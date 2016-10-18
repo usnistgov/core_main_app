@@ -1,0 +1,4 @@
+include README.rst
+include requirements.txt
+recursive-include core_website_app/static *
+recursive-include core_website_app/templates *
