@@ -1,0 +1,22 @@
+<list>
+    <item>
+        <name>item0</name>
+        <datum>alpha1</datum>
+    </item>
+    <item>
+        <name>item1</name>
+        <datum>alpha2</datum>
+    </item>
+    <item>
+        <name>item2</name>
+        <datum>beta1</datum>
+    </item>
+    <item>
+        <name>item3</name>
+        <datum>beta2</datum>
+    </item>
+    <item>
+        <name>item4</name>
+        <datum>beta3</datum>
+    </item>
+</list>
