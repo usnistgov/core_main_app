@@ -5,6 +5,8 @@ import os
 from django.utils.importlib import import_module
 from django.template import loader, Context
 from django.core.mail import send_mail as django_send_mail, mail_admins, mail_managers, BadHeaderError
+
+
 logger = getLogger(__name__)
 settings_file = os.environ.get("DJANGO_SETTINGS_MODULE")
 settings = import_module(settings_file)

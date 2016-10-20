@@ -5,7 +5,7 @@ import os
 from celery import Celery
 
 # set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mgi.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core_main_app.settings')
 
 from django.conf import settings  # noqa
 

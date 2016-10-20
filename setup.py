@@ -9,7 +9,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name="core_main_app",
-    version="0.0.1-alpha1",
+    version="1.0.0-alpha1",
     description=("core main Django package",),
     author="no_author",
     author_email="contact@example.com",
