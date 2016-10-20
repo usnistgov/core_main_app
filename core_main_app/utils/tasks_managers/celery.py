@@ -9,7 +9,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core_main_app.settings')
 
 from django.conf import settings  # noqa
 
-app = Celery('mgi')
+app = Celery('core_main_app')
 
 # Using a string here means the worker will not have to
 # pickle the object when using Windows.
