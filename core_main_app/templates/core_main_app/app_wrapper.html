@@ -1,0 +1,28 @@
+{% extends "theme.html" %}
+{% load staticfiles %}
+{% comment %}
+    Template including the necessary template and static file for a given view. The file utils/rendering.py is rendering
+    it using Django.
+{% endcomment %}
+
+{% block app_data %}
+    {% include template with data=data %}
+{% endblock %}
+
+{% block app_modals %}
+    {% for modal_file in modals %}
+        {% include modal_file %}
+    {% endfor %}
+{% endblock %}
+
+{% block app_css %}
+    {% for css_file in css %}
+        <link rel="stylesheet" href="{% static css_file %}" />
+    {% endfor %}
+{% endblock %}
+
+{% block app_js %}
+    {% for js_file in js %}
+        <script src="{% static js_file %}"></script>
+    {% endfor %}
+{% endblock %}
