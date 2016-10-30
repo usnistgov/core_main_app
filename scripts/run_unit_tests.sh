@@ -1,2 +1,3 @@
 #!/bin/bash
-python -m unittest discover
+SCRIPT_PATH=`dirname $0`
+python -m unittest discover ${SCRIPT_PATH}/..

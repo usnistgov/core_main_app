@@ -1,5 +1,7 @@
 Django==1.8.14
+mongoengine==0.10.6
 celery==3.1.23
+xmltodict==0.10.2
 lxml==3.6.4
-mock
+mock==2.0.0
 xml-utils==1.0.0-alpha1

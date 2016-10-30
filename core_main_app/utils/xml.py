@@ -1,11 +1,19 @@
 """
-Xml utils
+    Xml utils provide tool operation for xml data
 """
 
-from io import BytesIO
 from core_main_app.commons.exceptions import XSDError, MDCSError, XMLError
+
+from xml_validation.validation import xerces_validate_xsd, \
+    xerces_validate_xml, \
+    lxml_validate_xsd, \
+    lxml_validate_xml
+
 from lxml import etree
-from xml_validation.validation import xerces_validate_xsd, lxml_validate_xsd
+from io import BytesIO
+from collections import OrderedDict
+import xmltodict
+import json
 
 from core_main_app.settings import XERCES_VALIDATION
 
@@ -15,12 +23,12 @@ LXML_SCHEMA_NAMESPACE = "{" + SCHEMA_NAMESPACE + "}"
 
 def validate_xml_schema(xsd_tree):
     """
-    Send XML Schema to server to be validated
-    :param xsd_tree:
-    :return: None if no errors, string otherwise
+        Check if XSD schema is valid
+        Send XSD Schema to server to be validated
+        if XERCES_VALIDATION is true
+        :param xsd_tree:
+        :return: None if no errors, string otherwise
     """
-    error = None
-
     if XERCES_VALIDATION:
         try:
             error = xerces_validate_xsd(xsd_tree)
@@ -32,13 +40,33 @@ def validate_xml_schema(xsd_tree):
     return error
 
 
+def validate_xml_data(xsd_tree, xml_tree):
+    """
+        Check if XML data is valid
+        Send XML data to server to be validated
+        if XERCES_VALIDATION is true
+        :param xsd_tree:
+        :param xml_tree:
+        :return: None if no errors, string otherwise
+    """
+    if XERCES_VALIDATION:
+        try:
+            error = xerces_validate_xml(xsd_tree, xml_tree)
+        except Exception:
+            error = lxml_validate_xml(xsd_tree, xml_tree)
+    else:
+        error = lxml_validate_xml(xsd_tree, xml_tree)
+
+    return error
+
+
 def is_schema_valid(xsd_string):
     """
-    Test if the schema is valid to be uploaded
-    :param xsd_string:
-    :return:
+        Test if the schema is valid to be uploaded
+        :param xsd_string:
+        :return:
     """
-    if not is_well_formatted_xml(xsd_string):
+    if not is_well_formed_xml(xsd_string):
         raise XMLError('Uploaded file is not well formatted XML.')
 
     # is it supported by the MDCS?
@@ -47,20 +75,63 @@ def is_schema_valid(xsd_string):
         errors_str = ", ".join(errors)
         raise MDCSError(errors_str)
 
-    error = validate_xml_schema(_build_tree(xsd_string))
+    error = validate_xml_schema(build_tree(xsd_string))
     if error is not None:
         raise XSDError(error)
 
 
+def is_well_formed_xml(xml_string):
+    """
+        True if well formatted XML
+        :param xml_string:
+        :return:
+    """
+    # is it a valid XML document?
+    try:
+        build_tree(xml_string)
+    except Exception:
+        return False
+
+    return True
+
+
+def build_tree(xml_string):
+    """
+        Return a lxml etree from an XML string (xml, xsd...)
+        :param xml_string:
+        :return:
+    """
+    try:
+        xml_tree = etree.parse(BytesIO(xml_string.encode('utf-8')))
+    except Exception:
+        xml_tree = etree.parse(BytesIO(xml_string))
+
+    return xml_tree
+
+
+def unparse(json_dict):
+    """
+        Unparse JSON data
+        :param json_dict:
+        :return:
+    """
+    json_dump_string = json.dumps(json_dict)
+    preprocessed_dict = json.loads(json_dump_string,
+                                   parse_float=_parse_numbers,
+                                   parse_int=_parse_numbers,
+                                   object_pairs_hook=OrderedDict)
+    return xmltodict.unparse(preprocessed_dict)
+
+
 def _get_validity_errors_for_mdcs(xsd_string):
     """
-    Check that the format of the the schema is supported by the current version of the MDCS
-    :param xsd_string:
-    :return:
+        Check that the format of the the schema is supported by the current version of the MDCS
+        :param xsd_string:
+        :return:
     """
     errors = []
 
-    xsd_tree = _build_tree(xsd_string)
+    xsd_tree = build_tree(xsd_string)
 
     # General Tests
 
@@ -93,30 +164,11 @@ def _get_validity_errors_for_mdcs(xsd_string):
     return errors
 
 
-def is_well_formatted_xml(xml_string):
+def _parse_numbers(num_str):
     """
-    True if well formatted XML
-    :param xml_string:
-    :return:
+    Parse numbers from JSON
+
+    Returns:
+        str: parsed string
     """
-    # is it a valid XML document?
-    try:
-        _build_tree(xml_string)
-    except Exception:
-        return False
-
-    return True
-
-
-def _build_tree(xml_string):
-    """
-    Return a lxml etree from an XML string (xml, xsd...)
-    :param xml_string:
-    :return:
-    """
-    try:
-        xml_tree = etree.parse(BytesIO(xml_string.encode('utf-8')))
-    except Exception:
-        xml_tree = etree.parse(BytesIO(xml_string))
-
-    return xml_tree
+    return str(num_str)

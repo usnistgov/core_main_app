@@ -24,6 +24,12 @@ MANAGERS = getattr(settings, 'MANAGERS', [('manager', 'moderator@curator.org')])
 EMAIL_SUBJECT_PREFIX = getattr(settings, 'EMAIL_SUBJECT_PREFIX', "[CURATOR] ")
 
 
+# Replace by your own values
+MONGO_USER = getattr(settings, 'MONGO_USER', "mgi_user")
+MONGO_PASSWORD = getattr(settings, 'MONGO_PASSWORD', "mgi_password")
+DB_NAME = getattr(settings, 'DB_NAME', "mgi")
+MONGODB_URI = getattr(settings, 'MONGODB_URI', "mongodb://" + MONGO_USER + ":" + MONGO_PASSWORD + "@localhost/" + DB_NAME)
+
 INSTALLED_APPS = (
     'core_main_app',
 )

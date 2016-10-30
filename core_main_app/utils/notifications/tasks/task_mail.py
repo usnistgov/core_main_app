@@ -29,6 +29,7 @@ def send_mail(recipient_list, subject, path_to_template, context={}, fail_silent
     except Exception, e:
         raise e
 
+
 @app.task
 def send_mail_to_administrators(subject, path_to_template, context={}, fail_silently=True):
     try:
@@ -42,6 +43,7 @@ def send_mail_to_administrators(subject, path_to_template, context={}, fail_sile
         pass
     except Exception:
         pass
+
 
 @app.task
 def send_mail_to_managers(subject, path_to_template, context={}, fail_silently=True):

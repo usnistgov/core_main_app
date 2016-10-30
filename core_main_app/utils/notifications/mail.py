@@ -1,11 +1,5 @@
 import tasks.task_mail as task
-import os
-from django.utils.importlib import import_module
-
-settings_file = os.environ.get("DJANGO_SETTINGS_MODULE")
-settings = import_module(settings_file)
-USE_BACKGROUND_TASK = settings.USE_BACKGROUND_TASK
-SERVER_EMAIL = settings.SERVER_EMAIL
+from core_main_app.settings import SERVER_EMAIL, USE_BACKGROUND_TASK
 
 
 def send_mail(recipient_list, subject, path_to_template, context={}, fail_silently=True, sender=SERVER_EMAIL):
