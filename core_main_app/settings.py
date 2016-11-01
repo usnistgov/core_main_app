@@ -1,8 +1,12 @@
 from django.conf import settings
 
-# SECRET_KEY = getattr(settings, 'SECRET_KEY', 'ponq)(gd8hm57799)$lup4g9kyvp0l(9)k-3!em7dddn^(y)!5')
+if not settings.configured:
+    settings.configure()
 
-SECRET_KEY = 'ponq)(gd8hm57799)$lup4g9kyvp0l(9)k-3!em7dddn^(y)!5'
+SECRET_KEY = getattr(settings, 'SECRET_KEY', 'ponq)(gd8hm57799)$lup4g9kyvp0l(9)k-3!em7dddn^(y)!5')
+
+# XML
+XERCES_VALIDATION = getattr(settings, 'XERCES_VALIDATION', False)
 
 # Celery configuration
 USE_BACKGROUND_TASK = getattr(settings, 'USE_BACKGROUND_TASK', False)
