@@ -9,7 +9,7 @@ from xsd_hash import xsd_hash
 
 
 # TODO: exporters, xslt not added to templates
-def template_post(template_filename, template_content, template_dependencies=[]):
+def template_post(template_filename, template_content, template_dependencies=None):
     """
     Post the template
     :param template_filename:
