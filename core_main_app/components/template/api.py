@@ -9,7 +9,7 @@ from xsd_hash import xsd_hash
 
 
 # TODO: exporters, xslt not added to templates
-def template_post(template_filename, template_content, template_dependencies=None):
+def save(template_filename, template_content, template_dependencies=None):
     """
     Post the template
     :param template_filename:
@@ -22,15 +22,15 @@ def template_post(template_filename, template_content, template_dependencies=Non
         hash_value = xsd_hash.get_hash(template_content)
     except Exception:
         raise MDCSError("Something wrong happened during the hashing of the template.")
-    new_template = Template.create_template(template_filename=template_filename,
-                                            template_content=template_content,
-                                            template_hash=hash_value,
-                                            template_dependencies=template_dependencies)
+    new_template = Template.create(template_filename=template_filename,
+                                   template_content=template_content,
+                                   template_hash=hash_value,
+                                   template_dependencies=template_dependencies)
 
     return new_template
 
 
-def template_get(template_id):
+def get(template_id):
     """
     Get a template
     :param template_id:
@@ -42,7 +42,7 @@ def template_get(template_id):
         raise MDCSError('No template could be found with the given id')
 
 
-def template_list():
+def get_all():
     """
     List all templates
     :return:

@@ -30,7 +30,7 @@ class Template(Document):
         return Template.objects().get(pk=str(template_id))
 
     @staticmethod
-    def create_template(template_filename, template_content, template_hash, template_dependencies):
+    def create(template_filename, template_content, template_hash, template_dependencies):
         """
         Create a new template
         :param template_filename:

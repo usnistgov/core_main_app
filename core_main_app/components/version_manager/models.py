@@ -101,24 +101,22 @@ class VersionManager(Document):
         self.current = str(version.id)
 
     @staticmethod
-    def get_all_version_managers():
+    def get_all():
         """
         Return all Version Managers
         :return:
         """
-        return VersionManager.objects()
+        return VersionManager.objects.all()
 
     @staticmethod
-    def get_version_managers_filtered(disabled):
+    def get_all_filtered(disabled=False):
         """
         Return filtered list of Version Managers
         :param disabled:
         :return:
         """
-        if disabled is not None:
-            return VersionManager.objects(is_disabled=disabled)
-        else:
-            return VersionManager.objects()
+        return VersionManager.objects.get(is_disabled=disabled)
+
 
     @staticmethod
     def get_by_id(version_manager_id):
@@ -135,4 +133,4 @@ class VersionManager(Document):
         Return all Version Managers with user set to None
         :return:
         """
-        return [vm for vm in VersionManager.objects() if vm.user is None]
+        return [vm for vm in VersionManager.objects.all() if vm.user is None]
