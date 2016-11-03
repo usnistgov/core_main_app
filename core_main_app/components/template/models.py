@@ -2,16 +2,15 @@
 Template models
 """
 
-from mongoengine import *
-from django_mongoengine import fields as dme_fields, Document as dme_Document
+from django_mongoengine import fields, Document
 
 
-class Template(dme_Document):
+class Template(Document):
     """Represents an XML schema template that defines the structure of data for curation"""
-    filename = dme_fields.StringField()
-    content = dme_fields.StringField()
-    hash = dme_fields.StringField()
-    dependencies = dme_fields.ListField(StringField(), blank=True)
+    filename = fields.StringField()
+    content = fields.StringField()
+    hash = fields.StringField()
+    dependencies = fields.ListField(default=[], blank=True)
 
     @staticmethod
     def get_all():
