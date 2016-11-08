@@ -1,14 +1,8 @@
 """
     Xml utils provide tool operation for xml data
 """
-
-from core_main_app.commons import exceptions
-
-from xml_validation.validation import xerces_validate_xsd, \
-    xerces_validate_xml, \
-    lxml_validate_xsd, \
-    lxml_validate_xml
-
+import core_main_app.commons.exceptions as exceptions
+import xml_validation.validation as xml_validation
 from lxml import etree
 from io import BytesIO
 from collections import OrderedDict
@@ -31,11 +25,11 @@ def validate_xml_schema(xsd_tree):
     """
     if XERCES_VALIDATION:
         try:
-            error = xerces_validate_xsd(xsd_tree)
+            error = xml_validation.xerces_validate_xsd(xsd_tree)
         except Exception:
-            error = lxml_validate_xsd(xsd_tree)
+            error = xml_validation.lxml_validate_xsd(xsd_tree)
     else:
-        error = lxml_validate_xsd(xsd_tree)
+        error = xml_validation.lxml_validate_xsd(xsd_tree)
 
     return error
 
@@ -51,11 +45,11 @@ def validate_xml_data(xsd_tree, xml_tree):
     """
     if XERCES_VALIDATION:
         try:
-            error = xerces_validate_xml(xsd_tree, xml_tree)
+            error = xml_validation.xerces_validate_xml(xsd_tree, xml_tree)
         except Exception:
-            error = lxml_validate_xml(xsd_tree, xml_tree)
+            error = xml_validation.lxml_validate_xml(xsd_tree, xml_tree)
     else:
-        error = lxml_validate_xml(xsd_tree, xml_tree)
+        error = xml_validation.lxml_validate_xml(xsd_tree, xml_tree)
 
     return error
 
@@ -123,18 +117,18 @@ def unparse(json_dict):
     return xmltodict.unparse(preprocessed_dict)
 
 
-def raw_xml_to_dict(raw_xml):
+def raw_xml_to_dict(raw_xml, postprocessor=None):
     """
         Transform a raw xml to dict. Returns an empty dict if the parsing failed
         :param raw_xml:
+        :param postprocessor:
         :return:
         """
     try:
-        dict_raw = xmltodict.parse(raw_xml)
+        dict_raw = xmltodict.parse(raw_xml, postprocessor=postprocessor)
+        return dict_raw
     except xmltodict.expat.ExpatError:
-        dict_raw = {}
-
-    return dict_raw
+        raise exceptions.XMLError("An unexpected error happened during the XML parsing.")
 
 
 def _check_core_support(xsd_string):

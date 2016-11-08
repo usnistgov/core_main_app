@@ -1,11 +1,14 @@
+"""
+    xml tools
+"""
+
 from .models import Data
 from bson.objectid import ObjectId
 from core_main_app.commons import exceptions
 import core_main_app.components.template.api as template_api
-from core_main_app.utils.xml import build_tree, unparse, validate_xml_data
+import core_main_app.utils.xml as xml_tools
 
 import re
-import xmltodict
 
 
 def get_by_id(data_id):
@@ -66,28 +69,23 @@ def update(data_id, xml_content=None, title=None, user_id=None):
         :return:
     """
 
+    json = {}
+    if xml_content is not None:
+        json['content'] = xml_tools.raw_xml_to_dict(xml_content, postprocessor=_post_processor)
+
+    if title is not None:
+        json['title'] = title
+
+    if user_id is not None:
+        json['user_id'] = user_id
+
     try:
-        data = Data.get_by_id(data_id)
-
-        if xml_content is None:
-            content = data.content['content']
-        else:
-            content = xmltodict.parse(xml_content, postprocessor=_post_processor)
-
-        if title is None:
-            title = data.content['title']
-
-        if user_id is None:
-            user_id = data.content['user_id']
-
-        json = {'content': content, 'title': title, 'user_id': user_id}
-
         return Data.update(data_id, json)
     except Exception:
         raise exceptions.ApiError("An error occurred during document's content update.")
 
 
-def save_with_xml(template_id, title=None, xml=None, user_id=None):
+def save_with_xml(template_id, xml, title=None, user_id=None):
     """
         Save XML data
         :param template_id:
@@ -96,19 +94,15 @@ def save_with_xml(template_id, title=None, xml=None, user_id=None):
         :param user_id:
         :return:
     """
-
-    content = None
     if xml is not None:
         _check_xml_data_valid(xml, template_id)
-        content = xmltodict.parse(xml, postprocessor=_post_processor)
-
-    if content is not None:
+        content = xml_tools.raw_xml_to_dict(xml, postprocessor=_post_processor)
         return Data(template_id=template_id, content=content, title=title, user_id=user_id).save()
     else:
         raise exceptions.ApiError('No data provided. Expected parameter are: xml.')
 
 
-def save_with_json(template_id, title=None, json=None, user_id=None):
+def save_with_json(template_id, json, title=None, user_id=None):
     """
         Save XML data
         :param template_id:
@@ -118,13 +112,9 @@ def save_with_json(template_id, title=None, json=None, user_id=None):
         :return:
     """
 
-    content = None
     if json is not None:
         _check_json_data_valid(json, template_id)
-        content = json
-
-    if content is not None:
-        return Data(template_id=template_id, content=content, title=title, user_id=user_id).save()
+        return Data(template_id=template_id, content=json, title=title, user_id=user_id).save()
     else:
         raise exceptions.ApiError('No data provided. Expected parameter are: json.')
 
@@ -177,16 +167,16 @@ def _check_xml_data_valid(xml, schema_id):
     template = template_api.get(schema_id)
 
     try:
-        xml_tree = build_tree(xml)
+        xml_tree = xml_tools.build_tree(xml)
     except:
         raise exceptions.XMLError("Unexpected error: XML is not well formed.")
 
     try:
-        xsd_tree = build_tree(template.content)
+        xsd_tree = xml_tools.build_tree(template.content)
     except:
         raise exceptions.XSDError("Unexpected error: XSD is not well formed.")
 
-    error = validate_xml_data(xsd_tree, xml_tree)
+    error = xml_tools.validate_xml_data(xsd_tree, xml_tree)
     if error is not None:
         raise exceptions.XMLError(error)
     else:
@@ -194,7 +184,7 @@ def _check_xml_data_valid(xml, schema_id):
 
 
 def _check_json_data_valid(json, schema_id):
-    xml_string = unparse(json)
+    xml_string = xml_tools.unparse(json)
     _check_xml_data_valid(xml_string, schema_id)
 
 

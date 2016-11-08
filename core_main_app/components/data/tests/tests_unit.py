@@ -173,7 +173,7 @@ class TestDataSaveWithXml(TestCase):
         # Arrange
         # Act # Assert
         with self.assertRaises(exceptions.ApiError):
-            data_api.save_with_xml('1')
+            data_api.save_with_xml('1', None)
 
     @patch('core_main_app.components.data.models.Data.save')
     @patch('core_main_app.components.data.api._check_xml_data_valid')
@@ -241,7 +241,7 @@ class TestDataSaveWithJson(TestCase):
         # Arrange
         # Act # Assert
         with self.assertRaises(exceptions.ApiError):
-            data_api.save_with_json('1')
+            data_api.save_with_json('1', None)
 
     @patch('core_main_app.components.data.models.Data.save')
     @patch('core_main_app.components.data.api._check_json_data_valid')

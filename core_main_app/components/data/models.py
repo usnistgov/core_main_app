@@ -21,7 +21,7 @@ class Data(object):
         Wrapper to manage JSON Documents, like mongoengine would have manage them (but with ordered data)
     """
 
-    def __init__(self, template_id=None, content=None, title="", user_id=None):
+    def __init__(self, template_id=None, content=None, title="", user_id=""):
         """
             initialize the object
             template_id = ref template (Document)
