@@ -123,6 +123,20 @@ def unparse(json_dict):
     return xmltodict.unparse(preprocessed_dict)
 
 
+def raw_xml_to_dict(raw_xml):
+    """
+        Transform a raw xml to dict. Returns an empty dict if the parsing failed
+        :param raw_xml:
+        :return:
+        """
+    try:
+        dict_raw = xmltodict.parse(raw_xml)
+    except xmltodict.expat.ExpatError:
+        dict_raw = {}
+
+    return dict_raw
+
+
 def _get_validity_errors_for_mdcs(xsd_string):
     """
         Check that the format of the the schema is supported by the current version of the MDCS
