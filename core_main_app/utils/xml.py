@@ -2,7 +2,7 @@
     Xml utils provide tool operation for xml data
 """
 
-from core_main_app.commons.exceptions import XSDError, MDCSError, XMLError
+from core_main_app.commons import exceptions
 
 from xml_validation.validation import xerces_validate_xsd, \
     xerces_validate_xml, \
@@ -67,17 +67,17 @@ def is_schema_valid(xsd_string):
         :return:
     """
     if not is_well_formed_xml(xsd_string):
-        raise XMLError('Uploaded file is not well formatted XML.')
+        raise exceptions.XMLError('Uploaded file is not well formatted XML.')
 
-    # is it supported by the MDCS?
-    errors = _get_validity_errors_for_mdcs(xsd_string)
+    # Check schema support by the core
+    errors = _check_core_support(xsd_string)
     if len(errors) > 0:
         errors_str = ", ".join(errors)
-        raise MDCSError(errors_str)
+        raise exceptions.CoreError(errors_str)
 
     error = validate_xml_schema(build_tree(xsd_string))
     if error is not None:
-        raise XSDError(error)
+        raise exceptions.XSDError(error)
 
 
 def is_well_formed_xml(xml_string):
@@ -137,9 +137,9 @@ def raw_xml_to_dict(raw_xml):
     return dict_raw
 
 
-def _get_validity_errors_for_mdcs(xsd_string):
+def _check_core_support(xsd_string):
     """
-        Check that the format of the the schema is supported by the current version of the MDCS
+        Check that the format of the the schema is supported by the current version of the Core
         :param xsd_string:
         :return:
     """

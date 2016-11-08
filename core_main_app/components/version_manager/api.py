@@ -2,7 +2,7 @@
 Version Manager API
 """
 
-from core_main_app.commons.exceptions import MDCSError
+from core_main_app.commons import exceptions
 from core_main_app.components.version_manager.models import VersionManager
 
 
@@ -15,7 +15,7 @@ def get(version_manager_id):
     try:
         return VersionManager.get_by_id(version_manager_id)
     except:
-        raise MDCSError('No version manager could be found with the given id')
+        raise exceptions.ApiError('No version manager could be found with the given id')
 
 
 def get_from_version(version_id):
@@ -28,7 +28,7 @@ def get_from_version(version_id):
     for version_manager in version_managers:
         if str(version_id) in version_manager.versions:
             return version_manager
-    raise MDCSError("No version manager could be found for this id.")
+    raise exceptions.ApiError("No version manager could be found for this id.")
 
 
 def disable(version_manager_id):
@@ -74,11 +74,11 @@ def disable_version(version_id, new_current_id=None):
     if version_manager.current == str(version_id):
         # no version to be current provided
         if new_current_id is None:
-            raise MDCSError('Unable to disable the current version.')
+            raise exceptions.ApiError('Unable to disable the current version.')
 
         # id doesn't match a version
         if new_current_id not in version_manager.versions:
-            raise MDCSError('The id provided to be the next current version, could not be found.')
+            raise exceptions.ApiError('The id provided to be the next current version, could not be found.')
 
         # set the new current version
         version_manager.set_current_version(new_current_id)

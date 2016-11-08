@@ -2,9 +2,8 @@ from unittest.case import TestCase
 from lxml.html.diff import htmldiff
 from mock.mock import Mock, patch
 from os.path import join, dirname, realpath
-from core_main_app.commons.exceptions import MDCSError
-from core_main_app.components.xsl_transformation.api import xsl_transformation_get, xsl_transformation_list, \
-    xsl_transformation_post, xsl_transform
+from core_main_app.commons import exceptions
+import core_main_app.components.xsl_transformation.api as xsl_transformation_api
 from core_main_app.components.xsl_transformation.models import XslTransformation
 
 
@@ -21,7 +20,7 @@ class TestXslTransformationGet(TestCase):
         mock_get_by_name.return_value = mock_xslt
 
         # Act
-        result = xsl_transformation_get(mock_xslt.name)
+        result = xsl_transformation_api.get(mock_xslt.name)
 
         # Assert
         self.assertIsInstance(result, XslTransformation)
@@ -33,14 +32,14 @@ class TestXslTransformationGet(TestCase):
         mock_get_by_name.side_effect = Exception()
 
         # Act + Assert
-        with self.assertRaises(MDCSError):
-            xsl_transformation_get(mock_unexisting_name)
+        with self.assertRaises(exceptions.ApiError):
+            xsl_transformation_api.get(mock_unexisting_name)
 
 
-class TestXslTransformationList(TestCase):
+class TestXslTransformationGetAll(TestCase):
 
     @patch('core_main_app.components.xsl_transformation.models.XslTransformation.get_all')
-    def test_xsl_transformation_list_contains_only_xsl_transformation(self, mock_get_all):
+    def test_xsl_transformation_get_all_contains_only_xsl_transformation(self, mock_get_all):
         # Arrange
         mock_xslt_1 = Mock(spec=XslTransformation)
         mock_xslt_1.name = "xslt_name_1"
@@ -55,17 +54,40 @@ class TestXslTransformationList(TestCase):
         mock_get_all.return_value = [mock_xslt_1, mock_xslt_2]
 
         # Act
-        result = xsl_transformation_list()
+        result = xsl_transformation_api.get_all()
 
         # Assert
         self.assertTrue(all(isinstance(item, XslTransformation) for item in result))
 
 
-class TestXslTransformationPost(TestCase):
+class TestXslTransformationCreate(TestCase):
+
+    @patch('core_main_app.components.xsl_transformation.models.XslTransformation.save')
+    def test_xsl_transformation_create_return_xsl_transformation(self, mock_save):
+        # Arrange
+        mock_xslt = Mock(spec=XslTransformation)
+        mock_name = "xslt_name"
+        mock_filename = "xslt_filename"
+        mock_content = "xslt_content"
+
+        mock_xslt.name = mock_name
+        mock_xslt.filename = mock_filename
+        mock_xslt.content = mock_content
+
+        mock_save.return_value = mock_xslt
+
+        # Act
+        result = xsl_transformation_api.create(mock_name, mock_filename, mock_content)
+
+        # Assert
+        self.assertIsInstance(result, XslTransformation)
+
+
+class TestXslTransformationUpdate(TestCase):
 
     @patch('core_main_app.components.xsl_transformation.models.XslTransformation.save')
     @patch('core_main_app.components.xsl_transformation.models.XslTransformation.get_by_name')
-    def test_xsl_transformation_post_new_return_xsl_transformation(self, mock_save, mock_get_by_name):
+    def test_xsl_transformation_update_unexisting_throws_api_error(self, mock_get_by_name, mock_save):
         # Arrange
         mock_xslt = Mock(spec=XslTransformation)
         mock_name = "xslt_name"
@@ -79,17 +101,16 @@ class TestXslTransformationPost(TestCase):
         mock_save.return_value = mock_xslt
         mock_get_by_name.side_effect = Exception()
 
-        # Act
-        result = xsl_transformation_post(mock_name, mock_filename, mock_content)
-
-        # Assert
-        self.assertIsInstance(result, XslTransformation)
+        # Act + Assert
+        with self.assertRaises(exceptions.ApiError):
+            xsl_transformation_api.update(mock_name, mock_filename, mock_content)
 
     @patch('core_main_app.components.xsl_transformation.models.XslTransformation.save')
     @patch('core_main_app.components.xsl_transformation.models.XslTransformation.get_by_name')
-    def test_xsl_transformation_post_existing_return_xsl_transformation(self, mock_save, mock_get_by_name):
+    def test_xsl_transformation_update_return_xsl_transformation(self, mock_get_by_name, mock_save):
         # Arrange
         mock_xslt = Mock(spec=XslTransformation)
+
         mock_name = "xslt_name"
         mock_filename = "xslt_filename"
         mock_content = "xslt_content"
@@ -98,11 +119,11 @@ class TestXslTransformationPost(TestCase):
         mock_xslt.filename = mock_filename
         mock_xslt.content = mock_content
 
+        mock_get_by_name.return_value = XslTransformation()
         mock_save.return_value = mock_xslt
-        mock_get_by_name.return_value = mock_xslt
 
         # Act
-        result = xsl_transformation_post(mock_name, mock_filename, mock_content)
+        result = xsl_transformation_api.update(mock_name, mock_filename, mock_content)
 
         # Assert
         self.assertIsInstance(result, XslTransformation)
@@ -134,7 +155,7 @@ class TestXslTransform(TestCase):
             expected_result = html_file.read()
 
         # Act
-        result = xsl_transform(mock_xml_data, mock_xslt.name)
+        result = xsl_transformation_api.xsl_transform(mock_xml_data, mock_xslt.name)
         html_diff = htmldiff(result, expected_result)  # Computing difference in resulting content
 
         # Assert
@@ -158,8 +179,8 @@ class TestXslTransform(TestCase):
         mock_get_by_name.return_value = mock_xslt
 
         # Act + Assert
-        with self.assertRaises(MDCSError):
-            xsl_transform(mock_xml_data, mock_xslt.name)
+        with self.assertRaises(exceptions.ApiError):
+            xsl_transformation_api.xsl_transform(mock_xml_data, mock_xslt.name)
 
     @patch('core_main_app.components.xsl_transformation.models.XslTransformation.get_by_name')
     def test_xsl_transform_raise_mdcs_error_on_malformed_xslt(self, mock_get_by_name):
@@ -178,8 +199,8 @@ class TestXslTransform(TestCase):
         mock_get_by_name.return_value = mock_xslt
 
         # Act + Assert
-        with self.assertRaises(MDCSError):
-            xsl_transform(mock_xml_data, mock_xslt.name)
+        with self.assertRaises(exceptions.ApiError):
+            xsl_transformation_api.xsl_transform(mock_xml_data, mock_xslt.name)
 
     @patch('core_main_app.components.xsl_transformation.models.XslTransformation.get_by_name')
     def test_xsl_transform_raise_mdcs_error_on_malformed_xml(self, mock_get_by_name):
@@ -199,8 +220,8 @@ class TestXslTransform(TestCase):
         mock_get_by_name.return_value = mock_xslt
 
         # Act + Assert
-        with self.assertRaises(MDCSError):
-            xsl_transform(mock_xml_data, mock_xslt.name)
+        with self.assertRaises(exceptions.ApiError):
+            xsl_transformation_api.xsl_transform(mock_xml_data, mock_xslt.name)
 
     @patch('core_main_app.components.xsl_transformation.models.XslTransformation.get_by_name')
     @patch('lxml.etree.fromstring')
@@ -224,5 +245,5 @@ class TestXslTransform(TestCase):
         mock_etree_fromstring.side_effect = Exception()
 
         # Act + Assert
-        with self.assertRaises(MDCSError):
-            xsl_transform(mock_xml_data, mock_xslt.name)
+        with self.assertRaises(exceptions.ApiError):
+            xsl_transformation_api.xsl_transform(mock_xml_data, mock_xslt.name)

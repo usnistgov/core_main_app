@@ -2,11 +2,11 @@
 """
 from lxml import etree
 from lxml.etree import XMLSyntaxError
-from core_main_app.commons.exceptions import MDCSError
+from core_main_app.commons import exceptions
 from core_main_app.components.xsl_transformation.models import XslTransformation
 
 
-def xsl_transformation_get(xslt_name):
+def get(xslt_name):
     """ Get an XSLT document
 
     :return:
@@ -14,10 +14,10 @@ def xsl_transformation_get(xslt_name):
     try:
         return XslTransformation.get_by_name(xslt_name)
     except:
-        raise MDCSError("No transformation can be found with the given name")
+        raise exceptions.ApiError("No transformation can be found with the given name")
 
 
-def xsl_transformation_list():
+def get_all():
     """ Get list of XSLT document
 
     :return:
@@ -25,8 +25,8 @@ def xsl_transformation_list():
     return XslTransformation.get_all()
 
 
-def xsl_transformation_post(xslt_name, xslt_filename, xslt_content):
-    """ Create or update an XSLT document
+def update(xslt_name, xslt_filename=None, xslt_content=None):
+    """ Create an XSLT document
 
     Parameters:
         xslt_name (str):
@@ -35,23 +35,32 @@ def xsl_transformation_post(xslt_name, xslt_filename, xslt_content):
 
     Returns:
     """
-    xslt_object = None
+    xslt_object = get(xslt_name)
 
-    try:
-        xslt_object = xsl_transformation_get(xslt_name)
+    if xslt_filename is not None:
         xslt_object.filename = xslt_filename
-        xslt_object.content = xslt_content
-        xslt_object.reload()
-    except MDCSError:  # Object does not exist
-        xslt_object = XslTransformation(
-            name=xslt_name,
-            filename=xslt_filename,
-            content=xslt_content
-        )
 
-        xslt_object.save()
-    finally:
-        return xslt_object
+    if xslt_content is not None:
+        xslt_object.content = xslt_content
+
+    return xslt_object.save()
+
+
+def create(xslt_name, xslt_filename, xslt_content):
+    """ Create an XSLT document
+
+    Parameters:
+        xslt_name (str):
+        xslt_filename (str):
+        xslt_content (str):
+
+    Returns:
+    """
+    return XslTransformation(
+        name=xslt_name,
+        filename=xslt_filename,
+        content=xslt_content
+    ).save()
 
 
 def xsl_transform(xml_data, xslt_name):
@@ -65,7 +74,7 @@ def xsl_transform(xml_data, xslt_name):
     Returns:
         str: Transformed XML string
     """
-    xslt_object = xsl_transformation_get(xslt_name)
+    xslt_object = get(xslt_name)
 
     try:
         xml_dom_tree = etree.XML(xml_data)
@@ -74,10 +83,10 @@ def xsl_transform(xml_data, xslt_name):
         xslt_tree = etree.fromstring(xslt_content)
         xslt_transformation = etree.XSLT(xslt_tree)
     except (UnicodeDecodeError, UnicodeEncodeError):
-        raise MDCSError("An XSLT encoding error happenend while transforming the XML")
+        raise exceptions.ApiError("An XSLT encoding error happenend while transforming the XML")
     except XMLSyntaxError:
-        raise MDCSError("An XML/XSLT syntax error happenend while transforming the XML")
+        raise exceptions.ApiError("An XML/XSLT syntax error happenend while transforming the XML")
     except Exception:
-        raise MDCSError("An unexpected exception happened while transforming the XML")
+        raise exceptions.ApiError("An unexpected exception happened while transforming the XML")
 
     return str(xslt_transformation(xml_dom_tree))

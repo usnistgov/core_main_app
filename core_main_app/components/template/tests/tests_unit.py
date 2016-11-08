@@ -1,7 +1,7 @@
 from unittest.case import TestCase
 from bson.objectid import ObjectId
 from mock.mock import Mock, patch
-from core_main_app.commons.exceptions import MDCSError, XSDError
+from core_main_app.commons import exceptions
 from core_main_app.components.template import api as template_api
 from core_main_app.components.template.models import Template
 
@@ -32,7 +32,7 @@ class TestTemplateGet(TestCase):
         mock_get_by_id.side_effect = Exception()
 
         # Act + Assert
-        with self.assertRaises(MDCSError):
+        with self.assertRaises(exceptions.ApiError):
             template_api.get(mock_absent_id)
 
 
@@ -61,8 +61,8 @@ class TestTemplateList(TestCase):
 
 class TestTemplateSave(TestCase):
 
-    @patch('core_main_app.components.template.models.Template.create')
-    def test_template_create_valid_template(self, mock_create):
+    @patch('core_main_app.components.template.models.Template.save')
+    def test_template_create_valid_template(self, mock_save):
         # Arrange
         mock_template = Mock(spec=Template)
 
@@ -76,16 +76,16 @@ class TestTemplateSave(TestCase):
         mock_template.hash = mock_template_hash
         mock_template.id = mock_template_id
 
-        mock_create.return_value = mock_template
+        mock_save.return_value = mock_template
 
         # Act
-        result = template_api.save(mock_template_filename, mock_template_content)
+        result = template_api.create(mock_template_filename, mock_template_content)
 
         # Assert
         self.assertIsInstance(result, Template)
 
-    @patch('core_main_app.components.template.models.Template.create')
-    def test_template_create_valid_template_with_dependencies(self, mock_create):
+    @patch('core_main_app.components.template.models.Template.save')
+    def test_template_create_valid_template_with_dependencies(self, mock_save):
         # Arrange
         mock_template = Mock(spec=Template)
 
@@ -101,16 +101,16 @@ class TestTemplateSave(TestCase):
         mock_template.id = mock_template_id
         mock_template.dependencies = mock_template_dependencies
 
-        mock_create.return_value = mock_template
+        mock_save.return_value = mock_template
 
         # Act
-        result = template_api.save(mock_template_filename, mock_template_content, mock_template_dependencies)
+        result = template_api.create(mock_template_filename, mock_template_content, mock_template_dependencies)
 
         # Assert
         self.assertIsInstance(result, Template)
 
-    @patch('core_main_app.components.template.models.Template.create')
-    def test_template_create_raise_xsd_error_if_invalid(self, mock_create):
+    @patch('core_main_app.components.template.models.Template.save')
+    def test_template_create_raise_xsd_error_if_invalid(self, mock_save):
         # Arrange
         mock_template = Mock(spec=Template)
 
@@ -124,8 +124,8 @@ class TestTemplateSave(TestCase):
         mock_template.hash = mock_template_hash
         mock_template.id = mock_template_id
 
-        mock_create.return_value = mock_template
+        mock_save.return_value = mock_template
 
         # Act + Assert
-        with self.assertRaises(XSDError):
-            template_api.save(mock_template_filename, mock_template_content)
+        with self.assertRaises(exceptions.XSDError):
+            template_api.create(mock_template_filename, mock_template_content)

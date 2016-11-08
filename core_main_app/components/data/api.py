@@ -1,6 +1,6 @@
 from .models import Data
 from bson.objectid import ObjectId
-from core_main_app.commons.exceptions import MDCSError
+from core_main_app.commons import exceptions
 import core_main_app.components.template.api as template_api
 from core_main_app.utils.xml import build_tree, unparse, validate_xml_data
 
@@ -17,7 +17,7 @@ def get_by_id(data_id):
     try:
         return Data.get_by_id(data_id)
     except:
-        raise MDCSError('No data could be found with the given id')
+        raise exceptions.ApiError('No data could be found with the given id')
 
 
 def get_all():
@@ -84,7 +84,7 @@ def update(data_id, xml_content=None, title=None, user_id=None):
 
         return Data.update(data_id, json)
     except Exception:
-        raise MDCSError("An error occurred during document's content update.")
+        raise exceptions.ApiError("An error occurred during document's content update.")
 
 
 def save_with_xml(template_id, title=None, xml=None, user_id=None):
@@ -105,7 +105,7 @@ def save_with_xml(template_id, title=None, xml=None, user_id=None):
     if content is not None:
         return Data(template_id=template_id, content=content, title=title, user_id=user_id).save()
     else:
-        raise MDCSError('No data provided. Expected parameter are: xml.')
+        raise exceptions.ApiError('No data provided. Expected parameter are: xml.')
 
 
 def save_with_json(template_id, title=None, json=None, user_id=None):
@@ -126,7 +126,7 @@ def save_with_json(template_id, title=None, json=None, user_id=None):
     if content is not None:
         return Data(template_id=template_id, content=content, title=title, user_id=user_id).save()
     else:
-        raise MDCSError('No data provided. Expected parameter are: json.')
+        raise exceptions.ApiError('No data provided. Expected parameter are: json.')
 
 
 def query(query_value=None, data_id=None, schema_id=None, title=None):
@@ -152,7 +152,7 @@ def query(query_value=None, data_id=None, schema_id=None, title=None):
             else:
                 query_value['title'] = title
         if len(query_value.keys()) == 0:
-            raise MDCSError("No parameters given.")
+            raise exceptions.ApiError("No parameters given.")
 
         return Data.find(query_value)
 
@@ -168,19 +168,27 @@ def query_full_text(text, template_ids):
 
 
 def _check_xml_data_valid(xml, schema_id):
+    """ Check if xml data is valid against a given schema
+
+    :param xml:
+    :param schema_id:
+    :return:
+    """
     template = template_api.get(schema_id)
+
     try:
         xml_tree = build_tree(xml)
     except:
-        raise MDCSError("Unexpected error: XML is not well formed.")
+        raise exceptions.XMLError("Unexpected error: XML is not well formed.")
+
     try:
         xsd_tree = build_tree(template.content)
     except:
-        raise MDCSError("Unexpected error: XSD is not well formed.")
+        raise exceptions.XSDError("Unexpected error: XSD is not well formed.")
 
     error = validate_xml_data(xsd_tree, xml_tree)
     if error is not None:
-        raise MDCSError(error)
+        raise exceptions.XMLError(error)
     else:
         return None
 

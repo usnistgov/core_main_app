@@ -15,7 +15,7 @@ def create_manager(template_title, template_filename, template_content, template
     :param template_dependencies:
     :return:
     """
-    new_template = template_api.save(template_filename=template_filename,
+    new_template = template_api.create(template_filename=template_filename,
                                      template_content=template_content,
                                      template_dependencies=template_dependencies)
     new_template_manager = TemplateVersionManager.create(template_title, new_template, template_user)
@@ -32,7 +32,7 @@ def create_version(version_manager_id, template_filename, template_content, temp
     :return:
     """
     template_version_manager = TemplateVersionManager.get_by_id(version_manager_id)
-    new_template = template_api.save(template_filename=template_filename,
+    new_template = template_api.create(template_filename=template_filename,
                                      template_content=template_content,
                                      template_dependencies=template_dependencies)
     template_version_manager.insert(new_template)

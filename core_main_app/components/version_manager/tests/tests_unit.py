@@ -4,7 +4,7 @@ Version Manager unit tests
 from unittest.case import TestCase
 from bson.objectid import ObjectId
 from mock.mock import Mock, patch
-from core_main_app.commons.exceptions import MDCSError
+from core_main_app.commons import exceptions
 from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.components.version_manager.models import VersionManager
 
@@ -34,7 +34,7 @@ class TestVersionManagerGet(TestCase):
         mock_get_by_id.side_effect = Exception()
 
         # Act + Assert
-        with self.assertRaises(MDCSError):
+        with self.assertRaises(exceptions.ApiError):
             version_manager_api.get(mock_absent_id)
 
 
@@ -84,7 +84,7 @@ class TestVersionManagerGetFromVersionId(TestCase):
         mock_absent_id = ObjectId()
 
         # Act + Assert
-        with self.assertRaises(MDCSError):
+        with self.assertRaises(exceptions.ApiError):
             version_manager_api.get_from_version(mock_absent_id)
 
 
@@ -96,7 +96,7 @@ class TestVersionManagerDisable(TestCase):
         mock_get_by_id.side_effect = Exception()
 
         # Act + Assert
-        with self.assertRaises(MDCSError):
+        with self.assertRaises(exceptions.ApiError):
             version_manager_api.disable(mock_absent_id)
 
 
@@ -108,7 +108,7 @@ class TestVersionManagerRestore(TestCase):
         mock_get_by_id.side_effect = Exception()
 
         # Act + Assert
-        with self.assertRaises(MDCSError):
+        with self.assertRaises(exceptions.ApiError):
             version_manager_api.restore(mock_absent_id)
 
 
@@ -127,7 +127,7 @@ class TestVersionManagerRestoreVersion(TestCase):
         mock_get_all.return_value = [mock_vm]
 
         # Act + Assert
-        with self.assertRaises(MDCSError):
+        with self.assertRaises(exceptions.ApiError):
             version_manager_api.restore_version(mock_absent_id)
 
 
@@ -147,7 +147,7 @@ class TestVersionManagerDisableVersion(TestCase):
         mock_get_all.return_value = [mock_vm]
 
         # Act + Assert
-        with self.assertRaises(MDCSError):
+        with self.assertRaises(exceptions.ApiError):
             version_manager_api.disable_version(mock_absent_id)
 
     @patch('core_main_app.components.version_manager.models.VersionManager.get_all')
@@ -162,7 +162,7 @@ class TestVersionManagerDisableVersion(TestCase):
         mock_get_all.return_value = [mock_vm]
 
         # Act + Assert
-        with self.assertRaises(MDCSError):
+        with self.assertRaises(exceptions.ApiError):
             version_manager_api.disable_version(version_id)
 
     @patch('core_main_app.components.version_manager.models.VersionManager.get_all')
@@ -177,7 +177,7 @@ class TestVersionManagerDisableVersion(TestCase):
         mock_get_all.return_value = [mock_vm]
 
         # Act + Assert
-        with self.assertRaises(MDCSError):
+        with self.assertRaises(exceptions.ApiError):
             version_manager_api.disable_version(mock_vm.current, version_id)
 
 
@@ -205,5 +205,5 @@ class TestVersionManagerGetCurrent(TestCase):
         mock_get_by_id.side_effect = Exception()
 
         # Act + Assert
-        with self.assertRaises(MDCSError):
+        with self.assertRaises(exceptions.ApiError):
             version_manager_api.get_current(mock_absent_id)

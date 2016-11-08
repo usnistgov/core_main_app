@@ -28,19 +28,3 @@ class Template(Document):
         :return:
         """
         return Template.objects().get(pk=str(template_id))
-
-    @staticmethod
-    def create(template_filename, template_content, template_hash, template_dependencies):
-        """
-        Create a new template
-        :param template_filename:
-        :param template_content:
-        :param template_hash:
-        :param template_dependencies:
-        :return:
-        """
-        new_template = Template(filename=template_filename,
-                                content=template_content,
-                                hash=template_hash,
-                                dependencies=template_dependencies).save()
-        return new_template

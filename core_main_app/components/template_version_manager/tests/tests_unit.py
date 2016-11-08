@@ -10,15 +10,15 @@ from core_main_app.components.template_version_manager.models import TemplateVer
 class TestTemplateVersionManagerCreate(TestCase):
 
     @patch('core_main_app.components.template_version_manager.models.TemplateVersionManager.create')
-    @patch('core_main_app.components.template.models.Template.create')
-    def test_create_version_manager_returns_version_manager(self, mock_create_template, mock_create_version_manager):
+    @patch('core_main_app.components.template.models.Template.save')
+    def test_create_version_manager_returns_version_manager(self, mock_save_template, mock_create_version_manager):
         # Arrange
         mock_template_filename = "Schema"
         mock_template_content = "<schema xmlns='http://www.w3.org/2001/XMLSchema'></schema>"
 
         mock_template = _create_mock_template(mock_template_filename, mock_template_content)
 
-        mock_create_template.return_value = mock_template
+        mock_save_template.return_value = mock_template
 
         mock_version_manager = Mock(spec=TemplateVersionManager)
         mock_create_version_manager.return_value = mock_version_manager
@@ -29,18 +29,18 @@ class TestTemplateVersionManagerCreate(TestCase):
         # Assert
         self.assertIsInstance(result, TemplateVersionManager)
 
-    @patch('core_main_app.components.template.models.Template.create')
-    def test_create_version_manager_throws_exception_if_error_in_create_template(self, mock_create_template):
+    @patch('core_main_app.components.template.models.Template.save')
+    def test_create_version_manager_throws_exception_if_error_in_create_template(self, mock_save):
         # Arrange
-        mock_create_template.side_effect = Exception()
+        mock_save.side_effect = Exception()
 
         # Act + Assert
         with self.assertRaises(Exception):
             version_manager_api.create_manager("test", "test", "test")
 
     @patch('core_main_app.components.template_version_manager.models.TemplateVersionManager.create')
-    @patch('core_main_app.components.template.models.Template.create')
-    def test_create_version_manager_throws_exception_if_error_in_create_version_manager(self, mock_create_template,
+    @patch('core_main_app.components.template.models.Template.save')
+    def test_create_version_manager_throws_exception_if_error_in_create_version_manager(self, mock_save_template,
                                                                                         mock_create_version_manager):
         # Arrange
         mock_template_filename = "Schema"
@@ -48,7 +48,7 @@ class TestTemplateVersionManagerCreate(TestCase):
 
         mock_template = _create_mock_template(mock_template_filename, mock_template_content)
 
-        mock_create_template.return_value = mock_template
+        mock_save_template.return_value = mock_template
 
         mock_create_version_manager.side_effect = Exception()
 
@@ -60,14 +60,14 @@ class TestTemplateVersionManagerCreate(TestCase):
 class TestTemplateVersionManagerCreateVersion(TestCase):
 
     @patch('core_main_app.components.template_version_manager.models.TemplateVersionManager.get_by_id')
-    @patch('core_main_app.components.template.models.Template.create')
-    def test_create_version_returns_template_version(self, mock_create_template, mock_get_by_id):
+    @patch('core_main_app.components.template.models.Template.save')
+    def test_create_version_returns_template_version(self, mock_save_template, mock_get_by_id):
         # Arrange
         mock_template_filename = "Schema"
         mock_template_content = "<schema xmlns='http://www.w3.org/2001/XMLSchema'></schema>"
 
         mock_template = _create_mock_template(mock_template_filename, mock_template_content)
-        mock_create_template.return_value = mock_template
+        mock_save_template.return_value = mock_template
 
         mock_version_manager = Mock(spec=TemplateVersionManager)
         mock_version_manager.id = ObjectId()
@@ -89,14 +89,14 @@ class TestTemplateVersionManagerCreateVersion(TestCase):
             version_manager_api.create_version("test", "test", "test")
 
     @patch('core_main_app.components.template_version_manager.models.TemplateVersionManager.get_by_id')
-    @patch('core_main_app.components.template.models.Template.create')
-    def test_create_version_throws_exception_if_error_in_create_template(self, mock_create_template, mock_get_by_id):
+    @patch('core_main_app.components.template.models.Template.save')
+    def test_create_version_throws_exception_if_error_in_create_template(self, mock_save_template, mock_get_by_id):
         # Arrange
         mock_version_manager = Mock(spec=TemplateVersionManager)
         mock_version_manager.id = ObjectId()
         mock_get_by_id.return_value = mock_version_manager
 
-        mock_create_template.side_effect = Exception()
+        mock_save_template.side_effect = Exception()
 
         # Act + Assert
         with self.assertRaises(Exception):

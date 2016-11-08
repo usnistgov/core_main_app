@@ -1,9 +1,8 @@
 """
     Data model
 """
-
 from core_main_app.utils.database import Database
-from core_main_app.commons.exceptions import MDCSError
+from core_main_app.commons import exceptions
 from collections import OrderedDict
 from bson.objectid import ObjectId
 from pymongo import TEXT
@@ -36,22 +35,22 @@ class Data(object):
         if isinstance(template_id, basestring):
             self.content['template_id'] = template_id   # insert the ref to schema
         else:
-            raise MDCSError("template must be string value")
+            raise exceptions.DataModelError("template must be a string value")
 
         if isinstance(title, basestring):
             self.content['title'] = title               # insert the title
         else:
-            raise MDCSError("title must be string value")
+            raise exceptions.DataModelError("title must be a string value")
 
         if isinstance(content, OrderedDict):
             self.content['content'] = content           # insert the json content
         else:
-            raise MDCSError("content must be OrderedDict value")
+            raise exceptions.DataModelError("content must be OrderedDict value")
 
         if isinstance(user_id, basestring):
             self.content['user_id'] = user_id           # insert the user id
         else:
-            raise MDCSError("user_id must be string value")
+            raise exceptions.DataModelError("user_id must be a string value")
 
     def save(self):
         """
@@ -74,7 +73,7 @@ class Data(object):
         try:
             return Data._update_data(post_id, json_full_object)
         except:
-            raise MDCSError("Update operation error")
+            raise exceptions.DataModelError("Update operation error")
 
     @staticmethod
     def init_indexes():
@@ -155,7 +154,6 @@ class Data(object):
         database.close_connection()
         return [result for result in cursor]
 
-
     @staticmethod
     def execute_full_text_query(text, template_ids):
         """
@@ -191,10 +189,10 @@ class Data(object):
         data_collection = database.connect_to_collection(collection_name='data')
 
         if data_id is None:
-            raise MDCSError("data_id must not be None")
+            raise exceptions.DataModelError("data_id must not be None")
 
         if json_full_object is None:
-            raise MDCSError("content must not be None")
+            raise exceptions.DataModelError("content must not be None")
 
         data_collection.update_one({'_id': ObjectId(data_id)}, {"$set": json_full_object}, upsert=False)
         return_value = Data.get_by_id(data_id)

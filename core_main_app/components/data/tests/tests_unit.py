@@ -4,7 +4,7 @@
 import core_main_app.components.data.api as data_api
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
-from core_main_app.commons.exceptions import MDCSError
+from core_main_app.commons import exceptions
 from unittest.case import TestCase
 from mock import patch
 from collections import OrderedDict
@@ -27,11 +27,11 @@ class TestDataAll(TestCase):
 class TestDataGetById(TestCase):
 
     @patch('core_main_app.components.data.models.Data.get_by_id')
-    def test_data_get_by_id_return_mdcs_error_if_not_found(self, mock_get):
+    def test_data_get_by_id_return_api_error_if_not_found(self, mock_get):
         # Arrange
         mock_get.side_effect = Exception()
         # Act # Assert
-        with self.assertRaises(MDCSError):
+        with self.assertRaises(exceptions.ApiError):
             data_api.get_by_id(1)
 
     @patch('core_main_app.components.data.models.Data.get_by_id')
@@ -103,11 +103,11 @@ class TestDataAllByIdList(TestCase):
 class TestDataUpdate(TestCase):
 
     @patch('core_main_app.utils.database.Database.connect')
-    def test_date_update_raise_mdcs_exception_if_database_connection_fail(self, mock_connect):
+    def test_date_update_raise_api_error_if_database_connection_fail(self, mock_connect):
         # Arrange
         mock_connect.side_effect = Exception()
         # Act # Assert
-        with self.assertRaises(MDCSError):
+        with self.assertRaises(exceptions.ApiError):
             data_api.update(1)
 
     @patch('core_main_app.components.data.models.Data.update')
@@ -151,28 +151,28 @@ class TestDataUpdate(TestCase):
         self.assertEqual(json, result.content['content'])
 
     @patch('core_main_app.utils.database.Database.connect_to_collection')
-    def test_date_update_data_raise_MDCS_error_if_data_id_is_None(self, mock_con):
+    def test_date_update_data_raise_data_model_error_if_data_id_is_None(self, mock_con):
         # Arrange
         mock_con.return_value = []
         # Act # Assert
-        with self.assertRaises(MDCSError):
+        with self.assertRaises(exceptions.DataModelError):
             Data._update_data(json_full_object={})
 
     @patch('core_main_app.utils.database.Database.connect_to_collection')
-    def test_date_update_data_raise_MDCS_error_if_content_is_None(self, mock_con):
+    def test_date_update_data_raise_data_model_error_if_content_is_None(self, mock_con):
         # Arrange
         mock_con.return_value = []
         # Act # Assert
-        with self.assertRaises(MDCSError):
+        with self.assertRaises(exceptions.DataModelError):
             Data._update_data(data_id='1')
 
 
 class TestDataSaveWithXml(TestCase):
 
-    def test_data_save_with_xml_raise_mdcs_error_if_xml_is_none(self):
+    def test_data_save_with_xml_raise_api_error_if_xml_is_none(self):
         # Arrange
         # Act # Assert
-        with self.assertRaises(MDCSError):
+        with self.assertRaises(exceptions.ApiError):
             data_api.save_with_xml('1')
 
     @patch('core_main_app.components.data.models.Data.save')
@@ -188,27 +188,27 @@ class TestDataSaveWithXml(TestCase):
         self.assertIsInstance(result, Data)
 
     @patch('core_main_app.components.template.api.get')
-    def test_data_check_xml_data_valid_raise_mdcs_error_if_xml_tree_fail(self, mock_template):
+    def test_data_check_xml_data_valid_raise_xml_error_if_xml_tree_fail(self, mock_template):
         # Arrange
         template = Template()
         mock_template.return_value = template
         xml = '<tag>toto'
         # Act # Assert
-        with self.assertRaisesRegexp(MDCSError, "Unexpected error: XML is not well formed."):
+        with self.assertRaisesRegexp(exceptions.XMLError, "Unexpected error: XML is not well formed."):
             data_api._check_xml_data_valid(xml, 1)
 
     @patch('core_main_app.components.template.api.get')
-    def test_data_check_xml_data_valid_raise_mdcs_error_if_xsd_tree_fail(self, mock_template):
+    def test_data_check_xml_data_valid_raise_xsd_error_if_xsd_tree_fail(self, mock_template):
         # Arrange
         template = Template()
         mock_template.return_value = template
         xml = '<tag>toto</tag>'
         # Act # Assert
-        with self.assertRaisesRegexp(MDCSError, "Unexpected error: XSD is not well formed."):
+        with self.assertRaisesRegexp(exceptions.XSDError, "Unexpected error: XSD is not well formed."):
             data_api._check_xml_data_valid(xml, 1)
 
     @patch('core_main_app.components.template.api.get')
-    def test_data_check_xml_data_valid_raise_mdcs_error_if_validation_fail(self, mock_template):
+    def test_data_check_xml_data_valid_raise_xml_error_if_validation_fail(self, mock_template):
         # Arrange
         template = Template()
         xsd = '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">' \
@@ -217,7 +217,7 @@ class TestDataSaveWithXml(TestCase):
         mock_template.return_value = template
         xml = '<tog>toto</tog>'
         # Act # Assert
-        with self.assertRaisesRegexp(MDCSError, '^.*No matching.*$'):
+        with self.assertRaisesRegexp(exceptions.XMLError, '^.*No matching.*$'):
             data_api._check_xml_data_valid(xml, 1)
 
     @patch('core_main_app.components.template.api.get')
@@ -237,10 +237,10 @@ class TestDataSaveWithXml(TestCase):
 
 class TestDataSaveWithJson(TestCase):
 
-    def test_data_save_with_json_raise_mdcs_error_if_content_is_none(self):
+    def test_data_save_with_json_raise_api_error_if_content_is_none(self):
         # Arrange
         # Act # Assert
-        with self.assertRaises(MDCSError):
+        with self.assertRaises(exceptions.ApiError):
             data_api.save_with_json('1')
 
     @patch('core_main_app.components.data.models.Data.save')
@@ -256,7 +256,7 @@ class TestDataSaveWithJson(TestCase):
         self.assertIsInstance(result, Data)
 
     @patch('core_main_app.components.template.api.get')
-    def test_data_check_json_data_valid_raise_mdcs_error_if_validation_fail(self, mock_template):
+    def test_data_check_json_data_valid_raise_xml_error_if_validation_fail(self, mock_template):
         # Arrange
         template = Template()
         xsd = '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">' \
@@ -265,7 +265,7 @@ class TestDataSaveWithJson(TestCase):
         mock_template.return_value = template
         json = OrderedDict([(u'tog', u'toto')])
         # Act # Assert
-        with self.assertRaisesRegexp(MDCSError, '^.*No matching.*$'):
+        with self.assertRaisesRegexp(exceptions.XMLError, '^.*No matching.*$'):
             data_api._check_json_data_valid(json, '1')
 
     @patch('core_main_app.components.template.api.get')
@@ -285,10 +285,10 @@ class TestDataSaveWithJson(TestCase):
 
 class TestDataQuery(TestCase):
 
-    def test_data_query_raise_mdcs_error_if_no_parameter_given(self):
+    def test_data_query_raise_api_error_if_no_parameter_given(self):
         # Arrange
         # Act # Assert
-        with self.assertRaisesRegexp(MDCSError, 'No parameters given.'):
+        with self.assertRaisesRegexp(exceptions.ApiError, 'No parameters given.'):
             data_api.query()
 
     @patch('core_main_app.components.data.models.Data.find')
@@ -340,4 +340,3 @@ class TestDataQueryFullText(TestCase):
         result = data_api.query_full_text('', '1')
         # Assert
         self.assertTrue(all(isinstance(item, Data) for item in result))
-

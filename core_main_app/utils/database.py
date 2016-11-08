@@ -2,7 +2,7 @@
     The Database tool contains the available function relative to database operation (connection)
 """
 from pymongo import MongoClient
-from core_main_app.commons.exceptions import MDCSError
+from core_main_app.commons import exceptions
 from core_main_app.settings import MONGODB_URI, DB_NAME
 
 
@@ -23,7 +23,7 @@ class Database(object):
         if db is not None:
             return db           # return db connection
         else:                   # or raise an exception
-            raise MDCSError("Database connection error")
+            raise exceptions.CoreError("Database connection error")
 
     def connect_to_collection(self, collection_name, db_doc_class=dict):
         """
@@ -37,7 +37,7 @@ class Database(object):
             data_list = db[collection_name]     # get the data collection
             return data_list                    # return collection
         except:                                 # or raise an exception
-            raise MDCSError("Collection in database does not exist")
+            raise exceptions.CoreError("Collection in database does not exist")
 
     def close_connection(self):
         """
