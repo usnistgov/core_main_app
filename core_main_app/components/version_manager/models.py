@@ -18,15 +18,6 @@ class VersionManager(Document):
 
     meta = {'allow_inheritance': True}
 
-    def update_title(self, title):
-        """
-        Update the title associated to
-        :param title:
-        :return:
-        """
-        self.update(set__title=title)
-        self.save()
-
     def disable(self):
         """
         Disable the Version Manager

@@ -1,0 +1,6 @@
+<select class='dependency'>
+    <option value="None"> ------------- </option>
+    {% for template in templates %}
+        <option value='{{template.id}}'>{{template.title}}</option>
+    {% endfor %}
+</select>

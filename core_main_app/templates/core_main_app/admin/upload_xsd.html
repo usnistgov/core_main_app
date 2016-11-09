@@ -1,0 +1,22 @@
+<!-- FIXME: menu-->
+{% load staticfiles %}
+
+<h1>Upload Template</h1>
+
+
+<form id="form_start" action="{% url 'admin:core_main_app_upload_template' %}" method="post" enctype=multipart/form-data>
+    {% csrf_token %}
+    {{upload_form}}
+    <div id="upload_errors" style="color:red;">
+        {{ errors | safe}}
+    </div>
+    <br/>
+    <input type="submit" class="btn" value="Upload Template"/>
+</form>
+
+{% if dependency_resolver %}
+<hr>
+<div id="dependencies">
+    {{dependency_resolver}}
+</div>
+{% endif %}
