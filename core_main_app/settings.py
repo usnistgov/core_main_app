@@ -5,6 +5,8 @@ if not settings.configured:
 
 SECRET_KEY = getattr(settings, 'SECRET_KEY', '<secret_key>')
 
+SERVER_URI = getattr(settings, 'SERVER_URI', "http://localhost")
+
 # XML
 XERCES_VALIDATION = getattr(settings, 'XERCES_VALIDATION', False)
 

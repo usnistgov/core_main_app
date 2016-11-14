@@ -109,3 +109,15 @@ def get_current(version_manager_id):
     """
     version_manager = get(version_manager_id)
     return version_manager.current
+
+
+def update_title(version_manager_id, title):
+    """
+    Update version manager's title
+    :param version_manager_id:
+    :param title:
+    :return:
+    """
+    version_manager = get(version_manager_id)
+    version_manager.title = title
+    return version_manager.save()

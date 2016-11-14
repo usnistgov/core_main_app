@@ -9,7 +9,7 @@ from collections import OrderedDict
 import xmltodict
 import json
 
-from core_main_app.settings import XERCES_VALIDATION
+from core_main_app.settings import XERCES_VALIDATION, SERVER_URI
 
 SCHEMA_NAMESPACE = "http://www.w3.org/2001/XMLSchema"
 LXML_SCHEMA_NAMESPACE = "{" + SCHEMA_NAMESPACE + "}"
@@ -180,3 +180,98 @@ def _parse_numbers(num_str):
         str: parsed string
     """
     return str(num_str)
+
+
+def tree_to_string(xml_tree, pretty=False):
+    """
+    Return an XML String from a lxml etree
+    :param xml_tree:
+    :param pretty: True for indented print
+    :return:
+    """
+    try:
+        xml_tree = etree.tostring(xml_tree, pretty_print=pretty)
+    except Exception:
+        raise exceptions.XMLError("Something went wrong during conversion of the tree to a string.")
+
+    return xml_tree
+
+
+def get_imports_and_includes(xsd_string):
+    """
+    Get a list of imports and includes in the file
+    :param xsd_string:
+    :return: list of imports, list of includes
+    """
+    xsd_tree = build_tree(xsd_string)
+    # get the imports
+    imports = xsd_tree.findall("{}import".format(LXML_SCHEMA_NAMESPACE))
+    # get the includes
+    includes = xsd_tree.findall("{}include".format(LXML_SCHEMA_NAMESPACE))
+    return imports, includes
+
+
+def update_dependencies(xsd_string, dependencies):
+    """
+    Update dependencies of the schemas with given dependencies
+    :param xsd_string:
+    :param dependencies:
+    :return:
+    """
+    # build the tree
+    xsd_tree = build_tree(xsd_string)
+    # get the imports
+    xsd_imports = xsd_tree.findall("{}import".format(LXML_SCHEMA_NAMESPACE))
+    # get the includes
+    xsd_includes = xsd_tree.findall("{}include".format(LXML_SCHEMA_NAMESPACE))
+
+    for schema_location, dependency_id in dependencies.iteritems():
+        if dependency_id is not None:
+            for xsd_include in xsd_includes:
+                if schema_location == xsd_include.attrib['schemaLocation']:
+                    xsd_include.attrib['schemaLocation'] = _get_schema_location_uri(dependency_id)
+
+            for xsd_import in xsd_imports:
+                if schema_location == xsd_import.attrib['schemaLocation']:
+                    xsd_import.attrib['schemaLocation'] = _get_schema_location_uri(dependency_id)
+    return xsd_tree
+
+
+def _get_schema_location_uri(schema_id):
+    """
+    Get an URI of the schema location on the system from an id
+    :param schema_id:
+    :return:
+    """
+    return str(SERVER_URI)+'/rest/types/get-dependency?id=' + str(schema_id)
+
+
+def get_template_with_server_dependencies(xsd_string, dependencies):
+    """
+    Return the template with schema locations pointing to the server
+    :param xsd_string:
+    :param dependencies:
+    :return:
+    """
+    # replace includes/imports by API calls (get dependencies starting by the imports)
+    try:
+        xsd_tree = update_dependencies(xsd_string, dependencies)
+    except Exception, e:
+        raise exceptions.XSDError("Something went wrong during dependency update.")
+
+    # validate the schema
+    try:
+        error = validate_xml_schema(xsd_tree)
+    except Exception, e:
+        raise exceptions.XSDError("Something went wrong during XSD validation.")
+
+    # is it a valid XML document ?
+    if error is None:
+        try:
+            updated_xsd_string = tree_to_string(xsd_tree)
+        except Exception, e:
+            raise exceptions.XSDError("An unexpected error happened during dependency update.")
+    else:
+        raise exceptions.XSDError(error.replace("'", ""))
+
+    return updated_xsd_string
