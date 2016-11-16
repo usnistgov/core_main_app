@@ -8,6 +8,7 @@ from io import BytesIO
 from collections import OrderedDict
 import xmltodict
 import json
+from xsd_hash import xsd_hash
 
 from core_main_app.settings import XERCES_VALIDATION, SERVER_URI
 
@@ -275,3 +276,15 @@ def get_template_with_server_dependencies(xsd_string, dependencies):
         raise exceptions.XSDError(error.replace("'", ""))
 
     return updated_xsd_string
+
+
+def get_hash(xml_string):
+    """
+    Get the hash of an XML string
+    :param xml_string:
+    :return:
+    """
+    try:
+        return xsd_hash.get_hash(xml_string)
+    except Exception, e:
+        raise exceptions.XSDError("Something wrong happened during the hashing.")

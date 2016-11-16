@@ -2,46 +2,36 @@
 Template Version Manager API
 """
 from core_main_app.components.template import api as template_api
+from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.components.template_version_manager.models import TemplateVersionManager
 
 
-def create_manager(template_title, template_filename, template_content, template_user=None, template_dependencies=None):
+def insert(template_version_manager, template):
+    """Adds a version to a template version manager
+
+    Args:
+        template_version_manager:
+        template:
+
+    Returns:
+
     """
-    Create a new template version manager
-    :param template_title:
-    :param template_filename:
-    :param template_content:
-    :param template_user:
-    :param template_dependencies:
-    :return:
-    """
-    new_template = template_api.create(template_filename=template_filename,
-                                     template_content=template_content,
-                                     template_dependencies=template_dependencies)
-    new_template_manager = TemplateVersionManager.create(template_title, new_template, template_user)
-    return new_template_manager
+    # save the template in database
+    saved_template = template_api.upsert(template)
+    try:
+        # insert the initial template in the version manager
+        version_manager_api.insert_version(template_version_manager, saved_template)
+        # insert the version manager in database
+        return version_manager_api.upsert(template_version_manager)
+    except Exception, e:
+        template_api.delete(saved_template)
+        raise e
 
 
-def create_version(version_manager_id, template_filename, template_content, template_dependencies=None):
-    """
-    Create a new version of a template
-    :param version_manager_id:
-    :param template_filename:
-    :param template_content:
-    :param template_dependencies:
-    :return:
-    """
-    template_version_manager = TemplateVersionManager.get_by_id(version_manager_id)
-    new_template = template_api.create(template_filename=template_filename,
-                                     template_content=template_content,
-                                     template_dependencies=template_dependencies)
-    template_version_manager.insert(new_template)
-    return new_template
+def get_global_version_managers():
+    """Gets all global version managers of a template
 
+    Returns:
 
-def get_global_versions():
     """
-    Get all global versions of a template
-    :return:
-    """
-    return TemplateVersionManager.get_global_versions()
+    return TemplateVersionManager.get_global_version_managers()

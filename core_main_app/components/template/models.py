@@ -10,21 +10,25 @@ class Template(Document):
     filename = fields.StringField()
     content = fields.StringField()
     hash = fields.StringField()
-    dependencies = fields.ListField(default=[], blank=True)
+    dependencies = fields.ListField(fields.ReferenceField("self"), default=[], blank=True)
 
     @staticmethod
     def get_all():
+        """Returns all templates
+
+        Returns:
+
         """
-        Return all templates
-        :return:
-        """
-        return Template.objects()
+        return Template.objects.all()
 
     @staticmethod
     def get_by_id(template_id):
-        """
-        Return a template by its id
-        :param template_id:
-        :return:
+        """Returns a template by its id
+
+        Args:
+            template_id:
+
+        Returns:
+
         """
         return Template.objects().get(pk=str(template_id))

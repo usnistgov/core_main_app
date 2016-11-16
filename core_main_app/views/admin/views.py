@@ -1,13 +1,14 @@
 from django.http.response import HttpResponseRedirect
 from django.template import loader
 from django.template.context import Context
-from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.html import escape as html_escape
 from django.core.urlresolvers import reverse
 
 from core_main_app.commons import exceptions
+from core_main_app.components.template.models import Template
+from core_main_app.components.template_version_manager.models import TemplateVersionManager
 from core_main_app.components.template_version_manager import api as template_version_manager_api
 from core_main_app.utils.rendering import render
 from core_main_app.utils.xml import get_imports_and_includes
@@ -22,7 +23,7 @@ def manage_templates(request):
     :return:
     """
     # get all current templates
-    current_templates = template_version_manager_api.get_global_versions()
+    current_templates = template_version_manager_api.get_global_version_managers()
 
     context = {
         'objects': current_templates,
@@ -56,9 +57,9 @@ def upload_xsd(request):
             xsd_data = xsd_file.read()
 
             try:
-                template_version_manager_api.create_manager(template_title=name,
-                                                            template_filename=xsd_file.name,
-                                                            template_content=xsd_data)
+                template = Template(filename=xsd_file.name, content=xsd_data)
+                template_version_manager = TemplateVersionManager(title=name)
+                template_version_manager_api.insert(template_version_manager, template)
                 # XML schema loaded with success
                 messages.add_message(request, messages.INFO, 'Template uploaded with success.')
                 return HttpResponseRedirect(reverse("admin:core_main_app_templates"))
@@ -118,7 +119,7 @@ def _get_dependency_resolver_html(imports, includes, xsd_data, filename):
     :return:
     """
     # build the list of dependencies
-    current_templates = template_version_manager_api.get_global_versions()
+    current_templates = template_version_manager_api.get_global_version_managers()
     list_dependencies_template = loader.get_template('core_main_app/admin/list_dependencies.html')
     context = Context({
         'templates': current_templates,

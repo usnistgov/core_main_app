@@ -1,5 +1,7 @@
 import json
 from django.http.response import HttpResponse, HttpResponseBadRequest
+from core_main_app.components.template.models import Template
+from core_main_app.components.template_version_manager.models import TemplateVersionManager
 from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.components.template_version_manager import api as template_version_manager_api
 from core_main_app.utils.xml import get_template_with_server_dependencies
@@ -13,8 +15,8 @@ def disable_template(request):
     :return:
     """
     try:
-        object_id = request.GET['id']
-        version_manager_api.disable(object_id)
+        version_manager = version_manager_api.get(request.GET['id'])
+        version_manager_api.disable(version_manager)
     except Exception, e:
         return HttpResponseBadRequest(e.message, content_type='application/javascript')
 
@@ -28,8 +30,8 @@ def restore_template(request):
     :return:
     """
     try:
-        object_id = request.GET['id']
-        version_manager_api.restore(object_id)
+        version_manager = version_manager_api.get(request.GET['id'])
+        version_manager_api.restore(version_manager)
     except Exception, e:
         return HttpResponseBadRequest(e.message, content_type='application/javascript')
 
@@ -43,9 +45,9 @@ def edit_template(request):
     :return:
     """
     try:
-        object_id = request.GET['id']
-        object_title = request.GET['title']
-        version_manager_api.update_title(object_id, object_title)
+        version_manager = version_manager_api.get(request.GET['id'])
+        version_manager.title = request.GET['title']
+        version_manager_api.upsert(version_manager)
     except Exception, e:
         return HttpResponseBadRequest(e.message, content_type='application/javascript')
 
@@ -72,10 +74,9 @@ def resolve_dependencies(request):
         return HttpResponseBadRequest(e.message, content_type='application/javascript')
 
     # create new object
-    template_version_manager_api.create_manager(template_title=name,
-                                                template_filename=filename,
-                                                template_content=updated_xsd_content,
-                                                template_dependencies=dependencies)
+    template = Template(filename=filename, content=updated_xsd_content, dependencies=dependencies)
+    template_version_manager = TemplateVersionManager(title=name)
+    template_version_manager_api.init_and_save(template_version_manager, template)
 
     return HttpResponse(json.dumps({}), content_type='application/javascript')
 

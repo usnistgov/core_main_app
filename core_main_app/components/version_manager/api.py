@@ -7,117 +7,153 @@ from core_main_app.components.version_manager.models import VersionManager
 
 
 def get(version_manager_id):
+    """Gets a version manager by its id
+
+    Args:
+        version_manager_id:
+
+    Returns:
+
     """
-    Get a version manager by its id
-    :param version_manager_id:
-    :return:
-    """
-    try:
-        return VersionManager.get_by_id(version_manager_id)
-    except:
-        raise exceptions.ApiError('No version manager could be found with the given id')
+    return VersionManager.get_by_id(version_manager_id)
 
 
-def get_from_version(version_id):
-    """
-    Return VM from a version id
-    :param version_id:
-    :return:
+def get_from_version(version):
+    """Returns a version manager from a version
+
+    Args:
+        version:
+
+    Returns:
+
     """
     version_managers = VersionManager.get_all()
     for version_manager in version_managers:
-        if str(version_id) in version_manager.versions:
+        if str(version.id) in version_manager.versions:
             return version_manager
-    raise exceptions.ApiError("No version manager could be found for this id.")
+    raise exceptions.ApiError("No version manager could be found for this version.")
 
 
-def disable(version_manager_id):
+def disable(version_manager):
+    """Disables an object
+
+    Args:
+        version_manager:
+
+    Returns:
+
     """
-    Disable an object
-    :param version_manager_id:
-    :return:
-    """
-    version_manager = get(version_manager_id)
     version_manager.disable()
 
 
-def restore(version_manager_id):
+def restore(version_manager):
+    """Restores an object
+
+    Args:
+        version_manager:
+
+    Returns:
+
     """
-    Restore an object
-    :param version_manager_id:
-    :return:
-    """
-    version_manager = get(version_manager_id)
     version_manager.restore()
 
 
-def restore_version(version_id):
+def restore_version(version):
+    """Disables a version of the object
+
+    Args:
+        version:
+
+    Returns:
+
     """
-    Disable a version of the object
-    :param version_id:
-    :return:
-    """
-    version_manager = get_from_version(version_id)
-    version_manager.restore_version(version_id)
+    version_manager = get_from_version(version)
+    version_manager.restore_version(version)
 
 
-def disable_version(version_id, new_current_id=None):
+def disable_version(version, new_current=None):
+    """Disables a version of the object
+
+    Args:
+        version:
+        new_current:
+
+    Returns:
+
     """
-    Disable a version of the object
-    :param version_id:
-    :param new_current_id:
-    :return:
-    """
-    version_manager = get_from_version(version_id)
+    version_manager = get_from_version(version)
 
     # try to delete the current version
-    if version_manager.current == str(version_id):
+    if version_manager.current == str(version.id):
         # no version to be current provided
-        if new_current_id is None:
+        if new_current is None:
             raise exceptions.ApiError('Unable to disable the current version.')
 
         # id doesn't match a version
-        if new_current_id not in version_manager.versions:
+        if new_current.id not in version_manager.versions:
             raise exceptions.ApiError('The id provided to be the next current version, could not be found.')
 
         # set the new current version
-        version_manager.set_current_version(new_current_id)
-        # disable the version
-        version_manager.disable_version(version_id)
+        version_manager.set_current_version(new_current)
 
-    # try to delete another version than the current
-    else:
-        # disable the version
-        version_manager.disable_version(version_id)
+    # disable the version
+    version_manager.disable_version(version)
 
 
-def set_current(version_id):
+def set_current(version):
+    """Sets the current version of the object
+
+    Args:
+        version:
+
+    Returns:
+
     """
-    Set the current version of the object
-    :param version_id:
-    :return:
-    """
-    version_manager = get_from_version(version_id)
-    version_manager.set_current_version(version_id)
+    version_manager = get_from_version(version)
+
+    # a disabled version cannot be current
+    if str(version.id) in version_manager.get_disabled_versions():
+        raise exceptions.ApiError("Unable to set the current version because it is disabled.")
+
+    version_manager.set_current_version(version)
 
 
-def get_current(version_manager_id):
+def get_current(version_manager):
+    """Gets the current version of the version manager
+
+    Args:
+        version_manager:
+
+    Returns:
+
     """
-    Get the current version of the version manager
-    :param version_manager_id:
-    :return:
-    """
-    version_manager = get(version_manager_id)
     return version_manager.current
 
 
-def update_title(version_manager_id, title):
+def upsert(version_manager):
+    """Saves or Updates version manager
+
+    Args:
+        version_manager:
+
+    Returns:
+
     """
-    Update version manager's title
-    :param version_manager_id:
-    :param title:
-    :return:
-    """
-    version_manager = get(version_manager_id)
-    version_manager.title = title
     return version_manager.save()
+
+
+def insert_version(version_manager, version):
+    """Inserts a version in the version manager
+
+    Args:
+        version_manager:
+        version:
+
+    Returns:
+
+    """
+    version_manager.insert(version)
+
+    # first version inserted, set it as current
+    if len(version_manager.versions) == 1:
+        version_manager.set_current_version(version)
