@@ -288,3 +288,23 @@ def get_hash(xml_string):
         return xsd_hash.get_hash(xml_string)
     except Exception, e:
         raise exceptions.XSDError("Something wrong happened during the hashing.")
+
+
+def post_processor(path, key, value):
+    """ Called after XML to JSON transformation
+
+        Parameters:
+            path:
+            key:
+            value:
+
+        Returns:
+    """
+    try:
+        return key, int(value)
+    except (ValueError, TypeError):
+        try:
+            return key, float(value)
+        except (ValueError, TypeError):
+            return key, value
+
