@@ -1,5 +1,6 @@
 {% extends "theme.html" %}
 {% load staticfiles %}
+{% load include_static %}
 {% comment %}
     Template including the necessary template and static file for a given view. The file utils/rendering.py is rendering
     it using Django.
@@ -16,13 +17,29 @@
 {% endblock %}
 
 {% block app_css %}
-    {% for css_file in css %}
+    {% for css_file in assets.css %}
         <link rel="stylesheet" href="{% static css_file %}" />
     {% endfor %}
 {% endblock %}
 
 {% block app_js %}
-    {% for js_file in js %}
-        <script src="{% static js_file %}"></script>
+    {% comment %}
+        The js key from the asset dict should be formated like this:
+            "js": [
+                {
+                    "path": "path/to/file_1.js",
+                    "raw": True
+                },
+                ...
+            ]
+
+        The order of the list is the order of inclusion of the JavaScript files
+    {% endcomment %}
+    {% for js_file in assets.js %}
+        {% if js_file.raw %}
+            <script type="text/javascript">{% include_static js_file.path %}</script>
+        {% else %}
+            <script src="{% static js_file.path %}"></script>
+        {% endif %}
     {% endfor %}
 {% endblock %}

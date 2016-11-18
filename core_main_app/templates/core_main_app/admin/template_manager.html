@@ -21,7 +21,7 @@
         <th>Status</th>
         <th>Actions</th>
     </tr>
-    {% for object in objects %}
+    {% for object in data.objects %}
         {% cycle 'even' '' as rowcolors silent %}
         <tr class="{{ rowcolors }}">
             <td>{{ object.title }}</td>

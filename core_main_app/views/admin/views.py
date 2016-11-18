@@ -29,12 +29,26 @@ def manage_templates(request):
     current_templates = template_version_manager_api.get_global_version_managers()
 
     context = {
-        'objects': current_templates,
-        'js': ['core_main_app/admin/js/template_manager.js', 'core_main_app/admin/js/template.js'],
+        'objects': current_templates
     }
+
+    assets = {
+        "js": [
+            {
+                "path": 'core_main_app/admin/js/template_manager.js',
+                "raw": False
+            },
+            {
+                "path": 'core_main_app/admin/js/template.js',
+                "raw": False
+            }
+        ]
+    }
+
     return render(request,
                   'core_main_app/admin/template_manager.html',
-                  context)
+                  assets=assets,
+                  context=context)
 
 
 @staff_member_required
@@ -49,19 +63,35 @@ def manage_template_versions(request, version_manager_id):
 
     """
     # get the version manager
+    version_manager = None
+
     try:
         version_manager = version_manager_api.get(version_manager_id)
     except:
         # TODO: catch good exception, redirect to error page
         pass
 
+    assets = {
+        "js": [
+            {
+                "path": 'core_main_app/admin/js/template_versions_manager.js',
+                "raw": False
+            },
+            {
+                "path": 'core_main_app/admin/js/template.js',
+                "raw": False
+            }
+        ]
+    }
+
     context = {
         'version_manager': version_manager,
-        'js': ['core_main_app/admin/js/template_versions_manager.js', 'core_main_app/admin/js/template.js'],
     }
+
     return render(request,
                   'core_main_app/admin/template_versions_manager.html',
-                  context)
+                  assets=assets,
+                  context=context)
 
 
 @staff_member_required
@@ -74,11 +104,22 @@ def upload_template(request):
     Returns:
 
     """
+    assets = {
+        "js": [
+            {
+                "path": 'core_main_app/admin/js/dependency_resolver.js',
+                "raw": False
+            },
+            {
+                "path": 'core_main_app/admin/js/template.js',
+                "raw": False
+            }
+        ]
+    }
+
     context = {
         'url': reverse("admin:core_main_app_upload_template"),
-        'redirect_url': reverse("admin:core_main_app_templates"),
-        'js': ['core_main_app/admin/js/dependency_resolver.js',
-               'core_main_app/admin/js/template.js'],
+        'redirect_url': reverse("admin:core_main_app_templates")
     }
 
     # method is POST
@@ -88,15 +129,15 @@ def upload_template(request):
         context['upload_form'] = form
 
         if form.is_valid():
-            return _save_template(request, context)
+            return _save_template(request, assets, context)
         else:
             # Display error from the form
-            return _upload_template_response(request, context)
+            return _upload_template_response(request, assets, context)
     # method is GET
     else:
         # render the form to upload a template
         context['upload_form'] = UploadTemplateForm()
-        return _upload_template_response(request, context)
+        return _upload_template_response(request, assets, context)
 
 
 @staff_member_required
@@ -110,15 +151,26 @@ def upload_template_version(request, version_manager_id):
     Returns:
 
     """
+    assets = {
+        "js": [
+            {
+                "path": 'core_main_app/admin/js/dependency_resolver.js',
+                "raw": False
+            },
+            {
+                "path": 'core_main_app/admin/js/template.js',
+                "raw": False
+            }
+        ]
+    }
+
     template_version_manager = version_manager_api.get(version_manager_id)
     context = {
         'version_manager': template_version_manager,
         'url': reverse("admin:core_main_app_upload_template_version",
                        kwargs={'version_manager_id': template_version_manager.id}),
         'redirect_url': reverse("admin:core_main_app_manage_template_versions",
-                                kwargs={'version_manager_id': template_version_manager.id}),
-        'js': ['core_main_app/admin/js/dependency_resolver.js',
-               'core_main_app/admin/js/template.js'],
+                                kwargs={'version_manager_id': template_version_manager.id})
     }
 
     # method is POST
@@ -127,18 +179,18 @@ def upload_template_version(request, version_manager_id):
         context['upload_form'] = form
 
         if form.is_valid():
-            return _save_template_version(request, context, template_version_manager)
+            return _save_template_version(request, assets, context, template_version_manager)
         else:
             # Display errors from the form
-            return _upload_template_response(request, context)
+            return _upload_template_response(request, assets, context)
     # method is GET
     else:
         # render the form to upload a template
         context['upload_form'] = UploadVersionForm()
-        return _upload_template_response(request, context)
+        return _upload_template_response(request, assets, context)
 
 
-def _save_template(request, context):
+def _save_template(request, assets, context):
     """Saves a template
 
     Args:
@@ -161,13 +213,13 @@ def _save_template(request, context):
         template_version_manager_api.insert(template_version_manager, template)
         return HttpResponseRedirect(reverse("admin:core_main_app_templates"))
     except exceptions.XSDError, xsd_error:
-        return _handle_xsd_errors(request, context, xsd_error, xsd_data, xsd_file.name)
+        return _handle_xsd_errors(request, assets, context, xsd_error, xsd_data, xsd_file.name)
     except Exception, e:
         context['errors'] = html_escape(e.message)
-        return _upload_template_response(request, context)
+        return _upload_template_response(request, assets, context)
 
 
-def _save_template_version(request, context, template_version_manager):
+def _save_template_version(request, assets, context, template_version_manager):
     """Saves a template version
 
     Args:
@@ -189,13 +241,13 @@ def _save_template_version(request, context, template_version_manager):
         return HttpResponseRedirect(reverse("admin:core_main_app_manage_template_versions",
                                             kwargs={'version_manager_id': str(template_version_manager.id)}))
     except exceptions.XSDError, xsd_error:
-        return _handle_xsd_errors(request, context, xsd_error, xsd_data, xsd_file.name)
+        return _handle_xsd_errors(request, assets, context, xsd_error, xsd_data, xsd_file.name)
     except Exception, e:
         context['errors'] = html_escape(e.message)
-        return _upload_template_response(request, context)
+        return _upload_template_response(request, assets, context)
 
 
-def _handle_xsd_errors(request, context, xsd_error, xsd_content, filename):
+def _handle_xsd_errors(request, assets, context, xsd_error, xsd_content, filename):
     """Handles XSD errors. Builds dependency resolver if needed.
 
     Args:
@@ -214,10 +266,10 @@ def _handle_xsd_errors(request, context, xsd_error, xsd_content, filename):
         # build dependency resolver
         context['dependency_resolver'] = _get_dependency_resolver_html(imports, includes, xsd_content,
                                                                        filename)
-        return _upload_template_response(request, context)
+        return _upload_template_response(request, assets, context)
     else:
         context['errors'] = html_escape(xsd_error.message)
-        return _upload_template_response(request, context)
+        return _upload_template_response(request, assets, context)
 
 
 def _read_xsd_file(xsd_file):
@@ -232,7 +284,7 @@ def _read_xsd_file(xsd_file):
     return xsd_file.read()
 
 
-def _upload_template_response(request, context):
+def _upload_template_response(request, assets, context):
     """Renders template upload response
 
     Args:
@@ -244,7 +296,8 @@ def _upload_template_response(request, context):
     """
     return render(request,
                   'core_main_app/admin/upload_template.html',
-                  context)
+                  assets=assets,
+                  context=context)
 
 
 def _get_dependency_resolver_html(imports, includes, xsd_data, filename):

@@ -7,7 +7,7 @@
 <form id="form_start" action="{{ url }}" method="post"
       enctype=multipart/form-data>
     {% csrf_token %}
-    {{upload_form}}
+    {{ data.upload_form }}
     <div id="upload_errors" style="color:red;">
         {{ errors | safe}}
     </div>
@@ -15,10 +15,10 @@
     <input type="submit" class="btn" value="Upload Template"/>
 </form>
 
-{% if dependency_resolver %}
+{% if data.dependency_resolver %}
 <hr>
 <div id="dependencies">
-    {{dependency_resolver}}
+    {{ data.dependency_resolver }}
 </div>
 {% endif %}
 
