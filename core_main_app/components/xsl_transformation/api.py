@@ -9,7 +9,7 @@ from core_main_app.components.xsl_transformation.models import XslTransformation
 def get(xslt_name):
     """ Get an XSLT document
 
-    :return:
+    Returns:
     """
     try:
         return XslTransformation.get_by_name(xslt_name)
@@ -20,53 +20,27 @@ def get(xslt_name):
 def get_all():
     """ Get list of XSLT document
 
-    :return:
+    Returns:
     """
     return XslTransformation.get_all()
 
 
-def update(xslt_name, xslt_filename=None, xslt_content=None):
-    """ Create an XSLT document
+def upsert(xsl_transformation):
+    """
 
-    Parameters:
-        xslt_name (str):
-        xslt_filename (str):
-        xslt_content (str):
+    Args:
+        xsl_transformation:
 
     Returns:
+
     """
-    xslt_object = get(xslt_name)
-
-    if xslt_filename is not None:
-        xslt_object.filename = xslt_filename
-
-    if xslt_content is not None:
-        xslt_object.content = xslt_content
-
-    return xslt_object.save()
-
-
-def create(xslt_name, xslt_filename, xslt_content):
-    """ Create an XSLT document
-
-    Parameters:
-        xslt_name (str):
-        xslt_filename (str):
-        xslt_content (str):
-
-    Returns:
-    """
-    return XslTransformation(
-        name=xslt_name,
-        filename=xslt_filename,
-        content=xslt_content
-    ).save()
+    return xsl_transformation.save()
 
 
 def xsl_transform(xml_data, xslt_name):
     """ Transform an XML file using an XSL transformation
 
-    Parameters:
+    Args:
         xml_data (str): XML document content, encoded in UTF-8
         xslt_name (str): Name of an XslTransformation document
 

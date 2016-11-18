@@ -28,6 +28,26 @@ class DataModelError(Exception):
         return repr(self.message)
 
 
+class ModelError(Exception):
+    """ Generic exception for the model
+    """
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return repr(self.message)
+
+
+class DoesNotExist(Exception):
+    """ Exception raised when an object does not exist
+    """
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return repr(self.message)
+
+
 class XMLError(Exception):
     """
         Exception raised by XML validation

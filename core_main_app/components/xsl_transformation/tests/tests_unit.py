@@ -12,9 +12,9 @@ class TestXslTransformationGet(TestCase):
     @patch('core_main_app.components.xsl_transformation.models.XslTransformation.get_by_name')
     def test_xsl_transformation_get_return_xsl_transformation(self, mock_get_by_name):
         # Arrange
-        mock_xslt = _get_mock_xsl_transformation(name="xslt_name",
-                                                 filename="xslt_filename",
-                                                 content="xslt_content")
+        mock_xslt = _create_mock_xsl_transformation(name="xslt_name",
+                                                    filename="xslt_filename",
+                                                    content="xslt_content")
 
         mock_get_by_name.return_value = mock_xslt
 
@@ -40,13 +40,13 @@ class TestXslTransformationGetAll(TestCase):
     @patch('core_main_app.components.xsl_transformation.models.XslTransformation.get_all')
     def test_xsl_transformation_get_all_contains_only_xsl_transformation(self, mock_get_all):
         # Arrange
-        mock_xslt_1 = _get_mock_xsl_transformation(name="xslt_name_1",
-                                                   filename="xslt_filename_1",
-                                                   content="xslt_content_1")
+        mock_xslt_1 = _create_mock_xsl_transformation(name="xslt_name_1",
+                                                      filename="xslt_filename_1",
+                                                      content="xslt_content_1")
 
-        mock_xslt_2 = _get_mock_xsl_transformation(name="xslt_name_2",
-                                                   filename="xslt_filename_2",
-                                                   content="xslt_content_2")
+        mock_xslt_2 = _create_mock_xsl_transformation(name="xslt_name_2",
+                                                      filename="xslt_filename_2",
+                                                      content="xslt_content_2")
 
         mock_get_all.return_value = [mock_xslt_1, mock_xslt_2]
 
@@ -57,69 +57,23 @@ class TestXslTransformationGetAll(TestCase):
         self.assertTrue(all(isinstance(item, XslTransformation) for item in result))
 
 
-class TestXslTransformationCreate(TestCase):
+class TestXslTransformationUpsert(TestCase):
 
     @patch('core_main_app.components.xsl_transformation.models.XslTransformation.save')
-    def test_xsl_transformation_create_return_xsl_transformation(self, mock_save):
+    def test_xsl_transformation_upsert_return_xsl_transformation(self, mock_save):
         # Arrange
         mock_name = "xslt_name"
         mock_filename = "xslt_filename"
         mock_content = "xslt_content"
 
-        mock_xslt = _get_mock_xsl_transformation(name=mock_name,
-                                                 filename=mock_filename,
-                                                 content=mock_content)
+        mock_xslt = _create_xsl_transformation(name=mock_name,
+                                               filename=mock_filename,
+                                               content=mock_content)
 
         mock_save.return_value = mock_xslt
 
         # Act
-        result = xsl_transformation_api.create(mock_name, mock_filename, mock_content)
-
-        # Assert
-        self.assertIsInstance(result, XslTransformation)
-
-
-class TestXslTransformationUpdate(TestCase):
-
-    @patch('core_main_app.components.xsl_transformation.models.XslTransformation.save')
-    @patch('core_main_app.components.xsl_transformation.models.XslTransformation.get_by_name')
-    def test_xsl_transformation_update_unexisting_throws_api_error(self, mock_get_by_name, mock_save):
-        # Arrange
-        mock_xslt = Mock(spec=XslTransformation)
-        mock_name = "xslt_name"
-        mock_filename = "xslt_filename"
-        mock_content = "xslt_content"
-
-        mock_xslt = _get_mock_xsl_transformation(name=mock_name,
-                                                 filename=mock_filename,
-                                                 content=mock_content)
-
-        mock_save.return_value = mock_xslt
-        mock_get_by_name.side_effect = Exception()
-
-        # Act + Assert
-        with self.assertRaises(exceptions.ApiError):
-            xsl_transformation_api.update(mock_name, mock_filename, mock_content)
-
-    @patch('core_main_app.components.xsl_transformation.models.XslTransformation.save')
-    @patch('core_main_app.components.xsl_transformation.models.XslTransformation.get_by_name')
-    def test_xsl_transformation_update_return_xsl_transformation(self, mock_get_by_name, mock_save):
-        # Arrange
-        mock_xslt = Mock(spec=XslTransformation)
-
-        mock_name = "xslt_name"
-        mock_filename = "xslt_filename"
-        mock_content = "xslt_content"
-
-        mock_xslt = _get_mock_xsl_transformation(name=mock_name,
-                                                 filename=mock_filename,
-                                                 content=mock_content)
-
-        mock_get_by_name.return_value = XslTransformation()
-        mock_save.return_value = mock_xslt
-
-        # Act
-        result = xsl_transformation_api.update(mock_name, mock_filename, mock_content)
+        result = xsl_transformation_api.upsert(mock_xslt)
 
         # Assert
         self.assertIsInstance(result, XslTransformation)
@@ -138,8 +92,8 @@ class TestXslTransform(TestCase):
         with open(mock_xml_path, "r") as xml_file:
             mock_xml_data = xml_file.read()
 
-        mock_xslt = _get_mock_xsl_transformation(name="mock_xslt",
-                                                 filename="mock_xslt.xsl")
+        mock_xslt = _create_mock_xsl_transformation(name="mock_xslt",
+                                                    filename="mock_xslt.xsl")
 
         with open(mock_xsl_path, "r") as xsl_file:
             mock_xslt.content = xsl_file.read()
@@ -167,9 +121,9 @@ class TestXslTransform(TestCase):
             mock_xml_data = xml_file.read()
 
         # two .encode() in a row will trigger the exception
-        mock_xslt = _get_mock_xsl_transformation(name="mock_xslt",
-                                                 filename="mock_xslt.xsl",
-                                                 content=u"\u2000".encode("utf-8"))
+        mock_xslt = _create_mock_xsl_transformation(name="mock_xslt",
+                                                    filename="mock_xslt.xsl",
+                                                    content=u"\u2000".encode("utf-8"))
 
         mock_get_by_name.return_value = mock_xslt
 
@@ -186,9 +140,9 @@ class TestXslTransform(TestCase):
         with open(mock_xml_path, "r") as xml_file:
             mock_xml_data = xml_file.read()
 
-        mock_xslt = _get_mock_xsl_transformation(name="mock_xslt",
-                                                 filename="mock_xslt.xsl",
-                                                 content="mock_malformed_xslt/>")
+        mock_xslt = _create_mock_xsl_transformation(name="mock_xslt",
+                                                    filename="mock_xslt.xsl",
+                                                    content="mock_malformed_xslt/>")
         mock_get_by_name.return_value = mock_xslt
 
         # Act + Assert
@@ -203,8 +157,8 @@ class TestXslTransform(TestCase):
 
         mock_xml_data = "<tag>Unclosed"
 
-        mock_xslt = _get_mock_xsl_transformation(name="mock_xslt",
-                                                 filename="mock_xslt.xsl")
+        mock_xslt = _create_mock_xsl_transformation(name="mock_xslt",
+                                                    filename="mock_xslt.xsl")
 
         with open(mock_xsl_path, "r") as xsl_file:
             mock_xslt.content = xsl_file.read()
@@ -226,8 +180,8 @@ class TestXslTransform(TestCase):
         with open(mock_xml_path, "r") as xml_file:
             mock_xml_data = xml_file.read()
 
-        mock_xslt = _get_mock_xsl_transformation(name="mock_xslt",
-                                                 filename="mock_xslt.xsl")
+        mock_xslt = _create_mock_xsl_transformation(name="mock_xslt",
+                                                    filename="mock_xslt.xsl")
 
         with open(mock_xsl_path, "r") as xsl_file:
             mock_xslt.content = xsl_file.read()
@@ -240,9 +194,17 @@ class TestXslTransform(TestCase):
             xsl_transformation_api.xsl_transform(mock_xml_data, mock_xslt.name)
 
 
-def _get_mock_xsl_transformation(name=None, filename=None, content=None):
+def _create_mock_xsl_transformation(name=None, filename=None, content=None):
     mock_xslt = Mock(spec=XslTransformation)
     mock_xslt.name = name
     mock_xslt.filename = filename
     mock_xslt.content = content
     return mock_xslt
+
+
+def _create_xsl_transformation(name=None, filename=None, content=None):
+    xsl_transformation = XslTransformation()
+    xsl_transformation.name = name
+    xsl_transformation.filename = filename
+    xsl_transformation.content = content
+    return xsl_transformation
