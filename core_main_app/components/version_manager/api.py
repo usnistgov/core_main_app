@@ -35,7 +35,7 @@ def get_from_version(version):
 
 
 def disable(version_manager):
-    """Disables an object
+    """Disables an object, then saves it.
 
     Args:
         version_manager:
@@ -44,10 +44,11 @@ def disable(version_manager):
 
     """
     version_manager.disable()
+    return upsert(version_manager)
 
 
 def restore(version_manager):
-    """Restores an object
+    """Restores an object, then saves it.
 
     Args:
         version_manager:
@@ -56,10 +57,11 @@ def restore(version_manager):
 
     """
     version_manager.restore()
+    return upsert(version_manager)
 
 
 def restore_version(version):
-    """Disables a version of the object
+    """Disables a version of the object, then saves it.
 
     Args:
         version:
@@ -69,10 +71,11 @@ def restore_version(version):
     """
     version_manager = get_from_version(version)
     version_manager.restore_version(version)
+    return upsert(version_manager)
 
 
 def disable_version(version, new_current=None):
-    """Disables a version of the object
+    """Disables a version of the object, then saves it.
 
     Args:
         version:
@@ -98,10 +101,11 @@ def disable_version(version, new_current=None):
 
     # disable the version
     version_manager.disable_version(version)
+    return upsert(version_manager)
 
 
 def set_current(version):
-    """Sets the current version of the object
+    """Sets the current version of the object, then saves it.
 
     Args:
         version:
@@ -116,6 +120,7 @@ def set_current(version):
         raise exceptions.ApiError("Unable to set the current version because it is disabled.")
 
     version_manager.set_current_version(version)
+    return upsert(version_manager)
 
 
 def get_current(version_manager):
@@ -143,7 +148,7 @@ def upsert(version_manager):
 
 
 def insert_version(version_manager, version):
-    """Inserts a version in the version manager
+    """Inserts a version in the version manager, then saves it.
 
     Args:
         version_manager:
@@ -157,3 +162,5 @@ def insert_version(version_manager, version):
     # first version inserted, set it as current
     if len(version_manager.versions) == 1:
         version_manager.set_current_version(version)
+
+    return upsert(version_manager)

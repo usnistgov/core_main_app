@@ -1,7 +1,6 @@
 from django.http.response import HttpResponseRedirect
 from django.template import loader
 from django.template.context import Context
-from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.html import escape as html_escape
 from django.core.urlresolvers import reverse
@@ -10,17 +9,21 @@ from core_main_app.commons import exceptions
 from core_main_app.components.template.models import Template
 from core_main_app.components.template_version_manager.models import TemplateVersionManager
 from core_main_app.components.template_version_manager import api as template_version_manager_api
+from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.utils.rendering import render
 from core_main_app.utils.xml import get_imports_and_includes
-from core_main_app.views.admin.forms import UploadTemplateForm
+from core_main_app.views.admin.forms import UploadTemplateForm, UploadVersionForm
 
 
 @staff_member_required
 def manage_templates(request):
-    """
-    Page that allows to upload new schemas and manage the existing ones
-    :param request:
-    :return:
+    """View that allows template management
+
+    Args:
+        request:
+
+    Returns:
+
     """
     # get all current templates
     current_templates = template_version_manager_api.get_global_version_managers()
@@ -35,78 +38,212 @@ def manage_templates(request):
 
 
 @staff_member_required
-def upload_xsd(request):
+def manage_template_versions(request, version_manager_id):
+    """View that allows template versions management
+
+    Args:
+        request:
+        version_manager_id:
+
+    Returns:
+
     """
-    Form that allows to upload new templates
-    :param request:
-    :return:
+    # get the version manager
+    try:
+        version_manager = version_manager_api.get(version_manager_id)
+    except:
+        # TODO: catch good exception, redirect to error page
+        pass
+
+    context = {
+        'version_manager': version_manager,
+        'js': ['core_main_app/admin/js/template_versions_manager.js', 'core_main_app/admin/js/template.js'],
+    }
+    return render(request,
+                  'core_main_app/admin/template_versions_manager.html',
+                  context)
+
+
+@staff_member_required
+def upload_template(request):
+    """Upload template
+
+    Args:
+        request:
+
+    Returns:
+
     """
+    context = {
+        'url': reverse("admin:core_main_app_upload_template"),
+        'redirect_url': reverse("admin:core_main_app_templates"),
+        'js': ['core_main_app/admin/js/dependency_resolver.js',
+               'core_main_app/admin/js/template.js'],
+    }
+
     # method is POST
     if request.method == 'POST':
 
         form = UploadTemplateForm(request.POST,  request.FILES)
+        context['upload_form'] = form
 
         if form.is_valid():
-            # get the schema name
-            name = request.POST['name']
-            # get the file from the form
-            xsd_file = request.FILES['xsd_file']
-            # put the cursor at the beginning of the file
-            xsd_file.seek(0)
-            # read the content of the file
-            xsd_data = xsd_file.read()
-
-            try:
-                template = Template(filename=xsd_file.name, content=xsd_data)
-                template_version_manager = TemplateVersionManager(title=name)
-                template_version_manager_api.insert(template_version_manager, template)
-                # XML schema loaded with success
-                messages.add_message(request, messages.INFO, 'Template uploaded with success.')
-                return HttpResponseRedirect(reverse("admin:core_main_app_templates"))
-            except exceptions.XSDError, e:
-                imports, includes = get_imports_and_includes(xsd_data)
-                # a problem with includes/imports has been detected
-                if len(includes) > 0 or len(imports) > 0:
-                    # build dependency resolver
-                    dependency_resolver_html = _get_dependency_resolver_html(imports, includes, xsd_data, xsd_file.name)
-
-                    context = {
-                        'dependency_resolver': dependency_resolver_html,
-                    }
-
-                    return _upload_response(request, form, params=context)
-                else:
-                    return _upload_response(request, form, error_message=e.message)
-            except Exception, e:
-                return _upload_response(request, form, error_message=e.message)
+            return _save_template(request, context)
         else:
             # Display error from the form
-            return _upload_response(request, form)
+            return _upload_template_response(request, context)
     # method is GET
     else:
         # render the form to upload a template
-        return _upload_response(request, UploadTemplateForm())
+        context['upload_form'] = UploadTemplateForm()
+        return _upload_template_response(request, context)
 
 
-def _upload_response(request, form, params=None, error_message=""):
+@staff_member_required
+def upload_template_version(request, version_manager_id):
+    """Upload template version
+
+    Args:
+        request:
+        version_manager_id:
+
+    Returns:
+
     """
-    Return http response set with context and errors
-    :param request:
-    :param form:
-    :param error_message:
-    :return:
-    """
+    template_version_manager = version_manager_api.get(version_manager_id)
     context = {
-        'upload_form': form,
-        'errors': error_message.replace('"', '\''),
+        'version_manager': template_version_manager,
+        'url': reverse("admin:core_main_app_upload_template_version",
+                       kwargs={'version_manager_id': template_version_manager.id}),
+        'redirect_url': reverse("admin:core_main_app_manage_template_versions",
+                                kwargs={'version_manager_id': template_version_manager.id}),
         'js': ['core_main_app/admin/js/dependency_resolver.js',
                'core_main_app/admin/js/template.js'],
     }
-    if params is not None:
-        context.update(params)
 
+    # method is POST
+    if request.method == 'POST':
+        form = UploadVersionForm(request.POST,  request.FILES)
+        context['upload_form'] = form
+
+        if form.is_valid():
+            return _save_template_version(request, context, template_version_manager)
+        else:
+            # Display errors from the form
+            return _upload_template_response(request, context)
+    # method is GET
+    else:
+        # render the form to upload a template
+        context['upload_form'] = UploadVersionForm()
+        return _upload_template_response(request, context)
+
+
+def _save_template(request, context):
+    """Saves a template
+
+    Args:
+        request:
+        context:
+
+    Returns:
+
+    """
+    # get the schema name
+    name = request.POST['name']
+    # get the file from the form
+    xsd_file = request.FILES['xsd_file']
+    # read the content of the file
+    xsd_data = _read_xsd_file(xsd_file)
+
+    try:
+        template = Template(filename=xsd_file.name, content=xsd_data)
+        template_version_manager = TemplateVersionManager(title=name)
+        template_version_manager_api.insert(template_version_manager, template)
+        return HttpResponseRedirect(reverse("admin:core_main_app_templates"))
+    except exceptions.XSDError, xsd_error:
+        return _handle_xsd_errors(request, context, xsd_error, xsd_data, xsd_file.name)
+    except Exception, e:
+        context['errors'] = html_escape(e.message)
+        return _upload_template_response(request, context)
+
+
+def _save_template_version(request, context, template_version_manager):
+    """Saves a template version
+
+    Args:
+        request:
+        context:
+        template_version_manager:
+
+    Returns:
+
+    """
+    # get the file from the form
+    xsd_file = request.FILES['xsd_file']
+    # read the content of the file
+    xsd_data = _read_xsd_file(xsd_file)
+
+    try:
+        template = Template(filename=xsd_file.name, content=xsd_data)
+        template_version_manager_api.insert(template_version_manager, template)
+        return HttpResponseRedirect(reverse("admin:core_main_app_manage_template_versions",
+                                            kwargs={'version_manager_id': str(template_version_manager.id)}))
+    except exceptions.XSDError, xsd_error:
+        return _handle_xsd_errors(request, context, xsd_error, xsd_data, xsd_file.name)
+    except Exception, e:
+        context['errors'] = html_escape(e.message)
+        return _upload_template_response(request, context)
+
+
+def _handle_xsd_errors(request, context, xsd_error, xsd_content, filename):
+    """Handles XSD errors. Builds dependency resolver if needed.
+
+    Args:
+        request:
+        context:
+        xsd_error:
+        xsd_content:
+        filename:
+
+    Returns:
+
+    """
+    imports, includes = get_imports_and_includes(xsd_content)
+    # a problem with includes/imports has been detected
+    if len(includes) > 0 or len(imports) > 0:
+        # build dependency resolver
+        context['dependency_resolver'] = _get_dependency_resolver_html(imports, includes, xsd_content,
+                                                                       filename)
+        return _upload_template_response(request, context)
+    else:
+        context['errors'] = html_escape(xsd_error.message)
+        return _upload_template_response(request, context)
+
+
+def _read_xsd_file(xsd_file):
+    """Returns the content of the file uploaded using Django FileField
+
+    Returns:
+
+    """
+    # put the cursor at the beginning of the file
+    xsd_file.seek(0)
+    # read the content of the file
+    return xsd_file.read()
+
+
+def _upload_template_response(request, context):
+    """Renders template upload response
+
+    Args:
+        request:
+        context:
+
+    Returns:
+
+    """
     return render(request,
-                  'core_main_app/admin/upload_xsd.html',
+                  'core_main_app/admin/upload_template.html',
                   context)
 
 

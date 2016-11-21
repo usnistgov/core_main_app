@@ -7,3 +7,10 @@ class UploadTemplateForm(forms.Form):
     """
     name = forms.CharField(label='Enter Template name', max_length=100, required=True)
     xsd_file = forms.FileField(label='Select a file', required=True)
+
+
+class UploadVersionForm(forms.Form):
+    """
+    Form to upload a new version
+    """
+    xsd_file = forms.FileField(label='Select a file', required=True)
