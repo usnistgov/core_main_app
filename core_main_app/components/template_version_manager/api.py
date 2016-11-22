@@ -35,3 +35,4 @@ def get_global_version_managers():
 
     """
     return TemplateVersionManager.get_global_version_managers()
+

@@ -61,6 +61,68 @@ restore_template = function(objectID){
 
 
 /**
+ * Disable a version
+ */
+disableVersion = function()
+{
+    var objectID = $(this).attr("objectid");
+
+    $(function() {
+        $( "#dialog-disable-confirm-message" ).dialog({
+            modal: true,
+            buttons: {
+		Yes: function() {
+					disable_version(objectID);
+                    $( this ).dialog( "close" );
+                },
+		No: function() {
+                    $( this ).dialog( "close" );
+                }
+	        }
+        });
+    });
+}
+
+/**
+ * AJAX call, deletes a version
+ * @param objectID id of the object
+ */
+disable_version = function(objectID){
+    $.ajax({
+        url : "/admin/template/version/disable?id=" + objectID,
+        type : "GET",
+        success: function(data){
+            location.reload();
+        }
+    });
+}
+
+/**
+ * Restores a version
+ */
+restoreVersion = function()
+{
+    var objectID = $(this).attr("objectid");
+    restore_version(objectID);
+}
+
+
+/**
+ * AJAX call, restores a version
+ * @param objectID id of the object
+ */
+restore_version = function(objectID){
+    $.ajax({
+        url : "/admin/template/version/restore?id=" + objectID,
+        type : "GET",
+        success: function(data){
+            location.reload();
+        }
+    });
+}
+
+
+/**
  * Resolve dependencies
  */
 resolveDependencies = function()
@@ -99,7 +161,8 @@ resolve_dependencies = function(xsd_content, name, filename, schemaLocations, de
         	dependencies : dependencies,
         },
         success: function(data){
-            window.location = "admin/templates";
+            var redirect = $("#redirect_url").html();
+            window.location = redirect;
         },
         error: function(data){
             $("#errorDependencies").html(data.responseText);
@@ -149,6 +212,28 @@ edit_information = function(objectID, newName){
         },
         error: function(data){
 
+        }
+    });
+}
+
+/**
+ * Set current version
+ */
+setCurrentVersion = function(){
+    var objectID = $(this).attr("objectid");
+    set_current_version(objectID);
+}
+
+/**
+ * AJAX call, sets the current version
+ * @param objectID id of the object
+ */
+set_current_version = function(objectID){
+    $.ajax({
+        url : "/admin/template/version/current?id=" + objectID,
+        type : "GET",
+        success: function(data){
+            location.reload();
         }
     });
 }

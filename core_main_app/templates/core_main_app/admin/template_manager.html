@@ -7,7 +7,9 @@
 
 <div class="right-side">
 <span class="ctx_menu">
-    <a href="{% url 'admin:core_main_app_upload_template'%}"><div class="icon legend long upload">Upload Template</div></a>
+    <a href="{% url 'admin:core_main_app_upload_template'%}">
+        <div class="icon legend long upload">Upload Template</div>
+    </a>
 </span>
 </div>      
 
@@ -34,7 +36,7 @@
                 <td><span style="color:green;">Registered</span></td>
                 <td>
                     <span class="icon legend version">
-                        <a href="#">Version</a>
+                        <a href="{% url 'admin:core_main_app_manage_template_versions' object.id %}">Versions</a>
                     </span>
                     <span class="icon legend edit" objectid="{{ object.id }}">
                         <a href="#"> Edit </a>

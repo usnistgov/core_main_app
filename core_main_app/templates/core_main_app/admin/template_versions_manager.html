@@ -1,0 +1,51 @@
+{% load timestamptags%}
+
+<h1>Version Manager: {{version_manager.title }}</h1>
+
+<div class="right-side">
+<span class="ctx_menu">
+    <a href="{% url 'admin:core_main_app_upload_template_version' version_manager.id %}">
+        <div class="icon legend long upload">Upload Template</div>
+    </a>
+</span>
+</div>
+
+<div id="model_version">
+	<table>
+	{% for version in version_manager.versions reversed%}
+	   <tr>
+	       <td>Version {{ forloop.revcounter }} </td>
+	       {% if version == version_manager.current %}
+	       <td style='font-weight:bold;color:green'>Current</td>
+	       {% elif version in version_manager.disabled_versions %}
+	       <td style='color:red'>Disabled</td>
+	       <td>
+			   <span class='icon legend retrieve' objectid='{{version}}'>
+				   <a href="#"> Restore </a>
+			   </span>
+		   </td>
+	       {% else %}
+	       <td>
+			   <span class='icon legend long current' objectid='{{version}}'>
+				   <a href="#"> Set Current </a>
+			   </span>
+		   </td>
+	       <td>
+			   <span class='icon legend delete' objectid='{{version}}'>
+				   <a href="#"> Disable </a>
+			   </span>
+		   </td>
+	       {% endif %}
+	       <td> {{ version|print_timestamp }} </td>
+       </tr>
+   {% endfor %}
+   </table>
+</div>  
+
+<div id="dialog-disable-confirm-message" title="Confirm Delete" style="display:none;">
+<p></p>
+  <p>
+    <span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 10px 0;"></span>
+    Are you sure you want to disable this version?
+  </p>
+</div>

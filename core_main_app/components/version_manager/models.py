@@ -25,7 +25,6 @@ class VersionManager(Document):
 
         """
         self.is_disabled = True
-        self.save()
 
     def restore(self):
         """Restores the Version Manager
@@ -34,7 +33,6 @@ class VersionManager(Document):
 
         """
         self.is_disabled = False
-        self.save()
 
     def disable_version(self, version):
         """Disables a version
@@ -46,7 +44,6 @@ class VersionManager(Document):
 
         """
         self.disabled_versions.append(str(version.id))
-        self.save()
 
     def restore_version(self, version):
         """Restores a version
@@ -57,8 +54,7 @@ class VersionManager(Document):
         Returns:
 
         """
-        del self.disabled_versions[self.disabled_versions.index(str(version.id))]
-        self.save()
+        self.disabled_versions.remove(str(version.id))
 
     def set_current_version(self, version):
         """Sets the current version
@@ -70,7 +66,6 @@ class VersionManager(Document):
 
         """
         self.current = str(version.id)
-        self.save()
 
     def get_version_number(self, version_id):
         """Returns version number from version id
@@ -93,7 +88,6 @@ class VersionManager(Document):
 
         """
         self.versions.append(str(version.id))
-        self.save()
 
     def get_disabled_versions(self):
         """Gets the list disabled versions of the version manager
