@@ -18,7 +18,17 @@ class ApiError(Exception):
         return repr(self.message)
 
 
-class DataModelError(Exception):
+class ModelError(Exception):
+    """ Exception raised by the Data model
+    """
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return repr(self.message)
+
+
+class DoesNotExist(Exception):
     """ Exception raised by the Data model
     """
     def __init__(self, message):

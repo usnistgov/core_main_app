@@ -1,205 +1,115 @@
+""" Data API
 """
-    xml tools
-"""
-
-from .models import Data
-from bson.objectid import ObjectId
-from core_main_app.commons import exceptions
-import core_main_app.components.template.api as template_api
-import core_main_app.utils.xml as xml_tools
-
-import re
+from core_main_app.components.data.models import Data
+import core_main_app.utils.xml as xml_utils
+import core_main_app.commons.exceptions as exceptions
 
 
 def get_by_id(data_id):
+    """ Return data object with the given id
+
+        Parameters:
+            data_id:
+
+        Returns: data object
     """
-        Return data object
-        :param data_id:
-        :return: data object
-    """
-    try:
-        return Data.get_by_id(data_id)
-    except:
-        raise exceptions.ApiError('No data could be found with the given id')
+    return Data.get_by_id(data_id)
 
 
 def get_all():
-    """
-        List all data
-        :return: data collection
+    """ List all data
+
+        Returns: data collection
     """
     return Data.get_all()
 
 
-def get_all_by_user(user_id):
-    """
-        Return all data of a user
-        :param user_id:
-        :return: data collection
+def get_all_by_user_id(user_id):
+    """ Return all data of a user
+
+        Parameters:
+            user_id:
+
+        Returns: data collection
     """
     return Data.get_all_by_user_id(user_id)
 
 
-def get_all_except_user(user_id):
-    """
-        Returns all data which are not concern by the user
-        :param user_id:
-        :return: data collection
+def get_all_except_user_id(user_id):
+    """ Returns all data which are not concern by the user
+
+        Parameters:
+             user_id:
+
+        Returns: data collection
     """
     return Data.get_all_except_user_id(user_id)
 
 
 def get_all_by_id_list(list_ids, distinct_by=None):
-    """
-        Returns list of XML data from list of ids
-        :param list_ids:
-        :param distinct_by:
-        :return:
+    """ Returns list of XML data from list of ids
+
+        Parameters:
+            list_ids:
+            distinct_by:
+
+        Returns: data collection
     """
     return Data.get_all_by_id_list(list_ids, distinct_by)
 
 
-def update(data_id, xml_content=None, title=None, user_id=None):
+def upsert(data):
+    """ Save or update the data
+
+    Args:
+        data:
+
+    Returns:
+
     """
-        Change the content of a document
-        :param data_id:
-        :param xml_content:
-        :param title:
-        :param user_id:
-        :return:
-    """
-
-    json = {}
-    if xml_content is not None:
-        json['content'] = xml_tools.raw_xml_to_dict(xml_content, postprocessor=_post_processor)
-
-    if title is not None:
-        json['title'] = title
-
-    if user_id is not None:
-        json['user_id'] = user_id
-
-    try:
-        return Data.update(data_id, json)
-    except Exception:
-        raise exceptions.ApiError("An error occurred during document's content update.")
-
-
-def save_with_xml(template_id, xml, title=None, user_id=None):
-    """
-        Save XML data
-        :param template_id:
-        :param title:
-        :param xml:
-        :param user_id:
-        :return:
-    """
-    if xml is not None:
-        _check_xml_data_valid(xml, template_id)
-        content = xml_tools.raw_xml_to_dict(xml, postprocessor=_post_processor)
-        return Data(template_id=template_id, content=content, title=title, user_id=user_id).save()
-    else:
-        raise exceptions.ApiError('No data provided. Expected parameter are: xml.')
-
-
-def save_with_json(template_id, json, title=None, user_id=None):
-    """
-        Save XML data
-        :param template_id:
-        :param title:
-        :param json:
-        :param user_id:
-        :return:
-    """
-
-    if json is not None:
-        _check_json_data_valid(json, template_id)
-        return Data(template_id=template_id, content=json, title=title, user_id=user_id).save()
-    else:
-        raise exceptions.ApiError('No data provided. Expected parameter are: json.')
-
-
-def query(query_value=None, data_id=None, schema_id=None, title=None):
-    """
-        Execute query on xml data collection
-        :param query_value:
-        :param data_id:
-        :param schema_id:
-        :param title:
-        :return:
-    """
-    if query_value is not None:
-        return Data.find(query_value)
-    else:
-        query_value = dict()
-        if data_id is not None:
-            query_value['_id'] = ObjectId(data_id)
-        if schema_id is not None:
-            query_value['schema'] = schema_id
-        if title is not None:
-            if len(title) >= 2 and title[0] == '/' and title[-1] == '/':
-                query_value['title'] = re.compile(title[1:-1])
-            else:
-                query_value['title'] = title
-        if len(query_value.keys()) == 0:
-            raise exceptions.ApiError("No parameters given.")
-
-        return Data.find(query_value)
+    check_xml_file_is_valid(data)
+    return data.convert_and_save()
 
 
 def query_full_text(text, template_ids):
-    """
-        Execute full text query on xml data collection
-        :param text:
-        :param template_ids:
-        :return:
+    """ Execute full text query on xml data collection
+
+        Parameters:
+            text:
+            template_ids:
+
+        Returns:
     """
     return Data.execute_full_text_query(text, template_ids)
 
 
-def _check_xml_data_valid(xml, schema_id):
+def check_xml_file_is_valid(data):
     """ Check if xml data is valid against a given schema
 
-    :param xml:
-    :param schema_id:
-    :return:
+    Args:
+        data:
+
+    Returns:
+
     """
-    template = template_api.get(schema_id)
+    template = data.template
 
     try:
-        xml_tree = xml_tools.build_tree(xml)
-    except:
-        raise exceptions.XMLError("Unexpected error: XML is not well formed.")
+        xml_tree = xml_utils.build_tree(data.xml_file)
+    except Exception as e:
+        raise exceptions.XMLError(e.message)
 
     try:
-        xsd_tree = xml_tools.build_tree(template.content)
-    except:
-        raise exceptions.XSDError("Unexpected error: XSD is not well formed.")
+        xsd_tree = xml_utils.build_tree(template.content)
+    except Exception as e:
+        raise exceptions.XSDError(e.message)
 
-    error = xml_tools.validate_xml_data(xsd_tree, xml_tree)
+    error = xml_utils.validate_xml_data(xsd_tree, xml_tree)
     if error is not None:
         raise exceptions.XMLError(error)
     else:
-        return None
+        return True
 
 
-def _check_json_data_valid(json, schema_id):
-    xml_string = xml_tools.unparse(json)
-    _check_xml_data_valid(xml_string, schema_id)
 
 
-def _post_processor(path, key, value):
-    """
-        Called after XML to JSON transformation
-        :param path:
-        :param key:
-        :param value:
-        :return:
-    """
-    try:
-        return key, int(value)
-    except (ValueError, TypeError):
-        try:
-            return key, float(value)
-        except (ValueError, TypeError):
-            return key, value
