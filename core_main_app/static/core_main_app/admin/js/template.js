@@ -140,7 +140,8 @@ resolveDependencies = function()
     var xsd_content = $("#xsd_content").html();
     var name = $("#id_name").val();
     var filename = $("#filename").html();
-	resolve_dependencies(xsd_content, name, filename, schemaLocations, dependencies);
+    var version_manager_id = $("#vm_id").html();
+	resolve_dependencies(xsd_content, name, filename, version_manager_id, schemaLocations, dependencies);
 }
 
 
@@ -148,7 +149,7 @@ resolveDependencies = function()
  * AJAX call, resolves dependencies
  * @param dependencies
  */
-resolve_dependencies = function(xsd_content, name, filename, schemaLocations, dependencies){
+resolve_dependencies = function(xsd_content, name, filename, version_manager_id, schemaLocations, dependencies){
     $.ajax({
         url : "/admin/template/resolve-dependencies",
         type : "POST",
@@ -157,6 +158,7 @@ resolve_dependencies = function(xsd_content, name, filename, schemaLocations, de
             xsd_content: xsd_content,
             name: name,
             filename: filename,
+            version_manager_id: version_manager_id,
             schemaLocations: schemaLocations,
         	dependencies : dependencies,
         },

@@ -109,8 +109,8 @@ def resolve_dependencies(request):
     """
     try:
         # Get the parameters
-        name = request.POST['name'] if 'name' in request.POST else None
-        version_manager_id = request.POST['id'] if 'id' in request.POST else None
+        name = request.POST.get('name', None)
+        version_manager_id = request.POST.get('version_manager_id', '')
         filename = request.POST['filename']
         xsd_content = request.POST['xsd_content']
         schema_locations = request.POST.getlist('schemaLocations[]')
@@ -122,7 +122,7 @@ def resolve_dependencies(request):
         # create new object
         template = Template(filename=filename, content=updated_xsd_content, dependencies=dependencies)
         # get the version manager or create a new one
-        if version_manager_id is not None:
+        if version_manager_id != '':
             template_version_manager = version_manager_api.get(version_manager_id)
         else:
             template_version_manager = TemplateVersionManager(title=name)

@@ -1,6 +1,7 @@
 """
     Xml utils provide tool operation for xml data
 """
+from django.core.urlresolvers import reverse
 import core_main_app.commons.exceptions as exceptions
 import xml_validation.validation as xml_validation
 from lxml import etree
@@ -306,4 +307,5 @@ def _get_schema_location_uri(schema_id):
     :param schema_id:
     :return:
     """
-    return str(SERVER_URI)+'/rest/types/get-dependency?id=' + str(schema_id)
+    url = reverse('core_main_app_rest_template_download')
+    return str(SERVER_URI) + url + '?id=' + str(schema_id)

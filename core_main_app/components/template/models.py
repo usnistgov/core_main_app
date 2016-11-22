@@ -1,8 +1,9 @@
 """
 Template models
 """
-
 from django_mongoengine import fields, Document
+from mongoengine import errors as mongoengine_errors
+from core_main_app.commons import exceptions
 
 
 class Template(Document):
@@ -31,4 +32,10 @@ class Template(Document):
         Returns:
 
         """
-        return Template.objects().get(pk=str(template_id))
+        try:
+            return Template.objects().get(pk=str(template_id))
+        except mongoengine_errors.DoesNotExist as e:
+            raise exceptions.DoesNotExist(e.message)
+        except Exception as e:
+            raise exceptions.ModelError(e.message)
+
