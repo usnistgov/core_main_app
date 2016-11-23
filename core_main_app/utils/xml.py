@@ -132,121 +132,6 @@ def raw_xml_to_dict(raw_xml, postprocessor=None):
         raise exceptions.XMLError("An unexpected error happened during the XML parsing.")
 
 
-def _check_core_support(xsd_string):
-    """
-        Check that the format of the the schema is supported by the current version of the Core
-        :param xsd_string:
-        :return:
-    """
-    errors = []
-
-    xsd_tree = build_tree(xsd_string)
-
-    # General Tests
-
-    # get the imports
-    imports = xsd_tree.findall("{}import".format(LXML_SCHEMA_NAMESPACE))
-    # get the includes
-    includes = xsd_tree.findall("{}include".format(LXML_SCHEMA_NAMESPACE))
-
-    if len(imports) != 0 or len(includes) != 0:
-        for el_import in imports:
-            if 'schemaLocation' not in el_import.attrib:
-                errors.append("The attribute schemaLocation of import is required but missing.")
-            elif ' ' in el_import.attrib['schemaLocation']:
-                errors.append("The use of namespace in import elements is not supported.")
-        for el_include in includes:
-            if 'schemaLocation' not in el_include.attrib:
-                errors.append("The attribute schemaLocation of include is required but missing.")
-            elif ' ' in el_include.attrib['schemaLocation']:
-                errors.append("The use of namespace in include elements is not supported.")
-
-    # TargetNamespace test
-    root = xsd_tree.getroot()
-    if 'targetNamespace' in root.attrib:
-        target_namespace = root.attrib['targetNamespace']
-        if target_namespace not in root.nsmap.values():
-            errors.append("The use of a targetNamespace without an associated prefix is not supported.")
-
-    # FIXME: Add tests for Type upload in type api
-
-    return errors
-
-
-def _parse_numbers(num_str):
-    """
-    Parse numbers from JSON
-
-    Returns:
-        str: parsed string
-    """
-    return str(num_str)
-
-
-def tree_to_string(xml_tree, pretty=False):
-    """
-    Return an XML String from a lxml etree
-    :param xml_tree:
-    :param pretty: True for indented print
-    :return:
-    """
-    try:
-        xml_tree = etree.tostring(xml_tree, pretty_print=pretty)
-    except Exception:
-        raise exceptions.XMLError("Something went wrong during conversion of the tree to a string.")
-
-    return xml_tree
-
-
-def get_imports_and_includes(xsd_string):
-    """
-    Get a list of imports and includes in the file
-    :param xsd_string:
-    :return: list of imports, list of includes
-    """
-    xsd_tree = build_tree(xsd_string)
-    # get the imports
-    imports = xsd_tree.findall("{}import".format(LXML_SCHEMA_NAMESPACE))
-    # get the includes
-    includes = xsd_tree.findall("{}include".format(LXML_SCHEMA_NAMESPACE))
-    return imports, includes
-
-
-def update_dependencies(xsd_string, dependencies):
-    """
-    Update dependencies of the schemas with given dependencies
-    :param xsd_string:
-    :param dependencies:
-    :return:
-    """
-    # build the tree
-    xsd_tree = build_tree(xsd_string)
-    # get the imports
-    xsd_imports = xsd_tree.findall("{}import".format(LXML_SCHEMA_NAMESPACE))
-    # get the includes
-    xsd_includes = xsd_tree.findall("{}include".format(LXML_SCHEMA_NAMESPACE))
-
-    for schema_location, dependency_id in dependencies.iteritems():
-        if dependency_id is not None:
-            for xsd_include in xsd_includes:
-                if schema_location == xsd_include.attrib['schemaLocation']:
-                    xsd_include.attrib['schemaLocation'] = _get_schema_location_uri(dependency_id)
-
-            for xsd_import in xsd_imports:
-                if schema_location == xsd_import.attrib['schemaLocation']:
-                    xsd_import.attrib['schemaLocation'] = _get_schema_location_uri(dependency_id)
-    return xsd_tree
-
-
-def _get_schema_location_uri(schema_id):
-    """
-    Get an URI of the schema location on the system from an id
-    :param schema_id:
-    :return:
-    """
-    return str(SERVER_URI)+'/rest/types/get-dependency?id=' + str(schema_id)
-
-
 def get_template_with_server_dependencies(xsd_string, dependencies):
     """
     Return the template with schema locations pointing to the server
@@ -308,3 +193,117 @@ def post_processor(path, key, value):
         except (ValueError, TypeError):
             return key, value
 
+
+def tree_to_string(xml_tree, pretty=False):
+    """
+    Return an XML String from a lxml etree
+    :param xml_tree:
+    :param pretty: True for indented print
+    :return:
+    """
+    try:
+        xml_tree = etree.tostring(xml_tree, pretty_print=pretty)
+    except Exception:
+        raise exceptions.XMLError("Something went wrong during conversion of the tree to a string.")
+
+    return xml_tree
+
+
+def get_imports_and_includes(xsd_string):
+    """
+    Get a list of imports and includes in the file
+    :param xsd_string:
+    :return: list of imports, list of includes
+    """
+    xsd_tree = build_tree(xsd_string)
+    # get the imports
+    imports = xsd_tree.findall("{}import".format(LXML_SCHEMA_NAMESPACE))
+    # get the includes
+    includes = xsd_tree.findall("{}include".format(LXML_SCHEMA_NAMESPACE))
+    return imports, includes
+
+
+def update_dependencies(xsd_string, dependencies):
+    """
+    Update dependencies of the schemas with given dependencies
+    :param xsd_string:
+    :param dependencies:
+    :return:
+    """
+    # build the tree
+    xsd_tree = build_tree(xsd_string)
+    # get the imports
+    xsd_imports = xsd_tree.findall("{}import".format(LXML_SCHEMA_NAMESPACE))
+    # get the includes
+    xsd_includes = xsd_tree.findall("{}include".format(LXML_SCHEMA_NAMESPACE))
+
+    for schema_location, dependency_id in dependencies.iteritems():
+        if dependency_id is not None:
+            for xsd_include in xsd_includes:
+                if schema_location == xsd_include.attrib['schemaLocation']:
+                    xsd_include.attrib['schemaLocation'] = _get_schema_location_uri(dependency_id)
+
+            for xsd_import in xsd_imports:
+                if schema_location == xsd_import.attrib['schemaLocation']:
+                    xsd_import.attrib['schemaLocation'] = _get_schema_location_uri(dependency_id)
+    return xsd_tree
+
+
+def _check_core_support(xsd_string):
+    """
+        Check that the format of the the schema is supported by the current version of the Core
+        :param xsd_string:
+        :return:
+    """
+    errors = []
+
+    xsd_tree = build_tree(xsd_string)
+
+    # General Tests
+
+    # get the imports
+    imports = xsd_tree.findall("{}import".format(LXML_SCHEMA_NAMESPACE))
+    # get the includes
+    includes = xsd_tree.findall("{}include".format(LXML_SCHEMA_NAMESPACE))
+
+    if len(imports) != 0 or len(includes) != 0:
+        for el_import in imports:
+            if 'schemaLocation' not in el_import.attrib:
+                errors.append("The attribute schemaLocation of import is required but missing.")
+            elif ' ' in el_import.attrib['schemaLocation']:
+                errors.append("The use of namespace in import elements is not supported.")
+        for el_include in includes:
+            if 'schemaLocation' not in el_include.attrib:
+                errors.append("The attribute schemaLocation of include is required but missing.")
+            elif ' ' in el_include.attrib['schemaLocation']:
+                errors.append("The use of namespace in include elements is not supported.")
+
+    # TargetNamespace test
+    root = xsd_tree.getroot()
+    if 'targetNamespace' in root.attrib:
+        target_namespace = root.attrib['targetNamespace']
+        if target_namespace not in root.nsmap.values():
+            errors.append("The use of a targetNamespace without an associated prefix is not supported.")
+
+    # FIXME: Add tests for Type upload in type api
+
+    return errors
+
+
+def _parse_numbers(num_str):
+    """
+    Parse numbers from JSON
+
+    Returns:
+        str: parsed string
+    """
+    return str(num_str)
+
+
+def _get_schema_location_uri(schema_id):
+    """
+    Get an URI of the schema location on the system from an id
+    :param schema_id:
+    :return:
+    """
+    return str(SERVER_URI)+'/rest/types/get-dependency?id=' + str(schema_id)
