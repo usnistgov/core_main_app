@@ -2,9 +2,10 @@
     The Database pymongo tool contains the available function relative to database operation (connection)
 """
 from pymongo import MongoClient
+from pymongo.errors import OperationFailure
+from pymongo import TEXT
 from core_main_app.commons import exceptions
 from core_main_app.settings import MONGODB_URI, DB_NAME
-from pymongo import TEXT
 import re
 
 
@@ -14,36 +15,24 @@ class Database(object):
     def __init__(self):
         self.client = None
 
-    def connect(self, doc_class=dict):
+    def connect(self, db_uri, db_name, doc_class=dict):
         """ Connect to the database from settings.py
 
         Args:
+            db_uri:
+            db_name:
             doc_class:
 
         Returns:
 
         """
         # create a connection
-        self.client = MongoClient(MONGODB_URI, document_class=doc_class)
-        db = self.client[DB_NAME]    # connect to the database
+        self.client = MongoClient(db_uri, document_class=doc_class)
+        db = self.client[db_name]    # connect to the database
         if db is not None:
             return db           # return db connection
         else:                   # or raise an exception
             raise exceptions.CoreError("Database connection error")
-
-    def connect_to_collection(self, collection_name, db_doc_class=dict):
-        """
-            return cursor of collection name in parameters
-            :param collection_name:
-            :param db_doc_class:
-            :return collection
-        """
-        db = self.connect(doc_class=db_doc_class)    # connect to the db
-        try:
-            data_list = db[collection_name]     # get the data collection
-            return data_list                    # return collection
-        except:                                 # or raise an exception
-            raise exceptions.CoreError("Collection in database does not exist")
 
     def close_connection(self):
         """
@@ -51,12 +40,48 @@ class Database(object):
         """
         self.client.close()
 
+    @staticmethod
+    def get_collection(db, collection_name):
+        """ Return cursor of collection name in parameters
+
+        Args:
+            db:
+            collection_name:
+
+        Returns:
+
+        """
+        try:
+            data_list = db[collection_name]  # get the data collection
+            return data_list  # return collection
+        except:  # or raise an exception
+            raise exceptions.CoreError("Collection in database does not exist")
+
+    @staticmethod
+    def clean_database(db):
+        """ Clean the database
+
+        Args:
+            db:
+
+        Returns:
+
+        """
+        # clear all collections
+        for collection in db.collection_names():
+            try:
+                if collection != 'system.indexes':
+                    db.drop_collection(collection)
+            except OperationFailure:
+                pass
+
 
 def init_text_index(table_name):
     """ Create index for full text search
     """
     database = Database()
-    data_list = database.connect_to_collection(table_name)
+    db = database.connect(MONGODB_URI, DB_NAME)
+    data_list = Database.get_collection(db, table_name)
     # create the full text index
     data_list.create_index([('$**', TEXT)], default_language="en", language_override="en")
     database.close_connection()

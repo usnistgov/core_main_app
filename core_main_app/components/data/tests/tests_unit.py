@@ -9,10 +9,10 @@ from mock import patch
 from collections import OrderedDict
 
 
-class TestDataAll(TestCase):
+class TestDataGetAll(TestCase):
 
     @patch.object(Data, 'get_all')
-    def test_data_all_return_collection_of_data(self, mock_list):
+    def test_data_get_all_return_collection_of_data(self, mock_list):
         # Arrange
         mock_data_1 = Data(_get_template(), '3', title='title_1', xml_file="")
         mock_data_2 = Data(_get_template(), '1', title='title_2', xml_file="")
@@ -44,10 +44,10 @@ class TestDataGetById(TestCase):
         self.assertIsInstance(result, Data)
 
 
-class TestDataAllByUser(TestCase):
+class TestDataGetAllByUser(TestCase):
 
     @patch.object(Data, 'get_all_by_user_id')
-    def test_data_all_by_user_return_collection_of_data_from_user(self, mock_list_by_user_id):
+    def test_data_get_all_by_user_return_collection_of_data_from_user(self, mock_list_by_user_id):
         # Arrange
         user_id = '2'
         mock_data_1 = Data(_get_template(), user_id, title='title_1', xml_file="")
@@ -59,10 +59,10 @@ class TestDataAllByUser(TestCase):
         self.assertTrue(all(item.user_id == user_id for item in result))
 
 
-class TestDataAllExceptUser(TestCase):
+class TestDataGetAllExceptUser(TestCase):
 
     @patch.object(Data, 'get_all_except_user_id')
-    def test_data_all_except_user_return_collection_of_data_where_user_is_not_owner(self, mock_list_except_user_id):
+    def test_data_get_all_except_user_return_collection_of_data_where_user_is_not_owner(self, mock_list_except_user_id):
         # Arrange
         user_id = '2'
         mock_data_1 = Data(_get_template(), '3', title='title_1', xml_file="")
@@ -74,10 +74,10 @@ class TestDataAllExceptUser(TestCase):
         self.assertTrue(all(item.user_id != user_id for item in result))
 
 
-class TestDataAllByIdList(TestCase):
+class TestDataGetAllByIdList(TestCase):
 
     @patch.object(Data, 'get_all_by_id_list')
-    def test_data_all_by_id_list_return_collection_of_data(self, mock_list_by_id_list):
+    def test_data_get_all_by_id_list_return_collection_of_data(self, mock_list_by_id_list):
         # Arrange
         mock_data_1 = Data(_get_template(), '3', title='title_1', xml_file="")
         mock_data_2 = Data(_get_template(), '1', title='title_2', xml_file="")
@@ -88,7 +88,7 @@ class TestDataAllByIdList(TestCase):
         self.assertTrue(all(isinstance(item, Data) for item in result))
 
     @patch.object(Data, 'get_all_by_id_list')
-    def test_data_all_by_id_list_return_collection_of_distinct_data_by_template(self, mock_list_by_id_list):
+    def test_data_get_all_by_id_list_return_collection_of_distinct_data_by_template(self, mock_list_by_id_list):
         # Arrange
         mock_data_1 = Data(_get_template(), '2', title='title_1', xml_file="")
         mock_list_by_id_list.return_value = [mock_data_1]

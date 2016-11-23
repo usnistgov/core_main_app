@@ -60,7 +60,7 @@ class Data(Document):
         Returns:
 
         """
-        return Data.objects(user_id=user_id).all()
+        return Data.objects(user_id=str(user_id)).all()
 
     @staticmethod
     def get_all_except_user_id(user_id):
@@ -72,7 +72,7 @@ class Data(Document):
         Returns:
 
         """
-        return Data.objects(user_id__nin=user_id).all()
+        return Data.objects(user_id__nin=str(user_id)).all()
 
     @staticmethod
     def get_all_by_id_list(list_id, distinct_by=None):
