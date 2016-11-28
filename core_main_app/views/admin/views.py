@@ -13,6 +13,7 @@ from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.utils.rendering import render
 from core_main_app.utils.xml import get_imports_and_includes
 from core_main_app.views.admin.forms import UploadTemplateForm, UploadVersionForm
+from core_main_app.settings import INSTALLED_APPS
 
 
 @staff_member_required
@@ -87,6 +88,10 @@ def manage_template_versions(request, version_manager_id):
     context = {
         'version_manager': version_manager,
     }
+
+    # FIXME: make this more dynamic?
+    if 'core_parser_app' in INSTALLED_APPS:
+        context["core_parser_app_installed"] = True
 
     return render(request,
                   'core_main_app/admin/template_versions_manager.html',
@@ -195,6 +200,7 @@ def _save_template(request, assets, context):
 
     Args:
         request:
+        assets:
         context:
 
     Returns:
@@ -224,6 +230,7 @@ def _save_template_version(request, assets, context, template_version_manager):
 
     Args:
         request:
+        assets:
         context:
         template_version_manager:
 

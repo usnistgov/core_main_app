@@ -13,6 +13,7 @@ from xsd_hash import xsd_hash
 
 from core_main_app.settings import XERCES_VALIDATION, SERVER_URI
 
+XML_NAMESPACE = "http://www.w3.org/XML/1998/namespace"
 SCHEMA_NAMESPACE = "http://www.w3.org/2001/XMLSchema"
 LXML_SCHEMA_NAMESPACE = "{" + SCHEMA_NAMESPACE + "}"
 
@@ -309,3 +310,149 @@ def _get_schema_location_uri(schema_id):
     """
     url = reverse('core_main_app_rest_template_download')
     return str(SERVER_URI) + url + '?id=' + str(schema_id)
+
+
+def get_namespaces(xsd_string):
+    """Returns dict of prefix and namespaces
+
+    Args:
+        xsd_string:
+
+    Returns:
+
+    """
+    xsd_file = BytesIO(str(xsd_string))
+    events = "start", "start-ns"
+    ns = {'xml': XML_NAMESPACE}
+    for event, elem in etree.iterparse(xsd_file, events):
+        if event == "start-ns":
+            if elem[0] in ns and ns[elem[0]] != elem[1]:
+                raise exceptions.XSDError("Duplicate prefix with different URI found.")
+            if len(elem[0]) > 0 and len(elem[1]) > 0:
+                ns[elem[0]] = "%s" % elem[1]
+        elif event == "start":
+            break
+
+    return ns
+
+
+def get_default_prefix(namespaces):
+    """Returns the default prefix used in the schema
+
+    Args:
+        namespaces:
+
+    Returns:
+
+    """
+    default_prefix = ''
+    for prefix, url in namespaces.items():
+        if url == SCHEMA_NAMESPACE:
+            default_prefix = prefix
+            break
+
+    return default_prefix
+
+
+def get_element_by_xpath(xsd_tree, xpath):
+    """Returns an element from its xpath
+
+    Args:
+        xsd_tree:
+        xpath:
+
+    Returns:
+
+    """
+    element = xsd_tree.find(xpath)
+    if element is not None:
+        return element
+    else:
+        raise exceptions.XSDError('Unable to find an element for the given Xpath.')
+
+
+def set_attribute(xsd_string, xpath, attribute, value):
+    """Sets an attribute of an element
+
+    Args:
+        xsd_string:
+        xpath:
+        attribute:
+        value:
+
+    Returns:
+
+    """
+    # Build the XSD tree
+    xsd_tree = build_tree(xsd_string)
+    # Get namespaces
+    namespaces = get_namespaces(xsd_string)
+    # Get default prefix
+    default_prefix = get_default_prefix(namespaces)
+
+    # Transform xpath into LXML format
+    lxml_ns_xpath = xpath.replace(default_prefix + ":", LXML_SCHEMA_NAMESPACE)
+
+    # Get XSD element using its xpath
+    element = get_element_by_xpath(xsd_tree, lxml_ns_xpath)
+    # Set element attribute with value
+    element.attrib[attribute] = value
+    # Converts XSD tree back to string
+    updated_xsd_string = tree_to_string(xsd_tree)
+
+    return updated_xsd_string
+
+
+def delete_attribute(xsd_string, xpath, attribute):
+    """Delete an attribute from an element
+
+    Args:
+        xsd_string:
+        xpath:
+        attribute:
+
+    Returns:
+
+    """
+    # Build the XSD tree
+    xsd_tree = build_tree(xsd_string)
+    # Get namespaces
+    namespaces = get_namespaces(xsd_string)
+    # Get default prefix
+    default_prefix = get_default_prefix(namespaces)
+
+    # Transform xpath into LXML format
+    lxml_ns_xpath = xpath.replace(default_prefix + ":", LXML_SCHEMA_NAMESPACE)
+
+    # Get XSD element using its xpath
+    element = get_element_by_xpath(xsd_tree, lxml_ns_xpath)
+
+    # Deletes attribute
+    if attribute in element.attrib:
+        del element.attrib[attribute]
+
+    # Converts XSD tree back to string
+    updated_xsd_string = tree_to_string(xsd_tree)
+
+    return updated_xsd_string
+
+
+def xsl_transform(xml_string, xslt_string):
+    """
+
+    Args:
+        xml_string:
+        xslt_string:
+
+    Returns:
+
+    """
+    # Build the XSLT tree
+    xslt_tree = build_tree(xslt_string)
+    # Get the transform
+    transform = etree.XSLT(xslt_tree)
+    # Build the XML tree
+    xsd_tree = build_tree(xml_string)
+    # Get the transformed tree
+    transformed_tree = transform(xsd_tree)
+    return str(transformed_tree)

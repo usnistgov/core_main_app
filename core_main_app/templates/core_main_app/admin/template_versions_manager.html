@@ -1,10 +1,10 @@
 {% load timestamptags%}
 
-<h1>Version Manager: {{version_manager.title }}</h1>
+<h1>Version Manager: {{data.version_manager.title }}</h1>
 
 <div class="right-side">
 <span class="ctx_menu">
-    <a href="{% url 'admin:core_main_app_upload_template_version' version_manager.id %}">
+    <a href="{% url 'admin:core_main_app_upload_template_version' data.version_manager.id %}">
         <div class="icon legend long upload">Upload Template</div>
     </a>
 </span>
@@ -12,13 +12,16 @@
 
 <div id="model_version">
 	<table>
-	{% for version in version_manager.versions reversed%}
+	{% for version in data.version_manager.versions reversed%}
 	   <tr>
 	       <td>Version {{ forloop.revcounter }} </td>
-	       {% if version == version_manager.current %}
+	       {% if version == data.version_manager.current %}
 	       <td style='font-weight:bold;color:green'>Current</td>
-	       {% elif version in version_manager.disabled_versions %}
+	       {% elif version in data.version_manager.disabled_versions %}
 	       <td style='color:red'>Disabled</td>
+           {% endif %}
+
+           {% if version in data.version_manager.disabled_versions %}
 	       <td>
 			   <span class='icon legend retrieve' objectid='{{version}}'>
 				   <a href="#"> Restore </a>
@@ -26,14 +29,19 @@
 		   </td>
 	       {% else %}
 	       <td>
+			   {% if version != data.version_manager.current %}
 			   <span class='icon legend long current' objectid='{{version}}'>
 				   <a href="#"> Set Current </a>
 			   </span>
-		   </td>
-	       <td>
 			   <span class='icon legend delete' objectid='{{version}}'>
 				   <a href="#"> Disable </a>
 			   </span>
+			   {% endif %}
+			   {% if data.core_parser_app_installed %}
+               <span class="icon legend modules">
+                    <a href="{% url 'admin:core_parser_app_template_modules' version %}"> Modules </a>
+                </span>
+			   {% endif %}
 		   </td>
 	       {% endif %}
 	       <td> {{ version|print_timestamp }} </td>

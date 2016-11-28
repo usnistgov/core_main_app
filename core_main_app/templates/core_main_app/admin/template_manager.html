@@ -13,7 +13,7 @@
 </span>
 </div>      
 
-{% if objects %}
+{% if data.objects %}
 
 <table class="data-table">
     <tr>
@@ -43,9 +43,6 @@
                     </span>
                     <span class="icon legend delete" objectid="{{ object.id }}">
                         <a href="#"> Disable </a>
-                    </span>
-                    <span class="icon legend modules">
-                        <a href="#"> Modules </a>
                     </span>
                 </td>
             {% endif %}
