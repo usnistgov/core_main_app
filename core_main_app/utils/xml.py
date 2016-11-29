@@ -326,8 +326,6 @@ def get_namespaces(xsd_string):
     ns = {'xml': XML_NAMESPACE}
     for event, elem in etree.iterparse(xsd_file, events):
         if event == "start-ns":
-            if elem[0] in ns and ns[elem[0]] != elem[1]:
-                raise exceptions.XSDError("Duplicate prefix with different URI found.")
             if len(elem[0]) > 0 and len(elem[1]) > 0:
                 ns[elem[0]] = "%s" % elem[1]
         elif event == "start":
@@ -354,17 +352,29 @@ def get_default_prefix(namespaces):
     return default_prefix
 
 
-def get_element_by_xpath(xsd_tree, xpath):
+def get_element_by_xpath(xsd_tree, xpath, namespaces=None):
     """Returns an element from its xpath
 
     Args:
         xsd_tree:
         xpath:
+        namespaces:
 
     Returns:
 
     """
-    element = xsd_tree.find(xpath)
+    if namespaces is not None:
+        # Get default prefix
+        default_prefix = get_default_prefix(namespaces)
+
+        # Transform xpath into LXML format
+        xpath = xpath.replace(default_prefix + ":", LXML_SCHEMA_NAMESPACE)
+
+    try:
+        element = xsd_tree.find(xpath)
+    except:
+        raise exceptions.XSDError('Unable to find an element for the given Xpath.')
+
     if element is not None:
         return element
     else:
@@ -383,24 +393,7 @@ def set_attribute(xsd_string, xpath, attribute, value):
     Returns:
 
     """
-    # Build the XSD tree
-    xsd_tree = build_tree(xsd_string)
-    # Get namespaces
-    namespaces = get_namespaces(xsd_string)
-    # Get default prefix
-    default_prefix = get_default_prefix(namespaces)
-
-    # Transform xpath into LXML format
-    lxml_ns_xpath = xpath.replace(default_prefix + ":", LXML_SCHEMA_NAMESPACE)
-
-    # Get XSD element using its xpath
-    element = get_element_by_xpath(xsd_tree, lxml_ns_xpath)
-    # Set element attribute with value
-    element.attrib[attribute] = value
-    # Converts XSD tree back to string
-    updated_xsd_string = tree_to_string(xsd_tree)
-
-    return updated_xsd_string
+    return _update_attribute(xsd_string, xpath, attribute, value)
 
 
 def delete_attribute(xsd_string, xpath, attribute):
@@ -414,22 +407,36 @@ def delete_attribute(xsd_string, xpath, attribute):
     Returns:
 
     """
+    return _update_attribute(xsd_string, xpath, attribute)
+
+
+def _update_attribute(xsd_string, xpath, attribute, value=None):
+    """
+
+    Args:
+        xsd_string:
+        xpath: xpath of the element to update
+        attribute: name of the attribute to update
+        value: value of the attribute to set
+
+    Returns:
+
+    """
     # Build the XSD tree
     xsd_tree = build_tree(xsd_string)
     # Get namespaces
     namespaces = get_namespaces(xsd_string)
-    # Get default prefix
-    default_prefix = get_default_prefix(namespaces)
-
-    # Transform xpath into LXML format
-    lxml_ns_xpath = xpath.replace(default_prefix + ":", LXML_SCHEMA_NAMESPACE)
-
     # Get XSD element using its xpath
-    element = get_element_by_xpath(xsd_tree, lxml_ns_xpath)
+    element = get_element_by_xpath(xsd_tree, xpath, namespaces)
 
-    # Deletes attribute
-    if attribute in element.attrib:
-        del element.attrib[attribute]
+    # Add or update the attribute
+    if value is not None:
+        # Set element attribute with value
+        element.attrib[attribute] = value
+    else:
+        # Deletes attribute
+        if attribute in element.attrib:
+            del element.attrib[attribute]
 
     # Converts XSD tree back to string
     updated_xsd_string = tree_to_string(xsd_tree)
@@ -456,3 +463,122 @@ def xsl_transform(xml_string, xslt_string):
     # Get the transformed tree
     transformed_tree = transform(xsd_tree)
     return str(transformed_tree)
+
+
+def add_appinfo_element(xsd_string, xpath, attribute_name, value):
+    """Adds appinfo to an element
+
+    Args:
+        xsd_string:
+        xpath:
+        attribute_name:
+        value:
+
+    Returns:
+
+    """
+    return _update_appinfo_element(xsd_string, xpath, attribute_name, value)
+
+
+def delete_appinfo_element(xsd_string, xpath, attribute_name):
+    """Deletes appinfo from an element
+
+    Args:
+        xsd_string:
+        xpath:
+        attribute_name:
+
+    Returns:
+
+    """
+    return _update_appinfo_element(xsd_string, xpath, attribute_name)
+
+
+def _get_or_create_element(parent, element_tag, namespace=""):
+    """Gets an element in children or creates it
+
+    Args:
+        parent:
+        element_tag:
+        namespace:
+
+    Returns:
+
+    """
+    element = parent.find("./{0}{1}".format(namespace, element_tag))
+    if element is None:
+        # create element if absent
+        element = etree.Element("{0}{1}".format(namespace, element_tag))
+        # insert element
+        parent.insert(0, element)
+
+    return element
+
+
+def _get_appinfo_element(element, element_name, namespace):
+    """Get an element from the appinfo
+
+    Args:
+        element:
+        element_name:
+        namespace:
+
+    Returns:
+
+    """
+    appinfo_elements = element.findall("./{0}annotation/{0}appinfo/{1}".format(namespace, element_name))
+
+    if len(appinfo_elements) == 1:
+        return appinfo_elements[0]
+    elif len(appinfo_elements) > 1:
+        raise exceptions.XSDError("{} appinfo found multiple times in the same element".format(element_name))
+    elif len(appinfo_elements) == 0:
+        return None
+
+
+def _update_appinfo_element(xsd_string, xpath, attribute_name, value=None):
+    """Updates an appinfo element
+
+    Args:
+        xsd_string:
+        xpath: xpath to element to update
+        attribute_name: name of the attribute to update
+        value: value to set
+
+    Returns:
+
+    """
+    # Build the XSD tree
+    xsd_tree = build_tree(xsd_string)
+    # Get namespaces
+    namespaces = get_namespaces(xsd_string)
+    # Get XSD element using its xpath
+    element = get_element_by_xpath(xsd_tree, xpath, namespaces)
+
+    # Get the appinfo element
+    appinfo_element = _get_appinfo_element(element, attribute_name, LXML_SCHEMA_NAMESPACE)
+
+    # If a value is provided, create or update the appinfo
+    if value is not None:
+        # if appinfo is absent, creates it
+        if appinfo_element is None:
+            # get annotation tag
+            annotation = _get_or_create_element(element, "annotation", LXML_SCHEMA_NAMESPACE)
+
+            # get appinfo tag
+            appinfo = _get_or_create_element(annotation, "appinfo", LXML_SCHEMA_NAMESPACE)
+
+            # get attribute tag
+            appinfo_element = _get_or_create_element(appinfo, attribute_name)
+
+        # set the value of the appinfo
+        appinfo_element.text = value
+    else: # value is None, deletes the appinfo if present
+        # if appinfo is present, deletes it
+        if appinfo_element is not None:
+            appinfo_element.getparent().remove(appinfo_element)
+
+    # Converts XSD tree back to string
+    updated_xsd_string = tree_to_string(xsd_tree)
+
+    return updated_xsd_string
