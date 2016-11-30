@@ -1,18 +1,17 @@
 """ Unit Test Data
 """
+from core_main_app.utils.integration_tests.integration_base_test_case import MongoIntegrationBaseTestCase
+from core_main_app.components.data.tests.fixtures.fixtures import DataFixtures
 from core_main_app.components.data.models import Data
 from core_main_app.commons import exceptions
-from core_main_app.utils.mongo_integration_test_base import IntegrationTest
 from bson.objectid import ObjectId
 
+fixture_data = DataFixtures()
 
-class TestDataGetAll(IntegrationTest):
 
-    def setUp(self):
-        # Make a connexion with a mock database
-        super(TestDataGetAll, self).setUp()
-        # Arrange the scenario for TestDataAll test methods
-        super(TestDataGetAll, self).insert_two_data()
+class TestDataGetAll(MongoIntegrationBaseTestCase):
+
+    fixture = fixture_data
 
     def test_data_get_all_return_collection_of_data(self):
         # Act
@@ -20,20 +19,16 @@ class TestDataGetAll(IntegrationTest):
         # Assert
         self.assertTrue(all(isinstance(item, Data) for item in result))
 
-    def test_data_get_all_return_two_objects_data_in_collection(self):
+    def test_data_get_all_return_objects_data_in_collection(self):
         # Act
         result = Data.get_all()
         # Assert
-        self.assertTrue(2 == len(result))
+        self.assertTrue(len(self.fixture.data_collection) == len(result))
 
 
-class TestDataGetById(IntegrationTest):
+class TestDataGetById(MongoIntegrationBaseTestCase):
 
-    def setUp(self):
-        # Make a connexion with a mock database
-        super(TestDataGetById, self).setUp()
-        # Arrange the scenario for TestDataAll test methods
-        super(TestDataGetById, self).insert_two_data()
+    fixture = fixture_data
 
     def test_data_get_by_id_raises_api_error_if_not_found(self):
         # Act # Assert
@@ -42,20 +37,16 @@ class TestDataGetById(IntegrationTest):
 
     def test_data_get_by_id_return_data_if_found(self):
         # Act
-        result = Data.get_by_id(self.data_1.id)
+        result = Data.get_by_id(self.fixture.data_1.id)
         # Assert
-        self.assertEqual(result, self.data_1)
+        self.assertEqual(result, self.fixture.data_1)
 
 
-class TestDataGetAllByUser(IntegrationTest):
+class TestDataGetAllByUserId(MongoIntegrationBaseTestCase):
 
-    def setUp(self):
-        # Make a connexion with a mock database
-        super(TestDataGetAllByUser, self).setUp()
-        # Arrange the scenario for TestDataAll test methods
-        super(TestDataGetAllByUser, self).insert_two_data()
+    fixture = fixture_data
 
-    def test_data_get_all_by_user_return_collection_of_data_from_user(self):
+    def test_data_get_all_by_user_id_return_collection_of_data_from_user(self):
         # Arrange
         user_id = 1
         # Act
@@ -63,19 +54,31 @@ class TestDataGetAllByUser(IntegrationTest):
         # Assert
         self.assertTrue(all(item.user_id == str(user_id) for item in result))
 
+    def test_data_get_all_by_user_id_return_empty_collection_of_data_from_user_does_not_exist(self):
+        # Arrange
+        user_id = 800
+        # Act
+        result = Data.get_all_by_user_id(user_id)
+        # Assert
+        self.assertTrue(len(result) == 0)
 
-class TestDataGetAllExceptUser(IntegrationTest):
 
-    def setUp(self):
-        # Make a connexion with a mock database
-        super(TestDataGetAllExceptUser, self).setUp()
-        # Arrange the scenario for TestDataAll test methods
-        super(TestDataGetAllExceptUser, self).insert_two_data()
+class TestDataGetAllExceptUserId(MongoIntegrationBaseTestCase):
 
-    def test_data_get_all_except_user_return_collection_of_data_where_user_is_not_owner(self):
+    fixture = fixture_data
+
+    def test_data_get_all_except_user_id_return_collection_of_data_where_user_is_not_owner(self):
         # Arrange
         user_id = 1
         # Act
         result = Data.get_all_except_user_id(user_id)
         # Assert
         self.assertTrue(all(item.user_id != user_id for item in result))
+
+    def test_data_get_all_by_user_id_return_full_collection_of_data_from_user_does_not_exist(self):
+        # Arrange
+        user_id = 800
+        # Act
+        result = Data.get_all_except_user_id(user_id)
+        # Assert
+        self.assertTrue(len(result) > 0)
