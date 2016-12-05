@@ -31,6 +31,19 @@ def get(template_id):
     return Template.get_by_id(template_id)
 
 
+def get_all_by_hash(template_hash):
+    """ Returns all template having the given hash.
+
+    Args:
+        template_hash: Template hash.
+
+    Returns:
+        List of Template instance.
+
+    """
+    return Template.get_all_by_hash(template_hash)
+
+
 def get_all():
     """Lists all templates
 

@@ -39,3 +39,15 @@ class Template(Document):
         except Exception as e:
             raise exceptions.ModelError(e.message)
 
+    @staticmethod
+    def get_all_by_hash(template_hash):
+        """ Returns all template having the given hash.
+
+        Args:
+            template_hash: Template hash.
+
+        Returns:
+            List of Template instance.
+
+        """
+        return Template.objects(hash=template_hash).all()

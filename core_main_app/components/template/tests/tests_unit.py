@@ -38,22 +38,16 @@ class TestTemplateGet(TestCase):
             template_api.get(mock_absent_id)
 
 
+class TestTemplateGetAllByHash(TestCase):
+    @patch('core_main_app.components.template.models.Template.get_all_by_hash')
+    def test_template_get_all_by_hash_contains_only_template(self, mock_get_all_by_hash):
+        _generic_get_all_test(self, mock_get_all_by_hash, template_api.get_all_by_hash("fake_hash"))
+
+
 class TestTemplateList(TestCase):
     @patch('core_main_app.components.template.models.Template.get_all')
     def test_template_list_contains_only_template(self, mock_get_all):
-        # Arrange
-        mock_template_filename = "Schema"
-        mock_template_content = "<schema xmlns='http://www.w3.org/2001/XMLSchema'></schema>"
-
-        mock_template_1 = _create_mock_template(mock_template_filename, mock_template_content)
-        mock_template_2 = _create_mock_template(mock_template_filename, mock_template_content)
-        mock_get_all.return_value = [mock_template_1, mock_template_2]
-
-        # Act
-        result = template_api.get_all()
-
-        # Assert
-        self.assertTrue(all(isinstance(item, Template) for item in result))
+        _generic_get_all_test(self, mock_get_all, template_api.get_all())
 
 
 class TestTemplateUpsert(TestCase):
@@ -88,6 +82,22 @@ class TestTemplateUpsert(TestCase):
         mock_save.return_value = None
         with self.assertRaises(Exception):
             template_api.upsert(template)
+
+
+def _generic_get_all_test(self, mock_get_all, act_function):
+    # Arrange
+    mock_template_filename = "Schema"
+    mock_template_content = "<schema xmlns='http://www.w3.org/2001/XMLSchema'></schema>"
+
+    mock_template_1 = _create_mock_template(mock_template_filename, mock_template_content)
+    mock_template_2 = _create_mock_template(mock_template_filename, mock_template_content)
+    mock_get_all.return_value = [mock_template_1, mock_template_2]
+
+    # Act
+    result = act_function
+
+    # Assert
+    self.assertTrue(all(isinstance(item, Template) for item in result))
 
 
 def _create_template(filename="", content=""):
