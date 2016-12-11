@@ -7,6 +7,13 @@ SECRET_KEY = getattr(settings, 'SECRET_KEY', '<secret_key>')
 
 SERVER_URI = getattr(settings, 'SERVER_URI', "http://127.0.0.1:8000")
 
+# Website configuration
+WEBSITE_COMPACT_TITLE = getattr(settings, 'WEBSITE_COMPACT_TITLE', "Project")
+
+# Choose from:  black, black-light, blue, blue-light, green, green-light, purple, purple-light, red, red-light, yellow,
+#               yellow-light
+WEBSITE_ADMIN_COLOR = getattr(settings, 'WEBSITE_ADMIN_COLOR', "yellow")
+
 # XML
 XERCES_VALIDATION = getattr(settings, 'XERCES_VALIDATION', False)
 

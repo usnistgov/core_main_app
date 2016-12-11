@@ -10,10 +10,24 @@ from core_main_app.components.template.models import Template
 from core_main_app.components.template_version_manager.models import TemplateVersionManager
 from core_main_app.components.template_version_manager import api as template_version_manager_api
 from core_main_app.components.version_manager import api as version_manager_api
-from core_main_app.utils.rendering import render
+from core_main_app.utils.rendering import admin_render
 from core_main_app.utils.xml import get_imports_and_includes
 from core_main_app.views.admin.forms import UploadTemplateForm, UploadVersionForm
 from core_main_app.settings import INSTALLED_APPS
+
+
+@staff_member_required
+def admin_home(request):
+    """
+
+    Args:
+        request:
+
+    Returns:
+
+    """
+    return admin_render(request,
+                        'core_main_app/admin/dashboard.html')
 
 
 @staff_member_required
@@ -27,29 +41,40 @@ def manage_templates(request):
 
     """
     # get all current templates
-    current_templates = template_version_manager_api.get_global_version_managers()
+    templates = template_version_manager_api.get_global_version_managers()
 
     context = {
-        'objects': current_templates
+        'available': [template for template in templates if not template.is_disabled],
+        'disabled': [template for template in templates if template.is_disabled]
     }
 
     assets = {
         "js": [
             {
-                "path": 'core_main_app/admin/js/template_manager.js',
-                "raw": False
+                "path": 'core_main_app/admin/js/templates/list/restore.js',
+                "is_raw": False
             },
             {
-                "path": 'core_main_app/admin/js/template.js',
-                "raw": False
+                "path": 'core_main_app/admin/js/templates/list/modals/edit.js',
+                "is_raw": False
+            },
+            {
+                "path": 'core_main_app/admin/js/templates/list/modals/disable.js',
+                "is_raw": False
             }
         ]
     }
 
-    return render(request,
-                  'core_main_app/admin/template_manager.html',
-                  assets=assets,
-                  context=context)
+    modals = [
+        "core_main_app/admin/templates/list/modals/edit.html",
+        "core_main_app/admin/templates/list/modals/disable.html"
+    ]
+
+    return admin_render(request,
+                        'core_main_app/admin/templates/list.html',
+                        assets=assets,
+                        context=context,
+                        modals=modals)
 
 
 @staff_member_required
@@ -75,28 +100,57 @@ def manage_template_versions(request, version_manager_id):
     assets = {
         "js": [
             {
-                "path": 'core_main_app/admin/js/template_versions_manager.js',
-                "raw": False
+                "path": 'core_main_app/admin/js/templates/versions/set_current.js',
+                "is_raw": False
             },
             {
-                "path": 'core_main_app/admin/js/template.js',
-                "raw": False
+                "path": 'core_main_app/admin/js/templates/versions/restore.js',
+                "is_raw": False
+            },
+            {
+                "path": 'core_main_app/admin/js/templates/versions/modals/disable.js',
+                "is_raw": False
             }
         ]
     }
 
+    modals = [
+        "core_main_app/admin/templates/versions/modals/disable.html"
+    ]
+
+    # Use categorized version for easier manipulation in template
+    versions = version_manager.versions
+    categorized_versions = {
+        "available": [],
+        "disabled": []
+    }
+
+    for index, version in enumerate(versions, 1):
+        indexed_version = {
+            "index": index,
+            "object": version
+        }
+
+        if version not in version_manager.disabled_versions:
+            categorized_versions["available"].append(indexed_version)
+        else:
+            categorized_versions["disabled"].append(indexed_version)
+
+    version_manager.versions = categorized_versions
+
     context = {
-        'version_manager': version_manager,
+        "version_manager": version_manager
     }
 
     # FIXME: make this more dynamic?
     if 'core_parser_app' in INSTALLED_APPS:
         context["core_parser_app_installed"] = True
 
-    return render(request,
-                  'core_main_app/admin/template_versions_manager.html',
-                  assets=assets,
-                  context=context)
+    return admin_render(request,
+                        'core_main_app/admin/templates/versions.html',
+                        assets=assets,
+                        modals=modals,
+                        context=context)
 
 
 @staff_member_required
@@ -113,11 +167,11 @@ def upload_template(request):
         "js": [
             {
                 "path": 'core_main_app/admin/js/dependency_resolver.js',
-                "raw": False
+                "is_raw": False
             },
             {
                 "path": 'core_main_app/admin/js/template.js',
-                "raw": False
+                "is_raw": False
             }
         ]
     }
@@ -129,7 +183,6 @@ def upload_template(request):
 
     # method is POST
     if request.method == 'POST':
-
         form = UploadTemplateForm(request.POST,  request.FILES)
         context['upload_form'] = form
 
@@ -159,12 +212,8 @@ def upload_template_version(request, version_manager_id):
     assets = {
         "js": [
             {
-                "path": 'core_main_app/admin/js/dependency_resolver.js',
-                "raw": False
-            },
-            {
-                "path": 'core_main_app/admin/js/template.js',
-                "raw": False
+                "path": 'core_main_app/admin/js/templates/upload/dependencies.js',
+                "is_raw": False
             }
         ]
     }
@@ -301,10 +350,10 @@ def _upload_template_response(request, assets, context):
     Returns:
 
     """
-    return render(request,
-                  'core_main_app/admin/upload_template.html',
-                  assets=assets,
-                  context=context)
+    return admin_render(request,
+                        'core_main_app/admin/templates/upload.html',
+                        assets=assets,
+                        context=context)
 
 
 def _get_dependency_resolver_html(imports, includes, xsd_data, filename):

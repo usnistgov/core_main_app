@@ -1,0 +1,43 @@
+{% extends 'core_main_app/_render/admin/theme/tools/box.html' %}
+
+{% block box_title %}Available templates{% endblock %}
+
+{% block box_tools %}
+    <a href="{% url 'admin:core_main_app_upload_template'%}" class="pull-right btn btn-default">
+        <i class="fa fa-upload"></i> Upload Template
+    </a>
+{% endblock %}
+
+{% block box_body %}
+<table class="table table-bordered table-striped table-hover">
+    <tr>
+        <th>Template</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for object in data.available %}
+        <tr>
+            <td>{{ object.title }}</td>
+            <td>
+                <a class="btn btn-default"
+                   href="{% url 'admin:core_main_app_manage_template_versions' object.id %}">
+                    <i class="fa fa-list"></i> Versions
+                </a>
+                <span class="icon legend edit" objectid="{{ object.id }}">
+                    <a class="btn btn-default" href="#"><i class="fa fa-edit"></i> Edit</a>
+                </span>
+                <span class="icon legend delete" objectid="{{ object.id }}">
+                    <a class="btn btn-danger" href="#"><i class="fa fa-trash"></i> Disable </a>
+                </span>
+            </td>
+        </tr>
+    {% empty %}
+        <tr>
+            <td class="empty" colspan="2">
+                There are currently no Template uploaded. To add a new one, please click on
+                <a href="{% url 'admin:core_main_app_upload_template' %}">Upload Template</a>.
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}

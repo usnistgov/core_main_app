@@ -1,0 +1,71 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+  <title>{{ WEBSITE_SHORT_TITLE }} | Admin DashBoard</title>
+
+  <link rel="stylesheet" href="{% static 'core_main_app/libs/bootstrap/3.3.7/css/bootstrap.css' %}" />
+  <link rel="stylesheet" href="{% static 'core_main_app/libs/font-awesome/4.7.0/css/font-awesome.css' %}" />
+  <link rel="stylesheet" href="{% static 'core_main_app/libs/jquery-ui/1.12.1/jquery-ui.css' %}" />
+  <link rel="stylesheet" href="{% static 'core_main_app/libs/jquery-ui/1.12.1/jquery-ui.structure.css' %}" />
+  <link rel="stylesheet" href="{% static 'core_main_app/libs/jquery-ui/1.12.1/jquery-ui.theme.css' %}" />
+  <link rel="stylesheet" href="{% static 'core_main_app/libs/bootstrap/3.3.7/css/bootstrap-theme.css' %}" />
+
+  <link rel="stylesheet" href="{% static 'core_main_app/admin/_theme/css/theme.css' %}">
+  <link rel="stylesheet" href="{% static 'core_main_app/admin/_theme/css/additional.css' %}">
+  <link rel="stylesheet" href="{% static 'core_main_app/admin/_theme/css/skins.css' %}">
+
+  {% block app_css %}{% endblock %}
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+<body class="hold-transition skin-{{ WEBSITE_ADMIN_COLOR }} sidebar-mini">
+<div class="wrapper">
+
+  <header class="main-header">
+      {% include 'core_main_app/_render/admin/theme/header.html' %}
+  </header>
+
+  <aside class="main-sidebar">
+      {% include 'core_main_app/_render/admin/theme/menu.html' %}
+  </aside>
+
+  <div class="content-wrapper">
+    {% block app_data %}{% endblock %}
+  </div>
+
+  <footer class="main-footer">
+      {% include 'core_main_app/_render/admin/theme/footer.html' %}
+  </footer>
+
+  {% block app_modals %}{% endblock %}
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+
+<script src="{% static 'core_main_app/libs/jquery/3.1.1/jquery.js' %}"></script>
+<script src="{% static 'core_main_app/libs/jquery-ui/1.12.1/jquery-ui.js' %}"></script>
+<script src="{% static 'core_main_app/libs/bootstrap/3.3.7/js/bootstrap.js' %}"></script>
+<script src="{% static 'core_main_app/js/csrf.js' %}"></script>
+
+<script src="{% static 'core_main_app/admin/_theme/js/app.js' %}"></script>
+
+{% block app_js %}{% endblock %}
+
+<!-- Optionally, you can add Slimscroll and FastClick plugins.
+     Both of these plugins are recommended to enhance the
+     user experience. Slimscroll is required when using the
+     fixed layout. -->
+</body>
+</html>

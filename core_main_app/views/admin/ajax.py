@@ -92,8 +92,8 @@ def edit_template(request):
     :return:
     """
     try:
-        version_manager = version_manager_api.get(request.GET['id'])
-        version_manager.title = request.GET['title']
+        version_manager = version_manager_api.get(request.POST['id'])
+        version_manager.title = request.POST['title']
         version_manager_api.upsert(version_manager)
     except Exception, e:
         return HttpResponseBadRequest(e.message, content_type='application/javascript')
@@ -162,6 +162,6 @@ def _update_template_dependencies(xsd_content, schema_locations, dependencies):
 
     """
     html_parser = HTMLParser.HTMLParser()
-    xsd_content = str(html_parser.unescape(xsd_content))
+    xsd_content = str(html_parser.unescape(xsd_content).encode("utf-8"))
     dependencies_dict = _get_dependencies_dict(schema_locations, dependencies)
     return get_template_with_server_dependencies(xsd_content, dependencies_dict)

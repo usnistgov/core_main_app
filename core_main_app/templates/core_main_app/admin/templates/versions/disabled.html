@@ -1,0 +1,42 @@
+{% extends 'core_main_app/_render/admin/theme/tools/box.html' %}
+{% load timestamptags %}
+
+{% block box_title %}Disabled versions{% endblock %}
+
+{% block box_body %}
+<div id="model_version">
+	<table class="table table-bordered table-hover">
+        <tr>
+            <th style="width: 15%">Version #</th>
+            <th style="width: 20%">Upload date</th>
+            <th>Actions</th>
+        </tr>
+	    {% for version in data.version_manager.versions.disabled reversed %}
+        <tr>
+            <td>{{ version.index }}</td>
+            <td>{{ version.object | print_timestamp }}</td>
+
+            <td>
+                <span class='icon legend retrieve' objectid='{{ version.object }}'>
+                    <a class="btn btn-default" href="#"><i class="fa fa-undo"></i> Restore</a>
+                </span>
+                <!--<a class="btn btn-default" href="#">View</a>-->
+                <!--<a class="btn btn-default" href="#">Download</a>-->
+            </td>
+        </tr>
+        {% empty %}
+        <tr class="empty">
+            <td colspan="3">No disabled versions for this template</td>
+        </tr>
+        {% endfor %}
+   </table>
+</div>
+
+<div id="dialog-disable-confirm-message" title="Confirm Delete" style="display:none;">
+<p></p>
+  <p>
+    <span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 10px 0;"></span>
+    Are you sure you want to disable this version?
+  </p>
+</div>
+{% endblock %}

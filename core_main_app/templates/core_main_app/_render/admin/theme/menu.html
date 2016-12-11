@@ -1,0 +1,30 @@
+{% load menu %}
+<section class="sidebar">
+    <ul class="sidebar-menu">
+        {% block navigation_menu %}
+            {% generate_menu %}
+
+            {% for item in menus.admin %}
+                {% if not item.url %}
+                    <li class="header">{{ item.title }}</li>
+                    {% for child in item.children %}
+                    <li {% if request.path == child.url %}class="active"{% endif %}>
+                        <a href="{{ child.url }}">
+                            <i class="fa fa-{{ child.icon }}"></i>
+                            <span>{{ child.title }}</span>
+                        </a>
+                    </li>
+                    {% endfor %}
+                {% else %}
+                    <li {% if request.path == item.url %}class="active"{% endif %}>
+                        <a href="{{ item.url }}">
+                            <i class="fa fa-{{ item.icon }}"></i>
+                            <span>{{ item.title }}</span>
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        {% endblock %}
+        <li>{{ selected_menu.title }}</li>
+    </ul>
+</section>

@@ -1,26 +1,34 @@
 <!-- FIXME: menu-->
 {% load staticfiles %}
 
-<h1>Upload Template</h1>
+<section class="content-header">
+  <h1>
+    Upload Template
+  </h1>
+</section>
 
+<section class="content">
+    <form id="form_start" action="{{ url }}" method="post"
+          enctype=multipart/form-data>
+        {% csrf_token %}
 
-<form id="form_start" action="{{ url }}" method="post"
-      enctype=multipart/form-data>
-    {% csrf_token %}
-    {{ data.upload_form }}
-    <div id="upload_errors" style="color:red;">
-        {{ errors | safe}}
+        {{ data.upload_form }}
+
+        <div id="upload_errors" style="color:red;">
+            {{ data.errors | safe}}
+        </div>
+
+        <br/>
+        <input type="submit" class="btn btn-default" value="Upload Template"/>
+    </form>
+
+    {% if data.dependency_resolver %}
+    <hr>
+    <div id="dependencies">
+        {{ data.dependency_resolver }}
     </div>
-    <br/>
-    <input type="submit" class="btn" value="Upload Template"/>
-</form>
+    {% endif %}
 
-{% if data.dependency_resolver %}
-<hr>
-<div id="dependencies">
-    {{ data.dependency_resolver }}
-</div>
-{% endif %}
-
-<div id="redirect_url" style="display: none;">{{data.redirect_url}}</div>
-<div id="vm_id" style="display: none;">{{data.version_manager.id}}</div>
+    <div id="redirect_url" style="display: none;">{{data.redirect_url}}</div>
+    <div id="vm_id" style="display: none;">{{data.version_manager.id}}</div>
+</section>

@@ -28,7 +28,7 @@ resolveDependencies = function(event)
  */
 resolve_dependencies = function(xsd_content, name, filename, version_manager_id, schemaLocations, dependencies){
     $.ajax({
-        url : "/admin/template/resolve-dependencies",
+        url : templateDependenciesPostUrl,
         type : "POST",
         dataType: "json",
         data : {
@@ -48,3 +48,10 @@ resolve_dependencies = function(xsd_content, name, filename, version_manager_id,
         }
     });
 }
+
+/**
+ * Load controllers for dependency resolver
+ */
+$(document).ready(function() {
+    $('.resolve').on('click', resolveDependencies);
+});

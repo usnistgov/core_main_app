@@ -1,0 +1,21 @@
+{% if WEBSITE_ADMIN_COLOR == "yellow" %}
+    <div class="box box-warning">
+{% elif WEBSITE_ADMIN_COLOR == "blue" %}
+    <div class="box box-primary">
+{% else %}
+    <div class="box box-default">
+{% endif %}
+    <div class="box-header with-border">
+        <h3 class="box-title">{% block box_title %}{% endblock %}</h3>
+
+        <div class="box-tools pull-right">
+            {% block box_tools %}{% endblock %}
+        </div>
+    </div>
+    <div class="box-body">
+        {% block box_body %}{% endblock %}
+    </div>
+    <div class="box-footer">
+        {% block box_footer %}{% endblock %}
+    </div>
+</div>

@@ -1,4 +1,4 @@
-{% extends "theme.html" %}
+{% extends "core_main_app/_render/admin/theme/base.html" %}
 {% load staticfiles %}
 {% load include_static %}
 {% comment %}
@@ -28,7 +28,7 @@
             "js": [
                 {
                     "path": "path/to/file_1.js",
-                    "raw": True
+                    "is_raw": True
                 },
                 ...
             ]
@@ -36,7 +36,7 @@
         The order of the list is the order of inclusion of the JavaScript files
     {% endcomment %}
     {% for js_file in assets.js %}
-        {% if js_file.raw %}
+        {% if js_file.is_raw %}
             <script type="text/javascript">{% include_static js_file.path %}</script>
         {% else %}
             <script src="{% static js_file.path %}"></script>

@@ -1,0 +1,26 @@
+{% load timestamptags %}
+<section class="content-header">
+  <h1>
+    Version Manager
+      <small>for template <b>{{data.template_title }}</b></small>
+  </h1>
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            {% include 'core_main_app/admin/templates/versions/available.html' %}
+            {% include 'core_main_app/admin/templates/versions/disabled.html' %}
+        </div>
+    </div>
+
+<div id="dialog-disable-confirm-message" title="Confirm Delete" style="display:none;">
+<p></p>
+  <p>
+    <span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 10px 0;"></span>
+    Are you sure you want to disable this version?
+  </p>
+</div>
+
+</section>
+

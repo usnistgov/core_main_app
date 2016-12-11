@@ -1,0 +1,63 @@
+{% extends 'core_main_app/_render/admin/theme/tools/box.html' %}
+{% load timestamptags %}
+
+{% block box_title %}Available versions{% endblock %}
+
+{% block box_tools %}
+<a href="{% url 'admin:core_main_app_upload_template_version' data.version_manager.id %}"
+   class="pull-right btn btn-default">
+	<i class="fa fa-upload"></i> Upload New Version
+</a>
+{% endblock %}
+
+{% block box_body %}
+<div id="model_version">
+	<table class="table table-bordered table-hover">
+        <tr>
+            <th style="width: 15%">Version #</th>
+            <th style="width: 20%">Status</th>
+            <th style="width: 20%">Upload date</th>
+            <th>Actions</th>
+        </tr>
+	    {% for version in data.version_manager.versions.available reversed %}
+           <tr>
+               <td>{{ version.index }}</td>
+               {% if version.object == data.version_manager.current %}
+                    <td style='font-weight:bold;color:green'>Current</td>
+               {% else %}
+                    <td style='font-weight:bold;color:orange'>Uploaded</td>
+               {% endif %}
+
+               <td>{{ version.object | print_timestamp }}</td>
+
+               <td>
+                   {% if version.object != data.version_manager.current %}
+                   <span class='icon legend long current' objectid='{{ version.object }}'>
+                       <a class="btn btn-default" href="#"><i class="fa fa-bookmark"></i> Set Current</a>
+                   </span>
+                   <span class='icon legend delete' objectid='{{ version.object }}'>
+                       <a class="btn btn-danger" href="#"><i class="fa fa-trash"></i> Disable</a>
+                   </span>
+                   {% endif %}
+
+                   {% if data.core_parser_app_installed %}
+                   <span class="icon legend modules">
+                        <a href="{% url 'admin:core_parser_app_template_modules' version.object.id %}"> Modules </a>
+                    </span>
+                   {% endif %}
+                   <!--<a class="btn btn-default" href="#">View</a>-->
+                   <!--<a class="btn btn-default" href="#">Download</a>-->
+               </td>
+           </tr>
+       {% endfor %}
+   </table>
+</div>
+
+<div id="dialog-disable-confirm-message" title="Confirm Delete" style="display:none;">
+<p></p>
+  <p>
+    <span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 10px 0;"></span>
+    Are you sure you want to disable this version?
+  </p>
+</div>
+{% endblock %}

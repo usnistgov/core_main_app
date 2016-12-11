@@ -1,0 +1,18 @@
+{% extends 'core_main_app/_render/admin/theme/tools/modal.html' %}
+
+{% block modal_id %}disable-template-modal{% endblock %}
+{% block modal_title %}Disable template <i class="disable-template-name"></i>{% endblock %}
+
+{% block modal_body %}
+<input id="disable-template-id" type="hidden" value=""/>
+<p>
+    The template won't be erased from this website but nobody will be able to create or edit document that have been
+    created with it.
+</p>
+<p>Are you sure you want to disable this template?</p>
+{% endblock %}
+
+{% block modal_footer %}
+<a class="btn btn-default pull-left" data-dismiss="modal" href="#"><i class="fa fa-times"></i> No, bring me back!</a>
+<a id="disable-template-yes" class="btn btn-danger" href="#"><i class="fa fa-check"></i> Yes, disable the template!</a>
+{% endblock %}
