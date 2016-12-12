@@ -4,8 +4,9 @@
 
 import core_main_app.commons.exceptions as exceptions
 from unittest import TestCase
-from core_main_app.utils.xml import raw_xml_to_dict, get_namespaces, get_default_prefix, build_tree, \
+from core_main_app.utils.xml import raw_xml_to_dict, get_namespaces, get_default_prefix, \
     get_element_by_xpath, set_attribute, delete_attribute, add_appinfo_element, delete_appinfo_element
+from xsd_tree.xsd_tree import XSDTree
 from collections import OrderedDict
 from lxml import etree
 
@@ -82,7 +83,7 @@ class TestGetElementByXpath(TestCase):
     def test_get_element_xpath_matching_element(self):
         xsd_string = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'><root><test></test></root></xs:schema>"
         xpath = "root/test"
-        xsd_tree = build_tree(xsd_string)
+        xsd_tree = XSDTree.build_tree(xsd_string)
         element = get_element_by_xpath(xsd_tree, xpath)
         self.assertTrue(element is not None)
 
@@ -90,7 +91,7 @@ class TestGetElementByXpath(TestCase):
         xsd_string = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element><xs:complexType>" \
                      "</xs:complexType></xs:element></xs:schema>"
         xpath = "xs:element/xs:complexType"
-        xsd_tree = build_tree(xsd_string)
+        xsd_tree = XSDTree.build_tree(xsd_string)
         namespaces = get_namespaces(xsd_string)
         element = get_element_by_xpath(xsd_tree, xpath, namespaces)
         self.assertTrue(element is not None)
@@ -99,7 +100,7 @@ class TestGetElementByXpath(TestCase):
         xsd_string = "<xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema'><xsd:element><xsd:complexType>" \
                      "</xsd:complexType></xsd:element></xsd:schema>"
         xpath = "xsd:element/xsd:complexType"
-        xsd_tree = build_tree(xsd_string)
+        xsd_tree = XSDTree.build_tree(xsd_string)
         namespaces = get_namespaces(xsd_string)
         element = get_element_by_xpath(xsd_tree, xpath, namespaces)
         self.assertTrue(element is not None)
@@ -108,7 +109,7 @@ class TestGetElementByXpath(TestCase):
         xsd_string = "<xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema'><xsd:element><xsd:complexType>" \
                      "</xsd:complexType></xsd:element></xsd:schema>"
         xpath = "xs:element/xs:complexType"
-        xsd_tree = build_tree(xsd_string)
+        xsd_tree = XSDTree.build_tree(xsd_string)
         namespaces = get_namespaces(xsd_string)
         with self.assertRaises(exceptions.XSDError):
             get_element_by_xpath(xsd_tree, xpath, namespaces)
@@ -117,7 +118,7 @@ class TestGetElementByXpath(TestCase):
         xsd_string = "<xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema'><xsd:element><xsd:complexType>" \
                      "</xsd:complexType></xsd:element></xsd:schema>"
         xpath = "element/complexType"
-        xsd_tree = build_tree(xsd_string)
+        xsd_tree = XSDTree.build_tree(xsd_string)
         namespaces = get_namespaces(xsd_string)
         with self.assertRaises(exceptions.XSDError):
             get_element_by_xpath(xsd_tree, xpath, namespaces)
@@ -125,14 +126,14 @@ class TestGetElementByXpath(TestCase):
     def test_get_element_xpath_not_matching_element(self):
         xsd_string = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'><root><test></test></root></xs:schema>"
         xpath = "root/name"
-        xsd_tree = build_tree(xsd_string)
+        xsd_tree = XSDTree.build_tree(xsd_string)
         with self.assertRaises(exceptions.XSDError):
             get_element_by_xpath(xsd_tree, xpath)
 
     def test_get_element_invalid_xpath(self):
         xsd_string = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'><root><test></test></root></xs:schema>"
         xpath = "invalid"
-        xsd_tree = build_tree(xsd_string)
+        xsd_tree = XSDTree.build_tree(xsd_string)
         with self.assertRaises(exceptions.XSDError):
             get_element_by_xpath(xsd_tree, xpath)
 

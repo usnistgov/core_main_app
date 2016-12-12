@@ -1,9 +1,11 @@
 """
-    Xml utils provide tool operation for xml data
+    Xml utils provide too l operation for xml data
 """
 from django.core.urlresolvers import reverse
 import core_main_app.commons.exceptions as exceptions
 import xml_validation.validation as xml_validation
+from xsd_tree.xsd_tree import XSDTree
+import commons.constants as xml_utils_constants
 from lxml import etree
 from io import BytesIO
 from collections import OrderedDict
@@ -12,10 +14,6 @@ import json
 from xsd_hash import xsd_hash
 
 from core_main_app.settings import XERCES_VALIDATION, SERVER_URI
-
-XML_NAMESPACE = "http://www.w3.org/XML/1998/namespace"
-SCHEMA_NAMESPACE = "http://www.w3.org/2001/XMLSchema"
-LXML_SCHEMA_NAMESPACE = "{" + SCHEMA_NAMESPACE + "}"
 
 
 def validate_xml_schema(xsd_tree):
@@ -72,7 +70,7 @@ def is_schema_valid(xsd_string):
         errors_str = ", ".join(errors)
         raise exceptions.CoreError(errors_str)
 
-    error = validate_xml_schema(build_tree(xsd_string))
+    error = validate_xml_schema(XSDTree.build_tree(xsd_string))
     if error is not None:
         raise exceptions.XSDError(error)
 
@@ -85,25 +83,11 @@ def is_well_formed_xml(xml_string):
     """
     # is it a valid XML document?
     try:
-        build_tree(xml_string)
+        XSDTree.build_tree(xml_string)
     except Exception:
         return False
 
     return True
-
-
-def build_tree(xml_string):
-    """
-        Return a lxml etree from an XML string (xml, xsd...)
-        :param xml_string:
-        :return:
-    """
-    try:
-        xml_tree = etree.parse(BytesIO(xml_string.encode('utf-8')))
-    except Exception:
-        xml_tree = etree.parse(BytesIO(xml_string))
-
-    return xml_tree
 
 
 def unparse(json_dict):
@@ -217,11 +201,11 @@ def get_imports_and_includes(xsd_string):
     :param xsd_string:
     :return: list of imports, list of includes
     """
-    xsd_tree = build_tree(xsd_string)
+    xsd_tree = XSDTree.build_tree(xsd_string)
     # get the imports
-    imports = xsd_tree.findall("{}import".format(LXML_SCHEMA_NAMESPACE))
+    imports = xsd_tree.findall("{}import".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE))
     # get the includes
-    includes = xsd_tree.findall("{}include".format(LXML_SCHEMA_NAMESPACE))
+    includes = xsd_tree.findall("{}include".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE))
     return imports, includes
 
 
@@ -233,11 +217,11 @@ def update_dependencies(xsd_string, dependencies):
     :return:
     """
     # build the tree
-    xsd_tree = build_tree(xsd_string)
+    xsd_tree = XSDTree.build_tree(xsd_string)
     # get the imports
-    xsd_imports = xsd_tree.findall("{}import".format(LXML_SCHEMA_NAMESPACE))
+    xsd_imports = xsd_tree.findall("{}import".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE))
     # get the includes
-    xsd_includes = xsd_tree.findall("{}include".format(LXML_SCHEMA_NAMESPACE))
+    xsd_includes = xsd_tree.findall("{}include".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE))
 
     for schema_location, dependency_id in dependencies.iteritems():
         if dependency_id is not None:
@@ -259,14 +243,14 @@ def _check_core_support(xsd_string):
     """
     errors = []
 
-    xsd_tree = build_tree(xsd_string)
+    xsd_tree = XSDTree.build_tree(xsd_string)
 
     # General Tests
 
     # get the imports
-    imports = xsd_tree.findall("{}import".format(LXML_SCHEMA_NAMESPACE))
+    imports = xsd_tree.findall("{}import".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE))
     # get the includes
-    includes = xsd_tree.findall("{}include".format(LXML_SCHEMA_NAMESPACE))
+    includes = xsd_tree.findall("{}include".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE))
 
     if len(imports) != 0 or len(includes) != 0:
         for el_import in imports:
@@ -323,7 +307,7 @@ def get_namespaces(xsd_string):
     """
     xsd_file = BytesIO(str(xsd_string))
     events = "start", "start-ns"
-    ns = {'xml': XML_NAMESPACE}
+    ns = {'xml': xml_utils_constants.XML_NAMESPACE}
     for event, elem in etree.iterparse(xsd_file, events):
         if event == "start-ns":
             if len(elem[0]) > 0 and len(elem[1]) > 0:
@@ -345,7 +329,7 @@ def get_default_prefix(namespaces):
     """
     default_prefix = ''
     for prefix, url in namespaces.items():
-        if url == SCHEMA_NAMESPACE:
+        if url == xml_utils_constants.SCHEMA_NAMESPACE:
             default_prefix = prefix
             break
 
@@ -368,7 +352,7 @@ def get_element_by_xpath(xsd_tree, xpath, namespaces=None):
         default_prefix = get_default_prefix(namespaces)
 
         # Transform xpath into LXML format
-        xpath = xpath.replace(default_prefix + ":", LXML_SCHEMA_NAMESPACE)
+        xpath = xpath.replace(default_prefix + ":", xml_utils_constants.LXML_SCHEMA_NAMESPACE)
 
     try:
         element = xsd_tree.find(xpath)
@@ -423,7 +407,7 @@ def _update_attribute(xsd_string, xpath, attribute, value=None):
 
     """
     # Build the XSD tree
-    xsd_tree = build_tree(xsd_string)
+    xsd_tree = XSDTree.build_tree(xsd_string)
     # Get namespaces
     namespaces = get_namespaces(xsd_string)
     # Get XSD element using its xpath
@@ -455,11 +439,11 @@ def xsl_transform(xml_string, xslt_string):
 
     """
     # Build the XSLT tree
-    xslt_tree = build_tree(xslt_string)
+    xslt_tree = XSDTree.build_tree(xslt_string)
     # Get the transform
     transform = etree.XSLT(xslt_tree)
     # Build the XML tree
-    xsd_tree = build_tree(xml_string)
+    xsd_tree = XSDTree.build_tree(xml_string)
     # Get the transformed tree
     transformed_tree = transform(xsd_tree)
     return str(transformed_tree)
@@ -549,24 +533,24 @@ def _update_appinfo_element(xsd_string, xpath, attribute_name, value=None):
 
     """
     # Build the XSD tree
-    xsd_tree = build_tree(xsd_string)
+    xsd_tree = XSDTree.build_tree(xsd_string)
     # Get namespaces
     namespaces = get_namespaces(xsd_string)
     # Get XSD element using its xpath
     element = get_element_by_xpath(xsd_tree, xpath, namespaces)
 
     # Get the appinfo element
-    appinfo_element = _get_appinfo_element(element, attribute_name, LXML_SCHEMA_NAMESPACE)
+    appinfo_element = _get_appinfo_element(element, attribute_name, xml_utils_constants.LXML_SCHEMA_NAMESPACE)
 
     # If a value is provided, create or update the appinfo
     if value is not None:
         # if appinfo is absent, creates it
         if appinfo_element is None:
             # get annotation tag
-            annotation = _get_or_create_element(element, "annotation", LXML_SCHEMA_NAMESPACE)
+            annotation = _get_or_create_element(element, "annotation", xml_utils_constants.LXML_SCHEMA_NAMESPACE)
 
             # get appinfo tag
-            appinfo = _get_or_create_element(annotation, "appinfo", LXML_SCHEMA_NAMESPACE)
+            appinfo = _get_or_create_element(annotation, "appinfo", xml_utils_constants.LXML_SCHEMA_NAMESPACE)
 
             # get attribute tag
             appinfo_element = _get_or_create_element(appinfo, attribute_name)

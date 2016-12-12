@@ -1,7 +1,8 @@
 """ Data API
 """
 from core_main_app.components.data.models import Data
-import core_main_app.utils.xml as xml_utils
+from core_main_app.utils.xml import validate_xml_data
+from xsd_tree.xsd_tree import XSDTree
 import core_main_app.commons.exceptions as exceptions
 
 
@@ -95,16 +96,16 @@ def check_xml_file_is_valid(data):
     template = data.template
 
     try:
-        xml_tree = xml_utils.build_tree(data.xml_file)
+        xml_tree = XSDTree.build_tree(data.xml_file)
     except Exception as e:
         raise exceptions.XMLError(e.message)
 
     try:
-        xsd_tree = xml_utils.build_tree(template.content)
+        xsd_tree = XSDTree.build_tree(template.content)
     except Exception as e:
         raise exceptions.XSDError(e.message)
 
-    error = xml_utils.validate_xml_data(xsd_tree, xml_tree)
+    error = validate_xml_data(xsd_tree, xml_tree)
     if error is not None:
         raise exceptions.XMLError(error)
     else:
