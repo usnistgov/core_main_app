@@ -217,6 +217,45 @@ class TestDataQueryFullText(TestCase):
         self.assertTrue(all(isinstance(item, Data) for item in result))
 
 
+import datetime
+class TestSetPublish(TestCase):
+
+    @patch.object(Data, 'get_by_id')
+    @patch.object(data_api, 'upsert')
+    def test_data_set_publish_set_to_true_test_is_published(self, mock_upsert, mock_get):
+        # Create Data
+        data = Data(is_published=False)
+        mock_get.return_value = data
+        mock_upsert.return_value = None
+        # Update data
+        result = data_api.set_publish(1, True)
+        # Check update
+        self.assertTrue(data.is_published)
+
+    @patch.object(Data, 'get_by_id')
+    @patch.object(data_api, 'upsert')
+    def test_data_set_publish_set_to_true_test_publication_date(self, mock_upsert, mock_get):
+        # Create Data
+        data = Data(is_published=False)
+        mock_get.return_value = data
+        mock_upsert.return_value = None
+        # Update data
+        result = data_api.set_publish(1, True)
+        # Check update
+        self.assertIsNotNone(data.publication_date)
+
+    @patch.object(Data, 'get_by_id')
+    @patch.object(data_api, 'upsert')
+    def test_data_set_publish_set_to_false(self, mock_upsert, mock_get):
+        # Create Data
+        data = Data(is_published=True)
+        mock_get.return_value = data
+        mock_upsert.return_value = None
+        # Update data
+        result = data_api.set_publish(1, False)
+        # Check update
+        self.assertFalse(data.is_published)
+
 def _get_template():
     template = Template()
     template.id_field = 1

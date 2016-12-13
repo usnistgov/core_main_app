@@ -1,9 +1,25 @@
 """ Data API
 """
+import datetime
 from core_main_app.components.data.models import Data
 from core_main_app.utils.xml import validate_xml_data
 from xsd_tree.xsd_tree import XSDTree
 import core_main_app.commons.exceptions as exceptions
+
+
+def set_publish(data_id, bool):
+    """ Publish or unpublish data object with the given id
+
+        Parameters:
+            data_id:
+            bool:
+
+        Returns:
+    """
+    data = Data.get_by_id(data_id)
+    data.is_published = bool
+    data.publication_date = datetime.datetime.now()
+    upsert(data)
 
 
 def get_by_id(data_id):
