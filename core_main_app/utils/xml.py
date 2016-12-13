@@ -449,19 +449,19 @@ def xsl_transform(xml_string, xslt_string):
     return str(transformed_tree)
 
 
-def add_appinfo_element(xsd_string, xpath, attribute_name, value):
+def add_appinfo_element(xsd_string, xpath, appinfo_name, value):
     """Adds appinfo to an element
 
     Args:
         xsd_string:
         xpath:
-        attribute_name:
+        appinfo_name:
         value:
 
     Returns:
 
     """
-    return _update_appinfo_element(xsd_string, xpath, attribute_name, value)
+    return _update_appinfo_element(xsd_string, xpath, appinfo_name, value)
 
 
 def delete_appinfo_element(xsd_string, xpath, attribute_name):
@@ -520,7 +520,7 @@ def _get_appinfo_element(element, element_name, namespace):
         return None
 
 
-def _update_appinfo_element(xsd_string, xpath, attribute_name, value=None):
+def _update_appinfo_element(xsd_string, xpath, appinfo_name, value=None):
     """Updates an appinfo element
 
     Args:
@@ -539,30 +539,61 @@ def _update_appinfo_element(xsd_string, xpath, attribute_name, value=None):
     # Get XSD element using its xpath
     element = get_element_by_xpath(xsd_tree, xpath, namespaces)
 
-    # Get the appinfo element
-    appinfo_element = _get_appinfo_element(element, attribute_name, xml_utils_constants.LXML_SCHEMA_NAMESPACE)
-
-    # If a value is provided, create or update the appinfo
     if value is not None:
-        # if appinfo is absent, creates it
-        if appinfo_element is None:
-            # get annotation tag
-            annotation = _get_or_create_element(element, "annotation", xml_utils_constants.LXML_SCHEMA_NAMESPACE)
-
-            # get appinfo tag
-            appinfo = _get_or_create_element(annotation, "appinfo", xml_utils_constants.LXML_SCHEMA_NAMESPACE)
-
-            # get attribute tag
-            appinfo_element = _get_or_create_element(appinfo, attribute_name)
-
-        # set the value of the appinfo
-        appinfo_element.text = value
-    else: # value is None, deletes the appinfo if present
-        # if appinfo is present, deletes it
-        if appinfo_element is not None:
-            appinfo_element.getparent().remove(appinfo_element)
+        # If a value is provided, create or update the appinfo
+        add_appinfo_child_to_element(element, appinfo_name, value)
+    else:
+        # value is None, deletes the appinfo if present
+        delete_appinfo_child_from_element(element, appinfo_name)
 
     # Converts XSD tree back to string
     updated_xsd_string = tree_to_string(xsd_tree)
 
     return updated_xsd_string
+
+
+def add_appinfo_child_to_element(element, appinfo_name, value):
+    """Adds ab appinfo child to an etree element
+
+    Args:
+        element:
+        appinfo_name:
+        value:
+
+    Returns:
+
+    """
+    # Get the appinfo element
+    appinfo_element = _get_appinfo_element(element, appinfo_name, xml_utils_constants.LXML_SCHEMA_NAMESPACE)
+
+    # if appinfo is absent, creates it
+    if appinfo_element is None:
+        # get annotation tag
+        annotation = _get_or_create_element(element, "annotation", xml_utils_constants.LXML_SCHEMA_NAMESPACE)
+
+        # get appinfo tag
+        appinfo = _get_or_create_element(annotation, "appinfo", xml_utils_constants.LXML_SCHEMA_NAMESPACE)
+
+        # get attribute tag
+        appinfo_element = _get_or_create_element(appinfo, appinfo_name)
+
+    # set the value of the appinfo
+    appinfo_element.text = value
+
+
+def delete_appinfo_child_from_element(element, appinfo_name):
+    """Deletes an appinfo child an etree element
+
+    Args:
+        element:
+        appinfo_name: name of the appinfo to delete
+
+    Returns:
+
+    """
+    # Get the appinfo element
+    appinfo_element = _get_appinfo_element(element, appinfo_name, xml_utils_constants.LXML_SCHEMA_NAMESPACE)
+
+    # if appinfo is present, deletes it
+    if appinfo_element is not None:
+        appinfo_element.getparent().remove(appinfo_element)
