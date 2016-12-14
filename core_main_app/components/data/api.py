@@ -4,21 +4,23 @@ import datetime
 from core_main_app.components.data.models import Data
 from core_main_app.utils.xml import validate_xml_data
 from xml_utils.xsd_tree.xsd_tree import XSDTree
+from core_main_app import settings
 import core_main_app.commons.exceptions as exceptions
 
 
-def set_publish(data_id, bool):
+def set_publish(data_id, published):
     """ Publish or unpublish data object with the given id
 
         Parameters:
             data_id:
-            bool:
+            published:
 
         Returns:
     """
     data = Data.get_by_id(data_id)
-    data.is_published = bool
-    data.publication_date = datetime.datetime.now()
+    data.is_published = published
+    if published and not settings.DATA_AUTO_PUBLISH:
+        data.publication_date = datetime.datetime.now()
     upsert(data)
 
 

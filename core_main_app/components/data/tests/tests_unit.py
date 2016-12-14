@@ -217,7 +217,6 @@ class TestDataQueryFullText(TestCase):
         self.assertTrue(all(isinstance(item, Data) for item in result))
 
 
-import datetime
 class TestSetPublish(TestCase):
 
     @patch.object(Data, 'get_by_id')
@@ -228,33 +227,61 @@ class TestSetPublish(TestCase):
         mock_get.return_value = data
         mock_upsert.return_value = None
         # Update data
-        result = data_api.set_publish(1, True)
+        data_api.set_publish(1, True)
         # Check update
         self.assertTrue(data.is_published)
 
+    @patch('core_main_app.components.data.api.settings', DATA_AUTO_PUBLISH=True)
     @patch.object(Data, 'get_by_id')
     @patch.object(data_api, 'upsert')
-    def test_data_set_publish_set_to_true_test_publication_date(self, mock_upsert, mock_get):
+    def test_data_set_publish_set_to_true_test_publication_date_when_DATA_AUTO_PUBLISH_is_True(self, mock_upsert,
+                                                                                               mock_get, mock_DATA_AUTO_PUBLISH):
         # Create Data
         data = Data(is_published=False)
         mock_get.return_value = data
         mock_upsert.return_value = None
         # Update data
-        result = data_api.set_publish(1, True)
+        data_api.set_publish(1, True)
+        # Check update
+        self.assertIsNone(data.publication_date)
+
+    @patch('core_main_app.components.data.api.settings', DATA_AUTO_PUBLISH=False)
+    @patch.object(Data, 'get_by_id')
+    @patch.object(data_api, 'upsert')
+    def test_data_set_publish_set_to_true_test_publication_date_when_DATA_AUTO_PUBLISH_is_False(self, mock_upsert,
+                                                                                                mock_get, mock_DATA_AUTO_PUBLISH):
+        # Create Data
+        data = Data(is_published=False)
+        mock_get.return_value = data
+        mock_upsert.return_value = None
+        # Update data
+        data_api.set_publish(1, True)
         # Check update
         self.assertIsNotNone(data.publication_date)
 
     @patch.object(Data, 'get_by_id')
     @patch.object(data_api, 'upsert')
-    def test_data_set_publish_set_to_false(self, mock_upsert, mock_get):
+    def test_data_set_publish_set_to_false_test_is_published(self, mock_upsert, mock_get):
         # Create Data
         data = Data(is_published=True)
         mock_get.return_value = data
         mock_upsert.return_value = None
         # Update data
-        result = data_api.set_publish(1, False)
+        data_api.set_publish(1, False)
         # Check update
         self.assertFalse(data.is_published)
+
+    @patch.object(Data, 'get_by_id')
+    @patch.object(data_api, 'upsert')
+    def test_data_set_publish_set_to_false_test_publication_date(self, mock_upsert, mock_get):
+        # Create Data
+        data = Data(is_published=True)
+        mock_get.return_value = data
+        mock_upsert.return_value = None
+        # Update data
+        data_api.set_publish(1, False)
+        # Check update
+        self.assertIsNone(data.publication_date)
 
 def _get_template():
     template = Template()
