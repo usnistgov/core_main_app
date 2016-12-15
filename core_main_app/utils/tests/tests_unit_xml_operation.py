@@ -6,7 +6,7 @@ import core_main_app.commons.exceptions as exceptions
 from unittest import TestCase
 from core_main_app.utils.xml import raw_xml_to_dict, get_namespaces, get_default_prefix, \
     get_element_by_xpath, set_attribute, delete_attribute, add_appinfo_element, delete_appinfo_element
-from xsd_tree.xsd_tree import XSDTree
+from xml_utils.xsd_tree.xsd_tree import XSDTree
 from collections import OrderedDict
 from lxml import etree
 

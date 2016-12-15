@@ -3,7 +3,7 @@
 import datetime
 from core_main_app.components.data.models import Data
 from core_main_app.utils.xml import validate_xml_data
-from xsd_tree.xsd_tree import XSDTree
+from xml_utils.xsd_tree.xsd_tree import XSDTree
 import core_main_app.commons.exceptions as exceptions
 
 

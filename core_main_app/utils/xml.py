@@ -3,15 +3,15 @@
 """
 from django.core.urlresolvers import reverse
 import core_main_app.commons.exceptions as exceptions
-import xml_validation.validation as xml_validation
-from xsd_tree.xsd_tree import XSDTree
-import commons.constants as xml_utils_constants
+import xml_utils.xml_validation.validation as xml_validation
+from xml_utils.xsd_tree.xsd_tree import XSDTree
+import xml_utils.commons.constants as xml_utils_constants
 from lxml import etree
 from io import BytesIO
 from collections import OrderedDict
 import xmltodict
 import json
-from xsd_hash import xsd_hash
+from xml_utils.xsd_hash import xsd_hash
 
 from core_main_app.settings import XERCES_VALIDATION, SERVER_URI
 
