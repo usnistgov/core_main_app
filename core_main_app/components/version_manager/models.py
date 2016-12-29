@@ -2,6 +2,8 @@
 Version Manager model
 """
 from django_mongoengine import fields, Document
+from mongoengine import errors as mongoengine_errors
+from core_main_app.commons import exceptions
 
 
 # TODO: could change versions to ReferenceField (Document?)
@@ -128,7 +130,12 @@ class VersionManager(Document):
         Returns:
 
         """
-        return VersionManager.objects.get(pk=str(version_manager_id))
+        try:
+            return VersionManager.objects.get(pk=str(version_manager_id))
+        except mongoengine_errors.DoesNotExist as e:
+            raise exceptions.DoesNotExist(e.message)
+        except Exception as e:
+            raise exceptions.ModelError(e.message)
 
     @staticmethod
     def get_global_version_managers():

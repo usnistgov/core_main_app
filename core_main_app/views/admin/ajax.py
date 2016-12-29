@@ -1,20 +1,26 @@
+"""Admin AJAX views
+"""
 import json
 
 from django.http.response import HttpResponse, HttpResponseBadRequest
+
+from core_main_app.components.template.api import init_template_with_dependencies
 from core_main_app.components.template.models import Template
 from core_main_app.components.template_version_manager.models import TemplateVersionManager
 from core_main_app.components.template import api as template_api
 from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.components.template_version_manager import api as template_version_manager_api
-from core_main_app.utils.xml import get_template_with_server_dependencies
 import HTMLParser
 
 
 def disable_template(request):
-    """
-    Disables a template
-    :param request:
-    :return:
+    """Disables a template
+
+    Args:
+        request:
+
+    Returns:
+
     """
     try:
         version_manager = version_manager_api.get(request.GET['id'])
@@ -26,10 +32,13 @@ def disable_template(request):
 
 
 def restore_template(request):
-    """
-    Restores a disabled template
-    :param request:
-    :return:
+    """Restores a disabled template
+
+    Args:
+        request:
+
+    Returns:
+
     """
     try:
         version_manager = version_manager_api.get(request.GET['id'])
@@ -41,10 +50,13 @@ def restore_template(request):
 
 
 def disable_template_version(request):
-    """
-    Disables a version of a template
-    :param request:
-    :return:
+    """Disables a version of a template
+
+    Args:
+        request:
+
+    Returns:
+
     """
     try:
         version = template_api.get(request.GET['id'])
@@ -56,10 +68,13 @@ def disable_template_version(request):
 
 
 def restore_template_version(request):
-    """
-    Restores a disabled version of a template
-    :param request:
-    :return:
+    """Restores a disabled version of a template
+
+    Args:
+        request:
+
+    Returns:
+
     """
     try:
         version = template_api.get(request.GET['id'])
@@ -71,10 +86,13 @@ def restore_template_version(request):
 
 
 def set_current_version(request):
-    """
-    Sets the current version of a template
-    :param request:
-    :return:
+    """Sets the current version of a template
+
+    Args:
+        request:
+
+    Returns:
+
     """
     try:
         version = template_api.get(request.GET['id'])
@@ -86,10 +104,13 @@ def set_current_version(request):
 
 
 def edit_template(request):
-    """
-    Edit the template
-    :param request:
-    :return:
+    """Edit the template
+
+    Args:
+        request:
+
+    Returns:
+
     """
     try:
         version_manager = version_manager_api.get(request.POST['id'])
@@ -102,10 +123,13 @@ def edit_template(request):
 
 
 def resolve_dependencies(request):
-    """
-    Resolve import/includes to avoid local references
-    :param request:
-    :return:
+    """Resolve import/includes to avoid local references
+
+    Args:
+        request:
+
+    Returns:
+
     """
     try:
         # Get the parameters
@@ -116,11 +140,10 @@ def resolve_dependencies(request):
         schema_locations = request.POST.getlist('schemaLocations[]')
         dependencies = request.POST.getlist('dependencies[]')
 
-        # Update the XSD content with chosen dependencies
-        updated_xsd_content = _update_template_dependencies(xsd_content, schema_locations, dependencies)
-
         # create new object
-        template = Template(filename=filename, content=updated_xsd_content, dependencies=dependencies)
+        template = Template(filename=filename, content=_get_xsd_content_from_html(xsd_content))
+        init_template_with_dependencies(template, _get_dependencies_dict(schema_locations, dependencies))
+
         # get the version manager or create a new one
         if version_manager_id != '':
             template_version_manager = version_manager_api.get(version_manager_id)
@@ -134,11 +157,14 @@ def resolve_dependencies(request):
 
 
 def _get_dependencies_dict(schema_locations, dependencies):
-    """
-    Build a dict from lists got from the AJAX
-    :param schema_locations:
-    :param dependencies:
-    :return:
+    """Build a dict from lists of schema locations and dependencies
+
+    Args:
+        schema_locations:
+        dependencies:
+
+    Returns:
+
     """
     string_to_python_dependencies = []
     # transform 'None' into python None
@@ -150,18 +176,15 @@ def _get_dependencies_dict(schema_locations, dependencies):
     return dict(zip(schema_locations, string_to_python_dependencies))
 
 
-def _update_template_dependencies(xsd_content, schema_locations, dependencies):
-    """
+def _get_xsd_content_from_html(xsd_content):
+    """Decodes XSD content from HTML
 
     Args:
         xsd_content:
-        schema_locations:
-        dependencies:
 
     Returns:
 
     """
     html_parser = HTMLParser.HTMLParser()
     xsd_content = str(html_parser.unescape(xsd_content).encode("utf-8"))
-    dependencies_dict = _get_dependencies_dict(schema_locations, dependencies)
-    return get_template_with_server_dependencies(xsd_content, dependencies_dict)
+    return xsd_content

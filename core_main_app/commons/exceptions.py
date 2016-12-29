@@ -32,6 +32,16 @@ class ModelError(Exception):
         return repr(self.message)
 
 
+class RestApiError(Exception):
+    """ Exception raised by the the REST Api
+    """
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return repr(self.message)
+
+
 class DoesNotExist(Exception):
     """ Exception raised when an object does not exist
     """
@@ -60,3 +70,4 @@ class XSDError(Exception):
 
     def __str__(self):
         return repr(self.message)
+

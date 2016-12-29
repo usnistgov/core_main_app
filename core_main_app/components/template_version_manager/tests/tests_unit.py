@@ -7,7 +7,7 @@ from core_main_app.components.template_version_manager import api as version_man
 from core_main_app.components.template_version_manager.models import TemplateVersionManager
 
 
-class TestTemplateVersionManagerInitAndSave(TestCase):
+class TestTemplateVersionManagerInsert(TestCase):
     @patch('core_main_app.components.template_version_manager.models.TemplateVersionManager.save')
     @patch('core_main_app.components.template.models.Template.save')
     def test_create_version_manager_returns_version_manager(self, mock_save_template,
