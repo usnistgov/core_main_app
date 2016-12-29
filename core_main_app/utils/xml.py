@@ -139,10 +139,7 @@ def get_template_with_server_dependencies(xsd_string, dependencies):
 
     # is it a valid XML document ?
     if error is None:
-        try:
-            updated_xsd_string = tree_to_string(xsd_tree)
-        except Exception, e:
-            raise exceptions.XSDError("An unexpected error happened during dependency update.")
+        updated_xsd_string = XSDTree.tostring(xsd_tree)
     else:
         raise exceptions.XSDError(error.replace("'", ""))
 
@@ -178,21 +175,6 @@ def post_processor(path, key, value):
             return key, float(value)
         except (ValueError, TypeError):
             return key, value
-
-
-def tree_to_string(xml_tree, pretty=False):
-    """
-    Return an XML String from a lxml etree
-    :param xml_tree:
-    :param pretty: True for indented print
-    :return:
-    """
-    try:
-        xml_tree = etree.tostring(xml_tree, pretty_print=pretty)
-    except Exception:
-        raise exceptions.XMLError("Something went wrong during conversion of the tree to a string.")
-
-    return xml_tree
 
 
 def get_imports_and_includes(xsd_string):
@@ -423,7 +405,7 @@ def _update_attribute(xsd_string, xpath, attribute, value=None):
             del element.attrib[attribute]
 
     # Converts XSD tree back to string
-    updated_xsd_string = tree_to_string(xsd_tree)
+    updated_xsd_string = XSDTree.tostring(xsd_tree)
 
     return updated_xsd_string
 
@@ -549,7 +531,7 @@ def _update_appinfo_element(xsd_string, xpath, appinfo_name, value=None):
         delete_appinfo_child_from_element(element, appinfo_name)
 
     # Converts XSD tree back to string
-    updated_xsd_string = tree_to_string(xsd_tree)
+    updated_xsd_string = XSDTree.tostring(xsd_tree)
 
     return updated_xsd_string
 
