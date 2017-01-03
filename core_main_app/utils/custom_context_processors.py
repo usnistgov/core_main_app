@@ -2,7 +2,6 @@ from django.conf import settings
 
 
 def domain_context_processor(request):
-
     return {
         "WEBSITE_ADMIN_COLOR": settings.WEBSITE_ADMIN_COLOR if hasattr(settings, "WEBSITE_ADMIN_COLOR") else 'black',
         "WEBSITE_SHORT_TITLE": settings.WEBSITE_SHORT_TITLE if hasattr(settings, "WEBSITE_SHORT_TITLE") else '',

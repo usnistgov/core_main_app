@@ -438,15 +438,17 @@ def xsl_transform(xml_string, xslt_string):
     Returns:
 
     """
-    # Build the XSLT tree
-    xslt_tree = XSDTree.build_tree(xslt_string)
-    # Get the transform
-    transform = etree.XSLT(xslt_tree)
-    # Build the XML tree
-    xsd_tree = XSDTree.build_tree(xml_string)
-    # Get the transformed tree
-    transformed_tree = transform(xsd_tree)
-    return str(transformed_tree)
+    try:
+        # Build the XSD and XSLT tree
+        xslt_tree = XSDTree.build_tree(xslt_string)
+        xsd_tree = XSDTree.build_tree(xml_string)
+
+        # Get the XSLT transformation and transform the XSD
+        transform = etree.XSLT(xslt_tree)
+        transformed_tree = transform(xsd_tree)
+        return str(transformed_tree)
+    except Exception:
+        raise exceptions.CoreError("An unexpected exception happened while transforming the XML")
 
 
 def add_appinfo_element(xsd_string, xpath, appinfo_name, value):

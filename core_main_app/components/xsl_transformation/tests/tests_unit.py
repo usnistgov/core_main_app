@@ -170,8 +170,8 @@ class TestXslTransform(TestCase):
             xsl_transformation_api.xsl_transform(mock_xml_data, mock_xslt.name)
 
     @patch('core_main_app.components.xsl_transformation.models.XslTransformation.get_by_name')
-    @patch('lxml.etree.fromstring')
-    def test_xsl_transform_raise_api_error_on_other_exception(self, mock_etree_fromstring, mock_get_by_name):
+    @patch('core_main_app.utils.xml.xsl_transform')
+    def test_xsl_transform_raise_api_error_on_other_exception(self, mock_xsl_transform, mock_get_by_name):
         # Arrange
         mock_data_path = join(dirname(realpath(__file__)), "data")
         mock_xml_path = join(mock_data_path, "data.xml")
@@ -187,7 +187,7 @@ class TestXslTransform(TestCase):
             mock_xslt.content = xsl_file.read()
 
         mock_get_by_name.return_value = mock_xslt
-        mock_etree_fromstring.side_effect = Exception()
+        mock_xsl_transform.side_effect = Exception()
 
         # Act + Assert
         with self.assertRaises(exceptions.ApiError):
