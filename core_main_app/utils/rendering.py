@@ -50,7 +50,8 @@ def _render(request, template_name, wrapper_name, modals=None, assets=None, cont
     """
     modals = modals if modals is not None else []
     assets = assets if assets is not None else {"css": [], "js": []}
-    assets["js"] = _build_js_assets(assets["js"])
+    js_asset = assets["js"] if "js" in assets else []
+    assets["js"] = _build_js_assets(js_asset)
     context = context if context is not None else {}
 
     # Rebuild the context for the app_wrapper template
