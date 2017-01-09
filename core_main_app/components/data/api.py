@@ -86,6 +86,7 @@ def upsert(data):
     Returns:
 
     """
+    data.last_modification_date = datetime.datetime.now()
     check_xml_file_is_valid(data)
     return data.convert_and_save()
 

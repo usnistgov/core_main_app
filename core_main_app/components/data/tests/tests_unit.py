@@ -141,6 +141,19 @@ class TestDataUpsert(TestCase):
         # Assert
         self.assertEqual(xml, result.xml_file)
 
+    @patch.object(data_api, 'check_xml_file_is_valid')
+    @patch.object(Data, 'save')
+    def test_data_upsert_return_data_with_last_modification_date(self, mock_save,
+                                                                 mock_check):
+        # Arrange
+        data = Data(_get_template(), '3', title='title', xml_file='<tag></tag>')
+        mock_save.return_value = data
+        mock_check.return_value = None
+        # Act
+        result = data_api.upsert(data)
+        # Assert
+        self.assertIsNotNone(result.last_modification_date)
+
     def test_data_upsert_raises_xml_error_if_failed_during_xml_validation(self):
         # Arrange
         data = Data(None, '3', title='title', xml_file='')

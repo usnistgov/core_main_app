@@ -25,6 +25,7 @@ class Data(Document):
     xml_file = fields.StringField()
     is_published = fields.BooleanField(blank=True, default=DATA_AUTO_PUBLISH)
     publication_date = fields.DateTimeField(blank=True, default=None)
+    last_modification_date = fields.DateTimeField(blank=True, default=None)
 
     def convert_and_save(self):
         """ Save Data object and convert the xml to dict if needed
