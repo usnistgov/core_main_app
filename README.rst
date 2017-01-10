@@ -7,7 +7,7 @@ core_main_app is a Django app.
 Quick start
 -----------
 
-1. Add "core_website_app" to your INSTALLED_APPS setting like this::
+1. Add "core_main_app" to your INSTALLED_APPS setting like this::
 
     INSTALLED_APPS = [
         ...
