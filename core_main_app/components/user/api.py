@@ -4,6 +4,17 @@
 from django.contrib.auth.models import User
 
 
+def get_all_users():
+    """
+    Return all Users
+
+    Returns:
+        List of Users
+
+    """
+    return User.objects.all()
+
+
 def get_user_by_username(username):
     """
         Returns a user given its username
