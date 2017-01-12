@@ -36,3 +36,38 @@ def get_global_version_managers():
     """
     return TemplateVersionManager.get_global_version_managers()
 
+
+def get_active_global_version_manager():
+    """ Returns all active Version Managers with user set to None
+
+    Returns:
+
+    """
+    return TemplateVersionManager.get_active_global_version_manager()
+
+
+def get_disable_global_version_manager():
+    """ Returns all disabled Version Managers with user set to None
+
+    Returns:
+
+    """
+    return TemplateVersionManager.get_disable_global_version_manager()
+
+
+def get_active_version_manager_by_user_id(user_id):
+    """ Returns all active Version Managers with given user id
+
+    Returns:
+
+    """
+    return TemplateVersionManager.get_active_version_manager_by_user_id(user_id)
+
+
+def get_disable_version_manager_by_user_id(user_id):
+    """ Returns all disabled Version Managers with given user id
+
+    Returns:
+
+    """
+    return TemplateVersionManager.get_disable_version_manager_by_user_id(user_id)

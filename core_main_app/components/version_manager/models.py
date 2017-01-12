@@ -138,3 +138,40 @@ class VersionManager(Document):
 
         """
         return [vm for vm in VersionManager.objects.all() if vm.user is None]
+
+    @staticmethod
+    def get_active_global_version_manager():
+        """ Returns all active Version Managers with user set to None
+
+        Returns:
+
+        """
+        return [vm for vm in VersionManager.get_all_filtered(disabled=False) if vm.user is None]
+
+    @staticmethod
+    def get_disable_global_version_manager():
+        """ Returns all disabled Version Managers with user set to None
+
+        Returns:
+
+        """
+        return [vm for vm in VersionManager.get_all_filtered(disabled=True) if vm.user is None]
+
+    @staticmethod
+    def get_active_version_manager_by_user_id(user_id):
+        """ Returns all active Version Managers with given user id
+
+        Returns:
+
+        """
+        return VersionManager.objects(is_disabled=False, user=str(user_id)).all()
+
+    @staticmethod
+    def get_disable_version_manager_by_user_id(user_id):
+        """ Returns all disabled Version Managers with given user id
+
+        Returns:
+
+        """
+        return VersionManager.objects(is_disabled=True, user=str(user_id)).all()
+
