@@ -31,6 +31,7 @@
                <td>{{ version.object | print_timestamp }}</td>
 
                <td>
+                   {% block box_actions %}
                    {% if version.object != data.version_manager.current %}
                    <span class='icon legend long current' objectid='{{ version.object }}'>
                        <a class="btn btn-default" href="#"><i class="fa fa-bookmark"></i> Set Current</a>
@@ -42,9 +43,10 @@
 
                    {% if data.core_parser_app_installed %}
                    <span class="icon legend modules">
-                        <a href="{% url 'admin:core_parser_app_template_modules' version.object.id %}"> Modules </a>
+                        <a href="{% url 'admin:core_parser_app_template_modules' version.object %}"> Modules </a>
                     </span>
                    {% endif %}
+                   {% endblock %}
                    <!--<a class="btn btn-default" href="#">View</a>-->
                    <!--<a class="btn btn-default" href="#">Download</a>-->
                </td>

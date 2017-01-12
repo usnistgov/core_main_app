@@ -13,6 +13,8 @@ class Template(Document):
     hash = fields.StringField()
     dependencies = fields.ListField(fields.ReferenceField("self"), default=[], blank=True)
 
+    meta = {'allow_inheritance': True}
+
     @staticmethod
     def get_all():
         """Returns all templates

@@ -28,13 +28,13 @@ def insert(template_version_manager, template):
         raise e
 
 
-def get_global_version_managers():
+def get_global_version_managers(_cls=True):
     """Gets all global version managers of a template
 
     Returns:
-
+        _cls:
     """
-    return TemplateVersionManager.get_global_version_managers()
+    return TemplateVersionManager.get_global_version_managers(_cls)
 
 
 def get_active_global_version_manager():

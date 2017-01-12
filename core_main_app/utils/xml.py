@@ -253,8 +253,6 @@ def _check_core_support(xsd_string):
         if target_namespace not in root.nsmap.values():
             errors.append("The use of a targetNamespace without an associated prefix is not supported.")
 
-    # FIXME: Add tests for Type upload in type api
-
     return errors
 
 

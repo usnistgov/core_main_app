@@ -1,13 +1,13 @@
 {% extends 'core_main_app/_render/admin/theme/tools/modal.html' %}
 
 {% block modal_id %}edit-template-modal{% endblock %}
-{% block modal_title %}Edit template{% endblock %}
+{% block modal_title %}Edit {{ data.object_name }}{% endblock %}
 
 {% block modal_body %}
 <form id="edit-template-form">
     <input id="edit-template-id" type="hidden" value=""/>
     <div class="form-group">
-        <label for="edit-template-name">Enter new template name</label>
+        <label for="edit-template-name">Enter new {{ data.object_name }} name</label>
         <input id="edit-template-name" class="form-control" type="text" value="" placeholder="new_template_name"/>
     </div>
 </form>

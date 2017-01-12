@@ -44,6 +44,7 @@ def manage_templates(request):
     templates = template_version_manager_api.get_global_version_managers()
 
     context = {
+        'object_name': 'Template',
         'available': [template for template in templates if not template.is_disabled],
         'disabled': [template for template in templates if template.is_disabled]
     }
@@ -139,6 +140,7 @@ def manage_template_versions(request, version_manager_id):
     version_manager.versions = categorized_versions
 
     context = {
+        'object_name': 'Template',
         "version_manager": version_manager
     }
 
@@ -166,17 +168,22 @@ def upload_template(request):
     assets = {
         "js": [
             {
-                "path": 'core_main_app/admin/js/dependency_resolver.js',
+                "path": 'core_main_app/admin/js/templates/upload/dependency_resolver.js',
                 "is_raw": False
             },
             {
-                "path": 'core_main_app/admin/js/template.js',
+                "path": 'core_main_app/admin/js/templates/upload/dependencies.js',
                 "is_raw": False
+            },
+            {
+                "path": 'core_main_app/admin/js/templates/upload/dependencies.raw.js',
+                "is_raw": True
             }
         ]
     }
 
     context = {
+        'object_name': 'Template',
         'url': reverse("admin:core_main_app_upload_template"),
         'redirect_url': reverse("admin:core_main_app_templates")
     }
@@ -212,14 +219,23 @@ def upload_template_version(request, version_manager_id):
     assets = {
         "js": [
             {
+                "path": 'core_main_app/admin/js/templates/upload/dependency_resolver.js',
+                "is_raw": False
+            },
+            {
                 "path": 'core_main_app/admin/js/templates/upload/dependencies.js',
                 "is_raw": False
+            },
+            {
+                "path": 'core_main_app/admin/js/templates/upload/dependencies.raw.js',
+                "is_raw": True
             }
         ]
     }
 
     template_version_manager = version_manager_api.get(version_manager_id)
     context = {
+        'object_name': "Template",
         'version_manager': template_version_manager,
         'url': reverse("admin:core_main_app_upload_template_version",
                        kwargs={'version_manager_id': template_version_manager.id}),
@@ -365,10 +381,10 @@ def _get_dependency_resolver_html(imports, includes, xsd_data, filename):
     :return:
     """
     # build the list of dependencies
-    current_templates = template_version_manager_api.get_global_version_managers()
+    current_templates = template_version_manager_api.get_global_version_managers(_cls=False)
     list_dependencies_template = loader.get_template('core_main_app/admin/list_dependencies.html')
     context = Context({
-        'templates': current_templates,
+        'templates': [template for template in current_templates if not template.is_disabled],
     })
     list_dependencies_html = list_dependencies_template.render(context)
 

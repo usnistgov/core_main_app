@@ -164,3 +164,12 @@ def insert_version(version_manager, version):
         version_manager.set_current_version(version)
 
     return upsert(version_manager)
+
+
+def get_global_version_managers():
+    """Returns all Version Managers with user set to None
+
+    Returns:
+
+    """
+    return VersionManager.get_global_version_managers()
