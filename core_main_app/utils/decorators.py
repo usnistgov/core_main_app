@@ -1,16 +1,6 @@
+""" Method's decorators
 """
-# File Name: models.py
-# Application: core
-# Purpose:
-#
-# Author: Sharief Youssef
-#         sharief.youssef@nist.gov
-#
-#         Guillaume SOUSA AMARAL
-#         guillaume.sousa@nist.gov
-#
-# Sponsor: National Institute of Standards and Technology (NIST)
-"""
+
 from functools import wraps
 from django.contrib.auth.models import Group, User
 from django.db.models import Q
@@ -21,9 +11,9 @@ from urlparse import urlparse
 from django.core.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework import status
-from core_main_app.commons.rights import anonymous_group, default_group, api_access, api_content_type
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+import core_main_app.permissions.rights as rights
 
 
 @receiver(post_save, sender=User)
@@ -44,7 +34,7 @@ def add_default_group(sender, **kwargs):
     user = kwargs["instance"]
     # If it's a creation
     if kwargs["created"]:
-        group = Group.objects.get(name=default_group)
+        group = Group.objects.get(name=rights.default_group)
         user.groups.add(group)
         user.save()
 
@@ -69,9 +59,20 @@ def login_or_anonymous_perm_required(anonymous_permission, function=None, redire
     def _check_group(view_func):
         @wraps(view_func)
         def wrapper(request, *args, **kwargs):
+            """
+
+            Args:
+                request:
+                *args:
+                **kwargs:
+
+            Returns:
+
+            """
             request.has_anonymous_access = False
             if request.user.is_anonymous():
-                access = Group.objects.filter(Q(name=anonymous_group) & Q(permissions__codename=anonymous_permission))
+                access = Group.objects.filter(Q(name=rights.anonymous_group)
+                                              & Q(permissions__codename=anonymous_permission))
             else:
                 access = request.user.is_authenticated()
 
@@ -116,9 +117,19 @@ def permission_required(content_type, permission, login_url=None, raise_exceptio
     def _check_group(view_func):
         @wraps(view_func)
         def wrapper(request, *args, **kwargs):
+            """
+
+            Args:
+                request:
+                *args:
+                **kwargs:
+
+            Returns:
+
+            """
             if request.user.is_anonymous():
                 # Check in the anonymous_group
-                access = Group.objects.filter(Q(name=anonymous_group) & Q(permissions__codename=permission))
+                access = Group.objects.filter(Q(name=rights.anonymous_group) & Q(permissions__codename=permission))
             else:
                 # Check the permission for the current user
                 prefixed_permission = "{!s}.{!s}".format(content_type, permission)
@@ -161,6 +172,16 @@ def api_staff_member_required():
     def _check_group(view_func):
         @wraps(view_func)
         def wrapper(request, *args, **kwargs):
+            """
+
+            Args:
+                request:
+                *args:
+                **kwargs:
+
+            Returns:
+
+            """
             if request.user.is_staff:
                 return view_func(request, *args, **kwargs)
             else:
@@ -189,11 +210,22 @@ def api_permission_required(content_type, permission, raise_exception=False):
     def _check_group(view_func):
         @wraps(view_func)
         def wrapper(request, *args, **kwargs):
+            """
+            Args:
+                request:
+                *args:
+                **kwargs:
+
+            Returns:
+
+            """
             if request.user.is_anonymous():
-                access_api = Group.objects.filter(Q(name=anonymous_group) & Q(permissions__codename=api_access))
-                access = Group.objects.filter(Q(name=anonymous_group) & Q(permissions__codename=permission))
+                access_api = Group.objects.filter(Q(name=rights.anonymous_group)
+                                                  & Q(permissions__codename=rights.api_access))
+                access = Group.objects.filter(Q(name=rights.anonymous_group)
+                                              & Q(permissions__codename=permission))
             else:
-                prefixed_api_permission = "{!s}.{!s}".format(api_content_type, api_access)
+                prefixed_api_permission = "{!s}.{!s}".format(rights.api_content_type, rights.api_access)
                 access_api = request.user.has_perm(prefixed_api_permission)
                 prefixed_permission = "{!s}.{!s}".format(content_type, permission)
                 access = request.user.has_perm(prefixed_permission)

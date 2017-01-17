@@ -1,0 +1,21 @@
+""" Rights for core main app
+"""
+
+# Anonymous group
+anonymous_group = "anonymous"
+
+# Default group
+default_group = "default"
+
+# API rights
+api_content_type = "api"
+api_access = "api_access"
+
+
+def get_description(right):
+    """ Return the description of a specific right
+
+    :param right:
+    :return:
+    """
+    return "Can " + right.replace("_", " ")
