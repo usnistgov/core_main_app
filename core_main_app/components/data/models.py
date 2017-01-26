@@ -17,6 +17,7 @@ COLLECTION_NAME = 'data'
 # TODO: Status class have to be move to Core/Common/Enums.py
 
 
+
 class Data(Document):
     """ Represents Data object
     """
