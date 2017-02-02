@@ -5,14 +5,17 @@ from core_main_app.components.template.models import Template
 from mongoengine import errors as mongoengine_errors
 from core_main_app.utils import xml as xml_utils
 from django_mongoengine import fields, Document
+
 from core_main_app.utils.databases.pymongo_database import get_full_text_query
 from core_main_app.settings import DATA_AUTO_PUBLISH
+COLLECTION_NAME = 'data'
 
 # TODO: Create publication workflow manager
 # TODO: execute_query / execute_query_full_result -> use find method (RETURN FULL OBJECT)
 # TODO: Delete method have to be moved
 # TODO: update_publish / update_unpublish have to be move in OAI
 # TODO: Status class have to be move to Core/Common/Enums.py
+
 
 class Data(Document):
     """ Represents Data object
@@ -121,4 +124,17 @@ class Data(Document):
         """
         query = get_full_text_query(text)
         query.update({'template__id': {'$in': template_ids}})
+        # TODO: does find() exist? use pymongo if not
         return Data.objects.find(query)
+
+    @staticmethod
+    def execute_query(query):
+        """Execute a query
+
+        Args:
+            query:
+
+        Returns:
+
+        """
+        return Data.objects(__raw__=query)

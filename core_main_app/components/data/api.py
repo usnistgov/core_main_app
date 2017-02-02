@@ -131,5 +131,13 @@ def check_xml_file_is_valid(data):
         return True
 
 
+def execute_query(query):
+    """Executes a query on the Data collection
 
+    Args:
+        query:
 
+    Returns:
+
+    """
+    return Data.execute_query(query)
