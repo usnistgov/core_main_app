@@ -52,6 +52,16 @@ class DoesNotExist(Exception):
         return repr(self.message)
 
 
+class NotUniqueError(Exception):
+    """ Exception raised when an object is not unique
+    """
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return repr(self.message)
+
+
 class XMLError(Exception):
     """ Exception raised by XML validation
     """
