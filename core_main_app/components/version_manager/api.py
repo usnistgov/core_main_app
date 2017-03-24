@@ -173,3 +173,42 @@ def get_global_version_managers():
 
     """
     return VersionManager.get_global_version_managers()
+
+
+def get_active_global_version_manager_by_title(version_manager_title):
+    """Returns active Version Manager by its title with user set to None
+
+    Args:
+        version_manager_title: Version Manager title
+
+    Returns:
+        Version Manager instance
+
+    """
+    return VersionManager.get_active_global_version_manager_by_title(version_manager_title)
+
+
+def get_version_number(version_manager, version):
+    """Returns version number from version id
+
+    Args:
+        version_manager:
+        version:
+
+    Returns:
+
+    """
+    return version_manager.get_version_number(version)
+
+
+def get_version_by_number(version_manager, version_number):
+    """Returns the version by its version number.
+
+    Args:
+        version_manager:
+        version_number: Number of the version.
+
+    Returns:
+
+    """
+    return version_manager.get_version_by_number(version_number)

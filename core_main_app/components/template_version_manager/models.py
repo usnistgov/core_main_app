@@ -59,3 +59,16 @@ class TemplateVersionManager(VersionManager):
 
         """
         return super(TemplateVersionManager, TemplateVersionManager).get_disable_version_manager_by_user_id(user_id)
+
+    @staticmethod
+    def get_all_by_version_ids(version_ids):
+        """Gets all template version managers by a list of version ids.
+
+        Args:
+            version_ids: list of version ids.
+
+        Returns:
+            List of template version managers.
+
+        """
+        return TemplateVersionManager.objects(versions__in=version_ids).all()

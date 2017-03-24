@@ -28,6 +28,18 @@ def insert(template_version_manager, template):
         raise e
 
 
+def get_by_id(template_version_manager_id):
+    """Gets a template version manager by its id
+
+    Args:
+        template_version_manager_id: Id.
+
+    Returns:
+
+    """
+    return TemplateVersionManager.get_by_id(template_version_manager_id)
+
+
 def get_global_version_managers(_cls=True):
     """Gets all global version managers of a template
 
@@ -71,3 +83,30 @@ def get_disable_version_manager_by_user_id(user_id):
 
     """
     return TemplateVersionManager.get_disable_version_manager_by_user_id(user_id)
+
+
+def get_version_number(template_version_manager, template):
+    """ Returns version number from version id.
+
+    Args:
+        template_version_manager:
+        template:
+
+    Returns:
+        Version number
+
+    """
+    return template_version_manager.get_version_number(template)
+
+
+def get_all_by_version_ids(version_ids):
+    """Gets all template version managers by a list of version ids.
+
+    Args:
+        version_ids: list of version ids.
+
+    Returns:
+        List of template version managers.
+
+    """
+    return TemplateVersionManager.get_all_by_version_ids(version_ids)

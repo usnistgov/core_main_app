@@ -77,8 +77,14 @@ class VersionManager(Document):
 
         Returns:
 
+        Raises:
+            DoesNotExist: Version does not exist.
+
         """
-        return self.versions.index(version_id) + 1
+        try:
+            return self.versions.index(str(version_id)) + 1
+        except Exception as e:
+            raise exceptions.DoesNotExist(e.message)
 
     def insert(self, version):
         """Inserts a version in the Version Manager
@@ -98,6 +104,23 @@ class VersionManager(Document):
 
         """
         return self.disabled_versions
+
+    def get_version_by_number(self, version_number):
+        """Returns the version by its version number.
+
+        Args:
+            version_number: Number of the version.
+
+        Returns:
+
+        Raises:
+            DoesNotExist: Version does not exist.
+
+        """
+        try:
+            return self.versions[version_number - 1]
+        except Exception as e:
+            raise exceptions.DoesNotExist(e.message)
 
     @staticmethod
     def get_all():
@@ -132,6 +155,24 @@ class VersionManager(Document):
         """
         try:
             return VersionManager.objects.get(pk=str(version_manager_id))
+        except mongoengine_errors.DoesNotExist as e:
+            raise exceptions.DoesNotExist(e.message)
+        except Exception as e:
+            raise exceptions.ModelError(e.message)
+
+    @staticmethod
+    def get_active_global_version_manager_by_title(version_manager_title):
+        """Returns active Version Manager by its title with user set to None
+
+        Args:
+            version_manager_title: Version Manager title
+
+        Returns:
+            Version Manager instance
+
+        """
+        try:
+            return VersionManager.objects.get(is_disabled=False, title=version_manager_title, user=None)
         except mongoengine_errors.DoesNotExist as e:
             raise exceptions.DoesNotExist(e.message)
         except Exception as e:
@@ -181,4 +222,3 @@ class VersionManager(Document):
 
         """
         return VersionManager.objects(is_disabled=True, user=str(user_id)).all()
-
