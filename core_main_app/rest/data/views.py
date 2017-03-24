@@ -8,6 +8,7 @@ from rest_framework import status
 from core_main_app.commons import exceptions
 from core_main_app.rest.data.serializers import CreateDataSerializer, DataSerializer
 import core_main_app.components.data.api as data_api
+import json
 
 
 @api_view(['GET', 'POST'])
@@ -41,7 +42,7 @@ def get_all(request):
         data_object_list = data_api.get_all()
 
         # Serialize object
-        return_value = CreateDataSerializer(data_object_list, many=True)
+        return_value = DataSerializer(data_object_list, many=True)
 
         # Return response
         return Response(return_value.data, status=status.HTTP_200_OK)
@@ -121,6 +122,44 @@ def post(request):
         return_value = DataSerializer(data)
 
         return Response(return_value.data, status=status.HTTP_201_CREATED)
+    except Exception as api_exception:
+        content = {'message': api_exception.message}
+        return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+def execute_query(request):
+    """ POST /rest/data/query
+    {
+        "query": "{\"dict_content.root.element.value\": 1}",
+    }
+
+    Args:
+        request:
+
+    Returns:
+
+    """
+    try:
+        query = request.data.get('query', None)
+        if query is None:
+            content = {'message': 'Expected parameters not provided.'}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            json_query = json.loads(query)
+        except:
+            content = {'message': 'Query format is not correct.'}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
+        # Executes query
+        data_object_list = data_api.execute_query(json_query)
+
+        # Serialize object
+        return_value = DataSerializer(data_object_list, many=True)
+
+        # Return response
+        return Response(return_value.data, status=status.HTTP_200_OK)
     except Exception as api_exception:
         content = {'message': api_exception.message}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

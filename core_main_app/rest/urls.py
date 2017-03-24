@@ -21,6 +21,9 @@ urlpatterns = [
     url(r'^data/get$', data_views.get_by_id,
         name='core_main_app_rest_data_get_by_id'),
 
+    url(r'^data/query', data_views.execute_query,
+        name='core_main_app_rest_data_execute_query'),
+
     url(r'^data', data_views.data,
         name='core_main_app_rest_data'),
 ]
