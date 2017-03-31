@@ -1,7 +1,8 @@
 """Serializers used throughout the Rest API
 """
+from core_main_app.commons.serializers import BasicSerializer
 from rest_framework_mongoengine.serializers import DocumentSerializer
-from rest_framework.serializers import Serializer, CharField
+from rest_framework.serializers import CharField
 from core_main_app.components.template.models import Template
 from core_main_app.components.template_version_manager.models import TemplateVersionManager
 
@@ -24,7 +25,7 @@ class TemplateVersionManagerSerializer(DocumentSerializer):
         fields = "__all__"
 
 
-class CreateTemplateSerializer(Serializer):
+class CreateTemplateSerializer(BasicSerializer):
     """
         Template serializer (creation)
     """
@@ -35,7 +36,7 @@ class CreateTemplateSerializer(Serializer):
         return Template(**validated_data)
 
 
-class CreateTemplateVersionManagerSerializer(Serializer):
+class CreateTemplateVersionManagerSerializer(BasicSerializer):
     """
         Template Version Manager serializer (creation)
     """
