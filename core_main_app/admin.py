@@ -16,7 +16,7 @@ admin_urls = [
     url(r'^template/versions/(?P<version_manager_id>\w+)', admin_views.manage_template_versions,
         name='core_main_app_manage_template_versions'),
 
-    url(r'^$', admin_views.admin_home, name='core_main_app_admin_home'),
+    url(r'^dashboard$', admin_views.admin_home, name='core_main_app_admin_home'),
 
 
     url(r'^template/disable', admin_ajax.disable_template,
