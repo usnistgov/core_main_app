@@ -1,0 +1,12 @@
+{% extends "core_main_app/_render/admin/theme/tools/section.html" %}
+{% load staticfiles %}
+
+{% block section_title %}Upload {{ data.object_name }}{% endblock %}
+
+{% block section_content %}
+<div class="row">
+    <div class="col-md-12">
+        {% block upload_include %}{% endblock %}
+    </div>
+</div>
+{% endblock %}

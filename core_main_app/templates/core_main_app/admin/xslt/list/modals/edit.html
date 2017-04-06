@@ -1,0 +1,19 @@
+{% extends 'core_main_app/_render/admin/theme/tools/modal.html' %}
+
+{% block modal_id %}edit-xslt-modal{% endblock %}
+{% block modal_title %}Edit XSLT{% endblock %}
+
+{% block modal_body %}
+<form id="edit-xslt-form">
+    <input id="edit-xslt-id" type="hidden" value=""/>
+    <div class="form-group">
+        <label for="edit-xslt-name">Enter new XSLT name</label>
+        <input id="edit-xslt-name" class="form-control" type="text" value="" placeholder="new_xslt_name"/>
+    </div>
+</form>
+{% endblock %}
+
+{% block modal_footer %}
+<a class="btn btn-default pull-left" data-dismiss="modal" href="#"><i class="fa fa-times"></i> Close</a>
+<a id="edit-xslt-save" class="btn btn-primary" href="#"><i class="fa fa-save"></i> Save</a>
+{% endblock %}

@@ -12,6 +12,8 @@ class XslTransformation(Document):
     filename = fields.StringField(blank=False)
     content = fields.StringField(blank=False)
 
+    meta = {'allow_inheritance': True}
+
     @staticmethod
     def get_all():
         """
@@ -37,3 +39,21 @@ class XslTransformation(Document):
             raise exceptions.DoesNotExist(e.message)
         except Exception as e:
             raise exceptions.ModelError(e.message)
+
+    @staticmethod
+    def get_by_id(xslt_id):
+        """ Get an XSLT document by its id.
+
+        Args:
+            xslt_id: Id.
+
+        Returns:
+            XslTransformation object.
+
+        """
+        try:
+            return XslTransformation.objects.get(pk=str(xslt_id))
+        except mongoengine_errors.DoesNotExist as e:
+            raise exceptions.DoesNotExist(e.message)
+        except Exception as ex:
+            raise exceptions.ModelError(ex.message)

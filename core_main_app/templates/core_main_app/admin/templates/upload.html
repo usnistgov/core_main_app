@@ -1,12 +1,3 @@
-{% extends "core_main_app/_render/admin/theme/tools/section.html" %}
-{% load staticfiles %}
+{% extends "core_main_app/admin/commons/upload/upload.html" %}
 
-{% block section_title %}Upload {{ data.object_name }}{% endblock %}
-
-{% block section_content %}
-<div class="row">
-    <div class="col-md-12">
-        {% include 'core_main_app/admin/templates/upload/base.html' %}
-    </div>
-</div>
-{% endblock %}
+{% block upload_include %}{% include 'core_main_app/admin/templates/upload/base.html' %}{% endblock %}

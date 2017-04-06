@@ -1,0 +1,13 @@
+{% extends "core_main_app/_render/admin/theme/tools/section.html" %}
+{% load staticfiles %}
+
+{% block section_title %} {{ data.object_name }}{% endblock %}
+{% block section_subtitle %}Optional description{% endblock %}
+
+{% block section_content %}
+<div class="row">
+    <div class="col-md-12">
+        {% include 'core_main_app/admin/xslt/list/table.html' %}
+    </div>
+</div>
+{% endblock %}

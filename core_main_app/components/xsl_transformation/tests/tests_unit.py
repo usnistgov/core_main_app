@@ -9,7 +9,7 @@ from core_main_app.components.xsl_transformation.models import XslTransformation
 
 class TestXslTransformationGet(TestCase):
 
-    @patch('core_main_app.components.xsl_transformation.models.XslTransformation.get_by_name')
+    @patch.object(XslTransformation, 'get_by_name')
     def test_xsl_transformation_get_return_xsl_transformation(self, mock_get_by_name):
         # Arrange
         mock_xslt = _create_mock_xsl_transformation(name="xslt_name",
@@ -24,8 +24,8 @@ class TestXslTransformationGet(TestCase):
         # Assert
         self.assertIsInstance(result, XslTransformation)
 
-    @patch('core_main_app.components.xsl_transformation.models.XslTransformation.get_by_name')
-    def test_xsl_transformation_get_throws_exception_if_object_does_not_exists(self, mock_get_by_name):
+    @patch.object(XslTransformation, 'get_by_name')
+    def test_xsl_transformation_get_raises_exception_if_object_does_not_exists(self, mock_get_by_name):
         # Arrange
         mock_unexisting_name = "unexisting_xslt_name"
         mock_get_by_name.side_effect = Exception()
@@ -35,9 +35,35 @@ class TestXslTransformationGet(TestCase):
             xsl_transformation_api.get(mock_unexisting_name)
 
 
+class TestXslTransformationGetById(TestCase):
+
+    @patch.object(XslTransformation, 'get_by_id')
+    def test_xsl_transformation_get_by_id_raises_api_error_if_does_not_exisst(self, mock_get):
+        # Arrange
+        mock_get.side_effect = exceptions.DoesNotExist('')
+
+        # Act + Assert
+        with self.assertRaises(exceptions.DoesNotExist):
+            xsl_transformation_api.get_by_id(1)
+
+    @patch.object(XslTransformation, 'get_by_id')
+    def test_xsl_transformation_get_by_id_returns_xsl_transformation(self, mock_get):
+        # Arrange
+        mock_data = _create_mock_xsl_transformation(name="xslt_name_1",
+                                                    filename="xslt_filename_1",
+                                                    content="xslt_content_1")
+        mock_get.return_value = mock_data
+
+        # Act
+        result = xsl_transformation_api.get_by_id(1)
+
+        # Assert
+        self.assertIsInstance(result, XslTransformation)
+
+
 class TestXslTransformationGetAll(TestCase):
 
-    @patch('core_main_app.components.xsl_transformation.models.XslTransformation.get_all')
+    @patch.object(XslTransformation, 'get_all')
     def test_xsl_transformation_get_all_contains_only_xsl_transformation(self, mock_get_all):
         # Arrange
         mock_xslt_1 = _create_mock_xsl_transformation(name="xslt_name_1",
@@ -59,12 +85,12 @@ class TestXslTransformationGetAll(TestCase):
 
 class TestXslTransformationUpsert(TestCase):
 
-    @patch('core_main_app.components.xsl_transformation.models.XslTransformation.save')
+    @patch.object(XslTransformation, 'save')
     def test_xsl_transformation_upsert_return_xsl_transformation(self, mock_save):
         # Arrange
         mock_name = "xslt_name"
         mock_filename = "xslt_filename"
-        mock_content = "xslt_content"
+        mock_content = "<root></root>"
 
         mock_xslt = _create_xsl_transformation(name=mock_name,
                                                filename=mock_filename,
@@ -78,10 +104,27 @@ class TestXslTransformationUpsert(TestCase):
         # Assert
         self.assertIsInstance(result, XslTransformation)
 
+    @patch.object(XslTransformation, 'save')
+    def test_xsl_transformation_upsert_raises_exception_if_not_well_formatted(self, mock_save):
+        # Arrange
+        mock_name = "xslt_name"
+        mock_filename = "xslt_filename"
+        mock_content = "bad_content"
+
+        mock_xslt = _create_xsl_transformation(name=mock_name,
+                                               filename=mock_filename,
+                                               content=mock_content)
+
+        mock_save.return_value = mock_xslt
+
+        # Act + Assert
+        with self.assertRaises(exceptions.ApiError):
+            xsl_transformation_api.upsert(mock_xslt)
+
 
 class TestXslTransform(TestCase):
 
-    @patch('core_main_app.components.xsl_transformation.models.XslTransformation.get_by_name')
+    @patch.object(XslTransformation, 'get_by_name')
     def test_xsl_transform_return_expected_string(self, mock_get_by_name):
         # Arrange
         mock_data_path = join(dirname(realpath(__file__)), "data")
@@ -111,7 +154,7 @@ class TestXslTransform(TestCase):
         self.assertNotIn("<ins>", html_diff)
         self.assertNotIn("<del>", html_diff)
 
-    @patch('core_main_app.components.xsl_transformation.models.XslTransformation.get_by_name')
+    @patch.object(XslTransformation, 'get_by_name')
     def test_xsl_transform_raise_api_error_on_encode_exception(self, mock_get_by_name):
         # Arrange
         mock_data_path = join(dirname(realpath(__file__)), "data")
@@ -131,7 +174,7 @@ class TestXslTransform(TestCase):
         with self.assertRaises(exceptions.ApiError):
             xsl_transformation_api.xsl_transform(mock_xml_data, mock_xslt.name)
 
-    @patch('core_main_app.components.xsl_transformation.models.XslTransformation.get_by_name')
+    @patch.object(XslTransformation, 'get_by_name')
     def test_xsl_transform_raise_api_error_on_malformed_xslt(self, mock_get_by_name):
         # Arrange
         mock_data_path = join(dirname(realpath(__file__)), "data")
@@ -149,7 +192,7 @@ class TestXslTransform(TestCase):
         with self.assertRaises(exceptions.ApiError):
             xsl_transformation_api.xsl_transform(mock_xml_data, mock_xslt.name)
 
-    @patch('core_main_app.components.xsl_transformation.models.XslTransformation.get_by_name')
+    @patch.object(XslTransformation, 'get_by_name')
     def test_xsl_transform_raise_api_error_on_malformed_xml(self, mock_get_by_name):
         # Arrange
         mock_data_path = join(dirname(realpath(__file__)), "data")
@@ -169,7 +212,7 @@ class TestXslTransform(TestCase):
         with self.assertRaises(exceptions.ApiError):
             xsl_transformation_api.xsl_transform(mock_xml_data, mock_xslt.name)
 
-    @patch('core_main_app.components.xsl_transformation.models.XslTransformation.get_by_name')
+    @patch.object(XslTransformation, 'get_by_name')
     @patch('core_main_app.utils.xml.xsl_transform')
     def test_xsl_transform_raise_api_error_on_other_exception(self, mock_xsl_transform, mock_get_by_name):
         # Arrange

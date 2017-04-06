@@ -1,8 +1,8 @@
 """
 Url router for the administration site
 """
-from django.contrib import admin
 from django.conf.urls import url
+from django.contrib import admin
 
 from views.admin import views as admin_views, ajax as admin_ajax
 
@@ -33,6 +33,12 @@ admin_urls = [
         name='core_main_app_resolve_dependencies'),
     url(r'^template/edit', admin_ajax.edit_template,
         name='core_main_app_edit_template'),
+
+    url(r'^xslt$', admin_views.XSLTView.as_view(), name='core_main_app_xslt'),
+    url(r'^xslt/upload$', admin_views.UploadXSLTView.as_view(), name='core_main_app_upload_xslt'),
+    url(r'^xslt/edit', admin_ajax.edit_xslt_name, name='core_main_app_edit_xslt'),
+    url(r'^xslt/delete', admin_ajax.delete_xslt, name='core_main_app_delete_xslt'),
+
 ]
 
 urls = admin.site.get_urls()

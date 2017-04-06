@@ -4,6 +4,7 @@ from django.template.context import Context
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.html import escape as html_escape
 from django.core.urlresolvers import reverse
+from django.views.generic import View
 
 from core_main_app.commons import exceptions
 from core_main_app.components.template.models import Template
@@ -12,8 +13,10 @@ from core_main_app.components.template_version_manager import api as template_ve
 from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.utils.rendering import admin_render
 from core_main_app.utils.xml import get_imports_and_includes
-from core_main_app.views.admin.forms import UploadTemplateForm, UploadVersionForm
+from core_main_app.views.admin.forms import UploadTemplateForm, UploadVersionForm, UploadXSLTForm
 from core_main_app.settings import INSTALLED_APPS
+from core_main_app.components.xsl_transformation.models import XslTransformation
+from core_main_app.components.xsl_transformation import api as xslt_transformation_api
 
 
 @staff_member_required
@@ -274,7 +277,7 @@ def _save_template(request, assets, context):
     # get the schema name
     name = request.POST['name']
     # get the file from the form
-    xsd_file = request.FILES['xsd_file']
+    xsd_file = request.FILES['upload_file']
     # read the content of the file
     xsd_data = _read_xsd_file(xsd_file)
 
@@ -398,3 +401,88 @@ def _get_dependency_resolver_html(imports, includes, xsd_data, filename):
         'dependencies': list_dependencies_html,
     })
     return dependency_resolver_template.render(context)
+
+
+class XSLTView(View):
+    """
+    Class' purpose: XSLT view.
+    """
+
+    @staticmethod
+    def get(request, *args, **kwargs):
+        modals = [
+            "core_main_app/admin/xslt/list/modals/edit.html",
+            "core_main_app/admin/xslt/list/modals/delete.html"
+        ]
+
+        assets = {
+            "js": [
+                {
+                    "path": "core_main_app/admin/js/xslt/list/modals/edit.js",
+                    "is_raw": False
+                },
+                {
+                    "path": "core_main_app/admin/js/xslt/list/modals/delete.js",
+                    "is_raw": False
+                }
+            ],
+        }
+
+        context = {
+            'object_name': 'XSLT',
+            "xslt": xslt_transformation_api.get_all(),
+            "update_url": reverse('admin:core_main_app_upload_xslt')
+        }
+
+        return admin_render(request, "core_main_app/admin/xslt/list.html", modals=modals, assets=assets,
+                            context=context)
+
+
+class UploadXSLTView(View):
+    """
+    Class' purpose: Upload XSLT view.
+    """
+    form_class = UploadXSLTForm
+    template_name = 'core_main_app/admin/xslt/upload.html'
+    object_name = 'XSLT'
+
+    def __init__(self, **kwargs):
+        super(UploadXSLTView, self).__init__(**kwargs)
+        self.context = {}
+        self.context.update({'object_name': self.object_name})
+
+    def get(self, request, *args, **kwargs):
+        self.context.update({'upload_form': self.form_class()})
+        return admin_render(request, self.template_name, context=self.context)
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, request.FILES)
+        self.context.update({'upload_form': form})
+
+        if form.is_valid():
+            return self._save_xslt(request)
+        else:
+            # Display error from the form
+            return admin_render(request, self.template_name, context=self.context)
+
+    def _save_xslt(self, request):
+        """Saves an XSLT.
+
+        Args:
+            request: Request.
+
+        """
+        try:
+            # get the XSLT name
+            name = request.POST['name']
+            # get the file from the form
+            xsd_file = request.FILES['upload_file']
+            # read the content of the file
+            xsd_data = _read_xsd_file(xsd_file)
+            xslt = XslTransformation(name=name, filename=xsd_file.name, content=xsd_data)
+            xslt_transformation_api.upsert(xslt)
+
+            return HttpResponseRedirect(reverse("admin:core_main_app_xslt"))
+        except Exception, e:
+            self.context.update({'errors': html_escape(e.message)})
+            return admin_render(request, 'core_main_app/admin/xslt/upload.html', context=self.context)

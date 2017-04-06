@@ -10,6 +10,7 @@ from core_main_app.components.template_version_manager.models import TemplateVer
 from core_main_app.components.template import api as template_api
 from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.components.template_version_manager import api as template_version_manager_api
+from core_main_app.components.xsl_transformation import api as xsl_transformation_api
 import HTMLParser
 
 
@@ -188,3 +189,40 @@ def _get_xsd_content_from_html(xsd_content):
     html_parser = HTMLParser.HTMLParser()
     xsd_content = str(html_parser.unescape(xsd_content).encode("utf-8"))
     return xsd_content
+
+
+def edit_xslt_name(request):
+    """Edit the xslt
+
+    Args:
+        request:
+
+    Returns:
+
+    """
+    try:
+        xslt = xsl_transformation_api.get_by_id(request.POST['id'])
+        xslt.name = request.POST['name']
+        xsl_transformation_api.upsert(xslt)
+    except Exception, e:
+        return HttpResponseBadRequest(e.message, content_type='application/javascript')
+
+    return HttpResponse(json.dumps({}), content_type='application/javascript')
+
+
+def delete_xslt(request):
+    """Delete the xslt.
+
+    Args:
+        request:
+
+    Returns:
+
+    """
+    try:
+        xslt = xsl_transformation_api.get_by_id(request.POST['id'])
+        xsl_transformation_api.delete(xslt)
+    except Exception, e:
+        return HttpResponseBadRequest(e.message, content_type='application/javascript')
+
+    return HttpResponse(json.dumps({}), content_type='application/javascript')

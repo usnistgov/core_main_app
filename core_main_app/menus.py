@@ -7,11 +7,20 @@ Menu.add_item(
 
 templates_children = (
     MenuItem("Template List", reverse("admin:core_main_app_templates"), icon="list"),
-    MenuItem("Upload New Template", reverse("admin:core_main_app_upload_template"), icon="upload")
+    MenuItem("Upload New Template", reverse("admin:core_main_app_upload_template"), icon="upload"),
 )
 
 Menu.add_item(
     "admin", MenuItem("TEMPLATES", None, children=templates_children)
+)
+
+xslt_children = (
+    MenuItem("XSLT List", reverse("admin:core_main_app_xslt"), icon="list"),
+    MenuItem("Upload New XSLT", reverse("admin:core_main_app_upload_xslt"), icon="upload")
+)
+
+Menu.add_item(
+    "admin", MenuItem("XSLT", None, children=xslt_children)
 )
 
 users_admin_children = (
