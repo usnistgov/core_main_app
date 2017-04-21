@@ -23,27 +23,41 @@ class MongoIntegrationBaseTestCase(TestCase):
     """
         Methods
     """
-    def setUp(self):
-        """ Open a connection to the database and insert data needed
+
+    @classmethod
+    def setUpClass(cls):
+        """ Opens a connection to the database.
 
         Returns:
 
         """
         # open an connection to a mock database
-        self.database = Database(MOCK_DATABASE_HOST, MOCK_DATABASE_NAME)
-        self.database.connect()
+        cls.database = Database(MOCK_DATABASE_HOST, MOCK_DATABASE_NAME)
+        cls.database.connect()
 
+    @classmethod
+    def tearDownClass(cls):
+        """ Disconnects the database.
+        Returns:
+
+        """
+        cls.database.disconnect()
+
+    def setUp(self):
+        """ Inserts needed data.
+
+        Returns:
+
+        """
         if self.fixture is None:
             raise CoreError("Fixtures must be initialized")
 
         self.fixture.insert_data()
 
-    # FIXME: /!\ collections are kept between tests in a same class
     def tearDown(self):
-        """ Clean the database
+        """ Cleans the database.
 
         Returns:
 
         """
         self.database.clean_database()
-        self.database = None

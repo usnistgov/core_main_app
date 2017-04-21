@@ -1,10 +1,11 @@
 """ Mongo engine database tools
 """
 from mongoengine import connect
+from mongoengine.connection import disconnect
 
 
 class Database(object):
-    """ Represent Database
+    """ Represents a Database
     """
 
     def __init__(self, host, name):
@@ -19,7 +20,7 @@ class Database(object):
         self.database = None
 
     def connect(self):
-        """ Open an connection to the database
+        """ Opens a connection to the database.
 
         Returns:
             the database connection created
@@ -27,13 +28,22 @@ class Database(object):
         self.database = connect(self.database_name, host=self.database_host)
         return self.database
 
+    def disconnect(self):
+        """ Closes the connection.
+        """
+        disconnect(self.database)
+
     def clean_database(self):
-        """ Drop the database
+        """ Clears all collections of the database.
 
-                Returns:
+        Returns:
 
-                """
-        # clear the mock database for the next test
-        if self.database is not None:
-            self.database.drop_database(self.database_name)
-        self.database = None
+        """
+        # Clear the database for the next test
+        if self.database[self.database_name] is not None:
+            # Clear all collections
+            for collection in self.database[self.database_name].collection_names():
+                if collection != 'system.indexes':
+                    # WARNING: Do not drop the collection but clear it. Drop collection with mongomock is not well
+                    # supported. Please see https://github.com/mongomock/mongomock/issues/238
+                    self.database[self.database_name].get_collection(collection).delete_many({})
