@@ -217,16 +217,19 @@ def update_dependencies(xsd_string, dependencies):
 
 
 def _check_core_support(xsd_string):
+    """Checks that the format of the the schema is supported by the current version of the Core
+
+    Args:
+        xsd_string:
+
+    Returns:
+
     """
-        Check that the format of the the schema is supported by the current version of the Core
-        :param xsd_string:
-        :return:
-    """
+    # list of errors
     errors = []
 
+    # build xsd tree
     xsd_tree = XSDTree.build_tree(xsd_string)
-
-    # General Tests
 
     # get the imports
     imports = xsd_tree.findall("{}import".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE))
@@ -244,13 +247,6 @@ def _check_core_support(xsd_string):
                 errors.append("The attribute schemaLocation of include is required but missing.")
             elif ' ' in el_include.attrib['schemaLocation']:
                 errors.append("The use of namespace in include elements is not supported.")
-
-    # TargetNamespace test
-    root = xsd_tree.getroot()
-    if 'targetNamespace' in root.attrib:
-        target_namespace = root.attrib['targetNamespace']
-        if target_namespace not in root.nsmap.values():
-            errors.append("The use of a targetNamespace without an associated prefix is not supported.")
 
     return errors
 
