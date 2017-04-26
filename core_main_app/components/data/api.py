@@ -8,6 +8,7 @@ from core_main_app import settings
 import core_main_app.commons.exceptions as exceptions
 
 
+# FIXME: don't pass the data_id but the actual object
 def set_publish(data_id, published):
     """ Publish or unpublish data object with the given id
 
@@ -141,3 +142,15 @@ def execute_query(query):
 
     """
     return Data.execute_query(query)
+
+
+def delete(data):
+    """ Deletes a data
+
+    Args:
+        data:
+
+    Returns:
+
+    """
+    data.delete()
