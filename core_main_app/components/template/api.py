@@ -33,7 +33,7 @@ def init_template_with_dependencies(template, dependencies_dict):
         # update template content
         template.content = get_template_with_server_dependencies(template.content, dependencies_dict)
         # set the dependencies
-        template.dependencies = dependencies_dict.values()
+        template.dependencies = [get(template_id) for template_id in dependencies_dict.values()]
 
     return template
 
