@@ -11,11 +11,3 @@ default_group = "default"
 api_content_type = "api"
 api_access = "api_access"
 
-
-def get_description(right):
-    """ Return the description of a specific right
-
-    :param right:
-    :return:
-    """
-    return "Can " + right.replace("_", " ")

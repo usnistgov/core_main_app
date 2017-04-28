@@ -21,7 +21,8 @@ def has_perm(user, permission):
     """
     try:
         permission_split = permission.split('.')
-        permission_name = getattr(RIGHTS, permission_split[1])
+        permission_name = permission_split[1]
+
         if user.is_anonymous():
             # We can give directly the permission name
             access = group_api.get_by_name_and_permission(name=RIGHTS.anonymous_group,
