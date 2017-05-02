@@ -49,40 +49,40 @@ def get_global_version_managers(_cls=True):
     return TemplateVersionManager.get_global_version_managers(_cls)
 
 
-def get_active_global_version_manager():
+def get_active_global_version_manager(_cls=True):
     """ Returns all active Version Managers with user set to None
 
     Returns:
 
     """
-    return TemplateVersionManager.get_active_global_version_manager()
+    return TemplateVersionManager.get_active_global_version_manager(_cls)
 
 
-def get_disable_global_version_manager():
+def get_disable_global_version_manager(_cls=True):
     """ Returns all disabled Version Managers with user set to None
 
     Returns:
 
     """
-    return TemplateVersionManager.get_disable_global_version_manager()
+    return TemplateVersionManager.get_disable_global_version_manager(_cls)
 
 
-def get_active_version_manager_by_user_id(user_id):
+def get_active_version_manager_by_user_id(user_id, _cls=True):
     """ Returns all active Version Managers with given user id
 
     Returns:
 
     """
-    return TemplateVersionManager.get_active_version_manager_by_user_id(user_id)
+    return TemplateVersionManager.get_active_version_manager_by_user_id(user_id, _cls)
 
 
-def get_disable_version_manager_by_user_id(user_id):
+def get_disable_version_manager_by_user_id(user_id, _cls=True):
     """ Returns all disabled Version Managers with given user id
 
     Returns:
 
     """
-    return TemplateVersionManager.get_disable_version_manager_by_user_id(user_id)
+    return TemplateVersionManager.get_disable_version_manager_by_user_id(user_id, _cls)
 
 
 def get_version_number(template_version_manager, template):

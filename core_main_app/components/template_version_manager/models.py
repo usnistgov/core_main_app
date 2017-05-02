@@ -14,51 +14,58 @@ class TemplateVersionManager(VersionManager):
         Returns:
             _cls: if True, restricts to TemplateVersionManager _cls
         """
+        queryset = [vm for vm in TemplateVersionManager.objects().all() if vm.user is None]
         if _cls:
-            return [vm for vm in TemplateVersionManager.objects(_cls="VersionManager.TemplateVersionManager")
-                .all() if vm.user is None]
-        else:
-            return [vm for vm in TemplateVersionManager.objects().all() if vm.user is None]
+            return TemplateVersionManager._filter_by_cls(queryset)
+        return queryset
 
-    # FIXME: do not query on all Version Managers
     @staticmethod
-    def get_active_global_version_manager():
+    def get_active_global_version_manager(_cls=True):
         """ Returns all active Version Managers with user set to None
 
         Returns:
 
         """
-        return super(TemplateVersionManager, TemplateVersionManager).get_active_global_version_manager()
+        queryset = super(TemplateVersionManager, TemplateVersionManager).get_active_global_version_manager()
+        if _cls:
+            return TemplateVersionManager._filter_by_cls(queryset)
+        return queryset
 
-    # FIXME: do not query on all Version Managers
     @staticmethod
-    def get_disable_global_version_manager():
+    def get_disable_global_version_manager(_cls=True):
         """ Returns all disabled Version Managers with user set to None
 
         Returns:
 
         """
-        return super(TemplateVersionManager, TemplateVersionManager).get_disable_global_version_manager()
+        queryset = super(TemplateVersionManager, TemplateVersionManager).get_disable_global_version_manager()
+        if _cls:
+            return TemplateVersionManager._filter_by_cls(queryset)
+        return queryset
 
-    # FIXME: do not query on all Version Managers
     @staticmethod
-    def get_active_version_manager_by_user_id(user_id):
+    def get_active_version_manager_by_user_id(user_id, _cls=True):
         """ Returns all active Version Managers with given user id
 
         Returns:
 
         """
-        return super(TemplateVersionManager, TemplateVersionManager).get_active_version_manager_by_user_id(user_id)
+        queryset = super(TemplateVersionManager, TemplateVersionManager).get_active_version_manager_by_user_id(user_id)
+        if _cls:
+            return TemplateVersionManager._filter_by_cls(queryset)
+        return queryset
 
-    # FIXME: do not query on all Version Managers
     @staticmethod
-    def get_disable_version_manager_by_user_id(user_id):
+    def get_disable_version_manager_by_user_id(user_id, _cls=True):
         """ Returns all disabled Version Managers with given user id
 
         Returns:
 
         """
-        return super(TemplateVersionManager, TemplateVersionManager).get_disable_version_manager_by_user_id(user_id)
+        queryset = super(TemplateVersionManager, TemplateVersionManager).get_disable_version_manager_by_user_id(user_id)
+        if _cls:
+            return TemplateVersionManager._filter_by_cls(queryset)
+        return queryset
 
     @staticmethod
     def get_all_by_version_ids(version_ids):
@@ -72,3 +79,15 @@ class TemplateVersionManager(VersionManager):
 
         """
         return TemplateVersionManager.objects(versions__in=version_ids).all()
+
+    @staticmethod
+    def _filter_by_cls(queryset):
+        """
+
+        Args:
+            queryset:
+
+        Returns:
+
+        """
+        return [record for record in queryset if record['_cls'] == 'VersionManager.TemplateVersionManager']

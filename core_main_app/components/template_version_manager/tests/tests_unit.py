@@ -141,8 +141,8 @@ class TestTemplateVersionManagerGetActiveGlobalVersions(TestCase):
     def test_get_active_global_version_managers_returns_templates_not_disable(self,
                                                                               mock_get_active_global_version_managers):
         # Arrange
-        mock_template1 = _create_mock_template()
-        mock_template2 = _create_mock_template()
+        mock_template1 = _create_template_version_manager("test1")
+        mock_template2 = _create_template_version_manager("test2")
 
         mock_get_active_global_version_managers.return_value = [mock_template1, mock_template2]
 
@@ -155,13 +155,13 @@ class TestTemplateVersionManagerGetActiveGlobalVersions(TestCase):
 class TestTemplateVersionManagerGetActiveGlobalVersionsByUserId(TestCase):
 
     @patch('core_main_app.components.version_manager.models.VersionManager.get_active_version_manager_by_user_id')
-    def test_get_active_global_version_managers_by_user_id_returns_templates_not_disable_with_giver_user_id(
+    def test_get_active_global_version_managers_by_user_id_returns_templates_not_disable_with_given_user_id(
                                                                             self,
                                                                             mock_get_active_global_version_managers):
         # Arrange
-        user_id = 10
-        mock_template1 = _create_mock_template(user_id=user_id)
-        mock_template2 = _create_mock_template(user_id=user_id)
+        user_id = "10"
+        mock_template1 = _create_template_version_manager(user_id=user_id)
+        mock_template2 = _create_template_version_manager(user_id=user_id)
 
         mock_get_active_global_version_managers.return_value = [mock_template1, mock_template2]
 
@@ -177,8 +177,8 @@ class TestTemplateVersionManagerGetDisableGlobalVersions(TestCase):
     def test_get_disable_global_version_managers_returns_templates_disabled(self,
                                                                             mock_get_disable_global_version_managers):
         # Arrange
-        mock_template1 = _create_mock_template(mock_is_disable=True)
-        mock_template2 = _create_mock_template(mock_is_disable=True)
+        mock_template1 = _create_template_version_manager(is_disabled=True)
+        mock_template2 = _create_template_version_manager(is_disabled=True)
 
         mock_get_disable_global_version_managers.return_value = [mock_template1, mock_template2]
 
@@ -195,9 +195,9 @@ class TestTemplateVersionManagerGetDisableGlobalVersionsByUserId(TestCase):
                                                                             self,
                                                                             mock_get_disable_global_version_managers):
         # Arrange
-        user_id = 10
-        mock_template1 = _create_mock_template(mock_is_disable=True, user_id=user_id)
-        mock_template2 = _create_mock_template(mock_is_disable=True, user_id=user_id)
+        user_id = "10"
+        mock_template1 = _create_template_version_manager(is_disabled=True, user_id=user_id)
+        mock_template2 = _create_template_version_manager(is_disabled=True, user_id=user_id)
 
         mock_get_disable_global_version_managers.return_value = [mock_template1, mock_template2]
 
@@ -225,7 +225,7 @@ class TestTemplateVersionManagerGetAllByVersionIds(TestCase):
         self.assertTrue(all(isinstance(item, TemplateVersionManager) for item in result))
 
 
-def _create_mock_template(mock_template_filename="", mock_template_content="", mock_is_disable=False, user_id=""):
+def _create_mock_template(mock_template_filename="", mock_template_content=""):
     """
     Returns a mock template
     :param mock_template_filename:
@@ -236,21 +236,24 @@ def _create_mock_template(mock_template_filename="", mock_template_content="", m
     mock_template.filename = mock_template_filename
     mock_template.content = mock_template_content
     mock_template.id = ObjectId()
-    mock_template.is_disabled = mock_is_disable
-    mock_template.user = str(user_id)
     return mock_template
 
 
-def _create_mock_template_version_manager(title="", versions=[]):
+def _create_mock_template_version_manager(title="", versions=None, is_disabled=False, user_id=""):
     """
     Returns a mock template version manager
     :return:
     """
+    if versions is None:
+        versions = []
     mock_template_version_manager = Mock(spec=TemplateVersionManager)
     mock_template_version_manager.title = title
     mock_template_version_manager.id = ObjectId()
     mock_template_version_manager.versions = versions
     mock_template_version_manager.disabled_versions = []
+    mock_template_version_manager.is_disabled = is_disabled
+    mock_template_version_manager.user = str(user_id)
+    mock_template_version_manager._cls = 'VersionManager.TemplateVersionManager'
     return mock_template_version_manager
 
 
@@ -268,7 +271,7 @@ def _create_template(filename="", content=""):
     )
 
 
-def _create_template_version_manager(title=""):
+def _create_template_version_manager(title="", is_disabled=False, user_id=""):
     """
     Returns a templates version manager
     :param title:
@@ -278,5 +281,8 @@ def _create_template_version_manager(title=""):
         id=ObjectId(),
         title=title,
         versions=[],
-        disabled_versions=[]
+        user=user_id,
+        is_disabled=is_disabled,
+        disabled_versions=[],
+        _cls='VersionManager.TemplateVersionManager'
     )
