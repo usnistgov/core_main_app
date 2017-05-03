@@ -53,3 +53,15 @@ class Template(Document):
 
         """
         return Template.objects(hash=template_hash).all()
+
+    @staticmethod
+    def get_all_by_id_list(template_id_list):
+        """ Returns all template with id in list
+
+        Args:
+            template_id_list:
+
+        Returns:
+
+        """
+        return Template.objects(pk__in=template_id_list)

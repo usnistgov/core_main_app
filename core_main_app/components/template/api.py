@@ -63,6 +63,18 @@ def get_all_by_hash(template_hash):
     return Template.get_all_by_hash(template_hash)
 
 
+def get_all_by_id_list(template_id_list):
+    """ Returns all template with id in list
+
+    Args:
+        template_id_list:
+
+    Returns:
+
+    """
+    return Template.get_all_by_id_list(template_id_list)
+
+
 def get_all():
     """Lists all templates
 
