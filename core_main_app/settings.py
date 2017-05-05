@@ -17,6 +17,9 @@ WEBSITE_ADMIN_COLOR = getattr(settings, 'WEBSITE_ADMIN_COLOR', "yellow")
 # XML
 XERCES_VALIDATION = getattr(settings, 'XERCES_VALIDATION', False)
 
+# GridFS
+GRIDFS_DATA_COLLECTION = getattr(settings, 'GRIDFS_DATA_COLLECTION', 'fs_data')
+
 # Celery configuration
 USE_BACKGROUND_TASK = getattr(settings, 'USE_BACKGROUND_TASK', False)
 BROKER_URL = getattr(settings, 'BROKER_URL', 'redis://localhost:6379/0')

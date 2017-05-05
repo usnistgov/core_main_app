@@ -1,5 +1,6 @@
 """ REST views for the data API
 """
+from core_main_app.components.data.models import Data
 from rest_framework.decorators import api_view
 from core_main_app.components.template import api as template_api
 from rest_framework.response import Response
@@ -22,13 +23,12 @@ def data(request):
 
     """
     if request.method == 'GET':
-        return get_all(request)
+        return _get_all(request)
     elif request.method == 'POST':
-        return post(request)
+        return _post(request)
 
 
-@api_view(['GET'])
-def get_all(request):
+def _get_all(request):
     """
 
     Args:
@@ -88,14 +88,13 @@ def get_by_id(request):
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(['POST'])
-def post(request):
+def _post(request):
     """ POST /rest/data
     {
         "template": "588a728a7179c72131ec11ae",
         "user_id": "1",
         "title": "title",
-        "xml_file": "<root>1</root>"
+        "xml_content": "<root>1</root>"
     }
 
     Args:
@@ -111,15 +110,25 @@ def post(request):
         # Validate data
         data_serializer.is_valid(True)
 
-        # Deserialize object
-        data = data_serializer.create(data_serializer.data)
-        data.template = template_api.get(request.data['template'])
+        # Get template
+        template = template_api.get(request.data['template'])
 
+        # Create object
+        data_object = Data(
+            template=template,
+            title=data_serializer.data['title'],
+            user_id=data_serializer.data['user_id'],
+            is_published=data_serializer.data['is_published'],
+            publication_date=data_serializer.data['publication_date'],
+            last_modification_date=data_serializer.data['last_modification_date'],
+        )
+        # Set xml content
+        data_object.xml_content = data_serializer.data['xml_content']
         # Upsert the data
-        data_api.upsert(data)
+        data_api.upsert(data_object)
 
-        # Returns the serialized template
-        return_value = DataSerializer(data)
+        # Return the serialized template
+        return_value = DataSerializer(data_object)
 
         return Response(return_value.data, status=status.HTTP_201_CREATED)
     except Exception as api_exception:

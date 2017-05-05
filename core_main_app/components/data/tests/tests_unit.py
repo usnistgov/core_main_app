@@ -14,8 +14,8 @@ class TestDataGetAll(TestCase):
     @patch.object(Data, 'get_all')
     def test_data_get_all_return_collection_of_data(self, mock_list):
         # Arrange
-        mock_data_1 = Data(_get_template(), '3', title='title_1', xml_file="")
-        mock_data_2 = Data(_get_template(), '1', title='title_2', xml_file="")
+        mock_data_1 = _create_data(_get_template(), user_id='3', title='title_1', content="")
+        mock_data_2 = _create_data(_get_template(), user_id='1', title='title_2', content="")
         mock_list.return_value = [mock_data_1, mock_data_2]
         # Act
         result = data_api.get_all()
@@ -50,8 +50,8 @@ class TestDataGetAllByUser(TestCase):
     def test_data_get_all_by_user_return_collection_of_data_from_user(self, mock_list_by_user_id):
         # Arrange
         user_id = '2'
-        mock_data_1 = Data(_get_template(), user_id, title='title_1', xml_file="")
-        mock_data_2 = Data(_get_template(), user_id, title='title_2', xml_file="")
+        mock_data_1 = _create_data(_get_template(), user_id=user_id, title='title_1', content="")
+        mock_data_2 = _create_data(_get_template(), user_id=user_id, title='title_2', content="")
         mock_list_by_user_id.return_value = [mock_data_1, mock_data_2]
         # Act
         result = data_api.get_all_by_user_id(user_id)
@@ -65,8 +65,8 @@ class TestDataGetAllExceptUser(TestCase):
     def test_data_get_all_except_user_return_collection_of_data_where_user_is_not_owner(self, mock_list_except_user_id):
         # Arrange
         user_id = '2'
-        mock_data_1 = Data(_get_template(), '3', title='title_1', xml_file="")
-        mock_data_2 = Data(_get_template(), '1', title='title_2', xml_file="")
+        mock_data_1 = _create_data(_get_template(), user_id='3', title='title_1', content="")
+        mock_data_2 = _create_data(_get_template(), user_id='1', title='title_2', content="")
         mock_list_except_user_id.return_value = [mock_data_1, mock_data_2]
         # Act
         result = data_api.get_all_except_user_id(user_id)
@@ -79,8 +79,8 @@ class TestDataGetAllByIdList(TestCase):
     @patch.object(Data, 'get_all_by_id_list')
     def test_data_get_all_by_id_list_return_collection_of_data(self, mock_list_by_id_list):
         # Arrange
-        mock_data_1 = Data(_get_template(), '3', title='title_1', xml_file="")
-        mock_data_2 = Data(_get_template(), '1', title='title_2', xml_file="")
+        mock_data_1 = _create_data(_get_template(), user_id='3', title='title_1', content="")
+        mock_data_2 = _create_data(_get_template(), user_id='1', title='title_2', content="")
         mock_list_by_id_list.return_value = [mock_data_1, mock_data_2]
         # Act
         result = data_api.get_all_by_id_list([1, 2])
@@ -90,7 +90,7 @@ class TestDataGetAllByIdList(TestCase):
     @patch.object(Data, 'get_all_by_id_list')
     def test_data_get_all_by_id_list_return_collection_of_distinct_data_by_template(self, mock_list_by_id_list):
         # Arrange
-        mock_data_1 = Data(_get_template(), '2', title='title_1', xml_file="")
+        mock_data_1 = _create_data(_get_template(), user_id='2', title='title_1', content="")
         mock_list_by_id_list.return_value = [mock_data_1]
         # Act
         result = data_api.get_all_by_id_list([1], 'template_id')
@@ -101,54 +101,64 @@ class TestDataGetAllByIdList(TestCase):
 
 class TestDataUpsert(TestCase):
 
+    @patch.object(Data, 'convert_to_file')
     @patch.object(data_api, 'check_xml_file_is_valid')
     @patch.object(Data, 'save')
     def test_data_upsert_return_data_with_new_title_if_is_called_with_only_title_modified(self, mock_save,
-                                                                                          mock_check):
+                                                                                          mock_check,
+                                                                                          mock_convert_file):
         # Arrange
-        data = Data(_get_template(), '2', title='new_title', xml_file='<tag></tag>')
+        data = _create_data(_get_template(), user_id='2', title='new_title', content='<tag></tag>')
         mock_save.return_value = data
         mock_check.return_value = None
+        mock_convert_file.return_value = None
         # Act
         result = data_api.upsert(data)
         # Assert
         self.assertEqual('new_title', result.title)
 
+    @patch.object(Data, 'convert_to_file')
     @patch.object(data_api, 'check_xml_file_is_valid')
     @patch.object(Data, 'save')
     def test_data_upsert_return_data_with_new_user_id_if_is_called_with_only_user_id_modified(self, mock_save,
-                                                                                              mock_check):
+                                                                                              mock_check,
+                                                                                              mock_convert_file):
         # Arrange
-        data = Data(_get_template(), '3', title='new_title', xml_file='<tag></tag>')
+        data = _create_data(_get_template(), user_id='3', title='new_title', content='<tag></tag>')
         mock_save.return_value = data
         mock_check.return_value = None
+        mock_convert_file.return_value = None
         # Act
         result = data_api.upsert(data)
         # Assert
         self.assertEqual('3', result.user_id)
 
+    @patch.object(Data, 'convert_to_file')
     @patch.object(data_api, 'check_xml_file_is_valid')
     @patch.object(Data, 'save')
     def test_data_upsert_return_data_with_new_xml_if_is_called_with_only_xml_modified(self, mock_save,
-                                                                                      mock_check):
+                                                                                      mock_check, mock_convert_file):
         # Arrange
         xml = '<new_tag></new_tag>'
-        data = Data(_get_template(), '3', title='title', xml_file=xml)
+        data = _create_data(_get_template(), user_id='3', title='title', content=xml)
         mock_save.return_value = data
         mock_check.return_value = None
+        mock_convert_file.return_value = None
         # Act
         result = data_api.upsert(data)
         # Assert
-        self.assertEqual(xml, result.xml_file)
+        self.assertEqual(xml, result.xml_content)
 
+    @patch.object(Data, 'convert_to_file')
     @patch.object(data_api, 'check_xml_file_is_valid')
     @patch.object(Data, 'save')
     def test_data_upsert_return_data_with_last_modification_date(self, mock_save,
-                                                                 mock_check):
+                                                                 mock_check, mock_convert_file):
         # Arrange
-        data = Data(_get_template(), '3', title='title', xml_file='<tag></tag>')
+        data = _create_data(_get_template(), user_id='3', title='title', content='<tag></tag>')
         mock_save.return_value = data
         mock_check.return_value = None
+        mock_convert_file.return_value = None
         # Act
         result = data_api.upsert(data)
         # Assert
@@ -156,7 +166,7 @@ class TestDataUpsert(TestCase):
 
     def test_data_upsert_raises_xml_error_if_failed_during_xml_validation(self):
         # Arrange
-        data = Data(None, '3', title='title', xml_file='')
+        data = _create_data(None, user_id='3', title='title', content='')
         # Act # Assert
         with self.assertRaises(exceptions.XMLError):
             data_api.upsert(data)
@@ -165,7 +175,7 @@ class TestDataUpsert(TestCase):
         # Arrange
         template = _get_template()
         template.content += "<"
-        data = Data(template, '3', title='title', xml_file='<new_tag></new_tag>')
+        data = _create_data(template, user_id='3', title='title', content='<new_tag></new_tag>')
         # Act # Assert
         with self.assertRaises(exceptions.XSDError):
             data_api.upsert(data)
@@ -173,7 +183,7 @@ class TestDataUpsert(TestCase):
     def test_data_upsert_raises_xml_error_if_failed_during_validation(self):
         # Arrange
         template = _get_template()
-        data = Data(template, '3', title='title', xml_file='<new_tag></new_tag>')
+        data = _create_data(template, user_id='3', title='title', content='<new_tag></new_tag>')
         # Act # Assert
         with self.assertRaises(exceptions.XMLError):
             data_api.upsert(data)
@@ -183,7 +193,7 @@ class TestDataCheckXmlFileIsValid(TestCase):
 
     def test_data_check_xml_file_is_valid_raises_xml_error_if_failed_during_xml_validation(self):
         # Arrange
-        data = Data(None, '3', title='title', xml_file='')
+        data = _create_data(None, user_id='3', title='title', content='')
         # Act # Assert
         with self.assertRaises(exceptions.XMLError):
             data_api.check_xml_file_is_valid(data)
@@ -192,7 +202,7 @@ class TestDataCheckXmlFileIsValid(TestCase):
         # Arrange
         template = _get_template()
         template.content += "<"
-        data = Data(template, '3', title='title', xml_file='<new_tag></new_tag>')
+        data = _create_data(template, user_id='3', title='title', content='<new_tag></new_tag>')
         # Act # Assert
         with self.assertRaises(exceptions.XSDError):
             data_api.check_xml_file_is_valid(data)
@@ -200,7 +210,7 @@ class TestDataCheckXmlFileIsValid(TestCase):
     def test_data_check_xml_file_is_valid_raises_xml_error_if_failed_during_validation(self):
         # Arrange
         template = _get_template()
-        data = Data(template, '3', title='title', xml_file='<new_tag></new_tag>')
+        data = _create_data(template, user_id='3', title='title', content='<new_tag></new_tag>')
         # Act # Assert
         with self.assertRaises(exceptions.XMLError):
             data_api.check_xml_file_is_valid(data)
@@ -208,7 +218,7 @@ class TestDataCheckXmlFileIsValid(TestCase):
     def test_data_check_xml_data_valid_return_true_if_validation_success(self):
         # Arrange
         template = _get_template()
-        data = Data(template, '3', title='title', xml_file='<tag>toto</tag>')
+        data = _create_data(template, user_id='3', title='title', content='<tag>toto</tag>')
         # Act
         result = data_api.check_xml_file_is_valid(data)
         # Assert
@@ -221,8 +231,8 @@ class TestDataQueryFullText(TestCase):
     def test_data_execute_full_text_query_return_collection(self, mock_execute):
         # Arrange
         template = _get_template()
-        mock_data_1 = Data(template, '2', title='title_1', xml_file="")
-        mock_data_2 = Data(template, '2', title='title_2', xml_file="")
+        mock_data_1 = _create_data(template, user_id='2', title='title_1', content="")
+        mock_data_2 = _create_data(template, user_id='2', title='title_2', content="")
         mock_execute.return_value = [mock_data_1, mock_data_2]
         # Act
         result = data_api.query_full_text('', '1')
@@ -296,6 +306,7 @@ class TestSetPublish(TestCase):
         # Check update
         self.assertIsNone(data.publication_date)
 
+
 def _get_template():
     template = Template()
     template.id_field = 1
@@ -303,3 +314,11 @@ def _get_template():
           '<xs:element name="tag"></xs:element></xs:schema>'
     template.content = xsd
     return template
+
+
+def _create_data(template, user_id, title, content):
+    data = Data(template=template,
+                user_id=user_id,
+                title=title)
+    data.xml_content = content
+    return data

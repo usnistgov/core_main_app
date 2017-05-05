@@ -1,5 +1,7 @@
 """ Data model
 """
+from io import BytesIO
+
 from core_main_app.commons import exceptions
 from core_main_app.components.template.models import Template
 from mongoengine import errors as mongoengine_errors
@@ -7,8 +9,7 @@ from core_main_app.utils import xml as xml_utils
 from django_mongoengine import fields, Document
 
 from core_main_app.utils.databases.pymongo_database import get_full_text_query
-from core_main_app.settings import DATA_AUTO_PUBLISH
-COLLECTION_NAME = 'data'
+from core_main_app.settings import DATA_AUTO_PUBLISH, GRIDFS_DATA_COLLECTION
 
 # TODO: Create publication workflow manager
 # TODO: execute_query / execute_query_full_result -> use find method (RETURN FULL OBJECT)
@@ -20,15 +21,42 @@ COLLECTION_NAME = 'data'
 class Data(Document):
     """ Represents Data object
     """
-
     template = fields.ReferenceField(Template)
     user_id = fields.StringField()
     dict_content = fields.DictField(blank=True)
-    title = fields.StringField()
-    xml_file = fields.StringField()
+    title = fields.StringField(blank=False)
+    xml_file = fields.FileField(blank=False, collection_name=GRIDFS_DATA_COLLECTION)
     is_published = fields.BooleanField(blank=True, default=DATA_AUTO_PUBLISH)
     publication_date = fields.DateTimeField(blank=True, default=None)
     last_modification_date = fields.DateTimeField(blank=True, default=None)
+
+    _xml_content = None
+
+    @property
+    def xml_content(self):
+        """Gets xml content - read from a saved file
+
+        Returns:
+
+        """
+        # private field xml_content not set yet, and reference to xml_file to read is set
+        if self._xml_content is None and self.xml_file is not None:
+            # read xml file into xml_content field
+            self._xml_content = self.xml_file.read()
+        # return xml content
+        return self._xml_content
+
+    @xml_content.setter
+    def xml_content(self, value):
+        """Sets xml content - to be saved as a file
+
+        Args:
+            value:
+
+        Returns:
+
+        """
+        self._xml_content = value
 
     def convert_and_save(self):
         """ Save Data object and convert the xml to dict if needed
@@ -37,15 +65,36 @@ class Data(Document):
 
         """
         self.convert_to_dict()
+        self.convert_to_file()
+
         return self.save()
 
     def convert_to_dict(self):
-        """ Convert the xml contained in xml_file to Dict
+        """ Converts the xml contained in xml_content into a dictionary
 
         Returns:
 
         """
-        self.dict_content = xml_utils.raw_xml_to_dict(self.xml_file, xml_utils.post_processor)
+        self.dict_content = xml_utils.raw_xml_to_dict(self.xml_content, xml_utils.post_processor)
+
+    def convert_to_file(self):
+        """ Converts the xml string into a file
+
+        Returns:
+
+        """
+        try:
+            xml_file = BytesIO(self.xml_content.encode('utf-8'))
+        except Exception:
+            xml_file = BytesIO(self.xml_content)
+
+        if self.xml_file.grid_id is None:
+            # new file
+            self.xml_file.put(xml_file, content_type="application/xml")
+        else:
+            # editing
+            # self.xml_file gets a new id
+            self.xml_file.replace(xml_file, content_type="application/xml")
 
     @staticmethod
     def get_all():

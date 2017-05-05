@@ -1,7 +1,8 @@
 """Serializers used throughout the data Rest API
 """
+from core_main_app.settings import DATA_AUTO_PUBLISH
 from rest_framework_mongoengine.serializers import DocumentSerializer
-from rest_framework.serializers import Serializer, CharField, BooleanField, DateTimeField, OrderedDict
+from rest_framework.serializers import Serializer, CharField, BooleanField, DateTimeField
 from core_main_app.components.data.models import Data
 
 
@@ -12,7 +13,13 @@ class DataSerializer(DocumentSerializer):
         """ Meta
         """
         model = Data
-        fields = "__all__"
+        fields = ["template",
+                  "user_id",
+                  "title",
+                  "xml_content",
+                  "is_published",
+                  "publication_date",
+                  "last_modification_date"]
 
 
 class CreateDataSerializer(Serializer):
@@ -20,19 +27,9 @@ class CreateDataSerializer(Serializer):
     """
     template = CharField()
     user_id = CharField()
-    dict_content = OrderedDict(required=False)
     title = CharField()
-    xml_file = CharField()
-    is_published = BooleanField(required=False)
-    publication_date = DateTimeField(required=False)
-    last_modification_date = DateTimeField(required=False)
+    xml_content = CharField()
+    is_published = BooleanField(required=False, default=DATA_AUTO_PUBLISH)
+    publication_date = DateTimeField(required=False, default=None)
+    last_modification_date = DateTimeField(required=False, default=None)
 
-    def create(self, validated_data):
-        """
-        Args:
-            validated_data:
-
-        Returns:
-
-        """
-        return Data(**validated_data)

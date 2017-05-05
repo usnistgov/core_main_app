@@ -87,6 +87,9 @@ def upsert(data):
     Returns:
 
     """
+    if data.xml_content is None:
+        raise exceptions.ApiError("Unable to save data: xml_content field is not set.")
+
     data.last_modification_date = datetime.datetime.now()
     check_xml_file_is_valid(data)
     return data.convert_and_save()
@@ -116,7 +119,7 @@ def check_xml_file_is_valid(data):
     template = data.template
 
     try:
-        xml_tree = XSDTree.build_tree(data.xml_file)
+        xml_tree = XSDTree.build_tree(data.xml_content)
     except Exception as e:
         raise exceptions.XMLError(e.message)
 

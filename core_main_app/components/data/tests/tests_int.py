@@ -5,10 +5,12 @@ from core_main_app.components.data.tests.fixtures.fixtures import DataFixtures
 from core_main_app.components.data.models import Data
 from core_main_app.commons import exceptions
 from bson.objectid import ObjectId
+import unittest
 
 fixture_data = DataFixtures()
 
 
+@unittest.skip("GridFS not supported by mongomock")
 class TestDataGetAll(MongoIntegrationBaseTestCase):
 
     fixture = fixture_data
@@ -26,6 +28,7 @@ class TestDataGetAll(MongoIntegrationBaseTestCase):
         self.assertTrue(len(self.fixture.data_collection) == len(result))
 
 
+@unittest.skip("GridFS not supported by mongomock")
 class TestDataGetById(MongoIntegrationBaseTestCase):
 
     fixture = fixture_data
@@ -42,6 +45,7 @@ class TestDataGetById(MongoIntegrationBaseTestCase):
         self.assertEqual(result, self.fixture.data_1)
 
 
+@unittest.skip("GridFS not supported by mongomock")
 class TestDataGetAllByUserId(MongoIntegrationBaseTestCase):
 
     fixture = fixture_data
@@ -63,6 +67,7 @@ class TestDataGetAllByUserId(MongoIntegrationBaseTestCase):
         self.assertTrue(len(result) == 0)
 
 
+@unittest.skip("GridFS not supported by mongomock")
 class TestDataGetAllExceptUserId(MongoIntegrationBaseTestCase):
 
     fixture = fixture_data
