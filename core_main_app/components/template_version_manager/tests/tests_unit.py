@@ -121,7 +121,8 @@ class TestTemplateVersionManagerAddVersion(TestCase):
 
 class TestTemplateVersionManagerGetGlobalVersions(TestCase):
 
-    @patch('core_main_app.components.version_manager.models.VersionManager.get_global_version_managers')
+    @patch('core_main_app.components.template_version_manager.models.TemplateVersionManager.'
+           'get_global_version_managers')
     def test_get_global_version_managers_returns_templates(self, mock_get_global_version_managers):
         # Arrange
         mock_template1 = _create_mock_template()
