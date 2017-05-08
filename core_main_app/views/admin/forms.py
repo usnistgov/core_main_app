@@ -1,5 +1,8 @@
 from django import forms
 from core_main_app.views.admin.commons.upload.forms import UploadForm
+from core_main_app.components.xsl_transformation import api as xsl_transformation_api
+from core_main_app.components.template import api as template_api
+from core_main_app.components.template_xsl_rendering.models import TemplateXslRendering
 
 
 class UploadTemplateForm(UploadForm):
@@ -35,3 +38,17 @@ class UploadXSLTForm(UploadForm):
     def __init__(self, *args, **kwargs):
         super(UploadXSLTForm, self).__init__(*args, **kwargs)
         self.fields['name'].label = 'Enter XSLT name'
+
+
+class TemplateXsltRenderingForm(forms.Form):
+    """
+
+    """
+    id = forms.CharField(widget=forms.HiddenInput(), required=False)
+    template = forms.ModelChoiceField(widget=forms.HiddenInput(), required=False, queryset=template_api.get_all())
+    list_xslt = forms.ModelChoiceField(label='List XSLT', empty_label="(No XSLT)", required=False,
+                                       widget=forms.Select(attrs={'class': 'form-control'}),
+                                       queryset=xsl_transformation_api.get_all())
+    detail_xslt = forms.ModelChoiceField(label='Detail XSLT', empty_label="(No XSLT)", required=False,
+                                         widget=forms.Select(attrs={'class': 'form-control'}),
+                                         queryset=xsl_transformation_api.get_all())

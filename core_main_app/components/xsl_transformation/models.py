@@ -14,6 +14,15 @@ class XslTransformation(Document):
 
     meta = {'allow_inheritance': True}
 
+    def __str__(self):
+        """ String representation of an object.
+
+        Returns:
+            String representation
+
+        """
+        return self.name
+
     @staticmethod
     def get_all():
         """

@@ -15,7 +15,8 @@ admin_urls = [
         name='core_main_app_upload_template_version'),
     url(r'^template/versions/(?P<version_manager_id>\w+)', admin_views.manage_template_versions,
         name='core_main_app_manage_template_versions'),
-
+    url(r'^template/xslt/(?P<template_id>\w+)', admin_views.TemplateXSLRenderingView.as_view(),
+        name='core_main_app_template_xslt'),
     url(r'^dashboard$', admin_views.admin_home, name='core_main_app_admin_home'),
 
 

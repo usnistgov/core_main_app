@@ -41,10 +41,15 @@
                    </span>
                    {% endif %}
 
+                    <a class="btn btn-default results-xslt"
+                        href="{% url 'admin:core_main_app_template_xslt' version.object %}">
+                        <i class="fa fa-file-code-o"></i> XSLT
+                    </a>
                    {% if data.core_parser_app_installed %}
-                   <span class="icon legend modules">
-                        <a href="{% url 'admin:core_parser_app_template_modules' version.object %}"> Modules </a>
-                    </span>
+                    <a class="btn btn-default modules"
+                        href="{% url 'admin:core_parser_app_template_modules' version.object %}">
+                        <i class="fa fa-cubes"></i> Modules
+                    </a>
                    {% endif %}
                    {% endblock %}
                    <!--<a class="btn btn-default" href="#">View</a>-->

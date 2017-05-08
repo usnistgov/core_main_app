@@ -2,24 +2,86 @@
 """
 from django import template
 from os.path import join
-
 from django.contrib.staticfiles import finders
 from core_main_app.utils.xml import xsl_transform
-
+from core_main_app.components.template_xsl_rendering import api as template_xsl_rendering_api
+from core_main_app.commons import exceptions
 register = template.Library()
 
 
-@register.filter(name='xsl_transform')
-def render_xml_as_html(xml_string, template_id=None):
+class XSLType(object):
+    type_list = "List"
+    type_detail = "Detail"
+
+
+# TODO: Deprecated in Django 1.9. Use simple_tag instead when migrated to 1.9.
+@register.assignment_tag(name='xsl_transform_list')
+def render_xml_as_html(*args, **kwargs):
+    """ Renders an XML to HTML using the list xslt.
+    Args:
+        *args:
+        **kwargs:
+
+    Returns:
+        HTML
+
+    """
+    xml_content = kwargs['xml_content']
+    template_id = kwargs['template_id']
+    template_hash = kwargs['template_hash']
+    return _render_xml_as_html(xml_content, template_id, template_hash, XSLType.type_list)
+
+
+@register.assignment_tag(name='xsl_transform_detail')
+def render_xml_as_html(*args, **kwargs):
+    """ Renders an XML to HTML using the detail xslt.
+    Args:
+        *args:
+        **kwargs:
+
+    Returns:
+        HTML
+
+    """
+    xml_content = kwargs['xml_content']
+    template_id = kwargs['template_id']
+    template_hash = kwargs['template_hash']
+    return _render_xml_as_html(xml_content, template_id, template_hash, XSLType.type_detail)
+
+
+def _render_xml_as_html(xml_string, template_id=None, template_hash=None, xslt_type=XSLType.type_list):
+    """ Renders an XML to HTML according to an xslt type (list or detail)
+    Args:
+        xml_string:
+        template_id:
+        template_hash:
+        xslt_type:
+
+    Returns:
+        HTML
+
+    """
     try:
-        if template_id is not None:
-            # TODO: find custom XSLT attached to template and use it for transformation
-            return xml_string
-        else:
+        try:
+            if template_id:
+                template_xsl_rendering = template_xsl_rendering_api.get_by_template_id(template_id)
+            elif template_hash:
+                template_xsl_rendering = template_xsl_rendering_api.get_by_template_hash(template_hash)
+            else:
+                raise Exception("No template information provided. Default xslt will be used.")
+
+            if xslt_type == XSLType.type_list:
+                xslt_string = template_xsl_rendering.list_xslt.content
+            elif xslt_type == XSLType.type_detail:
+                xslt_string = template_xsl_rendering.detail_xslt.content
+            else:
+                raise Exception("XSLT Type unknown. Default xslt will be used.")
+        except (Exception, exceptions.DoesNotExist):
             default_xslt_path = finders.find(join('core_main_app', 'common', 'xsl', 'xml2html.xsl'))
             xslt_string = _read_file_content(default_xslt_path)
-            return xsl_transform(xml_string, xslt_string)
-    except:
+
+        return xsl_transform(xml_string, xslt_string)
+    except Exception:
         return xml_string
 
 
