@@ -13,7 +13,8 @@ class DataSerializer(DocumentSerializer):
         """ Meta
         """
         model = Data
-        fields = ["template",
+        fields = ["id",
+                  "template",
                   "user_id",
                   "title",
                   "xml_content",
@@ -29,7 +30,11 @@ class CreateDataSerializer(Serializer):
     user_id = CharField()
     title = CharField()
     xml_content = CharField()
-    is_published = BooleanField(required=False, default=DATA_AUTO_PUBLISH)
-    publication_date = DateTimeField(required=False, default=None)
-    last_modification_date = DateTimeField(required=False, default=None)
 
+
+class UpdateDataSerializer(Serializer):
+    """ Data serializer (update)
+    """
+    id = CharField()
+    title = CharField(required=False, default=None)
+    xml_content = CharField(required=False, default=None)

@@ -16,6 +16,7 @@ from rest_framework import status
 from core_main_app.components.template.api import init_template_with_dependencies
 from core_main_app.rest.serializers import CreateTemplateSerializer, CreateTemplateVersionManagerSerializer, \
     TemplateSerializer
+from core_main_app.utils.file import get_file_http_response
 
 
 @api_view(['GET'])
@@ -38,7 +39,12 @@ def download(request):
 
     # Get template from id
     template_object = _get_template(template_id)
-    return _get_file_response(template_object)
+
+    try:
+        return get_file_http_response(template_object.content, template_object.filename, 'text/xsd', 'xsd')
+    except Exception, e:
+        content = {'message': e.message}
+        return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['GET'])
@@ -72,8 +78,7 @@ def get_by_id(request):
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(['POST'])
-def post(request):
+def _post(request):
     """ POST /rest/template
     {
     "filename": "filename",
@@ -119,11 +124,11 @@ def post(request):
         template_serializer = TemplateSerializer(template_object)
         return Response(template_serializer.data, status=status.HTTP_201_CREATED)
     except Exception as api_exception:
-        content = {'message': api_exception.detail}
+        content = {'message': api_exception.message} # TODO: test not api_exception.details
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(['GET', 'POST'])
+@api_view(['POST'])
 def template(request):
     """Template api
 
@@ -133,10 +138,8 @@ def template(request):
     Returns:
 
     """
-    if request.method == 'GET':
-        return get_by_id(request)
-    elif request.method == 'POST':
-        return post(request)
+    if request.method == 'POST':
+        return _post(request)
 
 
 def _get_template(template_id):
@@ -153,29 +156,6 @@ def _get_template(template_id):
     except exceptions.DoesNotExist:
         content = {'message': 'No template could be found with the given id.'}
         return Response(content, status=status.HTTP_400_BAD_REQUEST)
-    except Exception, e:
-        # TODO: log e.message
-        content = {'message': 'An unexpected error happened.'}
-        return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-def _get_file_response(template):
-    """Get an HTTP response with the file
-
-    Args:
-        template:
-
-    Returns:
-
-    """
-    try:
-        # Get template content
-        xsd_content = template.content
-        # Set file content
-        xsd_file = StringIO(xsd_content)
-        response = HttpResponse(xsd_file, content_type='text/xml')
-        response['Content-Disposition'] = 'attachment; filename=' + template.filename
-        return response
     except Exception, e:
         # TODO: log e.message
         content = {'message': 'An unexpected error happened.'}

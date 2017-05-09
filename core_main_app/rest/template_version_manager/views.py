@@ -11,7 +11,9 @@ from core_main_app.commons import exceptions as exceptions
 
 @api_view(['GET'])
 def get_by_id(request):
-    """GET /rest/template-version-manager?id=<id>
+    """Returns a template version manager by its id
+
+    GET /rest/template-version-manager?id=<id>
 
     Args:
         request:
@@ -40,22 +42,10 @@ def get_by_id(request):
 
 
 @api_view(['GET'])
-def template_version_manager(request):
-    """Template version manager api
-
-    Args:
-        request:
-
-    Returns:
-
-    """
-    if request.method == 'GET':
-        return get_by_id(request)
-
-
-@api_view(['GET'])
 def get_all_globals(request):
-    """GET /rest/template-version-manager/select/all/global
+    """Returns http response with all global template version managers
+
+    GET /rest/template-version-manager/get/all/global
 
     Args:
         request:
@@ -72,8 +62,30 @@ def get_all_globals(request):
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@api_view(['GET'])
+def get_active_by_user(request):
+    """Returns http response with all active template version managers of a user
+
+    GET /rest/template-version-manager/get/active/user
+
+    Args:
+        request:
+
+    Returns:
+
+    """
+    try:
+        template_version_managers = template_version_manager_api.\
+            get_active_version_manager_by_user_id(user_id=request.user.id)
+        template_version_manager_serializer = TemplateVersionManagerSerializer(template_version_managers, many=True)
+        return Response(template_version_manager_serializer.data, status=status.HTTP_200_OK)
+    except Exception, e:
+        content = {'message:': e.message}
+        return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 def _get_template_version_manager(template_version_manager_id):
-    """Get a template version manager by its id
+    """Gets a template version manager by its id
 
     Args:
         template_version_manager_id:
@@ -85,7 +97,7 @@ def _get_template_version_manager(template_version_manager_id):
         return version_manager_api.get(template_version_manager_id)
     except exceptions.DoesNotExist:
         content = {'message': 'No template version manager could be found with the given id.'}
-        return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        return Response(content, status=status.HTTP_404_NOT_FOUND)
     except Exception, e:
         # TODO: log e.message
         content = {'message': 'An unexpected error happened.'}
