@@ -27,8 +27,8 @@ def render_xml_as_html(*args, **kwargs):
 
     """
     xml_content = kwargs['xml_content']
-    template_id = kwargs['template_id']
-    template_hash = kwargs['template_hash']
+    template_id = kwargs.get('template_id', None)
+    template_hash = kwargs.get('template_hash', None)
     return _render_xml_as_html(xml_content, template_id, template_hash, XSLType.type_list)
 
 
@@ -44,8 +44,8 @@ def render_xml_as_html(*args, **kwargs):
 
     """
     xml_content = kwargs['xml_content']
-    template_id = kwargs['template_id']
-    template_hash = kwargs['template_hash']
+    template_id = kwargs.get('template_id', None)
+    template_hash = kwargs.get('template_hash', None)
     return _render_xml_as_html(xml_content, template_id, template_hash, XSLType.type_detail)
 
 
