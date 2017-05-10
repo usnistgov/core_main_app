@@ -53,3 +53,5 @@ INSTALLED_APPS = getattr(settings, 'INSTALLED_APPS', [])
 DATA_AUTO_PUBLISH = getattr(settings, 'DATA_AUTO_PUBLISH', False)
 
 USE_TZ = getattr(settings, 'USE_TZ', True)
+
+SEARCHABLE_DATA_OCCURRENCES_LIMIT = getattr(settings, 'SEARCHABLE_DATA_OCCURRENCES_LIMIT', None)

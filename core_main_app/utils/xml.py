@@ -117,6 +117,35 @@ def raw_xml_to_dict(raw_xml, postprocessor=None):
         raise exceptions.XMLError("An unexpected error happened during the XML parsing.")
 
 
+def remove_lists_from_xml_dict(xml_dict, max_list_size=0):
+    """Removes from dictionary the lists that exceed max list size
+
+    Args:
+        xml_dict:
+        max_list_size:
+
+    Returns:
+
+    """
+    # init list of keys to delete
+    keys_to_delete = []
+    # iterate key, values
+    for key, value in xml_dict.iteritems():
+        # if value is a list
+        if isinstance(value, list):
+            # if list's size is higher than maximum size
+            if len(value) > max_list_size:
+                # mark key for deletion
+                keys_to_delete.append(key)
+        # if value is a dict
+        elif isinstance(value, dict):
+            # continue recursion on value
+            remove_lists_from_xml_dict(value, max_list_size)
+    # delete keys marked for deletion
+    for key_to_delete in keys_to_delete:
+        del xml_dict[key_to_delete]
+
+
 def get_template_with_server_dependencies(xsd_string, dependencies):
     """
     Return the template with schema locations pointing to the server

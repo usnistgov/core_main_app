@@ -9,7 +9,8 @@ from core_main_app.utils import xml as xml_utils
 from django_mongoengine import fields, Document
 
 from core_main_app.utils.databases.pymongo_database import get_full_text_query
-from core_main_app.settings import DATA_AUTO_PUBLISH, GRIDFS_DATA_COLLECTION
+from core_main_app.settings import DATA_AUTO_PUBLISH, GRIDFS_DATA_COLLECTION, SEARCHABLE_DATA_OCCURRENCES_LIMIT
+
 
 # TODO: Create publication workflow manager
 # TODO: execute_query / execute_query_full_result -> use find method (RETURN FULL OBJECT)
@@ -75,7 +76,14 @@ class Data(Document):
         Returns:
 
         """
-        self.dict_content = xml_utils.raw_xml_to_dict(self.xml_content, xml_utils.post_processor)
+        # transform xml content into a dictionary
+        dict_content = xml_utils.raw_xml_to_dict(self.xml_content, xml_utils.post_processor)
+        # if limit on element occurrences is set
+        if SEARCHABLE_DATA_OCCURRENCES_LIMIT is not None:
+            # Remove lists which size exceed the limit size
+            xml_utils.remove_lists_from_xml_dict(dict_content, SEARCHABLE_DATA_OCCURRENCES_LIMIT)
+        # store dictionary
+        self.dict_content = dict_content
 
     def convert_to_file(self):
         """ Converts the xml string into a file
