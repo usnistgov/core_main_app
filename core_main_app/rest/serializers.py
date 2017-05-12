@@ -29,8 +29,8 @@ class CreateTemplateSerializer(BasicSerializer):
     """
         Template serializer (creation)
     """
-    filename = CharField()
-    content = CharField()
+    filename = CharField(required=True)
+    content = CharField(required=True)
 
     def create(self, validated_data):
         return Template(**validated_data)
@@ -40,7 +40,7 @@ class CreateTemplateVersionManagerSerializer(BasicSerializer):
     """
         Template Version Manager serializer (creation)
     """
-    title = CharField()
+    title = CharField(required=True)
 
     def create(self, validated_data):
         return TemplateVersionManager(**validated_data)

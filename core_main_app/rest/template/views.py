@@ -1,10 +1,8 @@
 """REST views for the template API
 """
-from io import StringIO
 import json
-
-from django.http.response import HttpResponse
 from rest_framework.decorators import api_view
+from rest_framework.exceptions import ValidationError
 
 from core_main_app.commons import exceptions as exceptions
 from core_main_app.commons.exceptions import RestApiError
@@ -29,19 +27,22 @@ def download(request):
     Returns:
 
     """
-    # Get parameters
-    template_id = request.query_params.get('id', None)
-
-    # Check parameters
-    if template_id is None:
-        content = {'message': 'Expected parameters not provided.'}
-        return Response(content, status=status.HTTP_400_BAD_REQUEST)
-
-    # Get template from id
-    template_object = _get_template(template_id)
-
     try:
+        # Get parameters
+        template_id = request.query_params.get('id', None)
+
+        # Check parameters
+        if template_id is None:
+            content = {'message': 'Expected parameters not provided.'}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
+        # Get template from id
+        template_object = template_api.get(template_id)
+
         return get_file_http_response(template_object.content, template_object.filename, 'text/xsd', 'xsd')
+    except exceptions.DoesNotExist:
+        content = {'message': 'No template could be found with the given id.'}
+        return Response(content, status=status.HTTP_404_NOT_FOUND)
     except Exception, e:
         content = {'message': e.message}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -67,12 +68,15 @@ def get_by_id(request):
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
         # Get object
-        template_object = _get_template(template_id)
+        template_object = template_api.get(template_id)
 
         # Serialize object
         template_serializer = TemplateSerializer(template_object)
         # Return response
         return Response(template_serializer.data, status=status.HTTP_200_OK)
+    except exceptions.DoesNotExist:
+        content = {'message': 'No template could be found with the given id.'}
+        return Response(content, status=status.HTTP_404_NOT_FOUND)
     except Exception as api_exception:
         content = {'message': api_exception.message}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -123,8 +127,11 @@ def _post(request):
         # Returns the serialized template
         template_serializer = TemplateSerializer(template_object)
         return Response(template_serializer.data, status=status.HTTP_201_CREATED)
+    except ValidationError as validation_exception:
+        content = {'message': validation_exception.detail}
+        return Response(content, status=status.HTTP_400_BAD_REQUEST)
     except Exception as api_exception:
-        content = {'message': api_exception.message} # TODO: test not api_exception.details
+        content = {'message': api_exception.message}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -140,26 +147,6 @@ def template(request):
     """
     if request.method == 'POST':
         return _post(request)
-
-
-def _get_template(template_id):
-    """Get a template by its id
-
-    Args:
-        template_id:
-
-    Returns:
-
-    """
-    try:
-        return template_api.get(template_id)
-    except exceptions.DoesNotExist:
-        content = {'message': 'No template could be found with the given id.'}
-        return Response(content, status=status.HTTP_400_BAD_REQUEST)
-    except Exception, e:
-        # TODO: log e.message
-        content = {'message': 'An unexpected error happened.'}
-        return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 def _load_dependencies(dependencies=None):

@@ -31,11 +31,14 @@ def get_by_id(request):
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
         # Get object
-        template_version_manager_object = _get_template_version_manager(template_version_manager_id)
+        template_version_manager_object = version_manager_api.get(template_version_manager_id)
         # Serialize object
         template_version_manager_serializer = TemplateVersionManagerSerializer(template_version_manager_object)
         # Return response
         return Response(template_version_manager_serializer.data, status=status.HTTP_200_OK)
+    except exceptions.DoesNotExist:
+        content = {'message': 'No template version manager could be found with the given id.'}
+        return Response(content, status=status.HTTP_404_NOT_FOUND)
     except Exception, e:
         content = {'message:': e.message}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -81,24 +84,4 @@ def get_active_by_user(request):
         return Response(template_version_manager_serializer.data, status=status.HTTP_200_OK)
     except Exception, e:
         content = {'message:': e.message}
-        return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-def _get_template_version_manager(template_version_manager_id):
-    """Gets a template version manager by its id
-
-    Args:
-        template_version_manager_id:
-
-    Returns:
-
-    """
-    try:
-        return version_manager_api.get(template_version_manager_id)
-    except exceptions.DoesNotExist:
-        content = {'message': 'No template version manager could be found with the given id.'}
-        return Response(content, status=status.HTTP_404_NOT_FOUND)
-    except Exception, e:
-        # TODO: log e.message
-        content = {'message': 'An unexpected error happened.'}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

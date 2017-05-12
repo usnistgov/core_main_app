@@ -6,7 +6,7 @@ from core_main_app.rest.template_version_manager import views as template_versio
 from core_main_app.rest.data import views as data_views
 
 urlpatterns = [
-    url(r'^template/download$', template_views.download,
+    url(r'^template/download', template_views.download,
         name='core_main_app_rest_template_download'),
 
     url(r'^template/get', template_views.get_by_id,
@@ -19,7 +19,7 @@ urlpatterns = [
         name='core_main_app_rest_template_version_manager_get_active_by_user'),
 
     url(r'^template-version-manager/get$', template_version_manager_views.get_by_id,
-        name='core_main_app_rest_template_version_manager'),
+        name='core_main_app_rest_template_version_manager_get'),
 
     url(r'^template', template_views.template,
         name='core_main_app_rest_template'),
