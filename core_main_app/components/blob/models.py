@@ -1,0 +1,89 @@
+"""Blob model
+"""
+from django_mongoengine import fields, Document
+
+from blob_utils.blob_host_factory import BLOBHostFactory
+from core_main_app.settings import BLOB_HOST, BLOB_HOST_URI, BLOB_HOST_USER, BLOB_HOST_PASSWORD
+from core_main_app.commons import exceptions
+from mongoengine import errors as mongoengine_errors
+
+
+class Blob(Document):
+    """ Represents a Blob object
+    """
+    filename = fields.StringField(blank=False)
+    user_id = fields.StringField(blank=False)
+    handle = fields.StringField(blank=False)
+
+    _blob_host = None
+    _blob = None
+
+    @staticmethod
+    def get_by_id(blob_id):
+        """ Return the object with the given id
+
+        Args:
+            blob_id:
+
+        Returns:
+            Blob
+
+        """
+        try:
+            return Blob.objects.get(pk=str(blob_id))
+        except mongoengine_errors.DoesNotExist as e:
+            raise exceptions.DoesNotExist(e.message)
+        except Exception as ex:
+            raise exceptions.ModelError(ex.message)
+
+    @classmethod
+    def blob_host(cls):
+        """ Return blob host
+
+        Returns:
+
+        """
+        if cls._blob_host is None:
+            blob_host_factory = BLOBHostFactory(blob_host=BLOB_HOST,
+                                                blob_host_uri=BLOB_HOST_URI,
+                                                blob_host_user=BLOB_HOST_USER,
+                                                blob_host_password=BLOB_HOST_PASSWORD)
+            cls._blob_host = blob_host_factory.create_blob_host()
+        return cls._blob_host
+
+    @property
+    def blob(self):
+        """ Return blob from blob host
+
+        Returns:
+
+        """
+        # if the blob is not set
+        if self._blob is None:
+            # if an handle is set
+            if self.handle is not None:
+                # get the blob using its handle
+                self._blob = Blob.blob_host().get(self.handle)
+        return self._blob
+
+    @blob.setter
+    def blob(self, value):
+        """Set blob value
+
+        Args:
+            value: file
+
+        Returns:
+
+        """
+        self._blob = value
+
+    def save_blob(self):
+        """ Save blob on the blob host
+
+        Returns:
+
+        """
+        self.handle = str(Blob.blob_host().save(self._blob))
+
+

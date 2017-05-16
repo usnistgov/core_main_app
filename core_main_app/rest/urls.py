@@ -4,6 +4,7 @@ from django.conf.urls import url
 from core_main_app.rest.template import views as template_views
 from core_main_app.rest.template_version_manager import views as template_version_manager_views
 from core_main_app.rest.data import views as data_views
+from core_main_app.rest.blob import views as blob_views
 
 urlpatterns = [
     url(r'^template/download', template_views.download,
@@ -38,4 +39,7 @@ urlpatterns = [
 
     url(r'^data', data_views.data,
         name='core_main_app_rest_data'),
+
+    url(r'^blob/download', blob_views.download,
+        name='core_main_app_rest_blob_download'),
 ]

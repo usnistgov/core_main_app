@@ -55,3 +55,8 @@ DATA_AUTO_PUBLISH = getattr(settings, 'DATA_AUTO_PUBLISH', False)
 USE_TZ = getattr(settings, 'USE_TZ', True)
 
 SEARCHABLE_DATA_OCCURRENCES_LIMIT = getattr(settings, 'SEARCHABLE_DATA_OCCURRENCES_LIMIT', None)
+
+BLOB_HOST = getattr(settings, 'BLOB_HOST', 'GRIDFS')
+BLOB_HOST_URI = getattr(settings, 'BLOB_HOST_URI', MONGODB_URI)
+BLOB_HOST_USER = getattr(settings, 'BLOB_HOST_USER', None)
+BLOB_HOST_PASSWORD = getattr(settings, 'BLOB_HOST_PASSWORD', None)
