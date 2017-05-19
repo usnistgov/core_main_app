@@ -38,6 +38,22 @@ def init_template_with_dependencies(template, dependencies_dict):
     return template
 
 
+def set_display_name(template, display_name):
+    """Set template display name
+
+    Args:
+        template:
+        display_name:
+
+    Returns:
+
+    """
+    # Set display name
+    template.display_name = display_name
+    # Save
+    template.save()
+
+
 def get(template_id):
     """Gets a template
 

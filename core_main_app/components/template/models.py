@@ -11,6 +11,7 @@ class Template(Document):
     filename = fields.StringField()
     content = fields.StringField()
     hash = fields.StringField()
+    _display_name = fields.StringField(blank=True)
     dependencies = fields.ListField(fields.ReferenceField("self"), default=[], blank=True)
 
     meta = {'allow_inheritance': True}
@@ -65,3 +66,27 @@ class Template(Document):
 
         """
         return Template.objects(pk__in=template_id_list)
+
+    @property
+    def display_name(self):
+        """Returns template name to display
+
+        Returns:
+
+        """
+        if self._display_name is not None:
+            return self._display_name
+        else:
+            return self.filename
+
+    @display_name.setter
+    def display_name(self, value):
+        """Sets template name to display
+
+        Args:
+            value:
+
+        Returns:
+
+        """
+        self._display_name = value

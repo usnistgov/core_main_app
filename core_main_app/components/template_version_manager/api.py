@@ -4,6 +4,7 @@ Template Version Manager API
 from core_main_app.components.template import api as template_api
 from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.components.template_version_manager.models import TemplateVersionManager
+from core_main_app.components.version_manager.utils import get_latest_version_name, get_version_name
 
 
 def insert(template_version_manager, template):
@@ -17,15 +18,60 @@ def insert(template_version_manager, template):
 
     """
     # save the template in database
-    saved_template = template_api.upsert(template)
+    template_api.upsert(template)
     try:
         # insert the initial template in the version manager
-        version_manager_api.insert_version(template_version_manager, saved_template)
+        version_manager_api.insert_version(template_version_manager, template)
         # insert the version manager in database
-        return version_manager_api.upsert(template_version_manager)
+        version_manager_api.upsert(template_version_manager)
+        # get template display name
+        display_name = get_latest_version_name(template_version_manager)
+        # update saved template
+        template_api.set_display_name(template, display_name)
+        # return version manager
+        return template_version_manager
     except Exception, e:
-        template_api.delete(saved_template)
+        template_api.delete(template)
         raise e
+
+
+def edit_title(template_version_manager, title):
+    """Edit template version manager title
+
+    Args:
+        template_version_manager:
+        title:
+
+    Returns:
+
+    """
+    # set version template manager title
+    template_version_manager.title = title
+    # save template version manager
+    template_version_manager.save()
+    # update templates display names
+    update_templates_display_name(template_version_manager)
+
+
+def update_templates_display_name(template_version_manager):
+    """Update templates display name
+
+    Args:
+        template_version_manager:
+
+    Returns:
+
+    """
+    # Iterate versions
+    for i in range(0, len(template_version_manager.versions)):
+        # get template id from list of versions
+        template_id = template_version_manager.versions[i]
+        # get template from template id
+        template = template_api.get(template_id)
+        # get display name for the template
+        display_name = get_version_name(template_version_manager.title, i+1)
+        # update template's display name
+        template_api.set_display_name(template, display_name)
 
 
 def get_by_id(template_version_manager_id):

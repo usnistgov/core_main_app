@@ -115,8 +115,7 @@ def edit_template(request):
     """
     try:
         version_manager = version_manager_api.get(request.POST['id'])
-        version_manager.title = request.POST['title']
-        version_manager_api.upsert(version_manager)
+        template_version_manager_api.edit_title(version_manager, request.POST['title'])
     except Exception, e:
         return HttpResponseBadRequest(e.message, content_type='application/javascript')
 
