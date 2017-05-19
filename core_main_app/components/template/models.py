@@ -17,13 +17,18 @@ class Template(Document):
     meta = {'allow_inheritance': True}
 
     @staticmethod
-    def get_all():
+    def get_all(is_cls):
         """Returns all templates
 
         Returns:
 
         """
-        return Template.objects.all()
+        if is_cls:
+            # will return all Template object only
+            return Template.objects(_cls=Template.__name__).all()
+        else:
+            # will return all inherited object
+            return Template.object().all()
 
     @staticmethod
     def get_by_id(template_id):

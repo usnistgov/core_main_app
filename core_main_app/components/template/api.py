@@ -91,13 +91,13 @@ def get_all_by_id_list(template_id_list):
     return Template.get_all_by_id_list(template_id_list)
 
 
-def get_all():
+def get_all(is_cls=True):
     """Lists all templates
 
     Returns:
 
     """
-    return Template.get_all()
+    return Template.get_all(is_cls)
 
 
 def delete(template):
