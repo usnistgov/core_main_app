@@ -91,3 +91,36 @@ class TemplateVersionManager(VersionManager):
 
         """
         return [record for record in queryset if record['_cls'] == 'VersionManager.TemplateVersionManager']
+
+    @staticmethod
+    def get_all_version_manager_except_user_id(user_id, _cls=True):
+        """ Return all Version Managers of all users except user with given user id.
+
+        Args:
+            user_id:
+            _cls:
+
+        Returns:
+
+        """
+        queryset = super(TemplateVersionManager, TemplateVersionManager).get_all_version_manager_except_user_id(user_id)
+        if _cls:
+            return TemplateVersionManager._filter_by_cls(queryset)
+        return queryset
+
+    @staticmethod
+    def get_all_version_manager_by_user_id(user_id, _cls=True):
+        """ Return all Version Managers with given user id.
+
+        Args:
+            user_id:
+            _cls:
+
+        Returns:
+
+        """
+        queryset = super(TemplateVersionManager, TemplateVersionManager).get_all_version_manager_by_user_id(user_id)
+        if _cls:
+            return TemplateVersionManager._filter_by_cls(queryset)
+        return queryset
+

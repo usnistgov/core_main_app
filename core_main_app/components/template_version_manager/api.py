@@ -156,3 +156,21 @@ def get_all_by_version_ids(version_ids):
 
     """
     return TemplateVersionManager.get_all_by_version_ids(version_ids)
+
+
+def get_all_version_manager_except_user_id(user_id, _cls=True):
+    """ Return all  Version Managers of all users except user with given user id
+
+    Returns:
+
+    """
+    return TemplateVersionManager.get_all_version_manager_except_user_id(user_id, _cls)
+
+
+def get_all_by_user_id(user_id, _cls=True):
+    """ Return all Template Version Managers with given user id
+
+    Returns:
+
+    """
+    return TemplateVersionManager.get_all_version_manager_by_user_id(user_id, _cls)

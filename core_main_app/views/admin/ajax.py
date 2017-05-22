@@ -3,123 +3,13 @@
 import json
 
 from django.http.response import HttpResponse, HttpResponseBadRequest
-
+from core_main_app.components.xsl_transformation import api as xsl_transformation_api
 from core_main_app.components.template.api import init_template_with_dependencies
 from core_main_app.components.template.models import Template
 from core_main_app.components.template_version_manager.models import TemplateVersionManager
-from core_main_app.components.template import api as template_api
-from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.components.template_version_manager import api as template_version_manager_api
-from core_main_app.components.xsl_transformation import api as xsl_transformation_api
+from core_main_app.components.version_manager import api as version_manager_api
 import HTMLParser
-
-
-def disable_template(request):
-    """Disables a template
-
-    Args:
-        request:
-
-    Returns:
-
-    """
-    try:
-        version_manager = version_manager_api.get(request.GET['id'])
-        version_manager_api.disable(version_manager)
-    except Exception, e:
-        return HttpResponseBadRequest(e.message, content_type='application/javascript')
-
-    return HttpResponse(json.dumps({}), content_type='application/javascript')
-
-
-def restore_template(request):
-    """Restores a disabled template
-
-    Args:
-        request:
-
-    Returns:
-
-    """
-    try:
-        version_manager = version_manager_api.get(request.GET['id'])
-        version_manager_api.restore(version_manager)
-    except Exception, e:
-        return HttpResponseBadRequest(e.message, content_type='application/javascript')
-
-    return HttpResponse(json.dumps({}), content_type='application/javascript')
-
-
-def disable_template_version(request):
-    """Disables a version of a template
-
-    Args:
-        request:
-
-    Returns:
-
-    """
-    try:
-        version = template_api.get(request.GET['id'])
-        version_manager_api.disable_version(version)
-    except Exception, e:
-        return HttpResponseBadRequest(e.message, content_type='application/javascript')
-
-    return HttpResponse(json.dumps({}), content_type='application/javascript')
-
-
-def restore_template_version(request):
-    """Restores a disabled version of a template
-
-    Args:
-        request:
-
-    Returns:
-
-    """
-    try:
-        version = template_api.get(request.GET['id'])
-        version_manager_api.restore_version(version)
-    except Exception, e:
-        return HttpResponseBadRequest(e.message, content_type='application/javascript')
-
-    return HttpResponse(json.dumps({}), content_type='application/javascript')
-
-
-def set_current_version(request):
-    """Sets the current version of a template
-
-    Args:
-        request:
-
-    Returns:
-
-    """
-    try:
-        version = template_api.get(request.GET['id'])
-        version_manager_api.set_current(version)
-    except Exception, e:
-        return HttpResponseBadRequest(e.message, content_type='application/javascript')
-
-    return HttpResponse(json.dumps({}), content_type='application/javascript')
-
-
-def edit_template(request):
-    """Edit the template
-
-    Args:
-        request:
-
-    Returns:
-
-    """
-    try:
-        version_manager = version_manager_api.get(request.POST['id'])
-        template_version_manager_api.edit_title(version_manager, request.POST['title'])
-    except Exception, e:
-        return HttpResponseBadRequest(e.message, content_type='application/javascript')
-
-    return HttpResponse(json.dumps({}), content_type='application/javascript')
 
 
 def resolve_dependencies(request):

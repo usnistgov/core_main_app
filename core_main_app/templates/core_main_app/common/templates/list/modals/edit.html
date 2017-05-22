@@ -1,0 +1,17 @@
+{% block modal_id %}edit-template-modal{% endblock %}
+{% block modal_title %}Edit {{ data.object_name }}{% endblock %}
+
+{% block modal_body %}
+<form id="edit-template-form">
+    <input id="edit-template-id" type="hidden" value=""/>
+    <div class="form-group">
+        <label for="edit-template-name">Enter new {{ data.object_name }} name</label>
+        <input id="edit-template-name" class="form-control" type="text" value="" placeholder="new_template_name"/>
+    </div>
+</form>
+{% endblock %}
+
+{% block modal_footer %}
+<a class="btn btn-default pull-left" data-dismiss="modal" href="#"><i class="fa fa-times"></i> Close</a>
+<a id="edit-template-save" class="btn btn-primary" href="#"><i class="fa fa-save"></i> Save</a>
+{% endblock %}

@@ -36,6 +36,7 @@ editTemplateSave = function(event) {
 
 $(document).ready(function() {
     $('.edit').on('click', editTemplateOpenModal);
+    $('.edit-template-btn').on('click', editTemplateOpenModal);
     $('#edit-template-form').on('submit', editTemplateSave);
     $('#edit-template-save').on('click', editTemplateSave);
 });

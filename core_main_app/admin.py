@@ -22,22 +22,8 @@ admin_urls = [
         name='core_main_app_template_xslt'),
     url(r'^dashboard$', admin_views.admin_home, name='core_main_app_admin_home'),
 
-
-    url(r'^template/disable', admin_ajax.disable_template,
-        name='core_main_app_disable_template'),
-    url(r'^template/restore', admin_ajax.restore_template,
-        name='core_main_app_restore_template'),
-    url(r'^template/version/disable', admin_ajax.disable_template_version,
-        name='core_main_app_disable_template_version'),
-    url(r'^template/version/restore', admin_ajax.restore_template_version,
-        name='core_main_app_restore_template_version'),
-    url(r'^template/version/current', admin_ajax.set_current_version,
-        name='core_main_app_set_current_template_version'),
     url(r'^template/resolve-dependencies', admin_ajax.resolve_dependencies,
         name='core_main_app_resolve_dependencies'),
-    url(r'^template/edit', admin_ajax.edit_template,
-        name='core_main_app_edit_template'),
-
     url(r'^xslt$', admin_views.XSLTView.as_view(), name='core_main_app_xslt'),
     url(r'^xslt/upload$', admin_views.UploadXSLTView.as_view(), name='core_main_app_upload_xslt'),
     url(r'^xslt/edit', admin_ajax.edit_xslt_name, name='core_main_app_edit_xslt'),

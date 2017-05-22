@@ -1,1 +1,0 @@
-var setCurrentVersionPostUrl = "{% url 'admin:core_main_app_set_current_template_version' %}";

@@ -1,0 +1,11 @@
+{% extends "core_main_app/_render/admin/theme/tools/section.html" %}
+{% load staticfiles %}
+
+{% block section_title %}Template XSLT Rendering{% endblock %}
+{% block section_subtitle %} for Template <strong>{{data.template_title}} Version #{{data.template_version}}</strong> {% endblock %}
+
+{% block section_content %}
+<div>
+    {% include 'core_main_app/admin/templates_xslt/main/form.html' %}
+</div>
+{% endblock %}

@@ -1,14 +1,6 @@
-{% extends 'core_main_app/_render/admin/theme/tools/box.html' %}
 {% load timestamptags %}
 
 {% block box_title %}Available versions{% endblock %}
-
-{% block box_tools %}
-<a href="{% url 'admin:core_main_app_upload_template_version' data.version_manager.id %}"
-   class="pull-right btn btn-default">
-	<i class="fa fa-upload"></i> Upload New Version
-</a>
-{% endblock %}
 
 {% block box_body %}
 <div id="model_version">
@@ -32,25 +24,14 @@
 
                <td>
                    {% block box_actions %}
-                   {% if version.object != data.version_manager.current %}
-                   <span class='icon legend long current' objectid='{{ version.object }}'>
-                       <a class="btn btn-default" href="#"><i class="fa fa-bookmark"></i> Set Current</a>
-                   </span>
-                   <span class='icon legend delete' objectid='{{ version.object }}'>
-                       <a class="btn btn-danger" href="#"><i class="fa fa-trash"></i> Disable</a>
-                   </span>
-                   {% endif %}
 
-                   {% if data.object_name == 'Template' %}
                     <a class="btn btn-default results-xslt"
-                        href="{% url 'admin:core_main_app_template_xslt' version.object %}">
+                        href="{% url 'core_main_app_template_xslt' version.object %}">
                         <i class="fa fa-file-code-o"></i> XSLT
                     </a>
-                   {% endif %}
-
                    {% if data.core_parser_app_installed %}
                     <a class="btn btn-default modules"
-                        href="{% url 'admin:core_parser_app_template_modules' version.object %}">
+                        href="{% url 'core_parser_app_template_modules' version.object %}">
                         <i class="fa fa-cubes"></i> Modules
                     </a>
                    {% endif %}

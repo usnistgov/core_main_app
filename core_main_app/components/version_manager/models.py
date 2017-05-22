@@ -222,3 +222,27 @@ class VersionManager(Document):
 
         """
         return VersionManager.objects(is_disabled=True, user=str(user_id)).all()
+
+    @staticmethod
+    def get_all_version_manager_except_user_id(user_id):
+        """ Returns all Version Managers of all users except user with given user id
+
+        Args:
+            user_id: user_id.
+
+        Returns:
+
+        """
+        return VersionManager.objects(user__nin=str(user_id)).all()
+
+    @staticmethod
+    def get_all_version_manager_by_user_id(user_id):
+        """ Returns all Version Managers with given user id
+
+        Args:
+            user_id: user_id.
+
+        Returns:
+
+        """
+        return VersionManager.objects(user=str(user_id)).all()

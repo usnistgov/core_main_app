@@ -1,0 +1,29 @@
+{% extends 'core_main_app/_render/admin/theme/tools/box.html' %}
+
+{% block box_title %}Disabled{% endblock %}
+
+{% block box_body %}
+<table class="table table-bordered table-striped table-hover">
+    <tr>
+        <th width="35%">{{ data.object_name }}</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for object in data.disabled %}
+        <tr>
+            <td>{{ object.title }}</td>
+            <td>
+                <span objectid="{{ object.id }}">
+                    <a class="btn btn-default" href="#"><i class="fa fa-undo"></i> Restore </a>
+                </span>
+            </td>
+        </tr>
+    {% empty %}
+        <tr>
+            <td class="empty" colspan="2">
+                No {{ data.object_name }} disabled.
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}

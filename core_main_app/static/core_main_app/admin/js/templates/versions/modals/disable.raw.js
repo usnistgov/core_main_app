@@ -1,1 +1,0 @@
-var disableVersionPostUrl = "{% url 'admin:core_main_app_disable_template_version' %}";

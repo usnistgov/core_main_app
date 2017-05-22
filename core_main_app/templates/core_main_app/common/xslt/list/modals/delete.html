@@ -1,0 +1,15 @@
+{% block modal_id %}delete-xslt-modal{% endblock %}
+{% block modal_title %}Delete XSLT <i class="delete-xslt-name"></i>{% endblock %}
+
+{% block modal_body %}
+<input id="delete-xslt-id" type="hidden" value=""/>
+<p>
+    The XSLT will be erased definitely.
+</p>
+<p>Are you sure you want to delete this XSLT?</p>
+{% endblock %}
+
+{% block modal_footer %}
+<a class="btn btn-default pull-left" data-dismiss="modal" href="#"><i class="fa fa-times"></i> No</a>
+<a id="delete-xslt-yes" class="btn btn-danger" href="#"><i class="fa fa-check"></i> Yes</a>
+{% endblock %}

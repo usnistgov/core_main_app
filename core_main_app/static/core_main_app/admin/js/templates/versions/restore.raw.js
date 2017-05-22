@@ -1,1 +1,0 @@
-var restoreVersionPostUrl = "{% url 'admin:core_main_app_restore_template_version' %}";

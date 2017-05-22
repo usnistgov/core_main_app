@@ -20,8 +20,6 @@
                 <span class='icon legend retrieve' objectid='{{ version.object }}'>
                     <a class="btn btn-default" href="#"><i class="fa fa-undo"></i> Restore</a>
                 </span>
-                <!--<a class="btn btn-default" href="#">View</a>-->
-                <!--<a class="btn btn-default" href="#">Download</a>-->
             </td>
         </tr>
         {% empty %}
@@ -30,13 +28,5 @@
         </tr>
         {% endfor %}
    </table>
-</div>
-
-<div id="dialog-disable-confirm-message" title="Confirm Delete" style="display:none;">
-<p></p>
-  <p>
-    <span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 10px 0;"></span>
-    Are you sure you want to disable this version?
-  </p>
 </div>
 {% endblock %}

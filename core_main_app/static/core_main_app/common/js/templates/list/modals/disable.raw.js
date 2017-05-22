@@ -1,0 +1,1 @@
+var disableTemplatePostUrl = "{% url 'core_main_app_disable_template' %}";

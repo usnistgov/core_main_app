@@ -1,0 +1,26 @@
+{% block box_title %}Template XSLT Rendering{% endblock %}
+
+{% block box_tools %}
+{% endblock %}
+
+{% block box_body %}
+<div id="error-div" style="display: none;">
+    <div class="alert alert-danger alert-dismissable">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>{{ data.errors }}</strong>
+    </div>
+</div>
+
+<form id="form_start" method="post">
+    {% csrf_token %}
+    {{ data.form_template_xsl_rendering }}
+
+    <br/>
+    <button type="submit" class="btn btn-default pull-left">
+        <i class="fa fa-times"></i> Cancel
+    </button>
+    <button type="submit" class="btn btn-default pull-right">
+      <i class="fa fa-floppy-o"></i> Save
+    </button>
+</form>
+{% endblock %}
