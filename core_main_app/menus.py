@@ -29,9 +29,9 @@ Menu.add_item(
 )
 
 users_admin_children = (
-    MenuItem("Users", reverse("admin:core_main_app_templates"), icon="address-book-o"),
-    MenuItem("Groups", reverse("admin:core_main_app_templates"), icon="users"),
-    MenuItem("Authentication", reverse("admin:core_main_app_templates"), icon="lock"),
+    MenuItem("Users", reverse("admin:auth_user_changelist"), icon="address-book-o"),
+    MenuItem("Groups", reverse("admin:auth_group_changelist"), icon="users"),
+    MenuItem("Authentication", reverse("admin:index"), icon="lock"),
 )
 
 Menu.add_item(
