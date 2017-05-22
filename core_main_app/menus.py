@@ -1,6 +1,11 @@
 from django.core.urlresolvers import reverse
 from menu import Menu, MenuItem
 
+
+Menu.add_item(
+    "main", MenuItem("Home", reverse("core_main_app_homepage"), icon="home", weight=-1000)
+)
+
 Menu.add_item(
     "admin", MenuItem("Dashboard", reverse("admin:core_main_app_admin_home"), icon="dashboard", weight=-10000)
 )

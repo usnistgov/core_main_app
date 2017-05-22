@@ -3,10 +3,13 @@ Url router for the administration site
 """
 from django.conf.urls import url
 from django.contrib import admin
-
+from django.core.urlresolvers import reverse_lazy
+from django.views.generic.base import RedirectView
 from views.admin import views as admin_views, ajax as admin_ajax
 
 admin_urls = [
+    url(r'^login', RedirectView.as_view(url=reverse_lazy("core_main_app_login"))),
+    url(r'^logout', RedirectView.as_view(url=reverse_lazy("core_main_app_logout"))),
 
     url(r'^templates$', admin_views.manage_templates, name='core_main_app_templates'),
     url(r'^template/upload$', admin_views.upload_template,
