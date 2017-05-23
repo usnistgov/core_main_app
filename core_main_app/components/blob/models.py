@@ -36,6 +36,31 @@ class Blob(Document):
         except Exception as ex:
             raise exceptions.ModelError(ex.message)
 
+    @staticmethod
+    def get_all():
+        """ Return all blobs.
+
+        Args:
+
+        Returns:
+            List of Blob instances.
+
+        """
+        return Blob.objects.all()
+
+    @staticmethod
+    def get_all_by_user_id(user_id):
+        """ Return all blobs by user.
+
+        Args:
+            user_id: User id.
+
+        Returns:
+            List of Blob instances for the given user id.
+
+        """
+        return Blob.objects(user_id=str(user_id)).all()
+
     @classmethod
     def blob_host(cls):
         """ Return blob host
@@ -86,4 +111,10 @@ class Blob(Document):
         """
         self.handle = str(Blob.blob_host().save(self._blob))
 
+    def delete_blob(self):
+        """ Delete blob on the blob host
 
+        Returns:
+
+        """
+        Blob.blob_host().delete(self.handle)
