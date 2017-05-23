@@ -27,7 +27,6 @@ class CreateDataSerializer(Serializer):
     """ Data serializer (creation)
     """
     template = CharField()
-    user_id = CharField()
     title = CharField()
     xml_content = CharField()
 

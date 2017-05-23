@@ -2,6 +2,7 @@
 """
 from core_main_app.components.data.models import Data
 from rest_framework.decorators import api_view
+from rest_framework.exceptions import ValidationError
 from core_main_app.components.template import api as template_api
 from rest_framework.response import Response
 from rest_framework import status
@@ -175,7 +176,6 @@ def _post(request):
     POST /rest/data
     {
         "template": "id",
-        "user_id": "1",
         "title": "title",
         "xml_content": "<root>1</root>"
     }
@@ -200,10 +200,7 @@ def _post(request):
         data_object = Data(
             template=template,
             title=data_serializer.data['title'],
-            user_id=data_serializer.data['user_id'],
-            is_published=data_serializer.data['is_published'],
-            publication_date=data_serializer.data['publication_date'],
-            last_modification_date=data_serializer.data['last_modification_date'],
+            user_id=str(request.user.id),
         )
         # Set xml content
         data_object.xml_content = data_serializer.data['xml_content']
@@ -214,6 +211,9 @@ def _post(request):
         return_value = DataSerializer(data_object)
 
         return Response(return_value.data, status=status.HTTP_201_CREATED)
+    except ValidationError as validation_exception:
+        content = {'message': validation_exception.detail}
+        return Response(content, status=status.HTTP_400_BAD_REQUEST)
     except Exception as api_exception:
         content = {'message': api_exception.message}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
