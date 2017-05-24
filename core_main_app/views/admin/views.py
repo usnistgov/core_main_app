@@ -513,9 +513,6 @@ class TemplateXSLRenderingView(View):
         template_id = kwargs.pop('template_id')
         # Get the template
         template = template_api.get(template_id)
-        # Get template information (version)
-        version_manager = version_manager_api.get_from_version(template)
-        version_number = version_manager_api.get_version_number(version_manager, template_id)
         try:
             # Get the existing configuration to build the form
             template_xsl_rendering = template_xsl_rendering_api.get_by_template_id(template_id)
@@ -528,8 +525,7 @@ class TemplateXSLRenderingView(View):
             data = {'template': template.id, 'list_xslt': None, 'detail_xslt': None}
 
         self.context = {
-            'template_title': version_manager.title,
-            'template_version': version_number,
+            'template_title': template.display_name,
             "form_template_xsl_rendering": self.form_class(data)
         }
 
