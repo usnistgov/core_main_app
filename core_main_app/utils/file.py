@@ -41,3 +41,17 @@ def get_file_http_response(file_content, file_name, content_type=None, extension
         return response
     except Exception:
         raise CoreError('An unexpected error occurred.')
+
+
+def read_file_content(file_path):
+    """Read the content of a file
+
+    Args:
+        file_path:
+
+    Returns:
+
+    """
+    with open(file_path) as _file:
+        file_content = _file.read()
+        return file_content
