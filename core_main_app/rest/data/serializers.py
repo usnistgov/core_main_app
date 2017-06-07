@@ -23,6 +23,25 @@ class DataSerializer(DocumentSerializer):
                   "last_modification_date"]
 
 
+# FIXME: Should use in the future an serializer with dynamic fields (init depth with parameter for example)
+class DataWithTemplateInfoSerializer(DocumentSerializer):
+    """ Data Full serializer
+    """
+    class Meta:
+        """ Meta
+        """
+        model = Data
+        depth = 2
+        fields = ["id",
+                  "template",
+                  "user_id",
+                  "title",
+                  "xml_content",
+                  "is_published",
+                  "publication_date",
+                  "last_modification_date"]
+
+
 class CreateDataSerializer(Serializer):
     """ Data serializer (creation)
     """

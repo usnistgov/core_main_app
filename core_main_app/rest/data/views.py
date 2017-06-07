@@ -8,7 +8,10 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from core_main_app.commons import exceptions
-from core_main_app.rest.data.serializers import CreateDataSerializer, DataSerializer, UpdateDataSerializer
+from core_main_app.rest.data.serializers import CreateDataSerializer, \
+                                                DataSerializer, \
+                                                UpdateDataSerializer, \
+                                                DataWithTemplateInfoSerializer
 import core_main_app.components.data.api as data_api
 import json
 
@@ -87,7 +90,46 @@ def get_by_id(request):
         data_object = data_api.get_by_id(data_id)
 
         # Serialize object
-        return_value = DataSerializer(data_object)
+        return_value = DataSerializer(data_object, depth=2)
+
+        # Return response
+        return Response(return_value.data, status=status.HTTP_200_OK)
+    except exceptions.DoesNotExist as e:
+        content = {'message': 'No data found with the given id.'}
+        return Response(content, status=status.HTTP_404_NOT_FOUND)
+    except Exception as api_exception:
+        content = {'message': api_exception.message}
+        return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# FIXME: Should use in the future an serializer with dynamic fields (init depth with parameter for example)
+# Should avoid here a duplication code with get_by_id
+@api_view(['GET'])
+def get_by_id_with_template_info(request):
+    """ Gets data by its id
+
+        /rest/data/get?id=588a73b47179c722f6fdaf43
+
+        Args:
+            request:
+
+        Returns:
+
+        """
+    try:
+        # Get parameters
+        data_id = request.query_params.get('id', None)
+
+        # Check parameters
+        if data_id is None:
+            content = {'message': 'Expected parameters not provided.'}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
+        # Get object
+        data_object = data_api.get_by_id(data_id)
+
+        # Serialize object
+        return_value = DataWithTemplateInfoSerializer(data_object)
 
         # Return response
         return Response(return_value.data, status=status.HTTP_200_OK)

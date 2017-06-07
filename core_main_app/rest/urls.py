@@ -28,6 +28,9 @@ urlpatterns = [
     url(r'^data/get$', data_views.get_by_id,
         name='core_main_app_rest_data_get_by_id'),
 
+    url(r'^data/get-full$', data_views.get_by_id_with_template_info,
+        name='core_main_app_rest_data_get_by_id_with_template_info'),
+
     url(r'^data/download', data_views.download,
         name='core_main_app_rest_data_download'),
 
