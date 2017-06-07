@@ -38,6 +38,7 @@ def get_all():
     return XslTransformation.get_all()
 
 
+# TODO: Add namespace check
 def upsert(xsl_transformation):
     """ Upsert an xsl_transformation.
 
@@ -50,7 +51,7 @@ def upsert(xsl_transformation):
     """
     is_well_formed = is_well_formed_xml(xsl_transformation.content)
     if is_well_formed:
-        return xsl_transformation.save()
+        return xsl_transformation.save_object()
     else:
         raise exceptions.ApiError("Uploaded file is not well formatted XSLT.")
 

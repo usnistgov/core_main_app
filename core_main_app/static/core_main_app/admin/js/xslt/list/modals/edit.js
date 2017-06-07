@@ -10,6 +10,7 @@ editXSLTOpenModal = function(event) {
 
     $("#edit-xslt-name").val(xsltName);
     $("#edit-xslt-id").val(xsltId);
+    hideErrorXSLT();
     $("#edit-xslt-modal").modal("show");
 }
 
@@ -30,9 +31,27 @@ editXSLTSave = function(event) {
             location.reload();
         },
         error: function(data){
+            showErrorXSLT(data.responseText);
         }
     });
 }
+
+/*
+* Show label error with message
+* */
+showErrorXSLT = function(message){
+    $('#error-div-xslt').show();
+    $('#error-message').text(message);
+};
+
+/*
+* Hide label error with message
+* */
+hideErrorXSLT = function(message){
+    $('#error-div-xslt').hide();
+    $('#error-message').text('');
+};
+
 
 $(document).ready(function() {
     $('.edit-xslt-btn').on('click', editXSLTOpenModal);

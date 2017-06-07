@@ -9,6 +9,7 @@ from core_main_app.components.template.models import Template
 from core_main_app.components.template_version_manager.models import TemplateVersionManager
 from core_main_app.components.template_version_manager import api as template_version_manager_api
 from core_main_app.components.version_manager import api as version_manager_api
+from core_main_app.commons.exceptions import NotUniqueError
 import HTMLParser
 
 
@@ -41,7 +42,7 @@ def resolve_dependencies(request):
             template_version_manager = TemplateVersionManager(title=name)
         template_version_manager_api.insert(template_version_manager, template)
     except Exception, e:
-        return HttpResponseBadRequest(e.message, content_type='application/javascript')
+        return HttpResponseBadRequest(e.message)
 
     return HttpResponse(json.dumps({}), content_type='application/javascript')
 
@@ -91,10 +92,13 @@ def edit_xslt_name(request):
     """
     try:
         xslt = xsl_transformation_api.get_by_id(request.POST['id'])
-        xslt.name = request.POST['name']
+        name = request.POST['name']
+        xslt.name = name
         xsl_transformation_api.upsert(xslt)
+    except NotUniqueError:
+        return HttpResponseBadRequest("Name already exists.")
     except Exception, e:
-        return HttpResponseBadRequest(e.message, content_type='application/javascript')
+        return HttpResponseBadRequest(e.message)
 
     return HttpResponse(json.dumps({}), content_type='application/javascript')
 
@@ -112,6 +116,6 @@ def delete_xslt(request):
         xslt = xsl_transformation_api.get_by_id(request.POST['id'])
         xsl_transformation_api.delete(xslt)
     except Exception, e:
-        return HttpResponseBadRequest(e.message, content_type='application/javascript')
+        return HttpResponseBadRequest(e.message)
 
     return HttpResponse(json.dumps({}), content_type='application/javascript')

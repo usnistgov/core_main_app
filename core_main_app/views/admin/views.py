@@ -25,6 +25,7 @@ from core_main_app.views.admin.forms import UploadTemplateForm, UploadVersionFor
     TemplateXsltRenderingForm
 from core_main_app.views.common.views import read_xsd_file
 from core_main_app.views.user.views import get_context_manage_template_versions
+from core_main_app.commons.exceptions import NotUniqueError
 
 
 @staff_member_required
@@ -397,6 +398,9 @@ class UploadXSLTView(View):
             xslt_transformation_api.upsert(xslt)
 
             return HttpResponseRedirect(reverse("admin:core_main_app_xslt"))
+        except NotUniqueError:
+            self.context.update({'errors': html_escape("This name already exists.")})
+            return admin_render(request, 'core_main_app/admin/xslt/upload.html', context=self.context)
         except Exception, e:
             self.context.update({'errors': html_escape(e.message)})
             return admin_render(request, 'core_main_app/admin/xslt/upload.html', context=self.context)
