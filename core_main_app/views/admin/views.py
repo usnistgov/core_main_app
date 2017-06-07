@@ -124,6 +124,10 @@ def manage_template_versions(request, version_manager_id):
                     {
                         "path": 'core_main_app/common/js/templates/versions/modals/disable.js',
                         "is_raw": False
+                    },
+                    {
+                        "path": 'core_main_app/common/js/backtoprevious.js',
+                        "is_raw": True
                     }
                 ]
             }
@@ -156,6 +160,10 @@ def upload_template(request):
             {
                 "path": 'core_main_app/admin/js/templates/upload/dependencies.js',
                 "is_raw": False
+            },
+            {
+                "path": 'core_main_app/common/js/backtoprevious.js',
+                "is_raw": True
             }
         ]
     }
@@ -401,6 +409,14 @@ class TemplateXSLRenderingView(View):
     form_class = TemplateXsltRenderingForm
     template_name = "core_main_app/admin/templates_xslt/main.html"
     context = {}
+    assets = {
+        "js": [
+            {
+                "path": 'core_main_app/common/js/backtoprevious.js',
+                "is_raw": True
+            }
+        ]
+    }
 
     def get(self, request, *args, **kwargs):
         """ GET request. Creates/Shows the form for the configuration.
@@ -432,7 +448,7 @@ class TemplateXSLRenderingView(View):
             "form_template_xsl_rendering": self.form_class(data)
         }
 
-        return admin_render(request, self.template_name, context=self.context)
+        return admin_render(request, self.template_name, context=self.context, assets=self.assets)
 
     def post(self, request, *args, **kwargs):
         """ POST request. Try to saves the configuration.

@@ -7,6 +7,7 @@ from django.http.response import HttpResponse, HttpResponseBadRequest
 from core_main_app.components.template import api as template_api
 from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.components.template_version_manager import api as template_version_manager_api
+from core_main_app.commons import exceptions
 
 
 def edit_template_version_manager(request):
@@ -18,11 +19,14 @@ def edit_template_version_manager(request):
     Returns:
 
     """
+    title = request.POST['title']
     try:
         template_version_manager = template_version_manager_api.get_by_id(request.POST['id'])
-        template_version_manager_api.edit_title(template_version_manager, request.POST['title'])
+        template_version_manager_api.edit_title(template_version_manager, title)
+    except exceptions.NotUniqueError, e:
+        return HttpResponseBadRequest("A template called \"" + title + "\" already exists. Please choose another name.")
     except Exception, e:
-        return HttpResponseBadRequest(e.message, content_type='application/javascript')
+        return HttpResponseBadRequest(e.message)
 
     return HttpResponse(json.dumps({}), content_type='application/javascript')
 

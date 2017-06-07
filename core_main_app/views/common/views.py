@@ -120,6 +120,14 @@ class TemplateXSLRenderingView(View):
     form_class = TemplateXsltRenderingForm
     template_name = "core_main_app/common/templates_xslt/main.html"
     context = {}
+    assets = {
+        "js": [
+            {
+                "path": 'core_main_app/common/js/backtoprevious.js',
+                "is_raw": True
+            }
+        ]
+    }
 
     def get(self, request, *args, **kwargs):
         """ GET request. Creates/Shows the form for the configuration.
@@ -155,7 +163,7 @@ class TemplateXSLRenderingView(View):
             "form_template_xsl_rendering": self.form_class(data)
         }
 
-        return render(request, self.template_name, context=self.context)
+        return render(request, self.template_name, context=self.context, assets=self.assets)
 
     def post(self, request, *args, **kwargs):
         """ POST request. Try to saves the configuration.

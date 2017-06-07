@@ -7,10 +7,11 @@ editTemplateOpenModal = function(event) {
     var templateName = $(this).parent().siblings(':first').text();
     var templateId = $(this).attr("objectid");
 
+    hideErrorEditTemplate();
     $("#edit-template-name").val(templateName);
     $("#edit-template-id").val(templateId);
     $("#edit-template-modal").modal("show");
-}
+};
 
 editTemplateSave = function(event) {
     event.preventDefault();
@@ -29,10 +30,26 @@ editTemplateSave = function(event) {
             location.reload();
         },
         error: function(data){
-
+            showErrorEditTemplate(data.responseText);
         }
     });
-}
+};
+
+/*
+* Show label error with message
+* */
+showErrorEditTemplate = function(message){
+    $('#error-div-edit-template').show();
+    $('#error-message').text(message);
+};
+
+/*
+* Hide label error with message
+* */
+hideErrorEditTemplate = function(){
+    $('#error-div-edit-template').hide();
+    $('#error-message').text('');
+};
 
 $(document).ready(function() {
     $('.edit').on('click', editTemplateOpenModal);

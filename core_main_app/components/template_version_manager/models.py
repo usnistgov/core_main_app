@@ -124,3 +124,13 @@ class TemplateVersionManager(VersionManager):
             return TemplateVersionManager._filter_by_cls(queryset)
         return queryset
 
+    def save_template_version_manager(self):
+        """ Custom save.
+
+        Returns:
+            Saved Instance.
+
+        """
+        return super(TemplateVersionManager, self).save_version_manager()
+
+

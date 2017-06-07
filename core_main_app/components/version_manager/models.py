@@ -246,3 +246,17 @@ class VersionManager(Document):
 
         """
         return VersionManager.objects(user=str(user_id)).all()
+
+    def save_version_manager(self):
+        """ Custom save.
+
+        Returns:
+            Saved Instance.
+
+        """
+        try:
+            return self.save()
+        except mongoengine_errors.NotUniqueError as e:
+            raise exceptions.NotUniqueError(e.message)
+        except Exception as ex:
+            raise exceptions.ModelError(ex.message)

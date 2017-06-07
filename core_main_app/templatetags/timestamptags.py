@@ -10,7 +10,7 @@ def print_timestamp(object_id):
     return _get_datetime(object_id)
 
 
-def _get_datetime(object_id, str_format="%m/%d/%Y %H:%M:%S"):
+def _get_datetime(object_id, str_format="%m/%d/%Y %I:%M:%S %p"):
     """
     Returns converted to UTC
     :param object_id:

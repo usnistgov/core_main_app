@@ -48,7 +48,7 @@ def edit_title(template_version_manager, title):
     # set version template manager title
     template_version_manager.title = title
     # save template version manager
-    template_version_manager.save()
+    template_version_manager.save_template_version_manager()
     # update templates display names
     update_templates_display_name(template_version_manager)
 

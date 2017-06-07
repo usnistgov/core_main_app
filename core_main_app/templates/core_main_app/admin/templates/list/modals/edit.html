@@ -4,6 +4,11 @@
 {% block modal_title %}Edit {{ data.object_name }}{% endblock %}
 
 {% block modal_body %}
+<div class="alert alert-danger" id="error-div-edit-template" style="display: none;">
+    <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
+    <h4><i class="fa fa-exclamation-circle"></i> Error</h4>
+    <div id="error-message"></div>
+</div>
 <form id="edit-template-form">
     <input id="edit-template-id" type="hidden" value=""/>
     <div class="form-group">

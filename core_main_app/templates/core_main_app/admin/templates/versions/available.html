@@ -4,6 +4,9 @@
 {% block box_title %}Available versions{% endblock %}
 
 {% block box_tools %}
+<a href="#" class="btn btn-default back-to-previous">
+     <i class="fa fa-arrow-left"></i> Previous page
+</a>
 <a href="{% url 'admin:core_main_app_upload_template_version' data.version_manager.id %}"
    class="pull-right btn btn-default">
 	<i class="fa fa-upload"></i> Upload New Version
