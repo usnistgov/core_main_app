@@ -23,9 +23,16 @@ def custom_login(request):
     
         Returns:
     """
+    def _login_redirect(to_page):
+        if to_page is not None:
+            return redirect(to_page)
+
+        return redirect(reverse("core_main_app_homepage"))
+
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
+        next_page = request.POST["next_page"]
 
         try:
             user = authenticate(username=username, password=password)
@@ -36,7 +43,7 @@ def custom_login(request):
 
             login(request, user)
 
-            return redirect(reverse("core_main_app_homepage"))
+            return _login_redirect(next_page)
         except Exception as e:
             return render(request, "core_main_app/user/login.html",
                           context={'login_form': LoginForm(), 'login_error': True})
@@ -44,7 +51,12 @@ def custom_login(request):
         if request.user.is_authenticated():
             return redirect(reverse("core_main_app_homepage"))
 
-        return render(request, "core_main_app/user/login.html", context={'login_form': LoginForm()})
+        next_page = None
+        if "next" in request.GET:
+            next_page = request.GET["next"]
+
+        return render(request, "core_main_app/user/login.html",
+                      context={'login_form': LoginForm(initial={"next_page": next_page})})
     else:
         return HttpResponse(status=HTTP_405_METHOD_NOT_ALLOWED)
 
