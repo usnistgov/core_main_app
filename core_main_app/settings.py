@@ -7,6 +7,8 @@ SECRET_KEY = getattr(settings, 'SECRET_KEY', '<secret_key>')
 
 SERVER_URI = getattr(settings, 'SERVER_URI', "http://127.0.0.1:8000")
 
+INSTALLED_APPS = getattr(settings, 'INSTALLED_APPS', [])
+
 # Website configuration
 WEBSITE_COMPACT_TITLE = getattr(settings, 'WEBSITE_COMPACT_TITLE', "Project")
 

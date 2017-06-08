@@ -5,20 +5,20 @@
         {% if data.login_error %}
         <div class="alert alert-danger">
             <i class="fa fa-exclamation-circle"></i> Invalid username and/or password. Please try again or
-            <a href="#">contact an administrator</a> for any assistance.
+            contact an administrator for any assistance.
         </div>
         {% endif %}
         {% if data.login_locked %}
         <div class="alert alert-info">
             <i class="fa fa-info-circle"></i> Your username is not activated yet. Please check back soon or
-            <a href="#">contact an administrator</a> for any assistance.
+            contact an administrator for any assistance.
         </div>
         {% endif %}
 
         <form method="post" action="{% url 'core_main_app_login' %}" class="form-horizontal">
             {% csrf_token %}
 
-            {% for field in data.login_form %}
+            {% for field in data.login_form.visible_fields %}
             <div class="form-group">
                 <label for="{{ field.id_for_label }}" class="col-sm-2 control-label">{{ field.label }}</label>
                 <div class="col-sm-10">
@@ -27,19 +27,26 @@
             </div>
             {% endfor %}
 
+            {% for field in data.login_form.hidden_fields %}
+                {{ field }}
+            {% endfor %}
+
             {% if USE_EMAIL %}
                 <a href="{#{% url 'password_reset' %}#}">Forgot password?</a>
             {% endif %}
 
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
-                    <button type="submit" class="btn btn-lg btn-default">
-                        <i class="fa fa-sign-in"></i> Login
-                    </button>
-                    <a class="btn btn-default btn-lg request account pull-right"
+                    {% if data.with_website_features %}
+                    <a class="btn btn-default btn-lg request account"
                        href="{% url 'core_website_app_account_request' %}">
                         <i class="fa fa-user-plus"></i> Request an Account
                     </a>
+                    {% endif %}
+
+                    <button type="submit" class="btn btn-lg btn-default pull-right">
+                        <i class="fa fa-sign-in"></i> Login
+                    </button>
                 </div>
 
             </div>

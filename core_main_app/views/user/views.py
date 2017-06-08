@@ -24,7 +24,7 @@ def custom_login(request):
         Returns:
     """
     def _login_redirect(to_page):
-        if to_page is not None:
+        if to_page is not None and to_page != "":
             return redirect(to_page)
 
         return redirect(reverse("core_main_app_homepage"))
@@ -39,14 +39,16 @@ def custom_login(request):
 
             if not user.is_active:
                 return render(request, "core_main_app/user/login.html",
-                              context={'login_form': LoginForm(), 'login_locked': True})
+                              context={'login_form': LoginForm(initial={'next_page': next_page}), 'login_locked': True,
+                                       'with_website_features': "core_website_app" in INSTALLED_APPS})
 
             login(request, user)
 
             return _login_redirect(next_page)
         except Exception as e:
             return render(request, "core_main_app/user/login.html",
-                          context={'login_form': LoginForm(), 'login_error': True})
+                          context={'login_form': LoginForm(initial={'next_page': next_page}), 'login_error': True,
+                                   'with_website_features': "core_website_app" in INSTALLED_APPS})
     elif request.method == "GET":
         if request.user.is_authenticated():
             return redirect(reverse("core_main_app_homepage"))
@@ -56,7 +58,8 @@ def custom_login(request):
             next_page = request.GET["next"]
 
         return render(request, "core_main_app/user/login.html",
-                      context={'login_form': LoginForm(initial={"next_page": next_page})})
+                      context={'login_form': LoginForm(initial={"next_page": next_page}),
+                               'with_website_features': "core_website_app" in INSTALLED_APPS})
     else:
         return HttpResponse(status=HTTP_405_METHOD_NOT_ALLOWED)
 
