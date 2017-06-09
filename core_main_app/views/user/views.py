@@ -160,7 +160,7 @@ def manage_template_versions(request, version_manager_id):
         # TODO: catch good exception, redirect to error page
         pass
 
-    if not request.user.is_staff and version_manager.user != request.user.id:
+    if not request.user.is_staff and version_manager.user != str(request.user.id):
         raise Exception("You don't have the rights to perform this action.")
 
     context = get_context_manage_template_versions(version_manager)
