@@ -1,4 +1,5 @@
 Django==1.8.14
+django-password-policies==0.4.1
 mongoengine==0.10.6
 celery==3.1.23
 xmltodict==0.10.2
