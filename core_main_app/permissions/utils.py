@@ -3,7 +3,7 @@
 
 
 def get_formatted_name(permission):
-    """Returns the formatted name from a permission
+    """Return the formatted name from a permission.
 
     Args:
         permission:

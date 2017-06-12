@@ -7,7 +7,7 @@ from core_main_app.components.version_manager.models import VersionManager
 
 
 def get(version_manager_id):
-    """Gets a version manager by its id
+    """Get a version manager by its id.
 
     Args:
         version_manager_id:
@@ -19,7 +19,7 @@ def get(version_manager_id):
 
 
 def get_from_version(version):
-    """Returns a version manager from a version
+    """Return a version manager from a version.
 
     Args:
         version:
@@ -35,7 +35,7 @@ def get_from_version(version):
 
 
 def disable(version_manager):
-    """Disables an object, then saves it.
+    """Disable an object, then saves it.
 
     Args:
         version_manager:
@@ -48,7 +48,7 @@ def disable(version_manager):
 
 
 def restore(version_manager):
-    """Restores an object, then saves it.
+    """Restore an object, then saves it.
 
     Args:
         version_manager:
@@ -61,7 +61,7 @@ def restore(version_manager):
 
 
 def restore_version(version):
-    """Disables a version of the object, then saves it.
+    """Disable a version of the object, then saves it.
 
     Args:
         version:
@@ -75,7 +75,7 @@ def restore_version(version):
 
 
 def disable_version(version, new_current=None):
-    """Disables a version of the object, then saves it.
+    """Disable a version of the object, then saves it.
 
     Args:
         version:
@@ -105,7 +105,7 @@ def disable_version(version, new_current=None):
 
 
 def set_current(version):
-    """Sets the current version of the object, then saves it.
+    """Set the current version of the object, then saves it.
 
     Args:
         version:
@@ -124,7 +124,7 @@ def set_current(version):
 
 
 def get_current(version_manager):
-    """Gets the current version of the version manager
+    """Get the current version of the version manager.
 
     Args:
         version_manager:
@@ -136,7 +136,7 @@ def get_current(version_manager):
 
 
 def upsert(version_manager):
-    """Saves or Updates version manager
+    """Save or update version manager.
 
     Args:
         version_manager:
@@ -148,7 +148,7 @@ def upsert(version_manager):
 
 
 def insert_version(version_manager, version):
-    """Inserts a version in the version manager, then saves it.
+    """Insert a version in the version manager, then saves it.
 
     Args:
         version_manager:
@@ -167,7 +167,7 @@ def insert_version(version_manager, version):
 
 
 def get_global_version_managers():
-    """Returns all Version Managers with user set to None
+    """Return all Version Managers with user set to None.
 
     Returns:
 
@@ -176,7 +176,7 @@ def get_global_version_managers():
 
 
 def get_active_global_version_manager_by_title(version_manager_title):
-    """Returns active Version Manager by its title with user set to None
+    """Return active Version Manager by its title with user set to None.
 
     Args:
         version_manager_title: Version Manager title
@@ -189,7 +189,7 @@ def get_active_global_version_manager_by_title(version_manager_title):
 
 
 def get_version_number(version_manager, version):
-    """Returns version number from version id
+    """Return version number from version id.
 
     Args:
         version_manager:
@@ -202,7 +202,7 @@ def get_version_number(version_manager, version):
 
 
 def get_version_by_number(version_manager, version_number):
-    """Returns the version by its version number.
+    """Return the version by its version number.
 
     Args:
         version_manager:

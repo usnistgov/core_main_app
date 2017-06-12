@@ -1,3 +1,5 @@
+"""Forms for admin views
+"""
 from django import forms
 from core_main_app.views.admin.commons.upload.forms import UploadForm
 from core_main_app.components.xsl_transformation import api as xsl_transformation_api
@@ -43,7 +45,7 @@ class UploadXSLTForm(UploadForm):
 
 class TemplateXsltRenderingForm(forms.Form):
     """
-
+    Form to associate list and detail XSLTs to template
     """
     id = forms.CharField(widget=forms.HiddenInput(), required=False)
     template = forms.ModelChoiceField(widget=forms.HiddenInput(), required=False, queryset=template_api.get_all())

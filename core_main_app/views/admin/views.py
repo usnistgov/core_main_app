@@ -30,7 +30,7 @@ from core_main_app.commons.exceptions import NotUniqueError
 
 @staff_member_required
 def admin_home(request):
-    """
+    """Admin home view.
 
     Args:
         request:
@@ -44,7 +44,7 @@ def admin_home(request):
 
 @staff_member_required
 def manage_templates(request):
-    """View that allows template management
+    """View that allows template management.
 
     Args:
         request:
@@ -92,7 +92,7 @@ def manage_templates(request):
 
 @staff_member_required
 def manage_template_versions(request, version_manager_id):
-    """View that allows template versions management
+    """View that allows template versions management.
 
     Args:
         request:
@@ -144,7 +144,7 @@ def manage_template_versions(request, version_manager_id):
 
 @staff_member_required
 def upload_template(request):
-    """Upload template
+    """Upload template.
 
     Args:
         request:
@@ -194,7 +194,7 @@ def upload_template(request):
 
 @staff_member_required
 def upload_template_version(request, version_manager_id):
-    """Upload template version
+    """Upload template version.
 
     Args:
         request:
@@ -244,7 +244,7 @@ def upload_template_version(request, version_manager_id):
 
 
 def _save_template(request, assets, context):
-    """Saves a template
+    """Save a template.
 
     Args:
         request:
@@ -274,7 +274,7 @@ def _save_template(request, assets, context):
 
 
 def _save_template_version(request, assets, context, template_version_manager):
-    """Saves a template version
+    """Save a template version.
 
     Args:
         request:
@@ -303,7 +303,7 @@ def _save_template_version(request, assets, context, template_version_manager):
 
 
 def _upload_template_response(request, assets, context):
-    """Renders template upload response
+    """Render template upload response.
 
     Args:
         request:
@@ -319,8 +319,7 @@ def _upload_template_response(request, assets, context):
 
 
 class XSLTView(View):
-    """
-    Class' purpose: XSLT view.
+    """XSLT view.
     """
 
     @staticmethod
@@ -354,8 +353,7 @@ class XSLTView(View):
 
 
 class UploadXSLTView(View):
-    """
-    Class' purpose: Upload XSLT view.
+    """Upload XSLT view.
     """
     form_class = UploadXSLTForm
     template_name = 'core_main_app/admin/xslt/upload.html'
@@ -407,8 +405,7 @@ class UploadXSLTView(View):
 
 
 class TemplateXSLRenderingView(View):
-    """
-    Class' purpose: Template XSL rendering view.
+    """Template XSL rendering view.
     """
     form_class = TemplateXsltRenderingForm
     template_name = "core_main_app/admin/templates_xslt/main.html"
@@ -508,6 +505,7 @@ def handle_xsd_errors(request, assets, context, xsd_error, xsd_content, filename
 
     Args:
         request:
+        assets:
         context:
         xsd_error:
         xsd_content:
@@ -528,12 +526,16 @@ def handle_xsd_errors(request, assets, context, xsd_error, xsd_content, filename
 
 
 def get_dependency_resolver_html(imports, includes, xsd_data, filename):
-    """
-    Return HTML for dependency resolver form
-    Args: imports:
-    Args: includes:
-    Args: xsd_data:
-    Return:
+    """Return HTML for dependency resolver form.
+
+    Args:
+        imports:
+        includes:
+        xsd_data:
+        filename:
+
+    Returns:
+
     """
     # build the list of dependencies
     current_templates = template_version_manager_api.get_global_version_managers(_cls=False)

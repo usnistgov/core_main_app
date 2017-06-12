@@ -19,7 +19,7 @@ from core_main_app.utils.file import get_file_http_response
 
 @api_view(['GET'])
 def download(request):
-    """Downloads the template file
+    """Download the template file.
 
     Args:
         request:
@@ -50,7 +50,9 @@ def download(request):
 
 @api_view(['GET'])
 def get_by_id(request):
-    """GET /rest/template?id=<id>
+    """Get template by id.
+
+    GET /rest/template?id=<id>
 
     Args:
         request:
@@ -83,7 +85,9 @@ def get_by_id(request):
 
 
 def _post(request):
-    """ POST /rest/template
+    """ Post template.
+
+    POST /rest/template
     {
     "filename": "filename",
     "title": "title",
@@ -150,7 +154,7 @@ def template(request):
 
 
 def _load_dependencies(dependencies=None):
-    """Returns dependencies as a dict
+    """Return dependencies as a dict.
 
     Args:
         dependencies:

@@ -17,7 +17,7 @@ class TemplateXslRendering(Document):
 
     @staticmethod
     def get_by_id(template_xsl_rendering_id):
-        """ Gets a TemplateXslRendering document by its id.
+        """ Get a TemplateXslRendering document by its id.
 
         Args:
             template_xsl_rendering_id: Id.
@@ -39,7 +39,7 @@ class TemplateXslRendering(Document):
 
     @staticmethod
     def get_by_template_id(template_id):
-        """Gets TemplateXslRendering by its template id.
+        """Get TemplateXslRendering by its template id.
 
         Args:
             template_id: Template id.
@@ -61,7 +61,7 @@ class TemplateXslRendering(Document):
 
     @staticmethod
     def get_all():
-        """Gets all TemplateXslRendering.
+        """Get all TemplateXslRendering.
 
         Returns:
             List of TemplateXslRendering.

@@ -11,7 +11,7 @@ from core_main_app.commons import exceptions
 
 
 def edit_template_version_manager(request):
-    """Edit the template version manager
+    """Edit the template version manager.
 
     Args:
         request:
@@ -32,7 +32,7 @@ def edit_template_version_manager(request):
 
 
 def disable_version_manager(request):
-    """Disable a version manager
+    """Disable a version manager.
 
     Args:
         request:
@@ -50,7 +50,7 @@ def disable_version_manager(request):
 
 
 def restore_version_manager(request):
-    """Restore a disabled version manager
+    """Restore a disabled version manager.
 
     Args:
         request:
@@ -68,7 +68,7 @@ def restore_version_manager(request):
 
 
 def disable_template_version_from_version_manager(request):
-    """ Disable a template version of a version manager
+    """ Disable a template version of a version manager.
 
     Args:
         request:
@@ -85,7 +85,7 @@ def disable_template_version_from_version_manager(request):
 
 
 def disable_version_of_version_manager(version):
-    """ Disable a version of a version manager
+    """ Disable a version of a version manager.
 
     Args:
         version:
@@ -100,7 +100,7 @@ def disable_version_of_version_manager(version):
 
 
 def restore_template_version_from_version_manager(request):
-    """ Restore a disabled template version of a version manager
+    """ Restore a disabled template version of a version manager.
 
     Args:
         request:
@@ -117,7 +117,7 @@ def restore_template_version_from_version_manager(request):
 
 
 def restore_version_from_version_manager(version):
-    """ Restore a disabled version of a version manager
+    """ Restore a disabled version of a version manager.
 
     Args:
         version:
@@ -132,7 +132,7 @@ def restore_version_from_version_manager(version):
 
 
 def set_current_template_version_from_version_manager(request):
-    """ Set the current version of a template
+    """ Set the current version of a template.
 
     Args:
         request:
@@ -149,7 +149,7 @@ def set_current_template_version_from_version_manager(request):
 
 
 def set_current_version_from_version_manager(version):
-    """ Set the current version of a version manager
+    """ Set the current version of a version manager.
 
     Args:
         version:

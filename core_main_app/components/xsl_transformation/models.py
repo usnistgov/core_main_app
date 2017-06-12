@@ -25,7 +25,7 @@ class XslTransformation(Document):
 
     @staticmethod
     def get_all():
-        """
+        """ Get all XSL Transformations.
 
         Returns:
 
@@ -34,7 +34,7 @@ class XslTransformation(Document):
 
     @staticmethod
     def get_by_name(xslt_name):
-        """
+        """ Get XSL Transformation by name.
 
         Args:
             xslt_name:

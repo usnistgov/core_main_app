@@ -1,3 +1,5 @@
+"""Template tag to print date
+"""
 from bson.objectid import ObjectId
 from django import template
 from dateutil import tz
@@ -7,15 +9,26 @@ register = template.Library()
 
 @register.filter
 def print_timestamp(object_id):
+    """Print timestamp.
+
+    Args:
+        object_id:
+
+    Returns:
+
+    """
     return _get_datetime(object_id)
 
 
 def _get_datetime(object_id, str_format="%m/%d/%Y %I:%M:%S %p"):
-    """
-    Returns converted to UTC
-    :param object_id:
-    :param str_format:
-    :return:
+    """Return converted to UTC.
+
+    Args:
+        object_id:
+        str_format:
+
+    Returns:
+
     """
     object_id = ObjectId(object_id)
     from_zone = tz.tzutc()

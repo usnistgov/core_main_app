@@ -11,7 +11,7 @@ from core_main_app.commons import exceptions as exceptions
 
 @api_view(['GET'])
 def get_by_id(request):
-    """Returns a template version manager by its id
+    """Return a template version manager by its id.
 
     GET /rest/template-version-manager?id=<id>
 
@@ -46,7 +46,7 @@ def get_by_id(request):
 
 @api_view(['GET'])
 def get_all_globals(request):
-    """Returns http response with all global template version managers
+    """Return http response with all global template version managers.
 
     GET /rest/template-version-manager/get/all/global
 
@@ -67,7 +67,7 @@ def get_all_globals(request):
 
 @api_view(['GET'])
 def get_active_by_user(request):
-    """Returns http response with all active template version managers of a user
+    """Return http response with all active template version managers of a user.
 
     GET /rest/template-version-manager/get/active/user
 

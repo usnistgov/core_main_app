@@ -43,7 +43,7 @@ def data(request):
 
 
 def _get_all(request):
-    """Returns http response with all data
+    """Return http response with all data.
 
     Args:
         request:
@@ -67,7 +67,7 @@ def _get_all(request):
 
 @api_view(['GET'])
 def get_by_id(request):
-    """ Gets data by its id
+    """ Get data by its id.
 
         /rest/data/get?id=588a73b47179c722f6fdaf43
 
@@ -106,7 +106,7 @@ def get_by_id(request):
 # Should avoid here a duplication code with get_by_id
 @api_view(['GET'])
 def get_by_id_with_template_info(request):
-    """ Gets data by its id
+    """ Get data by its id.
 
         /rest/data/get?id=588a73b47179c722f6fdaf43
 
@@ -143,7 +143,7 @@ def get_by_id_with_template_info(request):
 
 @api_view(['GET'])
 def download(request):
-    """Downloads the data file
+    """Download the data file.
 
     /rest/data/download?id=<id>
 
@@ -176,7 +176,7 @@ def download(request):
 
 @api_view(['DELETE'])
 def delete(request):
-    """ Deletes a data
+    """ Delete a data.
 
         /rest/data/delete?id=<id>
 
@@ -213,7 +213,7 @@ def delete(request):
 
 
 def _post(request):
-    """Saves a data
+    """Save a data.
 
     POST /rest/data
     {
@@ -262,7 +262,7 @@ def _post(request):
 
 
 def _edit(request):
-    """Edits fields of a data
+    """Edit fields of a data.
 
     PATCH /rest/data
     {
@@ -310,7 +310,7 @@ def _edit(request):
 
 @api_view(['POST'])
 def execute_query(request):
-    """Executes a query on the data collection
+    """Execute a query on the data collection.
 
     POST /rest/data/query
     {

@@ -1,5 +1,4 @@
-"""
-
+"""Common custom fields
 """
 from django import forms
 from core_main_app import settings
@@ -9,8 +8,9 @@ from core_main_app.commons.validators import UpperCaseLetterCountValidator, Lowe
 
 class CustomPasswordPoliciesField(PasswordPoliciesField):
     """
-A form field that validates a password using :ref:`api-validators`.
-"""
+    A form field that validates a password using :ref:`api-validators`.
+    """
+
     def __init__(self, *args, **kwargs):
         if "widget" not in kwargs:
             kwargs["widget"] = forms.PasswordInput(render_value=False)

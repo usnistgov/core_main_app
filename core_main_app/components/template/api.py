@@ -6,7 +6,7 @@ from core_main_app.utils.xml import is_schema_valid, get_hash, get_template_with
 
 
 def upsert(template):
-    """Saves or Updates the template
+    """Save or Updates the template.
 
     Args:
         template:
@@ -14,13 +14,16 @@ def upsert(template):
     Returns:
 
     """
+    # Check if schema is valid
     is_schema_valid(template.content)
+    # Get hash for the template
     template.hash = get_hash(template.content)
+    # Save template
     return template.save()
 
 
 def init_template_with_dependencies(template, dependencies_dict):
-    """Initializes template content and dependencies from a dict
+    """Initialize template content and dependencies from a dictionary.
 
     Args:
         template:
@@ -39,7 +42,7 @@ def init_template_with_dependencies(template, dependencies_dict):
 
 
 def set_display_name(template, display_name):
-    """Set template display name
+    """Set template display name.
 
     Args:
         template:
@@ -55,7 +58,7 @@ def set_display_name(template, display_name):
 
 
 def get(template_id):
-    """Gets a template
+    """Get a template.
 
     Args:
         template_id:
@@ -67,7 +70,7 @@ def get(template_id):
 
 
 def get_all_by_hash(template_hash):
-    """ Returns all template having the given hash.
+    """ Return all template having the given hash.
 
     Args:
         template_hash: Template hash.
@@ -92,7 +95,7 @@ def get_all_by_id_list(template_id_list):
 
 
 def get_all(is_cls=True):
-    """Lists all templates
+    """List all templates.
 
     Returns:
 
@@ -101,7 +104,7 @@ def get_all(is_cls=True):
 
 
 def delete(template):
-    """Deletes the template
+    """Delete the template.
 
     Returns:
 

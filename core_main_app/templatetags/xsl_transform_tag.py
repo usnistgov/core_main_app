@@ -19,7 +19,7 @@ class XSLType(object):
 # TODO: Deprecated in Django 1.9. Use simple_tag instead when migrated to 1.9.
 @register.assignment_tag(name='xsl_transform_list')
 def render_xml_as_html(*args, **kwargs):
-    """ Renders an XML to HTML using the list xslt.
+    """ Render an XML to HTML using the list xslt.
     Args:
         *args:
         **kwargs:
@@ -36,7 +36,7 @@ def render_xml_as_html(*args, **kwargs):
 
 @register.assignment_tag(name='xsl_transform_detail')
 def render_xml_as_html(*args, **kwargs):
-    """ Renders an XML to HTML using the detail xslt.
+    """ Render an XML to HTML using the detail xslt.
     Args:
         *args:
         **kwargs:
@@ -52,7 +52,7 @@ def render_xml_as_html(*args, **kwargs):
 
 
 def _render_xml_as_html(xml_string, template_id=None, template_hash=None, xslt_type=XSLType.type_list):
-    """ Renders an XML to HTML according to an xslt type (list or detail)
+    """ Render an XML to HTML according to an xslt type (list or detail).
     Args:
         xml_string:
         template_id:

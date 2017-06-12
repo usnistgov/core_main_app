@@ -16,12 +16,13 @@ from core_main_app.settings import XERCES_VALIDATION, SERVER_URI
 
 
 def validate_xml_schema(xsd_tree):
-    """
-        Check if XSD schema is valid
-        Send XSD Schema to server to be validated
-        if XERCES_VALIDATION is true
-        :param xsd_tree:
-        :return: None if no errors, string otherwise
+    """Check if XSD schema is valid, send XSD Schema to server to be validated if XERCES_VALIDATION is true.
+
+    Args:
+        xsd_tree:
+
+    Returns: None if no errors, string otherwise
+
     """
     if XERCES_VALIDATION:
         try:
@@ -35,13 +36,14 @@ def validate_xml_schema(xsd_tree):
 
 
 def validate_xml_data(xsd_tree, xml_tree):
-    """
-        Check if XML data is valid
-        Send XML data to server to be validated
-        if XERCES_VALIDATION is true
-        :param xsd_tree:
-        :param xml_tree:
-        :return: None if no errors, string otherwise
+    """Check if XML data is valid, send XML data to server to be validated if XERCES_VALIDATION is true
+
+    Args:
+        xsd_tree:
+        xml_tree:
+
+    Returns:None if no errors, string otherwise
+
     """
     if XERCES_VALIDATION:
         try:
@@ -55,10 +57,13 @@ def validate_xml_data(xsd_tree, xml_tree):
 
 
 def is_schema_valid(xsd_string):
-    """
-        Test if the schema is valid to be uploaded
-        :param xsd_string:
-        :return:
+    """Test if the schema is valid to be uploaded.
+
+    Args:
+        xsd_string:
+
+    Returns:
+
     """
     if not is_well_formed_xml(xsd_string):
         raise exceptions.XMLError('Uploaded file is not well formatted XML.')
@@ -75,10 +80,13 @@ def is_schema_valid(xsd_string):
 
 
 def is_well_formed_xml(xml_string):
-    """
-        True if well formatted XML
-        :param xml_string:
-        :return:
+    """True if well formatted XML.
+
+    Args:
+        xml_string:
+
+    Returns:
+
     """
     # is it a valid XML document?
     try:
@@ -90,10 +98,13 @@ def is_well_formed_xml(xml_string):
 
 
 def unparse(json_dict):
-    """
-        Unparse JSON data
-        :param json_dict:
-        :return:
+    """Unparse JSON data.
+
+    Args:
+        json_dict:
+
+    Returns:
+
     """
     json_dump_string = json.dumps(json_dict)
     preprocessed_dict = json.loads(json_dump_string,
@@ -104,12 +115,15 @@ def unparse(json_dict):
 
 
 def raw_xml_to_dict(raw_xml, postprocessor=None):
+    """Transform a raw xml to dict. Returns an empty dict if the parsing failed.
+
+    Args:
+        raw_xml:
+        postprocessor:
+
+    Returns:
+
     """
-        Transform a raw xml to dict. Returns an empty dict if the parsing failed
-        :param raw_xml:
-        :param postprocessor:
-        :return:
-        """
     try:
         dict_raw = xmltodict.parse(raw_xml, postprocessor=postprocessor)
         return dict_raw
@@ -118,7 +132,7 @@ def raw_xml_to_dict(raw_xml, postprocessor=None):
 
 
 def remove_lists_from_xml_dict(xml_dict, max_list_size=0):
-    """Removes from dictionary the lists that exceed max list size
+    """Remove from dictionary the lists that exceed max list size.
 
     Args:
         xml_dict:
@@ -147,11 +161,14 @@ def remove_lists_from_xml_dict(xml_dict, max_list_size=0):
 
 
 def get_template_with_server_dependencies(xsd_string, dependencies):
-    """
-    Return the template with schema locations pointing to the server
-    :param xsd_string:
-    :param dependencies:
-    :return:
+    """Return the template with schema locations pointing to the server.
+
+    Args:
+        xsd_string:
+        dependencies:
+
+    Returns:
+
     """
     # replace includes/imports by API calls (get dependencies starting by the imports)
     try:
@@ -175,10 +192,13 @@ def get_template_with_server_dependencies(xsd_string, dependencies):
 
 
 def get_hash(xml_string):
-    """
-    Get the hash of an XML string
-    :param xml_string:
-    :return:
+    """Get the hash of an XML string.
+
+    Args:
+        xml_string:
+
+    Returns:
+
     """
     try:
         return xsd_hash.get_hash(xml_string)
@@ -187,7 +207,7 @@ def get_hash(xml_string):
 
 
 def post_processor(path, key, value):
-    """ Called after XML to JSON transformation
+    """ Called after XML to JSON transformation.
 
         Parameters:
             path:
@@ -206,10 +226,13 @@ def post_processor(path, key, value):
 
 
 def get_imports_and_includes(xsd_string):
-    """
-    Get a list of imports and includes in the file
-    :param xsd_string:
-    :return: list of imports, list of includes
+    """Get a list of imports and includes in the file.
+
+    Args:
+        xsd_string:
+
+    Returns: list of imports, list of includes
+
     """
     xsd_tree = XSDTree.build_tree(xsd_string)
     # get the imports
@@ -220,11 +243,14 @@ def get_imports_and_includes(xsd_string):
 
 
 def update_dependencies(xsd_string, dependencies):
-    """
-    Update dependencies of the schemas with given dependencies
-    :param xsd_string:
-    :param dependencies:
-    :return:
+    """Update dependencies of the schemas with given dependencies.
+
+    Args:
+        xsd_string:
+        dependencies:
+
+    Returns:
+
     """
     # build the tree
     xsd_tree = XSDTree.build_tree(xsd_string)
@@ -246,7 +272,7 @@ def update_dependencies(xsd_string, dependencies):
 
 
 def _check_core_support(xsd_string):
-    """Checks that the format of the the schema is supported by the current version of the Core
+    """Check that the format of the the schema is supported by the current version of the Core.
 
     Args:
         xsd_string:
@@ -281,8 +307,7 @@ def _check_core_support(xsd_string):
 
 
 def _parse_numbers(num_str):
-    """
-    Parse numbers from JSON
+    """Parse numbers from JSON.
 
     Returns:
         str: parsed string
@@ -291,17 +316,20 @@ def _parse_numbers(num_str):
 
 
 def _get_schema_location_uri(schema_id):
-    """
-    Get an URI of the schema location on the system from an id
-    :param schema_id:
-    :return:
+    """Get an URI of the schema location on the system from an id.
+
+    Args:
+        schema_id:
+
+    Returns:
+
     """
     url = reverse('core_main_app_rest_template_download')
     return str(SERVER_URI) + url + '?id=' + str(schema_id)
 
 
 def xsl_transform(xml_string, xslt_string):
-    """
+    """Apply transformation to xml.
 
     Args:
         xml_string:

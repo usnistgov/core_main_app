@@ -10,7 +10,7 @@ class InitApp(AppConfig):
     name = 'core_main_app'
 
     def ready(self):
-        """ Run when the app is ready
+        """ Run when the app is ready.
 
         Returns:
 

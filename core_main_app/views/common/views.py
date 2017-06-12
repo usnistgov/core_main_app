@@ -17,8 +17,7 @@ from core_main_app.views.admin.forms import UploadXSLTForm, TemplateXsltRenderin
 
 
 class XSLTView(View):
-    """
-    Class' purpose: XSLT view.
+    """XSLT view.
     """
 
     @staticmethod
@@ -52,7 +51,7 @@ class XSLTView(View):
 
 
 def read_xsd_file(xsd_file):
-    """Returns the content of the file uploaded using Django FileField
+    """Return the content of the file uploaded using Django FileField.
 
     Returns:
 
@@ -64,8 +63,7 @@ def read_xsd_file(xsd_file):
 
 
 class UploadXSLTView(View):
-    """
-    Class' purpose: Upload XSLT view.
+    """Upload XSLT view.
     """
     form_class = UploadXSLTForm
     template_name = 'core_main_app/common/xslt/upload.html'
@@ -91,7 +89,7 @@ class UploadXSLTView(View):
             return render(request, self.template_name, context=self.context)
 
     def _save_xslt(self, request):
-        """Saves an XSLT.
+        """Save an XSLT.
 
         Args:
             request: Request.
@@ -114,8 +112,7 @@ class UploadXSLTView(View):
 
 
 class TemplateXSLRenderingView(View):
-    """
-    Class' purpose: Template XSL rendering view.
+    """Template XSL rendering view.
     """
     form_class = TemplateXsltRenderingForm
     template_name = "core_main_app/common/templates_xslt/main.html"
@@ -130,7 +127,7 @@ class TemplateXSLRenderingView(View):
     }
 
     def get(self, request, *args, **kwargs):
-        """ GET request. Creates/Shows the form for the configuration.
+        """ GET request. Create/Show the form for the configuration.
 
         Args:
             request:
@@ -166,7 +163,7 @@ class TemplateXSLRenderingView(View):
         return render(request, self.template_name, context=self.context, assets=self.assets)
 
     def post(self, request, *args, **kwargs):
-        """ POST request. Try to saves the configuration.
+        """ POST request. Try to save the configuration.
 
         Args:
             request:
@@ -186,7 +183,7 @@ class TemplateXSLRenderingView(View):
             return render(request, self.template_name, context=self.context)
 
     def _save_template_xslt(self, request):
-        """Saves a template xslt rendering.
+        """Save a template xslt rendering.
 
         Args:
             request: Request.
@@ -208,7 +205,7 @@ class TemplateXSLRenderingView(View):
                                                      template_id=request.POST.get('template'),
                                                      list_xslt=list_xslt, detail_xslt=detail_xslt)
 
-            #TODO: user dashboard installed go to template page, home otherwise
+            # TODO: user dashboard installed go to template page, home otherwise
             return HttpResponseRedirect(reverse("core_main_app_templates"))
         except Exception, e:
             self.context.update({'errors': html_escape(e.message)})

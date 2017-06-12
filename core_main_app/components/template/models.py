@@ -7,7 +7,7 @@ from core_main_app.commons import exceptions
 
 
 class Template(Document):
-    """Represents an XML schema template that defines the structure of data for curation"""
+    """Represents an XML schema template that defines the structure of data"""
     filename = fields.StringField()
     content = fields.StringField()
     hash = fields.StringField()
@@ -18,7 +18,7 @@ class Template(Document):
 
     @staticmethod
     def get_all(is_cls):
-        """Returns all templates
+        """Return all templates.
 
         Returns:
 
@@ -32,7 +32,7 @@ class Template(Document):
 
     @staticmethod
     def get_by_id(template_id):
-        """Returns a template by its id
+        """Return a template by its id.
 
         Args:
             template_id:
@@ -49,7 +49,7 @@ class Template(Document):
 
     @staticmethod
     def get_all_by_hash(template_hash):
-        """ Returns all template having the given hash.
+        """ Return all template having the given hash.
 
         Args:
             template_hash: Template hash.
@@ -62,7 +62,7 @@ class Template(Document):
 
     @staticmethod
     def get_all_by_id_list(template_id_list):
-        """ Returns all template with id in list
+        """ Return all template with id in list.
 
         Args:
             template_id_list:
@@ -74,7 +74,7 @@ class Template(Document):
 
     @property
     def display_name(self):
-        """Returns template name to display
+        """Return template name to display.
 
         Returns:
 
@@ -86,7 +86,7 @@ class Template(Document):
 
     @display_name.setter
     def display_name(self, value):
-        """Sets template name to display
+        """Set template name to display.
 
         Args:
             value:

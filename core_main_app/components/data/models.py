@@ -20,7 +20,7 @@ from core_main_app.settings import DATA_AUTO_PUBLISH, GRIDFS_DATA_COLLECTION, SE
 
 
 class Data(Document):
-    """ Represents Data object
+    """ Data object
     """
     template = fields.ReferenceField(Template)
     user_id = fields.StringField()
@@ -35,7 +35,7 @@ class Data(Document):
 
     @property
     def xml_content(self):
-        """Gets xml content - read from a saved file
+        """Get xml content - read from a saved file.
 
         Returns:
 
@@ -49,7 +49,7 @@ class Data(Document):
 
     @xml_content.setter
     def xml_content(self, value):
-        """Sets xml content - to be saved as a file
+        """Set xml content - to be saved as a file.
 
         Args:
             value:
@@ -60,7 +60,7 @@ class Data(Document):
         self._xml_content = value
 
     def convert_and_save(self):
-        """ Save Data object and convert the xml to dict if needed
+        """ Save Data object and convert the xml to dict if needed.
 
         Returns:
 
@@ -71,7 +71,7 @@ class Data(Document):
         return self.save()
 
     def convert_to_dict(self):
-        """ Converts the xml contained in xml_content into a dictionary
+        """ Convert the xml contained in xml_content into a dictionary.
 
         Returns:
 
@@ -86,7 +86,7 @@ class Data(Document):
         self.dict_content = dict_content
 
     def convert_to_file(self):
-        """ Converts the xml string into a file
+        """ Convert the xml string into a file.
 
         Returns:
 
@@ -100,13 +100,12 @@ class Data(Document):
             # new file
             self.xml_file.put(xml_file, content_type="application/xml")
         else:
-            # editing
-            # self.xml_file gets a new id
+            # editing (self.xml_file gets a new id)
             self.xml_file.replace(xml_file, content_type="application/xml")
 
     @staticmethod
     def get_all():
-        """
+        """ Get all data.
 
         Returns:
 
@@ -139,7 +138,7 @@ class Data(Document):
 
     @staticmethod
     def get_all_by_id_list(list_id, distinct_by=None):
-        """ Returns the object with the given list id
+        """ Return the object with the given list id.
 
         Args:
             list_id:
@@ -152,7 +151,7 @@ class Data(Document):
 
     @staticmethod
     def get_by_id(data_id):
-        """ Returns the object with the given id
+        """ Return the object with the given id.
 
         Args:
             data_id:
@@ -170,7 +169,7 @@ class Data(Document):
 
     @staticmethod
     def execute_full_text_query(text, template_ids):
-        """ Execute a full text query with possible refinements
+        """ Execute a full text query with possible refinements.
 
         Args:
             text:
@@ -186,7 +185,7 @@ class Data(Document):
 
     @staticmethod
     def execute_query(query):
-        """Execute a query
+        """Execute a query.
 
         Args:
             query:

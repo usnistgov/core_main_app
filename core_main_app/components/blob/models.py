@@ -9,7 +9,7 @@ from mongoengine import errors as mongoengine_errors
 
 
 class Blob(Document):
-    """ Represents a Blob object
+    """ Blob object
     """
     filename = fields.StringField(blank=False)
     user_id = fields.StringField(blank=False)
@@ -20,7 +20,7 @@ class Blob(Document):
 
     @staticmethod
     def get_by_id(blob_id):
-        """ Return the object with the given id
+        """ Return the object with the given id.
 
         Args:
             blob_id:
@@ -63,7 +63,7 @@ class Blob(Document):
 
     @classmethod
     def blob_host(cls):
-        """ Return blob host
+        """ Return blob host.
 
         Returns:
 
@@ -78,7 +78,7 @@ class Blob(Document):
 
     @property
     def blob(self):
-        """ Return blob from blob host
+        """ Return blob from blob host.
 
         Returns:
 
@@ -93,7 +93,7 @@ class Blob(Document):
 
     @blob.setter
     def blob(self, value):
-        """Set blob value
+        """Set blob value.
 
         Args:
             value: file
@@ -104,7 +104,7 @@ class Blob(Document):
         self._blob = value
 
     def save_blob(self):
-        """ Save blob on the blob host
+        """ Save blob on the blob host.
 
         Returns:
 
@@ -112,7 +112,7 @@ class Blob(Document):
         self.handle = str(Blob.blob_host().save(self._blob))
 
     def delete_blob(self):
-        """ Delete blob on the blob host
+        """ Delete blob on the blob host.
 
         Returns:
 

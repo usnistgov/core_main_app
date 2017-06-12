@@ -13,6 +13,14 @@ class DateTimeEncoder(JSONEncoder):
     """
 
     def default(self, obj):
+        """
+
+        Args:
+            obj:
+
+        Returns:
+
+        """
         if isinstance(obj, datetime):
             return {
                 '__type__': 'datetime',

@@ -6,6 +6,6 @@ from core_main_app.commons.serializers import BasicSerializer
 
 
 class DeleteBlobsSerializer(BasicSerializer):
-    """ Delete Blob ids serializer
+    """ Delete Blob ids serializer.
     """
     blob_ids = ListField(child=CharField())

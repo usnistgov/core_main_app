@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 
 
 def get_blob_download_uri(blob, request):
-    """ Return download url for the blob
+    """ Return download url for the blob.
 
     Args:
         blob:

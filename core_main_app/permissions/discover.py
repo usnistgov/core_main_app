@@ -1,6 +1,6 @@
 """ discover rules for core main app
 """
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 import core_main_app.permissions.rights as rights
 
 

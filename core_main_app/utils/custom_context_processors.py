@@ -1,3 +1,5 @@
+"""Custom context processor
+"""
 from django.conf import settings
 
 

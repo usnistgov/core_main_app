@@ -5,11 +5,11 @@ from core_main_app.components.version_manager.models import VersionManager
 
 
 class TemplateVersionManager(VersionManager):
-    """Manages versions of templates"""
+    """Manager of templates versions"""
 
     @staticmethod
     def get_global_version_managers(_cls=True):
-        """Returns all Template Version Managers with user set to None
+        """Return all Template Version Managers with user set to None.
 
         Returns:
             _cls: if True, restricts to TemplateVersionManager _cls
@@ -21,7 +21,7 @@ class TemplateVersionManager(VersionManager):
 
     @staticmethod
     def get_active_global_version_manager(_cls=True):
-        """ Returns all active Version Managers with user set to None
+        """ Return all active Version Managers with user set to None.
 
         Returns:
 
@@ -33,7 +33,7 @@ class TemplateVersionManager(VersionManager):
 
     @staticmethod
     def get_disable_global_version_manager(_cls=True):
-        """ Returns all disabled Version Managers with user set to None
+        """ Return all disabled Version Managers with user set to None.
 
         Returns:
 
@@ -45,7 +45,7 @@ class TemplateVersionManager(VersionManager):
 
     @staticmethod
     def get_active_version_manager_by_user_id(user_id, _cls=True):
-        """ Returns all active Version Managers with given user id
+        """ Return all active Version Managers with given user id.
 
         Returns:
 
@@ -57,7 +57,7 @@ class TemplateVersionManager(VersionManager):
 
     @staticmethod
     def get_disable_version_manager_by_user_id(user_id, _cls=True):
-        """ Returns all disabled Version Managers with given user id
+        """ Return all disabled Version Managers with given user id.
 
         Returns:
 
@@ -69,7 +69,7 @@ class TemplateVersionManager(VersionManager):
 
     @staticmethod
     def get_all_by_version_ids(version_ids):
-        """Gets all template version managers by a list of version ids.
+        """Get all template version managers by a list of version ids.
 
         Args:
             version_ids: list of version ids.
@@ -82,7 +82,7 @@ class TemplateVersionManager(VersionManager):
 
     @staticmethod
     def _filter_by_cls(queryset):
-        """
+        """Filter queryset by cls attribute
 
         Args:
             queryset:

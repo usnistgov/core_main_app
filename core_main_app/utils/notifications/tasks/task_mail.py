@@ -1,3 +1,5 @@
+"""Mailing task
+"""
 from __future__ import absolute_import
 from logging import getLogger
 from core_main_app.utils.tasks_managers.celery import app
@@ -16,6 +18,19 @@ EMAIL_SUBJECT_PREFIX = settings.EMAIL_SUBJECT_PREFIX
 
 @app.task
 def send_mail(recipient_list, subject, path_to_template, context={}, fail_silently=True, sender=SERVER_EMAIL):
+    """Send email.
+
+    Args:
+        recipient_list:
+        subject:
+        path_to_template:
+        context:
+        fail_silently:
+        sender:
+
+    Returns:
+
+    """
     try:
         # Render the given template with context information
         template = loader.get_template(path_to_template)
@@ -32,6 +47,17 @@ def send_mail(recipient_list, subject, path_to_template, context={}, fail_silent
 
 @app.task
 def send_mail_to_administrators(subject, path_to_template, context={}, fail_silently=True):
+    """Send email to administrators.
+
+    Args:
+        subject:
+        path_to_template:
+        context:
+        fail_silently:
+
+    Returns:
+
+    """
     try:
         # Render the given template with context information
         template = loader.get_template(path_to_template)
@@ -47,6 +73,17 @@ def send_mail_to_administrators(subject, path_to_template, context={}, fail_sile
 
 @app.task
 def send_mail_to_managers(subject, path_to_template, context={}, fail_silently=True):
+    """Send email to managers.
+
+    Args:
+        subject:
+        path_to_template:
+        context:
+        fail_silently:
+
+    Returns:
+
+    """
     try:
         # Render the given template with context information
         template = loader.get_template(path_to_template)

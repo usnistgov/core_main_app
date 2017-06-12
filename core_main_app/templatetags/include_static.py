@@ -1,7 +1,6 @@
 import io
 from django import template
 from django.contrib.staticfiles import finders
-from django.core.urlresolvers import reverse
 from django.template.base import Template
 
 register = template.Library()

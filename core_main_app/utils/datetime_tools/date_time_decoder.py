@@ -14,10 +14,24 @@ from core_main_app import settings
 class DateTimeDecoder(json.JSONDecoder):
 
     def __init__(self, *args, **kargs):
+        """
+
+        Args:
+            *args:
+            **kargs:
+        """
         JSONDecoder.__init__(self, object_hook=self.dict_to_object,
                              *args, **kargs)
 
     def dict_to_object(self, d):
+        """
+
+        Args:
+            d:
+
+        Returns:
+
+        """
         if '__type__' not in d:
             return d
 

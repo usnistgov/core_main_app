@@ -8,7 +8,7 @@ from core_main_app.components.version_manager.utils import get_latest_version_na
 
 
 def insert(template_version_manager, template):
-    """Adds a version to a template version manager
+    """Add a version to a template version manager.
 
     Args:
         template_version_manager:
@@ -36,7 +36,7 @@ def insert(template_version_manager, template):
 
 
 def edit_title(template_version_manager, title):
-    """Edit template version manager title
+    """Edit template version manager title.
 
     Args:
         template_version_manager:
@@ -54,7 +54,7 @@ def edit_title(template_version_manager, title):
 
 
 def update_templates_display_name(template_version_manager):
-    """Update templates display name
+    """Update templates display name.
 
     Args:
         template_version_manager:
@@ -75,7 +75,7 @@ def update_templates_display_name(template_version_manager):
 
 
 def get_by_id(template_version_manager_id):
-    """Gets a template version manager by its id
+    """Get a template version manager by its id.
 
     Args:
         template_version_manager_id: Id.
@@ -87,7 +87,7 @@ def get_by_id(template_version_manager_id):
 
 
 def get_global_version_managers(_cls=True):
-    """Gets all global version managers of a template
+    """Get all global version managers of a template.
 
     Returns:
         _cls:
@@ -96,7 +96,7 @@ def get_global_version_managers(_cls=True):
 
 
 def get_active_global_version_manager(_cls=True):
-    """ Returns all active Version Managers with user set to None
+    """ Return all active Version Managers with user set to None.
 
     Returns:
 
@@ -105,7 +105,7 @@ def get_active_global_version_manager(_cls=True):
 
 
 def get_disable_global_version_manager(_cls=True):
-    """ Returns all disabled Version Managers with user set to None
+    """ Return all disabled Version Managers with user set to None.
 
     Returns:
 
@@ -114,7 +114,7 @@ def get_disable_global_version_manager(_cls=True):
 
 
 def get_active_version_manager_by_user_id(user_id, _cls=True):
-    """ Returns all active Version Managers with given user id
+    """ Return all active Version Managers with given user id.
 
     Returns:
 
@@ -123,7 +123,7 @@ def get_active_version_manager_by_user_id(user_id, _cls=True):
 
 
 def get_disable_version_manager_by_user_id(user_id, _cls=True):
-    """ Returns all disabled Version Managers with given user id
+    """ Return all disabled Version Managers with given user id.
 
     Returns:
 
@@ -132,7 +132,7 @@ def get_disable_version_manager_by_user_id(user_id, _cls=True):
 
 
 def get_version_number(template_version_manager, template):
-    """ Returns version number from version id.
+    """ Return version number from version id.
 
     Args:
         template_version_manager:
@@ -146,7 +146,7 @@ def get_version_number(template_version_manager, template):
 
 
 def get_all_by_version_ids(version_ids):
-    """Gets all template version managers by a list of version ids.
+    """Get all template version managers by a list of version ids.
 
     Args:
         version_ids: list of version ids.
@@ -159,7 +159,7 @@ def get_all_by_version_ids(version_ids):
 
 
 def get_all_version_manager_except_user_id(user_id, _cls=True):
-    """ Return all  Version Managers of all users except user with given user id
+    """ Return all  Version Managers of all users except user with given user id.
 
     Returns:
 
@@ -168,7 +168,7 @@ def get_all_version_manager_except_user_id(user_id, _cls=True):
 
 
 def get_all_by_user_id(user_id, _cls=True):
-    """ Return all Template Version Managers with given user id
+    """ Return all Template Version Managers with given user id.
 
     Returns:
 

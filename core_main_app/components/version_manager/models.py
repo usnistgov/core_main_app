@@ -10,7 +10,7 @@ from core_main_app.commons import exceptions
 # TODO: could make current an IntField (index of the current in versions)
 # TODO: could make is_disabled a Status with other possible values taken from an enum
 class VersionManager(Document):
-    """Manages versions"""
+    """Version Manager"""
     title = fields.StringField(unique=True)
     user = fields.StringField(blank=True)
     versions = fields.ListField(default=[], blank=True)
@@ -21,7 +21,7 @@ class VersionManager(Document):
     meta = {'allow_inheritance': True}
 
     def disable(self):
-        """Disables the Version Manager
+        """Disable the Version Manager.
 
         Returns:
 
@@ -29,7 +29,7 @@ class VersionManager(Document):
         self.is_disabled = True
 
     def restore(self):
-        """Restores the Version Manager
+        """Restore the Version Manager.
 
         Returns:
 
@@ -37,7 +37,7 @@ class VersionManager(Document):
         self.is_disabled = False
 
     def disable_version(self, version):
-        """Disables a version
+        """Disable a version.
 
         Args:
             version:
@@ -48,7 +48,7 @@ class VersionManager(Document):
         self.disabled_versions.append(str(version.id))
 
     def restore_version(self, version):
-        """Restores a version
+        """Restore a version.
 
         Args:
             version:
@@ -59,7 +59,7 @@ class VersionManager(Document):
         self.disabled_versions.remove(str(version.id))
 
     def set_current_version(self, version):
-        """Sets the current version
+        """Set the current version.
 
         Args:
             version:
@@ -70,7 +70,7 @@ class VersionManager(Document):
         self.current = str(version.id)
 
     def get_version_number(self, version_id):
-        """Returns version number from version id
+        """Return version number from version id.
 
         Args:
             version_id:
@@ -87,7 +87,7 @@ class VersionManager(Document):
             raise exceptions.DoesNotExist(e.message)
 
     def insert(self, version):
-        """Inserts a version in the Version Manager
+        """Insert a version in the Version Manager.
 
         Args:
             version:
@@ -98,7 +98,7 @@ class VersionManager(Document):
         self.versions.append(str(version.id))
 
     def get_disabled_versions(self):
-        """Gets the list disabled versions of the version manager
+        """Get the list disabled versions of the version manager.
 
         Returns:
 
@@ -106,7 +106,7 @@ class VersionManager(Document):
         return self.disabled_versions
 
     def get_version_by_number(self, version_number):
-        """Returns the version by its version number.
+        """Return the version by its version number.
 
         Args:
             version_number: Number of the version.
@@ -124,7 +124,7 @@ class VersionManager(Document):
 
     @staticmethod
     def get_all():
-        """Returns all Version Managers
+        """Return all Version Managers.
 
         Returns:
 
@@ -133,7 +133,7 @@ class VersionManager(Document):
 
     @staticmethod
     def get_all_filtered(disabled=False):
-        """Returns filtered list of Version Managers
+        """Return filtered list of Version Managers.
 
         Args:
             disabled:
@@ -145,7 +145,7 @@ class VersionManager(Document):
 
     @staticmethod
     def get_by_id(version_manager_id):
-        """Returns Version Managers by id
+        """Return Version Managers by id.
 
         Args:
             version_manager_id:
@@ -162,7 +162,7 @@ class VersionManager(Document):
 
     @staticmethod
     def get_active_global_version_manager_by_title(version_manager_title):
-        """Returns active Version Manager by its title with user set to None
+        """Return active Version Manager by its title with user set to None.
 
         Args:
             version_manager_title: Version Manager title
@@ -180,7 +180,7 @@ class VersionManager(Document):
 
     @staticmethod
     def get_global_version_managers():
-        """Returns all Version Managers with user set to None
+        """Return all Version Managers with user set to None.
 
         Returns:
 
@@ -189,7 +189,7 @@ class VersionManager(Document):
 
     @staticmethod
     def get_active_global_version_manager():
-        """ Returns all active Version Managers with user set to None
+        """ Return all active Version Managers with user set to None.
 
         Returns:
 
@@ -198,7 +198,7 @@ class VersionManager(Document):
 
     @staticmethod
     def get_disable_global_version_manager():
-        """ Returns all disabled Version Managers with user set to None
+        """ Return all disabled Version Managers with user set to None.
 
         Returns:
 
@@ -207,7 +207,7 @@ class VersionManager(Document):
 
     @staticmethod
     def get_active_version_manager_by_user_id(user_id):
-        """ Returns all active Version Managers with given user id
+        """ Return all active Version Managers with given user id.
 
         Returns:
 
@@ -216,7 +216,7 @@ class VersionManager(Document):
 
     @staticmethod
     def get_disable_version_manager_by_user_id(user_id):
-        """ Returns all disabled Version Managers with given user id
+        """ Return all disabled Version Managers with given user id.
 
         Returns:
 
@@ -225,7 +225,7 @@ class VersionManager(Document):
 
     @staticmethod
     def get_all_version_manager_except_user_id(user_id):
-        """ Returns all Version Managers of all users except user with given user id
+        """ Return all Version Managers of all users except user with given user id.
 
         Args:
             user_id: user_id.
@@ -237,7 +237,7 @@ class VersionManager(Document):
 
     @staticmethod
     def get_all_version_manager_by_user_id(user_id):
-        """ Returns all Version Managers with given user id
+        """ Return all Version Managers with given user id.
 
         Args:
             user_id: user_id.

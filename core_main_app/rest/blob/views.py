@@ -14,7 +14,7 @@ from core_main_app.components.user import api as user_api
 
 @api_view(['GET'])
 def download(request):
-    """Downloads the blob file
+    """Download the blob file.
 
     /rest/blob/download?id=<id>
 
@@ -187,7 +187,7 @@ def list_all(request):
 
 
 def _get_list_blob_info(list_blob, request):
-    """ Get list blob info
+    """ Get list blob info.
     Args:
         list_blob:
         request:

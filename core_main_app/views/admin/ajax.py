@@ -14,7 +14,7 @@ import HTMLParser
 
 
 def resolve_dependencies(request):
-    """Resolve import/includes to avoid local references
+    """Resolve import/includes to avoid local references.
 
     Args:
         request:
@@ -48,7 +48,7 @@ def resolve_dependencies(request):
 
 
 def _get_dependencies_dict(schema_locations, dependencies):
-    """Build a dict from lists of schema locations and dependencies
+    """Build a dict from lists of schema locations and dependencies.
 
     Args:
         schema_locations:
@@ -68,7 +68,7 @@ def _get_dependencies_dict(schema_locations, dependencies):
 
 
 def _get_xsd_content_from_html(xsd_content):
-    """Decodes XSD content from HTML
+    """Decode XSD content from HTML.
 
     Args:
         xsd_content:
@@ -82,7 +82,7 @@ def _get_xsd_content_from_html(xsd_content):
 
 
 def edit_xslt_name(request):
-    """Edit the xslt
+    """Edit the xslt.
 
     Args:
         request:

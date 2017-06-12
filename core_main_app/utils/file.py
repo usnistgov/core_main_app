@@ -8,7 +8,7 @@ from django.http.response import HttpResponse
 
 
 def get_file_http_response(file_content, file_name, content_type=None, extension=''):
-    """
+    """Return http response with file to download.
 
     Args:
         file_content:
@@ -44,7 +44,7 @@ def get_file_http_response(file_content, file_name, content_type=None, extension
 
 
 def read_file_content(file_path):
-    """Read the content of a file
+    """Read the content of a file.
 
     Args:
         file_path:

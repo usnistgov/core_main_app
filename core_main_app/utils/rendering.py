@@ -1,10 +1,12 @@
+""" Rendering utils
+"""
 from django.contrib.staticfiles import finders
 from django.shortcuts import render as django_render
 from os.path import splitext
 
 
 def _build_js_assets(js_assets):
-    """
+    """Build js assets structure
 
     Args:
         js_assets:
@@ -35,7 +37,7 @@ def _build_js_assets(js_assets):
 
 
 def _render(request, template_name, wrapper_name, modals=None, assets=None, context=None):
-    """
+    """Render a selected template.
 
     Args:
         request:
@@ -66,7 +68,7 @@ def _render(request, template_name, wrapper_name, modals=None, assets=None, cont
 
 
 def render(request, template_name, modals=None, assets=None, context=None):
-    """Renders a selected template with the project's theme
+    """Render a selected template with the project's theme.
 
     Parameters:
         request:
@@ -82,7 +84,7 @@ def render(request, template_name, modals=None, assets=None, context=None):
 
 
 def admin_render(request, template_name, modals=None, assets=None, context=None):
-    """Renders a selected template with the project's theme
+    """Render a selected template with the project's theme,
 
     Parameters:
         request:

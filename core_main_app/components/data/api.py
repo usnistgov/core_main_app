@@ -10,7 +10,7 @@ import core_main_app.commons.exceptions as exceptions
 
 # FIXME: don't pass the data_id but the actual object
 def set_publish(data_id, published):
-    """ Publish or unpublish data object with the given id
+    """ Publish or unpublish data object with the given id.
 
         Parameters:
             data_id:
@@ -26,7 +26,7 @@ def set_publish(data_id, published):
 
 
 def get_by_id(data_id):
-    """ Return data object with the given id
+    """ Return data object with the given id.
 
         Parameters:
             data_id:
@@ -37,7 +37,7 @@ def get_by_id(data_id):
 
 
 def get_all():
-    """ List all data
+    """ List all data.
 
         Returns: data collection
     """
@@ -45,7 +45,7 @@ def get_all():
 
 
 def get_all_by_user_id(user_id):
-    """ Return all data of a user
+    """ Return all data of a user.
 
         Parameters:
             user_id:
@@ -56,7 +56,7 @@ def get_all_by_user_id(user_id):
 
 
 def get_all_except_user_id(user_id):
-    """ Returns all data which are not concern by the user
+    """ Return all data which are not concern by the user.
 
         Parameters:
              user_id:
@@ -67,7 +67,7 @@ def get_all_except_user_id(user_id):
 
 
 def get_all_by_id_list(list_ids, distinct_by=None):
-    """ Returns list of XML data from list of ids
+    """ Return list of XML data from list of ids.
 
         Parameters:
             list_ids:
@@ -79,7 +79,7 @@ def get_all_by_id_list(list_ids, distinct_by=None):
 
 
 def upsert(data):
-    """ Save or update the data
+    """ Save or update the data.
 
     Args:
         data:
@@ -96,7 +96,7 @@ def upsert(data):
 
 
 def query_full_text(text, template_ids):
-    """ Execute full text query on xml data collection
+    """ Execute full text query on xml data collection.
 
         Parameters:
             text:
@@ -108,7 +108,7 @@ def query_full_text(text, template_ids):
 
 
 def check_xml_file_is_valid(data):
-    """ Check if xml data is valid against a given schema
+    """ Check if xml data is valid against a given schema.
 
     Args:
         data:
@@ -136,7 +136,7 @@ def check_xml_file_is_valid(data):
 
 
 def execute_query(query):
-    """Executes a query on the Data collection
+    """Execute a query on the Data collection.
 
     Args:
         query:
@@ -148,7 +148,7 @@ def execute_query(query):
 
 
 def delete(data):
-    """ Deletes a data
+    """ Delete a data.
 
     Args:
         data:

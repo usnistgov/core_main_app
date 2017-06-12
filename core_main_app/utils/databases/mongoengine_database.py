@@ -5,7 +5,7 @@ from mongoengine.connection import disconnect
 
 
 class Database(object):
-    """ Represents a Database
+    """ Represent a Database.
     """
 
     def __init__(self, host, name):
@@ -20,7 +20,7 @@ class Database(object):
         self.database = None
 
     def connect(self):
-        """ Opens a connection to the database.
+        """ Open a connection to the database.
 
         Returns:
             the database connection created
@@ -29,12 +29,12 @@ class Database(object):
         return self.database
 
     def disconnect(self):
-        """ Closes the connection.
+        """ Close the connection.
         """
         disconnect(self.database)
 
     def clean_database(self):
-        """ Clears all collections of the database.
+        """ Clear all collections of the database.
 
         Returns:
 

@@ -5,8 +5,7 @@ from django.contrib.auth.models import User
 
 
 def get_all_users():
-    """
-    Return all Users
+    """ Return all Users.
 
     Returns:
         List of Users
@@ -16,8 +15,7 @@ def get_all_users():
 
 
 def get_user_by_username(username):
-    """
-        Returns a user given its username
+    """Return a user given its username.
 
         Args:
             username (str): Given username
@@ -29,8 +27,7 @@ def get_user_by_username(username):
 
 
 def get_user_by_id(user_id):
-    """
-        Returns a user given its primary key
+    """Return a user given its primary key.
 
         Args:
             user_id (str): Given user id
@@ -42,8 +39,7 @@ def get_user_by_id(user_id):
 
 
 def create_and_save_user(username, password, first_name, last_name, email):
-    """
-        Save a user with the given parameters
+    """Save a user with the given parameters.
 
         Args:
             username (str): Given user name
@@ -64,7 +60,7 @@ def create_and_save_user(username, password, first_name, last_name, email):
 
 
 def upsert(user):
-    """
+    """ Upsert user.
 
     Args:
         user (User): The user to be saved

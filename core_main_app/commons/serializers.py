@@ -1,10 +1,11 @@
-""" Common Serializers """
+""" Common Serializers
+"""
 from rest_framework.serializers import Serializer
 
 
 class BasicSerializer(Serializer):
     """
-    Represents a serializer with a basic implementation of the abstract methods create and update.
+    Represent a serializer with a basic implementation of the abstract methods create and update.
     """
     def create(self, validated_data):
         pass

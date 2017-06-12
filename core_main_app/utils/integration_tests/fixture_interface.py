@@ -3,7 +3,7 @@
 
 
 class FixtureInterface(object):
-    """ Represents the fixture interface with methods which must be implemented
+    """ Represent the fixture interface with methods which must be implemented.
     """
 
     def insert_data(self):

@@ -6,13 +6,13 @@ import json
 
 
 class RequestMock(object):
-    """ Represents a request.
+    """ Represent a request.
         Use this class to simulate an HTTP request.
     """
 
     @staticmethod
     def do_request_get(view, user, data=None):
-        """Executes a GET HTTP request.
+        """Execute a GET HTTP request.
         Args:
             view: View method called by the request.
             user: User for the request.
@@ -26,7 +26,7 @@ class RequestMock(object):
 
     @staticmethod
     def do_request_post(view, user, data=None):
-        """Executes a POST HTTP request.
+        """Execute a POST HTTP request.
         Args:
             view: View method called by the request.
             user: User for the request.
@@ -39,7 +39,7 @@ class RequestMock(object):
 
     @staticmethod
     def do_request_put(view, user, data=None):
-        """Executes a PUT HTTP request.
+        """Execute a PUT HTTP request.
         Args:
             view: View method called by the request.
             user: User for the request.
@@ -53,13 +53,12 @@ class RequestMock(object):
 
     @staticmethod
     def _do_request(http_method, view, user, data=None):
-        """Executes the http_method request.
+        """Execute the http_method request.
         Args:
             http_method: HTTP method.
             view: View method called by the request.
             user: User for the request.
             data: Data.
-            url: Optional URL. (Not used for resolution)
 
         Returns:
             Response: Request response.

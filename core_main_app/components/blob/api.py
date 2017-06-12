@@ -5,7 +5,7 @@ from core_main_app.components.blob.models import Blob
 
 
 def save(blob):
-    """ Save the blob
+    """ Save the blob.
 
     Args:
         blob:
@@ -23,7 +23,7 @@ def save(blob):
 
 
 def delete(blob):
-    """ Delete the blob
+    """ Delete the blob.
 
     Args:
         blob:
@@ -38,7 +38,7 @@ def delete(blob):
 
 
 def get_by_id(blob_id):
-    """ Return blob by its id
+    """ Return blob by its id.
 
     Args:
         blob_id:

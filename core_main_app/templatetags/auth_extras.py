@@ -10,7 +10,7 @@ register = template.Library()
 
 @register.filter(name='has_perm')
 def has_perm(user, permission):
-    """Checks if user has the right level of permission to access a feature
+    """Check if user has the right level of permission to access a feature.
 
     Args:
         user:

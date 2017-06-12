@@ -6,7 +6,7 @@ from django.db.models import Q
 
 
 def get_by_name_and_permission(name, permission_codename):
-    """Get a group by name and permission codename
+    """Get a group by name and permission codename.
 
     Args:
         name:

@@ -7,7 +7,7 @@ from core_main_app.utils.xml import is_well_formed_xml
 
 
 def get(xslt_name):
-    """ Get an XSLT document
+    """ Get an XSLT document.
 
     Returns:
     """
@@ -31,7 +31,7 @@ def get_by_id(xslt_id):
 
 
 def get_all():
-    """ Get list of XSLT document
+    """ Get list of XSLT document.
 
     Returns:
     """
@@ -57,7 +57,7 @@ def upsert(xsl_transformation):
 
 
 def delete(xsl_transformation):
-    """ Delete an xsl_transformation
+    """ Delete an xsl_transformation.
 
     Args:
         xsl_transformation: XslTransformation to delete.
@@ -67,7 +67,7 @@ def delete(xsl_transformation):
 
 
 def xsl_transform(xml_data, xslt_name):
-    """ Transform an XML file using an XSL transformation
+    """ Transform an XML file using an XSL transformation.
 
     Args:
         xml_data (str): XML document content, encoded in UTF-8

@@ -51,7 +51,7 @@ def _upsert(template_xsl_rendering):
 
 
 def delete(template_xsl_rendering):
-    """ Deletes an TemplateXslRendering.
+    """ Delete an TemplateXslRendering.
 
     Args:
         template_xsl_rendering: TemplateXslRendering to delete.
@@ -61,7 +61,7 @@ def delete(template_xsl_rendering):
 
 
 def get_by_id(template_xsl_rendering_id):
-    """ Gets an TemplateXslRendering document by its id.
+    """ Get an TemplateXslRendering document by its id.
 
     Args:
         template_xsl_rendering_id: Id.
@@ -78,7 +78,7 @@ def get_by_id(template_xsl_rendering_id):
 
 
 def get_by_template_id(template_id):
-    """Gets TemplateXslRendering by its template id.
+    """Get TemplateXslRendering by its template id.
 
     Args:
         template_id: Template id.
@@ -91,7 +91,7 @@ def get_by_template_id(template_id):
 
 
 def get_by_template_hash(template_hash):
-    """Gets TemplateXslRendering by its template hash.
+    """Get TemplateXslRendering by its template hash.
 
     Args:
         template_hash: Template hash.
@@ -119,7 +119,7 @@ def get_by_template_hash(template_hash):
 
 
 def get_all():
-    """Gets all TemplateXslRendering.
+    """Get all TemplateXslRendering.
 
     Returns:
         List of TemplateXslRendering.

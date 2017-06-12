@@ -3,7 +3,7 @@
 
 
 def get_latest_version_name(version_manager):
-    """Get name for the latest version of version manager
+    """Get name for the latest version of version manager.
 
     Args:
         version_manager:
@@ -15,7 +15,7 @@ def get_latest_version_name(version_manager):
 
 
 def get_version_name(title, version_number):
-    """Get a version name from a title and a version number
+    """Get a version name from a title and a version number.
 
     Args:
         title:
