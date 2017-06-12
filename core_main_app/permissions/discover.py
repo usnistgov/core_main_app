@@ -1,6 +1,6 @@
 """ discover rules for core main app
 """
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Group
 import core_main_app.permissions.rights as rights
 
 
@@ -23,17 +23,18 @@ def init_rules():
         if not created:
             default_group.permissions.clear()
 
-        edit_data_perm = Permission.objects.get(codename=rights.edit_data)
-        delete_data_perm = Permission.objects.get(codename=rights.delete_data)
-
-        edit_form_perm = Permission.objects.get(codename=rights.edit_form)
-        delete_form_perm = Permission.objects.get(codename=rights.delete_form)
+        # FIXME: put it back when the main model is ready
+        # edit_data_perm = Permission.objects.get(codename=rights.edit_data)
+        # delete_data_perm = Permission.objects.get(codename=rights.delete_data)
+        #
+        # edit_form_perm = Permission.objects.get(codename=rights.edit_form)
+        # delete_form_perm = Permission.objects.get(codename=rights.delete_form)
 
         # Add permissions to default group
-        default_group.permissions.add(edit_data_perm,
-                                      delete_data_perm,
-                                      edit_form_perm,
-                                      delete_form_perm)
+        # default_group.permissions.add(edit_data_perm,
+        #                               delete_data_perm,
+        #                               edit_form_perm,
+        #                               delete_form_perm)
 
     except Exception, e:
         print('ERROR : Impossible to init the rules : ' + e.message)
