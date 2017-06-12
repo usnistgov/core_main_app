@@ -50,8 +50,6 @@ DB_NAME = getattr(settings, 'DB_NAME', "mgi")
 mongodb_uri_default = "mongodb://" + MONGO_USER + ":" + MONGO_PASSWORD + "@localhost/" + DB_NAME
 MONGODB_URI = getattr(settings, 'MONGODB_URI', mongodb_uri_default)
 
-INSTALLED_APPS = getattr(settings, 'INSTALLED_APPS', [])
-
 DATA_AUTO_PUBLISH = getattr(settings, 'DATA_AUTO_PUBLISH', False)
 
 USE_TZ = getattr(settings, 'USE_TZ', True)
