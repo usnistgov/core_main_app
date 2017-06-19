@@ -23,8 +23,8 @@ def edit_template_version_manager(request):
     try:
         template_version_manager = template_version_manager_api.get_by_id(request.POST['id'])
         template_version_manager_api.edit_title(template_version_manager, title)
-    except exceptions.NotUniqueError, e:
-        return HttpResponseBadRequest("A template called \"" + title + "\" already exists. Please choose another name.")
+    except exceptions.NotUniqueError:
+        return HttpResponseBadRequest("A template with the same name already exists. Please choose another name.")
     except Exception, e:
         return HttpResponseBadRequest(e.message)
 

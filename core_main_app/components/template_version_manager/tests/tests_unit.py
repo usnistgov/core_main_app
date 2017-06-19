@@ -1,7 +1,10 @@
 from unittest.case import TestCase
 from bson.objectid import ObjectId
 from django.core import exceptions as django_exceptions
+from mongoengine import errors as mongoengine_errors
 from mock.mock import Mock, patch
+
+from core_main_app.commons.exceptions import NotUniqueError, ModelError
 from core_main_app.components.template.models import Template
 from core_main_app.components.template_version_manager import api as version_manager_api
 from core_main_app.components.template_version_manager.models import TemplateVersionManager
@@ -42,10 +45,10 @@ class TestTemplateVersionManagerInsert(TestCase):
         mock_template_save.return_value = template
         mock_template_delete.return_value = None
         mock_version_manager = _create_template_version_manager(title="Schema")
-        mock_version_manager_save.side_effect = django_exceptions.ValidationError("")
+        mock_version_manager_save.side_effect = mongoengine_errors.NotUniqueError("")
 
         # Act + Assert
-        with self.assertRaises(django_exceptions.ValidationError):
+        with self.assertRaises(NotUniqueError):
             version_manager_api.insert(mock_version_manager, template)
 
     @patch('core_main_app.components.template.models.Template.save')
@@ -79,7 +82,7 @@ class TestTemplateVersionManagerInsert(TestCase):
         mock_delete_template.return_value = None
 
         # Act + Assert
-        with self.assertRaises(django_exceptions.ValidationError):
+        with self.assertRaises(ModelError):
             version_manager_api.insert(version_manager, template)
 
 

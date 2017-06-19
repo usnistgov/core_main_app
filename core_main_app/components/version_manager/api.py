@@ -144,7 +144,7 @@ def upsert(version_manager):
     Returns:
 
     """
-    return version_manager.save()
+    return version_manager.save_version_manager()
 
 
 def insert_version(version_manager, version):
