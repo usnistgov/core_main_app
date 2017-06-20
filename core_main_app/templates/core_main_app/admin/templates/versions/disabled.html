@@ -8,12 +8,14 @@
 	<table class="table table-bordered table-hover">
         <tr>
             <th style="width: 15%">Version #</th>
+            <th style="width: 20%">Status</th>
             <th style="width: 20%">Upload date</th>
             <th>Actions</th>
         </tr>
 	    {% for version in data.version_manager.versions.disabled reversed %}
         <tr>
             <td>{{ version.index }}</td>
+            <td style='font-weight:bold;color:red'>Disabled</td>
             <td>{{ version.object | print_timestamp }}</td>
 
             <td>
