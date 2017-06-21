@@ -118,3 +118,16 @@ class Blob(Document):
 
         """
         Blob.blob_host().delete(self.handle)
+
+    @staticmethod
+    def get_all_except_user_id(user_id):
+        """ Return all blobs except the ones of user.
+
+        Args:
+            user_id: User id.
+
+        Returns:
+            List of Blob instances except for the given user id.
+
+        """
+        return Blob.objects(user_id__nin=str(user_id)).all()

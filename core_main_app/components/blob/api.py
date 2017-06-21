@@ -72,3 +72,16 @@ def get_all_by_user_id(user_id):
 
     """
     return Blob.get_all_by_user_id(user_id)
+
+
+def get_all_except_user_id(user_id):
+    """ Return all blobs except the ones of user.
+
+    Args:
+        user_id: User id.
+
+    Returns:
+        List of Blob instances except the given user id.
+
+    """
+    return Blob.get_all_except_user_id(user_id)
