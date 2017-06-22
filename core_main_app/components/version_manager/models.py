@@ -4,14 +4,17 @@ Version Manager model
 from django_mongoengine import fields, Document
 from mongoengine import errors as mongoengine_errors
 from core_main_app.commons import exceptions
+from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
 
 
 # TODO: could change versions to ReferenceField (Document?)
 # TODO: could make current an IntField (index of the current in versions)
 # TODO: could make is_disabled a Status with other possible values taken from an enum
+
+
 class VersionManager(Document):
     """Version Manager"""
-    title = fields.StringField(unique=True)
+    title = fields.StringField(unique=True, regex=NOT_EMPTY_OR_WHITESPACES)
     user = fields.StringField(blank=True)
     versions = fields.ListField(default=[], blank=True)
     current = fields.StringField(blank=True)

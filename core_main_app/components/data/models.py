@@ -3,6 +3,7 @@
 from io import BytesIO
 
 from core_main_app.commons import exceptions
+from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
 from core_main_app.components.template.models import Template
 from mongoengine import errors as mongoengine_errors
 from core_main_app.utils import xml as xml_utils
@@ -25,7 +26,7 @@ class Data(Document):
     template = fields.ReferenceField(Template)
     user_id = fields.StringField()
     dict_content = fields.DictField(blank=True)
-    title = fields.StringField(blank=False)
+    title = fields.StringField(blank=False, regex=NOT_EMPTY_OR_WHITESPACES)
     xml_file = fields.FileField(blank=False, collection_name=GRIDFS_DATA_COLLECTION)
     is_published = fields.BooleanField(blank=True, default=DATA_AUTO_PUBLISH)
     publication_date = fields.DateTimeField(blank=True, default=None)

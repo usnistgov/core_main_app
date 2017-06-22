@@ -3,6 +3,7 @@
 from django_mongoengine import fields, Document
 
 from blob_utils.blob_host_factory import BLOBHostFactory
+from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
 from core_main_app.settings import BLOB_HOST, BLOB_HOST_URI, BLOB_HOST_USER, BLOB_HOST_PASSWORD
 from core_main_app.commons import exceptions
 from mongoengine import errors as mongoengine_errors
@@ -11,7 +12,7 @@ from mongoengine import errors as mongoengine_errors
 class Blob(Document):
     """ Blob object
     """
-    filename = fields.StringField(blank=False)
+    filename = fields.StringField(blank=False, regex=NOT_EMPTY_OR_WHITESPACES)
     user_id = fields.StringField(blank=False)
     handle = fields.StringField(blank=False)
 

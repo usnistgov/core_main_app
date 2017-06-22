@@ -3,13 +3,14 @@
 from django_mongoengine import fields, Document
 from mongoengine import errors as mongoengine_errors
 from core_main_app.commons import exceptions
+from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
 
 
 class XslTransformation(Document):
     """ XslTransformation object
     """
-    name = fields.StringField(blank=False, unique=True)
-    filename = fields.StringField(blank=False)
+    name = fields.StringField(blank=False, unique=True, regex=NOT_EMPTY_OR_WHITESPACES)
+    filename = fields.StringField(blank=False, regex=NOT_EMPTY_OR_WHITESPACES)
     content = fields.StringField(blank=False)
 
     meta = {'allow_inheritance': True}
