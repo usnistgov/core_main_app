@@ -1,0 +1,14 @@
+{% extends 'core_main_app/_render/admin/theme/tools/modal.html' %}
+
+{% block modal_id %}error-modal{% endblock %}
+{% block modal_title %}Error!{% endblock %}
+
+{% block modal_body %}
+<div id="modal-error-message" class="alert alert-danger">
+  An error occurred
+</div>
+{% endblock %}
+
+{% block modal_footer %}
+<button id="btn-dismiss-modal" class="btn btn-default">Dismiss</button>
+{% endblock %}
