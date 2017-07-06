@@ -2,8 +2,9 @@
 Template API
 """
 from core_main_app.components.template.models import Template
-from core_main_app.utils.xml import is_schema_valid, get_hash, get_template_with_server_dependencies
-
+from core_main_app.utils.xml import is_schema_valid, get_hash, \
+    get_template_with_server_dependencies, get_local_dependencies
+from core_main_app.commons import exceptions
 
 def upsert(template):
     """Save or Updates the template.
@@ -18,6 +19,8 @@ def upsert(template):
     is_schema_valid(template.content)
     # Get hash for the template
     template.hash = get_hash(template.content)
+    # Register local dependencies
+    _register_local_dependencies(template)
     # Save template
     return template.save()
 
@@ -35,8 +38,6 @@ def init_template_with_dependencies(template, dependencies_dict):
     if dependencies_dict is not None:
         # update template content
         template.content = get_template_with_server_dependencies(template.content, dependencies_dict)
-        # set the dependencies
-        template.dependencies = [get(template_id) for template_id in dependencies_dict.values()]
 
     return template
 
@@ -110,3 +111,40 @@ def delete(template):
 
     """
     template.delete()
+
+
+def _register_local_dependencies(template):
+    """ Register local dependencies for the given template.
+
+    Args:
+        template: Template instance.
+
+    Returns:
+
+    """
+    # Clean all dependencies. Template content could have been changed.
+    del template.dependencies
+    # Get local dependencies
+    local_dependencies = get_local_dependencies(template.content)
+    for local_dependency in local_dependencies:
+        try:
+            # get the dependency
+            dependency_object = get(local_dependency)
+            # add the dependency
+            template.dependencies.append(dependency_object)
+        except exceptions.DoesNotExist:
+            pass
+
+
+def get_all_templates_by_dependencies(dependency_id_list):
+    """List all templates having the given dependencies.
+
+    Args:
+        dependency_id_list: List of dependency ids.
+
+    Returns:
+        List of templates.
+
+    """
+
+    return Template.get_all_templates_by_dependencies(dependency_id_list)

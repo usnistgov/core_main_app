@@ -1,17 +1,19 @@
 """
     Xml utils provide too l operation for xml data
 """
-from django.core.urlresolvers import reverse
-import core_main_app.commons.exceptions as exceptions
-import xml_utils.xml_validation.validation as xml_validation
-from xml_utils.xsd_tree.xsd_tree import XSDTree
-import xml_utils.commons.constants as xml_utils_constants
-from lxml import etree
-from collections import OrderedDict
-import xmltodict
 import json
-from xml_utils.xsd_hash import xsd_hash
+from collections import OrderedDict
+from urlparse import urlparse
 
+import xml_utils.commons.constants as xml_utils_constants
+import xml_utils.xml_validation.validation as xml_validation
+import xmltodict
+from django.core.urlresolvers import reverse
+from lxml import etree
+from xml_utils.xsd_hash import xsd_hash
+from xml_utils.xsd_tree.xsd_tree import XSDTree
+
+import core_main_app.commons.exceptions as exceptions
 from core_main_app.settings import XERCES_VALIDATION, SERVER_URI
 
 
@@ -269,6 +271,39 @@ def update_dependencies(xsd_string, dependencies):
                 if schema_location == xsd_import.attrib['schemaLocation']:
                     xsd_import.attrib['schemaLocation'] = _get_schema_location_uri(dependency_id)
     return xsd_tree
+
+
+def get_local_dependencies(xsd_string):
+    """Get local dependencies from an xsd.
+
+        Args:
+            xsd_string: XSD as string.
+
+        Returns:
+            Local dependencies
+
+        """
+    # declare list of dependencies
+    dependencies = []
+    # Get includes and imports
+    imports, includes = get_imports_and_includes(xsd_string)
+    # list of includes and imports
+    xsd_includes_imports = imports + includes
+
+    for xsd_include_import in xsd_includes_imports:
+        if xsd_include_import.attrib['schemaLocation'].startswith(SERVER_URI):
+            try:
+                # parse dependency url
+                url = urlparse(xsd_include_import.attrib['schemaLocation'])
+                # get id from url
+                object_id = url.query.split("=")[1]
+                # add id to list of internal dependencies
+                dependencies.append(object_id)
+            except Exception:
+                # If error, don't add it to the list of dependencies
+                pass
+
+    return dependencies
 
 
 def _check_core_support(xsd_string):
