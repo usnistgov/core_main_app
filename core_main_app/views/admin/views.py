@@ -11,18 +11,15 @@ from django.utils.html import escape as html_escape
 from django.views.generic import View
 
 from core_main_app.commons import exceptions
-from core_main_app.components.template import api as template_api
 from core_main_app.components.template.models import Template
 from core_main_app.components.template_version_manager import api as template_version_manager_api
 from core_main_app.components.template_version_manager.models import TemplateVersionManager
-from core_main_app.components.template_xsl_rendering import api as template_xsl_rendering_api
 from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.components.xsl_transformation import api as xslt_transformation_api
 from core_main_app.components.xsl_transformation.models import XslTransformation
 from core_main_app.utils.rendering import admin_render
 from core_main_app.utils.xml import get_imports_and_includes
-from core_main_app.views.admin.forms import UploadTemplateForm, UploadVersionForm, UploadXSLTForm, \
-    TemplateXsltRenderingForm
+from core_main_app.views.admin.forms import UploadTemplateForm, UploadVersionForm, UploadXSLTForm
 from core_main_app.views.common.views import read_xsd_file
 from core_main_app.views.user.views import get_context_manage_template_versions
 
@@ -404,102 +401,6 @@ class UploadXSLTView(View):
         except Exception, e:
             self.context.update({'errors': html_escape(e.message)})
             return admin_render(request, 'core_main_app/admin/xslt/upload.html', context=self.context)
-
-
-class TemplateXSLRenderingView(View):
-    """Template XSL rendering view.
-    """
-    form_class = TemplateXsltRenderingForm
-    template_name = "core_main_app/admin/templates_xslt/main.html"
-    context = {}
-    assets = {
-        "js": [
-            {
-                "path": 'core_main_app/common/js/backtoprevious.js',
-                "is_raw": True
-            }
-        ]
-    }
-
-    def get(self, request, *args, **kwargs):
-        """ GET request. Creates/Shows the form for the configuration.
-
-        Args:
-            request:
-            *args:
-            **kwargs:
-
-        Returns:
-
-        """
-        template_id = kwargs.pop('template_id')
-        # Get the template
-        template = template_api.get(template_id)
-        try:
-            # Get the existing configuration to build the form
-            template_xsl_rendering = template_xsl_rendering_api.get_by_template_id(template_id)
-            data = {'id': template_xsl_rendering.id, 'template': template.id,
-                    'list_xslt': template_xsl_rendering.list_xslt.id if template_xsl_rendering.list_xslt else None,
-                    'detail_xslt': template_xsl_rendering.detail_xslt.id if template_xsl_rendering.detail_xslt else None
-                   }
-        except (Exception, exceptions.DoesNotExist):
-            # If no configuration, new form with pre-selected fields.
-            data = {'template': template.id, 'list_xslt': None, 'detail_xslt': None}
-
-        self.context = {
-            'template_title': template.display_name,
-            "form_template_xsl_rendering": self.form_class(data)
-        }
-
-        return admin_render(request, self.template_name, context=self.context, assets=self.assets)
-
-    def post(self, request, *args, **kwargs):
-        """ POST request. Try to saves the configuration.
-
-        Args:
-            request:
-            *args:
-            **kwargs:
-
-        Returns:
-
-        """
-        form = self.form_class(request.POST, request.FILES)
-        self.context.update({'form_template_xsl_rendering': form})
-
-        if form.is_valid():
-            return self._save_template_xslt(request)
-        else:
-            # Display error from the form
-            return admin_render(request, self.template_name, context=self.context)
-
-    def _save_template_xslt(self, request):
-        """Saves a template xslt rendering.
-
-        Args:
-            request: Request.
-
-        """
-        try:
-            # Get the list xslt instance
-            try:
-                list_xslt = xslt_transformation_api.get_by_id(request.POST.get('list_xslt'))
-            except (Exception, exceptions.DoesNotExist):
-                list_xslt = None
-            # Get the detail xslt instance
-            try:
-                detail_xslt = xslt_transformation_api.get_by_id(request.POST.get('detail_xslt'))
-            except (Exception, exceptions.DoesNotExist):
-                detail_xslt = None
-
-            template_xsl_rendering_api.add_or_delete(template_xsl_rendering_id=request.POST.get('id'),
-                                                     template_id=request.POST.get('template'),
-                                                     list_xslt=list_xslt, detail_xslt=detail_xslt)
-
-            return HttpResponseRedirect(reverse("admin:core_main_app_templates"))
-        except Exception, e:
-            self.context.update({'errors': html_escape(e.message)})
-            return admin_render(request, self.template_name, context=self.context)
 
 
 def handle_xsd_errors(request, assets, context, xsd_error, xsd_content, filename):

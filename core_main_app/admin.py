@@ -5,7 +5,10 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic.base import RedirectView
+
+from core_main_app.utils.rendering import admin_render
 from views.admin import views as admin_views, ajax as admin_ajax
+from views.common import views as common_views
 
 admin_urls = [
     url(r'^login', RedirectView.as_view(url=reverse_lazy("core_main_app_login"))),
@@ -18,7 +21,12 @@ admin_urls = [
         name='core_main_app_upload_template_version'),
     url(r'^template/versions/(?P<version_manager_id>\w+)', admin_views.manage_template_versions,
         name='core_main_app_manage_template_versions'),
-    url(r'^template/xslt/(?P<template_id>\w+)', admin_views.TemplateXSLRenderingView.as_view(),
+    url(r'^template/xslt/(?P<template_id>\w+)',
+        common_views.TemplateXSLRenderingView.as_view(
+            rendering=admin_render,
+            template_name="core_main_app/admin/templates_xslt/main.html",
+            save_redirect="admin:core_main_app_manage_template_versions"
+        ),
         name='core_main_app_template_xslt'),
     url(r'^dashboard$', admin_views.admin_home, name='core_main_app_admin_home'),
 

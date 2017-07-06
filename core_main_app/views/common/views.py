@@ -114,6 +114,8 @@ class UploadXSLTView(View):
 class TemplateXSLRenderingView(View):
     """Template XSL rendering view.
     """
+    rendering = render
+    save_redirect = "core_main_app_manage_template_versions"
     form_class = TemplateXsltRenderingForm
     template_name = "core_main_app/common/templates_xslt/main.html"
     context = {}
@@ -160,7 +162,7 @@ class TemplateXSLRenderingView(View):
             "form_template_xsl_rendering": self.form_class(data)
         }
 
-        return render(request, self.template_name, context=self.context, assets=self.assets)
+        return self.rendering(request, self.template_name, context=self.context, assets=self.assets)
 
     def post(self, request, *args, **kwargs):
         """ POST request. Try to save the configuration.
@@ -180,7 +182,7 @@ class TemplateXSLRenderingView(View):
             return self._save_template_xslt(request)
         else:
             # Display error from the form
-            return render(request, self.template_name, context=self.context)
+            return self.rendering(request, self.template_name, context=self.context)
 
     def _save_template_xslt(self, request):
         """Save a template xslt rendering.
@@ -205,8 +207,10 @@ class TemplateXSLRenderingView(View):
                                                      template_id=request.POST.get('template'),
                                                      list_xslt=list_xslt, detail_xslt=detail_xslt)
 
-            # TODO: user dashboard installed go to template page, home otherwise
-            return HttpResponseRedirect(reverse("core_main_app_templates"))
+            template = template_api.get(request.POST.get('template'))
+            # Get template information (version)
+            version_manager = version_manager_api.get_from_version(template)
+            return HttpResponseRedirect(reverse(self.save_redirect, args=[version_manager.id]))
         except Exception, e:
             self.context.update({'errors': html_escape(e.message)})
-            return render(request, self.template_name, context=self.context)
+            return self.rendering(request, self.template_name, context=self.context)

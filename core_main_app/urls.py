@@ -1,9 +1,10 @@
 """ Url router for the main application
 """
-import core_main_app.views.user.views as user_views
 from django.conf.urls import url, include
-from views.common import ajax as common_ajax, views as common_views
 
+import core_main_app.views.user.views as user_views
+from core_main_app.utils.rendering import render
+from views.common import ajax as common_ajax, views as common_views
 
 urlpatterns = [
     url(r'^$', user_views.homepage, name='core_main_app_homepage'),
@@ -32,6 +33,11 @@ urlpatterns = [
 
     url(r'^xslt$', common_views.XSLTView.as_view(), name='core_main_app_xslt'),
     url(r'^xslt/upload$', common_views.UploadXSLTView.as_view(), name='core_main_app_upload_xslt'),
-    url(r'^template/xslt/(?P<template_id>\w+)', common_views.TemplateXSLRenderingView.as_view(),
+    url(r'^template/xslt/(?P<template_id>\w+)',
+        common_views.TemplateXSLRenderingView.as_view(
+            rendering=render,
+            template_name="core_main_app/common/templates_xslt/main.html",
+            save_redirect="core_main_app_manage_template_versions"
+        ),
         name='core_main_app_template_xslt'),
 ]
