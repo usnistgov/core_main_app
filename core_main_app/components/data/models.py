@@ -6,10 +6,11 @@ from core_main_app.commons import exceptions
 from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
 from core_main_app.components.template.models import Template
 from mongoengine import errors as mongoengine_errors
+from mongoengine.queryset.base import NULLIFY
 from core_main_app.utils import xml as xml_utils
 from django_mongoengine import fields, Document
 from core_main_app.settings import DATA_AUTO_PUBLISH, GRIDFS_DATA_COLLECTION, SEARCHABLE_DATA_OCCURRENCES_LIMIT
-
+from core_workspace_app.components.workspace.models import Workspace
 
 # TODO: Create publication workflow manager
 # TODO: execute_query / execute_query_full_result -> use find method (RETURN FULL OBJECT)
@@ -29,6 +30,7 @@ class Data(Document):
     is_published = fields.BooleanField(blank=True, default=DATA_AUTO_PUBLISH)
     publication_date = fields.DateTimeField(blank=True, default=None)
     last_modification_date = fields.DateTimeField(blank=True, default=None)
+    workspace = fields.ReferenceField(Workspace, reverse_delete_rule=NULLIFY, blank=True)
 
     _xml_content = None
 
@@ -106,10 +108,12 @@ class Data(Document):
     def get_all():
         """ Get all data.
 
+        Args:
+
         Returns:
 
         """
-        return Data.objects.all()
+        return Data.objects().all()
 
     @staticmethod
     def get_all_by_user_id(user_id):

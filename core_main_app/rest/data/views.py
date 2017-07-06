@@ -53,7 +53,7 @@ def _get_all(request):
     """
     try:
         # Get object
-        data_object_list = data_api.get_all()
+        data_object_list = data_api.get_all(request.user)
 
         # Serialize object
         return_value = DataSerializer(data_object_list, many=True)
@@ -87,7 +87,7 @@ def get_by_id(request):
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
         # Get object
-        data_object = data_api.get_by_id(data_id)
+        data_object = data_api.get_by_id(data_id, request.user)
 
         # Serialize object
         return_value = DataSerializer(data_object)
@@ -126,7 +126,7 @@ def get_by_id_with_template_info(request):
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
         # Get object
-        data_object = data_api.get_by_id(data_id)
+        data_object = data_api.get_by_id(data_id, request.user)
 
         # Serialize object
         return_value = DataWithTemplateInfoSerializer(data_object)
@@ -163,7 +163,7 @@ def download(request):
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
         # Get template from id
-        data_object = data_api.get_by_id(data_id)
+        data_object = data_api.get_by_id(data_id, request.user)
 
         return get_file_http_response(data_object.xml_content, data_object.title, 'text/xml', 'xml')
     except exceptions.DoesNotExist as e:
@@ -196,10 +196,10 @@ def delete(request):
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
         # Get object
-        data_object = data_api.get_by_id(data_id)
+        data_object = data_api.get_by_id(data_id, request.user)
 
         # Serialize object
-        data_api.delete(data_object)
+        data_api.delete(data_object, request.user)
 
         # Return response
         content = {'message': 'Data deleted with success.'}
@@ -247,7 +247,7 @@ def _post(request):
         # Set xml content
         data_object.xml_content = data_serializer.data['xml_content']
         # Upsert the data
-        data_api.upsert(data_object)
+        data_api.upsert(data_object, request.user)
 
         # Return the serialized template
         return_value = DataSerializer(data_object)
@@ -285,7 +285,7 @@ def _edit(request):
         data_serializer.is_valid(True)
 
         # Get object
-        data_object = data_api.get_by_id(data_serializer.data['id'])
+        data_object = data_api.get_by_id(data_serializer.data['id'], request.user)
 
         # Update date
         if data_serializer.data['title'] is not None:
@@ -294,7 +294,7 @@ def _edit(request):
             data_object.xml_content = data_serializer.data['xml_content']
 
         # Upsert the data
-        data_api.upsert(data_object)
+        data_api.upsert(data_object, request.user)
 
         # Return the serialized template
         return_value = DataSerializer(data_object)
@@ -336,7 +336,7 @@ def execute_query(request):
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
         # Executes query
-        data_object_list = data_api.execute_query(json_query)
+        data_object_list = data_api.execute_query(json_query, request.user)
 
         # Serialize object
         return_value = DataSerializer(data_object_list, many=True)

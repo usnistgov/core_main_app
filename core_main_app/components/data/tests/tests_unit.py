@@ -8,17 +8,20 @@ from unittest.case import TestCase
 from mock import patch
 from collections import OrderedDict
 
+from core_main_app.utils.tests_tools.MockUser import MockUser
+
 
 class TestDataGetAll(TestCase):
 
-    @patch.object(Data, 'get_all')
+    @patch.object(Data, 'get_all_by_user_id')
     def test_data_get_all_return_collection_of_data(self, mock_list):
         # Arrange
         mock_data_1 = _create_data(_get_template(), user_id='3', title='title_1', content="")
         mock_data_2 = _create_data(_get_template(), user_id='1', title='title_2', content="")
         mock_list.return_value = [mock_data_1, mock_data_2]
+        mock_user = _create_user('2')
         # Act
-        result = data_api.get_all()
+        result = data_api.get_all(mock_user)
         # Assert
         self.assertTrue(all(isinstance(item, Data) for item in result))
 
@@ -29,34 +32,21 @@ class TestDataGetById(TestCase):
     def test_data_get_by_id_raises_api_error_if_not_found(self, mock_get):
         # Arrange
         mock_get.side_effect = exceptions.DoesNotExist('')
+        mock_user = _create_user('1')
         # Act # Assert
         with self.assertRaises(exceptions.DoesNotExist):
-            data_api.get_by_id(1)
+            data_api.get_by_id(1, mock_user)
 
     @patch.object(Data, 'get_by_id')
     def test_data_get_by_id_return_data_if_found(self, mock_get):
         # Arrange
         mock_data = Data(_get_template(), OrderedDict(), 'title', '2')
         mock_get.return_value = mock_data
+        mock_user = _create_user('1')
         # Act
-        result = data_api.get_by_id(1)
+        result = data_api.get_by_id(1, mock_user)
         # Assert
         self.assertIsInstance(result, Data)
-
-
-class TestDataGetAllByUser(TestCase):
-
-    @patch.object(Data, 'get_all_by_user_id')
-    def test_data_get_all_by_user_return_collection_of_data_from_user(self, mock_list_by_user_id):
-        # Arrange
-        user_id = '2'
-        mock_data_1 = _create_data(_get_template(), user_id=user_id, title='title_1', content="")
-        mock_data_2 = _create_data(_get_template(), user_id=user_id, title='title_2', content="")
-        mock_list_by_user_id.return_value = [mock_data_1, mock_data_2]
-        # Act
-        result = data_api.get_all_by_user_id(user_id)
-        # Assert
-        self.assertTrue(all(item.user_id == user_id for item in result))
 
 
 class TestDataGetAllExceptUser(TestCase):
@@ -68,8 +58,9 @@ class TestDataGetAllExceptUser(TestCase):
         mock_data_1 = _create_data(_get_template(), user_id='3', title='title_1', content="")
         mock_data_2 = _create_data(_get_template(), user_id='1', title='title_2', content="")
         mock_list_except_user_id.return_value = [mock_data_1, mock_data_2]
+        mock_user = _create_user('2')
         # Act
-        result = data_api.get_all_except_user_id(user_id)
+        result = data_api.get_all_except_user(mock_user)
         # Assert
         self.assertTrue(all(item.user_id != user_id for item in result))
 
@@ -87,8 +78,9 @@ class TestDataUpsert(TestCase):
         mock_save.return_value = data
         mock_check.return_value = None
         mock_convert_file.return_value = None
+        mock_user = _create_user('2')
         # Act
-        result = data_api.upsert(data)
+        result = data_api.upsert(data, mock_user)
         # Assert
         self.assertEqual('new_title', result.title)
 
@@ -103,8 +95,9 @@ class TestDataUpsert(TestCase):
         mock_save.return_value = data
         mock_check.return_value = None
         mock_convert_file.return_value = None
+        mock_user = _create_user('3')
         # Act
-        result = data_api.upsert(data)
+        result = data_api.upsert(data, mock_user)
         # Assert
         self.assertEqual('3', result.user_id)
 
@@ -119,8 +112,9 @@ class TestDataUpsert(TestCase):
         mock_save.return_value = data
         mock_check.return_value = None
         mock_convert_file.return_value = None
+        mock_user = _create_user('3')
         # Act
-        result = data_api.upsert(data)
+        result = data_api.upsert(data, mock_user)
         # Assert
         self.assertEqual(xml, result.xml_content)
 
@@ -134,34 +128,38 @@ class TestDataUpsert(TestCase):
         mock_save.return_value = data
         mock_check.return_value = None
         mock_convert_file.return_value = None
+        mock_user = _create_user('3')
         # Act
-        result = data_api.upsert(data)
+        result = data_api.upsert(data, mock_user)
         # Assert
         self.assertIsNotNone(result.last_modification_date)
 
     def test_data_upsert_raises_xml_error_if_failed_during_xml_validation(self):
         # Arrange
         data = _create_data(None, user_id='3', title='title', content='')
+        mock_user = _create_user('3')
         # Act # Assert
         with self.assertRaises(exceptions.XMLError):
-            data_api.upsert(data)
+            data_api.upsert(data, mock_user)
 
     def test_data_upsert_raises_xsd_error_if_failed_during_xsd_validation(self):
         # Arrange
         template = _get_template()
         template.content += "<"
         data = _create_data(template, user_id='3', title='title', content='<new_tag></new_tag>')
+        mock_user = _create_user('3')
         # Act # Assert
         with self.assertRaises(exceptions.XSDError):
-            data_api.upsert(data)
+            data_api.upsert(data, mock_user)
 
     def test_data_upsert_raises_xml_error_if_failed_during_validation(self):
         # Arrange
         template = _get_template()
         data = _create_data(template, user_id='3', title='title', content='<new_tag></new_tag>')
+        mock_user = _create_user('3')
         # Act # Assert
         with self.assertRaises(exceptions.XMLError):
-            data_api.upsert(data)
+            data_api.upsert(data, mock_user)
 
 
 class TestDataCheckXmlFileIsValid(TestCase):
@@ -215,3 +213,7 @@ def _create_data(template, user_id, title, content):
                 title=title)
     data.xml_content = content
     return data
+
+
+def _create_user(user_id):
+    return MockUser(user_id)

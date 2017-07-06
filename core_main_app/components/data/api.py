@@ -1,58 +1,61 @@
 """ Data API
 """
 import datetime
+
+from xml_utils.xsd_tree.xsd_tree import XSDTree
+
 from core_main_app.components.data.models import Data
 from core_main_app.utils.xml import validate_xml_data
-from xml_utils.xsd_tree.xsd_tree import XSDTree
-import core_main_app.commons.exceptions as exceptions
+from core_main_app.commons import exceptions as exceptions
+from core_main_app.utils.access_control.decorators import access_control
+from core_main_app.components.data.access_control import can_read_data_id, can_read_user, can_write_data, \
+    can_read_data_query
 
 
-def get_by_id(data_id):
+@access_control(can_read_data_id)
+def get_by_id(data_id, user):
     """ Return data object with the given id.
 
         Parameters:
             data_id:
+            user:
 
         Returns: data object
     """
     return Data.get_by_id(data_id)
 
 
-def get_all():
-    """ List all data.
-
-        Returns: data collection
-    """
-    return Data.get_all()
-
-
-def get_all_by_user_id(user_id):
-    """ Return all data of a user.
+@access_control(can_read_user)
+def get_all(user):
+    """ Return all data accessible by a user.
 
         Parameters:
-            user_id:
+            user:
 
         Returns: data collection
     """
-    return Data.get_all_by_user_id(user_id)
+    return Data.get_all_by_user_id(str(user.id))
 
 
-def get_all_except_user_id(user_id):
-    """ Return all data which are not concern by the user.
+@access_control(can_read_user)
+def get_all_except_user(user):
+    """ Return all data which are not created by the user.
 
         Parameters:
-             user_id:
+             user:
 
         Returns: data collection
     """
-    return Data.get_all_except_user_id(user_id)
+    return Data.get_all_except_user_id(str(user.id))
 
 
-def upsert(data):
+@access_control(can_write_data)
+def upsert(data, user):
     """ Save or update the data.
 
     Args:
         data:
+        user:
 
     Returns:
 
@@ -93,11 +96,13 @@ def check_xml_file_is_valid(data):
         return True
 
 
-def execute_query(query):
+@access_control(can_read_data_query)
+def execute_query(query, user):
     """Execute a query on the Data collection.
 
     Args:
         query:
+        user:
 
     Returns:
 
@@ -105,11 +110,13 @@ def execute_query(query):
     return Data.execute_query(query)
 
 
-def delete(data):
+@access_control(can_write_data)
+def delete(data, user):
     """ Delete a data.
 
     Args:
         data:
+        user:
 
     Returns:
 

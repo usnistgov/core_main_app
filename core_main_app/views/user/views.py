@@ -114,7 +114,7 @@ def data_detail(request):
     data_id = request.GET['id']
 
     try:
-        data = data_api.get_by_id(data_id)
+        data = data_api.get_by_id(data_id, request.user)
     except:
         # TODO: catch good exception, redirect to error page
         pass
