@@ -74,31 +74,6 @@ class TestDataGetAllExceptUser(TestCase):
         self.assertTrue(all(item.user_id != user_id for item in result))
 
 
-class TestDataGetAllByIdList(TestCase):
-
-    @patch.object(Data, 'get_all_by_id_list')
-    def test_data_get_all_by_id_list_return_collection_of_data(self, mock_list_by_id_list):
-        # Arrange
-        mock_data_1 = _create_data(_get_template(), user_id='3', title='title_1', content="")
-        mock_data_2 = _create_data(_get_template(), user_id='1', title='title_2', content="")
-        mock_list_by_id_list.return_value = [mock_data_1, mock_data_2]
-        # Act
-        result = data_api.get_all_by_id_list([1, 2])
-        # Assert
-        self.assertTrue(all(isinstance(item, Data) for item in result))
-
-    @patch.object(Data, 'get_all_by_id_list')
-    def test_data_get_all_by_id_list_return_collection_of_distinct_data_by_template(self, mock_list_by_id_list):
-        # Arrange
-        mock_data_1 = _create_data(_get_template(), user_id='2', title='title_1', content="")
-        mock_list_by_id_list.return_value = [mock_data_1]
-        # Act
-        result = data_api.get_all_by_id_list([1], 'template_id')
-        count_result = len([item.template.id_field == '1' for item in result])
-        # Assert
-        self.assertEqual(count_result, 1)
-
-
 class TestDataUpsert(TestCase):
 
     @patch.object(Data, 'convert_to_file')
@@ -223,88 +198,6 @@ class TestDataCheckXmlFileIsValid(TestCase):
         result = data_api.check_xml_file_is_valid(data)
         # Assert
         self.assertEqual(result, True)
-
-
-class TestDataQueryFullText(TestCase):
-
-    @patch('core_main_app.components.data.models.Data.execute_full_text_query')
-    def test_data_execute_full_text_query_return_collection(self, mock_execute):
-        # Arrange
-        template = _get_template()
-        mock_data_1 = _create_data(template, user_id='2', title='title_1', content="")
-        mock_data_2 = _create_data(template, user_id='2', title='title_2', content="")
-        mock_execute.return_value = [mock_data_1, mock_data_2]
-        # Act
-        result = data_api.query_full_text('', '1')
-        # Assert
-        self.assertTrue(all(isinstance(item, Data) for item in result))
-
-
-class TestSetPublish(TestCase):
-
-    @patch.object(Data, 'get_by_id')
-    @patch.object(data_api, 'upsert')
-    def test_data_set_publish_set_to_true_test_is_published(self, mock_upsert, mock_get):
-        # Create Data
-        data = Data(is_published=False)
-        mock_get.return_value = data
-        mock_upsert.return_value = None
-        # Update data
-        data_api.set_publish(1, True)
-        # Check update
-        self.assertTrue(data.is_published)
-
-    @patch('core_main_app.components.data.api.settings', DATA_AUTO_PUBLISH=True)
-    @patch.object(Data, 'get_by_id')
-    @patch.object(data_api, 'upsert')
-    def test_data_set_publish_set_to_true_test_publication_date_when_DATA_AUTO_PUBLISH_is_True(self, mock_upsert,
-                                                                                               mock_get, mock_DATA_AUTO_PUBLISH):
-        # Create Data
-        data = Data(is_published=False)
-        mock_get.return_value = data
-        mock_upsert.return_value = None
-        # Update data
-        data_api.set_publish(1, True)
-        # Check update
-        self.assertIsNone(data.publication_date)
-
-    @patch('core_main_app.components.data.api.settings', DATA_AUTO_PUBLISH=False)
-    @patch.object(Data, 'get_by_id')
-    @patch.object(data_api, 'upsert')
-    def test_data_set_publish_set_to_true_test_publication_date_when_DATA_AUTO_PUBLISH_is_False(self, mock_upsert,
-                                                                                                mock_get, mock_DATA_AUTO_PUBLISH):
-        # Create Data
-        data = Data(is_published=False)
-        mock_get.return_value = data
-        mock_upsert.return_value = None
-        # Update data
-        data_api.set_publish(1, True)
-        # Check update
-        self.assertIsNotNone(data.publication_date)
-
-    @patch.object(Data, 'get_by_id')
-    @patch.object(data_api, 'upsert')
-    def test_data_set_publish_set_to_false_test_is_published(self, mock_upsert, mock_get):
-        # Create Data
-        data = Data(is_published=True)
-        mock_get.return_value = data
-        mock_upsert.return_value = None
-        # Update data
-        data_api.set_publish(1, False)
-        # Check update
-        self.assertFalse(data.is_published)
-
-    @patch.object(Data, 'get_by_id')
-    @patch.object(data_api, 'upsert')
-    def test_data_set_publish_set_to_false_test_publication_date(self, mock_upsert, mock_get):
-        # Create Data
-        data = Data(is_published=True)
-        mock_get.return_value = data
-        mock_upsert.return_value = None
-        # Update data
-        data_api.set_publish(1, False)
-        # Check update
-        self.assertIsNone(data.publication_date)
 
 
 def _get_template():

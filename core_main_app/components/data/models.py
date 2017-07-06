@@ -8,8 +8,6 @@ from core_main_app.components.template.models import Template
 from mongoengine import errors as mongoengine_errors
 from core_main_app.utils import xml as xml_utils
 from django_mongoengine import fields, Document
-
-from core_main_app.utils.databases.pymongo_database import get_full_text_query
 from core_main_app.settings import DATA_AUTO_PUBLISH, GRIDFS_DATA_COLLECTION, SEARCHABLE_DATA_OCCURRENCES_LIMIT
 
 
@@ -167,22 +165,6 @@ class Data(Document):
             raise exceptions.DoesNotExist(e.message)
         except Exception as ex:
             raise exceptions.ModelError(ex.message)
-
-    @staticmethod
-    def execute_full_text_query(text, template_ids):
-        """ Execute a full text query with possible refinements.
-
-        Args:
-            text:
-            template_ids:
-
-        Returns:
-
-        """
-        query = get_full_text_query(text)
-        query.update({'template__id': {'$in': template_ids}})
-        # TODO: does find() exist? use pymongo if not
-        return Data.objects.find(query)
 
     @staticmethod
     def execute_query(query):
