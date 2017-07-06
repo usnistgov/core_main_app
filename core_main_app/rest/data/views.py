@@ -90,7 +90,7 @@ def get_by_id(request):
         data_object = data_api.get_by_id(data_id)
 
         # Serialize object
-        return_value = DataSerializer(data_object, depth=2)
+        return_value = DataSerializer(data_object)
 
         # Return response
         return Response(return_value.data, status=status.HTTP_200_OK)
@@ -108,7 +108,7 @@ def get_by_id(request):
 def get_by_id_with_template_info(request):
     """ Get data by its id.
 
-        /rest/data/get?id=588a73b47179c722f6fdaf43
+        /rest/data/get-full?id=588a73b47179c722f6fdaf43
 
         Args:
             request:
