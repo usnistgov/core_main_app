@@ -3,9 +3,10 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-
 from core_main_app.commons import exceptions
 import core_main_app.components.blob.api as blob_api
+from core_main_app.commons.exceptions import ApiError
+from core_main_app.components.blob.models import Blob
 from core_main_app.components.blob.utils import get_blob_download_uri
 from core_main_app.utils.file import get_file_http_response
 from core_main_app.rest.blob import serializers
@@ -37,12 +38,52 @@ def download(request):
         blob_object = blob_api.get_by_id(blob_id)
 
         return get_file_http_response(blob_object.blob, blob_object.filename)
-    except exceptions.DoesNotExist as e:
+    except exceptions.DoesNotExist:
         content = {'message': 'No blob found with the given id.'}
         return Response(content, status=status.HTTP_404_NOT_FOUND)
     except Exception as api_exception:
         content = {'message': api_exception.message}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(["POST"])
+def upload(request):
+    """ Upload a file in the blob repository
+
+    POST /<rest_main>/blob
+
+    Args:
+        request (HttpRequest): request.
+
+    Returns:
+        Response object
+    """
+    # Get the name of the uploaded file
+    if "file" not in request.FILES or len(request.FILES.keys()) > 1:
+        content = {"message": "Malformed request parameters"}
+        return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
+    uploaded_file = request.FILES['file']
+    filename = uploaded_file.name
+
+    # Retrieve the user ID
+    if not request.user.is_authenticated():
+        content = {"message": "Please log in to upload a blob"}
+        return Response(content, status=status.HTTP_403_FORBIDDEN)
+
+    user_id = str(request.user.id)
+
+    # Save the blob
+    try:
+        blob_object = Blob(filename=filename, user_id=user_id)
+        blob_object.blob = uploaded_file
+        blob_api.insert(blob_object)
+    except ApiError as e:
+        content = {"message": e.message}
+        return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    content = {"message": "Blob uploaded with success"}
+    return Response(content, status=status.HTTP_201_CREATED)
 
 
 @api_view(['DELETE'])
@@ -79,7 +120,7 @@ def delete(request):
             status_code = status.HTTP_401_UNAUTHORIZED
 
         return Response(content, status=status_code)
-    except exceptions.DoesNotExist as e:
+    except exceptions.DoesNotExist:
         content = {'message': 'No blob found with the given id.'}
         return Response(content, status=status.HTTP_404_NOT_FOUND)
     except Exception as api_exception:
@@ -188,6 +229,7 @@ def list_all(request):
 
 def _get_list_blob_info(list_blob, request):
     """ Get list blob info.
+
     Args:
         list_blob:
         request:

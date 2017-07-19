@@ -4,8 +4,8 @@ import core_main_app.commons.exceptions as exceptions
 from core_main_app.components.blob.models import Blob
 
 
-def save(blob):
-    """ Save the blob.
+def insert(blob):
+    """ Insert the blob in the blob repository.
 
     Args:
         blob:

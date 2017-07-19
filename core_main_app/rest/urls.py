@@ -46,6 +46,9 @@ urlpatterns = [
     url(r'^blob/download', blob_views.download,
         name='core_main_app_rest_blob_download'),
 
+    url(r'^blob/upload', blob_views.upload,
+        name='core_main_app_rest_blob_upload'),
+
     url(r'^blob/delete', blob_views.delete,
         name='core_main_app_rest_blob_delete'),
 
