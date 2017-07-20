@@ -28,7 +28,8 @@
             "js": [
                 {
                     "path": "path/to/file_1.js",
-                    "is_raw": True
+                    "is_raw": True,
+                    "is_external": False
                 },
                 ...
             ]
@@ -38,6 +39,8 @@
     {% for js_file in assets.js %}
         {% if js_file.is_raw %}
             <script type="text/javascript">{% include_static js_file.path %}</script>
+        {% elif js_file.is_external %}
+            <script src="{{ js_file.path }}"></script>
         {% else %}
             <script src="{% static js_file.path %}"></script>
         {% endif %}

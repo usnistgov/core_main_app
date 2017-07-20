@@ -18,7 +18,15 @@ def _build_js_assets(js_assets):
     included_js_paths = [asset["path"] for asset in js_assets]
 
     for asset in js_assets:
-        if not asset["is_raw"]:
+        # By default an asset is not raw javascript
+        if "is_raw" not in asset:
+            asset["is_raw"] = False
+
+        # By default asset are stored in the static dir
+        if "is_external" not in asset:
+            asset["is_external"] = False
+
+        if not asset["is_raw"]:  # If an asset is not raw js, we look for raw js child file
             js_asset_splitext = splitext(asset["path"])
             js_raw_file = js_asset_splitext[0] + ".raw" + js_asset_splitext[1]
 
