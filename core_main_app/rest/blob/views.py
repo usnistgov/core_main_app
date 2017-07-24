@@ -82,7 +82,7 @@ def upload(request):
         content = {"message": e.message}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    content = {"message": "Blob uploaded with success"}
+    content = {"message": "Blob uploaded with success", "blob_id": str(blob_object.id)}
     return Response(content, status=status.HTTP_201_CREATED)
 
 
