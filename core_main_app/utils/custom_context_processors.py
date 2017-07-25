@@ -21,4 +21,6 @@ def domain_context_processor(request):
 
         'DATA_SOURCES_EXPLORE_APPS': settings.DATA_SOURCES_EXPLORE_APPS if
         hasattr(settings, 'DATA_SOURCES_EXPLORE_APPS') else [],
+
+        'INSTALLED_APPS': settings.INSTALLED_APPS if hasattr(settings, 'INSTALLED_APPS') else [],
     }
