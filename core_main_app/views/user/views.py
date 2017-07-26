@@ -226,7 +226,5 @@ def get_context_manage_template_versions(version_manager):
         'object_name': 'Template',
         "version_manager": version_manager
     }
-    # FIXME: make this more dynamic?
-    if 'core_parser_app' in INSTALLED_APPS:
-        context["core_parser_app_installed"] = True
+
     return context
