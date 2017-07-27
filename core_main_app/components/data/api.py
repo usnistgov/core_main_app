@@ -115,3 +115,16 @@ def delete(data):
 
     """
     data.delete()
+
+
+def change_owner(data, new_user):
+    """ Change data's owner.
+
+    Args:
+        data:
+        new_user:
+
+    Returns:
+    """
+    data.user_id = str(new_user.id)
+    data.save()
