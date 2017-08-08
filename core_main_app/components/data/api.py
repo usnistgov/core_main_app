@@ -9,7 +9,7 @@ from core_main_app.utils.xml import validate_xml_data
 from core_main_app.commons import exceptions as exceptions
 from core_main_app.utils.access_control.decorators import access_control
 from core_main_app.components.data.access_control import can_read_data_id, can_read_user, can_write_data, \
-    can_read_data_query
+    can_read_data_query, can_change_owner
 
 
 @access_control(can_read_data_id)
@@ -124,14 +124,17 @@ def delete(data, user):
     data.delete()
 
 
-def change_owner(data, new_user):
+@access_control(can_change_owner)
+def change_owner(data, new_user, user):
     """ Change data's owner.
 
     Args:
         data:
+        user:
         new_user:
 
     Returns:
     """
+    # FIXME: user can transfer data to anybody, too permissive
     data.user_id = str(new_user.id)
     data.save()

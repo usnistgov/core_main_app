@@ -5,12 +5,10 @@ from core_main_app.components.data.tests.fixtures.fixtures import DataFixtures
 from core_main_app.components.data.models import Data
 from core_main_app.commons import exceptions
 from bson.objectid import ObjectId
-import unittest
 
 fixture_data = DataFixtures()
 
 
-@unittest.skip("GridFS not supported by mongomock")
 class TestDataGetAll(MongoIntegrationBaseTestCase):
 
     fixture = fixture_data
@@ -25,10 +23,9 @@ class TestDataGetAll(MongoIntegrationBaseTestCase):
         # Act
         result = Data.get_all()
         # Assert
-        self.assertTrue(len(self.fixture.data_collection) == len(result))
+        self.assertTrue(len(self.fixture.data_collection) == result.count())
 
 
-@unittest.skip("GridFS not supported by mongomock")
 class TestDataGetById(MongoIntegrationBaseTestCase):
 
     fixture = fixture_data
@@ -45,7 +42,6 @@ class TestDataGetById(MongoIntegrationBaseTestCase):
         self.assertEqual(result, self.fixture.data_1)
 
 
-@unittest.skip("GridFS not supported by mongomock")
 class TestDataGetAllByUserId(MongoIntegrationBaseTestCase):
 
     fixture = fixture_data
@@ -64,10 +60,9 @@ class TestDataGetAllByUserId(MongoIntegrationBaseTestCase):
         # Act
         result = Data.get_all_by_user_id(user_id)
         # Assert
-        self.assertTrue(len(result) == 0)
+        self.assertTrue(result.count() == 0)
 
 
-@unittest.skip("GridFS not supported by mongomock")
 class TestDataGetAllExceptUserId(MongoIntegrationBaseTestCase):
 
     fixture = fixture_data
@@ -78,7 +73,7 @@ class TestDataGetAllExceptUserId(MongoIntegrationBaseTestCase):
         # Act
         result = Data.get_all_except_user_id(user_id)
         # Assert
-        self.assertTrue(all(item.user_id != user_id for item in result))
+        self.assertTrue(item.user_id != user_id for item in result)
 
     def test_data_get_all_by_user_id_return_full_collection_of_data_from_user_does_not_exist(self):
         # Arrange
@@ -86,4 +81,4 @@ class TestDataGetAllExceptUserId(MongoIntegrationBaseTestCase):
         # Act
         result = Data.get_all_except_user_id(user_id)
         # Assert
-        self.assertTrue(len(result) > 0)
+        self.assertTrue(result.count() > 0)

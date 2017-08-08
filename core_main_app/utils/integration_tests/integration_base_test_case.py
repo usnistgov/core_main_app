@@ -1,15 +1,16 @@
 """ Integration Tests Base
 """
+from django.test.testcases import SimpleTestCase
 
 from core_main_app.commons.exceptions import CoreError
 from core_main_app.utils.databases.mongoengine_database import Database
-from unittest.case import TestCase
+
 
 MOCK_DATABASE_NAME = 'db_mock'
 MOCK_DATABASE_HOST = 'mongomock://localhost'
 
 
-class MongoIntegrationBaseTestCase(TestCase):
+class MongoIntegrationBaseTestCase(SimpleTestCase):
     """ Represent the Integration base test case
         The integration tests must inherit of this class
     """
