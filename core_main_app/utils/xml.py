@@ -218,13 +218,25 @@ def post_processor(path, key, value):
 
         Returns:
     """
+    return key, convert_value(value)
+
+
+def convert_value(value):
+    """ Convert the value to the true type
+
+    Args:
+        value:
+
+    Returns:
+
+    """
     try:
-        return key, int(value)
+        return int(value)
     except (ValueError, TypeError):
         try:
-            return key, float(value)
+            return float(value)
         except (ValueError, TypeError):
-            return key, value
+            return value
 
 
 def get_imports_and_includes(xsd_string):
