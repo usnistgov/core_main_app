@@ -1,0 +1,18 @@
+{% load staticfiles %}
+{% comment %}
+    Template displaying all messages in the application. Must be included on ALL pages.
+
+    Uses the notify.js library with custom styles.
+{% endcomment %}
+<script src="{% static 'core_main_app/libs/notify.js' %}"></script>
+<script src="{% static 'core_main_app/common/js/notify-styles.js' %}"></script>
+
+{% if messages %}
+<script>
+    $( document ).ready(function() {
+        {% for message in messages %}
+            $.notify("{{ message }}", {style: "{{ message.tags }}"});
+        {% endfor %}
+    });
+</script>
+{% endif %}
