@@ -1,12 +1,14 @@
 """Mailing task
 """
 from __future__ import absolute_import
-from logging import getLogger
-from core_main_app.utils.tasks_managers.celery import app
+
 import os
-from django.utils.importlib import import_module
-from django.template import loader, Context
+from logging import getLogger
+
+from celery import shared_task
 from django.core.mail import send_mail as django_send_mail, mail_admins, mail_managers, BadHeaderError
+from django.template import loader, Context
+from django.utils.importlib import import_module
 
 
 logger = getLogger(__name__)
@@ -16,7 +18,7 @@ SERVER_EMAIL = settings.SERVER_EMAIL
 EMAIL_SUBJECT_PREFIX = settings.EMAIL_SUBJECT_PREFIX
 
 
-@app.task
+@shared_task
 def send_mail(recipient_list, subject, path_to_template, context={}, fail_silently=True, sender=SERVER_EMAIL):
     """Send email.
 
@@ -37,7 +39,8 @@ def send_mail(recipient_list, subject, path_to_template, context={}, fail_silent
         context = Context(context)
         message = template.render(context)
         # Send mail
-        django_send_mail(subject=EMAIL_SUBJECT_PREFIX+subject, message='', from_email=sender, recipient_list=recipient_list,
+        django_send_mail(subject=EMAIL_SUBJECT_PREFIX+subject, message='', from_email=sender,
+                         recipient_list=recipient_list,
                          html_message=message, fail_silently=fail_silently)
     except BadHeaderError, e:
         raise e
@@ -45,7 +48,7 @@ def send_mail(recipient_list, subject, path_to_template, context={}, fail_silent
         raise e
 
 
-@app.task
+@shared_task
 def send_mail_to_administrators(subject, path_to_template, context={}, fail_silently=True):
     """Send email to administrators.
 
@@ -71,7 +74,7 @@ def send_mail_to_administrators(subject, path_to_template, context={}, fail_sile
         pass
 
 
-@app.task
+@shared_task
 def send_mail_to_managers(subject, path_to_template, context={}, fail_silently=True):
     """Send email to managers.
 
