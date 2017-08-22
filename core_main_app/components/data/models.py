@@ -181,3 +181,15 @@ class Data(Document):
 
         """
         return Data.objects(__raw__=query)
+
+    @staticmethod
+    def get_all_by_workspace(workspace):
+        """ Get all data that belong to the workspace.
+
+        Args:
+            workspace:
+
+        Returns:
+
+        """
+        return Data.objects(workspace=workspace).all()
