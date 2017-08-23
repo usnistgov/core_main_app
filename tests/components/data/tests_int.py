@@ -1,7 +1,7 @@
 """ Unit Test Data
 """
 from core_main_app.utils.integration_tests.integration_base_test_case import MongoIntegrationBaseTestCase
-from core_main_app.components.data.tests.fixtures.fixtures import DataFixtures
+from tests.components.data.fixtures.fixtures import DataFixtures
 from core_main_app.components.data.models import Data
 from core_main_app.commons import exceptions
 from bson.objectid import ObjectId

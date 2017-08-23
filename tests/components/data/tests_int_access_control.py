@@ -3,7 +3,7 @@
 from core_main_app.components.data.models import Data
 from core_main_app.components.data import api as data_api
 
-from core_main_app.components.data.tests.fixtures.fixtures import AccessControlDataFixture
+from tests.components.data.fixtures.fixtures import AccessControlDataFixture
 from core_main_app.utils.access_control.exceptions import AccessControlError
 from core_main_app.utils.integration_tests.integration_base_test_case import MongoIntegrationBaseTestCase
 from core_main_app.utils.tests_tools.MockUser import MockUser
