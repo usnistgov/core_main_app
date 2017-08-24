@@ -92,7 +92,7 @@ class TestDataGetAll(MongoIntegrationBaseTestCase):
         mock_user = _create_user('1')
         data_list = data_api.get_all(mock_user)
         get_all_workspaces_with_read_access_by_user.return_value = []
-        self.assertTrue(data_list.count() == 2)
+        self.assertTrue(len(data_list) == 2)
         self.assertTrue(data.id == '1' for data in data_list)
 
     @modify_settings(INSTALLED_APPS={'append': 'core_workspace_app'})
@@ -101,13 +101,13 @@ class TestDataGetAll(MongoIntegrationBaseTestCase):
         mock_user = _create_user('3')
         data_list = data_api.get_all(mock_user)
         get_all_workspaces_with_read_access_by_user.return_value = []
-        self.assertTrue(data_list.count() == 0)
+        self.assertTrue(len(data_list) == 0)
 
     @modify_settings(INSTALLED_APPS={'append': 'core_workspace_app'})
     def test_get_all_as_superuser_returns_own_data(self):
         mock_user = _create_user('1', is_superuser=True)
         data_list = data_api.get_all(mock_user)
-        self.assertTrue(data_list.count() == 2)
+        self.assertTrue(len(data_list) == 2)
         self.assertTrue(data.user_id == '1' for data in data_list)
 
 
@@ -136,7 +136,7 @@ class TestDataGetAllExceptUser(MongoIntegrationBaseTestCase):
     def test_get_all_except_user_as_superuser_returns_others_data(self):
         mock_user = _create_user('1', is_superuser=True)
         data_list = data_api.get_all_except_user(mock_user)
-        self.assertTrue(data_list.count() > 0)
+        self.assertTrue(len(data_list) > 0)
         self.assertTrue(data.user_id != mock_user.id for data in data_list)
 
 
@@ -155,7 +155,7 @@ class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
         mock_user = _create_user('3')
         get_all_workspaces_with_read_access_by_user.return_value = [fixture_data.workspace_1]
         data_list = data_api.execute_query({}, mock_user)
-        self.assertTrue(data_list.count() > 0)
+        self.assertTrue(len(data_list) > 0)
         self.assertTrue(all(isinstance(data, Data) for data in data_list))
 
     @modify_settings(INSTALLED_APPS={'append': 'core_workspace_app'})
@@ -164,7 +164,7 @@ class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
         mock_user = _create_user('3')
         get_all_workspaces_with_read_access_by_user.return_value = [fixture_data.workspace_1]
         data_list = data_api.execute_query({}, mock_user)
-        self.assertTrue(data_list.count() == 1)
+        self.assertTrue(len(data_list) == 1)
         self.assertTrue(data.workspace == '1' for data in data_list)
 
     @modify_settings(INSTALLED_APPS={'append': 'core_workspace_app'})
@@ -173,7 +173,7 @@ class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
         mock_user = _create_user('3')
         get_all_workspaces_with_read_access_by_user.return_value = [fixture_data.workspace_1]
         data_list = data_api.execute_query({}, mock_user)
-        self.assertTrue(data_list.count() == 1)
+        self.assertTrue(len(data_list) == 1)
         self.assertTrue(data.workspace == '2' for data in data_list)
 
     @modify_settings(INSTALLED_APPS={'append': 'core_workspace_app'})
@@ -183,7 +183,7 @@ class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
         get_all_workspaces_with_read_access_by_user.return_value = [fixture_data.workspace_1,
                                                                     fixture_data.workspace_2]
         data_list = data_api.execute_query({}, mock_user)
-        self.assertTrue(data_list.count() == 2)
+        self.assertTrue(len(data_list) == 2)
         self.assertTrue(data.workspace == '1' or data.workspace == '2' for data in data_list)
 
     @modify_settings(INSTALLED_APPS={'append': 'core_workspace_app'})
@@ -192,7 +192,7 @@ class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
         mock_user = _create_user('3')
         get_all_workspaces_with_read_access_by_user.return_value = [fixture_data.workspace_1]
         data_list = data_api.execute_query({'workspace': fixture_data.workspace_1.id}, mock_user)
-        self.assertTrue(data_list.count() == 1)
+        self.assertTrue(len(data_list) == 1)
         self.assertTrue(data.workspace == '1' for data in data_list)
 
     @modify_settings(INSTALLED_APPS={'append': 'core_workspace_app'})
@@ -201,7 +201,7 @@ class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
         mock_user = _create_user('3')
         get_all_workspaces_with_read_access_by_user.return_value = []
         data_list = data_api.execute_query({'workspace': fixture_data.workspace_1.id}, mock_user)
-        self.assertTrue(data_list.count() == 0)
+        self.assertTrue(len(data_list) == 0)
 
     @modify_settings(INSTALLED_APPS={'append': 'core_workspace_app'})
     @patch('core_workspace_app.components.workspace.api.get_all_workspaces_with_read_access_by_user')
@@ -209,13 +209,13 @@ class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
         mock_user = _create_user('3')
         get_all_workspaces_with_read_access_by_user.return_value = []
         data_list = data_api.execute_query({'workspace': None}, mock_user)
-        self.assertTrue(data_list.count() == 0)
+        self.assertTrue(len(data_list) == 0)
 
     @modify_settings(INSTALLED_APPS={'append': 'core_workspace_app'})
     def test_execute_query_as_superuser_returns_all_data(self):
         mock_user = _create_user('1', is_superuser=True)
         data_list = data_api.execute_query({}, mock_user)
-        self.assertTrue(data_list.count() == 4)
+        self.assertTrue(len(data_list) == 4)
 
 
 class TestDataDelete(MongoIntegrationBaseTestCase):

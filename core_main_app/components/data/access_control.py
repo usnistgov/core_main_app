@@ -217,19 +217,17 @@ def _check_can_read_data_list(data_list, user):
 
     """
     if 'core_workspace_app' in settings.INSTALLED_APPS:
-        # get list of accessible workspaces
-        accessible_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(user)
-        # check that all data belong to a workspace accessible by the user
-        wrong_workspace_data = data_list.filter(user_id__ne=str(user.id),
-                                                workspace__ne=None,
-                                                workspace__nin=accessible_workspaces).all()
-        if len(wrong_workspace_data) > 0:
-            raise AccessControlError("The user doesn't have enough rights to access this data.")
-        # check that all data outside any workspace belong to the user
-        wrong_owner_data = data_list.filter(workspace=None,
-                                            user_id__nin=str(user.id)).all()
-        if len(wrong_owner_data) > 0:
-            raise AccessControlError("The user doesn't have enough rights to access this data.")
+        if len(data_list) > 0:
+            # get list of accessible workspaces
+            accessible_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(user)
+            # check access is correct
+            for data in data_list:
+                # user is data owner
+                if data.user_id == str(user.id):
+                    continue
+                # user is not owner or data not in accessible workspace
+                if data.workspace is None or data.workspace not in accessible_workspaces:
+                    raise AccessControlError("The user doesn't have enough rights to access this data.")
     else:
         # general case: users can read other users data
         pass
