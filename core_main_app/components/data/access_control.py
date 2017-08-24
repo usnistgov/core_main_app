@@ -8,6 +8,26 @@ from core_workspace_app.components.workspace import api as workspace_api
 from django.conf import settings
 
 
+def can_read_list_data_id(func, list_data_id, user):
+    """ Can read list of data.
+
+    Args:
+        func:
+        list_data_id:
+        user:
+
+    Returns:
+
+    """
+    if user.is_superuser:
+        return func(list_data_id, user)
+
+    list_data = func(list_data_id, user)
+    _check_can_read_data_list(list_data, user)
+
+    return list_data
+
+
 def can_read_data_id(func, data_id, user):
     """ Can read data.
 
