@@ -71,3 +71,25 @@ def upsert(user):
     # Has to be called separately because save from django object returns nothing
     user.save()
     return user
+
+
+def get_all_users_except_list(list_user):
+    """ Get all users except the given list of users.
+
+    Args:
+        list_user
+
+    Returns:
+    """
+    return get_all_users_except_list_id([str(user.id) for user in list_user])
+
+
+def get_all_users_except_list_id(list_user_ids):
+    """ Get all users except the given list of user ids.
+
+    Args:
+        list_user_ids
+
+    Returns:
+    """
+    return User.objects.exclude(id__in=list_user_ids)
