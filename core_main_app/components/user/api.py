@@ -93,3 +93,14 @@ def get_all_users_except_list_id(list_user_ids):
     Returns:
     """
     return User.objects.exclude(id__in=list_user_ids)
+
+
+def get_all_users_by_list_id(list_user_ids):
+    """ Get all users by the given list of user ids.
+
+    Args:
+        list_user_ids
+
+    Returns:
+    """
+    return User.objects.filter(id__in=list_user_ids)
