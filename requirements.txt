@@ -2,6 +2,7 @@ Django==1.8.14
 django-password-policies==0.4.1
 mongoengine==0.10.6
 celery==4.0.1
+redis==2.10.5
 xmltodict==0.10.2
 lxml==3.6.4
 mock==2.0.0
