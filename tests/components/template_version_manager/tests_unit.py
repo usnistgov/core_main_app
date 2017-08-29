@@ -1,8 +1,10 @@
+""" Template Version Manager unit tests
+"""
 from unittest.case import TestCase
 from bson.objectid import ObjectId
 from django.core import exceptions as django_exceptions
 from mongoengine import errors as mongoengine_errors
-from mock.mock import Mock, patch
+from mock.mock import Mock, patch, MagicMock
 
 from core_main_app.commons.exceptions import NotUniqueError, ModelError
 from core_main_app.components.template.models import Template
@@ -148,7 +150,10 @@ class TestTemplateVersionManagerGetActiveGlobalVersions(TestCase):
         mock_template1 = _create_template_version_manager("test1")
         mock_template2 = _create_template_version_manager("test2")
 
-        mock_get_active_global_version_managers.return_value = [mock_template1, mock_template2]
+        queryset = MagicMock()
+        queryset.filter.return_value = queryset
+        queryset.all.return_value = [mock_template1, mock_template2]
+        mock_get_active_global_version_managers.return_value = queryset
 
         result = version_manager_api.get_active_global_version_manager()
 
@@ -167,7 +172,10 @@ class TestTemplateVersionManagerGetActiveGlobalVersionsByUserId(TestCase):
         mock_template1 = _create_template_version_manager(user_id=user_id)
         mock_template2 = _create_template_version_manager(user_id=user_id)
 
-        mock_get_active_global_version_managers.return_value = [mock_template1, mock_template2]
+        queryset = MagicMock()
+        queryset.filter.return_value = queryset
+        queryset.all.return_value = [mock_template1, mock_template2]
+        mock_get_active_global_version_managers.return_value = queryset
 
         result = version_manager_api.get_active_version_manager_by_user_id(user_id)
 
@@ -184,7 +192,10 @@ class TestTemplateVersionManagerGetDisableGlobalVersions(TestCase):
         mock_template1 = _create_template_version_manager(is_disabled=True)
         mock_template2 = _create_template_version_manager(is_disabled=True)
 
-        mock_get_disable_global_version_managers.return_value = [mock_template1, mock_template2]
+        queryset = MagicMock()
+        queryset.filter.return_value = queryset
+        queryset.all.return_value = [mock_template1, mock_template2]
+        mock_get_disable_global_version_managers.return_value = queryset
 
         result = version_manager_api.get_disable_global_version_manager()
 
@@ -203,7 +214,10 @@ class TestTemplateVersionManagerGetDisableGlobalVersionsByUserId(TestCase):
         mock_template1 = _create_template_version_manager(is_disabled=True, user_id=user_id)
         mock_template2 = _create_template_version_manager(is_disabled=True, user_id=user_id)
 
-        mock_get_disable_global_version_managers.return_value = [mock_template1, mock_template2]
+        queryset = MagicMock()
+        queryset.filter.return_value = queryset
+        queryset.all.return_value = [mock_template1, mock_template2]
+        mock_get_disable_global_version_managers.return_value = queryset
 
         result = version_manager_api.get_disable_version_manager_by_user_id(user_id)
 
@@ -257,7 +271,7 @@ def _create_mock_template_version_manager(title="", versions=None, is_disabled=F
     mock_template_version_manager.disabled_versions = []
     mock_template_version_manager.is_disabled = is_disabled
     mock_template_version_manager.user = str(user_id)
-    mock_template_version_manager._cls = 'VersionManager.TemplateVersionManager'
+    mock_template_version_manager._cls = TemplateVersionManager.class_name
     return mock_template_version_manager
 
 
@@ -288,5 +302,5 @@ def _create_template_version_manager(title="", is_disabled=False, user_id=""):
         user=user_id,
         is_disabled=is_disabled,
         disabled_versions=[],
-        _cls='VersionManager.TemplateVersionManager'
+        _cls=TemplateVersionManager.class_name
     )

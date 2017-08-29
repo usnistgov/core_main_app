@@ -135,18 +135,6 @@ class VersionManager(Document):
         return VersionManager.objects.all()
 
     @staticmethod
-    def get_all_filtered(disabled=False):
-        """Return filtered list of Version Managers.
-
-        Args:
-            disabled:
-
-        Returns:
-
-        """
-        return VersionManager.objects(is_disabled=disabled).all()
-
-    @staticmethod
     def get_by_id(version_manager_id):
         """Return Version Managers by id.
 
@@ -188,7 +176,7 @@ class VersionManager(Document):
         Returns:
 
         """
-        return [vm for vm in VersionManager.objects.all() if vm.user is None]
+        return VersionManager.objects(user=None).all()
 
     @staticmethod
     def get_active_global_version_manager():
@@ -197,7 +185,7 @@ class VersionManager(Document):
         Returns:
 
         """
-        return [vm for vm in VersionManager.get_all_filtered(disabled=False) if vm.user is None]
+        return VersionManager.objects(is_disabled=False, user=None).all()
 
     @staticmethod
     def get_disable_global_version_manager():
@@ -206,7 +194,7 @@ class VersionManager(Document):
         Returns:
 
         """
-        return [vm for vm in VersionManager.get_all_filtered(disabled=True) if vm.user is None]
+        return VersionManager.objects(is_disabled=True, user=None).all()
 
     @staticmethod
     def get_active_version_manager_by_user_id(user_id):
