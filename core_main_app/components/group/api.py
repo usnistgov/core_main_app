@@ -46,3 +46,36 @@ def get_default_group():
     Returns:
     """
     return Group.objects.filter(name=rights.default_group).first()
+
+
+def get_all_groups_by_list_id(list_groups_ids):
+    """ Get all groups by the given list of group ids.
+
+    Args:
+        list_groups_ids
+
+    Returns:
+    """
+    return Group.objects.filter(id__in=list_groups_ids)
+
+
+def get_all_groups_except_list_id(list_groups_ids):
+    """ Get all groups except the given list of group ids.
+
+    Args:
+        list_groups_ids
+
+    Returns:
+    """
+    return Group.objects.exclude(id__in=list_groups_ids)
+
+
+def get_all_groups_except_list(list_group):
+    """ Get all groups except the given list of groups.
+
+    Args:
+        list_group
+
+    Returns:
+    """
+    return get_all_groups_except_list_id([str(group.id) for group in list_group])
