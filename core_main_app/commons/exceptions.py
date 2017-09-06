@@ -81,3 +81,13 @@ class XSDError(Exception):
     def __str__(self):
         return repr(self.message)
 
+
+class LockError(Exception):
+    """ Exception raised when an object is locked
+    """
+
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return repr(self.message)
