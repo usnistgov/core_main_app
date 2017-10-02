@@ -12,10 +12,7 @@ from django.utils.importlib import import_module
 
 
 logger = getLogger(__name__)
-settings_file = os.environ.get("DJANGO_SETTINGS_MODULE")
-settings = import_module(settings_file)
-SERVER_EMAIL = settings.SERVER_EMAIL
-EMAIL_SUBJECT_PREFIX = settings.EMAIL_SUBJECT_PREFIX
+from core_main_app.settings import SERVER_EMAIL, EMAIL_SUBJECT_PREFIX
 
 
 @shared_task
