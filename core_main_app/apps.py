@@ -15,4 +15,4 @@ class InitApp(AppConfig):
         Returns:
 
         """
-        discover.init_rules()
+        discover.init_rules(self.apps)

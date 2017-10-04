@@ -1,5 +1,5 @@
-Django==1.8.14
-django-password-policies==0.4.1
+Django==1.11.5
+django-password-policies==0.4.2
 mongoengine==0.10.6
 celery==4.0.1
 redis==2.10.5
