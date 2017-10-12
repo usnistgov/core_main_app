@@ -1,0 +1,17 @@
+{% extends 'core_main_app/_render/admin/theme/tools/modal.html' %}
+
+{% block modal_id %}switch-rights-modal{% endblock %}
+{% block modal_title %}Problem while updating the new permission.{% endblock %}
+
+
+{% block modal_body %}
+<div class="alert alert-danger" id="switch_rights_banner_errors" style="display: none;">
+        <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
+     	<h4><i class="fa fa-exclamation-circle"></i> Error</h4>
+        <div id="switch_rights_errors"></div>
+</div>
+{% endblock %}
+
+{% block modal_footer %}
+<a class="btn btn-default pull-left" data-dismiss="modal" href="#"><i class="fa fa-times"></i> Ok</a>
+{% endblock %}

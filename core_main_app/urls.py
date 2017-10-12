@@ -2,7 +2,7 @@
 """
 from django.conf.urls import url, include
 
-import core_main_app.views.user.views as user_views
+from core_main_app.views.user import views as user_views, ajax as user_ajax
 from core_main_app.utils.rendering import render
 from views.common import ajax as common_ajax, views as common_views
 
@@ -40,4 +40,21 @@ urlpatterns = [
             save_redirect="core_main_app_manage_template_versions"
         ),
         name='core_main_app_template_xslt'),
+
+    url(r'^edit-rights/(?P<workspace_id>\w+)$', user_views.edit_rights,
+        name='core_main_edit_rights_workspace'),
+
+    url(r'^create-workspace', user_ajax.create_workspace, name='core_main_create_workspace'),
+    url(r'^change-workspace', user_ajax.load_form_change_workspace, name='core_main_change_workspace'),
+    url(r'^assign-workspace', user_ajax.assign_workspace, name='core_main_assign_workspace'),
+    url(r'^public-workspace', user_ajax.set_public_workspace, name='core_main_public_workspace'),
+
+    url(r'^add-user-form', user_ajax.load_add_user_form, name='core_main_edit_rights_users_form'),
+    url(r'^add-user-right-to-workspace', user_ajax.add_user_right_to_workspace,
+        name='core_main_add_user_right_to_workspace'),
+    url(r'^switch-right', user_ajax.switch_right, name='core_main_switch_right'),
+    url(r'^remove-rights', user_ajax.remove_user_or_group_rights, name='core_main_remove_rights'),
+    url(r'^add-group-form', user_ajax.load_add_group_form, name='core_main_edit_rights_groups_form'),
+    url(r'^add-group-right-to-workspace', user_ajax.add_group_right_to_workspace,
+        name='core_main_add_group_right_to_workspace'),
 ]

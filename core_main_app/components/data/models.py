@@ -10,7 +10,7 @@ from mongoengine.queryset.base import NULLIFY
 from core_main_app.utils import xml as xml_utils
 from django_mongoengine import fields, Document
 from core_main_app.settings import DATA_AUTO_PUBLISH, GRIDFS_DATA_COLLECTION, SEARCHABLE_DATA_OCCURRENCES_LIMIT
-from core_workspace_app.components.workspace.models import Workspace
+from core_main_app.components.workspace.models import Workspace
 
 # TODO: Create publication workflow manager
 # TODO: execute_query / execute_query_full_result -> use find method (RETURN FULL OBJECT)

@@ -1,7 +1,8 @@
 """ Common forms
 """
-from core_main_app.commons.validators import BlankSpacesValidator
 from django import forms
+
+from core_main_app.commons.validators import BlankSpacesValidator
 
 
 class RenameForm(forms.Form):

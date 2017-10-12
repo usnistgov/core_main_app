@@ -3,9 +3,75 @@
 
 from core_main_app.utils.access_control.exceptions import AccessControlError
 from core_main_app.utils.raw_query.mongo_raw_query import add_access_criteria
-from core_workspace_app.components.workspace import api as workspace_api
+from core_main_app.components.workspace import api as workspace_api
 
 from django.conf import settings
+
+
+def can_read_or_write_data_workspace(func, workspace, user):
+    """ Can user read or write in workspace.
+
+    Args:
+        func:
+        workspace:
+        user:
+
+    Returns:
+
+    """
+    _check_can_read_or_write_workspace(workspace, user)
+    return func(workspace, user)
+
+
+def can_write_data_workspace(func, data, workspace, user):
+    """ Can user write data in workspace.
+
+    Args:
+        func:
+        data:
+        workspace:
+        user:
+
+    Returns:
+
+    """
+    if user.is_superuser:
+        return func(data, workspace, user)
+
+    _check_can_write_data(data, user)
+    _check_can_write_workspace(workspace, user)
+    return func(data, workspace, user)
+
+
+def _check_can_write_workspace(workspace, user):
+    """ Check that user can write in the workspace.
+
+    Args:
+        workspace:
+        user:
+
+    Returns:
+
+    """
+    accessible_workspaces = workspace_api.get_all_workspaces_with_write_access_by_user(user)
+    if workspace not in accessible_workspaces:
+        raise AccessControlError("The user does not have the permission to write into this workspace.")
+
+
+def _check_can_read_or_write_workspace(workspace, user):
+    """ Check that user can read or write in the workspace.
+
+    Args:
+        workspace:
+        user:
+
+    Returns:
+
+    """
+    accessible_write_workspaces = workspace_api.get_all_workspaces_with_write_access_by_user(user)
+    accessible_read_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(user)
+    if workspace not in list(accessible_write_workspaces) + list(accessible_read_workspaces):
+        raise AccessControlError("The user does not have the permission to write into this workspace.")
 
 
 def can_read_list_data_id(func, list_data_id, user):
@@ -159,22 +225,15 @@ def _check_can_write_data(data, user):
     Returns:
 
     """
-    # workspace case
-    if 'core_workspace_app' in settings.INSTALLED_APPS:
-        if data.user_id != str(user.id):
-            if hasattr(data, 'workspace') and data.workspace is not None:
-                # get list of accessible workspaces
-                accessible_workspaces = workspace_api.get_all_workspaces_with_write_access_by_user(user)
-                # check that accessed data belongs to an accessible workspace
-                if data.workspace not in accessible_workspaces:
-                    raise AccessControlError("The user doesn't have enough rights to access this data.")
-            # workspace is not set
-            else:
+    if data.user_id != str(user.id):
+        if hasattr(data, 'workspace') and data.workspace is not None:
+            # get list of accessible workspaces
+            accessible_workspaces = workspace_api.get_all_workspaces_with_write_access_by_user(user)
+            # check that accessed data belongs to an accessible workspace
+            if data.workspace not in accessible_workspaces:
                 raise AccessControlError("The user doesn't have enough rights to access this data.")
-    # general case
-    else:
-        # general case: owner can write data
-        if data.user_id != str(user.id):
+        # workspace is not set
+        else:
             raise AccessControlError("The user doesn't have enough rights to access this data.")
 
 
@@ -189,21 +248,17 @@ def _check_can_read_data(data, user):
 
     """
     # workspace case
-    if 'core_workspace_app' in settings.INSTALLED_APPS:
-        if data.user_id != str(user.id):
-            # workspace is set
-            if hasattr(data, 'workspace') and data.workspace is not None:
-                # get list of accessible workspaces
-                accessible_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(user)
-                # check that accessed data belongs to an accessible workspace
-                if data.workspace not in accessible_workspaces:
-                    raise AccessControlError("The user doesn't have enough rights to access this data.")
-            # workspace is not set
-            else:
+    if data.user_id != str(user.id):
+        # workspace is set
+        if hasattr(data, 'workspace') and data.workspace is not None:
+            # get list of accessible workspaces
+            accessible_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(user)
+            # check that accessed data belongs to an accessible workspace
+            if data.workspace not in accessible_workspaces:
                 raise AccessControlError("The user doesn't have enough rights to access this data.")
-    else:
-        # general case: users can read other users data
-        pass
+        # workspace is not set
+        else:
+            raise AccessControlError("The user doesn't have enough rights to access this data.")
 
 
 def _check_can_read_data_list(data_list, user):
@@ -216,21 +271,17 @@ def _check_can_read_data_list(data_list, user):
     Returns:
 
     """
-    if 'core_workspace_app' in settings.INSTALLED_APPS:
-        if len(data_list) > 0:
-            # get list of accessible workspaces
-            accessible_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(user)
-            # check access is correct
-            for data in data_list:
-                # user is data owner
-                if data.user_id == str(user.id):
-                    continue
-                # user is not owner or data not in accessible workspace
-                if data.workspace is None or data.workspace not in accessible_workspaces:
-                    raise AccessControlError("The user doesn't have enough rights to access this data.")
-    else:
-        # general case: users can read other users data
-        pass
+    if len(data_list) > 0:
+        # get list of accessible workspaces
+        accessible_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(user)
+        # check access is correct
+        for data in data_list:
+            # user is data owner
+            if data.user_id == str(user.id):
+                continue
+            # user is not owner or data not in accessible workspace
+            if data.workspace is None or data.workspace not in accessible_workspaces:
+                raise AccessControlError("The user doesn't have enough rights to access this data.")
 
 
 def _update_can_read_query(query, user):
@@ -245,14 +296,9 @@ def _update_can_read_query(query, user):
     """
 
     # workspace case
-    if 'core_workspace_app' in settings.INSTALLED_APPS:
-        # list accessible workspaces
-        accessible_workspaces = [workspace.id for workspace in
-                                 workspace_api.get_all_workspaces_with_read_access_by_user(user)]
-        # update query with workspace criteria
-        query = add_access_criteria(query, accessible_workspaces, user)
-    else:
-        # general case: users can read other users data
-        pass
-
+    # list accessible workspaces
+    accessible_workspaces = [workspace.id for workspace in
+                             workspace_api.get_all_workspaces_with_read_access_by_user(user)]
+    # update query with workspace criteria
+    query = add_access_criteria(query, accessible_workspaces, user)
     return query

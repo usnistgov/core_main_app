@@ -1,0 +1,1 @@
+var removeRightsUrl = "{% url 'core_main_remove_rights' %}";

@@ -1,0 +1,33 @@
+{% extends 'core_main_app/_render/admin/theme/tools/modal.html' %}
+
+{% block modal_id %}add-group-modal{% endblock %}
+{% block modal_title %} Give group rights to workspace {% endblock %}
+
+{% block modal_body %}
+<div class="alert alert-danger" id="banner_group_rights_errors" style="display: none;">
+    <h4><i class="fa fa-exclamation-circle fa-1x"></i> Error</h4>
+    <div id="form_edit_group_rights_errors">
+    </div>
+</div>
+
+Select all groups you want to give rights to the workspace:
+<div id="add-group-form">
+</div>
+<div id="list-rights">
+    <label class="switch">
+        <input type="checkbox" id="read_group">
+        <span class="slider"></span>
+    </label> Read
+    <br/>
+    <label class="switch">
+        <input type="checkbox" id="write_group">
+        <span class="slider"></span>
+    </label> Write
+</div>
+{% endblock %}
+
+{% block modal_footer %}
+<a class="btn btn-default pull-left" data-dismiss="modal" href="#"><i class="fa fa-times"></i> Cancel</a>
+<a id="add-group-yes" class="btn btn-default" href="#"><i class="fa fa-check"></i> Add</a>
+{% endblock %}
+

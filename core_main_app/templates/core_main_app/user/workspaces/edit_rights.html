@@ -1,0 +1,39 @@
+{% extends 'core_main_app/_render/admin/theme/tools/box.html' %}
+
+{% block box_title %}
+<h1><span>Edit access to workspace: {{data.workspace.title}}</span></h1>
+{% endblock %}
+
+{% block box_tools %}
+<a class="btn btn-default add-user-btn">
+    <i class="fa fa-file-text-o"></i> Add users
+</a>
+<a class="btn btn-default add-group-btn">
+    <i class="fa fa-file-text-o"></i> Add groups
+</a>
+<a href="#" class="btn btn-default back-to-previous">
+         <i class="fa fa-arrow-left"></i> Previous page
+</a>
+{% endblock %}
+
+{% block box_body %}
+<br/>
+    <!--FIXME: put back the tab -->
+    {% if data.user_data %}
+        Users
+        {% include data.template with objects=data.user_data group=data.user %}
+    {% else %}
+    <div class="empty-table">
+        No users have access to '{{ data.workspace.title }}'.
+    </div>
+    {% endif %}
+<br/>
+    {% if data.group_data %}
+        Groups
+        {% include data.template with objects=data.group_data group=data.group %}
+    {%else%}
+      <div class="empty-table">
+        No groups have access to '{{ data.workspace.title }}'.
+      </div>
+    {%endif%}
+{% endblock %}

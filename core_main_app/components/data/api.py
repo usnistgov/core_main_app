@@ -9,7 +9,37 @@ from core_main_app.utils.xml import validate_xml_data
 from core_main_app.commons import exceptions as exceptions
 from core_main_app.utils.access_control.decorators import access_control
 from core_main_app.components.data.access_control import can_read_data_id, can_read_user, can_write_data, \
-    can_read_data_query, can_change_owner, can_read_list_data_id
+    can_read_data_query, can_change_owner, can_read_list_data_id, can_write_data_workspace,\
+    can_read_or_write_data_workspace
+
+
+@access_control(can_write_data_workspace)
+def assign(data, workspace, user):
+    """ Assign data to a workspace.
+
+    Args:
+        data:
+        workspace:
+        user:
+
+    Returns:
+
+    """
+    data.workspace = workspace
+    return data.save()
+
+
+@access_control(can_read_or_write_data_workspace)
+def get_all_by_workspace(workspace, user):
+    """ Get all data that belong to the workspace.
+
+    Args:
+        workspace:
+
+    Returns:
+
+    """
+    return Data.get_all_by_workspace(workspace)
 
 
 @access_control(can_read_list_data_id)

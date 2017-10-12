@@ -1,0 +1,17 @@
+{% extends 'core_main_app/_render/admin/theme/tools/modal.html' %}
+
+{% block modal_id %}assign-workspace-modal{% endblock %}
+{% block modal_title %} Change workspace {% endblock %}
+
+{% block modal_body %}
+<input type="hidden" class="{{data.document}}-id"/>
+Select a new workspace to assign the record:
+<div id="assign-workspace-form">
+</div>
+{% endblock %}
+
+{% block modal_footer %}
+<a class="btn btn-default pull-left" data-dismiss="modal" href="#"><i class="fa fa-times"></i> Cancel</a>
+<a id="assign-workspace-yes" class="btn btn-default" href="#"><i class="fa fa-check"></i> Change</a>
+{% endblock %}
+

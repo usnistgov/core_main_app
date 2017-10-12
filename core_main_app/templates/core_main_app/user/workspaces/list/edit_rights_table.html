@@ -1,0 +1,32 @@
+<table id="table-rights-{{group}}" class="display data-table" style="margin-bottom: 0em; width:100%; border: None">
+    <thead>
+        <th>{% if group == 'group' %}Name {%else%}Username{% endif %}</th>
+        <th>Can read</th>
+        <th>Can write</th>
+        <th>Actions</th>
+    </thead>
+    <tbody>
+        {% for object in objects %}
+            <tr objectid="{{object.object_id}}">
+                <td>{{ object.object_name }}</td>
+                <td>
+                    <label class="switch">
+                        <input id="btn-read-{{group}}-{{object.object_id}}" type="checkbox" {% if object.can_read %} checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </td>
+                <td>
+                    <label class="switch">
+                        <input id="btn-write-{{group}}-{{object.object_id}}" type="checkbox" {% if object.can_write %} checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </td>
+                <td>
+                    <a class="btn btn-default remove-{{group}}-btn">
+                        <i class="fa fa-edit"></i> Remove {{group}} access
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -1,0 +1,8 @@
+<form id="add-user-form" method="post">
+    {% csrf_token %}
+    {{ add_user_form }}
+    <div id="add-user-errors" style="color:red;">
+        {{ errors | safe}}
+    </div>
+    <br/>
+</form>

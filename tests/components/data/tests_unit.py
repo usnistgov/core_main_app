@@ -1,29 +1,32 @@
 """ Unit Test Data
 """
+from collections import OrderedDict
+from unittest.case import TestCase
+
+from mock import patch
+
 import core_main_app.components.data.api as data_api
+from core_main_app.commons import exceptions
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
-from core_main_app.commons import exceptions
-from unittest.case import TestCase
-from mock import patch
-from collections import OrderedDict
-
+from core_main_app.utils.access_control.exceptions import AccessControlError
 from core_main_app.utils.tests_tools.MockUser import MockUser
 
 
 class TestDataGetAll(TestCase):
 
+    @patch("core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user")
     @patch.object(Data, 'get_all_by_user_id')
-    def test_data_get_all_return_collection_of_data(self, mock_list):
+    def test_data_get_all_return_collection_of_data(self, mock_list, get_all_workspaces_with_read_access_by_user):
         # Arrange
         mock_data_1 = _create_data(_get_template(), user_id='3', title='title_1', content="")
         mock_data_2 = _create_data(_get_template(), user_id='1', title='title_2', content="")
         mock_list.return_value = [mock_data_1, mock_data_2]
         mock_user = _create_user('2')
+        get_all_workspaces_with_read_access_by_user.return_value = []
         # Act
-        result = data_api.get_all(mock_user)
-        # Assert
-        self.assertTrue(all(isinstance(item, Data) for item in result))
+        with self.assertRaises(AccessControlError):
+            data_api.get_all(mock_user)
 
 
 class TestDataGetById(TestCase):
@@ -40,7 +43,7 @@ class TestDataGetById(TestCase):
     @patch.object(Data, 'get_by_id')
     def test_data_get_by_id_return_data_if_found(self, mock_get):
         # Arrange
-        mock_data = Data(_get_template(), OrderedDict(), 'title', '2')
+        mock_data = Data(_get_template(), '1', OrderedDict(), 'title')
         mock_get.return_value = mock_data
         mock_user = _create_user('1')
         # Act
@@ -51,18 +54,21 @@ class TestDataGetById(TestCase):
 
 class TestDataGetAllExceptUser(TestCase):
 
+    @patch("core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user")
     @patch.object(Data, 'get_all_except_user_id')
-    def test_data_get_all_except_user_return_collection_of_data_where_user_is_not_owner(self, mock_list_except_user_id):
+    def test_data_get_all_except_user_return_collection_of_data_where_user_is_not_owner(self, mock_list_except_user_id,
+                                                                                        get_all_workspaces_with_read_access_by_user):
         # Arrange
         user_id = '2'
         mock_data_1 = _create_data(_get_template(), user_id='3', title='title_1', content="")
         mock_data_2 = _create_data(_get_template(), user_id='1', title='title_2', content="")
         mock_list_except_user_id.return_value = [mock_data_1, mock_data_2]
         mock_user = _create_user('2')
+        get_all_workspaces_with_read_access_by_user.return_value = []
         # Act
-        result = data_api.get_all_except_user(mock_user)
-        # Assert
-        self.assertTrue(all(item.user_id != user_id for item in result))
+        with self.assertRaises(AccessControlError):
+            data_api.get_all_except_user(mock_user)
+
 
 
 class TestDataUpsert(TestCase):
