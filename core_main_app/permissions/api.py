@@ -39,7 +39,7 @@ def create_read_perm(title):
     Returns:
     """
     name = CAN_READ_NAME + " - " + title.strip()
-    content_type = ContentType.objects.get(app_label=CONTENT_TYPE_APP_LABEL, model='workspace')
+    content_type = ContentType.objects.get(app_label=CONTENT_TYPE_APP_LABEL, model='main')
     codename = CAN_READ_CODENAME + "_" + _title_to_codename(title)
     return _create_perm(name, content_type, codename)
 
@@ -53,7 +53,7 @@ def create_write_perm(title):
     Returns:
     """
     name = CAN_WRITE_NAME + " - " + title.strip()
-    content_type = ContentType.objects.get(app_label=CONTENT_TYPE_APP_LABEL, model='workspace')
+    content_type = ContentType.objects.get(app_label=CONTENT_TYPE_APP_LABEL, model='main')
     codename = CAN_WRITE_CODENAME + "_" + _title_to_codename(title)
     return _create_perm(name, content_type, codename)
 
