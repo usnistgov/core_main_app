@@ -443,18 +443,18 @@ def get_dependency_resolver_html(imports, includes, xsd_data, filename):
     # build the list of dependencies
     current_templates = template_version_manager_api.get_global_version_managers(_cls=False)
     list_dependencies_template = loader.get_template('core_main_app/admin/list_dependencies.html')
-    context = Context({
+    context = {
         'templates': [template for template in current_templates if not template.is_disabled],
-    })
+    }
     list_dependencies_html = list_dependencies_template.render(context)
 
     # build the dependency resolver form
     dependency_resolver_template = loader.get_template('core_main_app/admin/dependency_resolver.html')
-    context = Context({
+    context = {
         'imports': imports,
         'includes': includes,
         'xsd_content': html_escape(xsd_data),
         'filename': filename,
         'dependencies': list_dependencies_html,
-    })
+    }
     return dependency_resolver_template.render(context)
