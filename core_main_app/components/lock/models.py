@@ -79,9 +79,9 @@ class DatabaseLockObject(Document):
     Class DatabaseLockObject.
     """
 
-    object = fields.ReferenceField(Document, required=True)
-    user_id = fields.StringField(required=True)
-    lock_date = fields.DateTimeField(required=True)
+    object = fields.ReferenceField(Document, blank=False)
+    user_id = fields.StringField(blank=False)
+    lock_date = fields.DateTimeField(blank=False)
 
     @staticmethod
     def get_lock_by_object(object):
