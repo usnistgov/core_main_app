@@ -16,8 +16,7 @@ class XSLType(object):
     type_detail = "Detail"
 
 
-# TODO: Deprecated in Django 1.9. Use simple_tag instead when migrated to 1.9.
-@register.assignment_tag(name='xsl_transform_list')
+@register.simple_tag(name='xsl_transform_list')
 def render_xml_as_html(*args, **kwargs):
     """ Render an XML to HTML using the list xslt.
     Args:
@@ -34,7 +33,7 @@ def render_xml_as_html(*args, **kwargs):
     return _render_xml_as_html(xml_content, template_id, template_hash, XSLType.type_list)
 
 
-@register.assignment_tag(name='xsl_transform_detail')
+@register.simple_tag(name='xsl_transform_detail')
 def render_xml_as_html(*args, **kwargs):
     """ Render an XML to HTML using the detail xslt.
     Args:
