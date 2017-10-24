@@ -6,6 +6,9 @@ from core_main_app.views.user import views as user_views, ajax as user_ajax
 from core_main_app.utils.rendering import render
 from views.common import ajax as common_ajax, views as common_views
 
+from rest_framework_swagger.views import get_swagger_view
+schema_view = get_swagger_view(title="REST API")
+
 urlpatterns = [
     url(r'^$', user_views.homepage, name='core_main_app_homepage'),
 
@@ -57,4 +60,5 @@ urlpatterns = [
     url(r'^add-group-form', user_ajax.load_add_group_form, name='core_main_edit_rights_groups_form'),
     url(r'^add-group-right-to-workspace', user_ajax.add_group_right_to_workspace,
         name='core_main_add_group_right_to_workspace'),
+    url(r'^docs/api$', schema_view, name='swagger_view'),
 ]
