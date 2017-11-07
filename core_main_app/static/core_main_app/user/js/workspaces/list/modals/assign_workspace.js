@@ -15,12 +15,12 @@ load_form_change_workspace = function() {
             document_id: getSelectedDocument()
         },
 		success: function(data){
-            $("#banner_edit_errors").hide();
+            $("#banner_assign_workspace_errors").hide();
             $("#assign-workspace-form").html(data.form);
 	    },
         error:function(data){
-            $("#assign_workspace_errors").html(data.responseText);
-            $("#banner_edit_errors").show(500)
+            $("#form_assign_workspace_errors").html(data.responseText);
+            $("#banner_assign_workspace_errors").show(500);
         }
     });
 };
@@ -39,8 +39,8 @@ $.ajax({
            location.reload();
 	    },
         error:function(data){
-            $("#assign_workspace_errors").html(data.responseText);
-            $("#banner_edit_errors").show(500)
+            $("#form_assign_workspace_errors").html(data.responseText);
+            $("#banner_assign_workspace_errors").show(500);
         }
     });
 };

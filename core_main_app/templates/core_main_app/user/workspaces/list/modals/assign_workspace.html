@@ -4,6 +4,12 @@
 {% block modal_title %} Change workspace {% endblock %}
 
 {% block modal_body %}
+<div class="alert alert-danger" id="banner_assign_workspace_errors" style="display: none;">
+    <h4><i class="fa fa-exclamation-circle fa-1x"></i> Error</h4>
+    <div id="form_assign_workspace_errors">
+    </div>
+</div>
+
 <input type="hidden" class="{{data.document}}-id"/>
 Select a new workspace to assign the record:
 <div id="assign-workspace-form">
