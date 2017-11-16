@@ -31,8 +31,10 @@ class DataFixtures(FixtureInterface):
 
         """
         # NOTE: no xml_content to avoid using unsupported GridFS mock
-        self.data_1 = Data(self.template, '1', None, 'title').save()
-        self.data_2 = Data(self.template, '2', None, 'title2').save()
+        self.data_1 = Data(template=self.template, user_id='1', dict_content=None,
+                           title='title').save()
+        self.data_2 = Data(template=self.template, user_id='2', dict_content=None,
+                           title='title2').save()
         self.data_collection = [self.data_1, self.data_2]
 
     def generate_template(self):

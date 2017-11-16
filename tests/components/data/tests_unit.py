@@ -43,7 +43,8 @@ class TestDataGetById(TestCase):
     @patch.object(Data, 'get_by_id')
     def test_data_get_by_id_return_data_if_found(self, mock_get):
         # Arrange
-        mock_data = Data(_get_template(), '1', OrderedDict(), 'title')
+        mock_data = Data(template=_get_template(), user_id='1', dict_content=OrderedDict(),
+                         title='title')
         mock_get.return_value = mock_data
         mock_user = _create_user('1')
         # Act

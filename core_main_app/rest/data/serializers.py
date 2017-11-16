@@ -1,8 +1,8 @@
 """Serializers used throughout the data Rest API
 """
-from core_main_app.settings import DATA_AUTO_PUBLISH
+from rest_framework.serializers import Serializer, CharField
 from rest_framework_mongoengine.serializers import DocumentSerializer
-from rest_framework.serializers import Serializer, CharField, BooleanField, DateTimeField
+
 from core_main_app.components.data.models import Data
 
 
@@ -18,8 +18,6 @@ class DataSerializer(DocumentSerializer):
                   "user_id",
                   "title",
                   "xml_content",
-                  "is_published",
-                  "publication_date",
                   "last_modification_date"]
 
 
@@ -37,8 +35,6 @@ class DataWithTemplateInfoSerializer(DocumentSerializer):
                   "user_id",
                   "title",
                   "xml_content",
-                  "is_published",
-                  "publication_date",
                   "last_modification_date"]
 
 
