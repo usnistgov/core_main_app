@@ -62,6 +62,19 @@ class Template(Document):
         return Template.objects(hash=template_hash).all()
 
     @staticmethod
+    def get_all_by_hash_list(template_hash_list):
+        """ Return all template having the given hash list.
+
+        Args:
+            template_hash_list: Template hash list.
+
+        Returns:
+            List of Template instance.
+
+        """
+        return Template.objects(hash__in=template_hash_list).all()
+
+    @staticmethod
     def get_all_by_id_list(template_id_list):
         """ Return all template with id in list.
 
