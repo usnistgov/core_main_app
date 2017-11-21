@@ -13,22 +13,6 @@ from core_main_app.utils.access_control.exceptions import AccessControlError
 from core_main_app.utils.tests_tools.MockUser import MockUser
 
 
-class TestDataGetAll(TestCase):
-
-    @patch("core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user")
-    @patch.object(Data, 'get_all_by_user_id')
-    def test_data_get_all_return_collection_of_data(self, mock_list, get_all_workspaces_with_read_access_by_user):
-        # Arrange
-        mock_data_1 = _create_data(_get_template(), user_id='3', title='title_1', content="")
-        mock_data_2 = _create_data(_get_template(), user_id='1', title='title_2', content="")
-        mock_list.return_value = [mock_data_1, mock_data_2]
-        mock_user = _create_user('2')
-        get_all_workspaces_with_read_access_by_user.return_value = []
-        # Act
-        with self.assertRaises(AccessControlError):
-            data_api.get_all(mock_user)
-
-
 class TestDataGetById(TestCase):
 
     @patch.object(Data, 'get_by_id')
@@ -69,7 +53,6 @@ class TestDataGetAllExceptUser(TestCase):
         # Act
         with self.assertRaises(AccessControlError):
             data_api.get_all_except_user(mock_user)
-
 
 
 class TestDataUpsert(TestCase):

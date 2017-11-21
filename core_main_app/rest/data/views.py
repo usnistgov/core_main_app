@@ -53,7 +53,7 @@ def _get_all(request):
     """
     try:
         # Get object
-        data_object_list = data_api.get_all(request.user)
+        data_object_list = data_api.get_all_by_user(request.user)
 
         # Serialize object
         return_value = DataSerializer(data_object_list, many=True)

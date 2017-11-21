@@ -10,7 +10,8 @@ from core_main_app.commons import exceptions as exceptions
 from core_main_app.utils.access_control.decorators import access_control
 from core_main_app.components.data.access_control import can_read_data_id, can_read_user, can_write_data, \
     can_read_data_query, can_change_owner, can_read_list_data_id, can_write_data_workspace,\
-    can_read_or_write_data_workspace
+    can_read_or_write_data_workspace, has_perm_administration
+from core_main_app.components.workspace import api as workspace_api
 
 
 @access_control(can_write_data_workspace)
@@ -68,9 +69,39 @@ def get_by_id(data_id, user):
     return Data.get_by_id(data_id)
 
 
-@access_control(can_read_user)
+@access_control(has_perm_administration)
 def get_all(user):
+    """ Get all the data if superuser. Raise exception otherwise.
+
+    Parameters:
+            user:
+
+    Returns: data collection
+    """
+    return Data.get_all()
+
+
+def get_all_accessible_by_user(user):
     """ Return all data accessible by a user.
+
+        Parameters:
+            user:
+
+        Returns: data collection
+    """
+
+    read_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(user)
+    write_workspaces = workspace_api.get_all_workspaces_with_write_access_by_user(user)
+    user_accessible_workspaces = list(set().union(read_workspaces, write_workspaces))
+
+    accessible_data = Data.get_all_by_list_workspace(user_accessible_workspaces)
+    owned_data = get_all_by_user(user)
+
+    return list(set().union(owned_data, accessible_data))
+
+
+def get_all_by_user(user):
+    """ Return all data owned by a user.
 
         Parameters:
             user:

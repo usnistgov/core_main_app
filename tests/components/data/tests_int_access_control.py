@@ -71,6 +71,21 @@ class TestDataGetAll(MongoIntegrationBaseTestCase):
 
     fixture = fixture_data
 
+    def test_get_all_as_superuser_returns_all_data(self):
+        mock_user = _create_user('1', is_superuser=True)
+        data_list = data_api.get_all(mock_user)
+        self.assertTrue(len(data_list) == len(self.fixture.data_collection))
+
+    def test_get_all_as_user_raises_error(self):
+        mock_user = _create_user('1')
+        with self.assertRaises(AccessControlError):
+            data_api.get_all(mock_user)
+
+
+class TestDataGetAllByUser(MongoIntegrationBaseTestCase):
+
+    fixture = fixture_data
+
     @patch('core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user')
     def test_get_all_returns_data(self, get_all_workspaces_with_read_access_by_user):
         mock_user = _create_user('1')
@@ -79,23 +94,23 @@ class TestDataGetAll(MongoIntegrationBaseTestCase):
             data_api.get_all_except_user(mock_user)
 
     @patch('core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user')
-    def test_get_all_returns_owned_data(self, get_all_workspaces_with_read_access_by_user):
+    def test_get_all_by_user_returns_owned_data(self, get_all_workspaces_with_read_access_by_user):
         mock_user = _create_user('1')
-        data_list = data_api.get_all(mock_user)
+        data_list = data_api.get_all_by_user(mock_user)
         get_all_workspaces_with_read_access_by_user.return_value = []
         self.assertTrue(len(data_list) == 2)
         self.assertTrue(data.id == '1' for data in data_list)
 
     @patch('core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user')
-    def test_get_all_returns_no_data_if_owns_zero(self, get_all_workspaces_with_read_access_by_user):
+    def test_get_all_by_user_returns_no_data_if_owns_zero(self, get_all_workspaces_with_read_access_by_user):
         mock_user = _create_user('3')
-        data_list = data_api.get_all(mock_user)
+        data_list = data_api.get_all_by_user(mock_user)
         get_all_workspaces_with_read_access_by_user.return_value = []
         self.assertTrue(len(data_list) == 0)
 
-    def test_get_all_as_superuser_returns_own_data(self):
+    def test_get_all_by_user_as_superuser_returns_own_data(self):
         mock_user = _create_user('1', is_superuser=True)
-        data_list = data_api.get_all(mock_user)
+        data_list = data_api.get_all_by_user(mock_user)
         self.assertTrue(len(data_list) == 2)
         self.assertTrue(data.user_id == '1' for data in data_list)
 

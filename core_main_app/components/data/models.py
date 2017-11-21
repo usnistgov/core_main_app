@@ -109,3 +109,15 @@ class Data(AbstractData):
 
         """
         return Data.objects(workspace=workspace).all()
+
+    @staticmethod
+    def get_all_by_list_workspace(list_workspace):
+        """ Get all data that belong to the list of workspace.
+
+        Args:
+            list_workspace:
+
+        Returns:
+
+        """
+        return Data.objects(workspace__in=list_workspace).all()

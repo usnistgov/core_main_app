@@ -8,6 +8,21 @@ from core_main_app.components.workspace import api as workspace_api
 from django.conf import settings
 
 
+def has_perm_administration(func, user):
+    """ Is the given user has administration rights.
+
+        Args:
+            func:
+            user:
+
+        Returns:
+
+        """
+    if user.is_superuser:
+        return func(user)
+    raise AccessControlError("The user doesn't have enough rights to access this data.")
+
+
 def can_read_or_write_data_workspace(func, workspace, user):
     """ Can user read or write in workspace.
 
