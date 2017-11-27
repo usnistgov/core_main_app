@@ -1,6 +1,6 @@
 """Mailing util
 """
-import tasks.task_mail as task
+import core_main_app.utils.notifications.tasks.task_mail as task
 from core_main_app.settings import SERVER_EMAIL, USE_BACKGROUND_TASK
 
 

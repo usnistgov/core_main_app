@@ -3,8 +3,8 @@
 from django.conf.urls import url, include
 
 from core_main_app.views.user import views as user_views, ajax as user_ajax
+from core_main_app.views.common import ajax as common_ajax, views as common_views
 from core_main_app.utils.rendering import render
-from views.common import ajax as common_ajax, views as common_views
 
 from rest_framework_swagger.views import get_swagger_view
 schema_view = get_swagger_view(title="REST API")

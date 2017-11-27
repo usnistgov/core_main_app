@@ -1,10 +1,18 @@
-celery==4.0.1
-Django==1.11.5
+celery==4.1.0
+Django==1.11.7
+# Installs: django-mongoengine==0.2.1
+git+https://github.com/MongoEngine/django-mongoengine
 django-password-policies==0.4.2
-djangorestframework==3.5.3
+djangorestframework==3.7.3
 django-rest-framework-mongoengine==3.3.1
 django-rest-swagger==2.1.2
-mongomock==3.7.0
-python-dateutil==2.6.0
-redis==2.10.5
-requests==2.3.0
+django-simple-menu==1.2.1
+lxml==4.1.1
+mock==2.0.0
+mongoengine==0.11.0
+mongomock==3.8.0
+pymongo==3.5.1
+python-dateutil==2.6.1
+redis==2.10.6
+requests==2.18.4
+xmltodict==0.11.0

@@ -1,3 +1,2 @@
 blob-utils==1.0.0-beta3
-signals-utils==1.0.0-beta3
 xml-utils==1.0.0-alpha5

@@ -1,15 +1,13 @@
-"""
-Url router for the administration site
+""" Url router for the administration site
 """
 from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic.base import RedirectView
-
 from core_main_app.utils.rendering import admin_render
-from views.admin import views as admin_views, ajax as admin_ajax
-from views.common import views as common_views
+from core_main_app.views.admin import views as admin_views, ajax as admin_ajax
+from core_main_app.views.common import views as common_views
 
 admin_urls = [
     url(r'^login', RedirectView.as_view(url=reverse_lazy("core_main_app_login"))),
