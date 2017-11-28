@@ -136,6 +136,21 @@ class TemplateVersionManager(VersionManager):
             queryset = queryset.filter(_cls=TemplateVersionManager.class_name).all()
         return queryset
 
+    @staticmethod
+    def get_all_version_manager(_cls=True):
+        """ Return all Version Managers.
+
+            Args:
+                _cls:
+
+            Returns:
+
+            """
+        queryset = super(TemplateVersionManager, TemplateVersionManager).get_all()
+        if _cls:
+            queryset = queryset.filter(_cls=TemplateVersionManager.class_name).all()
+        return queryset
+
     def save_template_version_manager(self):
         """ Custom save.
 

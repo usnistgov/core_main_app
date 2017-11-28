@@ -187,3 +187,12 @@ def get_all_by_user_id(user_id, _cls=True):
 
     """
     return TemplateVersionManager.get_all_version_manager_by_user_id(user_id, _cls)
+
+
+def get_all(_cls=True):
+    """ Return all Template Version Managers.
+
+    Returns:
+
+    """
+    return TemplateVersionManager.get_all_version_manager(_cls)
