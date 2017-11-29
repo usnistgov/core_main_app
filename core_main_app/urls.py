@@ -16,7 +16,7 @@ urlpatterns = [
     url(r'^logout', user_views.custom_logout, name='core_main_app_logout'),
 
     url(r'^rest/', include('core_main_app.rest.urls')),
-    url(r'^data', user_views.data_detail, name='core_main_app_data_detail'),
+    url(r'^data',  common_views.ViewData.as_view(), name='core_main_app_data_detail'),
 
     url(r'^template/versions/(?P<version_manager_id>\w+)', user_views.manage_template_versions,
         name='core_main_app_manage_template_versions'),

@@ -1,6 +1,8 @@
 """
     Common views
 """
+from abc import ABCMeta
+
 from django.core.urlresolvers import reverse
 from django.http.response import HttpResponseRedirect
 from django.utils.html import escape as html_escape
@@ -14,6 +16,62 @@ from core_main_app.components.xsl_transformation import api as xslt_transformati
 from core_main_app.components.xsl_transformation.models import XslTransformation
 from core_main_app.utils.rendering import render
 from core_main_app.views.admin.forms import UploadXSLTForm, TemplateXsltRenderingForm
+import core_main_app.components.data.api as data_api
+from core_main_app.utils.rendering import admin_render
+
+
+class CommonView(View):
+    """
+        Abstract common view for admin and user.
+    """
+    __metaclass__ = ABCMeta
+
+    administration = False
+
+    def common_render(self, request, template_name, modals=None, assets=None, context=None):
+        return admin_render(request, template_name, modals, assets, context) if self.administration \
+            else render(request, template_name, modals, assets, context)
+
+
+class ViewData(CommonView):
+    """
+        View detail data.
+    """
+
+    def get(self, request, *args, **kwargs):
+        data_id = request.GET['id']
+        error_message = ''
+
+        try:
+            data = data_api.get_by_id(data_id, request.user)
+
+            context = {
+                'data': data
+            }
+
+            assets = {
+                "js": [
+                    {
+                        "path": 'core_main_app/common/js/XMLTree.js',
+                        "is_raw": False
+                    },
+                    {
+                        "path": 'core_main_app/user/js/data/detail.js',
+                        "is_raw": False
+                    },
+                ],
+                "css": ["core_main_app/common/css/XMLTree.css"],
+            }
+            return self.common_render(request, 'core_main_app/user/data/detail.html', context=context, assets=assets)
+        except exceptions.DoesNotExist:
+            error_message = 'Data not found'
+        except exceptions.ModelError:
+            error_message = 'Model error'
+        except Exception, e:
+            error_message = 'Unexpected error'
+
+        return self.common_render(request, 'core_main_app/common/commons/error.html',
+                            context={"error": "Unable to access the requested data: {}.".format(error_message)})
 
 
 class XSLTView(View):

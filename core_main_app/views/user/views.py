@@ -1,6 +1,5 @@
 """ Core main app user views
 """
-import copy
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -11,15 +10,12 @@ from django.http.response import HttpResponse
 from django.shortcuts import redirect
 from rest_framework.status import HTTP_405_METHOD_NOT_ALLOWED
 
-import core_main_app.components.data.api as data_api
-from core_main_app.commons import exceptions
 from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.group import api as group_api
 from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.settings import INSTALLED_APPS
 from core_main_app.utils import group as group_utils
-from core_main_app.utils.access_control.exceptions import AccessControlError
 from core_main_app.utils.rendering import render
 from core_main_app.views.user.forms import LoginForm
 
@@ -115,53 +111,6 @@ def homepage(request):
         )
 
     return render(request, "core_main_app/user/homepage.html", assets=assets)
-
-
-def data_detail(request):
-    """
-
-    Args:
-        request:
-
-    Returns:
-
-    """
-    data_id = request.GET['id']
-    error_message = ''
-
-    try:
-        data = data_api.get_by_id(data_id, request.user)
-
-        context = {
-            'data': data
-        }
-
-        assets = {
-            "js": [
-                {
-                    "path": 'core_main_app/common/js/XMLTree.js',
-                    "is_raw": False
-                },
-                {
-                    "path": 'core_main_app/user/js/data/detail.js',
-                    "is_raw": False
-                },
-            ],
-            "css": ["core_main_app/common/css/XMLTree.css"],
-        }
-
-        return render(request, 'core_main_app/user/data/detail.html', context=context, assets=assets)
-    except AccessControlError:
-        error_message = 'Access forbidden'
-    except exceptions.DoesNotExist:
-        error_message = 'Data not found'
-    except exceptions.ModelError:
-        error_message = 'Model error'
-    except Exception, e:
-        error_message = 'Unexpected error'
-
-    return render(request, 'core_main_app/common/commons/error.html',
-                  context={"error": "Unable to access the requested data: {}.".format(error_message)})
 
 
 @login_required(login_url='/login')
