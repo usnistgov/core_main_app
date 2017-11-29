@@ -5,13 +5,20 @@
             {% generate_menu %}
 
             {% for item in menus.admin %}
-                {% if not item.url %}  {# Case of a header element #}
+                {% if not item.url %}  {# Header element #}
                     <li class="header">{{ item.title }}</li>
                     {% for child in item.children %}
                     <li {% if request.path == child.url %}class="active"{% endif %}>
                         <a href="{{ child.url }}">
                             <i class="fa fa-{{ child.icon }}"></i>
                             <span>{{ child.title }}</span>
+                            {% if child.external %}
+                            <span class="pull-right-container">
+                                <span class="pull-right">
+                                    <i class="fa fa-external-link"></i>
+                                </span>
+                            </span>
+                            {% endif %}
                             {% if child.item_count_url %}
                             <span class="item_count pull-right-container">
                                 <span class="label label-default pull-right hidden" id="{% url child.item_count_url %}">
@@ -22,19 +29,28 @@
                         </a>
                     </li>
                     {% endfor %}
-                {% else %} {# Case of a single element (direct link without parent) #}
+                {% else %} {# Single element (direct link without parent) #}
                     <li {% if request.path == item.url %}class="active"{% endif %}>
                         <a href="{{ item.url }}">
                             <i class="fa fa-{{ item.icon }}"></i>
-                            <span>{{ item.title }}</span>
-                        </a>
-                        {% if child.item_count_url %}
-                        <span class="item_count pull-right-container">
-                            <span class="label label-default pull-right" id="{% url child.item_count_url %}">
-                                    N/A
+                            <span>
+                                {{ item.title }}
                             </span>
-                        </span>
-                        {% endif %}
+                            {% if item.external %}
+                            <span class="pull-right-container">
+                                <span class="pull-right">
+                                    <i class="fa fa-external-link"></i>
+                                </span>
+                            </span>
+                            {% endif %}
+                            {% if item.item_count_url %}
+                            <span class="item_count pull-right-container">
+                                <span class="label label-default pull-right" id="{% url item.item_count_url %}">
+                                        N/A
+                                </span>
+                            </span>
+                            {% endif %}
+                        </a>
                     </li>
                 {% endif %}
             {% endfor %}

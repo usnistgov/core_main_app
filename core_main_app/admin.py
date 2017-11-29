@@ -3,6 +3,7 @@ Url router for the administration site
 """
 from django.conf.urls import url
 from django.contrib import admin
+from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic.base import RedirectView
 
@@ -41,3 +42,6 @@ admin_urls = [
 
 urls = admin.site.get_urls()
 admin.site.get_urls = lambda: admin_urls + urls
+
+# Admin part for the Site mode is not useful in this application
+admin.site.unregister(Site)
