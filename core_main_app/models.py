@@ -1,4 +1,4 @@
-""" Main model
+""" App model to manage permissions.
 """
 from django.db import models
 

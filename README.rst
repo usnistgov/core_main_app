@@ -1,10 +1,40 @@
-core_main_app
+=============
+Core Main App
 =============
 
-Main functionalities for the curator core project.
+This Django reusable app contains the main functionalities for the curator core project.
 
-Quick start
-===========
+Pre-requisites
+==============
+
+* Install git
+* Install python
+* Install pip
+* Create a virtual env
+
+Installation
+============
+
+Automated installation
+----------------------
+
+.. warning::
+
+    *The automated installation is not yet available.*
+
+Manual installation
+-------------------
+
+.. code:: bash
+
+    $ git clone https://myrepo.com/core_main_app.git
+    $ cd core_main_app
+    $ python setup.py
+    $ pip install sdist/*.tar.gz
+
+
+Configuration
+=============
 
 1. Add "core_main_app" to your INSTALLED_APPS setting like this
 ---------------------------------------------------------------

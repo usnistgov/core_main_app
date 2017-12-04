@@ -35,11 +35,10 @@ admin_urls = [
     url(r'^xslt/upload$', admin_views.UploadXSLTView.as_view(), name='core_main_app_upload_xslt'),
     url(r'^xslt/edit', admin_ajax.edit_xslt_name, name='core_main_app_edit_xslt'),
     url(r'^xslt/delete', admin_ajax.delete_xslt, name='core_main_app_delete_xslt'),
-
 ]
 
 urls = admin.site.get_urls()
 admin.site.get_urls = lambda: admin_urls + urls
 
-# Admin part for the Site mode is not useful in this application
+# Admin part for the Site model is not useful in this application
 admin.site.unregister(Site)

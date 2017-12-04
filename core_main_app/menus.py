@@ -1,4 +1,10 @@
-"""Menu configuration
+""" Menu configuration for core_main_app. Upon installation of the app the following menus are displayed:
+
+  * [User] Home
+  * [Admin] Dashboard
+  * [Admin] Link to Django admin
+  * [Admin] Templates (list and upload)
+  * [Admin] XSLT (list and upload)
 """
 from django.core.urlresolvers import reverse
 from menu import Menu, MenuItem
