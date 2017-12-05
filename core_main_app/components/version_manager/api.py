@@ -18,6 +18,18 @@ def get(version_manager_id):
     return VersionManager.get_by_id(version_manager_id)
 
 
+def get_by_id_list(list_id):
+    """Get a version managers with the given id list.
+
+    Args:
+        list_id:
+
+    Returns:
+
+    """
+    return VersionManager.get_by_id_list(list_id)
+
+
 def get_from_version(version):
     """Return a version manager from a version.
 

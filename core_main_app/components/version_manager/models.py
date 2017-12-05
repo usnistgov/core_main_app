@@ -152,6 +152,18 @@ class VersionManager(Document):
             raise exceptions.ModelError(e.message)
 
     @staticmethod
+    def get_by_id_list(list_id):
+        """Return Version Managers with the given id list.
+
+        Args:
+            list_id:
+
+        Returns:
+
+        """
+        return VersionManager.objects(pk__in=list_id).all()
+
+    @staticmethod
     def get_active_global_version_manager_by_title(version_manager_title):
         """Return active Version Manager by its title with user set to None.
 
