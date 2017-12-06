@@ -1,6 +1,9 @@
 """
 Template Version Manager model
 """
+from mongoengine import errors as mongoengine_errors
+
+from core_main_app.commons import exceptions
 from core_main_app.components.version_manager.models import VersionManager
 
 
@@ -69,6 +72,24 @@ class TemplateVersionManager(VersionManager):
         if _cls:
             queryset = queryset.filter(_cls=TemplateVersionManager.class_name).all()
         return queryset
+
+    @staticmethod
+    def get_by_version_id(version_id):
+        """Get the template version manager containing the given version id.
+
+        Args:
+            version_id: version id.
+
+        Returns:
+            template version manager.
+
+        """
+        try:
+            return TemplateVersionManager.objects.get(versions__contains=version_id)
+        except mongoengine_errors.DoesNotExist as e:
+            raise exceptions.DoesNotExist(e.message)
+        except Exception as ex:
+            raise exceptions.ModelError(ex.message)
 
     @staticmethod
     def get_all_by_version_ids(version_ids):

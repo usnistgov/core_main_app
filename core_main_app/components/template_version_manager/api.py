@@ -145,6 +145,19 @@ def get_version_number(template_version_manager, template):
     return template_version_manager.get_version_number(template)
 
 
+def get_by_version_id(version_id):
+    """Get the template version manager containing the given version id.
+
+    Args:
+        version_id: version id.
+
+    Returns:
+        template version manager.
+
+    """
+    return TemplateVersionManager.get_by_version_id(version_id)
+
+
 def get_all_by_version_ids(version_ids):
     """Get all template version managers by a list of version ids.
 
