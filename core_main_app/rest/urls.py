@@ -37,9 +37,6 @@ urlpatterns = [
     url(r'^data/delete', data_views.delete,
         name='core_main_app_rest_data_delete'),
 
-    url(r'^data/query', data_views.execute_query,
-        name='core_main_app_rest_data_execute_query'),
-
     url(r'^data', data_views.data,
         name='core_main_app_rest_data'),
 
