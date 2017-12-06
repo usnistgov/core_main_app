@@ -1,7 +1,7 @@
 celery==4.1.0
 Django==1.11.7
 # Installs: django-mongoengine==0.2.1
-git+https://github.com/MongoEngine/django-mongoengine
+https://github.com/MongoEngine/django-mongoengine/tarball/master#egg=django-mongoengine-0.2.1
 django-password-policies==0.4.2
 djangorestframework==3.7.3
 django-rest-framework-mongoengine==3.3.1
