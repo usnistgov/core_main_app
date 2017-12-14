@@ -44,7 +44,7 @@ urlpatterns = [
         ),
         name='core_main_app_template_xslt'),
 
-    url(r'^edit-rights/(?P<workspace_id>\w+)$', user_views.edit_rights,
+    url(r'^edit-rights/(?P<workspace_id>\w+)$', common_views.EditWorkspaceRights.as_view(),
         name='core_main_edit_rights_workspace'),
 
     url(r'^create-workspace', user_ajax.create_workspace, name='core_main_create_workspace'),

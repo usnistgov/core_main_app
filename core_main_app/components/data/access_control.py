@@ -34,6 +34,9 @@ def can_read_or_write_data_workspace(func, workspace, user):
     Returns:
 
     """
+    if user.is_superuser:
+        return func(workspace, user)
+
     _check_can_read_or_write_workspace(workspace, user)
     return func(workspace, user)
 

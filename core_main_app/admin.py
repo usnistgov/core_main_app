@@ -36,6 +36,9 @@ admin_urls = [
     url(r'^xslt/upload$', admin_views.UploadXSLTView.as_view(), name='core_main_app_upload_xslt'),
     url(r'^xslt/edit', admin_ajax.edit_xslt_name, name='core_main_app_edit_xslt'),
     url(r'^xslt/delete', admin_ajax.delete_xslt, name='core_main_app_delete_xslt'),
+
+    url(r'^edit-rights/(?P<workspace_id>\w+)$', common_views.EditWorkspaceRights.as_view(administration=True),
+        name='core_main_edit_rights_workspace'),
 ]
 
 urls = admin.site.get_urls()

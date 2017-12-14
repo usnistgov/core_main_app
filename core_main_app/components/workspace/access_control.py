@@ -36,7 +36,7 @@ def is_workspace_owner(func, workspace, user):
 
     """
     if user.is_superuser:
-        func(workspace, user)
+        return func(workspace, user)
 
     _check_is_owner_workspace(workspace, user)
     return func(workspace, user)

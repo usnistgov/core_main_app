@@ -5,25 +5,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles import finders
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseBadRequest, HttpResponseForbidden
 from django.http.response import HttpResponse
 from django.shortcuts import redirect
 from rest_framework.status import HTTP_405_METHOD_NOT_ALLOWED
 
-from core_main_app.commons.exceptions import DoesNotExist
-from core_main_app.components.group import api as group_api
 from core_main_app.components.version_manager import api as version_manager_api
-from core_main_app.components.workspace import api as workspace_api
 from core_main_app.settings import INSTALLED_APPS
-from core_main_app.utils import group as group_utils
 from core_main_app.utils.rendering import render
 from core_main_app.views.user.forms import LoginForm
-
-GROUP = "group"
-USER = "user"
-
-ACTION_READ = "action_read"
-ACTION_WRITE = "action_write"
 
 
 def custom_login(request):
@@ -201,120 +190,3 @@ def get_context_manage_template_versions(version_manager):
     }
 
     return context
-
-
-def edit_rights(request, workspace_id):
-    """ Load page to edit the rights.
-
-    Args:   request
-            workspace_id
-    Returns:
-    """
-
-    try:
-        workspace = workspace_api.get_by_id(workspace_id)
-    except DoesNotExist as e:
-        return HttpResponseBadRequest("The workspace does not exist.")
-    except:
-        return HttpResponseBadRequest("Something wrong happened.")
-
-    if workspace.owner != str(request.user.id):
-        return HttpResponseForbidden("Only the workspace owner can edit the rights.")
-
-    try:
-        # Users
-        users_read_workspace = workspace_api.get_list_user_can_read_workspace(workspace, request.user)
-        users_write_workspace = workspace_api.get_list_user_can_write_workspace(workspace, request.user)
-
-        users_access_workspace = list(set(users_read_workspace + users_write_workspace))
-        detailed_users = []
-        for user in users_access_workspace:
-            detailed_users.append({'object_id': user.id,
-                                   'object_name': user.username,
-                                   'can_read': user in users_read_workspace,
-                                   'can_write': user in users_write_workspace,
-                                   })
-    except:
-        detailed_users = []
-
-    try:
-        # Groups
-        groups_read_workspace = workspace_api.get_list_group_can_read_workspace(workspace, request.user)
-        groups_write_workspace = workspace_api.get_list_group_can_write_workspace(workspace, request.user)
-
-        groups_access_workspace = list(set(groups_read_workspace + groups_write_workspace))
-        group_utils.remove_list_object_from_list(groups_access_workspace,
-                                                 [group_api.get_anonymous_group(), group_api.get_default_group()])
-        detailed_groups = []
-        for group in groups_access_workspace:
-            detailed_groups.append({'object_id': group.id,
-                                    'object_name': group.name,
-                                    'can_read': group in groups_read_workspace,
-                                    'can_write': group in groups_write_workspace,
-                                    })
-    except:
-        detailed_groups = []
-
-    context = {
-        'workspace': workspace,
-        'user_data': detailed_users,
-        'group_data': detailed_groups,
-        'template': "core_main_app/user/workspaces/list/edit_rights_table.html",
-        'action_read': ACTION_READ,
-        'action_write': ACTION_WRITE,
-        'user': USER,
-        'group': GROUP,
-    }
-
-    assets = {
-        "css": ['core_main_app/libs/datatables/1.10.13/css/jquery.dataTables.css',
-                'core_main_app/libs/fSelect/css/fSelect.css',
-                'core_main_app/common/css/switch.css'],
-
-        "js": [{
-                    "path": 'core_main_app/libs/datatables/1.10.13/js/jquery.dataTables.js',
-                    "is_raw": True
-                },
-                {
-                    "path": "core_main_app/libs/fSelect/js/fSelect.js",
-                    "is_raw": False
-                },
-                {
-                    "path": 'core_main_app/common/js/backtoprevious.js',
-                    "is_raw": True
-                },
-                {
-                    "path": 'core_main_app/user/js/workspaces/tables.js',
-                    "is_raw": True
-                },
-                {
-                    "path": 'core_main_app/user/js/workspaces/add_user.js',
-                    "is_raw": False
-                },
-                {
-                    "path": 'core_main_app/user/js/workspaces/list/modals/switch_right.js',
-                    "is_raw": False
-                },
-                {
-                    "path": 'core_main_app/user/js/workspaces/list/modals/remove_rights.js',
-                    "is_raw": False
-                },
-                {
-                    "path": 'core_main_app/user/js/workspaces/add_group.js',
-                    "is_raw": False
-                },
-                {
-                    "path": 'core_main_app/user/js/workspaces/init.js',
-                    "is_raw": False
-                }]
-    }
-
-    modals = ["core_main_app/user/workspaces/list/modals/add_user.html",
-              "core_main_app/user/workspaces/list/modals/switch_right.html",
-              "core_main_app/user/workspaces/list/modals/remove_rights.html",
-              "core_main_app/user/workspaces/list/modals/add_group.html"]
-
-    return render(request, "core_main_app/user/workspaces/edit_rights.html",
-                  context=context,
-                  assets=assets,
-                  modals=modals)

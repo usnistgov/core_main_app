@@ -4,20 +4,25 @@
 from abc import ABCMeta
 
 from django.core.urlresolvers import reverse
+from django.http import HttpResponseBadRequest, HttpResponseForbidden
 from django.http.response import HttpResponseRedirect
 from django.utils.html import escape as html_escape
 from django.views.generic import View
 
+import core_main_app.components.data.api as data_api
 from core_main_app.commons import exceptions
+from core_main_app.commons.exceptions import DoesNotExist
+from core_main_app.components.group import api as group_api
 from core_main_app.components.template import api as template_api
 from core_main_app.components.template_xsl_rendering import api as template_xsl_rendering_api
 from core_main_app.components.version_manager import api as version_manager_api
+from core_main_app.components.workspace import api as workspace_api
 from core_main_app.components.xsl_transformation import api as xslt_transformation_api
 from core_main_app.components.xsl_transformation.models import XslTransformation
+from core_main_app.utils import group as group_utils
+from core_main_app.utils.rendering import admin_render
 from core_main_app.utils.rendering import render
 from core_main_app.views.admin.forms import UploadXSLTForm, TemplateXsltRenderingForm
-import core_main_app.components.data.api as data_api
-from core_main_app.utils.rendering import admin_render
 
 
 class CommonView(View):
@@ -31,6 +36,123 @@ class CommonView(View):
     def common_render(self, request, template_name, modals=None, assets=None, context=None):
         return admin_render(request, template_name, modals, assets, context) if self.administration \
             else render(request, template_name, modals, assets, context)
+
+
+class EditWorkspaceRights(CommonView):
+    """
+        Edit workspace rights
+    """
+
+    def get(self, request, *args, **kwargs):
+
+        try:
+            workspace_id = kwargs['workspace_id']
+            workspace = workspace_api.get_by_id(workspace_id)
+        except DoesNotExist as e:
+            return HttpResponseBadRequest("The workspace does not exist.")
+        except:
+            return HttpResponseBadRequest("Something wrong happened.")
+
+        if workspace.owner != str(request.user.id) and not self.administration:
+            return HttpResponseForbidden("Only the workspace owner can edit the rights.")
+
+        try:
+            # Users
+            users_read_workspace = workspace_api.get_list_user_can_read_workspace(workspace, request.user)
+            users_write_workspace = workspace_api.get_list_user_can_write_workspace(workspace, request.user)
+
+            users_access_workspace = list(set(users_read_workspace + users_write_workspace))
+            detailed_users = []
+            for user in users_access_workspace:
+                detailed_users.append({'object_id': user.id,
+                                       'object_name': user.username,
+                                       'can_read': user in users_read_workspace,
+                                       'can_write': user in users_write_workspace,
+                                       })
+        except:
+            detailed_users = []
+
+        try:
+            # Groups
+            groups_read_workspace = workspace_api.get_list_group_can_read_workspace(workspace, request.user)
+            groups_write_workspace = workspace_api.get_list_group_can_write_workspace(workspace, request.user)
+
+            groups_access_workspace = list(set(groups_read_workspace + groups_write_workspace))
+            group_utils.remove_list_object_from_list(groups_access_workspace,
+                                                     [group_api.get_anonymous_group(), group_api.get_default_group()])
+            detailed_groups = []
+            for group in groups_access_workspace:
+                detailed_groups.append({'object_id': group.id,
+                                        'object_name': group.name,
+                                        'can_read': group in groups_read_workspace,
+                                        'can_write': group in groups_write_workspace,
+                                        })
+        except:
+            detailed_groups = []
+
+        context = {
+            'workspace': workspace,
+            'user_data': detailed_users,
+            'group_data': detailed_groups,
+            'template': "core_main_app/user/workspaces/list/edit_rights_table.html",
+            'action_read': 'action_read',
+            'action_write': 'action_write',
+            'user': 'user',
+            'group': 'group',
+        }
+
+        assets = {
+            "css": ['core_main_app/libs/datatables/1.10.13/css/jquery.dataTables.css',
+                    'core_main_app/libs/fSelect/css/fSelect.css',
+                    'core_main_app/common/css/switch.css'],
+
+            "js": [{
+                    "path": 'core_main_app/libs/datatables/1.10.13/js/jquery.dataTables.js',
+                    "is_raw": True
+                },
+                {
+                    "path": "core_main_app/libs/fSelect/js/fSelect.js",
+                    "is_raw": False
+                },
+                {
+                    "path": 'core_main_app/common/js/backtoprevious.js',
+                    "is_raw": True
+                },
+                {
+                    "path": 'core_main_app/user/js/workspaces/tables.js',
+                    "is_raw": True
+                },
+                {
+                    "path": 'core_main_app/user/js/workspaces/add_user.js',
+                    "is_raw": False
+                },
+                {
+                    "path": 'core_main_app/user/js/workspaces/list/modals/switch_right.js',
+                    "is_raw": False
+                },
+                {
+                    "path": 'core_main_app/user/js/workspaces/list/modals/remove_rights.js',
+                    "is_raw": False
+                },
+                {
+                    "path": 'core_main_app/user/js/workspaces/add_group.js',
+                    "is_raw": False
+                },
+                {
+                    "path": 'core_main_app/user/js/workspaces/init.js',
+                    "is_raw": False
+                }]
+        }
+
+        modals = ["core_main_app/user/workspaces/list/modals/add_user.html",
+                  "core_main_app/user/workspaces/list/modals/switch_right.html",
+                  "core_main_app/user/workspaces/list/modals/remove_rights.html",
+                  "core_main_app/user/workspaces/list/modals/add_group.html"]
+
+        return self.common_render(request, "core_main_app/user/workspaces/edit_rights.html",
+                                  context=context,
+                                  assets=assets,
+                                  modals=modals)
 
 
 class ViewData(CommonView):
