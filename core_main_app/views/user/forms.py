@@ -74,12 +74,16 @@ class ChangeWorkspaceForm(forms.Form):
     workspaces = forms.ChoiceField(label='', required=True, widget=forms.Select(attrs={"class": "form-control"}))
     WORKSPACES_OPTIONS = []
 
-    def __init__(self, user, list_current_workspace=[]):
+    def __init__(self, user, list_current_workspace=[], is_administration=False):
         self.WORKSPACES_OPTIONS = []
         self.WORKSPACES_OPTIONS.append(('', '-----------'))
 
-        # We retrieve all workspaces with write access
-        all_workspaces = workspace_api.get_all_workspaces_with_write_access_by_user(user)
+        # We retrieve all workspaces with write access, or all workspaces if administration
+        all_workspaces = []
+        if is_administration:
+            all_workspaces = workspace_api.get_all()
+        else:
+            all_workspaces = workspace_api.get_all_workspaces_with_write_access_by_user(user)
 
         if len(all_workspaces) == 0:
             raise DoesNotExist("You don't have access to any workspaces with sufficient rights to assign a document.")

@@ -75,17 +75,18 @@ def load_form_change_workspace(request):
     Returns:
     """
     document_ids = request.POST.getlist('document_id[]', [])
+    is_administration = request.POST.get('administration', False) == "True"
     list_workspace = set()
     try:
         list_data = data_api.get_by_id_list(document_ids, request.user)
         for data in list_data:
             if hasattr(data, 'workspace') and data.workspace is not None:
                 list_workspace.add(data.workspace)
-    except:
+    except Exception, e:
        pass
 
     try:
-        form = ChangeWorkspaceForm(request.user, list(list_workspace))
+        form = ChangeWorkspaceForm(request.user, list(list_workspace), is_administration)
     except DoesNotExist, dne:
         return HttpResponseBadRequest(dne.message)
     except:

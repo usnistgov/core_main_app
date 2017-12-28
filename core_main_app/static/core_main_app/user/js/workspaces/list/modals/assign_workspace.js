@@ -12,7 +12,8 @@ load_form_change_workspace = function() {
         type : "POST",
         dataType: "json",
         data : {
-            document_id: getSelectedDocument()
+            document_id: getSelectedDocument(),
+            administration: administration
         },
 		success: function(data){
             $("#banner_assign_workspace_errors").hide();
