@@ -19,7 +19,7 @@ Menu.add_item(
 )
 
 Menu.add_item(
-    "admin", MenuItem("Django admin", reverse("admin:index"), icon="sitemap", external=True, weight=-80000),
+    "admin", MenuItem("Django admin", reverse("admin:index"), icon="sitemap", weight=-80000),
 )
 
 templates_children = (
