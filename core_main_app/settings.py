@@ -129,3 +129,8 @@ PASSWORD_MIN_UPPERCASE_LETTERS = getattr(settings, 'PASSWORD_MIN_UPPERCASE_LETTE
 LOCK_OBJECT_TTL = getattr(settings, 'LOCK_OBJECT_TTL', 600)  # 10 min
 """ int: Lock duration on files
 """
+
+# Results per page for paginator
+RESULTS_PER_PAGE = getattr(settings, 'RESULTS_PER_PAGE', 10)
+""" int: Results per page
+"""
