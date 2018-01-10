@@ -21,27 +21,29 @@ class Data(AbstractData):
     workspace = fields.ReferenceField(Workspace, reverse_delete_rule=NULLIFY, blank=True)
 
     @staticmethod
-    def get_all():
+    def get_all(order_by_field=None):
         """ Get all data.
 
         Args:
+            order_by_field: Order by field.
 
         Returns:
 
         """
-        return Data.objects().all()
+        return Data.objects.order_by(order_by_field)
 
     @staticmethod
-    def get_all_by_user_id(user_id):
+    def get_all_by_user_id(user_id, order_by_field=None):
         """ Get all data relative to the given user id
 
         Args:
             user_id:
+            order_by_field: Order by field.
 
         Returns:
 
         """
-        return Data.objects(user_id=str(user_id)).all()
+        return Data.objects(user_id=str(user_id)).order_by(order_by_field)
 
     @staticmethod
     def get_all_except_user_id(user_id):

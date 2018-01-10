@@ -70,15 +70,16 @@ def get_by_id(data_id, user):
 
 
 @access_control(has_perm_administration)
-def get_all(user):
+def get_all(user, order_by_field=None):
     """ Get all the data if superuser. Raise exception otherwise.
 
     Parameters:
             user:
+            order_by_field: Order by field.
 
     Returns: data collection
     """
-    return Data.get_all()
+    return Data.get_all(order_by_field)
 
 
 def get_all_accessible_by_user(user):
@@ -100,15 +101,16 @@ def get_all_accessible_by_user(user):
     return list(set().union(owned_data, accessible_data))
 
 
-def get_all_by_user(user):
+def get_all_by_user(user, order_by_field=None):
     """ Return all data owned by a user.
 
         Parameters:
             user:
+            order_by_field: Order by field.
 
         Returns: data collection
     """
-    return Data.get_all_by_user_id(str(user.id))
+    return Data.get_all_by_user_id(str(user.id), order_by_field)
 
 
 @access_control(can_read_user)
