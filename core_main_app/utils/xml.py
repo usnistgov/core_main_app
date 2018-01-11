@@ -9,7 +9,6 @@ import xml_utils.commons.constants as xml_utils_constants
 import xml_utils.xml_validation.validation as xml_validation
 import xmltodict
 from django.core.urlresolvers import reverse
-from lxml import etree
 from xml_utils.xsd_hash import xsd_hash
 from xml_utils.xsd_tree.xsd_tree import XSDTree
 
@@ -391,7 +390,7 @@ def xsl_transform(xml_string, xslt_string):
         xsd_tree = XSDTree.build_tree(xml_string)
 
         # Get the XSLT transformation and transform the XSD
-        transform = etree.XSLT(xslt_tree)
+        transform = XSDTree.transform_to_xslt(xslt_tree)
         transformed_tree = transform(xsd_tree)
         return str(transformed_tree)
     except Exception:

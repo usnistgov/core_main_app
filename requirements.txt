@@ -7,7 +7,6 @@ djangorestframework==3.7.3
 django-rest-framework-mongoengine==3.3.1
 django-rest-swagger==2.1.2
 django-simple-menu==1.2.1
-lxml==4.1.1
 mock==2.0.0
 mongoengine==0.11.0
 mongomock==3.8.0
