@@ -1,25 +1,29 @@
 """ Set of functions to define the rules for access control
 """
 
+from django.contrib.auth.models import User
+
+from core_main_app.components.workspace import api as workspace_api
 from core_main_app.utils.access_control.exceptions import AccessControlError
 from core_main_app.utils.raw_query.mongo_raw_query import add_access_criteria
-from core_main_app.components.workspace import api as workspace_api
-
-from django.conf import settings
 
 
-def has_perm_administration(func, user):
+def has_perm_administration(func, *args, **kwargs):
     """ Is the given user has administration rights.
 
         Args:
             func:
-            user:
+            *args:
+            **kwargs:
 
         Returns:
 
         """
-    if user.is_superuser:
-        return func(user)
+    try:
+        if args[0].is_superuser:
+            return func(*args, **kwargs)
+    except Exception:
+        pass
     raise AccessControlError("The user doesn't have enough rights to access this data.")
 
 
