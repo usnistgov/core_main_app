@@ -11,6 +11,8 @@ import xmltodict
 from django.core.urlresolvers import reverse
 from xml_utils.xsd_hash import xsd_hash
 from xml_utils.xsd_tree.xsd_tree import XSDTree
+from xml_utils.xsd_tree.operations.namespaces import get_namespaces
+from xml_utils.commons.constants import XSL_NAMESPACE
 
 import core_main_app.commons.exceptions as exceptions
 from core_main_app.settings import XERCES_VALIDATION, SERVER_URI
@@ -96,6 +98,24 @@ def is_well_formed_xml(xml_string):
         return False
 
     return True
+
+
+def has_xsl_namespace(xml_string):
+    """True if XML has the XSL namespace.
+
+    Args:
+        xml_string:
+
+    Returns:
+
+    """
+    has_namespace = False
+    try:
+        has_namespace = XSL_NAMESPACE in get_namespaces(xml_string).values()
+    except Exception:
+        pass
+
+    return has_namespace
 
 
 def unparse(json_dict):

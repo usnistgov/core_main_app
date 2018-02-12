@@ -92,7 +92,8 @@ class TestXslTransformationUpsert(TestCase):
         # Arrange
         mock_name = "xslt_name"
         mock_filename = "xslt_filename"
-        mock_content = "<root></root>"
+        mock_content = "<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0'> " \
+                       "<xsl:output method='html' indent='yes' encoding='UTF-8' /><root></root></xsl:stylesheet>"
 
         mock_xslt = _create_xsl_transformation(name=mock_name,
                                                filename=mock_filename,
@@ -112,6 +113,23 @@ class TestXslTransformationUpsert(TestCase):
         mock_name = "xslt_name"
         mock_filename = "xslt_filename"
         mock_content = "bad_content"
+
+        mock_xslt = _create_xsl_transformation(name=mock_name,
+                                               filename=mock_filename,
+                                               content=mock_content)
+
+        mock_save.return_value = mock_xslt
+
+        # Act + Assert
+        with self.assertRaises(exceptions.ApiError):
+            xsl_transformation_api.upsert(mock_xslt)
+
+    @patch.object(XslTransformation, 'save')
+    def test_xsl_transformation_upsert_raises_exception_if_bad_namespace(self, mock_save):
+        # Arrange
+        mock_name = "xslt_name"
+        mock_filename = "xslt_filename"
+        mock_content = "<root></root>"
 
         mock_xslt = _create_xsl_transformation(name=mock_name,
                                                filename=mock_filename,
