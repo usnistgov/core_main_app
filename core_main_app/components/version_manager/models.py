@@ -263,3 +263,11 @@ class VersionManager(Document):
             raise exceptions.NotUniqueError(e.message)
         except Exception as ex:
             raise exceptions.ModelError(ex.message)
+
+    def clean(self):
+        """ Clean is called before saving
+
+        Returns:
+
+        """
+        self.title = self.title.strip()
