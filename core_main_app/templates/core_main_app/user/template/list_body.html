@@ -1,0 +1,12 @@
+{% for template in object_list %}
+<tr>
+    <td templateID='{{ template.current }}'>
+        {% if template.user %} <i class="fa fa-user" title="User Defined Item"></i>
+        {% else %}<i class="fa fa-users" title="Global Item"></i>
+        {% endif%} {{ template.title }}
+    </td>
+    <td>
+        {% block actions %}{% endblock %}
+    </td>
+</tr>
+{% endfor %}
