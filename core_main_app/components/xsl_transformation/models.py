@@ -81,3 +81,13 @@ class XslTransformation(Document):
             raise exceptions.NotUniqueError(e.message)
         except Exception as ex:
             raise exceptions.ModelError(ex.message)
+
+    def clean(self):
+        """ Clean is called before saving
+
+        Returns:
+
+        """
+        self.name = self.name.strip()
+        self.filename = self.filename.strip()
+
