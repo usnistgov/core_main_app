@@ -21,7 +21,7 @@ class TestXslTransformationGet(TestCase):
         mock_get_by_name.return_value = mock_xslt
 
         # Act
-        result = xsl_transformation_api.get(mock_xslt.name)
+        result = xsl_transformation_api.get_by_name(mock_xslt.name)
 
         # Assert
         self.assertIsInstance(result, XslTransformation)
@@ -34,7 +34,7 @@ class TestXslTransformationGet(TestCase):
 
         # Act + Assert
         with self.assertRaises(exceptions.ApiError):
-            xsl_transformation_api.get(mock_unexisting_name)
+            xsl_transformation_api.get_by_name(mock_unexisting_name)
 
 
 class TestXslTransformationGetById(TestCase):

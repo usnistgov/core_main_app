@@ -6,7 +6,7 @@ from core_main_app.utils import xml
 from core_main_app.utils.xml import is_well_formed_xml, has_xsl_namespace
 
 
-def get(xslt_name):
+def get_by_name(xslt_name):
     """ Get an XSLT document.
 
     Returns:
@@ -56,7 +56,6 @@ def upsert(xsl_transformation):
         return xsl_transformation.save_object()
 
 
-
 def delete(xsl_transformation):
     """ Delete an xsl_transformation.
 
@@ -67,19 +66,19 @@ def delete(xsl_transformation):
     xsl_transformation.delete()
 
 
-def xsl_transform(xml_data, xslt_name):
+def xsl_transform(xml_content, xslt_name):
     """ Transform an XML file using an XSL transformation.
 
     Args:
-        xml_data (str): XML document content, encoded in UTF-8
+        xml_content (str): XML document content, encoded in UTF-8
         xslt_name (str): Name of an XslTransformation document
 
     Returns:
         str: Transformed XML string
     """
-    xslt_object = get(xslt_name)
+    xslt_object = get_by_name(xslt_name)
 
     try:
-        return xml.xsl_transform(xml_data, xslt_object.content)
+        return xml.xsl_transform(xml_content, xslt_object.content)
     except Exception:
         raise exceptions.ApiError("An unexpected exception happened while transforming the XML")

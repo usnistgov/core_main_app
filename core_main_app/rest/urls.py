@@ -1,10 +1,13 @@
 """Url router for the REST API
 """
 from django.conf.urls import url
+from rest_framework.urlpatterns import format_suffix_patterns
+
+import core_main_app.rest.xsl_transformation.views as xslTransformationList_view
+from core_main_app.rest.blob import views as blob_views
+from core_main_app.rest.data import views as data_views
 from core_main_app.rest.template import views as template_views
 from core_main_app.rest.template_version_manager import views as template_version_manager_views
-from core_main_app.rest.data import views as data_views
-from core_main_app.rest.blob import views as blob_views
 
 urlpatterns = [
     url(r'^template/download', template_views.download,
@@ -54,4 +57,15 @@ urlpatterns = [
 
     url(r'^blob/list', blob_views.list_all,
         name='core_main_app_rest_blob_list'),
+
+    url(r'^xslt/$', xslTransformationList_view.XslTransformationList.as_view(),
+        name='core_main_app_rest_xslt'),
+
+    url(r'^xslt/transform/$', xslTransformationList_view.XslTransformationTransform.as_view(),
+        name='core_main_app_rest_xslt_transform'),
+
+    url(r'^xslt/(?P<pk>\w+)/$', xslTransformationList_view.XslTransformationDetail.as_view(),
+        name='core_main_app_rest_xslt_detail'),
 ]
+
+urlpatterns = format_suffix_patterns(urlpatterns)
