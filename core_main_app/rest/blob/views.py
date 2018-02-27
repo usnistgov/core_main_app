@@ -1,252 +1,220 @@
 """ REST views for the blob API
 """
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
+from django.http import Http404
 from rest_framework import status
-from core_main_app.commons import exceptions
+from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 import core_main_app.components.blob.api as blob_api
-from core_main_app.commons.exceptions import ApiError
-from core_main_app.components.blob.models import Blob
-from core_main_app.components.blob.utils import get_blob_download_uri
+from core_main_app.commons import exceptions
+from core_main_app.rest.blob.serializers import BlobSerializer, DeleteBlobsSerializer
 from core_main_app.utils.file import get_file_http_response
-from core_main_app.rest.blob import serializers
-from core_main_app.components.user import api as user_api
 
 
-@api_view(['GET'])
-def download(request):
-    """Download the blob file.
-
-    /rest/blob/download?id=<id>
-
-    Args:
-        request:
-
-    Returns:
-
+class BlobList(APIView):
+    """ List all user blobs, or create a new one.
     """
-    try:
-        # Get parameters
-        blob_id = request.query_params.get('id', None)
 
-        # Check parameters
-        if blob_id is None:
-            content = {'message': 'Expected parameters not provided.'}
+    def get(self, request):
+        """ Get all user blobs
+
+        Query Params:
+            filename: filename
+
+        Args:
+            request:
+
+        Returns:
+
+        """
+        try:
+            # FIXME: remove?
+            if request.user.is_superuser:
+                blob_list = blob_api.get_all()
+            else:
+                blob_list = blob_api.get_all_by_user_id(user_id=request.user.id)
+
+            # Apply filters
+            filename = self.request.query_params.get('filename', None)
+            if filename is not None:
+                blob_list = blob_list.filter(template=filename)
+
+            # Serialize object
+            serializer = BlobSerializer(blob_list, many=True, context={'request': request})
+
+            # Return response
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as api_exception:
+            content = {'message': api_exception.message}
+            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def post(self, request):
+        """ Create blob
+
+        Args:
+            request:
+
+        Returns:
+
+        """
+        try:
+            # Build serializer
+            serializer = BlobSerializer(data=request.data)
+
+            # Validate data
+            serializer.is_valid(True)
+
+            # Save data
+            serializer.save(user=request.user)
+
+            # Return the serialized data
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except ValidationError as validation_exception:
+            content = {'message': validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
-
-        # Get template from id
-        blob_object = blob_api.get_by_id(blob_id)
-
-        return get_file_http_response(blob_object.blob, blob_object.filename)
-    except exceptions.DoesNotExist:
-        content = {'message': 'No blob found with the given id.'}
-        return Response(content, status=status.HTTP_404_NOT_FOUND)
-    except Exception as api_exception:
-        content = {'message': api_exception.message}
-        return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as api_exception:
+            content = {'message': api_exception.message}
+            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(["POST"])
-def upload(request):
-    """ Upload a file in the blob repository
-
-    POST /<rest_main>/blob
-
-    Args:
-        request (HttpRequest): request.
-
-    Returns:
-        Response object
+class BlobDetail(APIView):
     """
-    # Get the name of the uploaded file
-    if "file" not in request.FILES or len(request.FILES.keys()) > 1:
-        content = {"message": "Malformed request parameters"}
-        return Response(content, status=status.HTTP_400_BAD_REQUEST)
-
-    uploaded_file = request.FILES['file']
-    filename = uploaded_file.name
-
-    # Retrieve the user ID
-    if not request.user.is_authenticated():
-        content = {"message": "Please log in to upload a blob"}
-        return Response(content, status=status.HTTP_403_FORBIDDEN)
-
-    user_id = str(request.user.id)
-
-    # Save the blob
-    try:
-        blob_object = Blob(filename=filename, user_id=user_id)
-        blob_object.blob = uploaded_file
-        blob_api.insert(blob_object)
-    except ApiError as e:
-        content = {"message": e.message}
-        return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    content = {"message": "Blob uploaded with success", "blob_id": str(blob_object.id)}
-    return Response(content, status=status.HTTP_201_CREATED)
-
-
-@api_view(['DELETE'])
-def delete(request):
-    """ Delete a given blob.
-
-    DELETE http://<server_ip>:<server_port>/<rest_main>/blob/delete?id=id
-
-    Args:
-        request (HttpRequest): request.
-
-    Returns:
-        Response object
-
+    Retrieve, update or delete a blob.
     """
-    try:
-        # Get parameters
-        blob_id = request.query_params.get('id', None)
 
-        # Check parameters
-        if blob_id is None:
-            content = {'message': 'Expected parameters not provided.'}
-            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+    def get_object(self, pk):
+        """ Get blob from db
 
-        # Get blob
-        blob_object = blob_api.get_by_id(blob_id)
-        # Check rights
-        if str(request.user.id) == blob_object.user_id or request.user.is_staff:
-            # Delete blob
-            message, status_code = _delete_blob(blob_object)
-            content = {'message': message}
-        else:
-            content = {'message': 'You don\'t have the right to delete the Blob {0}'.format(blob_object.id)}
-            status_code = status.HTTP_401_UNAUTHORIZED
+        Args:
+            pk:
 
-        return Response(content, status=status_code)
-    except exceptions.DoesNotExist:
-        content = {'message': 'No blob found with the given id.'}
-        return Response(content, status=status.HTTP_404_NOT_FOUND)
-    except Exception as api_exception:
-        content = {'message': api_exception.message}
-        return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        Returns:
+
+        """
+        try:
+            return blob_api.get_by_id(pk)
+        except exceptions.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk):
+        """ Retrieve blob
+
+        Args:
+            pk:
+
+        Returns:
+
+        """
+        try:
+            # Get object
+            blob_object = self.get_object(pk)
+
+            # Serialize object
+            serializer = BlobSerializer(blob_object, context={'request': request})
+
+            # Return response
+            return Response(serializer.data)
+        except Http404:
+            content = {'message': 'Blob not found.'}
+            return Response(content, status=status.HTTP_404_NOT_FOUND)
+        except Exception as api_exception:
+            content = {'message': api_exception.message}
+            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def delete(self, request, pk):
+        """ Delete a blob
+
+        Args:
+            request:
+            pk:
+
+        Returns:
+
+        """
+        try:
+            # Get object
+            blob_object = self.get_object(pk)
+
+            # Check rights
+            if str(request.user.id) != blob_object.user_id or not request.user.is_staff:
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Http404:
+            content = {'message': 'Blob not found.'}
+            return Response(content, status=status.HTTP_404_NOT_FOUND)
+        except Exception as api_exception:
+            content = {'message': api_exception.message}
+            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(['POST'])
-def delete_list(request):
-    """ Delete a list of blobs.
-
-    POST http://<server_ip>:<server_port>/<rest_main>/blob/list/delete
-
-    Args:
-        request (HttpRequest): request.
-
-    Returns:
-        Response object.
-
-    Examples:
-        >>> {"blob_ids": ["id1", "id2"]}
-
+class BlobDownload(APIView):
     """
-    try:
-        messages = []
-        blob_objects = []
-        serializer = serializers.DeleteBlobsSerializer(data=request.data)
-        if serializer.is_valid():
-            blob_ids = serializer.data.get('blob_ids')
-            # Check if all blob exist
+    Download a blob.
+    """
+
+    def get_object(self, pk):
+        """ Get blob from db
+
+        Args:
+            pk:
+
+        Returns:
+
+        """
+        try:
+            return blob_api.get_by_id(pk)
+        except exceptions.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk):
+        """ Retrieve blob
+
+        Args:
+            pk:
+
+        Returns:
+
+        """
+        try:
+            # Get object
+            blob_object = self.get_object(pk)
+
+            return get_file_http_response(blob_object.blob, blob_object.filename)
+        except Http404:
+            content = {'message': 'Blob not found.'}
+            return Response(content, status=status.HTTP_404_NOT_FOUND)
+        except Exception as api_exception:
+            content = {'message': api_exception.message}
+            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class BlobDeleteList(APIView):
+    """ Delete list of blobs.
+    """
+    def post(self, request):
+        try:
+            # Serialize data
+            serializer = DeleteBlobsSerializer(data=request.data, many=True, context={'request': request})
+
+            # Validate data
+            serializer.is_valid(True)
+
+            # Get list of unique ids
+            blob_ids = set([blob['id'] for blob in serializer.validated_data])
+
             for blob_id in blob_ids:
-                blob_object = blob_api.get_by_id(blob_id)
-                # Check rights
-                if str(request.user.id) == blob_object.user_id or request.user.is_staff:
-                    blob_objects.append(blob_object)
-                else:
-                    content = {'message': 'You don\'t have the right to delete the Blob {0}'.format(blob_object.id)}
-                    return Response(content, status=status.HTTP_401_UNAUTHORIZED)
+                # Get blob with its id
+                blob = blob_api.get_by_id(blob_id)
+                # Delete blob
+                blob_api.delete(blob)
 
-            # Delete blobs
-            for blob_object in blob_objects:
-                message, status_code = _delete_blob(blob_object)
-                messages.append({'message': message, 'status_code': status_code})
-
-            content = {'message': messages}
-            return Response(content, status=status.HTTP_200_OK)
-        else:
-            content = {'message': 'Expected parameters not provided.'}
+            # Return the serialized data
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except ValidationError as validation_exception:
+            content = {'message': validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
-    except exceptions.DoesNotExist as api_exception:
-        content = {'message': 'All Blob have not been found: {0}.'.format(api_exception.message)}
-        return Response(content, status=status.HTTP_404_NOT_FOUND)
-    except Exception as api_exception:
-        content = {'message': api_exception.message}
-        return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-def _delete_blob(blob_object):
-    """ Delete a blob.
-
-    Args:
-        blob_object: Blob to delete.
-
-    Returns:
-        message: Message content.
-        status_code: status code
-
-    """
-    try:
-        blob_api.delete(blob_object)
-        content = 'Blob {0} deleted with success.'.format(str(blob_object.id))
-        status_code = status.HTTP_200_OK
-    except Exception as api_exception:
-        content = 'An error occurred when attempting to delete the blob (id {0}): {1}'.format(str(blob_object.id),
-                                                                                              api_exception.message)
-        status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
-
-    return content, status_code
-
-
-@api_view(['GET'])
-def list_all(request):
-    """ List all blobs.
-
-    GET http://<server_ip>:<server_port>/<rest_main>/blob/list
-
-    Args:
-        request (HttpRequest): request.
-
-    Returns:
-        Response object.
-
-    """
-    try:
-        if request.user.is_staff:
-            blob_list = blob_api.get_all()
-        else:
-            blob_list = blob_api.get_all_by_user_id(user_id=request.user.id)
-
-        blobs_info = _get_list_blob_info(blob_list, request)
-        return Response(blobs_info, status=status.HTTP_200_OK)
-    except:
-        content = {'message': 'Something went wrong while listing the BLOB.'}
-        return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-def _get_list_blob_info(list_blob, request):
-    """ Get list blob info.
-
-    Args:
-        list_blob:
-        request:
-
-    Returns:
-
-    """
-    files = []
-    for blob in list_blob:
-        item = {'name': blob.filename,
-                'id': str(blob.id),
-                'uploadDate': str(blob.id.generation_time),
-                'handle': get_blob_download_uri(blob, request)
-                }
-        if request.user.is_staff:
-            user = user_api.get_user_by_id(blob.user_id)
-            item.update({'user': user.username})
-        files.append(item)
-
-    return files
+        except Exception as api_exception:
+            content = {'message': api_exception.message}
+            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

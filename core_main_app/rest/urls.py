@@ -40,20 +40,17 @@ urlpatterns = [
     url(r'^data/get-full$', data_views.get_by_id_with_template_info,
         name='core_main_app_rest_data_get_by_id_with_template_info'),
 
-    url(r'^blob/download', blob_views.download,
-        name='core_main_app_rest_blob_download'),
+    url(r'^blob/$', blob_views.BlobList.as_view(),
+        name='core_main_app_rest_blob_list'),
 
-    url(r'^blob/upload', blob_views.upload,
-        name='core_main_app_rest_blob_upload'),
-
-    url(r'^blob/delete', blob_views.delete,
-        name='core_main_app_rest_blob_delete'),
-
-    url(r'^blob/list/delete', blob_views.delete_list,
+    url(r'^blobs/delete/$', blob_views.BlobDeleteList.as_view(),
         name='core_main_app_rest_blob_delete_list'),
 
-    url(r'^blob/list', blob_views.list_all,
-        name='core_main_app_rest_blob_list'),
+    url(r'^blob/(?P<pk>\w+)/$', blob_views.BlobDetail.as_view(),
+        name='core_main_app_rest_blob_detail'),
+
+    url(r'^blob/download/(?P<pk>\w+)/$', blob_views.BlobDownload.as_view(),
+        name='core_main_app_rest_blob_download'),
 
     url(r'^xslt/$', xslTransformationList_view.XslTransformationList.as_view(),
         name='core_main_app_rest_xslt'),

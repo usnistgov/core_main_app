@@ -14,8 +14,6 @@ def get_blob_download_uri(blob, request):
 
     """
     # get URI to download blob
-    blob_download_uri = request.build_absolute_uri(reverse("core_main_app_rest_blob_download"))
-    # get download handle to blob
-    blob_handle = "{0}?id={1}".format(blob_download_uri, str(blob.id))
-
-    return blob_handle
+    blob_download_uri = request.build_absolute_uri(reverse("core_main_app_rest_blob_download",
+                                                           kwargs={'pk': str(blob.id)}))
+    return blob_download_uri
