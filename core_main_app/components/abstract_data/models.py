@@ -5,7 +5,6 @@ from io import BytesIO
 from django_mongoengine import fields, Document
 
 from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
-from core_main_app.components.template.models import Template
 from core_main_app.settings import GRIDFS_DATA_COLLECTION, SEARCHABLE_DATA_OCCURRENCES_LIMIT
 from core_main_app.utils import xml as xml_utils
 
@@ -13,9 +12,8 @@ from core_main_app.utils import xml as xml_utils
 class AbstractData(Document):
     """ AbstractData object
     """
-    template = fields.ReferenceField(Template, blank=True)
     dict_content = fields.DictField(blank=True)
-    title = fields.StringField(blank=True, regex=NOT_EMPTY_OR_WHITESPACES)
+    title = fields.StringField(blank=False, regex=NOT_EMPTY_OR_WHITESPACES)
     last_modification_date = fields.DateTimeField(blank=True, default=None)
     xml_file = fields.FileField(blank=False, collection_name=GRIDFS_DATA_COLLECTION)
 

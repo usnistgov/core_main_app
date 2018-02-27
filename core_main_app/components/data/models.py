@@ -7,6 +7,7 @@ from mongoengine.queryset.base import NULLIFY
 
 from core_main_app.commons import exceptions
 from core_main_app.components.abstract_data.models import AbstractData
+from core_main_app.components.template.models import Template
 from core_main_app.components.workspace.models import Workspace
 
 
@@ -17,6 +18,7 @@ from core_main_app.components.workspace.models import Workspace
 class Data(AbstractData):
     """ Data object
     """
+    template = fields.ReferenceField(Template, blank=False)
     user_id = fields.StringField()
     workspace = fields.ReferenceField(Workspace, reverse_delete_rule=NULLIFY, blank=True)
 
