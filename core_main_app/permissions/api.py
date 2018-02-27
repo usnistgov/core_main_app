@@ -156,9 +156,14 @@ def get_all_workspace_permissions_user_can_write(user_id):
 
     """
     user = user_api.get_user_by_id(user_id)
-    return [str(perm.id) for perm in Permission.objects.filter((Q(user=user) | Q(group__in=user.groups.all())),
-                                                               content_type__app_label=CONTENT_TYPE_APP_LABEL,
-                                                               codename__startswith=CAN_WRITE_CODENAME)]
+    # TODO: fix the super user case
+    if user.is_superuser:
+        return [str(perm.id) for perm in Permission.objects.filter(content_type__app_label=CONTENT_TYPE_APP_LABEL,
+                                                                   codename__startswith=CAN_WRITE_CODENAME)]
+    else:
+        return [str(perm.id) for perm in Permission.objects.filter((Q(user=user) | Q(group__in=user.groups.all())),
+                                                                   content_type__app_label=CONTENT_TYPE_APP_LABEL,
+                                                                   codename__startswith=CAN_WRITE_CODENAME)]
 
 
 def get_all_workspace_permissions_user_can_read(user_id):
@@ -170,12 +175,17 @@ def get_all_workspace_permissions_user_can_read(user_id):
     Return:
     """
     user = user_api.get_user_by_id(user_id)
-    return [str(perm.id) for perm in Permission.objects.filter((Q(user=user) 
-                                                                | Q(group__in=user.groups.all())
-                                                                | (Q(group=group_api.get_default_group())
-                                                                   & Q(group=group_api.get_anonymous_group()))),
-                                                               content_type__app_label=CONTENT_TYPE_APP_LABEL,
-                                                               codename__startswith=CAN_READ_CODENAME)]
+    #TODO: fix the super user case
+    if user.is_superuser:
+        return [str(perm.id) for perm in Permission.objects.filter(content_type__app_label=CONTENT_TYPE_APP_LABEL,
+                                                                   codename__startswith=CAN_READ_CODENAME)]
+    else:
+        return [str(perm.id) for perm in Permission.objects.filter((Q(user=user)
+                                                                    | Q(group__in=user.groups.all())
+                                                                    | (Q(group=group_api.get_default_group())
+                                                                       & Q(group=group_api.get_anonymous_group()))),
+                                                                   content_type__app_label=CONTENT_TYPE_APP_LABEL,
+                                                                   codename__startswith=CAN_READ_CODENAME)]
 
 
 def is_workspace_public(permission_id):

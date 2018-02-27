@@ -204,11 +204,13 @@ def is_workspace_public(workspace):
     return permission_api.is_workspace_public(workspace.read_perm_id)
 
 
-def set_workspace_public(workspace):
+@access_control(is_workspace_owner)
+def set_workspace_public(workspace, user):
     """ Set the workspace to public.
 
     Args:
         workspace
+        user
 
     Return:
     """
@@ -290,6 +292,10 @@ def get_list_user_can_read_workspace(workspace, user):
         workspace
         user
     """
+
+    if is_workspace_public(workspace):
+        return list(user_api.get_all_users())
+
     # Get read permission of the workspace
     read_permission = permission_api.get_by_id(workspace.read_perm_id)
 
@@ -407,6 +413,9 @@ def get_list_group_can_read_workspace(workspace, user):
 
     Returns:
     """
+    if is_workspace_public(workspace):
+        return list(group_api.get_all_groups())
+
     # Get read permission of the workspace
     read_permission = permission_api.get_by_id(workspace.read_perm_id)
 

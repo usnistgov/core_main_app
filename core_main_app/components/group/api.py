@@ -7,6 +7,26 @@ from django.db.models import Q
 import core_main_app.permissions.rights as rights
 
 
+def get_or_create(name):
+    """ Get or create a group.
+    Args:
+        name:
+
+    Returns:
+    """
+    group, created = Group.objects.get_or_create(name=name)
+    return group, created
+
+def get_all_groups():
+    """ Return all Groups.
+
+    Returns:
+        List of Groups
+
+    """
+    return Group.objects.all()
+
+
 def get_by_name_and_permission(name, permission_codename):
     """Get a group by name and permission codename.
 

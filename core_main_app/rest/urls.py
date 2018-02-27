@@ -8,6 +8,7 @@ from core_main_app.rest.blob import views as blob_views
 from core_main_app.rest.data import views as data_views
 from core_main_app.rest.template import views as template_views
 from core_main_app.rest.template_version_manager import views as template_version_manager_views
+from core_main_app.rest.workspace import views as workspace_views
 
 urlpatterns = [
     url(r'^template/download', template_views.download,
@@ -60,6 +61,74 @@ urlpatterns = [
 
     url(r'^xslt/(?P<pk>\w+)/$', xslTransformationList_view.XslTransformationDetail.as_view(),
         name='core_main_app_rest_xslt_detail'),
+
+    url(r'^workspace/$', workspace_views.WorkspaceList.as_view(),
+        name='core_main_app_rest_workspace_list'),
+
+    url(r'^workspace/(?P<pk>\w+)/detail/$', workspace_views.WorkspaceDetail.as_view(),
+        name='core_main_app_rest_workspace_detail'),
+
+    url(r'^workspace/read_access', workspace_views.get_workspaces_with_read_access,
+        name='core_main_app_rest_workspace_get_all_workspaces_with_read_access_by_user'),
+
+    url(r'^workspace/write_access', workspace_views.get_workspaces_with_write_access,
+        name='core_main_app_rest_workspace_get_all_workspaces_with_write_access_by_user'),
+
+    url(r'^workspace/(?P<pk>\w+)/is_public/$', workspace_views.is_workspace_public,
+        name='core_main_app_rest_workspace_is_public'),
+
+    url(r'^workspace/(?P<pk>\w+)/set_public/$', workspace_views.set_workspace_public,
+        name='core_main_app_rest_workspace_set_public'),
+
+    url(r'^workspace/(?P<pk>\w+)/list_user_can_read/$', workspace_views.get_list_user_can_read_workspace,
+        name='core_main_app_rest_workspace_list_user_can_read'),
+
+    url(r'^workspace/(?P<pk>\w+)/list_user_can_write/$', workspace_views.get_list_user_can_write_workspace,
+        name='core_main_app_rest_workspace_list_user_can_write'),
+
+    url(r'^workspace/(?P<pk>\w+)/list_user_can_access/$', workspace_views.get_list_user_can_access_workspace,
+        name='core_main_app_rest_workspace_list_user_can_access'),
+
+    url(r'^workspace/(?P<pk>\w+)/list_group_can_read/$', workspace_views.get_list_group_can_read_workspace,
+        name='core_main_app_rest_workspace_list_group_can_read'),
+
+    url(r'^workspace/(?P<pk>\w+)/list_group_can_write/$', workspace_views.get_list_group_can_write_workspace,
+        name='core_main_app_rest_workspace_list_group_can_write'),
+
+    url(r'^workspace/(?P<pk>\w+)/list_group_can_access/$', workspace_views.get_list_group_can_access_workspace,
+        name='core_main_app_rest_workspace_list_group_can_access'),
+
+    url(r'^workspace/(?P<pk>\w+)/add_read_right_to_user/(?P<user_id>\w+)/$',
+        workspace_views.add_user_read_right_to_workspace,
+        name='core_main_app_rest_workspace_add_user_read'),
+
+    url(r'^workspace/(?P<pk>\w+)/add_write_right_to_user/(?P<user_id>\w+)/$',
+        workspace_views.add_user_write_right_to_workspace,
+        name='core_main_app_rest_workspace_add_user_write'),
+
+    url(r'^workspace/(?P<pk>\w+)/add_read_right_to_group/(?P<group_id>\w+)/$',
+        workspace_views.add_group_read_right_to_workspace,
+        name='core_main_app_rest_workspace_add_group_read'),
+
+    url(r'^workspace/(?P<pk>\w+)/add_write_right_to_group/(?P<group_id>\w+)/$',
+        workspace_views.add_group_write_right_to_workspace,
+        name='core_main_app_rest_workspace_add_group_write'),
+
+    url(r'^workspace/(?P<pk>\w+)/remove_read_right_to_user/(?P<user_id>\w+)/$',
+        workspace_views.remove_user_read_right_to_workspace,
+        name='core_main_app_rest_workspace_remove_user_read'),
+
+    url(r'^workspace/(?P<pk>\w+)/remove_write_right_to_user/(?P<user_id>\w+)/$',
+        workspace_views.remove_user_write_right_to_workspace,
+        name='core_main_app_rest_workspace_remove_user_write'),
+
+    url(r'^workspace/(?P<pk>\w+)/remove_read_right_to_group/(?P<group_id>\w+)/$',
+        workspace_views.remove_group_read_right_to_workspace,
+        name='core_main_app_rest_workspace_remove_group_read'),
+
+    url(r'^workspace/(?P<pk>\w+)/remove_write_right_to_group/(?P<group_id>\w+)/$',
+        workspace_views.remove_group_write_right_to_workspace,
+        name='core_main_app_rest_workspace_remove_group_write'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

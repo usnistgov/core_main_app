@@ -37,7 +37,7 @@ def set_public_workspace(request):
         return HttpResponseBadRequest(dne.message)
     try:
         for workspace in list_workspace:
-            workspace_api.set_workspace_public(workspace)
+            workspace_api.set_workspace_public(workspace, request.user)
     except:
         return HttpResponseBadRequest("Something wrong happened.")
 
