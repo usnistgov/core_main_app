@@ -1,0 +1,57 @@
+{% if pagination.has_other_pages %}
+    <center>
+        <ul class="pagination">
+            {% if pagination.has_previous %}
+                <li>
+                    {% block previous_nav %}
+                        <span onclick="window.location='?page={{pagination.previous_page_number}}'">&laquo;</span>
+                    {% endblock %}
+                </li>
+            {% else %}
+                <li class="disabled"><span>&laquo;</span></li>
+            {% endif %}
+
+            {% if pagination.number|add:'-4' > 1 %}
+                <li>
+                    {% block fast_previous_nav %}
+                        <span onclick="window.location='?page={{ pagination.number|add:'-5' }}'">&hellip;</span>
+                    {% endblock %}
+                </li>
+            {% endif %}
+
+            {% with ''|center:pagination.paginator.num_pages as range %}
+            {% for _ in range %}
+                {% if pagination.number == forloop.counter %}
+                    <li class="active">
+                        <span>{{ forloop.counter }} <span class="sr-only">(current)</span></span>
+                    </li>
+                {% elif forloop.counter > pagination.number|add:'-5' and forloop.counter < pagination.number|add:'5' %}
+                    <li>
+                        {% block page_nav %}
+                            <span onclick="window.location='?page={{forloop.counter}}'">{{forloop.counter}}</span>
+                        {% endblock %}
+                    </li>
+                {% endif %}
+            {% endfor %}
+            {% endwith %}
+
+            {% if pagination.paginator.num_pages > pagination.number|add:'4' %}
+                <li>
+                    {% block fast_next_nav %}
+                        <span onclick="window.location='?page={{ pagination.number|add:'5' }}'">&hellip;</span>
+                    {% endblock %}
+                </li>
+            {% endif %}
+
+            {% if pagination.has_next %}
+                <li>
+                    {% block next_nav %}
+                        <span onclick="window.location='?page={{pagination.next_page_number}}'">&raquo;</span>
+                    {% endblock %}
+                </li>
+            {% else %}
+                <li class="disabled"><span>&raquo;</span></li>
+            {% endif %}
+        </ul>
+    </center>
+{% endif %}
