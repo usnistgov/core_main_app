@@ -1,5 +1,6 @@
 from unittest.case import TestCase
 from bson.objectid import ObjectId
+from django.test import override_settings
 from mock.mock import Mock, patch
 from mongoengine import errors as mongoengine_errors
 from django.core import exceptions as django_exceptions
@@ -51,6 +52,7 @@ class TestTemplateList(TestCase):
 
 
 class TestTemplateUpsert(TestCase):
+    @override_settings(ROOT_URLCONF="core_main_app.urls")
     @patch('core_main_app.components.template.models.Template.save')
     def test_template_upsert_valid_returns_template(self, mock_save):
         template = _create_template(filename="name.xsd",
@@ -60,6 +62,7 @@ class TestTemplateUpsert(TestCase):
         result = template_api.upsert(template)
         self.assertIsInstance(result, Template)
 
+    @override_settings(ROOT_URLCONF="core_main_app.urls")
     @patch('core_main_app.components.template.models.Template.save')
     def test_template_upsert_invalid_filename_raises_validation_error(self, mock_save):
         template = _create_template(filename=1,

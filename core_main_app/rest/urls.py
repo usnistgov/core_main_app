@@ -1,6 +1,7 @@
 """Url router for the REST API
 """
 from django.conf.urls import url
+
 from rest_framework.urlpatterns import format_suffix_patterns
 
 import core_main_app.rest.xsl_transformation.views as xslTransformationList_view
@@ -11,23 +12,55 @@ from core_main_app.rest.template_version_manager import views as template_versio
 from core_main_app.rest.workspace import views as workspace_views
 
 urlpatterns = [
-    url(r'^template/download', template_views.download,
+    url(r'^template-version-manager/global/$',
+        template_version_manager_views.GlobalTemplateVersionManagerList.as_view(),
+        name='core_main_app_rest_template_version_manager_global_list'),
+
+    url(r'^template-version-manager/user/$',
+        template_version_manager_views.UserTemplateVersionManagerList.as_view(),
+        name='core_main_app_rest_template_version_manager_user_list'),
+
+    url(r'^template-version-manager/(?P<pk>\w+)/$',
+        template_version_manager_views.TemplateVersionManagerDetail.as_view(),
+        name='core_main_app_rest_template_version_manager_detail'),
+
+    url(r'^template-version-manager/(?P<pk>\w+)/version/$',
+        template_version_manager_views.TemplateVersion.as_view(),
+        name='core_main_app_rest_template_version'),
+
+    url(r'^template-version-manager/(?P<pk>\w+)/disable/$',
+        template_version_manager_views.DisableTemplateVersionManager.as_view(),
+        name='core_main_app_rest_template_version_manager_disable'),
+
+    url(r'^template-version-manager/(?P<pk>\w+)/restore/$',
+        template_version_manager_views.RestoreTemplateVersionManager.as_view(),
+        name='core_main_app_rest_template_version_manager_restore'),
+
+    url(r'^template/version/(?P<pk>\w+)/current/$',
+        template_version_manager_views.CurrentTemplateVersion.as_view(),
+        name='core_main_app_rest_template_version_current'),
+
+    url(r'^template/version/(?P<pk>\w+)/disable/$',
+        template_version_manager_views.DisableTemplateVersion.as_view(),
+        name='core_main_app_rest_template_version_disable'),
+
+    url(r'^template/version/(?P<pk>\w+)/restore/$',
+        template_version_manager_views.RestoreTemplateVersion.as_view(),
+        name='core_main_app_rest_template_version_restore'),
+
+    url(r'^template/global/$',
+        template_version_manager_views.GlobalTemplateList.as_view(),
+        name='core_main_app_rest_global_template_list'),
+
+    url(r'^template/user/$',
+        template_version_manager_views.UserTemplateList.as_view(),
+        name='core_main_app_rest_user_template_list'),
+
+    url(r'^template/(?P<pk>\w+)/download/$', template_views.TemplateDownload.as_view(),
         name='core_main_app_rest_template_download'),
 
-    url(r'^template/get', template_views.get_by_id,
-        name='core_main_app_rest_template_get_by_id'),
-
-    url(r'^template-version-manager/get/all/global$', template_version_manager_views.get_all_globals,
-        name='core_main_app_rest_template_version_manager_get_all_globals'),
-
-    url(r'^template-version-manager/get/active/user$', template_version_manager_views.get_active_by_user,
-        name='core_main_app_rest_template_version_manager_get_active_by_user'),
-
-    url(r'^template-version-manager/get$', template_version_manager_views.get_by_id,
-        name='core_main_app_rest_template_version_manager_get'),
-
-    url(r'^template', template_views.template,
-        name='core_main_app_rest_template'),
+    url(r'^template/(?P<pk>\w+)/$', template_views.TemplateDetail.as_view(),
+        name='core_main_app_rest_template_detail'),
 
     url(r'^data/$', data_views.DataList.as_view(),
         name='core_main_app_rest_data_list'),

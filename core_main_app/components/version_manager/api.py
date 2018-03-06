@@ -3,6 +3,7 @@ Version Manager API
 """
 
 from core_main_app.commons import exceptions
+from core_main_app.commons.exceptions import ApiError
 from core_main_app.components.version_manager.models import VersionManager
 
 
@@ -82,7 +83,10 @@ def restore_version(version):
 
     """
     version_manager = get_from_version(version)
-    version_manager.restore_version(version)
+    try:
+        version_manager.restore_version(version)
+    except ValueError as value_error:
+        raise ApiError('Unable to restore this version: status is not disabled.')
     return upsert(version_manager)
 
 

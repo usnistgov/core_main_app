@@ -1,5 +1,6 @@
 """ XSD Flattener Database or URL class
 """
+from core_main_app.utils.urls import get_template_download_pattern
 from xml_utils.xsd_flattener.xsd_flattener_url import XSDFlattenerURL
 from urlparse import urlparse
 from core_main_app.components.template import api as template_api
@@ -31,12 +32,20 @@ class XSDFlattenerDatabaseOrURL(XSDFlattenerURL):
             Content.
 
         """
+        # parse url
         url = urlparse(uri)
-        url_template_download = reverse('core_main_app_rest_template_download')
-        if url.path == url_template_download:
+        # get pattern to match a template download url
+        pattern = get_template_download_pattern()
+        # match url
+        match = pattern.match(url.path)
+        # if match
+        if match:
             try:
-                _id = url.query.split("=")[1]
-                template = template_api.get(_id)
+                # get pk from match
+                object_id = match.group('pk')
+                # get template object using pk
+                template = template_api.get(object_id)
+                # get template content
                 content = template.content
             except (exceptions.DoesNotExist, exceptions.ModelError, Exception):
                 content = super(XSDFlattenerDatabaseOrURL, self).get_dependency_content(uri)

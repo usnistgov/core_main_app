@@ -3,6 +3,7 @@
 from unittest.case import TestCase
 from bson.objectid import ObjectId
 from django.core import exceptions as django_exceptions
+from django.test import override_settings
 from mongoengine import errors as mongoengine_errors
 from mock.mock import Mock, patch, MagicMock
 
@@ -13,6 +14,7 @@ from core_main_app.components.template_version_manager.models import TemplateVer
 
 
 class TestTemplateVersionManagerInsert(TestCase):
+    @override_settings(ROOT_URLCONF="core_main_app.urls")
     @patch('core_main_app.components.template_version_manager.models.TemplateVersionManager.save')
     @patch('core_main_app.components.template.models.Template.save')
     def test_create_version_manager_returns_version_manager(self, mock_save_template,
@@ -33,6 +35,7 @@ class TestTemplateVersionManagerInsert(TestCase):
         # Assert
         self.assertIsInstance(result, TemplateVersionManager)
 
+    @override_settings(ROOT_URLCONF="core_main_app.urls")
     @patch('core_main_app.components.template.models.Template.delete')
     @patch('core_main_app.components.template.models.Template.save')
     @patch('core_main_app.components.template_version_manager.models.TemplateVersionManager.save')
@@ -53,6 +56,7 @@ class TestTemplateVersionManagerInsert(TestCase):
         with self.assertRaises(NotUniqueError):
             version_manager_api.insert(mock_version_manager, template)
 
+    @override_settings(ROOT_URLCONF="core_main_app.urls")
     @patch('core_main_app.components.template.models.Template.save')
     def test_create_version_manager_raises_exception_if_error_in_create_template(self, mock_save):
         # Arrange
@@ -67,6 +71,7 @@ class TestTemplateVersionManagerInsert(TestCase):
         with self.assertRaises(django_exceptions.ValidationError):
             version_manager_api.insert(mock_version_manager, template)
 
+    @override_settings(ROOT_URLCONF="core_main_app.urls")
     @patch('core_main_app.components.template.models.Template.delete')
     @patch('core_main_app.components.template_version_manager.models.TemplateVersionManager.save')
     @patch('core_main_app.components.template.models.Template.save')
@@ -89,6 +94,7 @@ class TestTemplateVersionManagerInsert(TestCase):
 
 
 class TestTemplateVersionManagerAddVersion(TestCase):
+    @override_settings(ROOT_URLCONF="core_main_app.urls")
     @patch('core_main_app.components.template_version_manager.models.TemplateVersionManager.insert')
     @patch('core_main_app.components.template.models.Template.save')
     @patch('core_main_app.components.template_version_manager.models.TemplateVersionManager.save')
@@ -108,6 +114,7 @@ class TestTemplateVersionManagerAddVersion(TestCase):
         # Assert
         self.assertIsInstance(result, TemplateVersionManager)
 
+    @override_settings(ROOT_URLCONF="core_main_app.urls")
     @patch('core_main_app.components.template.models.Template.save')
     def test_insert_raises_exception_if_error_in_create_template(self, mock_save_template):
         # Arrange

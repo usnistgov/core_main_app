@@ -5,17 +5,19 @@ import json
 from collections import OrderedDict
 from urlparse import urlparse
 
-import xml_utils.commons.constants as xml_utils_constants
-import xml_utils.xml_validation.validation as xml_validation
 import xmltodict
 from django.core.urlresolvers import reverse
-from xml_utils.xsd_hash import xsd_hash
-from xml_utils.xsd_tree.xsd_tree import XSDTree
-from xml_utils.xsd_tree.operations.namespaces import get_namespaces
-from xml_utils.commons.constants import XSL_NAMESPACE
 
 import core_main_app.commons.exceptions as exceptions
+import xml_utils.commons.constants as xml_utils_constants
+import xml_utils.xml_validation.validation as xml_validation
+from core_main_app.commons.exceptions import XMLError
 from core_main_app.settings import XERCES_VALIDATION, SERVER_URI
+from core_main_app.utils.urls import get_template_download_pattern
+from xml_utils.commons.constants import XSL_NAMESPACE
+from xml_utils.xsd_hash import xsd_hash
+from xml_utils.xsd_tree.operations.namespaces import get_namespaces
+from xml_utils.xsd_tree.xsd_tree import XSDTree
 
 
 def validate_xml_schema(xsd_tree):
@@ -321,18 +323,20 @@ def get_local_dependencies(xsd_string):
     # list of includes and imports
     xsd_includes_imports = imports + includes
 
+    # get pattern to match the url to download a template
+    pattern = get_template_download_pattern()
+
     for xsd_include_import in xsd_includes_imports:
         if xsd_include_import.attrib['schemaLocation'].startswith(SERVER_URI):
             try:
                 # parse dependency url
                 url = urlparse(xsd_include_import.attrib['schemaLocation'])
                 # get id from url
-                object_id = url.query.split("=")[1]
+                object_id = pattern.match(url.path).group('pk')
                 # add id to list of internal dependencies
                 dependencies.append(object_id)
             except Exception:
-                # If error, don't add it to the list of dependencies
-                pass
+                raise XMLError("Local dependency schemaLocation is not well formed.")
 
     return dependencies
 
@@ -390,8 +394,8 @@ def _get_schema_location_uri(schema_id):
     Returns:
 
     """
-    url = reverse('core_main_app_rest_template_download')
-    return str(SERVER_URI) + url + '?id=' + str(schema_id)
+    url = reverse('core_main_app_rest_template_download', kwargs={'pk': str(schema_id)})
+    return str(SERVER_URI) + url
 
 
 def xsl_transform(xml_string, xslt_string):

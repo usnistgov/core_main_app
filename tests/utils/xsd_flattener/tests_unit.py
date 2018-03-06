@@ -33,7 +33,7 @@ class TestXSDFlattenerDatabaseUrl(TestCase):
     @patch.object(template_api, 'get')
     def test_url_recognized_use_database(self, mock_get):
         # Arrange
-        url_template_download = reverse('core_main_app_rest_template_download')
+        url_template_download = reverse('core_main_app_rest_template_download', kwargs={'pk': 'pk'})
         xml_string = '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">' \
                      '<xs:include schemaLocation="http://dummy.com{0}?id=1234"/>' \
                      '</xs:schema>'.format(url_template_download)
@@ -53,7 +53,7 @@ class TestXSDFlattenerDatabaseUrl(TestCase):
     @patch.object(XSDFlattenerURL, 'get_dependency_content')
     def test_url_recognized_template_does_not_exist(self, mock_get_dependency_content, mock_get):
         # Arrange
-        url_template_download = reverse('core_main_app_rest_template_download')
+        url_template_download = reverse('core_main_app_rest_template_download', kwargs={'pk': 'pk'})
         xml_string = '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">' \
                      '<xs:include schemaLocation="http://dummy.com{0}?id=1234"/>' \
                      '</xs:schema>'.format(url_template_download)

@@ -1,10 +1,11 @@
 """
 Template API
 """
+from core_main_app.commons import exceptions
 from core_main_app.components.template.models import Template
 from core_main_app.utils.xml import is_schema_valid, get_hash, \
     get_template_with_server_dependencies, get_local_dependencies
-from core_main_app.commons import exceptions
+
 
 def upsert(template):
     """Save or Updates the template.
