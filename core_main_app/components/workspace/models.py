@@ -14,21 +14,10 @@ class Workspace(Document):
         Workspace class.
     """
 
-    title = fields.StringField(unique=True, blank=False, regex=NOT_EMPTY_OR_WHITESPACES)
+    title = fields.StringField(unique_with="owner", blank=False, regex=NOT_EMPTY_OR_WHITESPACES)
     owner = fields.StringField(blank=False)
     read_perm_id = fields.StringField(blank=False)
     write_perm_id = fields.StringField(blank=False)
-
-    @staticmethod
-    def check_if_workspace_already_exists(title):
-        """ Check if a workspace with the same title exists (case insensitive).
-
-        Args:
-            title
-
-        Returns:
-        """
-        return Workspace.objects.filter(title__iexact=title).exists()
 
     @staticmethod
     def get_all():

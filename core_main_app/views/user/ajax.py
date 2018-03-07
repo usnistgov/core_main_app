@@ -113,9 +113,9 @@ def create_workspace(request):
     try:
         workspace_api.create_and_save(request.user.id, name_workspace)
     except NotUniqueError:
-        return HttpResponseBadRequest("A workspace called "
+        return HttpResponseBadRequest("You already have a workspace called "
                                       + name_workspace +
-                                      " already exists. Please change the name and try again.")
+                                      ". Please change the name and try again.")
     except Exception:
         return HttpResponseBadRequest("A problem occurred while creating the workspace.")
     return HttpResponse(json.dumps({}), content_type='application/javascript')

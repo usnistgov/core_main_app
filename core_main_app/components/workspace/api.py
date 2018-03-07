@@ -20,14 +20,10 @@ def create_and_save(owner_id, title):
 
     Returns:
     """
-
-    if Workspace.check_if_workspace_already_exists(title):
-        raise NotUniqueError('A workspace with the same title already exists.')
-
     workspace = Workspace(title=title,
                           owner=str(owner_id),
-                          read_perm_id=str(permission_api.create_read_perm(title).id),
-                          write_perm_id=str(permission_api.create_write_perm(title).id))
+                          read_perm_id=str(permission_api.create_read_perm(title, str(owner_id)).id),
+                          write_perm_id=str(permission_api.create_write_perm(title, str(owner_id)).id))
 
     return workspace.save()
 

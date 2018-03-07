@@ -30,31 +30,33 @@ def _title_to_codename(title):
     return title
 
 
-def create_read_perm(title):
+def create_read_perm(title, owner_id):
     """ Create read permission.
 
     Args:
         title
+        owner_id
 
     Returns:
     """
-    name = CAN_READ_NAME + " - " + title.strip()
+    name = CAN_READ_NAME + " - " + title.strip() + " (" + owner_id + ")"
     content_type = ContentType.objects.get(app_label=CONTENT_TYPE_APP_LABEL, model='main')
-    codename = CAN_READ_CODENAME + "_" + _title_to_codename(title)
+    codename = CAN_READ_CODENAME + "_" + _title_to_codename(title) + " (" + owner_id + ")"
     return _create_perm(name, content_type, codename)
 
 
-def create_write_perm(title):
+def create_write_perm(title, owner_id):
     """ Create write permission.
 
     Args:
         title
+        owner_id
 
     Returns:
     """
-    name = CAN_WRITE_NAME + " - " + title.strip()
+    name = CAN_WRITE_NAME + " - " + title.strip() + " (" + owner_id + ")"
     content_type = ContentType.objects.get(app_label=CONTENT_TYPE_APP_LABEL, model='main')
-    codename = CAN_WRITE_CODENAME + "_" + _title_to_codename(title)
+    codename = CAN_WRITE_CODENAME + "_" + _title_to_codename(title) + " (" + owner_id + ")"
     return _create_perm(name, content_type, codename)
 
 
