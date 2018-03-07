@@ -19,7 +19,7 @@ class XslTransformationList(APIView):
     """
 
     def get(self, request):
-        """ Return http response with all instances.
+        """ Return http response with all xsl document.
 
             GET /rest/xslt
 
@@ -78,7 +78,7 @@ class XslTransformationDetail(APIView):
     """
 
     def get_object(self, pk):
-        """ Retrieve an instance
+        """ Retrieve an xsl document
 
         Args:
             pk:
@@ -119,7 +119,7 @@ class XslTransformationDetail(APIView):
 
     @method_decorator(api_staff_member_required())
     def delete(self, request, pk):
-        """ Delete instance by its id.
+        """ Delete xsl document by its id.
 
         DELETE /rest/xslt/pk
 
