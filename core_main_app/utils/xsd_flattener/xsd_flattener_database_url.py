@@ -1,4 +1,4 @@
-"""XSD Flattener Database or URL class
+""" XSD Flattener Database or URL class
 """
 from xml_utils.xsd_flattener.xsd_flattener_url import XSDFlattenerURL
 from urlparse import urlparse
@@ -8,8 +8,7 @@ from django.core.urlresolvers import reverse
 
 
 class XSDFlattenerDatabaseOrURL(XSDFlattenerURL):
-    """
-    Get the content of the dependency from the database or from the URL.
+    """ Get the content of the dependency from the database or from the URL.
     """
 
     def __init__(self, xml_string, download_enabled=True):
@@ -22,9 +21,9 @@ class XSDFlattenerDatabaseOrURL(XSDFlattenerURL):
         XSDFlattenerURL.__init__(self, xml_string=xml_string, download_enabled=download_enabled)
 
     def get_dependency_content(self, uri):
-        """ Get the content of the dependency from the database or from the URL.
-            1st: Directly from database
-            2nd: Download the content found at the URL.
+        """ Get the content of the dependency from the database or from the URL. Try to get the content from the
+        database first and then try to download it from the provided URI.
+
         Args:
             uri: Content URI.
 
