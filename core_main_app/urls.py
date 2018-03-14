@@ -20,7 +20,7 @@ urlpatterns = [
 
     url(r'^template/versions/(?P<version_manager_id>\w+)', user_views.manage_template_versions,
         name='core_main_app_manage_template_versions'),
-    url(r'^template/edit', common_ajax.edit_template_version_manager,
+    url(r'^template/(?P<pk>[\w-]+)/edit/$', common_ajax.EditTemplateVersionManagerView.as_view(),
         name='core_main_app_edit_template'),
     url(r'^template/disable', common_ajax.disable_version_manager,
         name='core_main_app_disable_template'),

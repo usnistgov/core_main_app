@@ -32,9 +32,10 @@ admin_urls = [
 
     url(r'^template/resolve-dependencies', admin_ajax.resolve_dependencies,
         name='core_main_app_resolve_dependencies'),
+    url(r'^xslt/(?P<pk>[\w-]+)/edit/$', admin_ajax.EditXSLTView.as_view(),
+        name='core_main_app_edit_xslt'),
     url(r'^xslt$', admin_views.XSLTView.as_view(), name='core_main_app_xslt'),
     url(r'^xslt/upload$', admin_views.UploadXSLTView.as_view(), name='core_main_app_upload_xslt'),
-    url(r'^xslt/edit', admin_ajax.edit_xslt_name, name='core_main_app_edit_xslt'),
     url(r'^xslt/delete', admin_ajax.delete_xslt, name='core_main_app_delete_xslt'),
 
     url(r'^edit-rights/(?P<workspace_id>\w+)$', common_views.EditWorkspaceRights.as_view(administration=True),

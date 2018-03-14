@@ -21,9 +21,8 @@
         <tr objectid="{{ elt.id }}">
             <td>{{ elt.name }}</td>
             <td>
-                <a class="btn btn-default edit-xslt-btn" href="#">
-                    <i class="fa fa-edit"></i> Edit
-                </a>
+                {% url 'admin:core_main_app_edit_xslt' elt.id as edit_url %}
+                {% include 'core_main_app/common/buttons/edit.html' %}
                 <a class="btn btn-danger delete-xslt-btn" href="#">
                     <i class="fa fa-trash"></i> Delete
                 </a>

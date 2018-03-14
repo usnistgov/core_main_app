@@ -18,7 +18,9 @@ from core_main_app.components.xsl_transformation import api as xslt_transformati
 from core_main_app.components.xsl_transformation.models import XslTransformation
 from core_main_app.utils.rendering import admin_render
 from core_main_app.utils.xml import get_imports_and_includes
+from core_main_app.views.admin.ajax import EditXSLTView
 from core_main_app.views.admin.forms import UploadTemplateForm, UploadVersionForm, UploadXSLTForm
+from core_main_app.views.common.ajax import EditTemplateVersionManagerView
 from core_main_app.views.common.views import read_xsd_file
 from core_main_app.views.user.views import get_context_manage_template_versions
 
@@ -63,19 +65,16 @@ def manage_templates(request):
                         "is_raw": False
                     },
                     {
-                        "path": 'core_main_app/common/js/templates/list/modals/edit.js',
-                        "is_raw": False
-                    },
-                    {
                         "path": 'core_main_app/common/js/templates/list/modals/disable.js',
                         "is_raw": False
-                    }
+                    },
+                    EditTemplateVersionManagerView.get_modal_js_path()
                 ]
             }
 
     modals = [
-                "core_main_app/admin/templates/list/modals/edit.html",
-                "core_main_app/admin/templates/list/modals/disable.html"
+                "core_main_app/admin/templates/list/modals/disable.html",
+                EditTemplateVersionManagerView.get_modal_html_path()
             ]
 
     return admin_render(request,
@@ -323,20 +322,17 @@ class XSLTView(View):
     @staticmethod
     def get(request, *args, **kwargs):
         modals = [
-            "core_main_app/admin/xslt/list/modals/edit.html",
-            "core_main_app/admin/xslt/list/modals/delete.html"
+            "core_main_app/admin/xslt/list/modals/delete.html",
+            EditXSLTView.get_modal_html_path()
         ]
 
         assets = {
             "js": [
                 {
-                    "path": "core_main_app/admin/js/xslt/list/modals/edit.js",
-                    "is_raw": False
-                },
-                {
                     "path": "core_main_app/admin/js/xslt/list/modals/delete.js",
                     "is_raw": False
-                }
+                },
+                EditXSLTView.get_modal_js_path()
             ],
         }
 
@@ -346,8 +342,8 @@ class XSLTView(View):
             "update_url": reverse('admin:core_main_app_upload_xslt')
         }
 
-        return admin_render(request, "core_main_app/admin/xslt/list.html", modals=modals, assets=assets,
-                            context=context)
+        return admin_render(request, "core_main_app/admin/xslt/list.html", modals=modals,
+                            assets=assets, context=context)
 
 
 class UploadXSLTView(View):

@@ -1,10 +1,34 @@
 """Forms for admin views
 """
 from django import forms
-from core_main_app.views.admin.commons.upload.forms import UploadForm
-from core_main_app.components.xsl_transformation import api as xsl_transformation_api
-from core_main_app.components.template import api as template_api
+from mongodbforms import DocumentForm
+
 from core_main_app.commons.validators import ExtensionValidator
+from core_main_app.components.template import api as template_api
+from core_main_app.components.template_version_manager.models import TemplateVersionManager
+from core_main_app.components.xsl_transformation import api as xsl_transformation_api
+from core_main_app.components.xsl_transformation.models import XslTransformation
+from core_main_app.views.admin.commons.upload.forms import UploadForm
+
+
+class EditTemplateForm(DocumentForm):
+    title = forms.CharField(label='Name',
+                            widget=forms.TextInput(attrs={'class': 'form-control',
+                                                          'placeholder': 'Type the new name'}))
+
+    class Meta:
+        document = TemplateVersionManager
+        fields = ['title']
+
+
+class EditXSLTForm(DocumentForm):
+    name = forms.CharField(label='Name',
+                            widget=forms.TextInput(attrs={'class': 'form-control',
+                                                          'placeholder': 'Type the new name'}))
+
+    class Meta:
+        document = XslTransformation
+        fields = ['name']
 
 
 class UploadTemplateForm(UploadForm):

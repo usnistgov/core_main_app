@@ -1,16 +1,21 @@
 """Admin AJAX views
 """
+import HTMLParser
 import json
 
-from django.http.response import HttpResponse, HttpResponseBadRequest
-from core_main_app.components.xsl_transformation import api as xsl_transformation_api
+from django.core.urlresolvers import reverse_lazy
+from django.http.response import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
+
+from core_main_app.commons.exceptions import NotUniqueError
 from core_main_app.components.template.api import init_template_with_dependencies
 from core_main_app.components.template.models import Template
-from core_main_app.components.template_version_manager.models import TemplateVersionManager
 from core_main_app.components.template_version_manager import api as template_version_manager_api
+from core_main_app.components.template_version_manager.models import TemplateVersionManager
 from core_main_app.components.version_manager import api as version_manager_api
-from core_main_app.commons.exceptions import NotUniqueError
-import HTMLParser
+from core_main_app.components.xsl_transformation import api as xsl_transformation_api
+from core_main_app.components.xsl_transformation.models import XslTransformation
+from core_main_app.views.admin.forms import EditXSLTForm
+from core_main_app.views.common.ajax import EditObjectModalView
 
 
 def resolve_dependencies(request):
@@ -79,6 +84,27 @@ def _get_xsd_content_from_html(xsd_content):
     html_parser = HTMLParser.HTMLParser()
     xsd_content = str(html_parser.unescape(xsd_content).encode("utf-8"))
     return xsd_content
+
+
+class EditXSLTView(EditObjectModalView):
+    form_class = EditXSLTForm
+    model = XslTransformation
+    success_url = reverse_lazy("admin:core_main_app_xslt")
+
+    def _save(self, form):
+        # Save treatment.
+        # It should return an HttpResponse.
+        try:
+            xsl_transformation_api.upsert(self.object)
+        except NotUniqueError:
+            form.add_error(None, "An object with the same name already exists. Please choose "
+                                 "another name.")
+            return super(EditXSLTView, self).form_invalid(form)
+        except Exception, e:
+            form.add_error(None, e.message)
+            return super(EditXSLTView, self).form_invalid(form)
+
+        return HttpResponseRedirect(self.get_success_url())
 
 
 def edit_xslt_name(request):

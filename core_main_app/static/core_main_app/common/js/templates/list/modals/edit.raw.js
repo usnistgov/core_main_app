@@ -1,1 +1,0 @@
-var editTemplatePostUrl = "{% url 'core_main_app_edit_template' %}";

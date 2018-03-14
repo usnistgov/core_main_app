@@ -24,9 +24,8 @@
                    href="{% url 'admin:core_main_app_manage_template_versions' object.id %}">
                     <i class="fa fa-list"></i> Versions
                 </a>
-                <span class="icon legend edit" objectid="{{ object.id }}">
-                    <a class="btn btn-default" href="#"><i class="fa fa-edit"></i> Edit</a>
-                </span>
+                {% url 'core_main_app_edit_template' object.id as edit_url %}
+                {% include 'core_main_app/common/buttons/edit.html' %}
                 <span class="icon legend delete" objectid="{{ object.id }}">
                     <a class="btn btn-danger" href="#"><i class="fa fa-trash"></i> Disable </a>
                 </span>
