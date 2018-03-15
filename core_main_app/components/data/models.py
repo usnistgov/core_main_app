@@ -60,17 +60,16 @@ class Data(AbstractData):
         return Data.objects(user_id__nin=str(user_id)).all()
 
     @staticmethod
-    def get_all_by_id_list(list_id, distinct_by=None):
+    def get_all_by_id_list(list_id):
         """ Return the object with the given list id.
 
         Args:
             list_id:
-            distinct_by:
 
         Returns:
             Object collection
         """
-        return Data.objects(pk__in=list_id).distinct(distinct_by)
+        return Data.objects(pk__in=list_id)
 
     @staticmethod
     def get_by_id(data_id):

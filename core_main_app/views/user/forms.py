@@ -79,7 +79,6 @@ class ChangeWorkspaceForm(forms.Form):
         self.WORKSPACES_OPTIONS.append(('', '-----------'))
 
         # We retrieve all workspaces with write access, or all workspaces if administration
-        all_workspaces = []
         if is_administration:
             all_workspaces = workspace_api.get_all()
         else:
