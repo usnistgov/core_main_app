@@ -3,6 +3,7 @@
  */
 var modal = null;
 
+
 editOpenModal = function(event) {
     event.preventDefault();
     var url = $(this).find('a').attr("href");
@@ -13,8 +14,8 @@ editOpenModal = function(event) {
 };
 
 editSave = function(event) {
+    event.preventDefault();
     var form = $(modal).find('form');
-
     $.ajax({
         type: $(form).attr('method'),
         url: $(form).attr('action'),
@@ -22,6 +23,7 @@ editSave = function(event) {
         success: function (xhr, ajaxOptions, thrownError) {
             if ( $(xhr).find('.errorlist').length > 0 ) {
                 $(modal).find('.modal-body').html(xhr);
+                $(modal).trigger('error.bs.modal');
             } else {
                 location.reload();;
             }
@@ -29,6 +31,7 @@ editSave = function(event) {
         error: function (xhr, ajaxOptions, thrownError) {
             if ( $(xhr).find('.errorlist').length > 0 ) {
                 $(modal).find('.modal-body').html(xhr);
+                $(modal).trigger('error.bs.modal');
             }
         }
     });
@@ -37,6 +40,8 @@ editSave = function(event) {
 $(document).ready(function() {
     modal = $('#edit-object-modal');
     $('.edit').on('click', editOpenModal);
-    $(modal).find('form').on('submit', editSave);
     $('#edit-object-save').on('click', editSave);
+    $(modal).on('show.bs.modal error.bs.modal', function (e) {
+        $(modal).find('form').on('submit', editSave);
+    })
 });
