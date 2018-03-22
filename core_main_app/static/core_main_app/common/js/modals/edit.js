@@ -20,19 +20,18 @@ editSave = function(event) {
         type: $(form).attr('method'),
         url: $(form).attr('action'),
         data: $(form).serialize(),
-        success: function (xhr, ajaxOptions, thrownError) {
-            if ( $(xhr).find('.errorlist').length > 0 ) {
-                $(modal).find('.modal-body').html(xhr);
+        success: function (xhr) {
+            if(xhr.is_valid){
+                window.location.href = xhr.url;
+            }
+            else {
+                $(modal).find('.modal-body').html(xhr.responseText);
                 $(modal).trigger('error.bs.modal');
-            } else {
-                location.reload();;
             }
         },
         error: function (xhr, ajaxOptions, thrownError) {
-            if ( $(xhr).find('.errorlist').length > 0 ) {
-                $(modal).find('.modal-body').html(xhr);
-                $(modal).trigger('error.bs.modal');
-            }
+            $(modal).find('.modal-body').html(xhr.responseText);
+            $(modal).trigger('error.bs.modal');
         }
     });
 };

@@ -4,8 +4,8 @@
 import json
 
 from django.contrib import messages
-from django.http.response import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.core.urlresolvers import reverse_lazy
+from django.http.response import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.views.generic.edit import UpdateView
 
 from core_main_app.commons import exceptions
@@ -24,18 +24,37 @@ class EditObjectModalView(UpdateView):
     form_class = None
     model = None
     success_url = None
+    success_message = None
+
+    def form_invalid(self, form):
+        # Get initial response
+        response = super(EditObjectModalView, self).form_invalid(form)
+        data = {
+            'is_valid': False,
+            'responseText': response.rendered_content
+        }
+        return JsonResponse(data)
 
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
-        # It should return an HttpResponse.
-        redirect_url = self._save(form)
+        # Call private save method
+        self._save(form)
+        if form.is_valid():
+            data = {
+                'is_valid': True,
+                'url': self.get_success_url(),
+            }
 
-        return redirect_url
+            if self.success_message:
+                messages.success(self.request, self.success_message)
+
+            return JsonResponse(data)
+        else:
+            return self.form_invalid(form)
 
     def _save(self, form):
         # Save treatment.
-        # It should return an HttpResponse.
-        return super(EditObjectModalView, self).form_valid(form)
+        super(EditObjectModalView, self).form_valid(form)
 
     @staticmethod
     def get_modal_html_path():
@@ -50,22 +69,17 @@ class EditTemplateVersionManagerView(EditObjectModalView):
     form_class = EditTemplateForm
     model = TemplateVersionManager
     success_url = reverse_lazy("admin:core_main_app_templates")
+    success_message = 'Name edited with success.'
 
     def _save(self, form):
         # Save treatment.
-        # It should return an HttpResponse.
         try:
             template_version_manager_api.edit_title(self.object, form.cleaned_data.get('title'))
-            messages.add_message(self.request, messages.SUCCESS, 'Name edited with success.')
         except exceptions.NotUniqueError:
             form.add_error(None, "An object with the same name already exists. Please choose "
                                  "another name.")
-            return super(EditTemplateVersionManagerView, self).form_invalid(form)
         except Exception, e:
             form.add_error(None, e.message)
-            return super(EditTemplateVersionManagerView, self).form_invalid(form)
-
-        return HttpResponseRedirect(self.get_success_url())
 
 
 def disable_version_manager(request):

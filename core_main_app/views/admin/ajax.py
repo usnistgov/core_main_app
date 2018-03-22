@@ -4,7 +4,7 @@ import HTMLParser
 import json
 
 from django.core.urlresolvers import reverse_lazy
-from django.http.response import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.http.response import HttpResponse, HttpResponseBadRequest
 
 from core_main_app.commons.exceptions import NotUniqueError
 from core_main_app.components.template.api import init_template_with_dependencies
@@ -90,21 +90,17 @@ class EditXSLTView(EditObjectModalView):
     form_class = EditXSLTForm
     model = XslTransformation
     success_url = reverse_lazy("admin:core_main_app_xslt")
+    success_message = 'XSLT edited with success.'
 
     def _save(self, form):
         # Save treatment.
-        # It should return an HttpResponse.
         try:
             xsl_transformation_api.upsert(self.object)
         except NotUniqueError:
             form.add_error(None, "An object with the same name already exists. Please choose "
                                  "another name.")
-            return super(EditXSLTView, self).form_invalid(form)
         except Exception, e:
             form.add_error(None, e.message)
-            return super(EditXSLTView, self).form_invalid(form)
-
-        return HttpResponseRedirect(self.get_success_url())
 
 
 def edit_xslt_name(request):
