@@ -3,7 +3,11 @@
 from django.test.testcases import SimpleTestCase
 
 from core_main_app.commons.exceptions import CoreError
-from tests.test_settings import database as settings_database
+from core_main_app.utils.databases.mongoengine_database import Database
+
+
+MOCK_DATABASE_NAME = 'db_mock'
+MOCK_DATABASE_HOST = 'mongomock://localhost'
 
 
 class MongoIntegrationBaseTestCase(SimpleTestCase):
@@ -14,12 +18,31 @@ class MongoIntegrationBaseTestCase(SimpleTestCase):
     """
         Fields
     """
-    database = settings_database     # database to use
+    database = None     # database to use
     fixture = None      # data fixture from component's tests
 
     """
         Methods
     """
+
+    @classmethod
+    def setUpClass(cls):
+        """ Open a connection to the database.
+
+        Returns:
+
+        """
+        # open an connection to a mock database
+        cls.database = Database(MOCK_DATABASE_HOST, MOCK_DATABASE_NAME)
+        cls.database.connect()
+
+    @classmethod
+    def tearDownClass(cls):
+        """ Disconnect the database.
+        Returns:
+
+        """
+        cls.database.disconnect()
 
     def setUp(self):
         """ Insert needed data.
