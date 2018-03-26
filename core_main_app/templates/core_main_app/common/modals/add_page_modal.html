@@ -1,0 +1,12 @@
+{% extends 'core_main_app/_render/admin/theme/tools/modal.html' %}
+
+{% block modal_id %}add-object-modal{% endblock %}
+{% block modal_title %}Add {{ data.object_name }}{% endblock %}
+
+{% block modal_body %}
+{% endblock %}
+
+{% block modal_footer %}
+<a class="btn btn-default pull-left" data-dismiss="modal" href="#"><i class="fa fa-times"></i> Close</a>
+<a id="add-object-save" class="btn btn-primary" href="#"><i class="fa fa-save"></i> Add</a>
+{% endblock %}

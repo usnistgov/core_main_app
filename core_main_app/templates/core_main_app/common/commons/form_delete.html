@@ -1,0 +1,5 @@
+<form action="{{ view.request.path }}" method="post">
+    <p>Are you sure you want to delete <i>{{ object_name }}</i> ?</p>
+    {% csrf_token %}
+    {{ form }}
+</form>
