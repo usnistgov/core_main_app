@@ -35,7 +35,7 @@ class TestPostXslTransformation(SimpleTestCase):
         self.data = None
 
     @patch.object(XslTransformation, 'save_object')
-    def test_post_xsl_document_returns_status_401_if_user_is_not_admin(self, mock_save):
+    def test_post_xsl_document_returns_status_403_if_user_is_not_admin(self, mock_save):
         # Arrange
         user = MockUser('0')
 
@@ -43,7 +43,7 @@ class TestPostXslTransformation(SimpleTestCase):
         response = RequestMock.do_request_post(xsl_views.XslTransformationList.as_view(), user, self.data)
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @unittest.skip("Not working on Jenkins")
     @patch.object(XslTransformation, 'save_object')

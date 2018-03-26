@@ -182,11 +182,11 @@ def api_staff_member_required():
             Returns:
 
             """
-            if request.user.is_staff:
+            if request.user.is_superuser or request.user.is_staff:
                 return view_func(request, *args, **kwargs)
             else:
                 content = {'message': 'Only administrators can use this feature.'}
-                return Response(content, status=status.HTTP_401_UNAUTHORIZED)
+                return Response(content, status=status.HTTP_403_FORBIDDEN)
 
         return wrapper
     return _check_group
@@ -238,7 +238,7 @@ def api_permission_required(content_type, permission, raise_exception=False):
                     raise PermissionDenied
                 else:
                     content = {'message': 'You don\'t have enough rights to use this feature.'}
-                    return Response(content, status=status.HTTP_401_UNAUTHORIZED)
+                    return Response(content, status=status.HTTP_403_FORBIDDEN)
 
         return wrapper
     return _check_group

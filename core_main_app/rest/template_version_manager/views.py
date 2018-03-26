@@ -152,7 +152,6 @@ class UserTemplateList(AbstractTemplateList):
         return str(self.request.user.id)
 
 
-# TODO: check status - now accessible to users with staff status (superuser only not accepted)
 class GlobalTemplateList(AbstractTemplateList):
     """ Create a global template (owner is None)
     """

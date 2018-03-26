@@ -138,7 +138,7 @@ class BlobDetail(APIView):
 
             # Check rights
             if str(request.user.id) != blob_object.user_id or not request.user.is_staff:
-                return Response(status=status.HTTP_401_UNAUTHORIZED)
+                return Response(status=status.HTTP_403_FORBIDDEN)
 
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Http404:

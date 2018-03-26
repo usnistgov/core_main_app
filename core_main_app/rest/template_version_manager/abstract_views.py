@@ -123,7 +123,7 @@ class AbstractStatusTemplateVersion(APIView):
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except AccessControlError as access_error:
             content = {'message': access_error.message}
-            return Response(content, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
         except ValidationError as validation_exception:
             content = {'message': validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
@@ -197,7 +197,7 @@ class AbstractStatusTemplateVersionManager(AbstractTemplateVersionManagerDetail)
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except AccessControlError as access_error:
             content = {'message': access_error.message}
-            return Response(content, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
         except ValidationError as validation_exception:
             content = {'message': validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)

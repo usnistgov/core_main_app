@@ -37,7 +37,7 @@ class TestPostXslTransformationList(MongoIntegrationBaseTestCase):
         super(TestPostXslTransformationList, self).setUp()
         self.data = None
 
-    def test_post_returns_status_401_if_user_is_unauthorized(self):
+    def test_post_returns_status_403_if_user_is_unauthorized(self):
         # Arrange
         user = MockUser('0')
 
@@ -47,7 +47,7 @@ class TestPostXslTransformationList(MongoIntegrationBaseTestCase):
                                                self.data)
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_post_returns_status_400_if_data_are_not_valid_with_admin_user(self):
         # Arrange
@@ -144,7 +144,7 @@ class TestDeleteXslTransformationDetail(MongoIntegrationBaseTestCase):
         super(TestDeleteXslTransformationDetail, self).setUp()
         self.data = None
 
-    def test_delete_raise_401_if_user_is_unauthorized(self):
+    def test_delete_raise_403_if_user_is_unauthorized(self):
         # Arrange
         user = MockUser('0')
         self.param = {
@@ -158,7 +158,7 @@ class TestDeleteXslTransformationDetail(MongoIntegrationBaseTestCase):
                                                  self.param)
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_delete_raise_404_when_not_found(self):
         # Arrange
@@ -216,7 +216,7 @@ class TestPatchXslTransformationDetail(MongoIntegrationBaseTestCase):
         super(TestPatchXslTransformationDetail, self).setUp()
         self.data = None
 
-    def test_patch_raise_401_if_user_is_authorized(self):
+    def test_patch_raise_403_if_user_is_authorized(self):
         # Arrange
         user = MockUser('0')
         self.param = {
@@ -230,7 +230,7 @@ class TestPatchXslTransformationDetail(MongoIntegrationBaseTestCase):
                                                 self.param)
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_patch_raise_404_when_not_found(self):
         # Arrange

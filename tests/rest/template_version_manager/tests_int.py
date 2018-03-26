@@ -267,7 +267,7 @@ class TestTemplateVersion(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def post_to_other_user_returns_http_401(self):
+    def post_to_other_user_returns_http_403(self):
         # Arrange
         user = MockUser('2')
 
@@ -278,7 +278,7 @@ class TestTemplateVersion(MongoIntegrationBaseTestCase):
                                                param={'pk': str(self.fixture.template_vm_2.id)})
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def post_to_other_user_as_superuser_returns_http_201(self):
         # Arrange
@@ -306,7 +306,7 @@ class TestTemplateVersion(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def post_to_global_as_user_returns_http_401(self):
+    def post_to_global_as_user_returns_http_403(self):
         # Arrange
         user = MockUser('2')
 
@@ -317,7 +317,7 @@ class TestTemplateVersion(MongoIntegrationBaseTestCase):
                                                param={'pk': str(self.fixture.template_vm_1.id)})
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class TestUserTemplateList(MongoIntegrationBaseTestCase):
@@ -457,7 +457,6 @@ class TestGlobalTemplateList(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    @unittest.skip("GlobalTemplateList using api_staff_member_required")
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_post_returns_http_201_if_user_is_superuser(self):
         # Arrange
@@ -472,7 +471,7 @@ class TestGlobalTemplateList(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
-    def test_post_returns_http_401_if_user_does_not_have_permission(self):
+    def test_post_returns_http_403_if_user_does_not_have_permission(self):
         # Arrange
         user = MockUser('1')
 
@@ -482,7 +481,7 @@ class TestGlobalTemplateList(MongoIntegrationBaseTestCase):
                                                data=self.data)
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_post_owner_is_global(self):
@@ -542,7 +541,7 @@ class TestCurrentTemplateVersion(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_patch_global_as_user_returns_http_401(self):
+    def test_patch_global_as_user_returns_http_403(self):
         # Arrange
         user = MockUser('2')
 
@@ -552,9 +551,9 @@ class TestCurrentTemplateVersion(MongoIntegrationBaseTestCase):
                                                 param={'pk': str(self.fixture.template_1_1.id)})
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_patch_other_user_returns_http_401(self):
+    def test_patch_other_user_returns_http_403(self):
         # Arrange
         user = MockUser('2')
 
@@ -564,7 +563,7 @@ class TestCurrentTemplateVersion(MongoIntegrationBaseTestCase):
                                                 param={'pk': str(self.fixture.template_2_1.id)})
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class TestDisableTemplateVersion(MongoIntegrationBaseTestCase):
@@ -618,7 +617,7 @@ class TestDisableTemplateVersion(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_patch_global_as_user_returns_http_401(self):
+    def test_patch_global_as_user_returns_http_403(self):
         # Arrange
         user = MockUser('2')
 
@@ -628,9 +627,9 @@ class TestDisableTemplateVersion(MongoIntegrationBaseTestCase):
                                                 param={'pk': str(self.fixture.template_1_1.id)})
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_patch_other_user_returns_http_401(self):
+    def test_patch_other_user_returns_http_403(self):
         # Arrange
         user = MockUser('2')
 
@@ -640,7 +639,7 @@ class TestDisableTemplateVersion(MongoIntegrationBaseTestCase):
                                                 param={'pk': str(self.fixture.template_2_1.id)})
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class TestRestoreTemplateVersion(MongoIntegrationBaseTestCase):
@@ -682,7 +681,7 @@ class TestRestoreTemplateVersion(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_patch_global_as_user_returns_http_401(self):
+    def test_patch_global_as_user_returns_http_403(self):
         # Arrange
         user = MockUser('1')
 
@@ -692,9 +691,9 @@ class TestRestoreTemplateVersion(MongoIntegrationBaseTestCase):
                                                 param={'pk': str(self.fixture.template_1_2.id)})
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_patch_other_user_returns_http_401(self):
+    def test_patch_other_user_returns_http_403(self):
         # Arrange
         user = MockUser('2')
 
@@ -704,7 +703,7 @@ class TestRestoreTemplateVersion(MongoIntegrationBaseTestCase):
                                                 param={'pk': str(self.fixture.template_2_1.id)})
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class TestDisableTemplateVersionManager(MongoIntegrationBaseTestCase):
@@ -747,7 +746,7 @@ class TestDisableTemplateVersionManager(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_patch_global_as_user_returns_http_401(self):
+    def test_patch_global_as_user_returns_http_403(self):
         # Arrange
         user = MockUser('2')
 
@@ -757,9 +756,9 @@ class TestDisableTemplateVersionManager(MongoIntegrationBaseTestCase):
                                                 param={'pk': str(self.fixture.template_vm_1.id)})
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_patch_other_user_returns_http_401(self):
+    def test_patch_other_user_returns_http_403(self):
         # Arrange
         user = MockUser('2')
 
@@ -769,7 +768,7 @@ class TestDisableTemplateVersionManager(MongoIntegrationBaseTestCase):
                                                 param={'pk': str(self.fixture.template_vm_2.id)})
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class TestRestoreTemplateVersionManager(MongoIntegrationBaseTestCase):
@@ -812,7 +811,7 @@ class TestRestoreTemplateVersionManager(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_patch_global_as_user_returns_http_401(self):
+    def test_patch_global_as_user_returns_http_403(self):
         # Arrange
         user = MockUser('1')
 
@@ -822,9 +821,9 @@ class TestRestoreTemplateVersionManager(MongoIntegrationBaseTestCase):
                                                 param={'pk': str(self.fixture.template_vm_1.id)})
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_patch_other_user_returns_http_401(self):
+    def test_patch_other_user_returns_http_403(self):
         # Arrange
         user = MockUser('2')
 
@@ -834,4 +833,4 @@ class TestRestoreTemplateVersionManager(MongoIntegrationBaseTestCase):
                                                 param={'pk': str(self.fixture.template_vm_2.id)})
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
