@@ -36,8 +36,9 @@ admin_urls = [
         name='core_main_app_edit_xslt'),
     url(r'^xslt$', admin_views.XSLTView.as_view(), name='core_main_app_xslt'),
     url(r'^xslt/upload$', admin_views.UploadXSLTView.as_view(), name='core_main_app_upload_xslt'),
-    url(r'^xslt/delete', admin_ajax.delete_xslt, name='core_main_app_delete_xslt'),
-
+    url(r'^xslt/(?P<pk>[\w-]+)/delete/$',
+        admin_ajax.DeleteXSLTView.as_view(),
+        name='core_main_app_delete_xslt'),
     url(r'^edit-rights/(?P<workspace_id>\w+)$', common_views.EditWorkspaceRights.as_view(administration=True),
         name='core_main_edit_rights_workspace'),
 ]

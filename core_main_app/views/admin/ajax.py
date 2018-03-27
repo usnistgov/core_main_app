@@ -15,7 +15,7 @@ from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.components.xsl_transformation import api as xsl_transformation_api
 from core_main_app.components.xsl_transformation.models import XslTransformation
 from core_main_app.views.admin.forms import EditXSLTForm
-from core_main_app.views.common.ajax import EditObjectModalView
+from core_main_app.views.common.ajax import EditObjectModalView, DeleteObjectModalView
 
 
 def resolve_dependencies(request):
@@ -103,41 +103,12 @@ class EditXSLTView(EditObjectModalView):
             form.add_error(None, e.message)
 
 
-def edit_xslt_name(request):
-    """Edit the xslt.
+class DeleteXSLTView(DeleteObjectModalView):
+    model = XslTransformation
+    success_url = reverse_lazy("admin:core_main_app_xslt")
+    success_message = 'XSLT deleted with success.'
+    field_for_name = 'name'
 
-    Args:
-        request:
-
-    Returns:
-
-    """
-    try:
-        xslt = xsl_transformation_api.get_by_id(request.POST['id'])
-        name = request.POST['name']
-        xslt.name = name
-        xsl_transformation_api.upsert(xslt)
-    except NotUniqueError:
-        return HttpResponseBadRequest("Name already exists.")
-    except Exception, e:
-        return HttpResponseBadRequest(e.message)
-
-    return HttpResponse(json.dumps({}), content_type='application/javascript')
-
-
-def delete_xslt(request):
-    """Delete the xslt.
-
-    Args:
-        request:
-
-    Returns:
-
-    """
-    try:
-        xslt = xsl_transformation_api.get_by_id(request.POST['id'])
-        xsl_transformation_api.delete(xslt)
-    except Exception, e:
-        return HttpResponseBadRequest(e.message)
-
-    return HttpResponse(json.dumps({}), content_type='application/javascript')
+    def _delete(self, request, *args, **kwargs):
+        # Delete treatment.
+        xsl_transformation_api.delete(self.object)

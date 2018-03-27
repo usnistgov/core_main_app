@@ -23,9 +23,8 @@
             <td>
                 {% url 'admin:core_main_app_edit_xslt' elt.id as edit_url %}
                 {% include 'core_main_app/common/buttons/edit.html' %}
-                <a class="btn btn-danger delete-xslt-btn" href="#">
-                    <i class="fa fa-trash"></i> Delete
-                </a>
+                {% url 'admin:core_main_app_delete_xslt' elt.id as delete_url %}
+                {% include 'core_main_app/common/buttons/delete.html' %}
             </td>
         </tr>
     {% empty %}

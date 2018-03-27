@@ -20,7 +20,7 @@ from core_main_app.utils.rendering import admin_render
 from core_main_app.utils.xml import get_imports_and_includes
 from core_main_app.views.admin.ajax import EditXSLTView
 from core_main_app.views.admin.forms import UploadTemplateForm, UploadVersionForm, UploadXSLTForm
-from core_main_app.views.common.ajax import EditTemplateVersionManagerView
+from core_main_app.views.common.ajax import EditTemplateVersionManagerView, DeleteObjectModalView
 from core_main_app.views.common.views import read_xsd_file
 from core_main_app.views.user.views import get_context_manage_template_versions
 
@@ -322,17 +322,14 @@ class XSLTView(View):
     @staticmethod
     def get(request, *args, **kwargs):
         modals = [
-            "core_main_app/admin/xslt/list/modals/delete.html",
-            EditXSLTView.get_modal_html_path()
+            EditXSLTView.get_modal_html_path(),
+            DeleteObjectModalView.get_modal_html_path()
         ]
 
         assets = {
             "js": [
-                {
-                    "path": "core_main_app/admin/js/xslt/list/modals/delete.js",
-                    "is_raw": False
-                },
-                EditXSLTView.get_modal_js_path()
+                EditXSLTView.get_modal_js_path(),
+                DeleteObjectModalView.get_modal_js_path()
             ],
         }
 

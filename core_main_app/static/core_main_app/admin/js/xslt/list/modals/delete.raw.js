@@ -1,1 +1,0 @@
-var deleteXSLTPostUrl = "{% url 'admin:core_main_app_delete_xslt' %}";
