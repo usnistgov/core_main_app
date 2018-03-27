@@ -1,4 +1,4 @@
-""" Fixtures files for Data
+""" Fixtures files for Blobs
 """
 from core_main_app.components.blob.models import Blob
 from core_main_app.utils.integration_tests.fixture_interface import FixtureInterface
@@ -10,6 +10,7 @@ class BlobFixtures(FixtureInterface):
     blob_1 = None
     blob_2 = None
     blob_3 = None
+    blob_collection = None
 
     def insert_data(self):
         """ Insert a set of Blobs.
@@ -32,10 +33,14 @@ class BlobFixtures(FixtureInterface):
         # NOTE: no real file to avoid using unsupported GridFS mock
         self.blob_1 = Blob(filename='blob1',
                            user_id='1',
-                           handle='handle1')
+                           handle='handle1').save()
         self.blob_2 = Blob(filename='blob2',
                            user_id='1',
-                           handle='handle2')
+                           handle='handle2').save()
         self.blob_3 = Blob(filename='blob3',
                            user_id='2',
-                           handle='handle3')
+                           handle='handle3').save()
+
+        self.blob_collection = [self.blob_1,
+                                self.blob_2,
+                                self.blob_3]

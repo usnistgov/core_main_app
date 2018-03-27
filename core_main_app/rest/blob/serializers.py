@@ -1,14 +1,16 @@
 """
     Serializers used throughout the Rest API
 """
-from rest_framework.exceptions import ValidationError
+from django.http import Http404
+from rest_framework.fields import CharField
 from rest_framework.fields import FileField, SerializerMethodField
-from rest_framework_mongoengine.fields import ReferenceField
 from rest_framework_mongoengine.serializers import DocumentSerializer
 
 import core_main_app.components.blob.api as blob_api
+from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.blob.utils import get_blob_download_uri
+from core_main_app.utils.access_control.exceptions import AccessControlError
 
 
 class BlobSerializer(DocumentSerializer):
@@ -22,6 +24,7 @@ class BlobSerializer(DocumentSerializer):
         model = Blob
         fields = ['id',
                   'user_id',
+                  'filename',
                   'handle',
                   'blob',
                   'upload_date']
@@ -75,25 +78,28 @@ class BlobSerializer(DocumentSerializer):
 class DeleteBlobsSerializer(DocumentSerializer):
     """ Delete Blob serializer.
     """
-    id = ReferenceField(Blob)
+    id = CharField()
 
     class Meta:
         model = Blob
         fields = ('id', )
 
-    def validate_id(self, blob):
+    def validate_id(self, id):
         """ Validate id field
 
         Args:
-            blob:
+            id:
 
         Returns:
 
         """
         request = self.context.get('request')
-        blob_object = blob_api.get_by_id(blob.id)
+        try:
+            blob_object = blob_api.get_by_id(id)
+        except DoesNotExist:
+            raise Http404
 
-        if str(request.user.id) != blob_object.user_id or not request.user.is_superuser:
-            raise ValidationError("Unauthorized")
+        if request.user.is_superuser is False and str(request.user.id) != blob_object.user_id:
+            raise AccessControlError("You don't have the permission to delete this id: {0}".format(id))
 
-        return blob.id
+        return id

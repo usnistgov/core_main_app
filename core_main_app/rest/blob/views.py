@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 import core_main_app.components.blob.api as blob_api
 from core_main_app.commons import exceptions
 from core_main_app.rest.blob.serializers import BlobSerializer, DeleteBlobsSerializer
+from core_main_app.utils.access_control.exceptions import AccessControlError
 from core_main_app.utils.file import get_file_http_response
 
 
@@ -18,6 +19,9 @@ class BlobList(APIView):
 
     def get(self, request):
         """ Get all user blobs
+
+        /rest/blob/
+        /rest/blob/?filename=<filename>
 
         Query Params:
             filename: filename
@@ -38,7 +42,7 @@ class BlobList(APIView):
             # Apply filters
             filename = self.request.query_params.get('filename', None)
             if filename is not None:
-                blob_list = blob_list.filter(template=filename)
+                blob_list = blob_list.filter(filename=filename)
 
             # Serialize object
             serializer = BlobSerializer(blob_list, many=True, context={'request': request})
@@ -52,6 +56,12 @@ class BlobList(APIView):
     def post(self, request):
         """ Create blob
 
+        Data:
+            {
+            "blob": "<file>",
+            "filename": "<filename>"
+            }
+
         Args:
             request:
 
@@ -60,7 +70,7 @@ class BlobList(APIView):
         """
         try:
             # Build serializer
-            serializer = BlobSerializer(data=request.data)
+            serializer = BlobSerializer(data=request.data, context={'request': request})
 
             # Validate data
             serializer.is_valid(True)
@@ -137,8 +147,11 @@ class BlobDetail(APIView):
             blob_object = self.get_object(pk)
 
             # Check rights
-            if str(request.user.id) != blob_object.user_id or not request.user.is_staff:
+            if request.user.is_superuser is False and str(request.user.id) != blob_object.user_id:
                 return Response(status=status.HTTP_403_FORBIDDEN)
+
+            # delete object
+            blob_api.delete(blob_object)
 
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Http404:
@@ -193,7 +206,20 @@ class BlobDownload(APIView):
 class BlobDeleteList(APIView):
     """ Delete list of blobs.
     """
-    def post(self, request):
+    def patch(self, request):
+        """ Delete a list of blobs.
+
+        /rest/blobs/delete/
+
+        Data:
+        [{"id":"<blob_id>"},{"id":"<blob_id>"}]
+
+        Args:
+            request:
+
+        Returns:
+
+        """
         try:
             # Serialize data
             serializer = DeleteBlobsSerializer(data=request.data, many=True, context={'request': request})
@@ -215,6 +241,9 @@ class BlobDeleteList(APIView):
         except ValidationError as validation_exception:
             content = {'message': validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        except AccessControlError as access_control_error:
+            content = {'message': access_control_error.message}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {'message': api_exception.message}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
