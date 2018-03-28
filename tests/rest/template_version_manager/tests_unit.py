@@ -8,7 +8,7 @@ from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.template_version_manager.models import TemplateVersionManager
 from core_main_app.components.version_manager.models import VersionManager
 from core_main_app.rest.template_version_manager import views
-from core_main_app.utils.tests_tools.MockUser import MockUser
+from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
 
 
@@ -19,7 +19,7 @@ class TestGlobalTemplateVersionManagerList(SimpleTestCase):
     @patch.object(TemplateVersionManager, 'get_all')
     def test_get_all_returns_http_200(self, mock_get_all):
         # Arrange
-        mock_user = MockUser('1')
+        mock_user = create_mock_user('1')
         mock_get_all.return_value = []
 
         # Mock
@@ -37,7 +37,7 @@ class TestUserTemplateVersionManagerList(SimpleTestCase):
     @patch.object(TemplateVersionManager, 'get_all')
     def test_get_all_returns_http_200(self, mock_get_all):
         # Arrange
-        mock_user = MockUser('1')
+        mock_user = create_mock_user('1')
         mock_get_all.return_value = []
 
         # Mock
@@ -55,7 +55,7 @@ class TestTemplateVersionManagerDetail(SimpleTestCase):
     @patch.object(VersionManager, 'get_by_id')
     def test_get_returns_http_200_when_data_exists(self, mock_get_by_id):
         # Arrange
-        mock_user = MockUser('1')
+        mock_user = create_mock_user('1')
         mock_get_by_id.return_value = TemplateVersionManager()
         # Mock
         response = RequestMock.do_request_get(views.TemplateVersionManagerDetail.as_view(),
@@ -68,7 +68,7 @@ class TestTemplateVersionManagerDetail(SimpleTestCase):
     @patch.object(VersionManager, 'get_by_id')
     def test_get_returns_http_404_when_data_not_found(self, mock_get_by_id):
         # Arrange
-        mock_user = MockUser('1')
+        mock_user = create_mock_user('1')
         mock_get_by_id.side_effect = DoesNotExist("error")
 
         # Mock

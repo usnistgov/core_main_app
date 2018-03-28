@@ -5,7 +5,7 @@ from rest_framework import status
 
 import core_main_app.rest.xsl_transformation.views as xsl_views
 from core_main_app.utils.integration_tests.integration_base_test_case import MongoIntegrationBaseTestCase
-from core_main_app.utils.tests_tools.MockUser import MockUser
+from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
 from tests.rest.xsl_transformation.fixtures.fixtures import XslTransformationFixtures
 
@@ -20,7 +20,7 @@ class TestGetAllXslTransformationList(MongoIntegrationBaseTestCase):
 
     def test_get_all_returns_status_200_with_no_permission_needed(self):
         # Arrange
-        user = MockUser('1')
+        user = create_mock_user('1')
 
         # Act
         response = RequestMock.do_request_get(xsl_views.XslTransformationList.as_view(),
@@ -39,7 +39,7 @@ class TestPostXslTransformationList(MongoIntegrationBaseTestCase):
 
     def test_post_returns_status_403_if_user_is_unauthorized(self):
         # Arrange
-        user = MockUser('0')
+        user = create_mock_user('0')
 
         # Act
         response = RequestMock.do_request_post(xsl_views.XslTransformationList.as_view(),
@@ -51,7 +51,7 @@ class TestPostXslTransformationList(MongoIntegrationBaseTestCase):
 
     def test_post_returns_status_400_if_data_are_not_valid_with_admin_user(self):
         # Arrange
-        user = MockUser('0', True, True)
+        user = create_mock_user('0', True, True)
 
         # Act
         response = RequestMock.do_request_post(xsl_views.XslTransformationList.as_view(),
@@ -63,7 +63,7 @@ class TestPostXslTransformationList(MongoIntegrationBaseTestCase):
 
     def test_post_returns_status_201_if_data_are_valid_with_admin_user(self):
         # Arrange
-        user = MockUser('0', True, True)
+        user = create_mock_user('0', True, True)
         self.data = {
             'name': 'name',
             'filename': 'filename.xsd',
@@ -90,7 +90,7 @@ class TestGetXslTransformationDetail(MongoIntegrationBaseTestCase):
 
     def test_get_returns_object_when_found(self):
         # Arrange
-        user = MockUser('0')
+        user = create_mock_user('0')
         self.param = {
             'pk': self.fixture.data_1.id
         }
@@ -106,7 +106,7 @@ class TestGetXslTransformationDetail(MongoIntegrationBaseTestCase):
 
     def test_get_raise_404_when_not_found(self):
         # Arrange
-        user = MockUser('0')
+        user = create_mock_user('0')
         self.param = {
             'pk': str(ObjectId())
         }
@@ -122,7 +122,7 @@ class TestGetXslTransformationDetail(MongoIntegrationBaseTestCase):
 
     def test_get_raise_500_sever_error_when_general_error_occured(self):
         # Arrange
-        user = MockUser('0')
+        user = create_mock_user('0')
         self.param = {
             'pk': '0'
         }
@@ -146,7 +146,7 @@ class TestDeleteXslTransformationDetail(MongoIntegrationBaseTestCase):
 
     def test_delete_raise_403_if_user_is_unauthorized(self):
         # Arrange
-        user = MockUser('0')
+        user = create_mock_user('0')
         self.param = {
             'pk': str(ObjectId())
         }
@@ -162,7 +162,7 @@ class TestDeleteXslTransformationDetail(MongoIntegrationBaseTestCase):
 
     def test_delete_raise_404_when_not_found(self):
         # Arrange
-        user = MockUser('0', True, True)
+        user = create_mock_user('0', True, True)
         self.param = {
             'pk': str(ObjectId())
         }
@@ -178,7 +178,7 @@ class TestDeleteXslTransformationDetail(MongoIntegrationBaseTestCase):
 
     def test_post_raise_500_sever_error_when_general_error_occured(self):
         # Arrange
-        user = MockUser('0', True, True)
+        user = create_mock_user('0', True, True)
         self.param = {
             'pk': '0'
         }
@@ -194,7 +194,7 @@ class TestDeleteXslTransformationDetail(MongoIntegrationBaseTestCase):
 
     def test_post_return_204_if_document_is_deleted_whit_success(self):
         # Arrange
-        user = MockUser('0', True, True)
+        user = create_mock_user('0', True, True)
         self.param = {
             'pk': self.fixture.data_1.id
         }
@@ -218,7 +218,7 @@ class TestPatchXslTransformationDetail(MongoIntegrationBaseTestCase):
 
     def test_patch_raise_403_if_user_is_authorized(self):
         # Arrange
-        user = MockUser('0')
+        user = create_mock_user('0')
         self.param = {
             'pk': str(ObjectId())
         }
@@ -234,7 +234,7 @@ class TestPatchXslTransformationDetail(MongoIntegrationBaseTestCase):
 
     def test_patch_raise_404_when_not_found(self):
         # Arrange
-        user = MockUser('0', True, True)
+        user = create_mock_user('0', True, True)
         self.param = {
             'pk': str(ObjectId())
         }
@@ -250,7 +250,7 @@ class TestPatchXslTransformationDetail(MongoIntegrationBaseTestCase):
 
     def test_patch_raise_500_sever_error_when_general_error_occured(self):
         # Arrange
-        user = MockUser('0', True, True)
+        user = create_mock_user('0', True, True)
         self.param = {
             'pk': '0'
         }
@@ -266,7 +266,7 @@ class TestPatchXslTransformationDetail(MongoIntegrationBaseTestCase):
 
     def test_patch_returns_200_when_data_are_valid_with_authorized_user(self):
         # Arrange
-        user = MockUser('0', True, True)
+        user = create_mock_user('0', True, True)
         self.param = {
             'pk': self.fixture.data_1.id
         }
@@ -295,7 +295,7 @@ class TestPostXslTransformationTransform(MongoIntegrationBaseTestCase):
 
     def test_post_raise_error_500_if_xslt_does_not_exist(self):
         # Arrange
-        user = MockUser('0')
+        user = create_mock_user('0')
 
         self.data = {
             'xml_content': 'xml_content',
@@ -312,7 +312,7 @@ class TestPostXslTransformationTransform(MongoIntegrationBaseTestCase):
 
     def test_post_return_status_200_if_xml_and_xslt_name_are_valid_parameters(self):
         # Arrange
-        user = MockUser('0')
+        user = create_mock_user('0')
 
         self.data = {
             'xml_content': '<test></test>',

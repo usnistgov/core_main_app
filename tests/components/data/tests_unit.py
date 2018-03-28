@@ -10,7 +10,7 @@ from core_main_app.commons import exceptions
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
 from core_main_app.utils.access_control.exceptions import AccessControlError
-from core_main_app.utils.tests_tools.MockUser import MockUser
+from core_main_app.utils.tests_tools.MockUser import create_mock_user
 
 
 class TestDataGetById(TestCase):
@@ -206,4 +206,4 @@ def _create_data(template, user_id, title, content):
 
 
 def _create_user(user_id):
-    return MockUser(user_id)
+    return create_mock_user(user_id)

@@ -7,7 +7,7 @@ from core_main_app.components.data.models import Data
 from core_main_app.rest.data import views as data_rest_views
 from core_main_app.utils.integration_tests.integration_base_test_case import \
     MongoIntegrationBaseTestCase
-from core_main_app.utils.tests_tools.MockUser import MockUser
+from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
 from tests.components.data.fixtures.fixtures import DataFixtures
 
@@ -22,7 +22,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
 
     def test_get_returns_http_200(self):
         # Arrange
-        user = MockUser('1')
+        user = create_mock_user('1')
 
         # Act
         response = RequestMock.do_request_get(data_rest_views.DataList.as_view(), user)
@@ -32,7 +32,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
 
     def test_get_returns_all_user_data(self):
         # Arrange
-        user = MockUser('1')
+        user = create_mock_user('1')
 
         # Act
         response = RequestMock.do_request_get(data_rest_views.DataList.as_view(), user)
@@ -42,7 +42,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
 
     def test_get_filtered_by_correct_title_returns_data(self):
         # Arrange
-        user = MockUser('1')
+        user = create_mock_user('1')
 
         # Act
         response = RequestMock.do_request_get(data_rest_views.DataList.as_view(),
@@ -54,7 +54,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
 
     def test_get_filtered_by_incorrect_title_returns_no_data(self):
         # Arrange
-        user = MockUser('1')
+        user = create_mock_user('1')
 
         # Act
         response = RequestMock.do_request_get(data_rest_views.DataList.as_view(),
@@ -66,7 +66,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
 
     def test_get_filtered_by_correct_template_returns_data(self):
         # Arrange
-        user = MockUser('1')
+        user = create_mock_user('1')
 
         # Act
         response = RequestMock.do_request_get(data_rest_views.DataList.as_view(),
@@ -78,7 +78,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
 
     def test_get_filtered_by_incorrect_template_returns_no_data(self):
         # Arrange
-        user = MockUser('1')
+        user = create_mock_user('1')
 
         # Act
         response = RequestMock.do_request_get(data_rest_views.DataList.as_view(),
@@ -90,7 +90,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
 
     def test_post_data_missing_field_returns_http_400(self):
         # Arrange
-        user = MockUser('1')
+        user = create_mock_user('1')
         mock_data = {'template': self.fixture.template.id,
                      'user_id': '1',
                      'xml_content': '<tag></tag>'}
@@ -105,7 +105,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
 
     def test_post_data_incorrect_template_returns_http_400(self):
         # Arrange
-        user = MockUser('1')
+        user = create_mock_user('1')
         mock_data = {'template': '507f1f77bcf86cd799439011',
                      'user_id': '1',
                      'title': 'new data',
@@ -128,7 +128,7 @@ class TestDataDetail(MongoIntegrationBaseTestCase):
 
     def test_get_returns_http_200(self):
         # Arrange
-        user = MockUser('1')
+        user = create_mock_user('1')
 
         # Act
         response = RequestMock.do_request_get(data_rest_views.DataDetail.as_view(),
@@ -140,7 +140,7 @@ class TestDataDetail(MongoIntegrationBaseTestCase):
 
     def test_get_returns_data(self):
         # Arrange
-        user = MockUser('1')
+        user = create_mock_user('1')
 
         # Act
         response = RequestMock.do_request_get(data_rest_views.DataDetail.as_view(),
@@ -152,7 +152,7 @@ class TestDataDetail(MongoIntegrationBaseTestCase):
 
     def test_get_wrong_id_returns_http_404(self):
         # Arrange
-        user = MockUser('1')
+        user = create_mock_user('1')
 
         # Act
         response = RequestMock.do_request_get(data_rest_views.DataDetail.as_view(),
@@ -164,7 +164,7 @@ class TestDataDetail(MongoIntegrationBaseTestCase):
 
     def test_delete_wrong_id_returns_http_404(self):
         # Arrange
-        user = MockUser('1')
+        user = create_mock_user('1')
 
         # Act
         response = RequestMock.do_request_delete(data_rest_views.DataDetail.as_view(),
@@ -176,7 +176,7 @@ class TestDataDetail(MongoIntegrationBaseTestCase):
 
     def test_patch_wrong_id_returns_http_404(self):
         # Arrange
-        user = MockUser('1')
+        user = create_mock_user('1')
 
         # Act
         response = RequestMock.do_request_patch(data_rest_views.DataDetail.as_view(),
@@ -188,7 +188,7 @@ class TestDataDetail(MongoIntegrationBaseTestCase):
 
     def test_patch_wrong_template_returns_http_400(self):
         # Arrange
-        user = MockUser('1')
+        user = create_mock_user('1')
 
         # Act
         response = RequestMock.do_request_patch(data_rest_views.DataDetail.as_view(),
@@ -208,7 +208,7 @@ class TestDataDownload(MongoIntegrationBaseTestCase):
 
     def test_get_returns_http_200(self):
         # Arrange
-        user = MockUser('1')
+        user = create_mock_user('1')
 
         # Act
         response = RequestMock.do_request_get(data_rest_views.DataDownload.as_view(),
@@ -220,7 +220,7 @@ class TestDataDownload(MongoIntegrationBaseTestCase):
 
     def test_get_wrong_id_returns_http_404(self):
         # Arrange
-        user = MockUser('1')
+        user = create_mock_user('1')
 
         # Act
         response = RequestMock.do_request_get(data_rest_views.DataDownload.as_view(),
