@@ -20,9 +20,11 @@ class TestDataList(MongoIntegrationBaseTestCase):
     def setUp(self):
         super(TestDataList, self).setUp()
 
-    def test_get_returns_http_200(self):
+    @patch.object(Data, 'xml_content')
+    def test_get_returns_http_200(self, mock_xml_content):
         # Arrange
         user = create_mock_user('1')
+        mock_xml_content.return_value = "content"
 
         # Act
         response = RequestMock.do_request_get(data_rest_views.DataList.as_view(), user)
@@ -126,9 +128,11 @@ class TestDataDetail(MongoIntegrationBaseTestCase):
     def setUp(self):
         super(TestDataDetail, self).setUp()
 
-    def test_get_returns_http_200(self):
+    @patch.object(Data, 'xml_content')
+    def test_get_returns_http_200(self, mock_xml_content):
         # Arrange
         user = create_mock_user('1')
+        mock_xml_content.return_value = "content"
 
         # Act
         response = RequestMock.do_request_get(data_rest_views.DataDetail.as_view(),
@@ -138,9 +142,11 @@ class TestDataDetail(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_get_returns_data(self):
+    @patch.object(Data, 'xml_content')
+    def test_get_returns_data(self, mock_xml_content):
         # Arrange
         user = create_mock_user('1')
+        mock_xml_content.return_value = "content"
 
         # Act
         response = RequestMock.do_request_get(data_rest_views.DataDetail.as_view(),
@@ -149,6 +155,20 @@ class TestDataDetail(MongoIntegrationBaseTestCase):
 
         # Assert
         self.assertEqual(response.data['title'], self.fixture.data_1.title)
+
+    @patch.object(Data, 'xml_content')
+    def test_get_data_containing_ascii_returns_data(self, mock_xml_content):
+        # Arrange
+        user = create_mock_user('1')
+        mock_xml_content.return_value = "\xc3te\xc3"
+
+        # Act
+        response = RequestMock.do_request_get(data_rest_views.DataDetail.as_view(),
+                                              user,
+                                              param={'pk': self.fixture.data_1.id})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_wrong_id_returns_http_404(self):
         # Arrange

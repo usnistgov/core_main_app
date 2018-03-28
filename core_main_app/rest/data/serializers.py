@@ -1,16 +1,27 @@
 """Serializers used throughout the data Rest API
 """
-from rest_framework.fields import CharField
+from rest_framework import serializers
 from rest_framework_mongoengine.serializers import DocumentSerializer
 
 import core_main_app.components.data.api as data_api
 from core_main_app.components.data.models import Data
 
 
+class XMLContentField(serializers.Field):
+    """
+    XML content is decoded when retrieved - not supported by CharField
+    """
+    def to_representation(self, obj):
+        return obj.decode('utf-8')
+
+    def to_internal_value(self, data):
+        return data
+
+
 class DataSerializer(DocumentSerializer):
     """ Data serializer
     """
-    xml_content = CharField()
+    xml_content = XMLContentField()
 
     class Meta:
         """ Meta
