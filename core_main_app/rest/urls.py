@@ -74,6 +74,12 @@ urlpatterns = [
     url(r'^data/get-full$', data_views.get_by_id_with_template_info,
         name='core_main_app_rest_data_get_by_id_with_template_info'),
 
+    url(r'^data/local/query/keyword', data_views.ExecuteLocalKeywordQueryView.as_view(),
+        name='core_explore_common_local_query_keyword'),
+
+    url(r'^data/local/query', data_views.ExecuteLocalQueryView.as_view(),
+        name='core_explore_common_local_query'),
+
     url(r'^blob/$', blob_views.BlobList.as_view(),
         name='core_main_app_rest_blob_list'),
 

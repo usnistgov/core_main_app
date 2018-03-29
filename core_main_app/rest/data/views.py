@@ -1,5 +1,7 @@
 """ REST views for the data API
 """
+import json
+
 from django.http import Http404
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -7,10 +9,13 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-import core_main_app.components.data.api as data_api
 from core_main_app.commons import exceptions
+from core_main_app.components.data import api as data_api
+from core_main_app.rest.data.abstract_views import AbstractExecuteLocalQueryView
 from core_main_app.rest.data.serializers import DataSerializer, DataWithTemplateInfoSerializer
+from core_main_app.utils.databases.pymongo_database import get_full_text_query
 from core_main_app.utils.file import get_file_http_response
+from core_main_app.utils.pagination.django_paginator.results_paginator import ResultsPaginator
 
 
 # FIXME: permissions
@@ -271,3 +276,38 @@ def get_by_id_with_template_info(request):
     except Exception as api_exception:
         content = {'message': api_exception.message}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
+    def build_response(self, data_list):
+        """ Build the paginated response.
+
+        Args:
+            data_list: List of data.
+
+        Returns:
+            The response.
+
+        """
+        # Paginator
+        page = self.request.query_params.get('page', 1)
+        results_paginator = ResultsPaginator.get_results(data_list, page, 10)
+        data_serializer = DataWithTemplateInfoSerializer(results_paginator, many=True)
+
+        return Response(data_serializer.data)
+
+
+class ExecuteLocalKeywordQueryView(ExecuteLocalQueryView):
+    def build_query(self, query, templates):
+        """ Build the raw query. Prepare the query for a keyword search.
+        Args:
+            query:
+            templates:
+
+        Returns:
+            The raw query.
+
+        """
+        # build query builder
+        query = json.dumps(get_full_text_query(query))
+        return super(ExecuteLocalKeywordQueryView, self).build_query(str(query), templates)
