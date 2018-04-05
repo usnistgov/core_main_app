@@ -52,7 +52,7 @@ class AbstractExecuteLocalQueryView(APIView):
         try:
             # get query and templates
             query = self.request.data.get('query', None)
-            templates = self.request.data.get('templates', '[]')
+            templates = json.loads(self.request.data.get('templates', '[]'))
 
             if query is not None:
                 # prepare query
@@ -81,7 +81,6 @@ class AbstractExecuteLocalQueryView(APIView):
         # build query builder
         query_builder = QueryBuilder(query, self.sub_document_root)
         # update the criteria with templates information
-        templates = json.loads(templates)
         if len(templates) > 0:
             list_template_ids = [template['id'] for template in templates]
             query_builder.add_list_templates_criteria(list_template_ids)

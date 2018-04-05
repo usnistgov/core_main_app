@@ -52,6 +52,38 @@ class DataFixtures(FixtureInterface):
         self.template = template.save()
 
 
+class QueryDataFixtures(DataFixtures):
+    """ Data fixtures
+    """
+
+    def generate_data_collection(self):
+        """ Generate a Data collection.
+
+        Returns:
+
+        """
+        content_1 = {
+            "root": {
+                "element": "value",
+                "complex": {
+                    "child1": "test",
+                    "child2": 0
+                }
+            }
+        }
+        content_2 = {
+            "root": {
+                "element": "value2"
+            }
+        }
+        # NOTE: no xml_content to avoid using unsupported GridFS mock
+        self.data_1 = Data(template=self.template, user_id='1', dict_content=content_1,
+                           title='title').save()
+        self.data_2 = Data(template=self.template, user_id='2', dict_content=content_2,
+                           title='title2').save()
+        self.data_collection = [self.data_1, self.data_2]
+
+
 class AccessControlDataFixture(FixtureInterface):
     """ Access Control Data fixture
     """

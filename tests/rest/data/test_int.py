@@ -1,5 +1,7 @@
 """ Integration Test for Data Rest API
 """
+import json
+
 from mock import patch
 from rest_framework import status
 
@@ -9,9 +11,10 @@ from core_main_app.utils.integration_tests.integration_base_test_case import \
     MongoIntegrationBaseTestCase
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
-from tests.components.data.fixtures.fixtures import DataFixtures
+from tests.components.data.fixtures.fixtures import DataFixtures, QueryDataFixtures
 
 fixture_data = DataFixtures()
+fixture_data_query = QueryDataFixtures()
 
 
 class TestDataList(MongoIntegrationBaseTestCase):
@@ -93,7 +96,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
     def test_post_data_missing_field_returns_http_400(self):
         # Arrange
         user = create_mock_user('1')
-        mock_data = {'template': self.fixture.template.id,
+        mock_data = {'template': str(self.fixture.template.id),
                      'user_id': '1',
                      'xml_content': '<tag></tag>'}
 
@@ -249,3 +252,89 @@ class TestDataDownload(MongoIntegrationBaseTestCase):
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
+    fixture = fixture_data_query
+
+    def setUp(self):
+        super(TestExecuteLocalQueryView, self).setUp()
+        # FIXME: unable to test paginated results (mocked queryset.count always returns 0)
+        self.data = {"all": "true"}
+        # create user with superuser access to skip access control
+        self.user = create_mock_user('1', is_superuser=True)
+
+    def test_post_query_one_data_returns_http_200(self):
+        # Arrange
+        self.data.update({"query": "{\"root.element\": \"value\"}"})
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_post_query_one_data_returns_one_data(self):
+        # Arrange
+        self.data.update({"query": "{\"root.element\": \"value\"}"})
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), 1)
+
+    def test_post_query_two_data_returns_two_data(self):
+        # Arrange
+        self.data.update({"query": "{\"$or\": [{\"root.element\": \"value\"}, {\"root.element\":\"value2\"}]}"})
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), 2)
+
+    def test_post_empty_query_filter_by_templates_returns_all_data_of_the_template(self):
+        # Arrange
+        self.data.update({"query": "{}",
+                          "templates": '[{"id": "' + str(self.fixture.template.id) + '"}]'})
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), 2)
+
+    def test_post_query_filtered_by_templates_returns_one_data(self):
+        # Arrange
+        self.data.update({"query": "{\"root.element\": \"value\"}",
+                          "templates": '[{"id": "' + str(self.fixture.template.id) + '"}]'})
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), 1)
+
+    def test_post_query_filtered_by_wrong_template_id_returns_no_data(self):
+        # Arrange
+        self.data.update({"query": "{\"root.element\": \"value\"}",
+                          "templates": '[{"id": "507f1f77bcf86cd799439011"}]'})
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), 0)

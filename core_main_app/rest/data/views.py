@@ -13,13 +13,13 @@ from core_main_app.commons import exceptions
 from core_main_app.components.data import api as data_api
 from core_main_app.rest.data.abstract_views import AbstractExecuteLocalQueryView
 from core_main_app.rest.data.serializers import DataSerializer, DataWithTemplateInfoSerializer
+from core_main_app.utils.boolean import to_bool
 from core_main_app.utils.databases.pymongo_database import get_full_text_query
 from core_main_app.utils.file import get_file_http_response
-from core_main_app.utils.pagination.django_paginator.results_paginator import ResultsPaginator
+from core_main_app.utils.pagination.rest_framework_paginator.pagination import StandardResultsSetPagination
 
 
 # FIXME: permissions
-
 
 class DataList(APIView):
     """ List all user data, or create a new one.
@@ -279,8 +279,28 @@ def get_by_id_with_template_info(request):
 
 
 class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
+    def post(self, request):
+        """ Execute a query.
+
+        /rest/data/query/
+        /rest/data/query/?page=2
+
+        Example Data:
+            {"query": "{\"root.element.value\": 2}"}
+            {"query": "{\"root.element.value\": 2}", "all": "true"}
+            {"query": "{\"root.element.value\": 2}", "templates": "[{\"id\":\"<template_id>\"}]"}
+            {"query": "{}", "templates": "[{\"id\":\"<template_id>\"}]"}
+
+        Args:
+            request:
+
+        Returns:
+
+        """
+        return super(ExecuteLocalQueryView, self).post(request)
+
     def build_response(self, data_list):
-        """ Build the paginated response.
+        """ Build the response.
 
         Args:
             data_list: List of data.
@@ -289,12 +309,23 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
             The response.
 
         """
-        # Paginator
-        page = self.request.query_params.get('page', 1)
-        results_paginator = ResultsPaginator.get_results(data_list, page, 10)
-        data_serializer = DataWithTemplateInfoSerializer(results_paginator, many=True)
+        if 'all' in self.request.data and to_bool(self.request.data['all']):
+            # Serialize data list
+            data_serializer = DataSerializer(data_list, many=True)
+            # Return response
+            return Response(data_serializer.data)
+        else:
+            # Get paginator
+            paginator = StandardResultsSetPagination()
 
-        return Response(data_serializer.data)
+            # Get requested page from list of results
+            page = paginator.paginate_queryset(data_list, self.request)
+
+            # Serialize page
+            data_serializer = DataSerializer(page, many=True)
+
+            # Return paginated response
+            return paginator.get_paginated_response(data_serializer.data)
 
 
 class ExecuteLocalKeywordQueryView(ExecuteLocalQueryView):

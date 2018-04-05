@@ -65,20 +65,20 @@ urlpatterns = [
     url(r'^data/$', data_views.DataList.as_view(),
         name='core_main_app_rest_data_list'),
 
-    url(r'^data/(?P<pk>\w+)/$', data_views.DataDetail.as_view(),
-        name='core_main_app_rest_data_detail'),
-
     url(r'^data/download/(?P<pk>\w+)/$', data_views.DataDownload.as_view(),
         name='core_main_app_rest_data_download'),
 
     url(r'^data/get-full$', data_views.get_by_id_with_template_info,
         name='core_main_app_rest_data_get_by_id_with_template_info'),
 
-    url(r'^data/local/query/keyword', data_views.ExecuteLocalKeywordQueryView.as_view(),
+    url(r'^data/query/keyword/$', data_views.ExecuteLocalKeywordQueryView.as_view(),
         name='core_explore_common_local_query_keyword'),
 
-    url(r'^data/local/query', data_views.ExecuteLocalQueryView.as_view(),
+    url(r'^data/query/$', data_views.ExecuteLocalQueryView.as_view(),
         name='core_explore_common_local_query'),
+
+    url(r'^data/(?P<pk>\w+)/$', data_views.DataDetail.as_view(),
+        name='core_main_app_rest_data_detail'),
 
     url(r'^blob/$', blob_views.BlobList.as_view(),
         name='core_main_app_rest_blob_list'),
