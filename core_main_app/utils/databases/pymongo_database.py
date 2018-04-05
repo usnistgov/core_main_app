@@ -1,12 +1,11 @@
 """
     The Database pymongo tool contains the available function relative to database operation (connection)
 """
+import re
 from pymongo import MongoClient
 from pymongo.errors import OperationFailure
-from pymongo import TEXT
+
 from core_main_app.commons import exceptions
-from core_main_app.settings import MONGODB_URI, DB_NAME
-import re
 
 
 class Database(object):
@@ -74,17 +73,6 @@ class Database(object):
                     db.drop_collection(collection)
             except OperationFailure:
                 pass
-
-
-def init_text_index(table_name):
-    """ Create index for full text search.
-    """
-    database = Database()
-    db = database.connect(MONGODB_URI, DB_NAME)
-    data_list = Database.get_collection(db, table_name)
-    # create the full text index
-    data_list.create_index([('$**', TEXT)], default_language="en", language_override="en")
-    database.close_connection()
 
 
 def get_full_text_query(text):

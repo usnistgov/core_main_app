@@ -47,3 +47,10 @@ class Database(object):
                     # WARNING: Do not drop the collection but clear it. Drop collection with mongomock is not well
                     # supported. Please see https://github.com/mongomock/mongomock/issues/238
                     self.database[self.database_name].get_collection(collection).delete_many({})
+
+
+def init_text_index(document_object):
+    """ Create index for full text search.
+    """
+    collection = document_object._get_collection()
+    collection.create_index([('$**', "text")], default_language="en", language_override="en")

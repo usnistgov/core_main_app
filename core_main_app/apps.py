@@ -1,7 +1,10 @@
 """ Apps file for setting core package when app is ready
 """
 from django.apps import AppConfig
+
 import core_main_app.permissions.discover as discover
+from core_main_app.components.data.models import Data
+from core_main_app.utils.databases.mongoengine_database import init_text_index
 
 
 class InitApp(AppConfig):
@@ -16,3 +19,4 @@ class InitApp(AppConfig):
 
         """
         discover.init_rules(self.apps)
+        init_text_index(Data)
