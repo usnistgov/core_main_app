@@ -64,11 +64,12 @@ class EditWorkspaceRights(CommonView):
             users_access_workspace = list(set(users_read_workspace + users_write_workspace))
             detailed_users = []
             for user in users_access_workspace:
-                detailed_users.append({'object_id': user.id,
-                                       'object_name': user.username,
-                                       'can_read': user in users_read_workspace,
-                                       'can_write': user in users_write_workspace,
-                                       })
+                if str(user.id) != workspace.owner:
+                    detailed_users.append({'object_id': user.id,
+                                           'object_name': user.username,
+                                           'can_read': user in users_read_workspace,
+                                           'can_write': user in users_write_workspace,
+                                           })
         except:
             detailed_users = []
 
