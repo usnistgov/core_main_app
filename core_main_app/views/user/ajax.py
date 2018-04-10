@@ -55,13 +55,23 @@ def assign_workspace(request):
     document_ids = request.POST.getlist('document_id[]', [])
     workspace_id = request.POST.get('workspace_id', None)
 
+    if workspace_id is None or workspace_id == '':
+        workspace = None
+    else:
+        try:
+            workspace = workspace_api.get_by_id(str(workspace_id))
+        except DoesNotExist:
+            return HttpResponseBadRequest("The selected workspace does not exist anymore.")
+        except Exception, exc:
+            return HttpResponseBadRequest("Something wrong happened.")
+
     for data_id in document_ids:
         try:
             data_workspace_api.assign(data_api.get_by_id(data_id, request.user),
-                                      workspace_api.get_by_id(str(workspace_id)),
+                                      workspace,
                                       request.user)
         except Exception, exc:
-            return HttpResponseBadRequest(exc.message)
+            return HttpResponseBadRequest("Something wrong happened.")
 
     return HttpResponse(json.dumps({}), content_type='application/javascript')
 

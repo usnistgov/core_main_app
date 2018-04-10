@@ -4,6 +4,7 @@ from django import forms
 
 from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.workspace import api as workspace_api
+from core_main_app.components.user import api as user_api
 
 
 class LoginForm(forms.Form):
@@ -94,7 +95,8 @@ class ChangeWorkspaceForm(forms.Form):
         for workspace in sort_workspaces:
             if list_current_workspace == [] or\
                     (len(list_current_workspace) > 0 and workspace not in list_current_workspace):
-                self.WORKSPACES_OPTIONS.append((workspace.id, workspace.title))
+                self.WORKSPACES_OPTIONS.append((workspace.id,
+                                                workspace.title + " (" + user_api.get_user_by_id(workspace.owner).username + ")"))
 
         super(ChangeWorkspaceForm, self).__init__()
         self.fields['workspaces'].choices = []
