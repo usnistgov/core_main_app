@@ -1,11 +1,12 @@
 """
 Permissions API
 """
-import collections
 
 from django.contrib.auth.models import Permission, ContentType
+from django.db import IntegrityError
 from django.db.models import Q
 
+from core_main_app.commons import exceptions
 from core_main_app.components.group import api as group_api
 from core_main_app.components.user import api as user_api
 from core_main_app.permissions.rights import CAN_READ_NAME, CAN_READ_CODENAME, CONTENT_TYPE_APP_LABEL,\
@@ -72,14 +73,14 @@ def _create_perm(name, content_type, codename):
     """
 
     try:
-        perm = Permission.objects.get(content_type=content_type,
-                                      codename=codename)
-
+        perm, created = Permission.objects.get_or_create(name=name, content_type=content_type, codename=codename)
+    except IntegrityError:
+        raise exceptions.NotUniqueError("The permission already exists.")
     except Exception, ie:
-        perm = Permission.objects.create(name=name,
-                                         content_type=content_type,
-                                         codename=codename)
-        perm.save()
+        raise exceptions.ModelError("Problem while creating the permission.")
+
+    if not created:
+        raise exceptions.NotUniqueError("The permission already exists.")
     return perm
 
 
