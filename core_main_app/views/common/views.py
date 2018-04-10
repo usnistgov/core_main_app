@@ -101,6 +101,9 @@ class EditWorkspaceRights(CommonView):
             'group': 'group',
         }
 
+        if workspace_api.is_workspace_public(workspace):
+            context.update({'is_public': True})
+
         assets = {
             "css": ['core_main_app/libs/datatables/1.10.13/css/jquery.dataTables.css',
                     'core_main_app/libs/fSelect/css/fSelect.css',
