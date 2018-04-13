@@ -5,12 +5,14 @@
 {% endblock %}
 
 {% block box_tools %}
-<a class="btn btn-default add-user-btn">
-    <i class="fa fa-file-text-o"></i> Add users
-</a>
-<a class="btn btn-default add-group-btn">
-    <i class="fa fa-file-text-o"></i> Add groups
-</a>
+{% if not data.is_public %}
+    <a class="btn btn-default add-user-btn">
+        <i class="fa fa-file-text-o"></i> Add users
+    </a>
+    <a class="btn btn-default add-group-btn">
+        <i class="fa fa-file-text-o"></i> Add groups
+    </a>
+{% endif %}
 <a href="#" class="btn btn-default back-to-previous">
          <i class="fa fa-arrow-left"></i> Previous page
 </a>
