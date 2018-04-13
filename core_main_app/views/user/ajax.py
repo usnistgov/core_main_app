@@ -141,7 +141,8 @@ def load_add_user_form(request):
         users_with_no_access = list(workspace_api.get_list_user_with_no_access_workspace(workspace, request.user))
 
         # We remove the owner of the workspace
-        users_with_no_access.remove(user_api.get_user_by_id(workspace.owner))
+        if len(users_with_no_access) > 0:
+            users_with_no_access.remove(user_api.get_user_by_id(workspace.owner))
 
         if len(users_with_no_access) == 0:
             return HttpResponseBadRequest("There is no users that can be added.")
@@ -361,8 +362,9 @@ def load_add_group_form(request):
         # We retrieve all groups with no access
         groups_with_no_access = list(workspace_api.get_list_group_with_no_access_workspace(workspace, request.user))
 
-        group_utils.remove_list_object_from_list(groups_with_no_access,
-                                                 [group_api.get_anonymous_group(), group_api.get_default_group()])
+        if len(groups_with_no_access) > 0:
+            group_utils.remove_list_object_from_list(groups_with_no_access,
+                                                     [group_api.get_anonymous_group(), group_api.get_default_group()])
         if len(groups_with_no_access) == 0:
             return HttpResponseBadRequest("There is no groups that can be added.")
 
