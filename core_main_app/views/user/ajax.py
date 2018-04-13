@@ -70,6 +70,8 @@ def assign_workspace(request):
             data_workspace_api.assign(data_api.get_by_id(data_id, request.user),
                                       workspace,
                                       request.user)
+        except AccessControlError, ace:
+            return HttpResponseBadRequest(ace.message)
         except Exception, exc:
             return HttpResponseBadRequest("Something wrong happened.")
 

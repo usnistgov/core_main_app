@@ -61,7 +61,8 @@ def can_write_data_workspace(func, data, workspace, user):
         return func(data, workspace, user)
 
     _check_can_write_data(data, user)
-    _check_can_write_workspace(workspace, user)
+    if workspace is not None:
+        _check_can_write_workspace(workspace, user)
     return func(data, workspace, user)
 
 
