@@ -85,6 +85,7 @@ def _check_object_locked(object, user, lock):
     date = database_lock_object.lock_date
     if (datetime.datetime.now() - date).total_seconds() > LOCK_OBJECT_TTL:
         lock.remove_lock(database_lock_object)
+        return False
 
     # If the user who requested the object is the same as the one who locked the object
     # then it is not locked for him
