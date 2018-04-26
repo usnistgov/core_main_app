@@ -60,7 +60,7 @@ def can_write_data_workspace(func, data, workspace, user):
     if user.is_superuser:
         return func(data, workspace, user)
 
-    _check_can_write_data(data, user)
+    check_can_write_data(data, user)
     if workspace is not None:
         _check_can_write_workspace(workspace, user)
     return func(data, workspace, user)
@@ -150,7 +150,7 @@ def can_write_data(func, data, user):
     if user.is_superuser:
         return func(data, user)
 
-    _check_can_write_data(data, user)
+    check_can_write_data(data, user)
     return func(data, user)
 
 
@@ -238,7 +238,7 @@ def can_change_owner(func, data, new_user, user):
     return func(data, new_user, user)
 
 
-def _check_can_write_data(data, user):
+def check_can_write_data(data, user):
     """ Check that the user can write a data.
 
     Args:
