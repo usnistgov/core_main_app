@@ -112,7 +112,7 @@ def get_all_workspaces_with_read_access_by_user(user):
     Returns:
 
     """
-    read_permissions = permission_api.get_all_workspace_permissions_user_can_read(str(user.id))
+    read_permissions = permission_api.get_all_workspace_permissions_user_can_read(user)
     return Workspace.get_all_workspaces_with_read_access_by_user_id(user.id, read_permissions)
 
 
@@ -125,7 +125,7 @@ def get_all_workspaces_with_write_access_by_user(user):
     Returns:
 
     """
-    write_permissions = permission_api.get_all_workspace_permissions_user_can_write(str(user.id))
+    write_permissions = permission_api.get_all_workspace_permissions_user_can_write(user)
     return Workspace.get_all_workspaces_with_write_access_by_user_id(user.id, write_permissions)
 
 
@@ -138,7 +138,7 @@ def get_all_workspaces_with_read_access_not_owned_by_user(user):
     Returns:
 
     """
-    read_permissions = permission_api.get_all_workspace_permissions_user_can_read(str(user.id))
+    read_permissions = permission_api.get_all_workspace_permissions_user_can_read(user)
     return Workspace.get_all_workspaces_with_read_access_not_owned_by_user_id(user.id, read_permissions)
 
 
@@ -151,7 +151,7 @@ def get_all_workspaces_with_write_access_not_owned_by_user_id(user):
     Returns:
 
     """
-    write_permissions = permission_api.get_all_workspace_permissions_user_can_write(str(user.id))
+    write_permissions = permission_api.get_all_workspace_permissions_user_can_write(user)
     return Workspace.get_all_workspaces_with_write_access_not_owned_by_user_id(user.id, write_permissions)
 
 

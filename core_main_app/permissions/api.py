@@ -147,16 +147,15 @@ def get_all_public_workspace_permission():
                                                                codename__startswith=CAN_READ_CODENAME)]
 
 
-def get_all_workspace_permissions_user_can_write(user_id):
+def get_all_workspace_permissions_user_can_write(user):
     """ Get a list of permission ids of workspaces that the user has write access.
 
     Args:
-        user_id
+        user
 
     Return:
 
     """
-    user = user_api.get_user_by_id(user_id)
     # TODO: fix the super user case
     if user.is_superuser:
         return [str(perm.id) for perm in Permission.objects.filter(content_type__app_label=CONTENT_TYPE_APP_LABEL,
@@ -167,15 +166,14 @@ def get_all_workspace_permissions_user_can_write(user_id):
                                                                    codename__startswith=CAN_WRITE_CODENAME)]
 
 
-def get_all_workspace_permissions_user_can_read(user_id):
+def get_all_workspace_permissions_user_can_read(user):
     """ Get a list of permission ids of workspaces that the user has read access.
 
     Args:
-        user_id
+        user
 
     Return:
     """
-    user = user_api.get_user_by_id(user_id)
     #TODO: fix the super user case
     if user.is_superuser:
         return [str(perm.id) for perm in Permission.objects.filter(content_type__app_label=CONTENT_TYPE_APP_LABEL,
