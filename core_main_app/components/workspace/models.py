@@ -15,7 +15,7 @@ class Workspace(Document):
     """
 
     title = fields.StringField(unique_with="owner", blank=False, regex=NOT_EMPTY_OR_WHITESPACES)
-    owner = fields.StringField(blank=False)
+    owner = fields.StringField(blank=True)
     read_perm_id = fields.StringField(blank=False)
     write_perm_id = fields.StringField(blank=False)
 

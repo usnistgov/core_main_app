@@ -1,18 +1,18 @@
 """
 Workspace API
 """
-from core_main_app.commons.exceptions import NotUniqueError
+from core_main_app.commons import exceptions
 from core_main_app.components.group import api as group_api
 from core_main_app.components.user import api as user_api
-from core_main_app.utils.access_control.decorators import access_control
 from core_main_app.components.workspace.access_control import can_delete_workspace, is_workspace_owner, \
     is_workspace_owner_to_perform_action_for_others
 from core_main_app.components.workspace.models import Workspace
 from core_main_app.permissions import api as permission_api
+from core_main_app.utils.access_control.decorators import access_control
 
 
 def create_and_save(owner_id, title):
-    """ Create and save a workspace. It will also create permissions.
+    """ Create and save a workspace. Owner is mandatory. It will also create permissions.
 
     Args:
         owner_id
@@ -24,8 +24,13 @@ def create_and_save(owner_id, title):
                           owner=str(owner_id),
                           read_perm_id=str(permission_api.create_read_perm(title, str(owner_id)).id),
                           write_perm_id=str(permission_api.create_write_perm(title, str(owner_id)).id))
-
-    return workspace.save()
+    try:
+        return workspace.save()
+    except Exception as ex:
+        # Rollback permissions
+        permission_api.delete_permission(workspace.read_perm_id)
+        permission_api.delete_permission(workspace.write_perm_id)
+        raise exceptions.ModelError(ex.message)
 
 
 @access_control(can_delete_workspace)
