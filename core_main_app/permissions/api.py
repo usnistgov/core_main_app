@@ -160,6 +160,9 @@ def get_all_workspace_permissions_user_can_write(user):
     if user.is_superuser:
         return [str(perm.id) for perm in Permission.objects.filter(content_type__app_label=CONTENT_TYPE_APP_LABEL,
                                                                    codename__startswith=CAN_WRITE_CODENAME)]
+    elif user.is_anonymous:
+        # No permissions.
+        return []
     else:
         return [str(perm.id) for perm in Permission.objects.filter((Q(user=user) | Q(group__in=user.groups.all())),
                                                                    content_type__app_label=CONTENT_TYPE_APP_LABEL,
@@ -178,11 +181,14 @@ def get_all_workspace_permissions_user_can_read(user):
     if user.is_superuser:
         return [str(perm.id) for perm in Permission.objects.filter(content_type__app_label=CONTENT_TYPE_APP_LABEL,
                                                                    codename__startswith=CAN_READ_CODENAME)]
+    elif user.is_anonymous:
+        return [str(perm.id) for perm in Permission.objects.filter(((Q(group=group_api.get_default_group())
+                                                                       and Q(group=group_api.get_anonymous_group()))),
+                                                                   content_type__app_label=CONTENT_TYPE_APP_LABEL,
+                                                                   codename__startswith=CAN_READ_CODENAME)]
     else:
         return [str(perm.id) for perm in Permission.objects.filter((Q(user=user)
-                                                                    | Q(group__in=user.groups.all())
-                                                                    | (Q(group=group_api.get_default_group())
-                                                                       & Q(group=group_api.get_anonymous_group()))),
+                                                                    | Q(group__in=user.groups.all())),
                                                                    content_type__app_label=CONTENT_TYPE_APP_LABEL,
                                                                    codename__startswith=CAN_READ_CODENAME)]
 
