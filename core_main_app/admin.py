@@ -25,7 +25,8 @@ admin_urls = [
         common_views.TemplateXSLRenderingView.as_view(
             rendering=admin_render,
             template_name="core_main_app/admin/templates_xslt/main.html",
-            save_redirect="admin:core_main_app_manage_template_versions"
+            save_redirect="admin:core_main_app_manage_template_versions",
+            back_to_url="admin:core_main_app_manage_template_versions"
         ),
         name='core_main_app_template_xslt'),
     url(r'^dashboard$', admin_views.admin_home, name='core_main_app_admin_home'),

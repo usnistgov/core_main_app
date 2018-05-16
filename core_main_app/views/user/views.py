@@ -184,9 +184,10 @@ def get_context_manage_template_versions(version_manager):
         else:
             categorized_versions["disabled"].append(indexed_version)
     version_manager.versions = categorized_versions
+
     context = {
         'object_name': 'Template',
-        "version_manager": version_manager
+        'version_manager': version_manager,
     }
 
     return context

@@ -302,17 +302,11 @@ class TemplateXSLRenderingView(View):
     """
     rendering = render
     save_redirect = "core_main_app_manage_template_versions"
+    back_to_url = "core_main_app_manage_template_versions"
     form_class = TemplateXsltRenderingForm
     template_name = "core_main_app/common/templates_xslt/main.html"
     context = {}
-    assets = {
-        "js": [
-            {
-                "path": 'core_main_app/common/js/backtoprevious.js',
-                "is_raw": True
-            }
-        ]
-    }
+    assets = {}
 
     def get(self, request, *args, **kwargs):
         """ GET request. Create/Show the form for the configuration.
@@ -345,7 +339,8 @@ class TemplateXSLRenderingView(View):
         self.context = {
             'template_title': version_manager.title,
             'template_version': version_number,
-            "form_template_xsl_rendering": self.form_class(data)
+            "form_template_xsl_rendering": self.form_class(data),
+            'url_back_to': reverse(self.back_to_url, kwargs={'version_manager_id': version_manager.id})
         }
 
         return self.rendering(request, self.template_name, context=self.context, assets=self.assets)

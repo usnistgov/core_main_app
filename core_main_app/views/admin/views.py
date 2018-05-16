@@ -119,10 +119,6 @@ def manage_template_versions(request, version_manager_id):
                     {
                         "path": 'core_main_app/common/js/templates/versions/modals/disable.js',
                         "is_raw": False
-                    },
-                    {
-                        "path": 'core_main_app/common/js/backtoprevious.js',
-                        "is_raw": True
                     }
                 ]
             }

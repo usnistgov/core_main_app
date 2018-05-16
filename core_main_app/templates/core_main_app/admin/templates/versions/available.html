@@ -4,9 +4,10 @@
 {% block box_title %}Available versions{% endblock %}
 
 {% block box_tools %}
-<a href="#" class="btn btn-default back-to-previous">
-     <i class="fa fa-arrow-left"></i> Previous page
-</a>
+
+{% url 'admin:core_main_app_templates' as template_list_url %}
+{% include 'core_main_app/common/buttons/go_to.html' with url=template_list_url label='Back to Templates' %}
+
 {% if not data.version_manager.user %}
     <a href="{% url 'admin:core_main_app_upload_template_version' data.version_manager.id %}"
        class="pull-right btn btn-default">
