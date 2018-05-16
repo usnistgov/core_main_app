@@ -48,7 +48,7 @@ urlpatterns = [
         name='core_main_edit_rights_workspace'),
 
     url(r'^create-workspace', user_ajax.create_workspace, name='core_main_create_workspace'),
-    url(r'^change-workspace', user_ajax.load_form_change_workspace, name='core_main_change_workspace'),
+    url(r'^change-workspace', user_ajax.LoadFormChangeWorkspace.as_view(), name='core_main_change_workspace'),
     url(r'^assign-workspace', user_ajax.assign_workspace, name='core_main_assign_workspace'),
     url(r'^public-workspace', user_ajax.set_public_workspace, name='core_main_public_workspace'),
 

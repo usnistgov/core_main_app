@@ -14,7 +14,7 @@ class Workspace(Document):
         Workspace class.
     """
 
-    title = fields.StringField(unique_with="owner", blank=False, regex=NOT_EMPTY_OR_WHITESPACES)
+    title = fields.StringField(blank=False, regex=NOT_EMPTY_OR_WHITESPACES)
     owner = fields.StringField(blank=True)
     read_perm_id = fields.StringField(blank=False)
     write_perm_id = fields.StringField(blank=False)
@@ -149,3 +149,16 @@ class Workspace(Document):
 
         """
         return Workspace.objects(owner=str(user_id), read_perm_id__in=public_permissions).all()
+
+    @staticmethod
+    def get_global_workspace():
+        """
+
+        :return:
+        """
+        try:
+            return Workspace.objects.get(owner=None)
+        except mongoengine_errors.DoesNotExist as e:
+            raise exceptions.DoesNotExist(e.message)
+        except Exception as ex:
+            raise exceptions.ModelError(ex.message)

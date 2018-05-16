@@ -4,8 +4,9 @@ import json
 
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader
+from django.views.generic import View
 
-from core_main_app.commons.exceptions import DoesNotExist, NotUniqueError
+from core_main_app.commons.exceptions import DoesNotExist, NotUniqueError, ModelError
 from core_main_app.components.data import api as data_api
 from core_main_app.components.group import api as group_api
 from core_main_app.components.user import api as user_api
@@ -78,30 +79,29 @@ def assign_workspace(request):
     return HttpResponse(json.dumps({}), content_type='application/javascript')
 
 
-def load_form_change_workspace(request):
-    """ Load the form to list the workspaces.
+class LoadFormChangeWorkspace(View):
+    """ Load the form to list the workspaces. """
 
-    Args:
-        request:
+    show_global_workspace = True
 
-    Returns:
-    """
-    is_administration = request.POST.get('administration', False) == "True"
+    def post(self, request, *args, **kwargs):
 
-    try:
-        form = ChangeWorkspaceForm(request.user, list(), is_administration)
-    except DoesNotExist, dne:
-        return HttpResponseBadRequest(dne.message)
-    except:
-        return HttpResponseBadRequest("Something wrong happened.")
+        is_administration = request.POST.get('administration', False) == "True"
 
-    context = {
-        "assign_workspace_form": form
-    }
+        try:
+            form = ChangeWorkspaceForm(request.user, list(), is_administration, self.show_global_workspace)
+        except DoesNotExist, dne:
+            return HttpResponseBadRequest(dne.message)
+        except Exception, e:
+            return HttpResponseBadRequest("Something wrong happened.")
 
-    return HttpResponse(json.dumps({'form': loader.render_to_string(
-        "core_main_app/user/workspaces/list/modals/assign_workspace_form.html", context)}),
-        'application/javascript')
+        context = {
+            "assign_workspace_form": form
+        }
+
+        return HttpResponse(json.dumps({'form': loader.render_to_string(
+            "core_main_app/user/workspaces/list/modals/assign_workspace_form.html", context)}),
+            'application/javascript')
 
 
 def create_workspace(request):
@@ -114,7 +114,7 @@ def create_workspace(request):
     """
     name_workspace = request.POST.get('name_workspace', None)
     try:
-        workspace_api.create_and_save(request.user.id, name_workspace)
+        workspace_api.create_and_save(name_workspace, request.user.id)
     except NotUniqueError:
         return HttpResponseBadRequest("You already have a workspace called "
                                       + name_workspace +
@@ -301,6 +301,7 @@ def remove_user_or_group_rights(request):
 
     try:
         workspace = workspace_api.get_by_id(str(workspace_id))
+
         if group_or_user == USER:
             _remove_user_rights(object_id, workspace, request.user)
         if group_or_user == GROUP:
@@ -308,6 +309,8 @@ def remove_user_or_group_rights(request):
 
     except AccessControlError, ace:
         return HttpResponseBadRequest(ace.message)
+    except ModelError, me:
+        return HttpResponseBadRequest(me.message)
     except DoesNotExist, dne:
         return HttpResponseBadRequest(dne.message)
     except Exception, exc:

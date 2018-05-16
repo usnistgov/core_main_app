@@ -21,4 +21,4 @@ class WorkspaceSerializer(DocumentSerializer):
         """
         Create and return a new `workspace` instance, given the validated data.
         """
-        return workspace_api.create_and_save(validated_data['owner'], validated_data['title'])
+        return workspace_api.create_and_save(validated_data['title'], validated_data['owner'])

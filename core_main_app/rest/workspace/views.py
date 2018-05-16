@@ -68,6 +68,9 @@ class WorkspaceList(APIView):
         except ValidationError as validation_exception:
             content = {'message': validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        except KeyError as validation_exception:
+            content = {'message': validation_exception}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
             content = {'message': api_exception.message}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

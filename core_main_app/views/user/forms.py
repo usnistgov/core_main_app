@@ -75,7 +75,7 @@ class ChangeWorkspaceForm(forms.Form):
     workspaces = forms.ChoiceField(label='', required=True, widget=forms.Select(attrs={"class": "form-control"}))
     WORKSPACES_OPTIONS = []
 
-    def __init__(self, user, list_current_workspace=[], is_administration=False):
+    def __init__(self, user, list_current_workspace=[], is_administration=False, show_global_workspace=False):
         self.WORKSPACES_OPTIONS = []
         self.WORKSPACES_OPTIONS.append(('', '-----------'))
 
@@ -93,10 +93,13 @@ class ChangeWorkspaceForm(forms.Form):
 
         # We add them
         for workspace in sort_workspaces:
-            if list_current_workspace == [] or\
-                    (len(list_current_workspace) > 0 and workspace not in list_current_workspace):
+            is_workspace_global = workspace_api.is_workspace_global(workspace)
+            if (list_current_workspace == [] or\
+                    (len(list_current_workspace) > 0 and workspace not in list_current_workspace)) \
+                            and ((show_global_workspace and is_workspace_global) or not is_workspace_global):
+
                 self.WORKSPACES_OPTIONS.append((workspace.id,
-                                                workspace.title + " (" + user_api.get_user_by_id(workspace.owner).username + ")"))
+                                                workspace.title + " (" + ("GLOBAL" if is_workspace_global else user_api.get_user_by_id(workspace.owner).username) + ")"))
 
         super(ChangeWorkspaceForm, self).__init__()
         self.fields['workspaces'].choices = []

@@ -19,4 +19,5 @@ class InitApp(AppConfig):
 
         """
         discover.init_rules(self.apps)
+        discover.create_public_workspace()
         init_text_index(Data)

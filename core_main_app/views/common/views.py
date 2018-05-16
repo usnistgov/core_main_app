@@ -104,6 +104,8 @@ class EditWorkspaceRights(CommonView):
 
         if workspace_api.is_workspace_public(workspace):
             context.update({'is_public': True})
+        if workspace_api.is_workspace_global(workspace):
+            context.update({'is_global': True})
 
         assets = {
             "css": ['core_main_app/libs/datatables/1.10.13/css/jquery.dataTables.css',
