@@ -254,3 +254,13 @@ def check_if_group_has_perm(group, permission):
     Returns:
     """
     return len(group.permissions.filter(id=str(permission.id))) == 1
+
+
+def get_by_codename(codename):
+    """ Get the permission by codename.
+
+    Args:
+         codename:
+    Returns:
+    """
+    return Permission.objects.get(codename=codename)

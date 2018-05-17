@@ -1,11 +1,24 @@
 """ Set of functions to define the rules for access control
 """
 
-from django.contrib.auth.models import User
-
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.utils.access_control.exceptions import AccessControlError
 from core_main_app.utils.raw_query.mongo_raw_query import add_access_criteria
+from core_main_app.permissions import api  as permissions_api
+import core_main_app.permissions.rights as rights
+
+
+def has_perm_publish_data(user):
+    """ Does the user have the permission to publish a data.
+
+    Args:
+        user
+
+    Returns
+    """
+    publish_perm = permissions_api.get_by_codename(rights.publish_data)
+    if not user.has_perm(publish_perm.content_type.app_label + '.' + publish_perm.codename):
+        raise AccessControlError("The user doesn't have enough rights to publish this data.")
 
 
 def has_perm_administration(func, *args, **kwargs):
@@ -59,6 +72,8 @@ def can_write_data_workspace(func, data, workspace, user):
     """
     if user.is_superuser:
         return func(data, workspace, user)
+    if workspace_api.is_workspace_public(workspace):
+        has_perm_publish_data(user)
 
     check_can_write_data(data, user)
     if workspace is not None:

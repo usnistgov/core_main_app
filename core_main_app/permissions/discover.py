@@ -18,7 +18,14 @@ def init_rules(apps):
         group.objects.get_or_create(name=rights.anonymous_group)
 
         # Get or Create the default group
-        group.objects.get_or_create(name=rights.default_group)
+        default_group, created = group.objects.get_or_create(name=rights.default_group)
+
+        # Get curate permissions
+        permission = apps.get_model("auth", "Permission")
+        publish_data_perm = permission.objects.get(codename=rights.publish_data)
+
+        # Add permissions to default group
+        default_group.permissions.add(publish_data_perm)
 
     except Exception, e:
         print('ERROR : Impossible to init the rules : ' + e.message)
