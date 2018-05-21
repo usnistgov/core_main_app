@@ -6,6 +6,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.core.urlresolvers import reverse
 from django.http.response import HttpResponseRedirect
 from django.template import loader
+from django.utils.decorators import method_decorator
 from django.utils.html import escape as html_escape
 from django.views.generic import View
 
@@ -316,6 +317,7 @@ class XSLTView(View):
     """
 
     @staticmethod
+    @staff_member_required
     def get(request, *args, **kwargs):
         modals = [
             EditXSLTView.get_modal_html_path(),
@@ -351,10 +353,12 @@ class UploadXSLTView(View):
         self.context = {}
         self.context.update({'object_name': self.object_name})
 
+    @method_decorator(staff_member_required)
     def get(self, request, *args, **kwargs):
         self.context.update({'upload_form': self.form_class()})
         return admin_render(request, self.template_name, context=self.context)
 
+    @method_decorator(staff_member_required)
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST, request.FILES)
         self.context.update({'upload_form': form})
