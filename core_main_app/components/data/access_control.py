@@ -72,7 +72,7 @@ def can_write_data_workspace(func, data, workspace, user):
     """
     if user.is_superuser:
         return func(data, workspace, user)
-    if workspace_api.is_workspace_public(workspace):
+    if workspace is not None and workspace_api.is_workspace_public(workspace):
         has_perm_publish_data(user)
 
     check_can_write_data(data, user)
