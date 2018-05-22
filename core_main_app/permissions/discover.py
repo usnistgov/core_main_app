@@ -40,14 +40,19 @@ def create_public_workspace():
     from core_main_app.components.workspace import api as workspace_api
     from core_main_app.components.group import api as group_api
     from core_main_app.permissions import api as permission_api
+    from core_main_app.commons import exceptions
 
     try:
-        # Create workspace public global
-        workspace = workspace_api.create_and_save("Global Public Workspace")
+        try:
+            # Test if global public workspace exists
+            workspace_api.get_global_workspace()
+        except exceptions.DoesNotExist, dne:
+            # Create workspace public global
+            workspace = workspace_api.create_and_save("Global Public Workspace")
 
-        # Set public
-        permission_api.add_permission_to_group(group_api.get_anonymous_group(), workspace.read_perm_id)
-        permission_api.add_permission_to_group(group_api.get_default_group(), workspace.read_perm_id)
+            # Set public
+            permission_api.add_permission_to_group(group_api.get_anonymous_group(), workspace.read_perm_id)
+            permission_api.add_permission_to_group(group_api.get_default_group(), workspace.read_perm_id)
     except Exception, e:
         print('ERROR : Impossible to create global public workspace : ' + e.message)
 
