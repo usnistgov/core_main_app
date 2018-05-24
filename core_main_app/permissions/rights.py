@@ -14,7 +14,7 @@ api_access = "api_access"
 # Data
 edit_data = "edit_data"
 delete_data = "delete_data"
-publish_data= "publish_data"
+publish_data = "publish_data"
 
 # Form
 edit_form = "edit_form"

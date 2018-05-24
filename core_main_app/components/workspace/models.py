@@ -18,6 +18,7 @@ class Workspace(Document):
     owner = fields.StringField(blank=True)
     read_perm_id = fields.StringField(blank=False)
     write_perm_id = fields.StringField(blank=False)
+    # FIXME: update can_delete_workspace when is_public is added
 
     @staticmethod
     def get_all():

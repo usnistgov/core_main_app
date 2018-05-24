@@ -134,3 +134,8 @@ LOCK_OBJECT_TTL = getattr(settings, 'LOCK_OBJECT_TTL', 600)  # 10 min
 RESULTS_PER_PAGE = getattr(settings, 'RESULTS_PER_PAGE', 10)
 """ int: Results per page
 """
+
+CAN_SET_PUBLIC_DATA_TO_PRIVATE = getattr(settings, 'CAN_SET_PUBLIC_DATA_TO_PRIVATE', True)
+""" bool: Can set public data to private
+"""
+

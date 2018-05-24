@@ -118,7 +118,7 @@ class WorkspaceDetail(APIView):
         """
         try:
             # Get object
-            workspace_object =  workspace_api.get_by_id(pk)
+            workspace_object = workspace_api.get_by_id(pk)
 
             # delete object
             workspace_api.delete(workspace_object, request.user)

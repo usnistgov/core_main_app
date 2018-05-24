@@ -1,11 +1,12 @@
 """ Set of functions to define the rules for access control
 """
 
+import core_main_app.permissions.rights as rights
+from core_main_app.settings import CAN_SET_PUBLIC_DATA_TO_PRIVATE
 from core_main_app.components.workspace import api as workspace_api
+from core_main_app.permissions import api as permissions_api
 from core_main_app.utils.access_control.exceptions import AccessControlError
 from core_main_app.utils.raw_query.mongo_raw_query import add_access_criteria
-from core_main_app.permissions import api  as permissions_api
-import core_main_app.permissions.rights as rights
 
 
 def has_perm_publish_data(user):
@@ -78,6 +79,15 @@ def can_write_data_workspace(func, data, workspace, user):
     check_can_write_data(data, user)
     if workspace is not None:
         _check_can_write_workspace(workspace, user)
+
+    # if we can not unpublish data
+    if CAN_SET_PUBLIC_DATA_TO_PRIVATE is False:
+        # if data is in public workspace
+        if data.workspace is not None and workspace_api.is_workspace_public(data.workspace):
+            # if target workspace is private
+            if workspace is None or workspace_api.is_workspace_public(workspace) is False:
+                raise AccessControlError("The data can not be unpublished.")
+
     return func(data, workspace, user)
 
 
