@@ -18,7 +18,7 @@ class Workspace(Document):
     owner = fields.StringField(blank=True)
     read_perm_id = fields.StringField(blank=False)
     write_perm_id = fields.StringField(blank=False)
-    # FIXME: update can_delete_workspace when is_public is added
+    is_public = fields.BooleanField(default=False)
 
     @staticmethod
     def get_all():
@@ -70,7 +70,7 @@ class Workspace(Document):
         Returns:
 
         """
-        return Workspace.objects(Q(owner=str(user_id)) | Q(read_perm_id__in=read_permissions)).all()
+        return Workspace.objects(Q(owner=str(user_id)) | Q(read_perm_id__in=read_permissions) | Q(is_public=True)).all()
 
     @staticmethod
     def get_all_workspaces_with_write_access_by_user_id(user_id, write_permissions):
@@ -97,7 +97,7 @@ class Workspace(Document):
 
         """
 
-        return Workspace.objects(owner__ne=str(user_id), read_perm_id__in=read_permissions).all()
+        return Workspace.objects(Q(read_perm_id__in=read_permissions) | Q(is_public=True), owner__ne=str(user_id)).all()
 
     @staticmethod
     def get_all_workspaces_with_write_access_not_owned_by_user_id(user_id, write_permissions):
@@ -113,52 +113,49 @@ class Workspace(Document):
         return Workspace.objects(owner__ne=str(user_id), write_perm_id__in=write_permissions).all()
 
     @staticmethod
-    def get_all_other_public_workspaces(user_id, public_permissions):
+    def get_all_other_public_workspaces(user_id):
         """ Get all other public workspaces.
 
         Args:
             user_id
-            public_permissions
 
         Returns:
 
         """
-        return Workspace.objects(owner__ne=str(user_id), read_perm_id__in=public_permissions).all()
+        return Workspace.objects(owner__ne=str(user_id), is_public=True).all()
 
     @staticmethod
-    def get_non_public_workspace_owned_by_user_id(user_id, public_permissions):
+    def get_non_public_workspace_owned_by_user_id(user_id):
         """ Get the non public workspaces owned by the given user id.
 
         Args:
             user_id
-            public_permissions
 
         Returns:
 
         """
-        return Workspace.objects(owner=str(user_id), read_perm_id__nin=public_permissions).all()
+        return Workspace.objects(owner=str(user_id), is_public=False).all()
 
     @staticmethod
-    def get_public_workspaces_owned_by_user_id(user_id, public_permissions):
+    def get_public_workspaces_owned_by_user_id(user_id):
         """ Get the public workspaces owned the given user id.
 
         Args:
             user_id
-            public_permissions
 
         Returns:
 
         """
-        return Workspace.objects(owner=str(user_id), read_perm_id__in=public_permissions).all()
+        return Workspace.objects(owner=str(user_id), is_public=True).all()
 
     @staticmethod
     def get_global_workspace():
-        """
+        """ Get global workspace.
 
-        :return:
+        Returns:
         """
         try:
-            return Workspace.objects.get(owner=None)
+            return Workspace.objects.get(owner=None, is_public=True)
         except mongoengine_errors.DoesNotExist as e:
             raise exceptions.DoesNotExist(e.message)
         except Exception as ex:

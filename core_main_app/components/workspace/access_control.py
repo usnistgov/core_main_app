@@ -58,10 +58,9 @@ def can_delete_workspace(func, workspace, user):
 
     _check_is_owner_workspace(workspace, user)
 
-    # FIXME: uncomment when is_public is added to model
-    # if CAN_SET_PUBLIC_DATA_TO_PRIVATE is False:
-    #     if workspace.is_public:
-    #         raise AccessControlError("The workspace can not be delete.")
+    if CAN_SET_PUBLIC_DATA_TO_PRIVATE is False:
+        if workspace.is_public:
+            raise AccessControlError("The workspace can not be deleted.")
 
     return func(workspace, user)
 

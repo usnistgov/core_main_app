@@ -19,7 +19,7 @@ class WorkspaceFixtures(FixtureInterface):
 
     @staticmethod
     def create_global_workspace(title):
-        workspace = workspace_api.create_and_save(title)
+        workspace = workspace_api.create_and_save(title, is_public=True)
         permission_api.add_permission_to_group(group_api.get_anonymous_group(), workspace.read_perm_id)
         permission_api.add_permission_to_group(group_api.get_default_group(), workspace.read_perm_id)
         return workspace

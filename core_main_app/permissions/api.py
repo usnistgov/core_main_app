@@ -136,17 +136,6 @@ def remove_permission_to_group(group, permission):
     group.save()
 
 
-def get_all_public_workspace_permission():
-    """ Get all permissions related to public workspaces.
-
-    Return:
-    """
-    return [str(perm.id) for perm in Permission.objects.filter((Q(group=group_api.get_default_group())
-                                                                & Q(group=group_api.get_anonymous_group())),
-                                                               content_type__app_label=CONTENT_TYPE_APP_LABEL,
-                                                               codename__startswith=CAN_READ_CODENAME)]
-
-
 def get_all_workspace_permissions_user_can_write(user):
     """ Get a list of permission ids of workspaces that the user has write access.
 
@@ -182,8 +171,7 @@ def get_all_workspace_permissions_user_can_read(user):
         return [str(perm.id) for perm in Permission.objects.filter(content_type__app_label=CONTENT_TYPE_APP_LABEL,
                                                                    codename__startswith=CAN_READ_CODENAME)]
     elif user.is_anonymous:
-        return [str(perm.id) for perm in Permission.objects.filter(((Q(group=group_api.get_default_group())
-                                                                       and Q(group=group_api.get_anonymous_group()))),
+        return [str(perm.id) for perm in Permission.objects.filter(group=group_api.get_anonymous_group(),
                                                                    content_type__app_label=CONTENT_TYPE_APP_LABEL,
                                                                    codename__startswith=CAN_READ_CODENAME)]
     else:
@@ -191,20 +179,6 @@ def get_all_workspace_permissions_user_can_read(user):
                                                                     | Q(group__in=user.groups.all())),
                                                                    content_type__app_label=CONTENT_TYPE_APP_LABEL,
                                                                    codename__startswith=CAN_READ_CODENAME)]
-
-
-def is_workspace_public(permission_id):
-    """ Check if the workspace is public.
-
-    Args:
-        permission_id
-
-    Returns:
-    """
-    permission = Permission.objects.get(pk=permission_id)
-    group_anonymous = group_api.get_anonymous_group()
-    group_default = group_api.get_default_group()
-    return permission in group_anonymous.permissions.all() and permission in group_default.permissions.all()
 
 
 def get_by_id(permission_id):

@@ -11,16 +11,17 @@ from core_main_app.permissions import api as permission_api
 from core_main_app.utils.access_control.decorators import access_control
 
 
-def create_and_save(title, owner_id=None):
+def create_and_save(title, owner_id=None, is_public=False):
     """ Create and save a workspace. It will also create permissions.
 
     Args:
         owner_id
         title
+        is_public
 
     Returns:
     """
-    workspace = _create_workspace(title, owner_id)
+    workspace = _create_workspace(title, owner_id, is_public)
     try:
         return workspace.save()
     except Exception as ex:
@@ -30,24 +31,27 @@ def create_and_save(title, owner_id=None):
         raise exceptions.ModelError(ex.message)
 
 
-def _create_workspace(title, owner_id=None):
+def _create_workspace(title, owner_id=None, is_public=False):
     """ Create workspace.
 
     Args:
         title
         owner_id
+        public
 
     Returns:
     """
     if owner_id is None:
         return Workspace(title=title,
                          read_perm_id=str(permission_api.create_read_perm(title, '').id),
-                         write_perm_id=str(permission_api.create_write_perm(title, '').id))
+                         write_perm_id=str(permission_api.create_write_perm(title, '').id),
+                         is_public=is_public)
     else:
         return Workspace(title=title,
                          owner=str(owner_id),
                          read_perm_id=str(permission_api.create_read_perm(title, str(owner_id)).id),
-                         write_perm_id=str(permission_api.create_write_perm(title, str(owner_id)).id))
+                         write_perm_id=str(permission_api.create_write_perm(title, str(owner_id)).id),
+                         is_public=is_public)
 
 
 @access_control(can_delete_workspace)
@@ -185,8 +189,7 @@ def get_all_other_public_workspaces(user):
     Returns:
 
     """
-    public_permissions = permission_api.get_all_public_workspace_permission()
-    return Workspace.get_all_other_public_workspaces(user.id, public_permissions)
+    return Workspace.get_all_other_public_workspaces(user.id)
 
 
 def get_non_public_workspace_owned_by_user(user):
@@ -198,8 +201,7 @@ def get_non_public_workspace_owned_by_user(user):
     Returns:
 
     """
-    public_permissions = permission_api.get_all_public_workspace_permission()
-    return Workspace.get_non_public_workspace_owned_by_user_id(user.id, public_permissions)
+    return Workspace.get_non_public_workspace_owned_by_user_id(user.id)
 
 
 def get_public_workspaces_owned_by_user(user):
@@ -211,8 +213,7 @@ def get_public_workspaces_owned_by_user(user):
     Returns:
 
     """
-    public_permissions = permission_api.get_all_public_workspace_permission()
-    return Workspace.get_public_workspaces_owned_by_user_id(user.id, public_permissions)
+    return Workspace.get_public_workspaces_owned_by_user_id(user.id)
 
 
 def is_workspace_public(workspace):
@@ -223,7 +224,7 @@ def is_workspace_public(workspace):
 
     Return:
     """
-    return permission_api.is_workspace_public(workspace.read_perm_id)
+    return workspace.is_public
 
 
 def is_workspace_global(workspace):
@@ -255,8 +256,8 @@ def set_workspace_public(workspace, user):
 
     Return:
     """
-    permission_api.add_permission_to_group(group_api.get_anonymous_group(), workspace.read_perm_id)
-    permission_api.add_permission_to_group(group_api.get_default_group(), workspace.read_perm_id)
+    workspace.is_public = True
+    workspace.save()
 
 
 def can_user_read_workspace(workspace, user):
@@ -268,6 +269,8 @@ def can_user_read_workspace(workspace, user):
 
     Return:
     """
+    if is_workspace_public(workspace):
+        return True
     permission_label = permission_api.get_permission_label(workspace.read_perm_id)
     return str(workspace.owner) == str(user.id) or user.has_perm(permission_label)
 
@@ -294,6 +297,8 @@ def can_group_read_workspace(workspace, group):
 
     Return:
     """
+    if is_workspace_public(workspace):
+        return True
     permission = permission_api.get_by_id(workspace.read_perm_id)
     return permission_api.check_if_group_has_perm(group, permission)
 
@@ -318,10 +323,11 @@ def get_list_user_can_write_workspace(workspace, user):
     Args:
         workspace
         user
+
+    Return:
     """
     # Get write permission of the workspace
     write_permission = permission_api.get_by_id(workspace.write_perm_id)
-
     return list(write_permission.user_set.all())
 
 
@@ -332,6 +338,8 @@ def get_list_user_can_read_workspace(workspace, user):
     Args:
         workspace
         user
+
+    Return:
     """
 
     if is_workspace_public(workspace):

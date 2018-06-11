@@ -38,8 +38,6 @@ def create_public_workspace():
     """
     # We need the app to be ready to access the Group model
     from core_main_app.components.workspace import api as workspace_api
-    from core_main_app.components.group import api as group_api
-    from core_main_app.permissions import api as permission_api
     from core_main_app.commons import exceptions
 
     try:
@@ -48,11 +46,8 @@ def create_public_workspace():
             workspace_api.get_global_workspace()
         except exceptions.DoesNotExist, dne:
             # Create workspace public global
-            workspace = workspace_api.create_and_save("Global Public Workspace")
+            workspace_api.create_and_save("Global Public Workspace", is_public=True)
 
-            # Set public
-            permission_api.add_permission_to_group(group_api.get_anonymous_group(), workspace.read_perm_id)
-            permission_api.add_permission_to_group(group_api.get_default_group(), workspace.read_perm_id)
     except Exception, e:
         print('ERROR : Impossible to create global public workspace : ' + e.message)
 
