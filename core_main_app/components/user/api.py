@@ -104,3 +104,15 @@ def get_all_users_by_list_id(list_user_ids):
     Returns:
     """
     return User.objects.filter(id__in=list_user_ids)
+
+
+def get_id_username_dict(list_user):
+    """ Get a usable key-value list
+
+    Args:
+        list_user:
+
+    Returns:
+
+    """
+    return dict((str(x.id), x.username) for x in list_user)
