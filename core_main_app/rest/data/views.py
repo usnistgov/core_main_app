@@ -11,8 +11,10 @@ from rest_framework.views import APIView
 
 from core_main_app.commons import exceptions
 from core_main_app.components.data import api as data_api
+from core_main_app.components.workspace import api as workspace_api
 from core_main_app.rest.data.abstract_views import AbstractExecuteLocalQueryView
 from core_main_app.rest.data.serializers import DataSerializer, DataWithTemplateInfoSerializer
+from core_main_app.utils.access_control.exceptions import AccessControlError
 from core_main_app.utils.boolean import to_bool
 from core_main_app.utils.databases.pymongo_database import get_full_text_query
 from core_main_app.utils.file import get_file_http_response
@@ -343,3 +345,66 @@ class ExecuteLocalKeywordQueryView(ExecuteLocalQueryView):
         # build query builder
         query = json.dumps(get_full_text_query(query))
         return super(ExecuteLocalKeywordQueryView, self).build_query(str(query), templates, options)
+
+
+class DataAssign(APIView):
+    """
+    Assign a data to a workspace.
+    """
+    def get_object(self, request, pk):
+        """ Get data from db
+
+        Args:
+            request:
+            pk:
+
+        Returns:
+
+        """
+        try:
+            return data_api.get_by_id(pk, request.user)
+        except exceptions.DoesNotExist:
+            raise Http404
+
+    def get_workspace(self, workspace_id):
+        """ Get workspace from database
+
+        Args:
+            workspace_id:
+
+        Returns:
+
+        """
+        try:
+            return workspace_api.get_by_id(workspace_id)
+        except exceptions.DoesNotExist:
+            raise Http404
+
+    def patch(self, request, pk, workspace_id):
+        """ Assign data to a workspace.
+
+        Args:
+            request:
+            pk:
+            workspace_id:
+
+        Returns:
+
+        """
+        try:
+            # Get object
+            data_object = self.get_object(request, pk)
+            workspace_object = self.get_workspace(workspace_id)
+
+            # Assign data to workspace
+            data_api.assign(data_object, workspace_object, request.user)
+            return Response({}, status=status.HTTP_200_OK)
+        except Http404:
+            content = {'message': 'Data or workspace not found.'}
+            return Response(content, status=status.HTTP_404_NOT_FOUND)
+        except AccessControlError as ace:
+            content = {'message': ace.message}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
+        except Exception as api_exception:
+            content = {'message': api_exception.message}
+            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

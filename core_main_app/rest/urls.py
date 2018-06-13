@@ -77,6 +77,9 @@ urlpatterns = [
     url(r'^data/query/$', data_views.ExecuteLocalQueryView.as_view(),
         name='core_explore_common_local_query'),
 
+    url(r'^data/(?P<pk>\w+)/assign/(?P<workspace_id>\w+)$', data_views.DataAssign.as_view(),
+        name='core_main_app_rest_data_assign'),
+
     url(r'^data/(?P<pk>\w+)/$', data_views.DataDetail.as_view(),
         name='core_main_app_rest_data_detail'),
 

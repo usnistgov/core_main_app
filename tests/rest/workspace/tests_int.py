@@ -3,15 +3,14 @@
 
 from rest_framework import status
 
+from core_main_app.components.workspace import api as workspace_api
 from core_main_app.rest.workspace import views as workspace_rest_views
 from core_main_app.utils.integration_tests.integration_base_transaction_test_case import \
     MongoIntegrationTransactionTestCase
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
-from tests.components.workspace.fixtures.fixtures import WorkspaceFixtures
-from tests.components.user.fixtures.fixtures import UserFixtures
 from tests.components.group.fixtures.fixtures import GroupFixtures
-from core_main_app.components.workspace import api as workspace_api
-from tests.rest import workspace
+from tests.components.user.fixtures.fixtures import UserFixtures
+from tests.components.workspace.fixtures.fixtures import WorkspaceFixtures
 
 TITLE_1 = 'title 1'
 TITLE_2 = 'title 2'

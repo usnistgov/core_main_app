@@ -1,20 +1,21 @@
 """ Integration Test for Data Rest API
 """
-import json
 
 from mock import patch
 from rest_framework import status
 
 from core_main_app.components.data.models import Data
+from core_main_app.components.workspace.models import Workspace
 from core_main_app.rest.data import views as data_rest_views
 from core_main_app.utils.integration_tests.integration_base_test_case import \
     MongoIntegrationBaseTestCase
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
-from tests.components.data.fixtures.fixtures import DataFixtures, QueryDataFixtures
+from tests.components.data.fixtures.fixtures import DataFixtures, QueryDataFixtures, AccessControlDataFixture
 
 fixture_data = DataFixtures()
 fixture_data_query = QueryDataFixtures()
+fixture_data_workspace = AccessControlDataFixture()
 
 
 class TestDataList(MongoIntegrationBaseTestCase):
@@ -338,3 +339,94 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
 
         # Assert
         self.assertEqual(len(response.data), 0)
+
+
+class TestDataAssign(MongoIntegrationBaseTestCase):
+    fixture = fixture_data_workspace
+
+    @patch.object(Workspace, 'get_by_id')
+    @patch.object(Data, 'get_by_id')
+    def test_get_returns_http_200(self, data_get_by_id, workspace_get_by_id):
+        # Arrange
+        data = self.fixture.data_collection[self.fixture.USER_1_WORKSPACE_1]
+        user = create_mock_user(data.user_id, is_superuser=True)
+        data_get_by_id.return_value = data
+        workspace_get_by_id.return_value = self.fixture.workspace_1
+
+        # Act
+        response = RequestMock.do_request_patch(data_rest_views.DataAssign.as_view(),
+                                                user,
+                                                param={'pk': data.id,
+                                                       'workspace_id': self.fixture.workspace_1.id})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(Workspace, 'get_by_id')
+    @patch.object(Data, 'get_by_id')
+    def test_assign_data_to_workspace_updates_workspace(self, data_get_by_id, workspace_get_by_id):
+        # Arrange
+        data = self.fixture.data_collection[self.fixture.USER_1_WORKSPACE_1]
+        user = create_mock_user(data.user_id, is_superuser=True)
+        data_get_by_id.return_value = data
+        workspace_get_by_id.return_value = self.fixture.workspace_2
+
+        # Act
+        RequestMock.do_request_patch(data_rest_views.DataAssign.as_view(),
+                                     user,
+                                     param={'pk': data.id,
+                                            'workspace_id': self.fixture.workspace_2.id})
+
+        # Assert
+        self.assertEqual(str(data.workspace.id), str(self.fixture.workspace_2.id))
+
+    @patch.object(Workspace, 'get_by_id')
+    @patch.object(Data, 'get_by_id')
+    def test_assign_data_to_workspace_returns_http_200(self, data_get_by_id, workspace_get_by_id):
+        # Arrange
+        data = self.fixture.data_collection[self.fixture.USER_1_WORKSPACE_1]
+        user = create_mock_user(data.user_id, is_superuser=True)
+        data_get_by_id.return_value = data
+        workspace_get_by_id.return_value = self.fixture.workspace_2
+
+        # Act
+        response = RequestMock.do_request_patch(data_rest_views.DataAssign.as_view(),
+                                                user,
+                                                param={'pk': data.id,
+                                                       'workspace_id': self.fixture.workspace_2.id})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(Workspace, 'get_by_id')
+    def test_assign_bad_data_id_returns_http_404(self, workspace_get_by_id):
+        # Arrange
+        fake_data_id = '507f1f77bcf86cd799439011'
+        user = create_mock_user('1', is_superuser=True)
+        workspace_get_by_id.return_value = self.fixture.workspace_2
+
+        # Act
+        response = RequestMock.do_request_patch(data_rest_views.DataAssign.as_view(),
+                                                user,
+                                                param={'pk': fake_data_id,
+                                                       'workspace_id': self.fixture.workspace_2.id})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @patch.object(Data, 'get_by_id')
+    def test_assign_bad_workspace_id_returns_http_404(self, data_get_by_id):
+        # Arrange
+        fake_workspace_id = '507f1f77bcf86cd799439011'
+        data = self.fixture.data_collection[self.fixture.USER_1_WORKSPACE_1]
+        user = create_mock_user(data.user_id, is_superuser=True)
+        data_get_by_id.return_value = data
+
+        # Act
+        response = RequestMock.do_request_patch(data_rest_views.DataAssign.as_view(),
+                                                user,
+                                                param={'pk': data.id,
+                                                       'workspace_id': fake_workspace_id})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
