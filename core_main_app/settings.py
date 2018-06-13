@@ -1,6 +1,7 @@
 """ Core main app settings
 """
 from django.conf import settings
+from os.path import join
 
 if not settings.configured:
     settings.configure()
@@ -139,3 +140,7 @@ CAN_SET_PUBLIC_DATA_TO_PRIVATE = getattr(settings, 'CAN_SET_PUBLIC_DATA_TO_PRIVA
 """ bool: Can set public data to private
 """
 
+DEFAULT_DATA_RENDERING_XSLT = getattr(settings, 'DEFAULT_DATA_RENDERING_XSLT',
+                                      join('core_main_app', 'common', 'xsl', 'xml2html.xsl'))
+""" str: Path to default XSLT to render data
+"""

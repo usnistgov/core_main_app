@@ -1,13 +1,14 @@
 """XSL Transformation tag
 """
 from django import template
-from os.path import join
 from django.contrib.staticfiles import finders
 
+from core_main_app.commons import exceptions
+from core_main_app.components.template_xsl_rendering import api as template_xsl_rendering_api
+from core_main_app.settings import DEFAULT_DATA_RENDERING_XSLT
 from core_main_app.utils.file import read_file_content
 from core_main_app.utils.xml import xsl_transform
-from core_main_app.components.template_xsl_rendering import api as template_xsl_rendering_api
-from core_main_app.commons import exceptions
+
 register = template.Library()
 
 
@@ -78,7 +79,7 @@ def _render_xml_as_html(xml_string, template_id=None, template_hash=None, xslt_t
             else:
                 raise Exception("XSLT Type unknown. Default xslt will be used.")
         except (Exception, exceptions.DoesNotExist):
-            default_xslt_path = finders.find(join('core_main_app', 'common', 'xsl', 'xml2html.xsl'))
+            default_xslt_path = finders.find(DEFAULT_DATA_RENDERING_XSLT)
             xslt_string = read_file_content(default_xslt_path)
 
         return xsl_transform(xml_string, xslt_string)
