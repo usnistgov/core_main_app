@@ -2,7 +2,7 @@
 """
 
 import core_main_app.permissions.rights as rights
-from core_main_app.settings import CAN_SET_PUBLIC_DATA_TO_PRIVATE
+from core_main_app.settings import CAN_SET_PUBLIC_DATA_TO_PRIVATE, CAN_ANONYMOUS_ACCESS_PUBLIC_DATA
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.permissions import api as permissions_api
 from core_main_app.utils.access_control.exceptions import AccessControlError
@@ -343,10 +343,14 @@ def _update_can_read_query(query, user):
 
     """
 
-    # workspace case
-    # list accessible workspaces
-    accessible_workspaces = [workspace.id for workspace in
-                             workspace_api.get_all_workspaces_with_read_access_by_user(user)]
+    if not CAN_ANONYMOUS_ACCESS_PUBLIC_DATA and user.is_anonymous:
+        accessible_workspaces = []
+    else:
+        # workspace case
+        # list accessible workspaces
+        accessible_workspaces = [workspace.id for workspace in
+                                 workspace_api.get_all_workspaces_with_read_access_by_user(user)]
+
     # update query with workspace criteria
     query = add_access_criteria(query, accessible_workspaces, user)
     return query

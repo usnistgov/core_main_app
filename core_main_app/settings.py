@@ -144,3 +144,8 @@ DEFAULT_DATA_RENDERING_XSLT = getattr(settings, 'DEFAULT_DATA_RENDERING_XSLT',
                                       join('core_main_app', 'common', 'xsl', 'xml2html.xsl'))
 """ str: Path to default XSLT to render data
 """
+
+# Can anonymous access public data
+CAN_ANONYMOUS_ACCESS_PUBLIC_DATA = getattr(settings, 'CAN_ANONYMOUS_ACCESS_PUBLIC_DATA', False)
+""" boolean: Can anonymous user access public data
+"""
