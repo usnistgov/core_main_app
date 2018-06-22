@@ -173,17 +173,18 @@ def check_xml_file_is_valid(data):
 
 
 @access_control(can_read_data_query)
-def execute_query(query, user):
+def execute_query(query, user, order_by_field=None):
     """Execute a query on the Data collection.
 
     Args:
         query:
         user:
+        order_by_field
 
     Returns:
 
     """
-    return Data.execute_query(query)
+    return Data.execute_query(query, order_by_field)
 
 
 @access_control(can_write_data)
@@ -214,3 +215,14 @@ def change_owner(data, new_user, user):
     # FIXME: user can transfer data to anybody, too permissive
     data.user_id = str(new_user.id)
     data.save()
+
+
+def is_data_public(data):
+    """ Is data public.
+
+    Args:
+        data:
+
+    Returns:
+    """
+    return workspace_api.is_workspace_public(data.workspace) if data.workspace is not None else False

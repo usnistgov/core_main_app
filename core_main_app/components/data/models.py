@@ -90,16 +90,17 @@ class Data(AbstractData):
             raise exceptions.ModelError(ex.message)
 
     @staticmethod
-    def execute_query(query):
+    def execute_query(query, order_by_field=None):
         """Execute a query.
 
         Args:
             query:
+            order_by_field: Order by field.
 
         Returns:
 
         """
-        return Data.objects(__raw__=query)
+        return Data.objects(__raw__=query).order_by(order_by_field)
 
     @staticmethod
     def get_all_by_workspace(workspace):

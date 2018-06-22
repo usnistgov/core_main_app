@@ -197,24 +197,25 @@ def can_read_data(func, data, user):
     return func(data, user)
 
 
-def can_read_data_query(func, query, user):
+def can_read_data_query(func, query, user, order_by_field=None):
     """ Can read a data, given a query.
 
     Args:
         func:
         query:
         user:
+        order_by_field
 
     Returns:
 
     """
     if user.is_superuser:
-        return func(query, user)
+        return func(query, user, order_by_field)
 
     # update the query
     query = _update_can_read_query(query, user)
     # get list of data
-    data_list = func(query, user)
+    data_list = func(query, user, order_by_field)
     # TODO: check if necessary because it is time consuming (checking that user has access to list of returned data)
     # check that user can access the list of data
     _check_can_read_data_list(data_list, user)
