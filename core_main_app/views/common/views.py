@@ -168,7 +168,6 @@ class ViewData(CommonView):
 
     def get(self, request, *args, **kwargs):
         data_id = request.GET['id']
-        error_message = ''
 
         try:
             data = data_api.get_by_id(data_id, request.user)
@@ -196,10 +195,10 @@ class ViewData(CommonView):
         except exceptions.ModelError:
             error_message = 'Model error'
         except Exception, e:
-            error_message = 'Unexpected error'
+            error_message = e.message
 
         return self.common_render(request, 'core_main_app/common/commons/error.html',
-                            context={"error": "Unable to access the requested data: {}.".format(error_message)})
+                                  context={"error": "Unable to access the requested data: {}.".format(error_message)})
 
 
 class XSLTView(View):
