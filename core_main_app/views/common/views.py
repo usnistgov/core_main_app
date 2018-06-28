@@ -165,6 +165,7 @@ class ViewData(CommonView):
     """
         View detail data.
     """
+    template = 'core_main_app/user/data/detail.html'
 
     def get(self, request, *args, **kwargs):
         data_id = request.GET['id']
@@ -189,7 +190,7 @@ class ViewData(CommonView):
                 ],
                 "css": ["core_main_app/common/css/XMLTree.css"],
             }
-            return self.common_render(request, 'core_main_app/user/data/detail.html', context=context, assets=assets)
+            return self.common_render(request, self.template, context=context, assets=assets)
         except exceptions.DoesNotExist:
             error_message = 'Data not found'
         except exceptions.ModelError:

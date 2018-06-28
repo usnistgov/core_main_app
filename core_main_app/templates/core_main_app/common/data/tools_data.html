@@ -1,0 +1,11 @@
+<div class="col-xs-6">
+    <button id="btn-previous-page" type="button" style="margin-top: 1em;" class="btn btn-danger pull-right">
+        back to previous
+    </button>
+    {% if 'core_tsne_app' in installed_apps %}
+        <a style="margin-top: 1em;" class="btn btn-primary pull-right"
+           href="{% url 'core_tsne_app_data' data.data.id %}">
+            view on t-sne map
+        </a>
+    {% endif %}
+</div>

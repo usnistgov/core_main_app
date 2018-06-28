@@ -1,0 +1,9 @@
+{% load xsl_transform_tag %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            {% xsl_transform_detail xml_content=data.data.xml_content template_id=data.data.template.id template_hash=data.data.template.hash as xml_representation %}
+            {{ xml_representation|safe}}
+        </div>
+    </div>
+</div>

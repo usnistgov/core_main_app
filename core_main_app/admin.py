@@ -13,7 +13,9 @@ admin_urls = [
     url(r'^login', RedirectView.as_view(url=reverse_lazy("core_main_app_login"))),
     url(r'^logout', RedirectView.as_view(url=reverse_lazy("core_main_app_logout"))),
 
-    url(r'^data', common_views.ViewData.as_view(administration=True), name='core_main_app_data_detail'),
+    url(r'^data$', common_views.ViewData.as_view(administration=True,
+                                                template='core_main_app/admin/data/detail.html'),
+        name='core_main_app_data_detail'),
     url(r'^templates$', admin_views.manage_templates, name='core_main_app_templates'),
     url(r'^template/upload$', admin_views.upload_template,
         name='core_main_app_upload_template'),

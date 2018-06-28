@@ -1,29 +1,11 @@
-{% load xsl_transform_tag %}
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
             <div class="col-xs-6">
                 <h2>{{ data.data.title }} <small> {{ data.data.template.display_name }}</small></h2>
             </div>
-            <div class="col-xs-6">
-                <button id="btn-previous-page" type="button" style="margin-top: 1em;" class="btn btn-danger pull-right">
-                    Back to previous
-                </button>
-                {% if 'core_tsne_app' in INSTALLED_APPS %}
-                <a style="margin-top: 1em;" class="btn btn-primary pull-right"
-                   href="{% url 'core_tsne_app_data' data.data.id %}">
-                    View on T-SNE Map
-                </a>
-                {% endif %}
-            </div>
+            {% include 'core_main_app/common/data/tools_data.html' %}
         </div>
     </div>
 </div>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            {% xsl_transform_detail xml_content=data.data.xml_content template_id=data.data.template.id template_hash=data.data.template.hash as xml_representation %}
-            {{ xml_representation|safe}}
-        </div>
-    </div>
-</div>
+{% include 'core_main_app/common/data/detail_data.html' %}

@@ -1,0 +1,12 @@
+{% extends "core_main_app/_render/admin/theme/tools/section.html" %}
+{% load staticfiles %}
+
+{% block section_title %} {{ data.data.title }} <small> {{ data.data.template.display_name }} </small>{% endblock %}
+
+{% block section_content %}
+<div class="row">
+    <div class="col-md-12">
+        {% include 'core_main_app/admin/data/detail.html' %}
+    </div>
+</div>
+{% endblock %}
