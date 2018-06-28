@@ -1,8 +1,11 @@
 """Query builder class
 """
 from bson.objectid import ObjectId
+
+from core_main_app.utils.query.constants import VISIBILITY_PUBLIC, VISIBILITY_ALL, VISIBILITY_USER
 from core_main_app.utils.query.mongo.prepare import prepare_query
 import json
+from core_main_app.components.workspace import api as workspace_api
 
 
 class QueryBuilder(object):
@@ -30,6 +33,27 @@ class QueryBuilder(object):
 
         """
         self.criteria.append({'template': {'$in': [ObjectId(template_id) for template_id in list_template_ids]}})
+
+    def add_visibility_criteria(self, visibility):
+        """Adds a criteria on visibility
+
+        Args:
+            visibility:
+
+        Returns:
+
+        """
+        if visibility == VISIBILITY_PUBLIC:
+            self.criteria.append({'workspace':
+                                      {'$in': [ObjectId(workspace_id)
+                                               for workspace_id
+                                               in workspace_api.get_all_public_workspaces().values_list('id')]}})
+        elif visibility == VISIBILITY_ALL:
+            # NOTE: get all data, no restriction needed
+            pass
+        elif visibility == VISIBILITY_USER:
+            # TODO: get only user data
+            pass
 
     def get_raw_query(self):
         """Returns the raw query

@@ -113,6 +113,17 @@ class Workspace(Document):
         return Workspace.objects(owner__ne=str(user_id), write_perm_id__in=write_permissions).all()
 
     @staticmethod
+    def get_all_public_workspaces():
+        """ Get all public workspaces.
+
+        Args:
+
+        Returns:
+
+        """
+        return Workspace.objects(is_public=True).all()
+
+    @staticmethod
     def get_all_other_public_workspaces(user_id):
         """ Get all other public workspaces.
 

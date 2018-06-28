@@ -329,11 +329,12 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
 
 
 class ExecuteLocalKeywordQueryView(ExecuteLocalQueryView):
-    def build_query(self, query, templates):
+    def build_query(self, query, templates, options):
         """ Build the raw query. Prepare the query for a keyword search.
         Args:
             query:
             templates:
+            options:
 
         Returns:
             The raw query.
@@ -341,4 +342,4 @@ class ExecuteLocalKeywordQueryView(ExecuteLocalQueryView):
         """
         # build query builder
         query = json.dumps(get_full_text_query(query))
-        return super(ExecuteLocalKeywordQueryView, self).build_query(str(query), templates)
+        return super(ExecuteLocalKeywordQueryView, self).build_query(str(query), templates, options)

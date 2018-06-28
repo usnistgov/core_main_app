@@ -1,13 +1,14 @@
 """ REST abstract views for the data API
 """
 import json
-
 from abc import ABCMeta, abstractmethod
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core_main_app.components.data import api as data_api
+from core_main_app.utils.query.constants import VISIBILITY_OPTION
 from core_main_app.utils.query.mongo.query_builder import QueryBuilder
 
 
@@ -53,10 +54,11 @@ class AbstractExecuteLocalQueryView(APIView):
             # get query and templates
             query = self.request.data.get('query', None)
             templates = json.loads(self.request.data.get('templates', '[]'))
+            options = json.loads(self.request.data.get('options', '{}'))
 
             if query is not None:
                 # prepare query
-                raw_query = self.build_query(query, templates)
+                raw_query = self.build_query(query, templates, options)
                 # execute query
                 data_list = self.execute_raw_query(raw_query)
                 # build and return response
@@ -68,11 +70,12 @@ class AbstractExecuteLocalQueryView(APIView):
             content = {'message': api_exception.message}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def build_query(self, query, templates):
+    def build_query(self, query, templates,  options):
         """ Build the raw query.
         Args:
             query:
             templates:
+            options:
 
         Returns:
             The raw query.
@@ -84,6 +87,9 @@ class AbstractExecuteLocalQueryView(APIView):
         if len(templates) > 0:
             list_template_ids = [template['id'] for template in templates]
             query_builder.add_list_templates_criteria(list_template_ids)
+        if VISIBILITY_OPTION in options:
+            query_builder.add_visibility_criteria(options[VISIBILITY_OPTION])
+
         # get raw query
         return query_builder.get_raw_query()
 

@@ -181,6 +181,17 @@ def get_all_workspaces_with_write_access_not_owned_by_user_id(user):
     return Workspace.get_all_workspaces_with_write_access_not_owned_by_user_id(user.id, write_permissions)
 
 
+def get_all_public_workspaces():
+    """ Get all public workspaces.
+
+    Args:
+
+    Returns:
+
+    """
+    return Workspace.get_all_public_workspaces()
+
+
 def get_all_other_public_workspaces(user):
     """ Get all other public workspaces.
 
