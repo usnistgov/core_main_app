@@ -219,7 +219,7 @@ def api_permission_required(content_type, permission, raise_exception=False):
             Returns:
 
             """
-            if request.user.is_anonymous():
+            if request.user.is_anonymous:
                 access_api = Group.objects.filter(Q(name=rights.anonymous_group)
                                                   & Q(permissions__codename=rights.api_access))
                 access = Group.objects.filter(Q(name=rights.anonymous_group)
