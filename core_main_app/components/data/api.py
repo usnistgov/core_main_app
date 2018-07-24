@@ -10,7 +10,7 @@ from core_main_app.commons import exceptions as exceptions
 from core_main_app.utils.access_control.decorators import access_control
 from core_main_app.components.data.access_control import can_read_data_id, can_read_user, can_write_data, \
     can_read_data_query, can_change_owner, can_read_list_data_id, can_write_data_workspace,\
-    can_read_or_write_data_workspace, has_perm_administration
+    can_read_or_write_data_workspace, has_perm_administration, can_read_aggregate_query
 from core_main_app.components.workspace import api as workspace_api
 
 
@@ -226,3 +226,17 @@ def is_data_public(data):
     Returns:
     """
     return workspace_api.is_workspace_public(data.workspace) if data.workspace is not None else False
+
+
+@access_control(can_read_aggregate_query)
+def aggregate(pipeline, user):
+    """Execute an aggregate on the Data collection.
+
+    Args:
+        pipeline:
+        user:
+
+    Returns:
+
+    """
+    return Data.aggregate(pipeline)

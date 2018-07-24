@@ -6,7 +6,8 @@ from core_main_app.settings import CAN_SET_PUBLIC_DATA_TO_PRIVATE, CAN_ANONYMOUS
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.permissions import api as permissions_api
 from core_main_app.utils.access_control.exceptions import AccessControlError
-from core_main_app.utils.raw_query.mongo_raw_query import add_access_criteria
+from core_main_app.utils.raw_query.mongo_raw_query import add_access_criteria, \
+    add_aggregate_access_criteria
 
 
 def has_perm_publish_data(user):
@@ -222,6 +223,28 @@ def can_read_data_query(func, query, user, order_by_field=None):
     return data_list
 
 
+def can_read_aggregate_query(func, query, user):
+    """ Can read a data, given an aggregate query.
+
+    Args:
+        func:
+        query:
+        user:
+
+    Returns:
+
+    """
+    if user.is_superuser:
+        return func(query, user)
+
+    # update the query
+    query = _update_can_read_aggregate_query(query, user)
+    # get list of data
+    data = func(query, user)
+
+    return data
+
+
 def can_read_user(func, user):
     """ Can read data, given a user.
 
@@ -344,6 +367,38 @@ def _update_can_read_query(query, user):
 
     """
 
+    accessible_workspaces = _get_read_accessible_workspaces_by_user(user)
+    # update query with workspace criteria
+    query = add_access_criteria(query, accessible_workspaces, user)
+    return query
+
+
+def _update_can_read_aggregate_query(query, user):
+    """ Update query with access control parameters.
+
+    Args:
+        query:
+        user:
+
+    Returns:
+
+    """
+
+    accessible_workspaces = _get_read_accessible_workspaces_by_user(user)
+    # update query with workspace criteria
+    query = add_aggregate_access_criteria(query, accessible_workspaces, user)
+    return query
+
+
+def _get_read_accessible_workspaces_by_user(user):
+    """ Get read accessible workspaces by user.
+
+    Args:
+        user:
+
+    Returns:
+
+    """
     if not CAN_ANONYMOUS_ACCESS_PUBLIC_DATA and user.is_anonymous:
         accessible_workspaces = []
     else:
@@ -352,6 +407,4 @@ def _update_can_read_query(query, user):
         accessible_workspaces = [workspace.id for workspace in
                                  workspace_api.get_all_workspaces_with_read_access_by_user(user)]
 
-    # update query with workspace criteria
-    query = add_access_criteria(query, accessible_workspaces, user)
-    return query
+    return accessible_workspaces

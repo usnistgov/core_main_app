@@ -125,3 +125,15 @@ class Data(AbstractData):
 
         """
         return Data.objects(workspace__in=list_workspace).all()
+
+    @staticmethod
+    def aggregate(pipeline):
+        """Execute an aggregate on the Data collection.
+
+        Args:
+            pipeline:
+
+        Returns:
+
+        """
+        return Data.objects.aggregate(*pipeline)
