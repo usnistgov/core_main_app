@@ -127,6 +127,18 @@ class Data(AbstractData):
         return Data.objects(workspace__in=list_workspace).all()
 
     @staticmethod
+    def get_all_by_list_template(list_template):
+        """ Get all data that belong to the list of template.
+
+        Args:
+            list_template:
+
+        Returns:
+
+        """
+        return Data.objects(template__in=list_template).all()
+
+    @staticmethod
     def aggregate(pipeline):
         """Execute an aggregate on the Data collection.
 
