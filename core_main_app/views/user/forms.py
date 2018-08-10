@@ -83,7 +83,11 @@ class ChangeWorkspaceForm(forms.Form):
         if is_administration:
             all_workspaces = workspace_api.get_all()
         else:
-            all_workspaces = workspace_api.get_all_workspaces_with_write_access_by_user(user)
+            all_workspaces = list(workspace_api.get_all_workspaces_with_write_access_by_user(user))
+            if show_global_workspace:
+                workspace_global = workspace_api.get_global_workspace()
+                if workspace_global not in all_workspaces:
+                    all_workspaces.append(workspace_global)
 
         if len(all_workspaces) == 0:
             raise DoesNotExist("You don't have access to any workspaces with sufficient rights to assign a document.")

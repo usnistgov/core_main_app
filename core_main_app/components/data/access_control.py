@@ -74,12 +74,13 @@ def can_write_data_workspace(func, data, workspace, user):
     """
     if user.is_superuser:
         return func(data, workspace, user)
-    if workspace is not None and workspace_api.is_workspace_public(workspace):
-        has_perm_publish_data(user)
+    if workspace is not None:
+            if workspace_api.is_workspace_public(workspace):
+                has_perm_publish_data(user)
+            else:
+                _check_can_write_workspace(workspace, user)
 
     check_can_write_data(data, user)
-    if workspace is not None:
-        _check_can_write_workspace(workspace, user)
 
     # if we can not unpublish data
     if CAN_SET_PUBLIC_DATA_TO_PRIVATE is False:
