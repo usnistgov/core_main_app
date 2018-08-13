@@ -1,4 +1,4 @@
-celery==4.1.0
+celery==4.1.1
 Django==1.11.7
 # Installs: django-mongoengine==0.2.1
 https://github.com/MongoEngine/django-mongoengine/tarball/master#egg=django-mongoengine-0.2.1
