@@ -43,6 +43,8 @@ class EditWorkspaceRights(CommonView):
         Edit workspace rights
     """
 
+    template = "core_main_app/user/workspaces/edit_rights.html"
+
     def get(self, request, *args, **kwargs):
 
         try:
@@ -155,7 +157,7 @@ class EditWorkspaceRights(CommonView):
                   "core_main_app/user/workspaces/list/modals/remove_rights.html",
                   "core_main_app/user/workspaces/list/modals/add_group.html"]
 
-        return self.common_render(request, "core_main_app/user/workspaces/edit_rights.html",
+        return self.common_render(request, self.template,
                                   context=context,
                                   assets=assets,
                                   modals=modals)

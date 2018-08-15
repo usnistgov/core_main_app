@@ -42,7 +42,10 @@ admin_urls = [
     url(r'^xslt/(?P<pk>[\w-]+)/delete/$',
         admin_ajax.DeleteXSLTView.as_view(),
         name='core_main_app_delete_xslt'),
-    url(r'^edit-rights/(?P<workspace_id>\w+)$', common_views.EditWorkspaceRights.as_view(administration=True),
+    url(r'^edit-rights/(?P<workspace_id>\w+)$',
+        common_views.EditWorkspaceRights.as_view(
+            administration=True,
+            template="core_main_app/admin/workspaces/edit_rights.html"),
         name='core_main_edit_rights_workspace'),
 ]
 
