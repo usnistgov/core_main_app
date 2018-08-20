@@ -38,28 +38,27 @@
 
                <td>
                    {% block box_actions %}
-                   {% if version.object != data.version_manager.current %}
-                   <span class='icon legend long current' objectid='{{ version.object }}'>
-                       <a class="btn btn-default" href="#"><i class="fa fa-bookmark"></i> Set Current</a>
-                   </span>
-                   <span class='icon legend delete' objectid='{{ version.object }}'>
-                       <a class="btn btn-danger" href="#"><i class="fa fa-trash"></i> Disable</a>
-                   </span>
-                   {% endif %}
+                       {% if version.object != data.version_manager.current %}
+                        <span class='icon legend long current' objectid='{{ version.object }}'>
+                           <a class="btn btn-default" href="#"><i class="fa fa-bookmark"></i> Set Current</a>
+                        </span>
+                        <span class='icon legend delete' objectid='{{ version.object }}'>
+                           <a class="btn btn-danger" href="#"><i class="fa fa-trash"></i> Disable</a>
+                        </span>
+                        {% endif %}
 
-                   {% if data.object_name == 'Template' %}
-                    <a class="btn btn-default results-xslt"
-                        href="{% url 'admin:core_main_app_template_xslt' version.object %}">
-                        <i class="fa fa-file-code-o"></i> XSLT
-                    </a>
-                   {% endif %}
-
-                   {% if 'core_parser_app' in INSTALLED_APPS %}
-                    <a class="btn btn-default modules"
-                        href="{% url 'admin:core_parser_app_template_modules' version.object %}">
-                        <i class="fa fa-cubes"></i> Modules
-                    </a>
-                   {% endif %}
+                        {% if data.object_name == 'Template' %}
+                        <a class="btn btn-default results-xslt"
+                            href="{% url 'admin:core_main_app_template_xslt' version.object %}">
+                            <i class="fa fa-file-code-o"></i> XSLT
+                        </a>
+                        {% endif %}
+                        {% if 'core_parser_app' in INSTALLED_APPS %}
+                            <a class="btn btn-default modules"
+                                href="{% url data.module_url version.object %}">
+                                <i class="fa fa-cubes"></i> Modules
+                            </a>
+                       {% endif %}
                    {% endblock %}
                </td>
            </tr>

@@ -2,6 +2,7 @@
     Admin views
 """
 
+from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.urlresolvers import reverse
 from django.http.response import HttpResponseRedirect
@@ -96,41 +97,41 @@ def manage_template_versions(request, version_manager_id):
     Returns:
 
     """
-
-    # get the version manager
-    version_manager = None
     try:
+        # get the version manager
         version_manager = version_manager_api.get(version_manager_id)
-    except:
-        # TODO: catch good exception, redirect to error page
-        pass
+        context = get_context_manage_template_versions(version_manager)
+        if 'core_parser_app' in settings.INSTALLED_APPS:
+            context.update({"module_url": "admin:core_parser_app_template_modules"})
 
-    context = get_context_manage_template_versions(version_manager)
+        assets = {
+                    "js": [
+                        {
+                            "path": 'core_main_app/common/js/templates/versions/set_current.js',
+                            "is_raw": False
+                        },
+                        {
+                            "path": 'core_main_app/common/js/templates/versions/restore.js',
+                            "is_raw": False
+                        },
+                        {
+                            "path": 'core_main_app/common/js/templates/versions/modals/disable.js',
+                            "is_raw": False
+                        }
+                    ]
+                }
 
-    assets = {
-                "js": [
-                    {
-                        "path": 'core_main_app/common/js/templates/versions/set_current.js',
-                        "is_raw": False
-                    },
-                    {
-                        "path": 'core_main_app/common/js/templates/versions/restore.js',
-                        "is_raw": False
-                    },
-                    {
-                        "path": 'core_main_app/common/js/templates/versions/modals/disable.js',
-                        "is_raw": False
-                    }
-                ]
-            }
+        modals = ["core_main_app/admin/templates/versions/modals/disable.html"]
 
-    modals = ["core_main_app/admin/templates/versions/modals/disable.html"]
-
-    return admin_render(request,
-                        'core_main_app/admin/templates/versions.html',
-                        assets=assets,
-                        modals=modals,
-                        context=context)
+        return admin_render(request,
+                            'core_main_app/admin/templates/versions.html',
+                            assets=assets,
+                            modals=modals,
+                            context=context)
+    except Exception, e:
+        return admin_render(request,
+                            'core_main_app/common/commons/error.html',
+                            context={'error': e.message})
 
 
 @staff_member_required

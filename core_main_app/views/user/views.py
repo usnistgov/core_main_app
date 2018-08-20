@@ -1,6 +1,6 @@
 """ Core main app user views
 """
-
+from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles import finders
@@ -113,48 +113,45 @@ def manage_template_versions(request, version_manager_id):
     Returns:
 
     """
-
-    # get the version manager
-    version_manager = None
     try:
+        # get the version manager
         version_manager = version_manager_api.get(version_manager_id)
-    except:
-        # TODO: catch good exception, redirect to error page
-        pass
 
-    if not request.user.is_staff and version_manager.user != str(request.user.id):
-        raise Exception("You don't have the rights to perform this action.")
+        if not request.user.is_staff and version_manager.user != str(request.user.id):
+            raise Exception("You don't have the rights to perform this action.")
 
-    context = get_context_manage_template_versions(version_manager)
+        context = get_context_manage_template_versions(version_manager)
+        if 'core_parser_app' in settings.INSTALLED_APPS:
+            context.update({"module_url": "core_parser_app_template_modules"})
 
-    assets = {
-                "js": [
-                    {
-                        "path": 'core_main_app/common/js/templates/versions/set_current.js',
-                        "is_raw": False
-                    },
-                    {
-                        "path": 'core_main_app/common/js/templates/versions/restore.js',
-                        "is_raw": False
-                    },
-                    {
-                        "path": 'core_main_app/common/js/templates/versions/modals/disable.js',
-                        "is_raw": False
-                    },
-                    {
-                        "path": 'core_main_app/common/js/backtoprevious.js',
-                        "is_raw": True
-                    }
-                ]
-            }
+        assets = {
+                    "js": [
+                        {
+                            "path": 'core_main_app/common/js/templates/versions/set_current.js',
+                            "is_raw": False
+                        },
+                        {
+                            "path": 'core_main_app/common/js/templates/versions/restore.js',
+                            "is_raw": False
+                        },
+                        {
+                            "path": 'core_main_app/common/js/templates/versions/modals/disable.js',
+                            "is_raw": False
+                        }
+                    ]
+                }
 
-    modals = ["core_main_app/admin/templates/versions/modals/disable.html"]
+        modals = ["core_main_app/admin/templates/versions/modals/disable.html"]
 
-    return render(request,
-                  'core_main_app/common/templates/versions.html',
-                  assets=assets,
-                  modals=modals,
-                  context=context)
+        return render(request,
+                      'core_main_app/common/templates/versions.html',
+                      assets=assets,
+                      modals=modals,
+                      context=context)
+    except Exception, e:
+        return render(request,
+                      'core_main_app/common/commons/error.html',
+                      context={'error': e.message})
 
 
 def get_context_manage_template_versions(version_manager):
@@ -183,11 +180,11 @@ def get_context_manage_template_versions(version_manager):
             categorized_versions["available"].append(indexed_version)
         else:
             categorized_versions["disabled"].append(indexed_version)
-    version_manager.versions = categorized_versions
 
+    version_manager.versions = categorized_versions
     context = {
-        'object_name': 'Template',
-        'version_manager': version_manager,
+        "object_name": "Template",
+        "version_manager": version_manager
     }
 
     return context
