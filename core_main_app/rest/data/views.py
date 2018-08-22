@@ -275,8 +275,11 @@ def get_by_id_with_template_info(request):
     except exceptions.DoesNotExist as e:
         content = {'message': 'No data found with the given id.'}
         return Response(content, status=status.HTTP_404_NOT_FOUND)
-    except Exception as api_exception:
-        content = {'message': api_exception.message}
+    except exceptions.ModelError:
+        content = {'message': 'Invalid input.'}
+        return Response(content, status=status.HTTP_400_BAD_REQUEST)
+    except Exception:
+        content = {'message': 'An unexpected error occurred.'}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

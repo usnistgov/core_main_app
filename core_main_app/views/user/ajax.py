@@ -6,6 +6,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader
 from django.views.generic import View
 
+from core_main_app.commons import exceptions
 from core_main_app.commons.exceptions import DoesNotExist, NotUniqueError, ModelError
 from core_main_app.components.data import api as data_api
 from core_main_app.components.group import api as group_api
@@ -135,8 +136,10 @@ def load_add_user_form(request):
     workspace_id = request.POST.get('workspace_id', None)
     try:
         workspace = workspace_api.get_by_id(str(workspace_id))
-    except Exception, exc:
-        return HttpResponseBadRequest(exc.message)
+    except exceptions.ModelError:
+        return HttpResponseBadRequest('Invalid input.')
+    except Exception:
+        return HttpResponseBadRequest('An unexpected error occurred.')
 
     try:
         # We retrieve all users with no access
@@ -309,11 +312,11 @@ def remove_user_or_group_rights(request):
 
     except AccessControlError, ace:
         return HttpResponseBadRequest(ace.message)
-    except ModelError, me:
-        return HttpResponseBadRequest(me.message)
+    except ModelError:
+        return HttpResponseBadRequest('Invalid input.')
     except DoesNotExist, dne:
         return HttpResponseBadRequest(dne.message)
-    except Exception, exc:
+    except Exception:
         return HttpResponseBadRequest('Something wrong happened.')
 
     return HttpResponse(json.dumps({}), content_type='application/javascript')
@@ -360,8 +363,10 @@ def load_add_group_form(request):
     workspace_id = request.POST.get('workspace_id', None)
     try:
         workspace = workspace_api.get_by_id(str(workspace_id))
-    except Exception, exc:
-        return HttpResponseBadRequest(exc.message)
+    except exceptions.ModelError:
+        return HttpResponseBadRequest('Invalid input.')
+    except Exception:
+        return HttpResponseBadRequest('An unexpected error occurred.')
 
     try:
         # We retrieve all groups with no access
