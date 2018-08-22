@@ -66,6 +66,11 @@ def delete(workspace, user):
 
     Returns:
     """
+
+    # Can't delete a global workspace
+    if workspace.is_global:
+        raise exceptions.ModelError("The global workspace can not be deleted.")
+
     permission_api.delete_permission(workspace.read_perm_id)
     permission_api.delete_permission(workspace.write_perm_id)
     workspace.delete()
