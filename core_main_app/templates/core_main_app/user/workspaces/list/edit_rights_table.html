@@ -21,10 +21,13 @@
                         <span class="slider"></span>
                     </label>
                 </td>
+
                 <td>
-                    <a class="btn btn-default remove-{{group}}-btn">
-                        <i class="fa fa-edit"></i> Remove {{group}} access
-                    </a>
+                    {% if not data.is_public %}
+                        <a class="btn btn-default remove-{{group}}-btn">
+                            <i class="fa fa-edit"></i> Remove {{group}} access
+                        </a>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}
