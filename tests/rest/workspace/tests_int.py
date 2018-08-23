@@ -172,8 +172,7 @@ class TestWorkspaceList(MongoIntegrationTransactionTestCase):
     def test_post_returns_http_201(self):
         # Context
         user = UserFixtures().create_user(username="user1")
-        mock_data = {"title": "title 1",
-                     "owner": user.id}
+        mock_data = {"title": "title 1"}
 
         # Act
         response = RequestMock.do_request_post(workspace_rest_views.WorkspaceList.as_view(),
@@ -185,8 +184,7 @@ class TestWorkspaceList(MongoIntegrationTransactionTestCase):
     def test_post_create_workspace(self):
         # Context
         user = UserFixtures().create_user(username="user1")
-        mock_data = {"title": TITLE_1,
-                     "owner": user.id}
+        mock_data = {"title": TITLE_1}
 
         # Act
         RequestMock.do_request_post(workspace_rest_views.WorkspaceList.as_view(),
@@ -197,11 +195,14 @@ class TestWorkspaceList(MongoIntegrationTransactionTestCase):
         workspace = workspace_api.get_all_by_owner(user)
         self.assertEqual(len(workspace), 1)
         self.assertEqual(workspace[0].title, TITLE_1)
+        self.assertEqual(workspace[0].owner, str(user.id))
 
-    def test_post_create_workspace_without_owner(self):
+    def test_post_create_workspace_with_owner(self):
         # Context
+        FAKE_USER_ID = 123456
         user = UserFixtures().create_user(username="user1")
-        mock_data = {"title": TITLE_1}
+        mock_data = {"title": TITLE_1,
+                     "owner": FAKE_USER_ID}
 
         # Act
         response = RequestMock.do_request_post(workspace_rest_views.WorkspaceList.as_view(),
@@ -209,7 +210,12 @@ class TestWorkspaceList(MongoIntegrationTransactionTestCase):
                                                data=mock_data)
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        workspace = workspace_api.get_all_by_owner(user)
+        self.assertEqual(len(workspace), 1)
+        self.assertEqual(workspace[0].title, TITLE_1)
+        self.assertEqual(workspace[0].owner, str(user.id))
+        self.assertNotEqual(workspace[0].owner, str(FAKE_USER_ID))
 
     def test_post_create_workspace_without_title(self):
         # Context

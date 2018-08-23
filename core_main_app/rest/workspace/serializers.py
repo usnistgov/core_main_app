@@ -15,10 +15,10 @@ class WorkspaceSerializer(DocumentSerializer):
         fields = ["id",
                   "title",
                   "owner"]
-        read_only_fields = ('id',)
+        read_only_fields = ('id', 'owner')
 
     def create(self, validated_data):
         """
         Create and return a new `workspace` instance, given the validated data.
         """
-        return workspace_api.create_and_save(validated_data['title'], validated_data['owner'])
+        return workspace_api.create_and_save(validated_data['title'], validated_data['user'].id)

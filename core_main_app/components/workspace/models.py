@@ -20,6 +20,15 @@ class Workspace(Document):
     write_perm_id = fields.StringField(blank=False)
     is_public = fields.BooleanField(default=False)
 
+    def clean(self):
+        """
+
+        Returns:
+        """
+        # Check the title
+        if self.owner is not None and self.title.lower() == "global public workspace":
+            raise exceptions.ModelError("You can't create a workspace with the title: " + self.title)
+
     @staticmethod
     def get_all():
         """ Get all workspaces.

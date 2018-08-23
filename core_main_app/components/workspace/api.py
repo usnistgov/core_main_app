@@ -21,7 +21,10 @@ def create_and_save(title, owner_id=None, is_public=False):
 
     Returns:
     """
+
+    # Create workspace
     workspace = _create_workspace(title, owner_id, is_public)
+
     try:
         return workspace.save()
     except Exception as ex:
@@ -37,7 +40,7 @@ def _create_workspace(title, owner_id=None, is_public=False):
     Args:
         title
         owner_id
-        public
+        is_public
 
     Returns:
     """

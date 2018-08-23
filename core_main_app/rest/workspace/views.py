@@ -61,12 +61,17 @@ class WorkspaceList(APIView):
             serializer.is_valid(True)
 
             # Save data
-            serializer.save()
+            serializer.save(user=request.user)
 
-            # Return the serialized data
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except ValidationError as validation_exception:
             content = {'message': validation_exception.detail}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        except exceptions.ModelError as validation_exception:
+            content = {'message': validation_exception.message}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        except exceptions.NotUniqueError as validation_exception:
+            content = {'message': validation_exception.message}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except KeyError as validation_exception:
             content = {'message': validation_exception}
