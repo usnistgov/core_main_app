@@ -171,3 +171,11 @@ class Workspace(Document):
             raise exceptions.DoesNotExist(e.message)
         except Exception as ex:
             raise exceptions.ModelError(ex.message)
+
+    @property
+    def is_global(self):
+        """ Get is global.
+
+        Returns:
+        """
+        return self.is_public and self.owner is None

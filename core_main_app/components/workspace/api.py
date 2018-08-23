@@ -246,7 +246,7 @@ def is_workspace_global(workspace):
 
     Return:
     """
-    return is_workspace_public(workspace) and workspace.owner is None
+    return workspace.is_global
 
 
 def get_global_workspace():
