@@ -1,0 +1,3 @@
+#: core_main_app/utils/labels.py:20
+msgid "form_label"
+msgstr "form"

@@ -1,7 +1,9 @@
 """ Core main app settings
 """
-from django.conf import settings
+import os
 from os.path import join
+
+from django.conf import settings
 
 if not settings.configured:
     settings.configure()
@@ -149,3 +151,9 @@ DEFAULT_DATA_RENDERING_XSLT = getattr(settings, 'DEFAULT_DATA_RENDERING_XSLT',
 CAN_ANONYMOUS_ACCESS_PUBLIC_DATA = getattr(settings, 'CAN_ANONYMOUS_ACCESS_PUBLIC_DATA', False)
 """ boolean: Can anonymous user access public data
 """
+
+# Locale folder
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'core_main_app/locale'),
+)
