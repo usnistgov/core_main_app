@@ -2,10 +2,11 @@
 """
 
 import core_main_app.permissions.rights as rights
-from core_main_app.settings import CAN_SET_PUBLIC_DATA_TO_PRIVATE, CAN_ANONYMOUS_ACCESS_PUBLIC_DATA
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.permissions import api as permissions_api
+from core_main_app.settings import CAN_SET_PUBLIC_DATA_TO_PRIVATE, CAN_ANONYMOUS_ACCESS_PUBLIC_DATA
 from core_main_app.utils.access_control.exceptions import AccessControlError
+from core_main_app.utils.labels import get_data_label
 from core_main_app.utils.raw_query.mongo_raw_query import add_access_criteria, \
     add_aggregate_access_criteria
 
@@ -20,7 +21,7 @@ def has_perm_publish_data(user):
     """
     publish_perm = permissions_api.get_by_codename(rights.publish_data)
     if not user.has_perm(publish_perm.content_type.app_label + '.' + publish_perm.codename):
-        raise AccessControlError("The user doesn't have enough rights to publish this data.")
+        raise AccessControlError("The user doesn't have enough rights to publish this " + get_data_label() + ".")
 
 
 def has_perm_administration(func, *args, **kwargs):
@@ -39,7 +40,7 @@ def has_perm_administration(func, *args, **kwargs):
             return func(*args, **kwargs)
     except Exception:
         pass
-    raise AccessControlError("The user doesn't have enough rights to access this data.")
+    raise AccessControlError("The user doesn't have enough rights to access this " + get_data_label() + ".")
 
 
 def can_read_or_write_data_workspace(func, workspace, user):
@@ -88,7 +89,7 @@ def can_write_data_workspace(func, data, workspace, user):
         if data.workspace is not None and workspace_api.is_workspace_public(data.workspace):
             # if target workspace is private
             if workspace is None or workspace_api.is_workspace_public(workspace) is False:
-                raise AccessControlError("The data can not be unpublished.")
+                raise AccessControlError("The " + get_data_label() + " can not be unpublished.")
 
     return func(data, workspace, user)
 
@@ -283,7 +284,7 @@ def can_change_owner(func, data, new_user, user):
         return func(data, new_user, user)
 
     if data.user_id != str(user.id):
-        raise AccessControlError("The user doesn't have enough rights to access this data.")
+        raise AccessControlError("The user doesn't have enough rights to access this " + get_data_label() + ".")
 
     return func(data, new_user, user)
 
@@ -304,10 +305,10 @@ def check_can_write_data(data, user):
             accessible_workspaces = workspace_api.get_all_workspaces_with_write_access_by_user(user)
             # check that accessed data belongs to an accessible workspace
             if data.workspace not in accessible_workspaces:
-                raise AccessControlError("The user doesn't have enough rights to access this data.")
+                raise AccessControlError("The user doesn't have enough rights to access this " + get_data_label() + ".")
         # workspace is not set
         else:
-            raise AccessControlError("The user doesn't have enough rights to access this data.")
+            raise AccessControlError("The user doesn't have enough rights to access this " + get_data_label() + ".")
 
 
 def _check_can_read_data(data, user):
@@ -328,10 +329,10 @@ def _check_can_read_data(data, user):
             accessible_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(user)
             # check that accessed data belongs to an accessible workspace
             if data.workspace not in accessible_workspaces:
-                raise AccessControlError("The user doesn't have enough rights to access this data.")
+                raise AccessControlError("The user doesn't have enough rights to access this " + get_data_label() + ".")
         # workspace is not set
         else:
-            raise AccessControlError("The user doesn't have enough rights to access this data.")
+            raise AccessControlError("The user doesn't have enough rights to access this " + get_data_label() + ".")
 
 
 def _check_can_read_data_list(data_list, user):
@@ -354,7 +355,7 @@ def _check_can_read_data_list(data_list, user):
                 continue
             # user is not owner or data not in accessible workspace
             if data.workspace is None or data.workspace not in accessible_workspaces:
-                raise AccessControlError("The user doesn't have enough rights to access this data.")
+                raise AccessControlError("The user doesn't have enough rights to access this " + get_data_label() + ".")
 
 
 def _update_can_read_query(query, user):

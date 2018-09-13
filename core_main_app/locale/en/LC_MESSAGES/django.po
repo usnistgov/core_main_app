@@ -1,3 +1,7 @@
-#: core_main_app/utils/labels.py:20
+#: core_main_app/utils/labels.py:11
+msgid "record_label"
+msgstr "record"
+
+#: core_main_app/utils/labels.py:19
 msgid "form_label"
 msgstr "form"

@@ -5,6 +5,7 @@ from django import forms
 from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.components.user import api as user_api
+from core_main_app.utils.labels import get_data_label
 
 
 class LoginForm(forms.Form):
@@ -90,7 +91,7 @@ class ChangeWorkspaceForm(forms.Form):
                     all_workspaces.append(workspace_global)
 
         if len(all_workspaces) == 0:
-            raise DoesNotExist("You don't have access to any workspaces with sufficient rights to assign a document.")
+            raise DoesNotExist("You don't have access to any workspaces with sufficient rights to assign a " + get_data_label() + ".")
 
         # We sort by title, case insensitive
         sort_workspaces = sorted(all_workspaces, key=lambda s: s.title.lower())

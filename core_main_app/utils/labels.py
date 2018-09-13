@@ -1,15 +1,14 @@
 """ Labels utils
 """
-from django.conf import settings
 from django.utils.translation import ugettext as _
 
 
 def get_data_label():
-    """ Get the correct label for a record/ressource.
+    """ Get the correct label for a record/resource.
 
     Returns:
     """
-    return getattr(settings, 'DATA_DISPLAY_NAME', 'record')
+    return _('record_label')
 
 
 def get_form_label():

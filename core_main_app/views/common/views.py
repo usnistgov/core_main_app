@@ -23,6 +23,7 @@ from core_main_app.utils import group as group_utils
 from core_main_app.utils.rendering import admin_render
 from core_main_app.utils.rendering import render
 from core_main_app.views.admin.forms import UploadXSLTForm, TemplateXsltRenderingForm
+from core_main_app.utils.labels import get_data_label
 
 
 class CommonView(View):
@@ -201,7 +202,7 @@ class ViewData(CommonView):
             error_message = e.message
 
         return self.common_render(request, 'core_main_app/common/commons/error.html',
-                                  context={"error": "Unable to access the requested data: {}.".format(error_message)})
+                                  context={"error": "Unable to access the requested " + get_data_label() + ": {}.".format(error_message)})
 
 
 class XSLTView(View):
