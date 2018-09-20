@@ -152,6 +152,10 @@ CAN_ANONYMOUS_ACCESS_PUBLIC_DATA = getattr(settings, 'CAN_ANONYMOUS_ACCESS_PUBLI
 """ boolean: Can anonymous user access public data
 """
 
+DISPLAY_NIST_HEADERS = getattr(settings, 'DISPLAY_NIST_HEADERS', False)
+""" boolean: HTML pages show the NIST headers/footers
+"""
+
 # Locale folder
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LOCALE_PATHS = (

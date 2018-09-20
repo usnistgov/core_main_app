@@ -16,6 +16,9 @@
         <link rel="stylesheet" href="{% static 'core_main_app/libs/jquery-ui/1.12.1/jquery-ui.theme.css' %}" />
         <link rel="stylesheet" href="{% static 'core_main_app/libs/bootstrap/3.3.7/css/bootstrap-theme.css' %}" />
         <link rel="stylesheet" href="{% static 'core_main_app/common/css/patch.css' %}" />
+        {% if DISPLAY_NIST_HEADERS %}
+        <link rel="stylesheet" href="https://pages.nist.gov/nist-header-footer/css/nist-combined.css">
+        {% endif %}
     {% endblock %}
     {% block theme_css %}{% endblock %}
     {% block app_css %}{% endblock %}
@@ -29,7 +32,9 @@
         <script src="{% static 'core_main_app/libs/jquery-ui/1.12.1/jquery-ui.js' %}"></script>
         <script src="{% static 'core_main_app/libs/bootstrap/3.3.7/js/bootstrap.js' %}"></script>
         <script src="{% static 'core_main_app/common/js/csrf.js' %}"></script>
-
+        {% if DISPLAY_NIST_HEADERS %}
+        <script src="https://pages.nist.gov/nist-header-footer/js/nist-header-footer.js" type="text/javascript" defer="defer"></script>
+        {% endif %}
         {% include 'core_main_app/_render/common/messages.html' %}
     {% endblock %}
     {% block theme_js %}{% endblock %}
