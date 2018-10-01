@@ -1,2 +1,2 @@
-blob-utils==1.0.0-beta5
-xml-utils==1.0.0-beta2
+blob-utils==1.0.0-rc1
+xml-utils==1.0.0-rc1
