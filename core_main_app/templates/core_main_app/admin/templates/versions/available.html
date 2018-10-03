@@ -5,15 +5,20 @@
 
 {% block box_tools %}
 
-{% url 'admin:core_main_app_templates' as template_list_url %}
-{% include 'core_main_app/common/buttons/go_to.html' with url=template_list_url label='Back to Templates' %}
-
 {% if not data.version_manager.user %}
+    <!-- If no user is linked to the version manager, it means that we come from the global template list -->
+    {% url 'admin:core_main_app_templates' as template_list_url %}
     <a href="{% url 'admin:core_main_app_upload_template_version' data.version_manager.id %}"
        class="pull-right btn btn-default">
         <i class="fa fa-upload"></i> Upload New Version
     </a>
+{% else %}
+    <!-- If a user is linked to the version manager, it means that we come from the dashboard template list -->
+    {% url 'admin:core_dashboard_templates' as template_list_url %}
 {% endif %}
+
+{% include 'core_main_app/common/buttons/go_to.html' with url=template_list_url label='Back to Templates' %}
+
 {% endblock %}
 
 {% block box_body %}
