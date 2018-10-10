@@ -20,4 +20,5 @@ def domain_context_processor(request):
         hasattr(settings, 'DATA_SOURCES_EXPLORE_APPS') else [],
 
         'INSTALLED_APPS': settings.INSTALLED_APPS if hasattr(settings, 'INSTALLED_APPS') else [],
+        "DISPLAY_NIST_HEADERS": settings.DISPLAY_NIST_HEADERS if hasattr(settings, "DISPLAY_NIST_HEADERS") else False,
     }
