@@ -1,0 +1,21 @@
+{% extends 'core_main_app/_render/admin/theme/tools/modal.html' %}
+
+{% block modal_id %}private-workspace-modal{% endblock %}
+{% block modal_title %}Set workspace private{% endblock %}
+
+
+{% block modal_body %}
+<div class="alert alert-danger" id="banner_errors" style="display: none;">
+        <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
+     	<h4><i class="fa fa-exclamation-circle"></i> Error</h4>
+        <div id="private_workspace_errors"></div>
+</div>
+<input type="hidden" class="{{data.document}}-id"/>
+<p>Are you sure you want to set the workspace private ?
+</p>
+{% endblock %}
+
+{% block modal_footer %}
+<a class="btn btn-default pull-left" data-dismiss="modal" href="#"><i class="fa fa-times"></i> Cancel</a>
+<a id="private-workspace-yes" class="btn btn-default" href="#"><i class="fa fa-check"></i> Set private</a>
+{% endblock %}

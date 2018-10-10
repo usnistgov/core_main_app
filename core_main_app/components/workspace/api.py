@@ -1,6 +1,7 @@
 """
 Workspace API
 """
+from core_main_app import settings
 from core_main_app.commons import exceptions
 from core_main_app.components.group import api as group_api
 from core_main_app.components.user import api as user_api
@@ -275,8 +276,31 @@ def set_workspace_public(workspace, user):
 
     Return:
     """
-    workspace.is_public = True
-    workspace.save()
+    if settings.CAN_SET_WORKSPACE_PUBLIC:
+        workspace.is_public = True
+        workspace.save()
+    else:
+        raise exceptions.ApiError("You can't change the state of the workspace because of the settings of the website.")
+
+
+@access_control(is_workspace_owner)
+def set_workspace_private(workspace, user):
+    """ Set the workspace to private.
+
+    Args:
+        workspace
+        user
+
+    Return:
+    """
+    if is_workspace_global(workspace):
+        raise exceptions.ApiError("You can't change the state of the global workspace.")
+
+    if settings.CAN_SET_PUBLIC_DATA_TO_PRIVATE:
+        workspace.is_public = False
+        workspace.save()
+    else:
+        raise exceptions.ApiError("You can't change the state of the workspace because of the settings of the website.")
 
 
 def can_user_read_workspace(workspace, user):

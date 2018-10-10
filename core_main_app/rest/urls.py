@@ -122,6 +122,9 @@ urlpatterns = [
     url(r'^workspace/(?P<pk>\w+)/set_public/$', workspace_views.set_workspace_public,
         name='core_main_app_rest_workspace_set_public'),
 
+    url(r'^workspace/(?P<pk>\w+)/set_private/$', workspace_views.set_workspace_private,
+        name='core_main_app_rest_workspace_set_private'),
+
     url(r'^workspace/(?P<pk>\w+)/list_user_can_read/$', workspace_views.get_list_user_can_read_workspace,
         name='core_main_app_rest_workspace_list_user_can_read'),
 

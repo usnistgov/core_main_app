@@ -46,6 +46,28 @@ def set_public_workspace(request):
     return HttpResponse(json.dumps({}), content_type='application/javascript')
 
 
+def set_private_workspace(request):
+    """ Set a workspace private.
+
+    Args:
+        request:
+
+    Returns:
+    """
+    workspace_id_list = request.POST.getlist('workspace_id[]', [])
+    try:
+        list_workspace = workspace_api.get_by_id_list(workspace_id_list)
+    except DoesNotExist, dne:
+        return HttpResponseBadRequest(dne.message)
+    try:
+        for workspace in list_workspace:
+            workspace_api.set_workspace_private(workspace, request.user)
+    except:
+        return HttpResponseBadRequest("Something wrong happened.")
+
+    return HttpResponse(json.dumps({}), content_type='application/javascript')
+
+
 def assign_workspace(request):
     """ Assign the record to a workspace.
 

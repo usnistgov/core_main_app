@@ -250,6 +250,37 @@ def set_workspace_public(request, pk):
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@api_view(['PATCH'])
+def set_workspace_private(request, pk):
+    """ Set the workspace private.
+
+        Args:
+            request:
+            pk:
+
+        Returns:
+
+    """
+    try:
+        # Get object
+        workspace_object = workspace_api.get_by_id(pk)
+
+        # Set the workspace public
+        workspace_api.set_workspace_private(workspace_object, request.user)
+
+        # Return response
+        return Response(status=status.HTTP_200_OK)
+    except exceptions.DoesNotExist:
+        content = {'message': 'Workspace not found.'}
+        return Response(content, status=status.HTTP_404_NOT_FOUND)
+    except AccessControlError as ace:
+        content = {'message': ace.message}
+        return Response(content, status=status.HTTP_403_FORBIDDEN)
+    except Exception as api_exception:
+        content = {'message': api_exception.message}
+        return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 @api_view(['GET'])
 def get_list_user_can_write_workspace(request, pk):
     """ Get list of users that have write access to workspace.

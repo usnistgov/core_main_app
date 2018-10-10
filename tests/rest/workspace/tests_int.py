@@ -508,6 +508,101 @@ class TestWorkspaceSetPublic(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
+class TestWorkspaceSetPrivate(MongoIntegrationTransactionTestCase):
+    """ Test Workspace Set Private
+    """
+
+    def test_set_workspace_private_return_http_200(self):
+        # Context
+        user = UserFixtures().create_user(username="user1")
+        workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
+
+        # Act
+        response = RequestMock.do_request_patch(workspace_rest_views.set_workspace_private,
+                                                user,
+                                                param={'pk': workspace.id})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_set_workspace_private_return_http_404(self):
+        # Context
+        user = UserFixtures().create_user(username="user1")
+
+        # Act
+        response = RequestMock.do_request_patch(workspace_rest_views.set_workspace_private,
+                                                user,
+                                                param={'pk': FAKE_WORKSPACE_ID})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_set_workspace_private_owner(self):
+        # Context
+        user = UserFixtures().create_user(username="user1")
+        workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
+        workspace_api.set_workspace_public(workspace, user)
+        self.assertTrue(workspace_api.is_workspace_public(workspace))
+
+        # Act
+        response = RequestMock.do_request_patch(workspace_rest_views.set_workspace_private,
+                                                user,
+                                                param={'pk': workspace.id})
+
+        # Assert
+        workspace = workspace_api.get_by_id(workspace.id)
+        self.assertFalse(workspace_api.is_workspace_public(workspace))
+
+    def test_set_workspace_private_admin_not_owner(self):
+        # Context
+        user = UserFixtures().create_user(username="user1")
+        user2 = UserFixtures().create_super_user(username="user2")
+        workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
+        workspace_api.set_workspace_public(workspace, user)
+        self.assertTrue(workspace_api.is_workspace_public(workspace))
+
+        # Act
+        response = RequestMock.do_request_patch(workspace_rest_views.set_workspace_private,
+                                                user2,
+                                                param={'pk': workspace.id})
+
+        # Assert
+        workspace = workspace_api.get_by_id(workspace.id)
+        self.assertFalse(workspace_api.is_workspace_public(workspace))
+
+    def test_set_workspace_private_user_not_owner(self):
+        # Context
+        user = UserFixtures().create_user(username="user1")
+        user2 = UserFixtures().create_user(username="user2")
+        workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
+        workspace_api.set_workspace_public(workspace, user)
+        self.assertTrue(workspace_api.is_workspace_public(workspace))
+
+        # Act
+        response = RequestMock.do_request_patch(workspace_rest_views.set_workspace_private,
+                                                user2,
+                                                param={'pk': workspace.id})
+
+        # Assert
+        workspace = workspace_api.get_by_id(workspace.id)
+        self.assertTrue(workspace_api.is_workspace_public(workspace))
+
+    def test_set_workspace_private_user_not_owner_return_http_403(self):
+        # Context
+        user = UserFixtures().create_user(username="user1")
+        user2 = UserFixtures().create_user(username="user2")
+        workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
+        self.assertFalse(workspace_api.is_workspace_public(workspace))
+
+        # Act
+        response = RequestMock.do_request_patch(workspace_rest_views.set_workspace_private,
+                                                user2,
+                                                param={'pk': workspace.id})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
 class TestWorkspaceListUserCanRead(MongoIntegrationTransactionTestCase):
     """ Test Workspace List User Can read
     """

@@ -161,3 +161,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'core_main_app/locale'),
 )
+
+# Can set Workspace public
+CAN_SET_WORKSPACE_PUBLIC = getattr(settings, 'CAN_SET_WORKSPACE_PUBLIC', True)
