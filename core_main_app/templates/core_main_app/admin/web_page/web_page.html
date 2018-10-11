@@ -1,0 +1,12 @@
+{% extends "core_main_app/_render/admin/theme/tools/section.html" %}
+{% load staticfiles %}
+
+{% block section_title %}{{ webpage_name | title }}{% endblock %}
+
+{% block section_content %}
+    {% include "core_main_app/admin/web_page/main.html" %}
+{% endblock %}
+
+{% block extrastyle %}
+<link rel="stylesheet" href="{% static 'core_main_app/admin/css/web_page/style.css' %}" />
+{% endblock %}

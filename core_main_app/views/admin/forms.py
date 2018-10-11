@@ -79,3 +79,10 @@ class TemplateXsltRenderingForm(forms.Form):
     detail_xslt = forms.ModelChoiceField(label='Detail XSLT', empty_label="(No XSLT)", required=False,
                                          widget=forms.Select(attrs={'class': 'form-control'}),
                                          queryset=xsl_transformation_api.get_all())
+
+
+class TextAreaForm(forms.Form):
+    """ TextArea Form
+    """
+    content = forms.CharField(label="", widget=forms.Textarea(attrs={'class': 'form-control'}),
+                              required=False)

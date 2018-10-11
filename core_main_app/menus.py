@@ -22,6 +22,10 @@ Menu.add_item(
     "admin", MenuItem("Django admin", reverse("admin:index"), icon="sitemap", weight=-80000),
 )
 
+Menu.add_item(
+    "admin", MenuItem("Login", reverse("admin:core_main_app_login_page"), icon="file-text", weight=-70000),
+)
+
 templates_children = (
     MenuItem("Template List", reverse("admin:core_main_app_templates"), icon="list"),
     MenuItem("Upload New Template", reverse("admin:core_main_app_upload_template"), icon="upload"),

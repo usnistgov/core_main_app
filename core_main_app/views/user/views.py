@@ -9,6 +9,7 @@ from django.http.response import HttpResponse
 from django.shortcuts import redirect
 from rest_framework.status import HTTP_405_METHOD_NOT_ALLOWED
 
+import core_main_app.components.web_page_login.api as web_page_login_api
 from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.settings import INSTALLED_APPS
 from core_main_app.utils.rendering import render
@@ -57,9 +58,38 @@ def custom_login(request):
         if "next" in request.GET:
             next_page = request.GET["next"]
 
-        return render(request, "core_main_app/user/login.html",
-                      context={'login_form': LoginForm(initial={"next_page": next_page}),
-                               'with_website_features': "core_website_app" in INSTALLED_APPS})
+        # build the context
+        context = {'login_form': LoginForm(initial={"next_page": next_page}),
+                   'with_website_features': "core_website_app" in INSTALLED_APPS}
+
+        # get the web page login if exist
+        web_page_login = web_page_login_api.get()
+
+        if web_page_login:
+            # update the context
+            context["login_message"] = web_page_login.content
+
+            # if exist we build assets and modals collection
+            assets = {
+                "js": [
+                    {
+                        "path": 'core_main_app/user/js/web_page_login/web_page_login.js',
+                        "is_raw": False
+                    }
+                ]
+            }
+            modals = ["core_main_app/user/web_page_login/modals/web_page_login_modal.html"]
+            # render the page with context, assets and modals
+            return render(request,
+                          "core_main_app/user/login.html",
+                          context=context,
+                          assets=assets,
+                          modals=modals)
+
+        # render page with context only
+        return render(request,
+                      "core_main_app/user/login.html",
+                      context=context)
     else:
         return HttpResponse(status=HTTP_405_METHOD_NOT_ALLOWED)
 

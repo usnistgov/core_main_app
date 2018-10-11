@@ -1,0 +1,13 @@
+{% extends 'core_main_app/_render/admin/theme/tools/modal.html' %}
+
+{% block modal_id %}login-modal-id{% endblock %}
+{% block modal_title %}Warning{% endblock %}
+
+{% block modal_body %}
+<p>{{ data.login_message }}</p>
+{% endblock %}
+
+{% block modal_footer %}
+    <a id="btn-login-cancel" class="btn btn-danger pull-left" href="#"><i class="fa fa-times"></i> Cancel</a>
+    <a id="btn-login-yes" class="btn btn-default" href="#"><i class="fa fa-check"></i> Accept</a>
+{% endblock %}

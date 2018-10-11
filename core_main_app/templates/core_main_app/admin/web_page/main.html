@@ -1,0 +1,28 @@
+{% extends 'core_main_app/_render/admin/theme/tools/box.html' %}
+
+{% block box_title %}
+    Use this form to provide content for the {{ webpage_name | lower }}. This page supports Markdown syntax.
+{% endblock %}
+
+{% block box_tools %}
+{% endblock %}
+
+{% block box_body %}
+{% if data.error_msg %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="alert alert-danger"><i class="fa fa-times-circle"></i> {{ data.error_msg }}</div>
+    </div>
+</div>
+{% endif %}
+<div class="row">
+    <div class="col-md-12">
+        <form action="{% url webpage_url %}" method="post">
+            {% csrf_token %}
+            {{ data.form }}
+
+            <button type="submit" class="btn btn-default pull-right"><i class="fa fa-save"></i> Save</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

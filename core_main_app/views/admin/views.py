@@ -3,28 +3,38 @@
 """
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.urlresolvers import reverse
 from django.http.response import HttpResponseRedirect
+from django.shortcuts import redirect
 from django.template import loader
 from django.utils.decorators import method_decorator
 from django.utils.html import escape as html_escape
 from django.views.generic import View
+from markdown import markdown
 
+import core_main_app.commons.constants as constants
 from core_main_app.commons import exceptions
 from core_main_app.components.template.models import Template
 from core_main_app.components.template_version_manager import api as template_version_manager_api
 from core_main_app.components.template_version_manager.models import TemplateVersionManager
 from core_main_app.components.version_manager import api as version_manager_api
+from core_main_app.components.web_page.models import WebPage
 from core_main_app.components.xsl_transformation import api as xslt_transformation_api
 from core_main_app.components.xsl_transformation.models import XslTransformation
+from core_main_app.templatetags.stripjs import stripjs
 from core_main_app.utils.rendering import admin_render
+from core_main_app.utils.rendering import admin_render as render
 from core_main_app.utils.xml import get_imports_and_includes
 from core_main_app.views.admin.ajax import EditXSLTView
+from core_main_app.views.admin.forms import TextAreaForm
 from core_main_app.views.admin.forms import UploadTemplateForm, UploadVersionForm, UploadXSLTForm
 from core_main_app.views.common.ajax import EditTemplateVersionManagerView, DeleteObjectModalView
 from core_main_app.views.common.views import read_xsd_file
 from core_main_app.views.user.views import get_context_manage_template_versions
+from xml_utils.commons.exceptions import HTMLError
+from xml_utils.html_tree.parser import parse_html
 
 
 @staff_member_required
@@ -451,3 +461,82 @@ def get_dependency_resolver_html(imports, includes, xsd_data, filename):
         'dependencies': list_dependencies_html,
     }
     return dependency_resolver_template.render(context)
+
+
+class WebPageView(View):
+    form_class = TextAreaForm
+    api = None
+    get_redirect = None
+    post_redirect = None
+    web_page_type = None
+
+    @method_decorator(staff_member_required)
+    def get(self, request, **kwargs):
+        """ GET request. Create/Show the form for the configuration.
+
+        Args:
+            request:
+            **kwargs:
+
+        Returns:
+
+        """
+        if "current_content" in kwargs:
+            content = kwargs["current_content"]
+        else:
+            website_object = self.api.get()
+            content = website_object.content if website_object is not None else ''
+
+        context = {
+            "form": self.form_class({'content': content})
+        }
+
+        if "error_id" in kwargs:
+            if kwargs["error_id"] < len(constants.MARKDOWN_ERRORS):
+                context["error_msg"] = constants.MARKDOWN_ERRORS[kwargs["error_id"]]
+            else:
+                context["error_msg"] = constants.UNKNOWN_ERROR
+
+        assets = {
+            "css": [
+                "core_main_app/admin/css/web_page/style.css"
+            ]
+        }
+
+        return render(request, self.get_redirect, context=context, assets=assets)
+
+    @method_decorator(staff_member_required)
+    def post(self, request):
+        """ POST request. Try to save the configuration.
+
+        Args:
+            request:
+
+        Returns:
+
+        """
+        form = self.form_class(request.POST)
+
+        if form.is_valid():
+            # Call the API
+            content = request.POST['content']
+            page = self.api.get()
+
+            markdown_content = markdown(content)
+            if markdown_content != stripjs(markdown_content):
+                return self.get(request, current_content=content, error_id=constants.MARKDOWN_UNSAFE)
+
+            try:
+                parse_html(markdown_content, 'div')
+            except HTMLError:
+                return self.get(request, current_content=content, error_id=constants.MARKDOWN_GENERATION_FAILED)
+
+            if page is None:
+                page = WebPage(self.web_page_type, content)
+            else:
+                page.content = content
+
+            self.api.upsert(page)
+            messages.add_message(request, messages.INFO, 'Information saved with success.')
+
+            return redirect(reverse(self.post_redirect))

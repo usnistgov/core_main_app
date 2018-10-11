@@ -1,0 +1,11 @@
+{% extends "core_main_app/_render/admin/theme/tools/section.html" %}
+{% load staticfiles %}
+
+{% block section_title %}{{ webpage_name | title }}{% endblock %}
+
+{% block section_content %}
+    <div class="alert alert-info">
+        <i class="fa fa-info-circle"></i> This page cannot be edited while the website is using the NIST header and
+        footer
+    </div>
+{% endblock %}
