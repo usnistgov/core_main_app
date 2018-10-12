@@ -1,0 +1,28 @@
+{% extends "core_main_app/_render/user/theme_base.html" %}
+{% load staticfiles %}
+
+{% comment %}
+<!--
+	Arcana by HTML5 UP
+	html5up.net | @n33co
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+{% endcomment %}
+
+{% block theme_css %}
+    <!--[if lte IE 8]><script src="{% static 'ie/html5shiv.js' %}"></script><![endif]-->
+    <!--[if lte IE 9]><link rel="stylesheet" href="{% static 'ie/ie9.css' %}" /><![endif]-->
+    <!--[if lte IE 8]><link rel="stylesheet" href="{% static 'ie/ie8.css' %}" /><![endif]-->
+{% endblock %}
+{% block theme_js %}
+    <!--[if lte IE 8]><script src="{% static 'ie/respond.min.js' %}"></script><![endif]-->
+{% endblock %}
+
+{% block title %}AM Material Database{% endblock %}
+{% block body %}
+    <div id="page-wrapper">
+        <div id="content" class="container-fluid">
+            {% block app_data %}{% endblock %}
+        </div>
+    </div>
+{% endblock %}
