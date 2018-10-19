@@ -103,7 +103,7 @@ def custom_logout(request):
         Returns:
     """
     logout(request)
-    return redirect(reverse("core_main_app_login"))
+    return redirect(reverse("core_main_app_homepage"))
 
 
 def homepage(request):
