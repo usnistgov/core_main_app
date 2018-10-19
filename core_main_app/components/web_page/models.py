@@ -18,7 +18,7 @@ class WebPage(Document):
         """ Get a WebPage given its type
 
             Parameters:
-                page_type (str): page type of the page
+                page_type (str): page type
 
             Returns:
                 Web Page corresponding to the given type
@@ -29,3 +29,15 @@ class WebPage(Document):
             raise exceptions.DoesNotExist(e.message)
         except Exception as ex:
             raise exceptions.ModelError(ex.message)
+
+    @staticmethod
+    def delete_by_type(page_type_key):
+        """ Delete all WebPage with the given type key
+
+        Args:
+            page_type_key (int): page type key
+
+        Returns:
+
+        """
+        return WebPage.objects(type=page_type_key).delete()
