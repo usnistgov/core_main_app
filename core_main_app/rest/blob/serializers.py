@@ -28,7 +28,7 @@ class BlobSerializer(DocumentSerializer):
                   'handle',
                   'blob',
                   'upload_date']
-        read_only_fields = ('id', 'user_id', 'handle', 'upload_date',)
+        read_only_fields = ('id', 'user_id', 'filename', 'handle', 'upload_date',)
 
     def get_handle(self, instance):
         """ Return handle

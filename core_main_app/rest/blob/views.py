@@ -59,8 +59,10 @@ class BlobList(APIView):
         Data:
             {
             "blob": "<file>",
-            "filename": "<filename>"
             }
+
+        Examples:
+            requests.post(url, files={'blob': open(BLOB_PATH, 'rb')}, auth=(USER, PSWD))
 
         Args:
             request:
