@@ -52,3 +52,14 @@ Configuration
 .. code:: python
 
     url(r'^', include("core_main_app.urls")),
+
+
+i18n
+====
+
+Before running the project, don't forget to compile the translation file at project level.
+i18n uses the gettext package, so please make sure it is installed prior using this command.
+
+.. code:: bash
+
+    $ python manage.py compilemessages
