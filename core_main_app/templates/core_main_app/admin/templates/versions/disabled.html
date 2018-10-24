@@ -1,5 +1,6 @@
 {% extends 'core_main_app/_render/admin/theme/tools/box.html' %}
 {% load timestamptags %}
+{% load tz_detect %}
 
 {% block box_title %}Disabled versions{% endblock %}
 
@@ -16,7 +17,10 @@
         <tr>
             <td>{{ version.index }}</td>
             <td style='font-weight:bold;color:red'>Disabled</td>
-            <td>{{ version.object | print_timestamp }}</td>
+            <td>
+                {{ version.object | print_timestamp }}
+                {% tz_detect %}
+            </td>
 
             <td>
                 <span class='icon legend retrieve' objectid='{{ version.object }}'>

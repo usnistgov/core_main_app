@@ -1,5 +1,6 @@
 {% extends 'core_main_app/_render/admin/theme/tools/box.html' %}
 {% load timestamptags %}
+{% load tz_detect %}
 
 {% block box_title %}Available versions{% endblock %}
 
@@ -39,8 +40,10 @@
                     <td style='font-weight:bold;color:orange'>Uploaded</td>
                {% endif %}
 
-               <td>{{ version.object | print_timestamp }}</td>
-
+               <td>
+                    {{ version.object|print_timestamp }}
+                    {% tz_detect %}
+               </td>
                <td>
                    {% block box_actions %}
                        {% if version.object != data.version_manager.current %}

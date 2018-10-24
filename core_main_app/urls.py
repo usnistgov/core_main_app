@@ -17,7 +17,6 @@ urlpatterns = [
 
     url(r'^rest/', include('core_main_app.rest.urls')),
     url(r'^data',  common_views.ViewData.as_view(), name='core_main_app_data_detail'),
-
     url(r'^template/versions/(?P<version_manager_id>\w+)', user_views.manage_template_versions,
         name='core_main_app_manage_template_versions'),
     url(r'^template/(?P<pk>[\w-]+)/edit/$', common_ajax.EditTemplateVersionManagerView.as_view(),
@@ -62,4 +61,5 @@ urlpatterns = [
     url(r'^add-group-right-to-workspace', user_ajax.add_group_right_to_workspace,
         name='core_main_add_group_right_to_workspace'),
     url(r'^docs/api$', schema_view, name='swagger_view'),
+    url(r'^tz_detect/', include('tz_detect.urls')),
 ]
