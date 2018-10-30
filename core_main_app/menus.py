@@ -23,7 +23,7 @@ Menu.add_item(
 )
 
 Menu.add_item(
-    "admin", MenuItem("Login", reverse("admin:core_main_app_login_page"), icon="file-text", weight=-70000),
+    "admin", MenuItem("Login message", reverse("admin:core_main_app_login_page"), icon="file-text", weight=-70000),
 )
 
 templates_children = (
