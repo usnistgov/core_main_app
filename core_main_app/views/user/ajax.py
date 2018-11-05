@@ -142,6 +142,9 @@ def create_workspace(request):
         return HttpResponseBadRequest("You already have a workspace called "
                                       + name_workspace +
                                       ". Please change the name and try again.")
+    except exceptions.ModelError:
+        return HttpResponseBadRequest("The given title does not meet the requirements for a title. "
+                                      "Please provide another title.")
     except Exception:
         return HttpResponseBadRequest("A problem occurred while creating the workspace.")
     return HttpResponse(json.dumps({}), content_type='application/javascript')
