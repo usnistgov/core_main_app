@@ -3,7 +3,7 @@
 
 
 class CoreError(Exception):
-    """ Exception raised by the Core
+    """ Exception raised by the Core.
     """
     def __init__(self, message):
         self.message = message
@@ -13,7 +13,7 @@ class CoreError(Exception):
 
 
 class ApiError(Exception):
-    """ Exception raised by the API
+    """ Exception raised by the API.
     """
     def __init__(self, message):
         self.message = message
@@ -23,7 +23,7 @@ class ApiError(Exception):
 
 
 class ModelError(Exception):
-    """ Generic exception for the model
+    """ Generic exception for the model.
     """
     def __init__(self, message):
         self.message = message
@@ -33,7 +33,7 @@ class ModelError(Exception):
 
 
 class RestApiError(Exception):
-    """ Exception raised by the the REST Api
+    """ Exception raised by the the REST API.
     """
     def __init__(self, message):
         self.message = message
@@ -43,7 +43,7 @@ class RestApiError(Exception):
 
 
 class DoesNotExist(Exception):
-    """ Exception raised when an object does not exist
+    """ Exception raised when an object does not exist.
     """
     def __init__(self, message):
         self.message = message
@@ -53,7 +53,7 @@ class DoesNotExist(Exception):
 
 
 class NotUniqueError(Exception):
-    """ Exception raised when an object is not unique
+    """ Exception raised when an object is not unique.
     """
     def __init__(self, message):
         self.message = message
@@ -63,7 +63,7 @@ class NotUniqueError(Exception):
 
 
 class XMLError(Exception):
-    """ Exception raised by XML validation
+    """ Exception raised by XML validation.
     """
     def __init__(self, message):
         self.message = message
@@ -73,7 +73,7 @@ class XMLError(Exception):
 
 
 class XSDError(Exception):
-    """ Exception raised by XSD validation
+    """ Exception raised by XSD validation.
     """
     def __init__(self, message):
         self.message = message
@@ -83,9 +83,19 @@ class XSDError(Exception):
 
 
 class LockError(Exception):
-    """ Exception raised when an object is locked
+    """ Exception raised when an object is locked.
     """
 
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return repr(self.message)
+
+
+class PaginationError(Exception):
+    """ Exception raised when an error occurs during pagination.
+    """
     def __init__(self, message):
         self.message = message
 
