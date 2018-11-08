@@ -9,5 +9,6 @@ rest.data
 .. toctree::
     :maxdepth: 2
 
+    abstract_views
     serializers
     views

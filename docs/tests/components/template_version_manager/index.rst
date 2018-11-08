@@ -10,3 +10,4 @@ tests.components.template_version_manager
     :maxdepth: 2
 
     tests_unit
+    fixtures/index

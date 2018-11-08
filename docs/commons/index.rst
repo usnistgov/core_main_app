@@ -9,8 +9,10 @@ commons
 .. toctree::
     :maxdepth: 2
 
-    serializers
-    validators
-    regex
+    constants
+    enums
     exceptions
     fields
+    regex
+    serializers
+    validators

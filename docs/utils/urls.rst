@@ -1,7 +1,7 @@
-runtests
-========
+utils.urls
+==========
 
-.. automodule:: runtests
+.. automodule:: utils.urls
     :members:
     :undoc-members:
     :show-inheritance:

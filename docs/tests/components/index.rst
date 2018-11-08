@@ -9,9 +9,14 @@ tests.components
 .. toctree::
     :maxdepth: 2
 
-    xsl_transformation/index
-    template_version_manager/index
+    blob/index
     data/index
+    group/index
     template/index
+    template_version_manager/index
     template_xsl_rendering/index
+    user/index
     version_manager/index
+    web_page/index
+    workspace/index
+    xsl_transformation/index

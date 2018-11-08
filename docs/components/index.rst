@@ -9,15 +9,18 @@ components
 .. toctree::
     :maxdepth: 2
 
-    xsl_transformation/index
-    workspace/index
-    group/index
-    template_version_manager/index
+
+    abstract_data/index
     blob/index
     data/index
-    template/index
-    user/index
-    template_xsl_rendering/index
-    version_manager/index
-    abstract_data/index
+    group/index
     lock/index
+    template/index
+    template_version_manager/index
+    template_xsl_rendering/index
+    user/index
+    version_manager/index
+    web_page/index
+    web_page_login/index
+    workspace/index
+    xsl_transformation/index

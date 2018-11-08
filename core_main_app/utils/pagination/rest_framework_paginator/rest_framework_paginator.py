@@ -14,7 +14,6 @@ def get_page_number(url):
     Returns:
 
     """
-
     if url is None:
         return None
 

@@ -9,4 +9,7 @@ rest.template_version_manager
 .. toctree::
     :maxdepth: 2
 
+    abstract_views
+    serializers
+    utils
     views

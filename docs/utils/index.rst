@@ -9,17 +9,22 @@ utils
 .. toctree::
     :maxdepth: 2
 
-    decorators
-    xml
+    boolean
     custom_context_processors
-    rendering
+    decorators
     file
     group
+    labels
+    rendering
+    urls
+    xml
     access_control/index
-    datetime_tools/index
-    tests_tools/index
-    notifications/index
-    integration_tests/index
     databases/index
+    datetime_tools/index
+    integration_tests/index
+    notifications/index
+    pagination/index
+    query/index
     raw_query/index
+    tests_tools/index
     xsd_flattener/index

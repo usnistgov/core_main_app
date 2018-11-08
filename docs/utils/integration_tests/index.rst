@@ -9,5 +9,6 @@ utils.integration_tests
 .. toctree::
     :maxdepth: 2
 
-    integration_base_test_case
     fixture_interface
+    integration_base_test_case
+    integration_base_transaction_test_case

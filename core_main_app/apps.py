@@ -1,4 +1,4 @@
-""" Apps file for setting core package when app is ready
+""" Apps file for setting core package when app is ready.
 """
 from django.apps import AppConfig
 
@@ -8,15 +8,15 @@ from core_main_app.utils.databases.mongoengine_database import init_text_index
 
 
 class InitApp(AppConfig):
-    """ Core application settings
+    """ Core application settings.
     """
+
     name = 'core_main_app'
+    """ :py:class:`str`: Package name
+    """
 
     def ready(self):
-        """ Run when the app is ready.
-
-        Returns:
-
+        """ When the app is ready, run the discovery and init the indexes.
         """
         discover.init_rules(self.apps)
         discover.create_public_workspace()

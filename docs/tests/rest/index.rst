@@ -9,5 +9,9 @@ tests.rest
 .. toctree::
     :maxdepth: 2
 
-    template_version_manager/index
+    blob/index
+    data/index
     template/index
+    template_version_manager/index
+    workspace/index
+    xsl_transformation/index

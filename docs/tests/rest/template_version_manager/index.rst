@@ -9,4 +9,5 @@ tests.rest.template_version_manager
 .. toctree::
     :maxdepth: 2
 
+    tests_int
     tests_unit

@@ -9,9 +9,12 @@ rest
 .. toctree::
     :maxdepth: 2
 
-    serializers
     urls
-    template_version_manager/index
     blob/index
     data/index
+    group/index
     template/index
+    template_version_manager/index
+    user/index
+    workspace/index
+    xsl_transformation/index

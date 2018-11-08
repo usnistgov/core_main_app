@@ -9,8 +9,9 @@ templatetags
 .. toctree::
     :maxdepth: 2
 
-    dict_key_extras
     auth_extras
+    dict_key_extras
     include_static
-    xsl_transform_tag
+    stripjs
     timestamptags
+    xsl_transform_tag

@@ -1,5 +1,5 @@
-core_main_app.apps
-==================
+Apps
+====
 
 .. automodule:: core_main_app.apps
     :members:

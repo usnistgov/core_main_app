@@ -12,11 +12,9 @@ core_main_app
     readme
     settings
     menus
-    admin
+    urls
     models
     apps
-    runtests
-    urls
     components/index
     permissions/index
     commons/index
