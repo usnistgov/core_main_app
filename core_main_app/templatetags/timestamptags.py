@@ -1,5 +1,6 @@
 """Template tag to print date
 """
+import pytz
 from bson.objectid import ObjectId
 from django import template
 
@@ -7,7 +8,20 @@ register = template.Library()
 
 
 @register.filter
-def print_timestamp(object_id):
+def print_datetime_utc_unaware(datetime):
+    """ Print datetime utc.
+
+    Args:
+        datetime: datetime timezone unaware
+
+    Returns:
+
+    """
+    return datetime.replace(tzinfo=pytz.UTC)
+
+
+@register.filter
+def print_datetime_from_object_id(object_id):
     """ Print timestamp.
 
     Args:

@@ -2,6 +2,8 @@
 """
 import datetime
 
+import pytz
+
 from xml_utils.xsd_tree.xsd_tree import XSDTree
 
 from core_main_app.components.data.models import Data
@@ -139,7 +141,7 @@ def upsert(data, user):
     if data.xml_content is None:
         raise exceptions.ApiError("Unable to save data: xml_content field is not set.")
 
-    data.last_modification_date = datetime.datetime.now()
+    data.last_modification_date = datetime.datetime.now(pytz.utc)
     check_xml_file_is_valid(data)
     return data.convert_and_save()
 

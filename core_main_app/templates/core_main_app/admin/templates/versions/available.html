@@ -1,6 +1,5 @@
 {% extends 'core_main_app/_render/admin/theme/tools/box.html' %}
 {% load timestamptags %}
-{% load tz_detect %}
 
 {% block box_title %}Available versions{% endblock %}
 
@@ -41,8 +40,7 @@
                {% endif %}
 
                <td>
-                    {{ version.object|print_timestamp }}
-                    {% tz_detect %}
+                    {{ version.object|print_datetime_from_object_id }}
                </td>
                <td>
                    {% block box_actions %}

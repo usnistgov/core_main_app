@@ -1,4 +1,6 @@
 {% load staticfiles %}
+{% load tz_detect %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -74,5 +76,11 @@
      Both of these plugins are recommended to enhance the
      user experience. Slimscroll is required when using the
      fixed layout. -->
+
+  <!--
+  From the documentation:
+      Add the detection template tag to your site, ideally in your base layout just before the </body> tag
+  -->
+  {% tz_detect %}
 </body>
 </html>
