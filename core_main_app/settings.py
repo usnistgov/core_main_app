@@ -179,3 +179,7 @@ LOCALE_PATHS = (
 CAN_SET_WORKSPACE_PUBLIC = getattr(settings, 'CAN_SET_WORKSPACE_PUBLIC', True)
 """ :py:class:`bool`: Can set workspace public.
 """
+
+SSL_CERTIFICATES_DIR = getattr(settings, 'SSL_CERTIFICATES_DIR', 'certs')
+""" :py:class:`str`: SSL certificates directory location.
+"""
