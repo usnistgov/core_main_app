@@ -1,6 +1,5 @@
-"""REST views for the template version manager API
+""" REST views for the template version manager API
 """
-
 from django.http import Http404
 from django.utils.decorators import method_decorator
 from rest_framework import status
@@ -20,42 +19,47 @@ from core_main_app.utils.decorators import api_staff_member_required
 
 
 class GlobalTemplateVersionManagerList(AbstractTemplateVersionManagerList):
-    """ List all global template version managers.
+    """ List all GlobalTemplateVersionManager
     """
 
     def get_template_version_managers(self):
-        """ Get global template version managers
+        """ Get GlobalTemplateVersionManager
 
         Returns:
 
+            List of GlobalTemplateVersionManager
         """
         return template_version_manager_api.get_global_version_managers()
 
 
 class UserTemplateVersionManagerList(AbstractTemplateVersionManagerList):
-    """ List all user template version managers.
+    """ List all UserTemplateVersionManager
     """
 
     def get_template_version_managers(self):
-        """ Get all user template version managers.
+        """ Get all UserTemplateVersionManager
 
         Returns:
 
+            List of UserTemplateVersionManager
         """
         return template_version_manager_api.get_all_by_user_id(user_id=str(self.request.user.id))
 
 
 class TemplateVersionManagerDetail(APIView):
-    """ Retrieve a template version manager.
+    """ Retrieve a TemplateVersionManager
     """
+
     def get_object(self, pk):
-        """ Get template version manager from db
+        """ Get TemplateVersionManager from db
 
         Args:
-            pk:
+
+            pk: ObjectId
 
         Returns:
 
+            TemplateVersionManager
         """
         try:
             return version_manager_api.get(pk)
@@ -63,14 +67,21 @@ class TemplateVersionManagerDetail(APIView):
             raise Http404
 
     def get(self, request, pk):
-        """ Retrieve template version manager
+        """ Retrieve a TemplateVersionManager
 
         Args:
-            request:
-            pk:
+
+            request: HTTP request
+            pk: ObjectId
 
         Returns:
 
+            - code: 200
+              content: TemplateVersionManager
+            - code: 404
+              content: Object was not found
+            - code: 500
+              content: Internal server error
         """
         try:
             # Get object
@@ -90,24 +101,37 @@ class TemplateVersionManagerDetail(APIView):
 
 
 class TemplateVersion(AbstractTemplateVersionManagerDetail):
-    """ Create a version.
+    """ Create a TemplateVersion
     """
+
     def post(self, request, pk):
-        """ Create a version.
+        """ Create a TemplateVersion
 
-        POST data
-        {
-        "filename": "filename",
-        "content": "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element name='root'/></xs:schema>"
-        }
+        Parameters:
 
-        Note: "dependencies"= json.dumps({"schemaLocation1": "id1" ,"schemaLocation2":"id2"})
+            {
+                "filename": "filename",
+                "content": "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element name='root'/></xs:schema>"
+            }
+
+        Note: 
+        
+            "dependencies"= json.dumps({"schemaLocation1": "id1" ,"schemaLocation2":"id2"})
 
         Args:
-            request:
+
+            request: HTTP request
 
         Returns:
 
+            - code: 200
+              content: Created TemplateVersionManager
+            - code: 400
+              content: Validation error
+            - code: 404
+              content: Template was not found
+            - code: 500
+              content: Internal server error
         """
         try:
             # Get object
@@ -135,114 +159,178 @@ class TemplateVersion(AbstractTemplateVersionManagerDetail):
 
 
 class UserTemplateList(AbstractTemplateList):
-    """ Create a user template (owner is user)
+    """ Create a Template (linked to the user)
     """
+
     def post(self, request):
-        """ Create a user template.
+        """ Create a Template (linked to the user)
+
+        Parameters:
+
+            {
+                "title": "title",
+                "filename": "filename",
+                "content": "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element name='root'/></xs:schema>"
+            }
+
+        Note:
+
+            "dependencies"= json.dumps({"schemaLocation1": "id1" ,"schemaLocation2":"id2"})
 
         Args:
-            request:
+
+            request: HTTP request
 
         Returns:
 
+            - code: 201
+              content: Created Template
+            - code: 400
+              content: Validation error / not unique / XSD error
+            - code: 500
+              content: Internal server error
         """
         return super(UserTemplateList, self).post(request)
 
     def get_user(self):
+        """ Retrieve the user from the request
+
+        Returns:
+
+            User ID
+        """
         return str(self.request.user.id)
 
 
 class GlobalTemplateList(AbstractTemplateList):
-    """ Create a global template (owner is None)
+    """ Create a Template (global schema)
     """
+
     @method_decorator(api_staff_member_required())
     def post(self, request):
-        """ Create a global template.
+        """ Create a Template (global schema)
+
+        Parameters:
+
+            {
+                "title": "title",
+                "filename": "filename",
+                "content": "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element name='root'/></xs:schema>"
+            }
+
+        Note:
+
+            "dependencies"= json.dumps({"schemaLocation1": "id1" ,"schemaLocation2":"id2"})
 
         Args:
-            request:
+
+            request: HTTP request
 
         Returns:
 
+            - code: 201
+              content: Created template
+            - code: 400
+              content: Validation error / not unique / XSD error
+            - code: 500
+              content: Internal server error
         """
         return super(GlobalTemplateList, self).post(request)
 
     def get_user(self):
+        """ The user is None for a global template
+
+        Returns:
+
+            None
+        """
         return None
 
 
 class CurrentTemplateVersion(AbstractStatusTemplateVersion):
-    """ Set current.
+    """ Update status to current
     """
+
     def status_update(self, template_object):
         """ Update status to current
 
         Args:
-            template_object:
+
+            template_object: template_version
 
         Returns:
 
+            TemplateVersion
         """
         return version_manager_api.set_current(template_object)
 
 
 class DisableTemplateVersion(AbstractStatusTemplateVersion):
-    """ Set disabled.
+    """ Update status to disabled
     """
+
     def status_update(self, template_object):
         """ Update status to disabled
 
         Args:
-            template_object:
+
+            template_object: template_version
 
         Returns:
 
+            TemplateVersion
         """
         return version_manager_api.disable_version(template_object)
 
 
 class RestoreTemplateVersion(AbstractStatusTemplateVersion):
-    """ Set restored
+    """ Update status to restored
     """
+
     def status_update(self, template_object):
         """ Update status to restored
 
         Args:
-            template_object:
+
+            template_object: template_version
 
         Returns:
 
+            TemplateVersion
         """
         return version_manager_api.restore_version(template_object)
 
 
 class DisableTemplateVersionManager(AbstractStatusTemplateVersionManager):
-    """ Set disabled.
+    """ Update status to disabled
     """
 
     def status_update(self, template_version_manager_object):
-        """ Set disabled.
+        """ Update status to disabled
 
         Args:
-            template_version_manager_object:
+
+            template_version_manager_object: template_version_manager
 
         Returns:
 
+            TemplateVersionManager
         """
+        # FIXME: add return?
         version_manager_api.disable(template_version_manager_object)
 
 
 class RestoreTemplateVersionManager(AbstractStatusTemplateVersionManager):
-    """ Set restored.
+    """ Update status to restored
     """
 
     def status_update(self, template_version_manager_object):
-        """ Set restored.
+        """ Update status to restored
 
         Args:
-            template_version_manager_object:
 
-        Returns:
+            template_version_manager_object: template_version_manager
 
         """
+        # FIXME: add return?
         version_manager_api.restore(template_version_manager_object)

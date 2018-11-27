@@ -22,22 +22,35 @@ from core_main_app.utils.pagination.rest_framework_paginator.pagination import S
 
 
 # FIXME: permissions
-
 class DataList(APIView):
-    """ List all user data, or create a new one.
+    """ List all user Data, or create a new one.
     """
-    def get(self, request):
-        """ Get all user data.
 
-        Query Params:
-            template: template id
-            title: title
+    def get(self, request):
+        """ Get all user Data
+
+        Url Parameters:
+
+            template: template_id
+            title: document_title
+
+        Examples:
+
+            ../data/
+            ../data?template=[template_id]
+            ../data?title=[document_title]
+            ../data?template=[template_id]&title=[document_title]
 
         Args:
-            request:
+
+            request: HTTP request
 
         Returns:
 
+            - code: 200
+              content: List of data
+            - code: 500
+              content: Internal server error
         """
         try:
             # Get object
@@ -62,13 +75,30 @@ class DataList(APIView):
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
-        """ Create data
+        """ Create a Data
+
+        Parameters:
+
+            {
+                "title": "document_title",
+                "template": "template_id",
+                "xml_content": "document_content"
+            }
 
         Args:
-            request:
+
+            request: HTTP request
 
         Returns:
 
+            - code: 201
+              content: Created data
+            - code: 400
+              content: Validation error
+            - code: 404
+              content: Template was not found
+            - code: 500
+              content: Internal server error
         """
         try:
             # Build serializer
@@ -86,25 +116,27 @@ class DataList(APIView):
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except exceptions.DoesNotExist:
             content = {'message': 'Template not found.'}
-            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+            return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
             content = {'message': api_exception.message}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class DataDetail(APIView):
+    """ Retrieve, update or delete a Data
     """
-    Retrieve, update or delete a data.
-    """
+
     def get_object(self, request, pk):
         """ Get data from db
 
         Args:
-            request:
-            pk:
+
+            request: HTTP request
+            pk: ObjectId
 
         Returns:
 
+            Data
         """
         try:
             return data_api.get_by_id(pk, request.user)
@@ -112,14 +144,21 @@ class DataDetail(APIView):
             raise Http404
 
     def get(self, request, pk):
-        """ Retrieve data
+        """ Retrieve a data
 
         Args:
-            request:
-            pk:
+
+            request: HTTP request
+            pk: ObjectId
 
         Returns:
 
+            - code: 200
+              content: Data
+            - code: 404
+              content: Object was not found
+            - code: 500
+              content: Internal server error
         """
         try:
             # Get object
@@ -138,14 +177,21 @@ class DataDetail(APIView):
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request, pk):
-        """ Delete a data
+        """ Delete a Data
 
         Args:
-            request:
-            pk:
+
+            request: HTTP request
+            pk: ObjectId
 
         Returns:
 
+            - code: 204
+              content: Deletion succeed
+            - code: 404
+              content: Object was not found
+            - code: 500
+              content: Internal server error
         """
         try:
             # Get object
@@ -164,14 +210,30 @@ class DataDetail(APIView):
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def patch(self, request, pk):
-        """ Update data
+        """ Update a Data
+
+        Parameters:
+
+            {
+                "title": "new_title",
+                "xml_content": "new_xml_content"
+            }
 
         Args:
-            request:
-            pk:
+
+            request: HTTP request
+            pk: ObjectId
 
         Returns:
 
+            - code: 200
+              content: Updated data
+            - code: 400
+              content: Validation error
+            - code: 404
+              content: Object was not found
+            - code: 500
+              content: Internal server error
         """
         try:
             # Get object
@@ -200,18 +262,19 @@ class DataDetail(APIView):
 
 
 class DataDownload(APIView):
-    """
-        Download XML file in data.
+    """ Download XML file in data
     """
     def get_object(self, request, pk):
-        """ Get data from db
+        """ Get Data from db
 
         Args:
-            request:
-            pk:
+
+            request: HTTP request
+            pk: ObjectId
 
         Returns:
 
+            Data
         """
         try:
             return data_api.get_by_id(pk, request.user)
@@ -219,14 +282,21 @@ class DataDownload(APIView):
             raise Http404
 
     def get(self, request, pk):
-        """ Download data
+        """ Download the XML file from a data
 
         Args:
-            request:
-            pk:
+
+            request: HTTP request
+            pk: ObjectId
 
         Returns:
 
+            - code: 200
+              content: XML file
+            - code: 404
+              content: Object was not found
+            - code: 500
+              content: Internal server error
         """
         try:
             # Get object
@@ -245,16 +315,27 @@ class DataDownload(APIView):
 # Should avoid here a duplication code with get_by_id
 @api_view(['GET'])
 def get_by_id_with_template_info(request):
-    """ Get data by its id.
+    """ Retrieve a Data with template information
 
-        /rest/data/get-full?id=588a73b47179c722f6fdaf43
+    Examples:
 
-        Args:
-            request:
+        ../data/get-full?id=[data_id]
 
-        Returns:
+    Args:
 
-        """
+        request: HTTP request
+
+    Returns:
+
+        - code: 200
+          content: Data
+        - code: 400
+          content: Validation error
+        - code: 404
+          content: Object was not found
+        - code: 500
+          content: Internal server error
+    """
     try:
         # Get parameters
         data_id = request.query_params.get('id', None)
@@ -285,22 +366,41 @@ def get_by_id_with_template_info(request):
 
 class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
     def post(self, request):
-        """ Execute a query.
+        """ Execute a query
 
-        /rest/data/query/
-        /rest/data/query/?page=2
+        Url Parameters:
 
-        Example Data:
+            page: page_number
+
+        Parameters:
+
+            {"query": "{}"}
             {"query": "{\"root.element.value\": 2}"}
             {"query": "{\"root.element.value\": 2}", "all": "true"}
-            {"query": "{\"root.element.value\": 2}", "templates": "[{\"id\":\"<template_id>\"}]"}
-            {"query": "{}", "templates": "[{\"id\":\"<template_id>\"}]"}
+            {"query": "{\"root.element.value\": 2}", "templates": "[{\"id\":\"[template_id]\"}]"}
+            {"query": "{}", "templates": "[{\"id\":\"[template_id]\"}]"}
+
+        Warning:
+
+            Need to backslash double quotes in JSON payload
+
+        Examples:
+
+            ../data/query/
+            ../data/query/?page=2
 
         Args:
-            request:
+
+            request: HTTP request
 
         Returns:
 
+            - code: 200
+              content: List of data
+            - code: 400
+              content: Bad request
+            - code: 500
+              content: Internal server error
         """
         return super(ExecuteLocalQueryView, self).post(request)
 
@@ -308,11 +408,12 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
         """ Build the response.
 
         Args:
-            data_list: List of data.
+
+            data_list: List of data
 
         Returns:
-            The response.
 
+            The response paginated
         """
         if 'all' in self.request.data and to_bool(self.request.data['all']):
             # Serialize data list
@@ -335,15 +436,18 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
 
 class ExecuteLocalKeywordQueryView(ExecuteLocalQueryView):
     def build_query(self, query, templates, options):
-        """ Build the raw query. Prepare the query for a keyword search.
+        """ Build the raw query
+        Prepare the query for a keyword search
+
         Args:
-            query:
-            templates:
-            options:
 
+            query: ObjectId
+            templates: ObjectId
+            options: Query options
+            
         Returns:
-            The raw query.
 
+            The raw query
         """
         # build query builder
         query = json.dumps(get_full_text_query(query))
@@ -351,18 +455,19 @@ class ExecuteLocalKeywordQueryView(ExecuteLocalQueryView):
 
 
 class DataAssign(APIView):
-    """
-    Assign a data to a workspace.
+    """ Assign a Data to a Workspace.
     """
     def get_object(self, request, pk):
         """ Get data from db
 
         Args:
-            request:
-            pk:
+
+            request: HTTP request
+            pk: ObjectId
 
         Returns:
 
+            Data
         """
         try:
             return data_api.get_by_id(pk, request.user)
@@ -370,13 +475,16 @@ class DataAssign(APIView):
             raise Http404
 
     def get_workspace(self, workspace_id):
-        """ Get workspace from database
+        """ Retrieve a Workspace
 
         Args:
-            workspace_id:
+
+            workspace_id: ObjectId
 
         Returns:
 
+            - code: 404
+              content: Object was not found
         """
         try:
             return workspace_api.get_by_id(workspace_id)
@@ -384,15 +492,24 @@ class DataAssign(APIView):
             raise Http404
 
     def patch(self, request, pk, workspace_id):
-        """ Assign data to a workspace.
+        """ Assign Data to a Workspace
 
         Args:
-            request:
-            pk:
-            workspace_id:
+
+            request: HTTP request
+            pk: ObjectId
+            workspace_id: ObjectId
 
         Returns:
 
+            - code: 200
+              content: None
+            - code: 403
+              content: Authentication error
+            - code: 404
+              content: Object was not found
+            - code: 500
+              content: Internal server error
         """
         try:
             # Get object

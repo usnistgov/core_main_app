@@ -14,23 +14,31 @@ from core_main_app.utils.file import get_file_http_response
 
 
 class BlobList(APIView):
-    """ List all user blobs, or create a new one.
+    """ List all user Blob, or create a new one
     """
 
     def get(self, request):
-        """ Get all user blobs
+        """ Get all user Blob
 
-        /rest/blob/
-        /rest/blob/?filename=<filename>
+        Url Parameters:
 
-        Query Params:
-            filename: filename
+            filename: document_filename
+
+        Examples:
+
+            ../blob/
+            ../blob?filename=[filename]
 
         Args:
-            request:
+
+            request: HTTP request
 
         Returns:
 
+            - code: 200
+              content: List of blob
+            - code: 500
+              content: Internal server error
         """
         try:
             # FIXME: remove?
@@ -54,21 +62,30 @@ class BlobList(APIView):
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
-        """ Create blob
+        """ Create Blob
 
-        Data:
+        Parameters:
+
             {
-            "blob": "<file>",
+                "blob": "[file]",
             }
 
-        Examples:
+        Code snippet:
+
             requests.post(url, files={'blob': open(BLOB_PATH, 'rb')}, auth=(USER, PSWD))
 
         Args:
-            request:
+
+            request: HTTP request
 
         Returns:
 
+            - code: 200
+              content: Created blob
+            - code: 400
+              content: Validation error
+            - code: 500
+              content: Internal server error
         """
         try:
             # Build serializer
@@ -91,18 +108,19 @@ class BlobList(APIView):
 
 
 class BlobDetail(APIView):
-    """
-    Retrieve, update or delete a blob.
+    """ Retrieve, update or delete a Blob
     """
 
     def get_object(self, pk):
-        """ Get blob from db
+        """ Get Blob from db
 
         Args:
-            pk:
+
+            pk: ObjectId
 
         Returns:
 
+            Blob
         """
         try:
             return blob_api.get_by_id(pk)
@@ -110,13 +128,21 @@ class BlobDetail(APIView):
             raise Http404
 
     def get(self, request, pk):
-        """ Retrieve blob
+        """ Retrieve Blob
 
         Args:
-            pk:
+
+            request: HTTP request
+            pk: ObjectId
 
         Returns:
 
+            - code: 200
+              content: Blob
+            - code: 404
+              content: Object was not found
+            - code: 500
+              content: Internal server error
         """
         try:
             # Get object
@@ -135,14 +161,23 @@ class BlobDetail(APIView):
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request, pk):
-        """ Delete a blob
+        """ Delete Blob
 
         Args:
-            request:
-            pk:
+
+            request: HTTP request
+            pk: ObjectId
 
         Returns:
 
+            - code: 204
+              content: Deletion succeed
+            - code: 403
+              content: Authentication error
+            - code: 404
+              content: Object was not found
+            - code: 500
+              content: Internal server error
         """
         try:
             # Get object
@@ -165,18 +200,19 @@ class BlobDetail(APIView):
 
 
 class BlobDownload(APIView):
-    """
-    Download a blob.
+    """ Download Blob
     """
 
     def get_object(self, pk):
-        """ Get blob from db
+        """ Get Blob from db
 
         Args:
-            pk:
+
+            pk: ObjectId
 
         Returns:
 
+            Blob
         """
         try:
             return blob_api.get_by_id(pk)
@@ -184,13 +220,21 @@ class BlobDownload(APIView):
             raise Http404
 
     def get(self, request, pk):
-        """ Retrieve blob
+        """ Download the Blob file
 
         Args:
-            pk:
+
+            request: HTTP request
+            pk: ObjectId
 
         Returns:
 
+            - code: 200
+              content: Blob file
+            - code: 404
+              content: Object was not found
+            - code: 500
+              content: Internal server error
         """
         try:
             # Get object
@@ -206,21 +250,37 @@ class BlobDownload(APIView):
 
 
 class BlobDeleteList(APIView):
-    """ Delete list of blobs.
+    """ Delete a list of Blob
     """
+
     def patch(self, request):
-        """ Delete a list of blobs.
+        """ Delete a list of Blob
 
-        /rest/blobs/delete/
+        Parameters:
 
-        Data:
-        [{"id":"<blob_id>"},{"id":"<blob_id>"}]
+            [
+                {
+                    "id": "blob_id",
+                },
+                {
+                    "id": "blob_id",
+                }
+            ]
 
         Args:
-            request:
+
+            request: HTTP request
 
         Returns:
 
+            - code: 204
+              content: Deletion succeed
+            - code: 400
+              content: Validation error
+            - code: 403
+              content: Authentication error
+            - code: 500
+              content: Internal server error
         """
         try:
             # Serialize data

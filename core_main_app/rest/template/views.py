@@ -1,6 +1,5 @@
-"""REST views for the template API
+""" REST views for the template API
 """
-
 from django.http import Http404
 from rest_framework import status
 from rest_framework.response import Response
@@ -13,17 +12,18 @@ from core_main_app.utils.file import get_file_http_response
 
 
 class TemplateDetail(APIView):
-    """
-    Retrieve a template.
+    """ Retrieve a Template.
     """
     def get_object(self, pk):
-        """ Get template from db
+        """ Get Template from db
 
         Args:
-            pk:
+
+            pk: ObjectId
 
         Returns:
 
+            Template
         """
         try:
             return template_api.get(pk)
@@ -31,14 +31,21 @@ class TemplateDetail(APIView):
             raise Http404
 
     def get(self, request, pk):
-        """ Retrieve template
+        """ Retrieve a Template
 
         Args:
-            request:
-            pk:
+
+            request: HTTP request
+            pk: ObjectId
 
         Returns:
 
+            - code: 200
+              content: Template
+            - code: 404
+              content: Object was not found
+            - code: 500
+              content: Internal server error
         """
         try:
             # Get object
@@ -58,17 +65,18 @@ class TemplateDetail(APIView):
 
 
 class TemplateDownload(APIView):
-    """
-    Download a template.
+    """ Download a Template
     """
     def get_object(self, pk):
-        """ Get template from db
+        """ Get Template from db
 
         Args:
-            pk:
+
+            pk: ObjectId
 
         Returns:
 
+            Template
         """
         try:
             return template_api.get(pk)
@@ -76,14 +84,21 @@ class TemplateDownload(APIView):
             raise Http404
 
     def get(self, request, pk):
-        """ Retrieve template
+        """ Download the XSD file from a Template
 
         Args:
-            request:
-            pk:
+
+            request: HTTP request
+            pk: ObjectId
 
         Returns:
 
+            - code: 200
+              content: XSD file
+            - code: 404
+              content: Object was not found
+            - code: 500
+              content: Internal server error
         """
         try:
             # Get object

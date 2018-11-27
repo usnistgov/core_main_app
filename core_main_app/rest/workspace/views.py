@@ -2,32 +2,37 @@
 """
 from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.exceptions import ValidationError
 
-import core_main_app.components.workspace.api as workspace_api
-import core_main_app.components.user.api as user_api
 import core_main_app.components.group.api as group_api
+import core_main_app.components.user.api as user_api
+import core_main_app.components.workspace.api as workspace_api
 from core_main_app.commons import exceptions
-from core_main_app.rest.workspace.serializers import WorkspaceSerializer
-from core_main_app.rest.user.serializers import UserSerializer
 from core_main_app.rest.group.serializers import GroupSerializer
+from core_main_app.rest.user.serializers import UserSerializer
+from core_main_app.rest.workspace.serializers import WorkspaceSerializer
 from core_main_app.utils.access_control.exceptions import AccessControlError
 
 
 class WorkspaceList(APIView):
-    """ List all user workspace, or create a new one.
+    """ List all user Workspace, or create a new one
     """
 
     def get(self, request):
-        """ Get all user workspaces.
+        """ Get all user workspaces
 
         Args:
-            request:
+
+            request: HTTP request
 
         Returns:
 
+            - code: 200
+              content: List of workspace
+            - code: 500
+              content: Internal server error
         """
         try:
             if request.user.is_superuser:
@@ -45,13 +50,26 @@ class WorkspaceList(APIView):
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
-        """ Create workspace.
+        """ Create a Workspace
+
+        Parameters:
+
+            {
+                "title": "document_title",
+            }
 
         Args:
-            request:
+
+            request: HTTP request
 
         Returns:
 
+            - code: 201
+              content: Created workspace
+            - code: 400
+              content: Validation error / not unique / model error
+            - code: 500
+              content: Internal server error
         """
         try:
             # Build serializer
@@ -82,18 +100,20 @@ class WorkspaceList(APIView):
 
 
 class WorkspaceDetail(APIView):
-    """ Workspace Detail.
+    """ Workspace Detail
     """
 
     def get(self, request, pk):
-        """ Retrieve workspace
+        """ Get Workspace from db
 
         Args:
-            request:
-            pk:
+
+            request: HTTP request
+            pk: ObjectId
 
         Returns:
 
+            Workspace
         """
         try:
             # Get object
@@ -112,14 +132,23 @@ class WorkspaceDetail(APIView):
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request, pk):
-        """ Delete a workspace
+        """ Delete a Workspace
 
         Args:
-            request:
-            pk:
+
+            request: HTTP request
+            pk: ObjectId
 
         Returns:
 
+            - code: 204
+              content: Deletion succeed
+            - code: 403
+              content: Authentication error
+            - code: 404
+              content: Object was not found
+            - code: 500
+              content: Internal server error
         """
         try:
             # Get object
@@ -143,41 +172,53 @@ class WorkspaceDetail(APIView):
 
 @api_view(['GET'])
 def get_workspaces_with_read_access(request):
-    """ Get all workspaces with read access.
+    """ Get all workspaces with read access
 
-        /rest/workspace/read_access
+    Args:
 
-        Args:
-            request:
+        request: HTTP request
 
-        Returns:
+    Returns:
 
+        - code: 200
+          content: list of workspace
+        - code: 500
+          content: Internal server error
     """
     return _list_of_workspaces_to_response(workspace_api.get_all_workspaces_with_read_access_by_user(request.user))
 
 
 @api_view(['GET'])
 def get_workspaces_with_write_access(request):
-    """ Get all workspaces with write access.
+    """ Get all workspaces with write access
 
-        /rest/workspace/write_access
+    Args:
 
-        Args:
-            request:
+        request: HTTP request
 
-        Returns:
+    Returns:
 
+        - code: 200
+          content: list of workspace
+        - code: 500
+          content: Internal server error
     """
     return _list_of_workspaces_to_response(workspace_api.get_all_workspaces_with_write_access_by_user(request.user))
 
 
 def _list_of_workspaces_to_response(func):
-    """ Serialize and generate response the list of workspaces you can get with func method.
+    """ Serialize and generate response the list of workspaces you can get with func method
 
-        Args:
-            func:
+    Args:
 
-        Returns:
+        func: function
+
+    Returns:
+
+        - code: 200
+          content: list of workspace
+        - code: 500
+          content: Internal server error
     """
     try:
         # Get object list
@@ -196,14 +237,21 @@ def _list_of_workspaces_to_response(func):
 
 @api_view(['GET'])
 def is_workspace_public(request, pk):
-    """ Is the workspace public.
+    """ Is the workspace public
 
-        Args:
-            request:
-            pk:
+    Args:
 
-        Returns:
+        request: HTTP request
+        pk: ObjectId
 
+    Returns:
+
+        - code: 200
+          content: Boolean
+        - code: 404
+          content: Object was not found
+        - code: 500
+          content: Internal server error
     """
     try:
         # Get object
@@ -221,14 +269,23 @@ def is_workspace_public(request, pk):
 
 @api_view(['PATCH'])
 def set_workspace_public(request, pk):
-    """ Set the workspace public.
+    """ Set the workspace public
 
-        Args:
-            request:
-            pk:
+    Args:
 
-        Returns:
+        request: HTTP request
+        pk: ObjectId
 
+    Returns:
+
+        - code: 200
+          content: None
+        - code: 403
+          content: Authentication error
+        - code: 404
+          content: Object was not found
+        - code: 500
+          content: Internal server error
     """
     try:
         # Get object
@@ -252,14 +309,23 @@ def set_workspace_public(request, pk):
 
 @api_view(['PATCH'])
 def set_workspace_private(request, pk):
-    """ Set the workspace private.
+    """ Set the workspace private
 
-        Args:
-            request:
-            pk:
+    Args:
 
-        Returns:
+        request: HTTP request
+        pk: ObjectId
 
+    Returns:
+
+        - code: 200
+          content: None
+        - code: 403
+          content: Authentication error
+        - code: 404
+          content: Object was not found
+        - code: 500
+          content: Internal server error
     """
     try:
         # Get object
@@ -283,14 +349,22 @@ def set_workspace_private(request, pk):
 
 @api_view(['GET'])
 def get_list_user_can_write_workspace(request, pk):
-    """ Get list of users that have write access to workspace.
+    """ Get list of users that have write access to workspace
 
     Args:
-        request:
-        pk:
+
+        request: HTTP request
 
     Returns:
 
+        - code: 200
+          content: list of user
+        - code: 403
+          content: Authentication error
+        - code: 404
+          content: Object was not found
+        - code: 500
+          content: Internal server error
     """
     return _list_of_users_or_groups_to_response(pk, workspace_api.get_list_user_can_write_workspace,
                                                 request.user, UserSerializer)
@@ -298,14 +372,22 @@ def get_list_user_can_write_workspace(request, pk):
 
 @api_view(['GET'])
 def get_list_user_can_read_workspace(request, pk):
-    """ Get list of users that have read access to workspace.
+    """ Get list of users that have read access to workspace
 
     Args:
-        request:
-        pk:
+
+        request: HTTP request
 
     Returns:
 
+        - code: 200
+          content: list of user
+        - code: 403
+          content: Authentication error
+        - code: 404
+          content: Object was not found
+        - code: 500
+          content: Internal server error
     """
     return _list_of_users_or_groups_to_response(pk, workspace_api.get_list_user_can_read_workspace,
                                                 request.user, UserSerializer)
@@ -313,14 +395,22 @@ def get_list_user_can_read_workspace(request, pk):
 
 @api_view(['GET'])
 def get_list_user_can_access_workspace(request, pk):
-    """ Get list of users that have read or write access to workspace.
+    """ Get list of users that have read or write access to workspace
 
     Args:
-        request:
-        pk:
+
+        request: HTTP request
 
     Returns:
 
+        - code: 200
+          content: list of user
+        - code: 403
+          content: Authentication error
+        - code: 404
+          content: Object was not found
+        - code: 500
+          content: Internal server error
     """
     return _list_of_users_or_groups_to_response(pk, workspace_api.get_list_user_can_access_workspace,
                                                 request.user, UserSerializer)
@@ -328,14 +418,22 @@ def get_list_user_can_access_workspace(request, pk):
 
 @api_view(['GET'])
 def get_list_group_can_write_workspace(request, pk):
-    """ Get list of groups that have write access to workspace.
+    """ Get list of groups that have write access to workspace
 
     Args:
-        request:
-        pk:
+
+        request: HTTP request
 
     Returns:
 
+        - code: 200
+          content: list of group
+        - code: 403
+          content: Authentication error
+        - code: 404
+          content: Object was not found
+        - code: 500
+          content: Internal server error
     """
     return _list_of_users_or_groups_to_response(pk, workspace_api.get_list_group_can_write_workspace,
                                                 request.user, GroupSerializer)
@@ -343,14 +441,22 @@ def get_list_group_can_write_workspace(request, pk):
 
 @api_view(['GET'])
 def get_list_group_can_read_workspace(request, pk):
-    """ Get list of groups that have read access to workspace.
+    """ Get list of groups that have read access to workspace
 
     Args:
-        request:
-        pk:
+
+        request: HTTP request
 
     Returns:
 
+        - code: 200
+          content: list of group
+        - code: 403
+          content: Authentication error
+        - code: 404
+          content: Object was not found
+        - code: 500
+          content: Internal server error
     """
     return _list_of_users_or_groups_to_response(pk, workspace_api.get_list_group_can_read_workspace,
                                                 request.user, GroupSerializer)
@@ -358,29 +464,46 @@ def get_list_group_can_read_workspace(request, pk):
 
 @api_view(['GET'])
 def get_list_group_can_access_workspace(request, pk):
-    """ Get list of groups that have read or write access to workspace.
+    """ Get list of groups that have read or write access to workspace
 
     Args:
-        request:
-        pk:
+
+        request: HTTP request
 
     Returns:
 
+        - code: 200
+          content: list of group
+        - code: 403
+          content: Authentication error
+        - code: 404
+          content: Object was not found
+        - code: 500
+          content: Internal server error
     """
     return _list_of_users_or_groups_to_response(pk, workspace_api.get_list_group_can_access_workspace,
                                                 request.user, GroupSerializer)
 
 
 def _list_of_users_or_groups_to_response(pk, func, user, serializer):
-    """ List of users or groups to response.
+    """ List of users or groups to response
 
     Args:
-        pk:
-        func:
-        user:
+
+        pk: ObjectId
+        func: function
+        user: user
 
     Returns:
 
+        - code: 200
+          content: list of group or user
+        - code: 403
+          content: Authentication error
+        - code: 404
+          content: Object was not found
+        - code: 500
+          content: Internal server error
     """
     try:
         # Get object
@@ -407,18 +530,27 @@ def _list_of_users_or_groups_to_response(pk, func, user, serializer):
 
 
 def _add_or_remove_to_user_or_group_right_to_workspace(request, pk, user_or_group_id, func, get_group_or_user_func):
-    """ Add
+    """ Add or remove a right to a user or a group
 
     Args:
-        request:
-        pk:
-        user_or_group_id:
-        func:
-        get_group_or_user_func
+
+        request: HTTP request
+        pk: ObjectId
+        user_or_group_id: ObjectId
+        func: function
+        get_group_or_user_func: function
 
     Returns:
-    """
 
+        - code: 200
+          content: None
+        - code: 403
+          content: Authentication error
+        - code: 404
+          content: Object was not found
+        - code: 500
+          content: Internal server error
+    """
     try:
         # Get object
         workspace_object = workspace_api.get_by_id(pk)
@@ -445,15 +577,24 @@ def _add_or_remove_to_user_or_group_right_to_workspace(request, pk, user_or_grou
 
 @api_view(['PATCH'])
 def add_user_read_right_to_workspace(request, pk, user_id):
-    """ Add to the user the read right to the workspace.
+    """ Add to the user the read right to the Workspace
 
     Args:
-        request:
-        pk:
-        user_id:
+
+        request: HTTP request
+        pk: ObjectId
+        user_id: ObjectId
 
     Returns:
 
+        - code: 200
+          content: None
+        - code: 403
+          content: Authentication error
+        - code: 404
+          content: Object was not found
+        - code: 500
+          content: Internal server error
     """
     return _add_or_remove_to_user_or_group_right_to_workspace(request, pk, user_id,
                                                               workspace_api.add_user_read_access_to_workspace,
@@ -462,15 +603,24 @@ def add_user_read_right_to_workspace(request, pk, user_id):
 
 @api_view(['PATCH'])
 def add_user_write_right_to_workspace(request, pk, user_id):
-    """ Add to the user the write right to the workspace.
+    """ Add to the user the write right to the workspace
 
     Args:
-        request:
-        pk:
-        user_id:
+
+        request: HTTP request
+        pk: ObjectId
+        user_id: ObjectId
 
     Returns:
 
+        - code: 200
+          content: None
+        - code: 403
+          content: Authentication error
+        - code: 404
+          content: Object was not found
+        - code: 500
+          content: Internal server error
     """
     return _add_or_remove_to_user_or_group_right_to_workspace(request, pk, user_id,
                                                               workspace_api.add_user_write_access_to_workspace,
@@ -479,15 +629,24 @@ def add_user_write_right_to_workspace(request, pk, user_id):
 
 @api_view(['PATCH'])
 def add_group_read_right_to_workspace(request, pk, group_id):
-    """ Add to the group the read right to the workspace.
+    """ Add to the group the read right to the workspace
 
     Args:
-        request:
-        pk:
-        group_id:
+
+        request: HTTP request
+        pk: ObjectId
+        group_id: ObjectId
 
     Returns:
 
+        - code: 200
+          content: None
+        - code: 403
+          content: Authentication error
+        - code: 404
+          content: Object was not found
+        - code: 500
+          content: Internal server error
     """
     return _add_or_remove_to_user_or_group_right_to_workspace(request, pk, group_id,
                                                               workspace_api.add_group_read_access_to_workspace,
@@ -496,15 +655,24 @@ def add_group_read_right_to_workspace(request, pk, group_id):
 
 @api_view(['PATCH'])
 def add_group_write_right_to_workspace(request, pk, group_id):
-    """ Add to the group the write right to the workspace.
+    """ Add to the group the write right to the workspace
 
     Args:
-        request:
-        pk:
-        group_id:
+
+        request: HTTP request
+        pk: ObjectId
+        group_id: ObjectId
 
     Returns:
 
+        - code: 200
+          content: None
+        - code: 403
+          content: Authentication error
+        - code: 404
+          content: Object was not found
+        - code: 500
+          content: Internal server error
     """
     return _add_or_remove_to_user_or_group_right_to_workspace(request, pk, group_id,
                                                               workspace_api.add_group_write_access_to_workspace,
@@ -513,15 +681,24 @@ def add_group_write_right_to_workspace(request, pk, group_id):
 
 @api_view(['PATCH'])
 def remove_user_read_right_to_workspace(request, pk, user_id):
-    """ Remove from the user the read right to the workspace.
+    """ Remove from the user the read right to the workspace
 
     Args:
-        request:
-        pk:
-        user_id:
+
+        request: HTTP request
+        pk: ObjectId
+        user_id: ObjectId
 
     Returns:
 
+        - code: 200
+          content: None
+        - code: 403
+          content: Authentication error
+        - code: 404
+          content: Object was not found
+        - code: 500
+          content: Internal server error
     """
     return _add_or_remove_to_user_or_group_right_to_workspace(request, pk, user_id,
                                                               workspace_api.remove_user_read_access_to_workspace,
@@ -530,15 +707,24 @@ def remove_user_read_right_to_workspace(request, pk, user_id):
 
 @api_view(['PATCH'])
 def remove_user_write_right_to_workspace(request, pk, user_id):
-    """ Remove from the user the write right to the workspace.
+    """ Remove from the user the write right to the workspace
 
     Args:
-        request:
-        pk:
-        user_id:
+
+        request: HTTP request
+        pk: ObjectId
+        user_id: ObjectId
 
     Returns:
 
+        - code: 200
+          content: None
+        - code: 403
+          content: Authentication error
+        - code: 404
+          content: Object was not found
+        - code: 500
+          content: Internal server error
     """
     return _add_or_remove_to_user_or_group_right_to_workspace(request, pk, user_id,
                                                               workspace_api.remove_user_write_access_to_workspace,
@@ -547,15 +733,24 @@ def remove_user_write_right_to_workspace(request, pk, user_id):
 
 @api_view(['PATCH'])
 def remove_group_read_right_to_workspace(request, pk, group_id):
-    """ Remove from the group the read right to the workspace.
+    """ Remove from the group the read right to the workspace
 
     Args:
-        request:
-        pk:
-        group_id:
+
+        request: HTTP request
+        pk: ObjectId
+        group_id: ObjectId
 
     Returns:
 
+        - code: 200
+          content: None
+        - code: 403
+          content: Authentication error
+        - code: 404
+          content: Object was not found
+        - code: 500
+          content: Internal server error
     """
     return _add_or_remove_to_user_or_group_right_to_workspace(request, pk, group_id,
                                                               workspace_api.remove_group_read_access_to_workspace,
@@ -564,15 +759,24 @@ def remove_group_read_right_to_workspace(request, pk, group_id):
 
 @api_view(['PATCH'])
 def remove_group_write_right_to_workspace(request, pk, group_id):
-    """ Remove from the group the write right to the workspace.
+    """ Remove from the group the write right to the workspace
 
     Args:
-        request:
-        pk:
-        group_id:
+
+        request: HTTP request
+        pk: ObjectId
+        group_id: ObjectId
 
     Returns:
 
+        - code: 200
+          content: None
+        - code: 403
+          content: Authentication error
+        - code: 404
+          content: Object was not found
+        - code: 500
+          content: Internal server error
     """
     return _add_or_remove_to_user_or_group_right_to_workspace(request, pk, group_id,
                                                               workspace_api.remove_group_write_access_to_workspace,

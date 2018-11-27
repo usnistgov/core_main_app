@@ -14,21 +14,23 @@ from core_main_app.utils.decorators import api_staff_member_required
 
 
 class XslTransformationList(APIView):
-    """
-        List, Create XSL document.
+    """ List, create XSL document
     """
 
     def get(self, request):
-        """ Return http response with all xsl document.
+        """ Get all XSL document
 
-            GET /rest/xslt
+        Args:
 
-            Args:
-                request:
+            request: HTTP request
 
-            Returns:
+        Returns:
 
-            """
+            - code: 200
+              content: List of XSL document
+            - code: 500
+              content: Internal server error
+        """
         try:
             # Get object
             xsl_object_list = xsl_api.get_all()
@@ -42,21 +44,29 @@ class XslTransformationList(APIView):
 
     @method_decorator(api_staff_member_required())
     def post(self, request):
-        """ Save an xslt.
+        """ Save an XSL document
 
-            POST /rest/xslt
+        Parameters:
+
             {
                 "name": "instance_name",
                 "filename": "url",
                 "content": "<content />",
             }
 
-            Args:
-                request:
+        Args:
 
-            Returns:
+            request: HTTP request
 
-            """
+        Returns:
+
+            - code: 201
+              content: Created XSL document
+            - code: 400
+              content: Validation error
+            - code: 500
+              content: Internal server error
+        """
         try:
             # Build serializer
             xsl_serializer = XslTransformationSerializer(data=request.data)
@@ -74,17 +84,19 @@ class XslTransformationList(APIView):
 
 
 class XslTransformationDetail(APIView):
-    """" Get, delete, patch an XSL document.
+    """" Get, delete, patch an XSL document
     """
 
     def get_object(self, pk):
-        """ Retrieve an xsl document
+        """ Get XSL document from db
 
         Args:
-            pk:
+
+            pk: ObjectId
 
         Returns:
 
+            XSL document
         """
         try:
             return xsl_api.get_by_id(pk)
@@ -92,16 +104,21 @@ class XslTransformationDetail(APIView):
             raise Http404
 
     def get(self, request, pk):
-        """ Get xslt by its id.
-
-        GET /rest/xslt/pk
+        """ Retrieve XSLT
 
         Args:
-            request:
-            pk:
+
+            request: HTTP request
+            pk: ObjectId
 
         Returns:
 
+            - code: 200
+              content: XSL document
+            - code: 404
+              content: Object was not found
+            - code: 500
+              content: Internal server error
         """
         try:
             # Get object
@@ -119,15 +136,21 @@ class XslTransformationDetail(APIView):
 
     @method_decorator(api_staff_member_required())
     def delete(self, request, pk):
-        """ Delete xsl document by its id.
-
-        DELETE /rest/xslt/pk
+        """ Delete an xsl document
 
         Args:
-            pk:
+
+            request: HTTP request
+            pk: ObjectId
 
         Returns:
 
+            - code: 204
+              content: Deletion succeed
+            - code: 404
+              content: Object was not found
+            - code: 500
+              content: Internal server error
         """
         try:
             # Get object
@@ -147,12 +170,29 @@ class XslTransformationDetail(APIView):
     def patch(self, request, pk):
         """ Update xsl
 
+        Parameters:
+
+            {
+                "name": "instance_name",
+                "filename": "url",
+                "content": "<content />",
+            }
+
         Args:
-            request:
-            pk:
+
+            request: HTTP request
+            pk: ObjectId
 
         Returns:
 
+            - code: 200
+              content: Updated XSL document
+            - code: 400
+              content: Validation error
+            - code: 404
+              content: Object was not found
+            - code: 500
+              content: Internal server error
         """
         try:
             # Get object
@@ -178,24 +218,31 @@ class XslTransformationDetail(APIView):
 
 
 class XslTransformationTransform(APIView):
-    """
-        Transform an Xml using a specific Xslt
+    """ Transform XML using a specific Xslt
     """
 
     def post(self, request):
-        """ Transform
+        """ Transform XML using a specific Xslt
 
-        POST /rest/xslt/transform
-        {
-            "xml_content": "<xml />",
-            "xslt_name": "name"
-        }
+        Parameters:
+
+            {
+                "xml_content": "<xml />",
+                "xslt_name": "name"
+            }
 
         Args:
-            request:
+
+            request: HTTP request
 
         Returns:
 
+            - code: 200
+              content: transformed xml content
+            - code: 400
+              content: Validation error
+            - code: 500
+              content: Internal server error
         """
         try:
             # Build serializer

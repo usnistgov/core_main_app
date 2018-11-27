@@ -18,37 +18,62 @@ class AbstractExecuteLocalQueryView(APIView):
     __metaclass__ = ABCMeta
 
     def get(self, request):
-        """Execute query on local instance and return results
+        """ Execute query on local instance and return results
+
+        Parameters:
+
+            {"query": "{}"}
+            {"query": "{\"root.element.value\": 2}"}
+            {"query": "{\"root.element.value\": 2}", "all": "true"}
+            {"query": "{\"root.element.value\": 2}", "templates": "[{\"id\":\"[template_id]\"}]"}
+            {"query": "{}", "templates": "[{\"id\":\"[template_id]\"}]"}
+
+        Warning:
+
+            Need to backslash double quotes in JSON payload
 
         Args:
-            request:
+
+            request: HTTP request
 
         Returns:
 
+            - code: 200
+              content: List of data
+            - code: 400
+              content: Bad request
+            - code: 500
+              content: Internal server error
         """
-
         return self.execute_query()
 
     def post(self, request):
-        """Execute query on local instance and return results
+        """ Execute query on local instance and return results
+
+        Parameters:
+
+            {"query": "{\"$or\": [{\"image.owner\": \"Peter\"}, {\"image.owner.#text\":\"Peter\"}]}"}
 
         Warning:
-            Need to backslash double quotes in JSON payload.
 
-        Example:
-            {"query": "{\"$or\": [{\"image.owner\": \"Peter\"}, {\"image.owner.#text\":\"Peter\"}]}"}
+            Need to backslash double quotes in JSON payload
 
         Args:
             request:
 
         Returns:
 
+            - code: 200
+              content: List of data
+            - code: 400
+              content: Bad request
+            - code: 500
+              content: Internal server error
         """
-
         return self.execute_query()
 
     def execute_query(self):
-        """ Compute and return query results.
+        """ Compute and return query results
         """
         try:
             # get query and templates
@@ -71,15 +96,17 @@ class AbstractExecuteLocalQueryView(APIView):
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def build_query(self, query, templates,  options):
-        """ Build the raw query.
+        """ Build the raw query
+
         Args:
-            query:
-            templates:
-            options:
+
+            query: Query
+            templates: List of template
+            options: Query option
 
         Returns:
-            The raw query.
 
+            The raw query
         """
         # build query builder
         query_builder = QueryBuilder(query, self.sub_document_root)
@@ -94,13 +121,15 @@ class AbstractExecuteLocalQueryView(APIView):
         return query_builder.get_raw_query()
 
     def execute_raw_query(self, raw_query):
-        """ Execute the raw query in database.
+        """ Execute the raw query in database
+
         Args:
-            raw_query: Query to execute.
+
+            raw_query: Query to execute
 
         Returns:
-            Results of the query.
 
+            Results of the query
         """
         return data_api.execute_query(raw_query, self.request.user)
 
@@ -109,10 +138,11 @@ class AbstractExecuteLocalQueryView(APIView):
         """ Build the paginated response.
 
         Args:
+
             data_list: List of data.
 
         Returns:
-            The response.
 
+            The response
         """
         raise NotImplementedError("build_response method is not implemented.")

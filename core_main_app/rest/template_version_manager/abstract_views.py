@@ -20,32 +20,35 @@ from core_main_app.utils.boolean import to_bool
 
 
 class AbstractTemplateVersionManagerList(APIView):
-    """ List template version managers.
+    """ List template version managers
     """
 
     __metaclass__ = ABCMeta
 
     @abstractmethod
     def get_template_version_managers(self):
-        """ Return template version managers.
-
-        Returns:
-
+        """ Return template version managers
         """
         raise NotImplementedError("get_template_version_managers method is not implemented.")
 
     def get(self, request):
-        """ Get template version managers.
+        """ Get template version managers
 
-        Query Params:
-            title: title
-            is_disabled: [True|False]
+        Url Parameters:
+
+            template: template_id
+            title: document_title
 
         Args:
-            request:
+
+            request: HTTP request
 
         Returns:
 
+            - code: 200
+              content: List of template version manager
+            - code: 500
+              content: Internal server error
         """
         try:
             # Get objects
@@ -69,8 +72,7 @@ class AbstractTemplateVersionManagerList(APIView):
 
 
 class AbstractStatusTemplateVersion(APIView):
-    """
-    Set template version status.
+    """ Set template version status
     """
 
     __metaclass__ = ABCMeta
@@ -79,10 +81,12 @@ class AbstractStatusTemplateVersion(APIView):
         """ Get template from db
 
         Args:
-            pk:
+
+            pk: ObjectId
 
         Returns:
 
+            Template
         """
         try:
             template_object = template_api.get(pk)
@@ -94,21 +98,30 @@ class AbstractStatusTemplateVersion(APIView):
 
     @abstractmethod
     def status_update(self, template_object):
-        """ Perform an update of the object status.
-
-        Returns:
-
+        """ Perform an update of the object status
         """
         raise NotImplementedError("status_update method is not implemented.")
 
     def patch(self, request, pk):
-        """ Set status.
+        """ Set status
 
         Args:
-            request:
+
+            request: HTTP request
+            pk: ObjectId
 
         Returns:
 
+            - code: 200
+              content: None
+            - code: 400
+              content: Validation error / bad request
+            - code: 403
+              content: Authentication error
+            - code: 404
+              content: Object was not found
+            - code: 500
+              content: Internal server error
         """
         try:
             # Get object
@@ -136,8 +149,7 @@ class AbstractStatusTemplateVersion(APIView):
 
 
 class AbstractTemplateVersionManagerDetail(APIView):
-    """
-    Template Version Manager Detail.
+    """ Template Version Manager Detail
     """
 
     __metaclass__ = ABCMeta
@@ -146,10 +158,12 @@ class AbstractTemplateVersionManagerDetail(APIView):
         """ Get template version manager from db
 
         Args:
-            pk:
+
+            pk: ObjectId
 
         Returns:
 
+            TemplateVersionManager
         """
         try:
             template_version_manager_object = version_manager_api.get(pk)
@@ -160,8 +174,7 @@ class AbstractTemplateVersionManagerDetail(APIView):
 
 
 class AbstractStatusTemplateVersionManager(AbstractTemplateVersionManagerDetail):
-    """
-    Set template version manager status.
+    """ Set template version manager status
     """
 
     __metaclass__ = ABCMeta
@@ -169,20 +182,29 @@ class AbstractStatusTemplateVersionManager(AbstractTemplateVersionManagerDetail)
     @abstractmethod
     def status_update(self, template_version_manager_object):
         """ Perform an update of the object status.
-
-        Returns:
-
         """
         raise NotImplementedError("status_update method is not implemented.")
 
     def patch(self, request, pk):
-        """ Set status.
+        """ Set status
 
         Args:
-            request:
+
+            request: HTTP request
+            pk: ObjectId
 
         Returns:
 
+            - code: 200
+              content: None
+            - code: 400
+              content: Validation error
+            - code: 403
+              content: Authentication error
+            - code: 404
+              content: Object was not found
+            - code: 500
+              content: Internal server error
         """
         try:
             # Get object
@@ -207,29 +229,38 @@ class AbstractStatusTemplateVersionManager(AbstractTemplateVersionManagerDetail)
 
 
 class AbstractTemplateList(APIView):
-    """
-    Create a template.
+    """ Create a template
     """
 
     __metaclass__ = ABCMeta
 
     def post(self, request):
-        """ Create a template.
+        """ Create a template
 
-        POST data
-        {
-        "title": "title",
-        "filename": "filename",
-        "content": "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element name='root'/></xs:schema>"
-        }
+        Parameters:
 
-        Note: "dependencies"= json.dumps({"schemaLocation1": "id1" ,"schemaLocation2":"id2"})
+            {
+                "title": "title",
+                "filename": "filename",
+                "content": "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element name='root'/></xs:schema>"
+            }
+
+        Note: 
+        
+            "dependencies"= json.dumps({"schemaLocation1": "id1" ,"schemaLocation2":"id2"})
 
         Args:
-            request:
+
+            request: HTTP request
 
         Returns:
 
+            - code: 201
+              content: Created template
+            - code: 400
+              content: Validation error / not unique / XSD error
+            - code: 500
+              content: Internal server error
         """
         try:
             # Build serializers
@@ -260,4 +291,6 @@ class AbstractTemplateList(APIView):
 
     @abstractmethod
     def get_user(self):
+        """ Retrieve a user
+        """
         raise NotImplementedError("get_user method is not implemented.")
