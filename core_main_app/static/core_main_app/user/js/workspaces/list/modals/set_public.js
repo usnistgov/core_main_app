@@ -2,7 +2,7 @@
  * Public workspace
  */
 setPublicWorkspace = function() {
-    $("#banner_errors").hide();
+    $("#banner_set_public_errors").hide();
     var $recordRow = $(this).parent().parent();
     $('.'+functional_object+'-id').val($recordRow.attr("objectid"));
     $("#public-workspace-modal").modal("show");
@@ -23,8 +23,8 @@ set_public_workspace = function(){
 			location.reload();
 	    },
         error:function(data){
-            $("#public_workspace_errors").html(data.responseText);
-            $("#banner_errors").show(500)
+            $("#set_public_workspace_errors").html(data.responseText);
+            $("#banner_set_public_errors").show(500)
         }
     });
 };

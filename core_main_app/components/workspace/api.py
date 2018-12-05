@@ -6,7 +6,7 @@ from core_main_app.commons import exceptions
 from core_main_app.components.group import api as group_api
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace.access_control import can_delete_workspace, is_workspace_owner, \
-    is_workspace_owner_to_perform_action_for_others
+    is_workspace_owner_to_perform_action_for_others, can_user_set_workspace_public
 from core_main_app.components.workspace.models import Workspace
 from core_main_app.permissions import api as permission_api
 from core_main_app.utils.access_control.decorators import access_control
@@ -266,7 +266,7 @@ def get_global_workspace():
     return Workspace.get_global_workspace()
 
 
-@access_control(is_workspace_owner)
+@access_control(can_user_set_workspace_public)
 def set_workspace_public(workspace, user):
     """ Set the workspace to public.
 

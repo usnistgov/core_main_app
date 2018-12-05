@@ -284,6 +284,7 @@ class TestWorkspaceReadAccess(MongoIntegrationTransactionTestCase):
     def test_get_workspace_with_read_access_public_workspace(self):
         # Context
         user = UserFixtures().create_user(username="user1")
+        UserFixtures().add_publish_perm(user)
         user2 = UserFixtures().create_user(username="user2")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
         workspace_api.set_workspace_public(workspace, user)
@@ -348,6 +349,7 @@ class TestWorkspaceWriteAccess(MongoIntegrationTransactionTestCase):
     def test_get_workspace_with_write_access_public_workspace(self):
         # Context
         user = UserFixtures().create_user(username="user1")
+        UserFixtures().add_publish_perm(user)
         user2 = UserFixtures().create_user(username="user2")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
         workspace_api.set_workspace_public(workspace, user)
@@ -392,6 +394,7 @@ class TestWorkspaceIsPublic(MongoIntegrationTransactionTestCase):
     def test_is_workspace_public_return_true(self):
         # Context
         user = UserFixtures().create_user(username="user1")
+        UserFixtures().add_publish_perm(user)
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
         workspace_api.set_workspace_public(workspace, user)
 
@@ -423,6 +426,7 @@ class TestWorkspaceSetPublic(MongoIntegrationTransactionTestCase):
     def test_set_workspace_public_return_http_200(self):
         # Context
         user = UserFixtures().create_user(username="user1")
+        UserFixtures().add_publish_perm(user)
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
@@ -433,9 +437,23 @@ class TestWorkspaceSetPublic(MongoIntegrationTransactionTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_set_workspace_public_return_http_403(self):
+        # Context
+        user = UserFixtures().create_user(username="user1")
+        workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
+
+        # Act
+        response = RequestMock.do_request_patch(workspace_rest_views.set_workspace_public,
+                                                user,
+                                                param={'pk': workspace.id})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
     def test_set_workspace_public_return_http_404(self):
         # Context
         user = UserFixtures().create_user(username="user1")
+        UserFixtures().add_publish_perm(user)
 
         # Act
         response = RequestMock.do_request_patch(workspace_rest_views.set_workspace_public,
@@ -448,6 +466,7 @@ class TestWorkspaceSetPublic(MongoIntegrationTransactionTestCase):
     def test_set_workspace_public_owner(self):
         # Context
         user = UserFixtures().create_user(username="user1")
+        UserFixtures().add_publish_perm(user)
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
         self.assertFalse(workspace_api.is_workspace_public(workspace))
 
@@ -540,6 +559,7 @@ class TestWorkspaceSetPrivate(MongoIntegrationTransactionTestCase):
     def test_set_workspace_private_owner(self):
         # Context
         user = UserFixtures().create_user(username="user1")
+        UserFixtures().add_publish_perm(user)
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
         workspace_api.set_workspace_public(workspace, user)
         self.assertTrue(workspace_api.is_workspace_public(workspace))
@@ -556,6 +576,7 @@ class TestWorkspaceSetPrivate(MongoIntegrationTransactionTestCase):
     def test_set_workspace_private_admin_not_owner(self):
         # Context
         user = UserFixtures().create_user(username="user1")
+        UserFixtures().add_publish_perm(user)
         user2 = UserFixtures().create_super_user(username="user2")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
         workspace_api.set_workspace_public(workspace, user)
@@ -573,6 +594,7 @@ class TestWorkspaceSetPrivate(MongoIntegrationTransactionTestCase):
     def test_set_workspace_private_user_not_owner(self):
         # Context
         user = UserFixtures().create_user(username="user1")
+        UserFixtures().add_publish_perm(user)
         user2 = UserFixtures().create_user(username="user2")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
         workspace_api.set_workspace_public(workspace, user)
@@ -680,6 +702,7 @@ class TestWorkspaceListUserCanRead(MongoIntegrationTransactionTestCase):
     def test_get_list_user_can_read_workspace_public(self):
         # Context
         user = UserFixtures().create_user(username="user1")
+        UserFixtures().add_publish_perm(user)
         user2 = UserFixtures().create_user(username="user2")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
         workspace_api.set_workspace_public(workspace, user)
@@ -788,6 +811,7 @@ class TestWorkspaceListUserCanWrite(MongoIntegrationTransactionTestCase):
     def test_get_list_user_can_write_workspace_public(self):
         # Context
         user = UserFixtures().create_user(username="user1")
+        UserFixtures().add_publish_perm(user)
         user2 = UserFixtures().create_user(username="user2")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
         workspace_api.set_workspace_public(workspace, user)
@@ -882,6 +906,7 @@ class TestWorkspaceListGroupCanRead(MongoIntegrationTransactionTestCase):
     def test_get_list_group_can_read_workspace_public(self):
         # Context
         user = UserFixtures().create_user(username="user1")
+        UserFixtures().add_publish_perm(user)
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
         workspace_api.set_workspace_public(workspace, user)
         GroupFixtures().create_group(name="group1")
@@ -976,6 +1001,7 @@ class TestWorkspaceListGroupCanWrite(MongoIntegrationTransactionTestCase):
     def test_get_list_group_can_write_workspace_public(self):
         # Context
         user = UserFixtures().create_user(username="user1")
+        UserFixtures().add_publish_perm(user)
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
         workspace_api.set_workspace_public(workspace, user)
         GroupFixtures().create_group(name="group1")

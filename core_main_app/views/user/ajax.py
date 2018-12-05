@@ -40,6 +40,8 @@ def set_public_workspace(request):
     try:
         for workspace in list_workspace:
             workspace_api.set_workspace_public(workspace, request.user)
+    except AccessControlError as ace:
+        return HttpResponseBadRequest(ace.message)
     except:
         return HttpResponseBadRequest("Something wrong happened.")
 

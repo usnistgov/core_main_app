@@ -1,6 +1,8 @@
 """
     Workspace access control
 """
+import core_main_app.permissions.rights as rights
+from core_main_app.permissions import api as permissions_api
 from core_main_app.settings import CAN_SET_PUBLIC_DATA_TO_PRIVATE
 from core_main_app.utils.access_control.exceptions import AccessControlError
 
@@ -22,6 +24,29 @@ def is_workspace_owner_to_perform_action_for_others(func, workspace, new_user_id
 
     _check_is_owner_workspace(workspace,  user)
     return func(workspace, new_user_id, user)
+
+
+def can_user_set_workspace_public(func, workspace, user):
+    """ Check if the user is the owner of the workspace.
+
+    Args:
+        func:
+        workspace:
+        user:
+
+    Returns:
+
+    """
+    if user.is_superuser:
+        return func(workspace, user)
+
+    _check_is_owner_workspace(workspace, user)
+
+    publish_perm = permissions_api.get_by_codename(rights.publish_data)
+    if not user.has_perm(publish_perm.content_type.app_label + '.' + publish_perm.codename):
+        raise AccessControlError("You don't have enough rights to set public this workspace.")
+
+    return func(workspace, user)
 
 
 def is_workspace_owner(func, workspace, user):
