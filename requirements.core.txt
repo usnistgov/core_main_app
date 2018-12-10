@@ -1,2 +1,2 @@
-blob-utils==1.0.0-rc2
-xml-utils==1.0.0-rc2
+blob-utils==1.0.0
+xml-utils==1.0.0
