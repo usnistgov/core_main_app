@@ -6,6 +6,7 @@ from django.http import Http404
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -21,10 +22,10 @@ from core_main_app.utils.file import get_file_http_response
 from core_main_app.utils.pagination.rest_framework_paginator.pagination import StandardResultsSetPagination
 
 
-# FIXME: permissions
 class DataList(APIView):
     """ List all user Data, or create a new one.
     """
+    permission_classes = (IsAuthenticated, )
 
     def get(self, request):
         """ Get all user Data

@@ -12,6 +12,7 @@ api_content_type = "api"
 api_access = "api_access"
 
 # Data
+# FIXME edit and delete rights are never used
 edit_data = "edit_data"
 delete_data = "delete_data"
 publish_data = "publish_data"
