@@ -1,5 +1,4 @@
-"""
-    Xml utils provide too l operation for xml data
+""" Xml utils for the core applications
 """
 import json
 from collections import OrderedDict
@@ -13,6 +12,7 @@ import xml_utils.commons.constants as xml_utils_constants
 import xml_utils.xml_validation.validation as xml_validation
 from core_main_app.commons.exceptions import XMLError
 from core_main_app.settings import XERCES_VALIDATION, SERVER_URI
+from core_main_app.utils.resolvers.resolver_utils import lmxl_uri_resolver
 from core_main_app.utils.urls import get_template_download_pattern
 from xml_utils.commons.constants import XSL_NAMESPACE
 from xml_utils.xsd_hash import xsd_hash
@@ -33,9 +33,9 @@ def validate_xml_schema(xsd_tree):
         try:
             error = xml_validation.xerces_validate_xsd(xsd_tree)
         except Exception:
-            error = xml_validation.lxml_validate_xsd(xsd_tree)
+            error = xml_validation.lxml_validate_xsd(xsd_tree, lmxl_uri_resolver())
     else:
-        error = xml_validation.lxml_validate_xsd(xsd_tree)
+        error = xml_validation.lxml_validate_xsd(xsd_tree, lmxl_uri_resolver())
 
     return error
 
@@ -54,9 +54,9 @@ def validate_xml_data(xsd_tree, xml_tree):
         try:
             error = xml_validation.xerces_validate_xml(xsd_tree, xml_tree)
         except Exception:
-            error = xml_validation.lxml_validate_xml(xsd_tree, xml_tree)
+            error = xml_validation.lxml_validate_xml(xsd_tree, xml_tree, lmxl_uri_resolver())
     else:
-        error = xml_validation.lxml_validate_xml(xsd_tree, xml_tree)
+        error = xml_validation.lxml_validate_xml(xsd_tree, xml_tree, lmxl_uri_resolver())
 
     return error
 

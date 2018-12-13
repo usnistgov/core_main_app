@@ -183,3 +183,7 @@ CAN_SET_WORKSPACE_PUBLIC = getattr(settings, 'CAN_SET_WORKSPACE_PUBLIC', True)
 SSL_CERTIFICATES_DIR = getattr(settings, 'SSL_CERTIFICATES_DIR', 'certs')
 """ :py:class:`str`: SSL certificates directory location.
 """
+
+XSD_URI_RESOLVER = getattr(settings, 'XSD_URI_RESOLVER', None)
+""" :py:class:`str`: XSD URI Resolver for lxml validation. Choose from:  None, 'REQUESTS_RESOLVER'.
+"""
