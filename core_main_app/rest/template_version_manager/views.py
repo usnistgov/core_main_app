@@ -116,7 +116,7 @@ class TemplateVersion(AbstractTemplateVersionManagerDetail):
 
         Note: 
         
-            "dependencies"= json.dumps({"schemaLocation1": "id1" ,"schemaLocation2":"id2"})
+            "dependencies_dict": json.dumps({"schemaLocation1": "id1" ,"schemaLocation2":"id2"})
 
         Args:
 
@@ -175,7 +175,7 @@ class UserTemplateList(AbstractTemplateList):
 
         Note:
 
-            "dependencies"= json.dumps({"schemaLocation1": "id1" ,"schemaLocation2":"id2"})
+            "dependencies_dict": json.dumps({"schemaLocation1": "id1" ,"schemaLocation2":"id2"})
 
         Args:
 
@@ -220,7 +220,7 @@ class GlobalTemplateList(AbstractTemplateList):
 
         Note:
 
-            "dependencies"= json.dumps({"schemaLocation1": "id1" ,"schemaLocation2":"id2"})
+            "dependencies_dict": json.dumps({"schemaLocation1": "id1" ,"schemaLocation2":"id2"})
 
         Args:
 
