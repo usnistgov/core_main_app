@@ -1,6 +1,11 @@
 """ discover rules for core main app
 """
+import logging
+
 import core_main_app.permissions.rights as rights
+
+
+logger = logging.getLogger(__name__)
 
 
 def init_rules(apps):
@@ -11,6 +16,8 @@ def init_rules(apps):
     Returns:
 
     """
+    logger.info("START init rules.")
+
     try:
         group = apps.get_model("auth", "Group")
 
@@ -26,9 +33,10 @@ def init_rules(apps):
 
         # Add permissions to default group
         default_group.permissions.add(publish_data_perm)
-
     except Exception, e:
-        print('ERROR : Impossible to init the rules : ' + e.message)
+        logger.error("Impossible to init the rules: %s" % e.message)
+
+    logger.info("FINISH init rules.")
 
 
 def create_public_workspace():
@@ -36,6 +44,8 @@ def create_public_workspace():
 
     Returns:
     """
+    logger.info("START create public workspace.")
+
     # We need the app to be ready to access the Group model
     from core_main_app.components.workspace import api as workspace_api
     from core_main_app.commons import exceptions
@@ -44,10 +54,12 @@ def create_public_workspace():
         try:
             # Test if global public workspace exists
             workspace_api.get_global_workspace()
-        except exceptions.DoesNotExist, dne:
+        except exceptions.DoesNotExist:
             # Create workspace public global
             workspace_api.create_and_save("Global Public Workspace", is_public=True)
+            logger.info("Public workspace created.")
 
     except Exception, e:
-        print('ERROR : Impossible to create global public workspace : ' + e.message)
+        logger.error("Impossible to create global public workspace: %s" % e.message)
 
+    logger.info("FINISH create public workspace.")
