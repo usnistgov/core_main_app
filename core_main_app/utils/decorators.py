@@ -182,7 +182,7 @@ def api_staff_member_required():
             Returns:
 
             """
-            if request.user.is_superuser or request.user.is_staff:
+            if request.user.is_staff:
                 return view_func(request, *args, **kwargs)
             else:
                 content = {'message': 'Only administrators can use this feature.'}
