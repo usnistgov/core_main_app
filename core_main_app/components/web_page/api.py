@@ -25,7 +25,7 @@ def delete_by_type(page_type):
     """ Delete the web pages with the given type
 
     Args:
-        page_type (str): page type
+        page_type (int): page type
 
     Returns: Web page
 

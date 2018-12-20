@@ -1,9 +1,9 @@
 """Url router for the REST API
 """
 from django.conf.urls import url
-
 from rest_framework.urlpatterns import format_suffix_patterns
 
+import core_main_app.rest.web_page.views as web_page_views
 import core_main_app.rest.xsl_transformation.views as xslTransformationList_view
 from core_main_app.rest.blob import views as blob_views
 from core_main_app.rest.data import views as data_views
@@ -174,6 +174,12 @@ urlpatterns = [
     url(r'^workspace/(?P<pk>\w+)/remove_write_right_to_group/(?P<group_id>\w+)/$',
         workspace_views.remove_group_write_right_to_workspace,
         name='core_main_app_rest_workspace_remove_group_write'),
+
+    url(r'^login-page$',
+        web_page_views.WebPageList.as_view(
+            web_page_type="login"
+        ),
+        name='login_page_rest_views')
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
