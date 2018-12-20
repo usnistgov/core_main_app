@@ -3,6 +3,7 @@
 from abc import ABCMeta, abstractmethod
 
 from django.http import Http404
+from django.utils.decorators import method_decorator
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -17,6 +18,7 @@ from core_main_app.rest.template_version_manager.serializers import TemplateVers
 from core_main_app.rest.template_version_manager.utils import can_user_modify_template_version_manager
 from core_main_app.utils.access_control.exceptions import AccessControlError
 from core_main_app.utils.boolean import to_bool
+from core_main_app.utils.decorators import api_staff_member_required
 
 
 class AbstractTemplateVersionManagerList(APIView):
@@ -102,6 +104,7 @@ class AbstractStatusTemplateVersion(APIView):
         """
         raise NotImplementedError("status_update method is not implemented.")
 
+    @method_decorator(api_staff_member_required())
     def patch(self, request, pk):
         """ Set status
 

@@ -4,6 +4,7 @@ from django.http import Http404
 from django.utils.decorators import method_decorator
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -36,6 +37,8 @@ class UserTemplateVersionManagerList(AbstractTemplateVersionManagerList):
     """ List all UserTemplateVersionManager
     """
 
+    permission_classes = (IsAuthenticated, )
+
     def get_template_version_managers(self):
         """ Get all UserTemplateVersionManager
 
@@ -49,6 +52,8 @@ class UserTemplateVersionManagerList(AbstractTemplateVersionManagerList):
 class TemplateVersionManagerDetail(APIView):
     """ Retrieve a TemplateVersionManager
     """
+
+    permission_classes = (IsAuthenticated,)
 
     def get_object(self, pk):
         """ Get TemplateVersionManager from db
@@ -104,6 +109,7 @@ class TemplateVersion(AbstractTemplateVersionManagerDetail):
     """ Create a TemplateVersion
     """
 
+    @method_decorator(api_staff_member_required())
     def post(self, request, pk):
         """ Create a TemplateVersion
 
@@ -161,6 +167,8 @@ class TemplateVersion(AbstractTemplateVersionManagerDetail):
 class UserTemplateList(AbstractTemplateList):
     """ Create a Template (linked to the user)
     """
+
+    permission_classes = (IsAuthenticated, )
 
     def post(self, request):
         """ Create a Template (linked to the user)
@@ -251,6 +259,8 @@ class CurrentTemplateVersion(AbstractStatusTemplateVersion):
     """ Update status to current
     """
 
+    permission_classes = (IsAuthenticated, )
+
     def status_update(self, template_object):
         """ Update status to current
 
@@ -268,6 +278,8 @@ class CurrentTemplateVersion(AbstractStatusTemplateVersion):
 class DisableTemplateVersion(AbstractStatusTemplateVersion):
     """ Update status to disabled
     """
+
+    permission_classes = (IsAuthenticated,)
 
     def status_update(self, template_object):
         """ Update status to disabled
@@ -287,6 +299,8 @@ class RestoreTemplateVersion(AbstractStatusTemplateVersion):
     """ Update status to restored
     """
 
+    permission_classes = (IsAuthenticated,)
+
     def status_update(self, template_object):
         """ Update status to restored
 
@@ -304,6 +318,8 @@ class RestoreTemplateVersion(AbstractStatusTemplateVersion):
 class DisableTemplateVersionManager(AbstractStatusTemplateVersionManager):
     """ Update status to disabled
     """
+
+    permission_classes = (IsAuthenticated,)
 
     def status_update(self, template_version_manager_object):
         """ Update status to disabled
@@ -323,6 +339,8 @@ class DisableTemplateVersionManager(AbstractStatusTemplateVersionManager):
 class RestoreTemplateVersionManager(AbstractStatusTemplateVersionManager):
     """ Update status to restored
     """
+
+    permission_classes = (IsAuthenticated,)
 
     def status_update(self, template_version_manager_object):
         """ Update status to restored
