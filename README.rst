@@ -112,3 +112,19 @@ Or, directly using Sphinx:
 
   $ cd docs/
   $ sphinx-build -b html . ../dist/_docs
+
+Enable SSL connection
+=====================
+
+Please follow these steps to configure the connection to any system running over HTTPS (including the local instance).
+
+* Create a folder for SSL certificates,
+* Copy the certificate in the folder,
+* Run ``c_rehash`` on the folder (needs to be done every time a new certificate is added to the folder),
+* Update the SSL_CERTIFICATES_DIR setting to point to the SSL certificate folder previously created.
+
+.. code:: bash
+
+  $ mkdir certs
+  $ cp cdcs.crt certs/
+  $ c_rehash certs/
