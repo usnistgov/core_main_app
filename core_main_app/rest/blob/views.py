@@ -3,6 +3,7 @@
 from django.http import Http404
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -16,6 +17,7 @@ from core_main_app.utils.file import get_file_http_response
 class BlobList(APIView):
     """ List all user Blob, or create a new one
     """
+    permission_classes = (IsAuthenticated, )
 
     def get(self, request):
         """ Get all user Blob
@@ -41,7 +43,7 @@ class BlobList(APIView):
               content: Internal server error
         """
         try:
-            # FIXME: remove?
+            # FIXME: right perms? right location for this test?
             if request.user.is_superuser:
                 blob_list = blob_api.get_all()
             else:
@@ -110,6 +112,7 @@ class BlobList(APIView):
 class BlobDetail(APIView):
     """ Retrieve, update or delete a Blob
     """
+    permission_classes = (IsAuthenticated, )
 
     def get_object(self, pk):
         """ Get Blob from db
@@ -202,6 +205,7 @@ class BlobDetail(APIView):
 class BlobDownload(APIView):
     """ Download Blob
     """
+    permission_classes = (IsAuthenticated, )
 
     def get_object(self, pk):
         """ Get Blob from db
@@ -252,6 +256,7 @@ class BlobDownload(APIView):
 class BlobDeleteList(APIView):
     """ Delete a list of Blob
     """
+    permission_classes = (IsAuthenticated, )
 
     def patch(self, request):
         """ Delete a list of Blob
