@@ -1,14 +1,20 @@
 """ Authentication tests for Data REST API
 """
 from django.test import SimpleTestCase
+from mock import Mock
 from mock.mock import patch
 from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.status import HTTP_200_OK
 
 from core_main_app.components.data.models import Data
-from core_main_app.rest.data.serializers import DataSerializer
+from core_main_app.rest.data.abstract_views import AbstractExecuteLocalQueryView
+from core_main_app.rest.data.serializers import DataSerializer, DataWithTemplateInfoSerializer
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
 from core_main_app.rest.data import views as data_rest_views
+from core_main_app.components.data import api as data_api
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
+from core_main_app.components.workspace import api as workspace_api
 
 
 class TestDataListPostPermissions(SimpleTestCase):
@@ -57,7 +63,6 @@ class TestDataListPostPermissions(SimpleTestCase):
 
 class TestDataListGetPermissions(SimpleTestCase):
     def test_anonymous_returns_http_403(self):
-
         response = RequestMock.do_request_get(
             data_rest_views.DataList.as_view(),
             None
@@ -87,6 +92,478 @@ class TestDataListGetPermissions(SimpleTestCase):
         response = RequestMock.do_request_get(
             data_rest_views.DataList.as_view(),
             mock_user
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestDataDetailGetPermissions(SimpleTestCase):
+    @patch.object(DataSerializer, "data")
+    @patch.object(data_api, "get_by_id")
+    def test_anonymous_returns_http_200(self, mock_data_api_get_by_id, mock_data_serializer_data):
+        mock_data_api_get_by_id.return_value = None
+        mock_data_serializer_data.return_value = []
+
+        response = RequestMock.do_request_get(
+            data_rest_views.DataDetail.as_view(),
+            None,
+            param={"pk": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(DataSerializer, "data")
+    @patch.object(data_api, "get_by_id")
+    def test_authenticated_returns_http_200(self, mock_data_api_get_by_id, mock_data_serializer_data):
+        mock_data_api_get_by_id.return_value = None
+        mock_data_serializer_data.return_value = []
+
+        mock_user = create_mock_user('1')
+        response = RequestMock.do_request_get(
+            data_rest_views.DataDetail.as_view(),
+            mock_user,
+            param={"pk": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(DataSerializer, "data")
+    @patch.object(data_api, "get_by_id")
+    def test_staff_returns_http_200(self, mock_data_api_get_by_id, mock_data_serializer_data):
+        mock_data_api_get_by_id.return_value = None
+        mock_data_serializer_data.return_value = []
+
+        mock_user = create_mock_user('1', is_staff=True)
+
+        response = RequestMock.do_request_get(
+            data_rest_views.DataDetail.as_view(),
+            mock_user,
+            param={"pk": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestDataDetailDeletePermissions(SimpleTestCase):
+    def test_anonymous_returns_http_403(self):
+        response = RequestMock.do_request_delete(
+            data_rest_views.DataDetail.as_view(),
+            None,
+            param={"pk": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch.object(data_api, "delete")
+    @patch.object(data_api, "get_by_id")
+    def test_authenticated_returns_http_204(self, mock_data_api_get_by_id, mock_data_api_delete):
+        mock_data_api_get_by_id.return_value = None
+        mock_data_api_delete.return_value = None
+
+        mock_user = create_mock_user('1')
+
+        response = RequestMock.do_request_delete(
+            data_rest_views.DataDetail.as_view(),
+            mock_user,
+            param={"pk": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    @patch.object(data_api, "delete")
+    @patch.object(data_api, "get_by_id")
+    def test_staff_returns_http_204(self, mock_data_api_get_by_id, mock_data_api_delete):
+        mock_data_api_get_by_id.return_value = None
+        mock_data_api_delete.return_value = None
+
+        mock_user = create_mock_user('1', is_staff=True)
+
+        response = RequestMock.do_request_delete(
+            data_rest_views.DataDetail.as_view(),
+            mock_user,
+            param={"pk": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class TestDataDetailPatchPermissions(SimpleTestCase):
+    def test_anonymous_returns_http_403(self):
+        response = RequestMock.do_request_patch(
+            data_rest_views.DataDetail.as_view(),
+            None,
+            param={"pk": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch.object(DataSerializer, "data")
+    @patch.object(DataSerializer, "save")
+    @patch.object(DataSerializer, "is_valid")
+    @patch.object(data_api, "get_by_id")
+    def test_authenticated_returns_http_200(self, mock_data_api_get_by_id, mock_data_serializer_is_valid,
+                                            mock_data_serializer_save, mock_data_serializer_data):
+        mock_data_api_get_by_id.return_value = []
+        mock_data_serializer_is_valid.return_value = True
+        mock_data_serializer_save.return_valie = None
+        mock_data_serializer_data.return_value = []
+
+        mock_user = create_mock_user('1')
+
+        response = RequestMock.do_request_patch(
+            data_rest_views.DataDetail.as_view(),
+            mock_user,
+            param={"pk": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(DataSerializer, "data")
+    @patch.object(DataSerializer, "save")
+    @patch.object(DataSerializer, "is_valid")
+    @patch.object(data_api, "get_by_id")
+    def test_staff_returns_http_200(self, mock_data_api_get_by_id, mock_data_serializer_is_valid,
+                                    mock_data_serializer_save, mock_data_serializer_data):
+        mock_data_api_get_by_id.return_value = []
+        mock_data_serializer_is_valid.return_value = True
+        mock_data_serializer_save.return_valie = None
+        mock_data_serializer_data.return_value = []
+
+        mock_user = create_mock_user('1', is_staff=True)
+
+        response = RequestMock.do_request_patch(
+            data_rest_views.DataDetail.as_view(),
+            mock_user,
+            param={"pk": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestDataDownloadGetPermissions(SimpleTestCase):
+
+    @patch.object(data_api, "get_by_id")
+    def test_anonymous_returns_http_200(self, mock_data_api_get_by_id):
+        data_object = Mock()
+        data_object.xml_content = "<tag attr='attr_val'>tag_val</tag>"
+        data_object.title = "mock.xml"
+
+        mock_data_api_get_by_id.return_value = data_object
+
+        response = RequestMock.do_request_get(
+            data_rest_views.DataDownload.as_view(),
+            None,
+            param={"pk": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(data_api, "get_by_id")
+    def test_authenticated_returns_http_200(self, mock_data_api_get_by_id):
+        data_object = Mock()
+        data_object.xml_content = "<tag attr='attr_val'>tag_val</tag>"
+        data_object.title = "mock.xml"
+
+        mock_data_api_get_by_id.return_value = data_object
+
+        mock_user = create_mock_user('1')
+
+        response = RequestMock.do_request_get(
+            data_rest_views.DataDownload.as_view(),
+            mock_user,
+            param={"pk": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(data_api, "get_by_id")
+    def test_staff_returns_http_200(self, mock_data_api_get_by_id):
+        data_object = Mock()
+        data_object.xml_content = "<tag attr='attr_val'>tag_val</tag>"
+        data_object.title = "mock.xml"
+
+        mock_data_api_get_by_id.return_value = data_object
+
+        mock_user = create_mock_user('1', is_staff=True)
+
+        response = RequestMock.do_request_get(
+            data_rest_views.DataDownload.as_view(),
+            mock_user,
+            param={"pk": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestDataGetFullGetPermissions(SimpleTestCase):
+    @patch.object(DataWithTemplateInfoSerializer, "data")
+    @patch.object(data_api, "get_by_id")
+    def test_anonymous_returns_http_200(self, mock_data_api_get_by_id, mock_data_with_template_serializer_data):
+        mock_data_api_get_by_id.return_value = None
+        mock_data_with_template_serializer_data.return_value = []
+
+        response = RequestMock.do_request_get(
+            data_rest_views.get_by_id_with_template_info,
+            None,
+            data={"id": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(DataWithTemplateInfoSerializer, "data")
+    @patch.object(data_api, "get_by_id")
+    def test_authenticated_returns_http_200(self, mock_data_api_get_by_id, mock_data_with_template_serializer_data):
+        mock_data_api_get_by_id.return_value = None
+        mock_data_with_template_serializer_data.return_value = []
+
+        mock_user = create_mock_user('1')
+
+        response = RequestMock.do_request_get(
+            data_rest_views.get_by_id_with_template_info,
+            mock_user,
+            data={"id": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(DataWithTemplateInfoSerializer, "data")
+    @patch.object(data_api, "get_by_id")
+    def test_staff_returns_http_200(self, mock_data_api_get_by_id, mock_data_with_template_serializer_data):
+        mock_data_api_get_by_id.return_value = None
+        mock_data_with_template_serializer_data.return_value = []
+
+        mock_user = create_mock_user('1', is_staff=True)
+
+        response = RequestMock.do_request_get(
+            data_rest_views.get_by_id_with_template_info,
+            mock_user,
+            data={"id": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestDataLocalQueryGetPermissions(SimpleTestCase):
+    @patch.object(AbstractExecuteLocalQueryView, "execute_query")
+    def test_anonymous_returns_http_200(self, mock_abstract_local_query_execute_query):
+        mock_abstract_local_query_execute_query.return_value = Response(status=HTTP_200_OK)
+
+        response = RequestMock.do_request_get(
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            None,
+            data={"query": "{}"}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(AbstractExecuteLocalQueryView, "execute_query")
+    def test_authenticated_returns_http_200(self, mock_abstract_local_query_execute_query):
+        mock_abstract_local_query_execute_query.return_value = Response(status=HTTP_200_OK)
+
+        mock_user = create_mock_user('1')
+
+        response = RequestMock.do_request_get(
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            mock_user,
+            data={"query": "{}"}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(AbstractExecuteLocalQueryView, "execute_query")
+    def test_staff_returns_http_200(self, mock_abstract_local_query_execute_query):
+        mock_abstract_local_query_execute_query.return_value = Response(status=HTTP_200_OK)
+
+        mock_user = create_mock_user('1', is_staff=True)
+
+        response = RequestMock.do_request_get(
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            mock_user,
+            data={"query": "{}"}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestDataLocalQueryPostPermissions(SimpleTestCase):
+    @patch.object(data_api, "execute_query")
+    def test_anonymous_returns_http_200(self, mock_data_api_execute_query):
+        mock_data_api_execute_query.return_value = []
+
+        response = RequestMock.do_request_post(
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            None,
+            data={"query": "{}"}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(data_api, "execute_query")
+    def test_authenticated_returns_http_200(self, mock_data_api_execute_query):
+        mock_data_api_execute_query.return_value = []
+
+        mock_user = create_mock_user('1')
+
+        response = RequestMock.do_request_post(
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            mock_user,
+            data={"query": "{}"}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(data_api, "execute_query")
+    def test_staff_returns_http_200(self, mock_data_api_execute_query):
+        mock_data_api_execute_query.return_value = []
+
+        mock_user = create_mock_user('1', is_staff=True)
+
+        response = RequestMock.do_request_post(
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            mock_user,
+            data={"query": "{}"}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestDataKeywordQueryGetPermissions(SimpleTestCase):
+
+    @patch.object(AbstractExecuteLocalQueryView, "execute_query")
+    def test_anonymous_returns_http_200(self, mock_abstract_local_query_execute_query):
+        mock_abstract_local_query_execute_query.return_value = Response(status=HTTP_200_OK)
+
+        response = RequestMock.do_request_get(
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            None,
+            data={"query": "{}"}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(AbstractExecuteLocalQueryView, "execute_query")
+    def test_authenticated_returns_http_200(self, mock_abstract_local_query_execute_query):
+        mock_abstract_local_query_execute_query.return_value = Response(status=HTTP_200_OK)
+
+        mock_user = create_mock_user('1')
+
+        response = RequestMock.do_request_get(
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            mock_user,
+            data={"query": "{}"}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(AbstractExecuteLocalQueryView, "execute_query")
+    def test_staff_returns_http_200(self, mock_abstract_local_query_execute_query):
+        mock_abstract_local_query_execute_query.return_value = Response(status=HTTP_200_OK)
+
+        mock_user = create_mock_user('1', is_staff=True)
+
+        response = RequestMock.do_request_get(
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            mock_user,
+            data={"query": "{}"}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestDataKeywordQueryPostPermissions(SimpleTestCase):
+    @patch.object(data_api, "execute_query")
+    def test_anonymous_returns_http_200(self, mock_data_api_execute_query):
+        mock_data_api_execute_query.return_value = []
+
+        response = RequestMock.do_request_post(
+            data_rest_views.ExecuteLocalKeywordQueryView.as_view(),
+            None,
+            data={"query": "{}"}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(data_api, "execute_query")
+    def test_authenticated_returns_http_200(self, mock_data_api_execute_query):
+        mock_data_api_execute_query.return_value = []
+
+        mock_user = create_mock_user('1')
+
+        response = RequestMock.do_request_post(
+            data_rest_views.ExecuteLocalKeywordQueryView.as_view(),
+            mock_user,
+            data={"query": "{}"}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(data_api, "execute_query")
+    def test_staff_returns_http_200(self, mock_data_api_execute_query):
+        mock_data_api_execute_query.return_value = []
+
+        mock_user = create_mock_user('1', is_staff=True)
+
+        response = RequestMock.do_request_post(
+            data_rest_views.ExecuteLocalKeywordQueryView.as_view(),
+            mock_user,
+            data={"query": "{}"}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestDataAssignPatchPermissions(SimpleTestCase):
+    @patch.object(data_api, "assign")
+    @patch.object(workspace_api, "get_by_id")
+    @patch.object(data_api, "get_by_id")
+    def test_anonymous_returns_http_200(self, mock_data_api_get_by_id, mock_workspace_api_get_by_id,
+                                        mock_data_api_assign):
+        mock_data_api_get_by_id.return_value = None
+        mock_workspace_api_get_by_id.return_value = None
+        mock_data_api_assign.return_value = None
+
+        response = RequestMock.do_request_patch(
+            data_rest_views.DataAssign.as_view(),
+            None,
+            param={"pk": 0, "workspace_id": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(data_api, "assign")
+    @patch.object(workspace_api, "get_by_id")
+    @patch.object(data_api, "get_by_id")
+    def test_authenticated_returns_http_200(self, mock_data_api_get_by_id, mock_workspace_api_get_by_id,
+                                            mock_data_api_assign):
+        mock_data_api_get_by_id.return_value = None
+        mock_workspace_api_get_by_id.return_value = None
+        mock_data_api_assign.return_value = None
+
+        mock_user = create_mock_user('1')
+
+        response = RequestMock.do_request_patch(
+            data_rest_views.DataAssign.as_view(),
+            mock_user,
+            param={"pk": 0, "workspace_id": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(data_api, "assign")
+    @patch.object(workspace_api, "get_by_id")
+    @patch.object(data_api, "get_by_id")
+    def test_staff_returns_http_200(self, mock_data_api_get_by_id, mock_workspace_api_get_by_id,
+                                    mock_data_api_assign):
+        mock_data_api_get_by_id.return_value = None
+        mock_workspace_api_get_by_id.return_value = None
+        mock_data_api_assign.return_value = None
+
+        mock_user = create_mock_user('1', is_staff=True)
+
+        response = RequestMock.do_request_patch(
+            data_rest_views.DataAssign.as_view(),
+            mock_user,
+            param={"pk": 0, "workspace_id": 0}
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

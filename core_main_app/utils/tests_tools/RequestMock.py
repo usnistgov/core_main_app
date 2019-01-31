@@ -3,6 +3,8 @@
 import json
 
 from django.core.wsgi import get_wsgi_application
+from django.http import HttpResponse
+from rest_framework import status
 from rest_framework.test import APIRequestFactory
 
 
@@ -112,8 +114,11 @@ class RequestMock(object):
             request = factory.delete(url, data=json.dumps(data), content_type="application/json")
         elif http_method == "PATCH":
             request = factory.patch(url, data=json.dumps(data), content_type="application/json")
+        else:
+            return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
         # Set the user
         request.user = user
+
         # i18n. Get django validation messages.
         get_wsgi_application()
         # Do not use CSRF checks.

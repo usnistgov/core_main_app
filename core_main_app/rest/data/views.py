@@ -6,7 +6,7 @@ from django.http import Http404
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -126,6 +126,7 @@ class DataList(APIView):
 class DataDetail(APIView):
     """ Retrieve, update or delete a Data
     """
+    permission_classes = (IsAuthenticatedOrReadOnly, )
 
     def get_object(self, request, pk):
         """ Get data from db
@@ -313,7 +314,7 @@ class DataDownload(APIView):
 
 
 # FIXME: Should use in the future an serializer with dynamic fields (init depth with parameter for example)
-# Should avoid here a duplication code with get_by_id
+# FIXME: Should avoid the duplicated code with get_by_id
 @api_view(['GET'])
 def get_by_id_with_template_info(request):
     """ Retrieve a Data with template information
