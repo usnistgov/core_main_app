@@ -4,6 +4,7 @@ from django.http import Http404
 from django.utils.decorators import method_decorator
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -16,6 +17,8 @@ from core_main_app.utils.decorators import api_staff_member_required
 class XslTransformationList(APIView):
     """ List, create XSL document
     """
+
+    permission_classes = (IsAdminUser,)
 
     def get(self, request):
         """ Get all XSL document
@@ -42,7 +45,6 @@ class XslTransformationList(APIView):
             content = {'message': api_exception.message}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @method_decorator(api_staff_member_required())
     def post(self, request):
         """ Save an XSL document
 
@@ -86,6 +88,8 @@ class XslTransformationList(APIView):
 class XslTransformationDetail(APIView):
     """" Get, delete, patch an XSL document
     """
+
+    permission_classes = (IsAdminUser,)
 
     def get_object(self, pk):
         """ Get XSL document from db
@@ -134,7 +138,6 @@ class XslTransformationDetail(APIView):
             content = {'message': api_exception.message}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @method_decorator(api_staff_member_required())
     def delete(self, request, pk):
         """ Delete an xsl document
 
@@ -166,7 +169,6 @@ class XslTransformationDetail(APIView):
             content = {'message': api_exception.message}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @method_decorator(api_staff_member_required())
     def patch(self, request, pk):
         """ Update xsl
 
@@ -220,6 +222,8 @@ class XslTransformationDetail(APIView):
 class XslTransformationTransform(APIView):
     """ Transform XML using a specific Xslt
     """
+
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         """ Transform XML using a specific Xslt

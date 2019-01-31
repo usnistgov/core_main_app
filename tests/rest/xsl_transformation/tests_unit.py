@@ -18,9 +18,20 @@ class TestGetAllXslTransformation(SimpleTestCase):
         self.data = None
 
     @patch.object(XslTransformation, 'get_all')
-    def test_get_all_xsl_document_returns_status_200_with_no_permission_needed(self, mock_get_all):
+    def test_get_all_xsl_document_returns_status_403_with_no_permission_needed(self, mock_get_all):
         # Arrange
         user = create_mock_user('0')
+
+        # Act
+        response = RequestMock.do_request_get(xsl_views.XslTransformationList.as_view(), user, self.data)
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch.object(XslTransformation, 'get_all')
+    def test_get_all_xsl_document_returns_status_200_with_staff_permission(self, mock_get_all):
+        # Arrange
+        user = create_mock_user('0', True)
 
         # Act
         response = RequestMock.do_request_get(xsl_views.XslTransformationList.as_view(), user, self.data)

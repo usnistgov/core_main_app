@@ -18,7 +18,7 @@ class TestGetAllXslTransformationList(MongoIntegrationBaseTestCase):
     def setUp(self):
         super(TestGetAllXslTransformationList, self).setUp()
 
-    def test_get_all_returns_status_200_with_no_permission_needed(self):
+    def test_get_all_returns_status_403_with_no_permission_needed(self):
         # Arrange
         user = create_mock_user('1')
 
@@ -27,7 +27,7 @@ class TestGetAllXslTransformationList(MongoIntegrationBaseTestCase):
                                               user)
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class TestPostXslTransformationList(MongoIntegrationBaseTestCase):
@@ -90,7 +90,7 @@ class TestGetXslTransformationDetail(MongoIntegrationBaseTestCase):
 
     def test_get_returns_object_when_found(self):
         # Arrange
-        user = create_mock_user('0')
+        user = create_mock_user('0', True)
         self.param = {
             'pk': self.fixture.data_1.id
         }
@@ -106,7 +106,7 @@ class TestGetXslTransformationDetail(MongoIntegrationBaseTestCase):
 
     def test_get_raise_404_when_not_found(self):
         # Arrange
-        user = create_mock_user('0')
+        user = create_mock_user('0', True)
         self.param = {
             'pk': str(ObjectId())
         }
@@ -122,7 +122,7 @@ class TestGetXslTransformationDetail(MongoIntegrationBaseTestCase):
 
     def test_get_raise_500_sever_error_when_general_error_occured(self):
         # Arrange
-        user = create_mock_user('0')
+        user = create_mock_user('0', True)
         self.param = {
             'pk': '0'
         }
