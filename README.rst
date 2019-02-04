@@ -128,3 +128,22 @@ Please follow these steps to configure the connection to any system running over
   $ mkdir certs
   $ cp cdcs.crt certs/
   $ c_rehash certs/
+
+Enable Redis Server authentication
+==================================
+
+Please follow these steps to enable authentication on the redis server.
+Depending on the way Redis is started on the machine, the method may differ.
+
+You can follow instructions at https://redis.io/topics/security#authentication-feature to enable authentication:
+* Open the file redis.conf (e.g. /usr/local/etc/redis.conf),
+* Uncomment the authentication setting (# requirepass foobared),
+* It is recommended to replace the default password (foobared) by a strong and long password,
+* Restart the Redis Server.
+
+You should then update the CDCS settings using a Redis connection URL with the password chosen in the previous steps.
+
+.. code:: python
+
+  BROKER_URL = 'redis://:<password>@localhost:6379/0'
+  CELERY_RESULT_BACKEND = 'redis://:<password>@localhost:6379/0'
