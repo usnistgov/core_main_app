@@ -15,10 +15,11 @@ class UserFixtures(FixtureInterface):
         pass
 
     @staticmethod
-    def create_user(username="username", password=None, email=None):
+    def create_user(username="username", password=None, email=None, is_staff=False):
         user = User.objects.create_user(username=username,
                                         password=password,
-                                        email=email)
+                                        email=email,
+                                        is_staff=is_staff)
         user.save()
         return user
 

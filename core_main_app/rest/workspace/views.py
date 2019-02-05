@@ -1,10 +1,11 @@
 """ REST views for the workspace API
 """
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
 import core_main_app.components.group.api as group_api
 import core_main_app.components.user.api as user_api
@@ -19,6 +20,8 @@ from core_main_app.utils.access_control.exceptions import AccessControlError
 class WorkspaceList(APIView):
     """ List all user Workspace, or create a new one
     """
+
+    permission_classes = (IsAuthenticated, )
 
     def get(self, request):
         """ Get all user workspaces
@@ -103,6 +106,8 @@ class WorkspaceDetail(APIView):
     """ Workspace Detail
     """
 
+    permission_classes = (IsAuthenticated,)
+
     def get(self, request, pk):
         """ Get Workspace from db
 
@@ -171,6 +176,7 @@ class WorkspaceDetail(APIView):
 
 
 @api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
 def get_workspaces_with_read_access(request):
     """ Get all workspaces with read access
 
@@ -189,6 +195,7 @@ def get_workspaces_with_read_access(request):
 
 
 @api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
 def get_workspaces_with_write_access(request):
     """ Get all workspaces with write access
 
@@ -236,6 +243,7 @@ def _list_of_workspaces_to_response(func):
 
 
 @api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
 def is_workspace_public(request, pk):
     """ Is the workspace public
 
@@ -268,6 +276,7 @@ def is_workspace_public(request, pk):
 
 
 @api_view(['PATCH'])
+@permission_classes((IsAuthenticated, ))
 def set_workspace_public(request, pk):
     """ Set the workspace public
 
@@ -308,6 +317,7 @@ def set_workspace_public(request, pk):
 
 
 @api_view(['PATCH'])
+@permission_classes((IsAuthenticated, ))
 def set_workspace_private(request, pk):
     """ Set the workspace private
 
@@ -348,6 +358,7 @@ def set_workspace_private(request, pk):
 
 
 @api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
 def get_list_user_can_write_workspace(request, pk):
     """ Get list of users that have write access to workspace
 
@@ -371,6 +382,7 @@ def get_list_user_can_write_workspace(request, pk):
 
 
 @api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
 def get_list_user_can_read_workspace(request, pk):
     """ Get list of users that have read access to workspace
 
@@ -394,6 +406,7 @@ def get_list_user_can_read_workspace(request, pk):
 
 
 @api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
 def get_list_user_can_access_workspace(request, pk):
     """ Get list of users that have read or write access to workspace
 
@@ -417,6 +430,7 @@ def get_list_user_can_access_workspace(request, pk):
 
 
 @api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
 def get_list_group_can_write_workspace(request, pk):
     """ Get list of groups that have write access to workspace
 
@@ -440,6 +454,7 @@ def get_list_group_can_write_workspace(request, pk):
 
 
 @api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
 def get_list_group_can_read_workspace(request, pk):
     """ Get list of groups that have read access to workspace
 
@@ -463,6 +478,7 @@ def get_list_group_can_read_workspace(request, pk):
 
 
 @api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
 def get_list_group_can_access_workspace(request, pk):
     """ Get list of groups that have read or write access to workspace
 
@@ -576,6 +592,7 @@ def _add_or_remove_to_user_or_group_right_to_workspace(request, pk, user_or_grou
 
 
 @api_view(['PATCH'])
+@permission_classes((IsAuthenticated, ))
 def add_user_read_right_to_workspace(request, pk, user_id):
     """ Add to the user the read right to the Workspace
 
@@ -602,6 +619,7 @@ def add_user_read_right_to_workspace(request, pk, user_id):
 
 
 @api_view(['PATCH'])
+@permission_classes((IsAuthenticated, ))
 def add_user_write_right_to_workspace(request, pk, user_id):
     """ Add to the user the write right to the workspace
 
@@ -628,6 +646,7 @@ def add_user_write_right_to_workspace(request, pk, user_id):
 
 
 @api_view(['PATCH'])
+@permission_classes((IsAuthenticated, ))
 def add_group_read_right_to_workspace(request, pk, group_id):
     """ Add to the group the read right to the workspace
 
@@ -654,6 +673,7 @@ def add_group_read_right_to_workspace(request, pk, group_id):
 
 
 @api_view(['PATCH'])
+@permission_classes((IsAuthenticated, ))
 def add_group_write_right_to_workspace(request, pk, group_id):
     """ Add to the group the write right to the workspace
 
@@ -680,6 +700,7 @@ def add_group_write_right_to_workspace(request, pk, group_id):
 
 
 @api_view(['PATCH'])
+@permission_classes((IsAuthenticated, ))
 def remove_user_read_right_to_workspace(request, pk, user_id):
     """ Remove from the user the read right to the workspace
 
@@ -706,6 +727,7 @@ def remove_user_read_right_to_workspace(request, pk, user_id):
 
 
 @api_view(['PATCH'])
+@permission_classes((IsAuthenticated, ))
 def remove_user_write_right_to_workspace(request, pk, user_id):
     """ Remove from the user the write right to the workspace
 
@@ -732,6 +754,7 @@ def remove_user_write_right_to_workspace(request, pk, user_id):
 
 
 @api_view(['PATCH'])
+@permission_classes((IsAuthenticated, ))
 def remove_group_read_right_to_workspace(request, pk, group_id):
     """ Remove from the group the read right to the workspace
 
@@ -758,6 +781,7 @@ def remove_group_read_right_to_workspace(request, pk, group_id):
 
 
 @api_view(['PATCH'])
+@permission_classes((IsAuthenticated, ))
 def remove_group_write_right_to_workspace(request, pk, group_id):
     """ Remove from the group the write right to the workspace
 
