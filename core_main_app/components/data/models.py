@@ -35,6 +35,21 @@ class Data(AbstractData):
         return Data.objects.order_by(order_by_field)
 
     @staticmethod
+    def get_all_except(id_list=None, order_by_field=None):
+        """ Get all data except for the ones with ID within the provided list.
+
+        Args:
+            id_list:
+            order_by_field:
+
+        Returns:
+        """
+        if id_list is None:
+            return Data.get_all(order_by_field)
+
+        return Data.objects(pk__nin=id_list).order_by(order_by_field)
+
+    @staticmethod
     def get_all_by_user_id(user_id, order_by_field=None):
         """ Get all data relative to the given user id
 

@@ -38,6 +38,18 @@ def get_all_by_list_template(list_template):
     return Data.get_all_by_list_template(list_template)
 
 
+def get_all_except(id_list):
+    """ Get all data except the ones with the IDs provided.
+
+    Args:
+        id_list:
+
+    Returns:
+
+    """
+    return Data.get_all_except(id_list)
+
+
 def execute_query_with_projection(query, projection):
     """ Execute a given query with a projection.
 
@@ -49,4 +61,3 @@ def execute_query_with_projection(query, projection):
 
     """
     return Data.execute_query(query).only(projection)
-
