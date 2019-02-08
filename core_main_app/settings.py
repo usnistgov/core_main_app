@@ -68,15 +68,15 @@ USE_EMAIL = getattr(settings, 'USE_EMAIL', False)
 """ :py:class:`bool`: Activate email sending on the platform.
 """
 
-SERVER_EMAIL = getattr(settings, 'SERVER_EMAIL', 'noreply@curator.org')
+SERVER_EMAIL = getattr(settings, 'SERVER_EMAIL', 'noreply@example.com')
 """ :py:class:`str`: Email address sending the message.
 """
 
-ADMINS = getattr(settings, 'ADMINS', [('admin', 'admin@curator.org')])
+ADMINS = getattr(settings, 'ADMINS', [('admin', 'admin@example.com')])
 """ :py:class:`list`: Email addresses of admins.
 """
 
-MANAGERS = getattr(settings, 'MANAGERS', [('manager', 'moderator@curator.org')])
+MANAGERS = getattr(settings, 'MANAGERS', [('manager', 'moderator@example.com')])
 """ :py:class:`list`: Email addresses of moderators (managers). 
 """
 
