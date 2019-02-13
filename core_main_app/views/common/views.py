@@ -339,6 +339,10 @@ class TemplateXSLRenderingView(View):
             # If no configuration, new form with pre-selected fields.
             data = {'template': template.id, 'list_xslt': None, 'detail_xslt': None}
 
+        self.assets = {
+            "css": ['core_main_app/admin/css/templates_xslt/form.css'],
+        }
+
         self.context = {
             'template_title': version_manager.title,
             'template_version': version_number,
