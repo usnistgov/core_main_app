@@ -44,12 +44,10 @@
                </td>
                <td>
                    {% block box_actions %}
-                        {% if data.object_name == 'Template' %}
-                            <a class="btn btn-default results-xslt"
-                                href="{% url 'admin:core_main_app_template_xslt' version.object %}">
-                                <i class="fa fa-file-code-o"></i> XSLT
-                            </a>
-                        {% endif %}
+                        <a class="btn btn-default results-xslt"
+                            href="{% url 'admin:core_main_app_template_xslt' version.object %}">
+                            <i class="fa fa-file-code-o"></i> XSLT
+                        </a>
                         {% if 'core_parser_app' in INSTALLED_APPS %}
                             <a class="btn btn-default modules"
                                 href="{% url data.module_url version.object %}">

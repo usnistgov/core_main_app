@@ -184,11 +184,12 @@ def manage_template_versions(request, version_manager_id):
                       context={'error': e.message})
 
 
-def get_context_manage_template_versions(version_manager):
+def get_context_manage_template_versions(version_manager, object_name="Template"):
     """ Get the context to manage the template versions.
 
     Args:
         version_manager:
+        object_name:
 
     Returns:
 
@@ -213,7 +214,7 @@ def get_context_manage_template_versions(version_manager):
 
     version_manager.versions = categorized_versions
     context = {
-        "object_name": "Template",
+        "object_name": object_name,
         "version_manager": version_manager
     }
 
