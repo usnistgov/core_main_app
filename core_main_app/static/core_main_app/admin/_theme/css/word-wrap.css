@@ -1,0 +1,9 @@
+.word-wrap {
+    word-break: break-word;
+    word-wrap: anywhere;
+    overflow-wrap: anywhere;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
+}
