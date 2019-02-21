@@ -22,11 +22,17 @@ class AbstractExecuteLocalQueryView(APIView):
 
         Parameters:
 
+            # get all results (paginated)
             {"query": "{}"}
-            {"query": "{\"root.element.value\": 2}"}
-            {"query": "{\"root.element.value\": 2}", "all": "true"}
-            {"query": "{\"root.element.value\": 2}", "templates": "[{\"id\":\"[template_id]\"}]"}
-            {"query": "{}", "templates": "[{\"id\":\"[template_id]\"}]"}
+            # get all results
+            {"query": "{}", "all": "true"}
+            # get all results filtered by templates
+            {"query": "{}", "templates": "[{\\"id\\":\\"[template_id]\\"}]"}
+            # get all results that verify a given criteria
+            {"query": "{\\"root.element.value\\": 2}"}
+            # get results using multiple options
+            {"query": "{\\"root.element.value\\": 2}", "templates": "[{\\"id\\":\\"template_id\\"}]", "all": "true"}
+
 
         Warning:
 
