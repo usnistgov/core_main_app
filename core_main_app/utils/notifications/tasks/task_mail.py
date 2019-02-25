@@ -31,7 +31,6 @@ def send_mail(recipient_list, subject, path_to_template, context={}, fail_silent
     try:
         # Render the given template with context information
         template = loader.get_template(path_to_template)
-        context = Context(context)
         message = template.render(context)
         # Send mail
         django_send_mail(subject=EMAIL_SUBJECT_PREFIX+subject, message='', from_email=sender,
@@ -59,7 +58,6 @@ def send_mail_to_administrators(subject, path_to_template, context={}, fail_sile
     try:
         # Render the given template with context information
         template = loader.get_template(path_to_template)
-        context = Context(context)
         message = template.render(context)
         # Send mail
         mail_admins(subject=subject, message='', html_message=message, fail_silently=fail_silently)
@@ -85,7 +83,6 @@ def send_mail_to_managers(subject, path_to_template, context={}, fail_silently=T
     try:
         # Render the given template with context information
         template = loader.get_template(path_to_template)
-        context = Context(context)
         message = template.render(context)
         # Send mail
         mail_managers(subject=subject, message='', html_message=message, fail_silently=fail_silently)

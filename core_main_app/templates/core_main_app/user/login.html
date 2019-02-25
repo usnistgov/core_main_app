@@ -31,9 +31,7 @@
                 {{ field }}
             {% endfor %}
 
-            {% if USE_EMAIL %}
-                <a href="{#{% url 'password_reset' %}#}">Forgot password?</a>
-            {% endif %}
+
 
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
@@ -43,7 +41,6 @@
                         <i class="fa fa-user-plus"></i> Request an Account
                     </a>
                     {% endif %}
-
                     <button type="submit" class="btn btn-lg btn-default pull-right">
                         <i class="fa fa-sign-in"></i> Login
                     </button>
