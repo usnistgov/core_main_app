@@ -1,5 +1,6 @@
 """ Fixtures files for Data
 """
+from core_main_app.utils.databases.mongoengine_database import init_text_index
 from core_main_app.utils.integration_tests.fixture_interface import FixtureInterface
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
@@ -65,6 +66,10 @@ class QueryDataFixtures(DataFixtures):
         content_1 = {
             "root": {
                 "element": "value",
+                "list": [
+                    {"element_list_1": 1},
+                    {"element_list_2": 2}
+                ],
                 "complex": {
                     "child1": "test",
                     "child2": 0

@@ -1,30 +1,44 @@
 """Query builder class
 """
+import json
+import logging
+
 from bson.objectid import ObjectId
 
+from core_main_app.components.workspace import api as workspace_api
 from core_main_app.utils.query.constants import VISIBILITY_PUBLIC, VISIBILITY_ALL, VISIBILITY_USER
 from core_main_app.utils.query.mongo.prepare import prepare_query
-import json
-from core_main_app.components.workspace import api as workspace_api
+
+logger = logging.getLogger("core_main_app.utils.query.mongo.query_builder")
 
 
 class QueryBuilder(object):
-    """Query builder class
+    """ Query builder class
     """
 
     def __init__(self, query, sub_document_root):
-        """Creates query builder
+        """ Create query builder
 
         Args:
             query:
             sub_document_root:
         """
-        self.criteria = [prepare_query(json.loads(query),
+        try:
+            # try to load the query in Json
+            # in case the user give a query in string format
+            query = json.loads(query)
+        except TypeError as e:
+            # if type error, we use the query as is
+            # (the query must be directly given in json format)
+            # Log the exception
+            logger.warning(e.message)
+
+        self.criteria = [prepare_query(query,
                                        regex=True,
                                        sub_document_root=sub_document_root)]
 
     def add_list_templates_criteria(self, list_template_ids):
-        """Adds a criteria on template ids
+        """ Add a criteria on template ids
 
         Args:
             list_template_ids:
@@ -35,7 +49,7 @@ class QueryBuilder(object):
         self.criteria.append({'template': {'$in': [ObjectId(template_id) for template_id in list_template_ids]}})
 
     def add_visibility_criteria(self, visibility):
-        """Adds a criteria on visibility
+        """ Add a criteria on visibility
 
         Args:
             visibility:
@@ -55,8 +69,19 @@ class QueryBuilder(object):
             # TODO: get only user data
             pass
 
+    def add_title_criteria(self, title):
+        """ Add a criteria on title
+
+        Args:
+            title:
+
+        Returns:
+
+        """
+        self.criteria.append({'title': title})
+
     def get_raw_query(self):
-        """Returns the raw query
+        """ Return the raw query
 
         Returns:
 

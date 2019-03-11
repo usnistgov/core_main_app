@@ -380,6 +380,8 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
             {"query": "{}"}
             # get all results
             {"query": "{}", "all": "true"}
+            # get all results filtered by title
+            {"query": "{}", "title": "title_string"}
             # get all results filtered by templates
             {"query": "{}", "templates": "[{\\"id\\":\\"[template_id]\\"}]"}
             # get all results that verify a given criteria

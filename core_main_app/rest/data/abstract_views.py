@@ -26,6 +26,8 @@ class AbstractExecuteLocalQueryView(APIView):
             {"query": "{}"}
             # get all results
             {"query": "{}", "all": "true"}
+            # get all results filtered by title
+            {"query": "{}", "title": "title_string"}
             # get all results filtered by templates
             {"query": "{}", "templates": "[{\\"id\\":\\"[template_id]\\"}]"}
             # get all results that verify a given criteria
@@ -114,14 +116,20 @@ class AbstractExecuteLocalQueryView(APIView):
 
             The raw query
         """
+        title = self.request.data.get('title', None)
+
         # build query builder
         query_builder = QueryBuilder(query, self.sub_document_root)
         # update the criteria with templates information
         if len(templates) > 0:
             list_template_ids = [template['id'] for template in templates]
             query_builder.add_list_templates_criteria(list_template_ids)
+        # update the criteria with visibility information
         if VISIBILITY_OPTION in options:
             query_builder.add_visibility_criteria(options[VISIBILITY_OPTION])
+        # update the criteria with title information
+        if title is not None:
+            query_builder.add_title_criteria(title)
 
         # get raw query
         return query_builder.get_raw_query()

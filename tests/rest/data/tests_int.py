@@ -265,7 +265,7 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
         # create user with superuser access to skip access control
         self.user = create_mock_user('1', is_superuser=True)
 
-    def test_post_query_one_data_returns_http_200(self):
+    def test_post_query_string_one_data_returns_http_200(self):
         # Arrange
         self.data.update({"query": "{\"root.element\": \"value\"}"})
 
@@ -277,7 +277,7 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_post_query_one_data_returns_one_data(self):
+    def test_post_query_string_one_data_returns_one_data(self):
         # Arrange
         self.data.update({"query": "{\"root.element\": \"value\"}"})
 
@@ -289,7 +289,7 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(len(response.data), 1)
 
-    def test_post_query_two_data_returns_two_data(self):
+    def test_post_query_string_two_data_returns_two_data(self):
         # Arrange
         self.data.update({"query": "{\"$or\": [{\"root.element\": \"value\"}, {\"root.element\":\"value2\"}]}"})
 
@@ -301,7 +301,7 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(len(response.data), 2)
 
-    def test_post_empty_query_filter_by_templates_returns_all_data_of_the_template(self):
+    def test_post_empty_query_string_filter_by_templates_returns_all_data_of_the_template(self):
         # Arrange
         self.data.update({"query": "{}",
                           "templates": '[{"id": "' + str(self.fixture.template.id) + '"}]'})
@@ -314,7 +314,7 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(len(response.data), 2)
 
-    def test_post_query_filtered_by_templates_returns_one_data(self):
+    def test_post_query_string_filtered_by_templates_returns_one_data(self):
         # Arrange
         self.data.update({"query": "{\"root.element\": \"value\"}",
                           "templates": '[{"id": "' + str(self.fixture.template.id) + '"}]'})
@@ -327,7 +327,7 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(len(response.data), 1)
 
-    def test_post_query_filtered_by_wrong_template_id_returns_no_data(self):
+    def test_post_query_string_filtered_by_wrong_template_id_returns_no_data(self):
         # Arrange
         self.data.update({"query": "{\"root.element\": \"value\"}",
                           "templates": '[{"id": "507f1f77bcf86cd799439011"}]'})
@@ -339,6 +339,90 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
 
         # Assert
         self.assertEqual(len(response.data), 0)
+
+    def test_post_query_json_returns_http_200(self):
+        # Arrange
+        self.data.update({"query": {}})
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_post_query_json_int_returns_data_1(self):
+        # Arrange
+        self.data.update({"query": {"root.complex.child2": 0}})
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), 1)
+
+    def test_post_query_json_string_returns_data_1(self):
+        # Arrange
+        self.data.update({"query": {"root.complex.child1": "test"}})
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), 1)
+
+    def test_post_query_json_regex_returns_all_data(self):
+        # Arrange
+        self.data.update({"query": {"root.element": "/.*/"}})
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), len(self.fixture.data_collection))
+
+    def test_post_query_json_or_operator_returns_data_1_and_data_2(self):
+        # Arrange
+        self.data.update({"query": {"$or": [{"root.element": "value"}, {"root.element": "value2"}]}})
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), len(self.fixture.data_collection))
+
+    def test_post_query_json_and_operator_returns_data_1(self):
+        # Arrange
+        self.data.update({"query": {"$and": [{"root.complex.child2": {"$lt": 1}}, {"root.complex.child2": { "$gte": 0 }}]}})
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), 1)
+
+    def test_post_query_json_element_match_operator_returns_data_1(self):
+        # Arrange
+        self.data.update({"query": {"root.list": {"$elemMatch": {"element_list_1": 1}}}})
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), 1)
 
 
 class TestDataAssign(MongoIntegrationBaseTestCase):
