@@ -1205,7 +1205,7 @@
  * ------------
  */
 .skin-yellow .main-header .navbar {
-  background-color: #f39c12;
+  background-color: #694000;
 }
 .skin-yellow .main-header .navbar .nav > li > a {
   color: #ffffff;
@@ -1245,7 +1245,7 @@
   }
 }
 .skin-yellow .main-header .logo {
-  background-color: #e08e0b;
+  background-color: #402700;
   color: #ffffff;
   border-bottom: 0 solid transparent;
 }
@@ -1268,7 +1268,7 @@
   color: #fff;
 }
 .skin-yellow .sidebar-menu > li.header {
-  color: #4b646f;
+  color: #fff;
   background: #1a2226;
 }
 .skin-yellow .sidebar-menu > li > a {

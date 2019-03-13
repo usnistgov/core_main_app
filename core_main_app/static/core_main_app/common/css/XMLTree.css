@@ -73,7 +73,7 @@ ul.tree ul li:last-child:before {
 }
 
 .text {
-	color: orange;
+	color: #369;
 }
 
 .path{
@@ -84,9 +84,9 @@ ul.tree ul li:last-child:before {
 	font-weight: bold;
 	color:white;
 	margin-left: 2px;
-	border: 3px solid #E68A00; 
+	border: 3px solid #ce0000;
 	text-align: center; 
-	background: #E68A00;
+	background: #ce0000;
 	border-radius: 5px;
 }
 
@@ -94,9 +94,9 @@ ul.tree ul li:last-child:before {
 	font-weight: bold;
 	color:white;
 	margin-left: 2px;
-	border: 3px solid #B8B8B8; 
+	border: 3px solid #0065a0;
 	text-align: center; 
-	background: #B8B8B8;
+	background: #0065a0;
 	border-radius: 5px;
 }
 
