@@ -48,7 +48,11 @@ class DataSerializer(DocumentSerializer):
         # Set xml content
         instance.xml_content = validated_data['xml_content']
         # Save the data
-        return data_api.upsert(instance, validated_data['user'])
+        data_api.upsert(instance, validated_data['user'])
+        # Encode the response body
+        instance.xml_content = validated_data['xml_content'].encode('utf-8')
+
+        return instance
 
     def update(self, instance, validated_data):
         """
