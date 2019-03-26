@@ -5,3 +5,11 @@
 .template-name {
     width: 75%;
 }
+
+.table-col-3 th {
+    width: 33%;
+}
+
+.table-col-4 th {
+    width: 25%;
+}
