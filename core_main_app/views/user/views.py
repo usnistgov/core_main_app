@@ -61,6 +61,9 @@ def custom_login(request):
         # build the context
         context = {'login_form': LoginForm(initial={"next_page": next_page}),
                    'with_website_features': "core_website_app" in INSTALLED_APPS}
+        assets = {
+            "css": ["core_main_app/user/css/login/login.css"]
+        }
 
         # get the web page login if exist
         web_page_login = web_page_login_api.get()
@@ -70,15 +73,16 @@ def custom_login(request):
             context["login_message"] = web_page_login.content
 
             # if exist we build assets and modals collection
-            assets = {
+            assets.update({
                 "js": [
                     {
                         "path": 'core_main_app/user/js/web_page_login/web_page_login.js',
                         "is_raw": False
                     }
                 ]
-            }
+            })
             modals = ["core_main_app/user/web_page_login/modals/web_page_login_modal.html"]
+            
             # render the page with context, assets and modals
             return render(request,
                           "core_main_app/user/login.html",
@@ -86,10 +90,11 @@ def custom_login(request):
                           assets=assets,
                           modals=modals)
 
-        # render page with context only
+        # render the page with context, assets
         return render(request,
                       "core_main_app/user/login.html",
-                      context=context)
+                      context=context,
+                      assets=assets)
     else:
         return HttpResponse(status=HTTP_405_METHOD_NOT_ALLOWED)
 
