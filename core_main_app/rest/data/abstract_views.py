@@ -88,10 +88,11 @@ class AbstractExecuteLocalQueryView(APIView):
             query = self.request.data.get('query', None)
             templates = json.loads(self.request.data.get('templates', '[]'))
             options = json.loads(self.request.data.get('options', '{}'))
+            title = self.request.data.get('title', None)
 
             if query is not None:
                 # prepare query
-                raw_query = self.build_query(query, templates, options)
+                raw_query = self.build_query(query, templates, options, title)
                 # execute query
                 data_list = self.execute_raw_query(raw_query)
                 # build and return response
@@ -103,7 +104,7 @@ class AbstractExecuteLocalQueryView(APIView):
             content = {'message': api_exception.message}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def build_query(self, query, templates,  options):
+    def build_query(self, query, templates,  options, title=None):
         """ Build the raw query
 
         Args:
@@ -111,12 +112,12 @@ class AbstractExecuteLocalQueryView(APIView):
             query: Query
             templates: List of template
             options: Query option
+            title: title filter
 
         Returns:
 
             The raw query
         """
-        title = self.request.data.get('title', None)
 
         # build query builder
         query_builder = QueryBuilder(query, self.sub_document_root)

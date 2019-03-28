@@ -444,7 +444,7 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
 
 
 class ExecuteLocalKeywordQueryView(ExecuteLocalQueryView):
-    def build_query(self, query, templates, options):
+    def build_query(self, query, templates, options, title=None):
         """ Build the raw query
         Prepare the query for a keyword search
 
@@ -453,6 +453,7 @@ class ExecuteLocalKeywordQueryView(ExecuteLocalQueryView):
             query: ObjectId
             templates: ObjectId
             options: Query options
+            title: title filter
             
         Returns:
 
@@ -460,7 +461,7 @@ class ExecuteLocalKeywordQueryView(ExecuteLocalQueryView):
         """
         # build query builder
         query = json.dumps(get_full_text_query(query))
-        return super(ExecuteLocalKeywordQueryView, self).build_query(str(query), templates, options)
+        return super(ExecuteLocalKeywordQueryView, self).build_query(str(query), templates, options, title)
 
 
 class DataAssign(APIView):
