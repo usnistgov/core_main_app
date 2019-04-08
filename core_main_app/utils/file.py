@@ -27,6 +27,7 @@ def get_file_http_response(file_content, file_name, content_type=None, extension
             _file = BytesIO(file_content.encode('utf-8'))
         except Exception:
             _file = BytesIO(file_content)
+
         # guess file content type if not set
         if content_type is None:
             content_type = guess_type(file_name)

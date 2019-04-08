@@ -19,11 +19,12 @@ from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.components.xsl_transformation import api as xslt_transformation_api
 from core_main_app.components.xsl_transformation.models import XslTransformation
+from core_main_app.settings import INSTALLED_APPS
 from core_main_app.utils import group as group_utils
+from core_main_app.utils.labels import get_data_label
 from core_main_app.utils.rendering import admin_render
 from core_main_app.utils.rendering import render
 from core_main_app.views.admin.forms import UploadXSLTForm, TemplateXsltRenderingForm
-from core_main_app.utils.labels import get_data_label
 
 
 class CommonView(View):
@@ -193,7 +194,18 @@ class ViewData(CommonView):
                 ],
                 "css": ["core_main_app/common/css/XMLTree.css"],
             }
-            return self.common_render(request, self.template, context=context, assets=assets)
+
+            modals = []
+
+            if "core_file_preview_app" in INSTALLED_APPS:
+                assets["js"].append({
+                    "path": 'core_file_preview_app/user/js/file_preview.js',
+                    "is_raw": False
+                })
+                assets["css"].append("core_file_preview_app/user/css/file_preview.css")
+                modals.append("core_file_preview_app/user/file_preview_modal.html")
+
+            return self.common_render(request, self.template, context=context, assets=assets, modals=modals)
         except exceptions.DoesNotExist:
             error_message = 'Data not found'
         except exceptions.ModelError:
