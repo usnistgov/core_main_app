@@ -198,10 +198,12 @@ class ViewData(CommonView):
             modals = []
 
             if "core_file_preview_app" in INSTALLED_APPS:
-                assets["js"].append({
-                    "path": 'core_file_preview_app/user/js/file_preview.js',
-                    "is_raw": False
-                })
+                assets["js"].extend([
+                    {
+                        "path": 'core_file_preview_app/user/js/file_preview.js',
+                        "is_raw": False
+                    }
+                ])
                 assets["css"].append("core_file_preview_app/user/css/file_preview.css")
                 modals.append("core_file_preview_app/user/file_preview_modal.html")
 
