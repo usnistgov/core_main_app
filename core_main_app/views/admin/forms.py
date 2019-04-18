@@ -38,13 +38,15 @@ class UploadTemplateForm(UploadForm):
     def __init__(self, *args, **kwargs):
         super(UploadTemplateForm, self).__init__(*args, **kwargs)
         self.fields['name'].label = 'Enter Template name'
+        self.fields['upload_file'].widget = forms.FileInput(attrs={'accept': '.xsd'})
 
 
 class UploadVersionForm(forms.Form):
     """
     Form to upload a new version
     """
-    xsd_file = forms.FileField(label='Select a file', required=True)
+    xsd_file = forms.FileField(label='Select a file', required=True,
+                               widget=forms.FileInput(attrs={'accept':'.xsd'}))
 
 
 class EditProfileForm(forms.Form):
@@ -59,12 +61,13 @@ class EditProfileForm(forms.Form):
 
 class UploadXSLTForm(UploadForm):
     """
-    Form to upload a new XSLT
+    Form to upload a new XSLT 
     """
     def __init__(self, *args, **kwargs):
         super(UploadXSLTForm, self).__init__(*args, **kwargs)
         self.fields['name'].label = 'Enter XSLT name'
         self.fields['upload_file'].validators = [ExtensionValidator('.xsl')]
+        self.fields['upload_file'].widget = forms.FileInput(attrs={'accept':'.xslt, .xsl'})
 
 
 class TemplateXsltRenderingForm(forms.Form):
