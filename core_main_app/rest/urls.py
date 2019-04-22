@@ -4,11 +4,12 @@ from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
 
 import core_main_app.rest.web_page.views as web_page_views
-import core_main_app.rest.xsl_transformation.views as xslTransformationList_view
+import core_main_app.rest.xsl_transformation.views as xsl_transformation_views
 from core_main_app.rest.blob import views as blob_views
 from core_main_app.rest.data import views as data_views
 from core_main_app.rest.template import views as template_views
 from core_main_app.rest.template_version_manager import views as template_version_manager_views
+from core_main_app.rest.template_xsl_rendering import views as template_xsl_rendering_views
 from core_main_app.rest.workspace import views as workspace_views
 
 urlpatterns = [
@@ -47,6 +48,14 @@ urlpatterns = [
     url(r'^template/version/(?P<pk>\w+)/restore/$',
         template_version_manager_views.RestoreTemplateVersion.as_view(),
         name='core_main_app_rest_template_version_restore'),
+
+    url(r'^template/xsl_rendering/$',
+        template_xsl_rendering_views.TemplateXslRenderingList.as_view(),
+        name='core_main_app_rest_template_detail'),
+
+    url(r'^template/xsl_rendering/(?P<pk>\w+)/$',
+        template_xsl_rendering_views.TemplateXslRenderingDetail.as_view(),
+        name='core_main_app_rest_template_download'),
 
     url(r'^template/global/$',
         template_version_manager_views.GlobalTemplateList.as_view(),
@@ -95,13 +104,13 @@ urlpatterns = [
     url(r'^blob/download/(?P<pk>\w+)/$', blob_views.BlobDownload.as_view(),
         name='core_main_app_rest_blob_download'),
 
-    url(r'^xslt/$', xslTransformationList_view.XslTransformationList.as_view(),
+    url(r'^xslt/$', xsl_transformation_views.XslTransformationList.as_view(),
         name='core_main_app_rest_xslt'),
 
-    url(r'^xslt/transform/$', xslTransformationList_view.XslTransformationTransform.as_view(),
+    url(r'^xslt/transform/$', xsl_transformation_views.XslTransformationTransform.as_view(),
         name='core_main_app_rest_xslt_transform'),
 
-    url(r'^xslt/(?P<pk>\w+)/$', xslTransformationList_view.XslTransformationDetail.as_view(),
+    url(r'^xslt/(?P<pk>\w+)/$', xsl_transformation_views.XslTransformationDetail.as_view(),
         name='core_main_app_rest_xslt_detail'),
 
     url(r'^workspace/$', workspace_views.WorkspaceList.as_view(),
@@ -125,22 +134,28 @@ urlpatterns = [
     url(r'^workspace/(?P<pk>\w+)/set_private/$', workspace_views.set_workspace_private,
         name='core_main_app_rest_workspace_set_private'),
 
-    url(r'^workspace/(?P<pk>\w+)/list_user_can_read/$', workspace_views.get_list_user_can_read_workspace,
+    url(r'^workspace/(?P<pk>\w+)/list_user_can_read/$',
+        workspace_views.get_list_user_can_read_workspace,
         name='core_main_app_rest_workspace_list_user_can_read'),
 
-    url(r'^workspace/(?P<pk>\w+)/list_user_can_write/$', workspace_views.get_list_user_can_write_workspace,
+    url(r'^workspace/(?P<pk>\w+)/list_user_can_write/$',
+        workspace_views.get_list_user_can_write_workspace,
         name='core_main_app_rest_workspace_list_user_can_write'),
 
-    url(r'^workspace/(?P<pk>\w+)/list_user_can_access/$', workspace_views.get_list_user_can_access_workspace,
+    url(r'^workspace/(?P<pk>\w+)/list_user_can_access/$',
+        workspace_views.get_list_user_can_access_workspace,
         name='core_main_app_rest_workspace_list_user_can_access'),
 
-    url(r'^workspace/(?P<pk>\w+)/list_group_can_read/$', workspace_views.get_list_group_can_read_workspace,
+    url(r'^workspace/(?P<pk>\w+)/list_group_can_read/$',
+        workspace_views.get_list_group_can_read_workspace,
         name='core_main_app_rest_workspace_list_group_can_read'),
 
-    url(r'^workspace/(?P<pk>\w+)/list_group_can_write/$', workspace_views.get_list_group_can_write_workspace,
+    url(r'^workspace/(?P<pk>\w+)/list_group_can_write/$',
+        workspace_views.get_list_group_can_write_workspace,
         name='core_main_app_rest_workspace_list_group_can_write'),
 
-    url(r'^workspace/(?P<pk>\w+)/list_group_can_access/$', workspace_views.get_list_group_can_access_workspace,
+    url(r'^workspace/(?P<pk>\w+)/list_group_can_access/$',
+        workspace_views.get_list_group_can_access_workspace,
         name='core_main_app_rest_workspace_list_group_can_access'),
 
     url(r'^workspace/(?P<pk>\w+)/add_read_right_to_user/(?P<user_id>\w+)/$',

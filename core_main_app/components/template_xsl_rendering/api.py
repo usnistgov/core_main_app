@@ -1,5 +1,6 @@
 """ TemplateXslRendering API calls
 """
+from core_main_app.commons.exceptions import ApiError
 from core_main_app.components.template_xsl_rendering.models import TemplateXslRendering
 from core_main_app.components.template import api as template_api
 from core_main_app.commons import exceptions
@@ -20,21 +21,38 @@ def add_or_delete(template_id, list_xslt, detail_xslt, template_xsl_rendering_id
     # Boolean to know if we need this instance in database, i.e there are XSLTs information.
     need_to_be_kept = list_xslt is not None or detail_xslt is not None
 
-    try:
-        # Update the configuration.
-        template_xsl_rendering = get_by_id(template_xsl_rendering_id)
-        if need_to_be_kept:
-            template_xsl_rendering.list_xslt = list_xslt
-            template_xsl_rendering.detail_xslt = detail_xslt
-            _upsert(template_xsl_rendering)
-        else:
+    if need_to_be_kept:
+        return upsert(template_id, list_xslt, detail_xslt, template_xsl_rendering_id)
+    else:
+        try:
+            template_xsl_rendering = get_by_id(template_xsl_rendering_id)
             delete(template_xsl_rendering)
-    except (Exception, exceptions.DoesNotExist):
-        # If no configuration, create a new one.
-        if need_to_be_kept:
-            template_xsl_rendering = TemplateXslRendering(template=template_id, list_xslt=list_xslt,
-                                                          detail_xslt=detail_xslt)
-            _upsert(template_xsl_rendering)
+            return None
+        except (Exception, exceptions.DoesNotExist):
+            raise ApiError("An error occured while deleting the TemplateXSLRendering")
+
+
+def upsert(template_id, list_xslt, detail_xslt, template_xsl_rendering_id=None):
+    """ Update or create a XSL Template rendering object
+
+    Args:
+        template_id:
+        list_xslt:
+        detail_xslt:
+        template_xsl_rendering_id:
+
+    Returns:
+        TemplateXSLRendering - The updated/created object.
+    """
+    try:
+        template_xsl_rendering = get_by_id(template_xsl_rendering_id)
+        template_xsl_rendering.list_xslt = list_xslt
+        template_xsl_rendering.detail_xslt = detail_xslt
+    except exceptions.DoesNotExist:
+        template_xsl_rendering = TemplateXslRendering(template=template_id, list_xslt=list_xslt,
+                                                      detail_xslt=detail_xslt)
+
+    return _upsert(template_xsl_rendering)
 
 
 def _upsert(template_xsl_rendering):
