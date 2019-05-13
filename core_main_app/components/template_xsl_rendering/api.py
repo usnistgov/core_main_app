@@ -1,9 +1,13 @@
 """ TemplateXslRendering API calls
 """
+import logging
+
 from core_main_app.commons.exceptions import ApiError
 from core_main_app.components.template_xsl_rendering.models import TemplateXslRendering
 from core_main_app.components.template import api as template_api
 from core_main_app.commons import exceptions
+
+logger = logging.getLogger(__name__)
 
 
 def add_or_delete(template_id, list_xslt, detail_xslt, template_xsl_rendering_id=None):
@@ -28,7 +32,7 @@ def add_or_delete(template_id, list_xslt, detail_xslt, template_xsl_rendering_id
             template_xsl_rendering = get_by_id(template_xsl_rendering_id)
             delete(template_xsl_rendering)
             return None
-        except (Exception, exceptions.DoesNotExist):
+        except Exception:
             raise ApiError("An error occured while deleting the TemplateXSLRendering")
 
 
@@ -48,7 +52,8 @@ def upsert(template_id, list_xslt, detail_xslt, template_xsl_rendering_id=None):
         template_xsl_rendering = get_by_id(template_xsl_rendering_id)
         template_xsl_rendering.list_xslt = list_xslt
         template_xsl_rendering.detail_xslt = detail_xslt
-    except exceptions.DoesNotExist:
+    except Exception as exception:
+        logger.info("Exception when saving TemplateXSLRendering object: %s" % str(exception))
         template_xsl_rendering = TemplateXslRendering(template=template_id, list_xslt=list_xslt,
                                                       detail_xslt=detail_xslt)
 
