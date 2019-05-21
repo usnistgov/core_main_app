@@ -137,7 +137,7 @@ def manage_template_versions(request, version_manager_id):
                             assets=assets,
                             modals=modals,
                             context=context)
-    except Exception, e:
+    except Exception as e:
         return admin_render(request,
                             'core_main_app/common/commons/error.html',
                             context={'error': e.message})
@@ -267,12 +267,12 @@ def _save_template(request, assets, context):
         template_version_manager = TemplateVersionManager(title=name)
         template_version_manager_api.insert(template_version_manager, template)
         return HttpResponseRedirect(reverse("admin:core_main_app_templates"))
-    except exceptions.XSDError, xsd_error:
+    except exceptions.XSDError as xsd_error:
         return handle_xsd_errors(request, assets, context, xsd_error, xsd_data, xsd_file.name)
     except exceptions.NotUniqueError:
         context['errors'] = html_escape("A template with the same name already exists. Please choose another name.")
         return _upload_template_response(request, assets, context)
-    except Exception, e:
+    except Exception as e:
         context['errors'] = html_escape(e.message)
         return _upload_template_response(request, assets, context)
 
@@ -299,9 +299,9 @@ def _save_template_version(request, assets, context, template_version_manager):
         template_version_manager_api.insert(template_version_manager, template)
         return HttpResponseRedirect(reverse("admin:core_main_app_manage_template_versions",
                                             kwargs={'version_manager_id': str(template_version_manager.id)}))
-    except exceptions.XSDError, xsd_error:
+    except exceptions.XSDError as xsd_error:
         return handle_xsd_errors(request, assets, context, xsd_error, xsd_data, xsd_file.name)
-    except Exception, e:
+    except Exception as e:
         context['errors'] = html_escape(e.message)
         return _upload_template_response(request, assets, context)
 
@@ -400,7 +400,7 @@ class UploadXSLTView(View):
         except exceptions.NotUniqueError:
             self.context.update({'errors': html_escape("This name already exists.")})
             return admin_render(request, 'core_main_app/admin/xslt/upload.html', context=self.context)
-        except Exception, e:
+        except Exception as e:
             self.context.update({'errors': html_escape(e.message)})
             return admin_render(request, 'core_main_app/admin/xslt/upload.html', context=self.context)
 

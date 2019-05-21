@@ -33,7 +33,7 @@ def init_rules(apps):
 
         # Add permissions to default group
         default_group.permissions.add(publish_data_perm)
-    except Exception, e:
+    except Exception as e:
         logger.error("Impossible to init the rules: %s" % e.message)
 
     logger.info("FINISH init rules.")
@@ -59,7 +59,7 @@ def create_public_workspace():
             workspace_api.create_and_save("Global Public Workspace", is_public=True)
             logger.info("Public workspace created.")
 
-    except Exception, e:
+    except Exception as e:
         logger.error("Impossible to create global public workspace: %s" % e.message)
 
     logger.info("FINISH create public workspace.")

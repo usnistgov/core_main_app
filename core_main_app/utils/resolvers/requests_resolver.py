@@ -25,7 +25,7 @@ class RequestsResolver(DefaultURIResolver):
         try:
             response = send_get_request(url)
             return self.resolve_string(response.content, context)
-        except Exception, e:
+        except Exception as e:
             # if an error occurs return None to use the next registered resolver (or lxml default resolver)
             logger.error("An error occurred with the RequestsResolver. Please make sure HTTPS is properly configured.")
             return None

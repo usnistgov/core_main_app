@@ -19,7 +19,7 @@ def is_object_locked(object, user):
         lock = Lock.acquire()
         _check_object_locked(object, user, lock)
         return False
-    except LockError, ler:
+    except LockError as ler:
         return True
     finally:
         Lock.release()
@@ -37,7 +37,7 @@ def set_lock_object(object, user):
         lock = Lock.acquire()
         if not _check_object_locked(object, user, lock):
             lock.set_lock(object, user)
-    except LockError, ler:
+    except LockError as ler:
         raise ler
     finally:
         Lock.release()

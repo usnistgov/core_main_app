@@ -30,7 +30,7 @@ def insert(template_version_manager, template):
         template_api.set_display_name(template, display_name)
         # return version manager
         return template_version_manager
-    except Exception, e:
+    except Exception as e:
         template_api.delete(template)
         raise e
 

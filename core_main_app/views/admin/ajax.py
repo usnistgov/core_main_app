@@ -46,7 +46,7 @@ def resolve_dependencies(request):
         else:
             template_version_manager = TemplateVersionManager(title=name)
         template_version_manager_api.insert(template_version_manager, template)
-    except Exception, e:
+    except Exception as e:
         return HttpResponseBadRequest(e.message)
 
     return HttpResponse(json.dumps({}), content_type='application/javascript')
@@ -99,7 +99,7 @@ class EditXSLTView(EditObjectModalView):
         except NotUniqueError:
             form.add_error(None, "An object with the same name already exists. Please choose "
                                  "another name.")
-        except Exception, e:
+        except Exception as e:
             form.add_error(None, e.message)
 
 

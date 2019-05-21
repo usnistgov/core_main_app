@@ -35,7 +35,7 @@ def set_public_workspace(request):
     workspace_id_list = request.POST.getlist('workspace_id[]', [])
     try:
         list_workspace = workspace_api.get_by_id_list(workspace_id_list)
-    except DoesNotExist, dne:
+    except DoesNotExist as dne:
         return HttpResponseBadRequest(dne.message)
     try:
         for workspace in list_workspace:
@@ -59,7 +59,7 @@ def set_private_workspace(request):
     workspace_id_list = request.POST.getlist('workspace_id[]', [])
     try:
         list_workspace = workspace_api.get_by_id_list(workspace_id_list)
-    except DoesNotExist, dne:
+    except DoesNotExist as dne:
         return HttpResponseBadRequest(dne.message)
     try:
         for workspace in list_workspace:
@@ -88,7 +88,7 @@ def assign_workspace(request):
             workspace = workspace_api.get_by_id(str(workspace_id))
         except DoesNotExist:
             return HttpResponseBadRequest("The selected workspace does not exist anymore.")
-        except Exception, exc:
+        except Exception as exc:
             return HttpResponseBadRequest("Something wrong happened.")
 
     for data_id in document_ids:
@@ -96,9 +96,9 @@ def assign_workspace(request):
             data_workspace_api.assign(data_api.get_by_id(data_id, request.user),
                                       workspace,
                                       request.user)
-        except AccessControlError, ace:
+        except AccessControlError as ace:
             return HttpResponseBadRequest(ace.message)
-        except Exception, exc:
+        except Exception as exc:
             return HttpResponseBadRequest("Something wrong happened.")
 
     return HttpResponse(json.dumps({}), content_type='application/javascript')
@@ -115,9 +115,9 @@ class LoadFormChangeWorkspace(View):
 
         try:
             form = ChangeWorkspaceForm(request.user, list(), is_administration, self.show_global_workspace)
-        except DoesNotExist, dne:
+        except DoesNotExist as dne:
             return HttpResponseBadRequest(dne.message)
-        except Exception, e:
+        except Exception as e:
             return HttpResponseBadRequest("Something wrong happened.")
 
         context = {
@@ -180,9 +180,9 @@ def load_add_user_form(request):
             return HttpResponseBadRequest("There is no users that can be added.")
 
         form = UserRightForm(users_with_no_access)
-    except AccessControlError, ace:
+    except AccessControlError as ace:
         return HttpResponseBadRequest(ace.message)
-    except DoesNotExist, dne:
+    except DoesNotExist as dne:
         return HttpResponseBadRequest(dne.message)
     except:
         return HttpResponseBadRequest("Something wrong happened.")
@@ -221,11 +221,11 @@ def add_user_right_to_workspace(request):
                 workspace_api.add_user_read_access_to_workspace(workspace, user, request.user)
             if is_write_checked:
                 workspace_api.add_user_write_access_to_workspace(workspace, user, request.user)
-    except AccessControlError, ace:
+    except AccessControlError as ace:
         return HttpResponseBadRequest(ace.message)
-    except DoesNotExist, dne:
+    except DoesNotExist as dne:
         return HttpResponseBadRequest(dne.message)
-    except Exception, exc:
+    except Exception as exc:
         return HttpResponseBadRequest('Something wrong happened.')
 
     return HttpResponse(json.dumps({}), content_type='application/javascript')
@@ -254,11 +254,11 @@ def switch_right(request):
         if group_or_user == GROUP:
             _switch_group_right(object_id, action, value, workspace, request.user)
 
-    except AccessControlError, ace:
+    except AccessControlError as ace:
         return HttpResponseBadRequest(ace.message)
-    except DoesNotExist, dne:
+    except DoesNotExist as dne:
         return HttpResponseBadRequest(dne.message)
-    except Exception, exc:
+    except Exception as exc:
         return HttpResponseBadRequest('Something wrong happened.')
 
     return HttpResponse(json.dumps({}), content_type='application/javascript')
@@ -337,11 +337,11 @@ def remove_user_or_group_rights(request):
         if group_or_user == GROUP:
             _remove_group_rights(object_id, workspace, request.user)
 
-    except AccessControlError, ace:
+    except AccessControlError as ace:
         return HttpResponseBadRequest(ace.message)
     except ModelError:
         return HttpResponseBadRequest('Invalid input.')
-    except DoesNotExist, dne:
+    except DoesNotExist as dne:
         return HttpResponseBadRequest(dne.message)
     except Exception:
         return HttpResponseBadRequest('Something wrong happened.')
@@ -406,9 +406,9 @@ def load_add_group_form(request):
             return HttpResponseBadRequest("There is no groups that can be added.")
 
         form = GroupRightForm(groups_with_no_access)
-    except AccessControlError, ace:
+    except AccessControlError as ace:
         return HttpResponseBadRequest(ace.message)
-    except DoesNotExist, dne:
+    except DoesNotExist as dne:
         return HttpResponseBadRequest(dne.message)
     except:
         return HttpResponseBadRequest("Something wrong happened.")
@@ -447,11 +447,11 @@ def add_group_right_to_workspace(request):
                 workspace_api.add_group_read_access_to_workspace(workspace, group, request.user)
             if is_write_checked:
                 workspace_api.add_group_write_access_to_workspace(workspace, group, request.user)
-    except AccessControlError, ace:
+    except AccessControlError as ace:
         return HttpResponseBadRequest(ace.message)
-    except DoesNotExist, dne:
+    except DoesNotExist as dne:
         return HttpResponseBadRequest(dne.message)
-    except Exception, exc:
+    except Exception as exc:
         return HttpResponseBadRequest('Something wrong happened.')
 
     return HttpResponse(json.dumps({}), content_type='application/javascript')

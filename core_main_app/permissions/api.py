@@ -76,7 +76,7 @@ def _create_perm(name, content_type, codename):
         perm, created = Permission.objects.get_or_create(name=name, content_type=content_type, codename=codename)
     except IntegrityError:
         raise exceptions.NotUniqueError("The permission already exists.")
-    except Exception, ie:
+    except Exception as ie:
         raise exceptions.ModelError("Problem while creating the permission.")
 
     if not created:
@@ -203,7 +203,7 @@ def delete_permission(permission_id):
     try:
         perm = get_by_id(permission_id)
         perm.delete()
-    except Exception, e:
+    except Exception as e:
         pass
 
 

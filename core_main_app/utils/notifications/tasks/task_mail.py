@@ -36,9 +36,9 @@ def send_mail(recipient_list, subject, path_to_template, context={}, fail_silent
         django_send_mail(subject=EMAIL_SUBJECT_PREFIX+subject, message='', from_email=sender,
                          recipient_list=recipient_list,
                          html_message=message, fail_silently=fail_silently)
-    except BadHeaderError, e:
+    except BadHeaderError as e:
         raise e
-    except Exception, e:
+    except Exception as e:
         raise e
 
 

@@ -196,13 +196,13 @@ def get_template_with_server_dependencies(xsd_string, dependencies):
     # replace includes/imports by API calls (get dependencies starting by the imports)
     try:
         xsd_tree = update_dependencies(xsd_string, dependencies)
-    except Exception, e:
+    except Exception as e:
         raise exceptions.XSDError("Something went wrong during dependency update.")
 
     # validate the schema
     try:
         error = validate_xml_schema(xsd_tree)
-    except Exception, e:
+    except Exception as e:
         raise exceptions.XSDError("Something went wrong during XSD validation.")
 
     # is it a valid XML document ?
@@ -225,7 +225,7 @@ def get_hash(xml_string):
     """
     try:
         return xsd_hash.get_hash(xml_string)
-    except Exception, e:
+    except Exception as e:
         raise exceptions.XSDError("Something wrong happened during the hashing.")
 
 

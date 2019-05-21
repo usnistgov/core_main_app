@@ -212,7 +212,7 @@ class ViewData(CommonView):
             error_message = 'Data not found'
         except exceptions.ModelError:
             error_message = 'Model error'
-        except Exception, e:
+        except Exception as e:
             error_message = e.message
 
         return self.common_render(request, 'core_main_app/common/commons/error.html',
@@ -309,7 +309,7 @@ class UploadXSLTView(View):
             xslt_transformation_api.upsert(xslt)
 
             return HttpResponseRedirect(reverse("core_main_app_xslt"))
-        except Exception, e:
+        except Exception as e:
             self.context.update({'errors': html_escape(e.message)})
             return render(request, 'core_main_app/common/xslt/upload.html', context=self.context)
 
@@ -413,6 +413,6 @@ class TemplateXSLRenderingView(View):
             # Get template information (version)
             version_manager = version_manager_api.get_from_version(template)
             return HttpResponseRedirect(reverse(self.save_redirect, args=[version_manager.id]))
-        except Exception, e:
+        except Exception as e:
             self.context.update({'errors': html_escape(e.message)})
             return self.rendering(request, self.template_name, context=self.context)
