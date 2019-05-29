@@ -1,5 +1,6 @@
 """Serializers used throughout the Rest API
 """
+from builtins import object
 from rest_framework_mongoengine.serializers import DocumentSerializer
 
 from core_main_app.components.template.api import init_template_with_dependencies
@@ -14,7 +15,7 @@ class TemplateVersionManagerSerializer(DocumentSerializer):
     """
         Template Version Manager serializer
     """
-    class Meta:
+    class Meta(object):
         model = TemplateVersionManager
         fields = "__all__"
         read_only_fields = ['id',

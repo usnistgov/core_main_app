@@ -10,12 +10,11 @@ from rest_framework.views import APIView
 from core_main_app.components.data import api as data_api
 from core_main_app.utils.query.constants import VISIBILITY_OPTION
 from core_main_app.utils.query.mongo.query_builder import QueryBuilder
+from future.utils import with_metaclass
 
 
-class AbstractExecuteLocalQueryView(APIView):
+class AbstractExecuteLocalQueryView(with_metaclass(ABCMeta, APIView)):
     sub_document_root = 'dict_content'
-
-    __metaclass__ = ABCMeta
 
     def get(self, request):
         """ Execute query on local instance and return results
@@ -101,7 +100,7 @@ class AbstractExecuteLocalQueryView(APIView):
                 content = {'message': 'Expected parameters not provided.'}
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
-            content = {'message': api_exception.message}
+            content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def build_query(self, query, templates,  options, title=None):

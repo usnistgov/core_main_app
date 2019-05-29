@@ -1,5 +1,6 @@
 """ XslTransformation model
 """
+from builtins import str
 from django_mongoengine import fields, Document
 from mongoengine import errors as mongoengine_errors
 from core_main_app.commons import exceptions
@@ -46,9 +47,9 @@ class XslTransformation(Document):
         try:
             return XslTransformation.objects.get(name=xslt_name)
         except mongoengine_errors.DoesNotExist as e:
-            raise exceptions.DoesNotExist(e.message)
+            raise exceptions.DoesNotExist(str(e))
         except Exception as e:
-            raise exceptions.ModelError(e.message)
+            raise exceptions.ModelError(str(e))
 
     @staticmethod
     def get_by_id(xslt_id):
@@ -64,9 +65,9 @@ class XslTransformation(Document):
         try:
             return XslTransformation.objects.get(pk=str(xslt_id))
         except mongoengine_errors.DoesNotExist as e:
-            raise exceptions.DoesNotExist(e.message)
+            raise exceptions.DoesNotExist(str(e))
         except Exception as ex:
-            raise exceptions.ModelError(ex.message)
+            raise exceptions.ModelError(str(ex))
 
     def save_object(self):
         """ Custom save.
@@ -78,9 +79,9 @@ class XslTransformation(Document):
         try:
             return self.save()
         except mongoengine_errors.NotUniqueError as e:
-            raise exceptions.NotUniqueError(e.message)
+            raise exceptions.NotUniqueError(str(e))
         except Exception as ex:
-            raise exceptions.ModelError(ex.message)
+            raise exceptions.ModelError(str(ex))
 
     def clean(self):
         """ Clean is called before saving

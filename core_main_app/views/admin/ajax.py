@@ -1,6 +1,10 @@
 """Admin AJAX views
 """
-import HTMLParser
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import zip
+import html.parser
 import json
 
 from django.core.urlresolvers import reverse_lazy
@@ -69,7 +73,7 @@ def _get_dependencies_dict(schema_locations, dependencies):
             string_to_python_dependencies.append(None)
         else:
             string_to_python_dependencies.append(dependency)
-    return dict(zip(schema_locations, string_to_python_dependencies))
+    return dict(list(zip(schema_locations, string_to_python_dependencies)))
 
 
 def _get_xsd_content_from_html(xsd_content):
@@ -81,7 +85,7 @@ def _get_xsd_content_from_html(xsd_content):
     Returns:
 
     """
-    html_parser = HTMLParser.HTMLParser()
+    html_parser = html.parser.HTMLParser()
     xsd_content = str(html_parser.unescape(xsd_content).encode("utf-8"))
     return xsd_content
 
@@ -100,7 +104,7 @@ class EditXSLTView(EditObjectModalView):
             form.add_error(None, "An object with the same name already exists. Please choose "
                                  "another name.")
         except Exception as e:
-            form.add_error(None, e.message)
+            form.add_error(None, str(e))
 
 
 class DeleteXSLTView(DeleteObjectModalView):

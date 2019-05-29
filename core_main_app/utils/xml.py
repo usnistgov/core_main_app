@@ -1,8 +1,11 @@
 """ Xml utils for the core applications
 """
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
 import json
 from collections import OrderedDict
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 import xmltodict
 from django.core.urlresolvers import reverse
@@ -113,7 +116,7 @@ def has_xsl_namespace(xml_string):
     """
     has_namespace = False
     try:
-        has_namespace = XSL_NAMESPACE in get_namespaces(xml_string).values()
+        has_namespace = XSL_NAMESPACE in list(get_namespaces(xml_string).values())
     except Exception:
         pass
 
@@ -167,7 +170,7 @@ def remove_lists_from_xml_dict(xml_dict, max_list_size=0):
     # init list of keys to delete
     keys_to_delete = []
     # iterate key, values
-    for key, value in xml_dict.iteritems():
+    for key, value in xml_dict.items():
         # if value is a list
         if isinstance(value, list):
             # if list's size is higher than maximum size
@@ -294,7 +297,7 @@ def update_dependencies(xsd_string, dependencies):
     # get the includes
     xsd_includes = xsd_tree.findall("{}include".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE))
 
-    for schema_location, dependency_id in dependencies.iteritems():
+    for schema_location, dependency_id in dependencies.items():
         if dependency_id is not None:
             for xsd_include in xsd_includes:
                 if schema_location == xsd_include.attrib['schemaLocation']:

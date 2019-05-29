@@ -1,5 +1,6 @@
 """ Serializers for Django User
 """
+from builtins import object
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
@@ -7,7 +8,7 @@ from django.contrib.auth.models import User
 class UserSerializer(serializers.ModelSerializer):
     """ User serializer
     """
-    class Meta:
+    class Meta(object):
         """ Meta
         """
         model = User

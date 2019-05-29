@@ -1,5 +1,6 @@
 """Serializers used throughout the workspace Rest API
 """
+from builtins import object
 from rest_framework_mongoengine.serializers import DocumentSerializer
 from core_main_app.components.workspace.models import Workspace
 from core_main_app.components.workspace import api as workspace_api
@@ -8,7 +9,7 @@ from core_main_app.components.workspace import api as workspace_api
 class WorkspaceSerializer(DocumentSerializer):
     """ Workspace serializer
     """
-    class Meta:
+    class Meta(object):
         """ Meta
         """
         model = Workspace

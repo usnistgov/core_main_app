@@ -1,6 +1,8 @@
 """Pagination utils for rest_framework package
 """
-from urlparse import urlparse
+from future import standard_library
+standard_library.install_aliases()
+from urllib.parse import urlparse
 from core_main_app.commons.exceptions import PaginationError
 from core_main_app.utils.pagination.rest_framework_paginator.pagination import StandardResultsSetPagination
 
@@ -28,7 +30,7 @@ def get_page_number(url):
         else:
             return query_url.split('=')[1]
     except Exception as e:
-        return PaginationError("An error occurred when getting page number from url: {}.".format(e.message))
+        return PaginationError("An error occurred when getting page number from url: {}.".format(str(e)))
 
 
 def get_paginator():

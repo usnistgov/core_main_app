@@ -2,6 +2,7 @@
 Permissions API
 """
 
+from builtins import str
 from django.contrib.auth.models import Permission, ContentType
 from django.db import IntegrityError
 from django.db.models import Q

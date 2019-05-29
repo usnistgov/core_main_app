@@ -2,6 +2,7 @@
 """
 
 
+from builtins import str
 def get_latest_version_name(version_manager):
     """Get name for the latest version of version manager.
 

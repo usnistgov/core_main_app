@@ -26,9 +26,9 @@ class WebPage(Document):
         try:
             return WebPage.objects.get(type=WEB_PAGE_TYPES[page_type])
         except mongoengine_errors.DoesNotExist as e:
-            raise exceptions.DoesNotExist(e.message)
+            raise exceptions.DoesNotExist(str(e))
         except Exception as ex:
-            raise exceptions.ModelError(ex.message)
+            raise exceptions.ModelError(str(ex))
 
     @staticmethod
     def delete_by_type(page_type_key):

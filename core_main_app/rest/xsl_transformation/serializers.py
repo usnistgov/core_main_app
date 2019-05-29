@@ -1,5 +1,6 @@
 """Serializers for Xsl transformation
 """
+from builtins import object
 from rest_framework.serializers import CharField
 from rest_framework_mongoengine.serializers import DocumentSerializer
 
@@ -12,7 +13,7 @@ class XslTransformationSerializer(DocumentSerializer):
     """
         XslTransformation serializer
     """
-    class Meta:
+    class Meta(object):
         model = XslTransformation
         fields = "__all__"
 

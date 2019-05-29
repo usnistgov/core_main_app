@@ -1,5 +1,6 @@
 """ Authentication tests for TemplateXSLRendering REST API
 """
+from builtins import str
 from bson import ObjectId
 from django.test import SimpleTestCase
 from mock import patch, Mock

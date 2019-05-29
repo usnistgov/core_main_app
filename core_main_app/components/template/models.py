@@ -1,6 +1,7 @@
 """
 Template models
 """
+from builtins import str
 from django_mongoengine import fields, Document
 from mongoengine import errors as mongoengine_errors
 from core_main_app.commons import exceptions
@@ -44,9 +45,9 @@ class Template(Document):
         try:
             return Template.objects().get(pk=str(template_id))
         except mongoengine_errors.DoesNotExist as e:
-            raise exceptions.DoesNotExist(e.message)
+            raise exceptions.DoesNotExist(str(e))
         except Exception as e:
-            raise exceptions.ModelError(e.message)
+            raise exceptions.ModelError(str(e))
 
     @staticmethod
     def get_all_by_hash(template_hash):

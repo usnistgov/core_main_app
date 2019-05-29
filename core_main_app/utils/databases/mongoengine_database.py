@@ -1,5 +1,6 @@
 """ Mongo engine database tools
 """
+from builtins import object
 from mongoengine import connect
 from mongoengine.connection import disconnect
 

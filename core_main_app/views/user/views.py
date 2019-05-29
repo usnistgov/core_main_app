@@ -1,5 +1,6 @@
 """ Core main app user views
 """
+from builtins import str
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -186,7 +187,7 @@ def manage_template_versions(request, version_manager_id):
     except Exception as e:
         return render(request,
                       'core_main_app/common/commons/error.html',
-                      context={'error': e.message})
+                      context={'error': str(e)})
 
 
 def get_context_manage_template_versions(version_manager, object_name="Template"):

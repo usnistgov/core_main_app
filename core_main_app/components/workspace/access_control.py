@@ -1,6 +1,7 @@
 """
     Workspace access control
 """
+from builtins import str
 import core_main_app.permissions.rights as rights
 from core_main_app.permissions import api as permissions_api
 from core_main_app.settings import CAN_SET_PUBLIC_DATA_TO_PRIVATE

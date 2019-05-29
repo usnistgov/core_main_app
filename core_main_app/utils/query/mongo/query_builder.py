@@ -1,5 +1,6 @@
 """Query builder class
 """
+from builtins import object
 import json
 import logging
 
@@ -31,7 +32,7 @@ class QueryBuilder(object):
             # if type error, we use the query as is
             # (the query must be directly given in json format)
             # Log the exception
-            logger.warning(e.message)
+            logger.warning(str(e))
 
         self.criteria = [prepare_query(query,
                                        regex=True,

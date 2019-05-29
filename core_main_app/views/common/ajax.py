@@ -1,6 +1,7 @@
 """
     Common ajax
 """
+from builtins import str
 import json
 
 from django.contrib import messages
@@ -137,7 +138,7 @@ class DeleteObjectModalView(DeleteView):
             if self.success_message:
                 messages.success(self.request, self.success_message)
         except Exception as e:
-            messages.error(self.request, e.message)
+            messages.error(self.request, str(e))
 
         data = {'url': self.get_success_url()}
         return JsonResponse(data)
@@ -193,7 +194,7 @@ class EditTemplateVersionManagerView(EditObjectModalView):
             form.add_error(None, "An object with the same name already exists. Please choose "
                                  "another name.")
         except Exception as e:
-            form.add_error(None, e.message)
+            form.add_error(None, str(e))
 
 
 def disable_version_manager(request):
@@ -209,7 +210,7 @@ def disable_version_manager(request):
         version_manager = version_manager_api.get(request.GET['id'])
         version_manager_api.disable(version_manager)
     except Exception as e:
-        return HttpResponseBadRequest(e.message, content_type='application/javascript')
+        return HttpResponseBadRequest(str(e), content_type='application/javascript')
 
     return HttpResponse(json.dumps({}), content_type='application/javascript')
 
@@ -227,7 +228,7 @@ def restore_version_manager(request):
         version_manager = version_manager_api.get(request.GET['id'])
         version_manager_api.restore(version_manager)
     except Exception as e:
-        return HttpResponseBadRequest(e.message, content_type='application/javascript')
+        return HttpResponseBadRequest(str(e), content_type='application/javascript')
 
     return HttpResponse(json.dumps({}), content_type='application/javascript')
 
@@ -244,7 +245,7 @@ def disable_template_version_from_version_manager(request):
     try:
         disable_version_of_version_manager(template_api.get(request.GET['id']))
     except Exception as e:
-        return HttpResponseBadRequest(e.message, content_type='application/javascript')
+        return HttpResponseBadRequest(str(e), content_type='application/javascript')
 
     return HttpResponse(json.dumps({}), content_type='application/javascript')
 
@@ -261,7 +262,7 @@ def disable_version_of_version_manager(version):
     try:
         version_manager_api.disable_version(version)
     except Exception as e:
-        return HttpResponseBadRequest(e.message, content_type='application/javascript')
+        return HttpResponseBadRequest(str(e), content_type='application/javascript')
 
 
 def restore_template_version_from_version_manager(request):
@@ -276,7 +277,7 @@ def restore_template_version_from_version_manager(request):
     try:
         restore_version_from_version_manager(template_api.get(request.GET['id']))
     except Exception as e:
-        return HttpResponseBadRequest(e.message, content_type='application/javascript')
+        return HttpResponseBadRequest(str(e), content_type='application/javascript')
 
     return HttpResponse(json.dumps({}), content_type='application/javascript')
 
@@ -293,7 +294,7 @@ def restore_version_from_version_manager(version):
     try:
         version_manager_api.restore_version(version)
     except Exception as e:
-        return HttpResponseBadRequest(e.message, content_type='application/javascript')
+        return HttpResponseBadRequest(str(e), content_type='application/javascript')
 
 
 def set_current_template_version_from_version_manager(request):
@@ -308,7 +309,7 @@ def set_current_template_version_from_version_manager(request):
     try:
         set_current_version_from_version_manager(template_api.get(request.GET['id']))
     except Exception as e:
-        return HttpResponseBadRequest(e.message, content_type='application/javascript')
+        return HttpResponseBadRequest(str(e), content_type='application/javascript')
 
     return HttpResponse(json.dumps({}), content_type='application/javascript')
 
@@ -325,5 +326,5 @@ def set_current_version_from_version_manager(version):
     try:
         version_manager_api.set_current(version)
     except Exception as e:
-        return HttpResponseBadRequest(e.message, content_type='application/javascript')
+        return HttpResponseBadRequest(str(e), content_type='application/javascript')
 

@@ -1,5 +1,6 @@
 """Blob model
 """
+from builtins import str
 from django_mongoengine import fields, Document
 
 from blob_utils.blob_host_factory import BLOBHostFactory
@@ -33,9 +34,9 @@ class Blob(Document):
         try:
             return Blob.objects.get(pk=str(blob_id))
         except mongoengine_errors.DoesNotExist as e:
-            raise exceptions.DoesNotExist(e.message)
+            raise exceptions.DoesNotExist(str(e))
         except Exception as ex:
-            raise exceptions.ModelError(ex.message)
+            raise exceptions.ModelError(str(ex))
 
     @staticmethod
     def get_all():

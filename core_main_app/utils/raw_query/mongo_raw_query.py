@@ -2,6 +2,7 @@
 """
 
 
+from builtins import str
 def add_access_criteria(query, accessible_workspaces, user):
     """ Add access criteria to the query.
 

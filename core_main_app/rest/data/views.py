@@ -1,5 +1,6 @@
 """ REST views for the data API
 """
+from builtins import str
 import json
 
 from django.http import Http404
@@ -72,7 +73,7 @@ class DataList(APIView):
             # Return response
             return Response(data_serializer.data, status=status.HTTP_200_OK)
         except Exception as api_exception:
-            content = {'message': api_exception.message}
+            content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
@@ -119,7 +120,7 @@ class DataList(APIView):
             content = {'message': 'Template not found.'}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': api_exception.message}
+            content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -175,7 +176,7 @@ class DataDetail(APIView):
             content = {'message': 'Data not found.'}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': api_exception.message}
+            content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request, pk):
@@ -208,7 +209,7 @@ class DataDetail(APIView):
             content = {'message': 'Data not found.'}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': api_exception.message}
+            content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def patch(self, request, pk):
@@ -259,7 +260,7 @@ class DataDetail(APIView):
             content = {'message': 'Data not found.'}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': api_exception.message}
+            content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -309,7 +310,7 @@ class DataDownload(APIView):
             content = {'message': 'Data not found.'}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': api_exception.message}
+            content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -533,8 +534,8 @@ class DataAssign(APIView):
             content = {'message': 'Data or workspace not found.'}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except AccessControlError as ace:
-            content = {'message': ace.message}
+            content = {'message': str(ace)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
-            content = {'message': api_exception.message}
+            content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

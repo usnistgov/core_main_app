@@ -1,5 +1,6 @@
 """Serializers used throughout the Rest API
 """
+from builtins import object
 from rest_framework.fields import CharField
 from rest_framework_mongoengine.serializers import DocumentSerializer
 
@@ -12,7 +13,7 @@ class TemplateSerializer(DocumentSerializer):
     """
     dependencies_dict = CharField(write_only=True, required=False)
 
-    class Meta:
+    class Meta(object):
         model = Template
         fields = ['id',
                   'filename',

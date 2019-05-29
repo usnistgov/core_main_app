@@ -1,6 +1,7 @@
 """
 Workspace model
 """
+from builtins import str
 from django_mongoengine import fields, Document
 from mongoengine import errors as mongoengine_errors
 from mongoengine.queryset.visitor import Q
@@ -64,9 +65,9 @@ class Workspace(Document):
         try:
             return Workspace.objects.get(pk=str(workspace_id))
         except mongoengine_errors.DoesNotExist as e:
-            raise exceptions.DoesNotExist(e.message)
+            raise exceptions.DoesNotExist(str(e))
         except Exception as ex:
-            raise exceptions.ModelError(ex.message)
+            raise exceptions.ModelError(str(ex))
 
     @staticmethod
     def get_all_workspaces_with_read_access_by_user_id(user_id, read_permissions):
@@ -177,9 +178,9 @@ class Workspace(Document):
         try:
             return Workspace.objects.get(owner=None, is_public=True)
         except mongoengine_errors.DoesNotExist as e:
-            raise exceptions.DoesNotExist(e.message)
+            raise exceptions.DoesNotExist(str(e))
         except Exception as ex:
-            raise exceptions.ModelError(ex.message)
+            raise exceptions.ModelError(str(ex))
 
     @property
     def is_global(self):

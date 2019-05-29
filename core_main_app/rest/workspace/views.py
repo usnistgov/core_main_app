@@ -49,7 +49,7 @@ class WorkspaceList(APIView):
             # Return response
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as api_exception:
-            content = {'message': api_exception.message}
+            content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
@@ -89,16 +89,16 @@ class WorkspaceList(APIView):
             content = {'message': validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except exceptions.ModelError as validation_exception:
-            content = {'message': validation_exception.message}
+            content = {'message': str(validation_exception)}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except exceptions.NotUniqueError as validation_exception:
-            content = {'message': validation_exception.message}
+            content = {'message': str(validation_exception)}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except KeyError as validation_exception:
             content = {'message': validation_exception}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
-            content = {'message': api_exception.message}
+            content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -133,7 +133,7 @@ class WorkspaceDetail(APIView):
             content = {'message': 'Workspace not found.'}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': api_exception.message}
+            content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request, pk):
@@ -168,10 +168,10 @@ class WorkspaceDetail(APIView):
             content = {'message': 'Workspace not found.'}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except AccessControlError as ace:
-            content = {'message': ace.message}
+            content = {'message': str(ace)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
-            content = {'message': api_exception.message}
+            content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -238,7 +238,7 @@ def _list_of_workspaces_to_response(func):
         return Response(return_value.data, status=status.HTTP_200_OK)
 
     except Exception as api_exception:
-        content = {'message': api_exception.message}
+        content = {'message': str(api_exception)}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -271,7 +271,7 @@ def is_workspace_public(request, pk):
         content = {'message': 'Workspace not found.'}
         return Response(content, status=status.HTTP_404_NOT_FOUND)
     except Exception as api_exception:
-        content = {'message': api_exception.message}
+        content = {'message': str(api_exception)}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -309,10 +309,10 @@ def set_workspace_public(request, pk):
         content = {'message': 'Workspace not found.'}
         return Response(content, status=status.HTTP_404_NOT_FOUND)
     except AccessControlError as ace:
-        content = {'message': ace.message}
+        content = {'message': str(ace)}
         return Response(content, status=status.HTTP_403_FORBIDDEN)
     except Exception as api_exception:
-        content = {'message': api_exception.message}
+        content = {'message': str(api_exception)}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -350,10 +350,10 @@ def set_workspace_private(request, pk):
         content = {'message': 'Workspace not found.'}
         return Response(content, status=status.HTTP_404_NOT_FOUND)
     except AccessControlError as ace:
-        content = {'message': ace.message}
+        content = {'message': str(ace)}
         return Response(content, status=status.HTTP_403_FORBIDDEN)
     except Exception as api_exception:
-        content = {'message': api_exception.message}
+        content = {'message': str(api_exception)}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -538,10 +538,10 @@ def _list_of_users_or_groups_to_response(pk, func, user, serializer):
         content = {'message': 'Workspace not found.'}
         return Response(content, status=status.HTTP_404_NOT_FOUND)
     except AccessControlError as ace:
-        content = {'message': ace.message}
+        content = {'message': str(ace)}
         return Response(content, status=status.HTTP_403_FORBIDDEN)
     except Exception as api_exception:
-        content = {'message': api_exception.message}
+        content = {'message': str(api_exception)}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -584,10 +584,10 @@ def _add_or_remove_to_user_or_group_right_to_workspace(request, pk, user_or_grou
         content = {'message': 'Workspace not found.'}
         return Response(content, status=status.HTTP_404_NOT_FOUND)
     except AccessControlError as ace:
-        content = {'message': ace.message}
+        content = {'message': str(ace)}
         return Response(content, status=status.HTTP_403_FORBIDDEN)
     except Exception as api_exception:
-        content = {'message': api_exception.message}
+        content = {'message': str(api_exception)}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

@@ -1,5 +1,6 @@
 """ TemplateXslRendering API calls
 """
+from builtins import str
 import logging
 
 from core_main_app.commons.exceptions import ApiError

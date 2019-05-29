@@ -1,6 +1,7 @@
 """
     Common views
 """
+from builtins import str
 from abc import ABCMeta
 
 from django.core.urlresolvers import reverse
@@ -25,13 +26,13 @@ from core_main_app.utils.labels import get_data_label
 from core_main_app.utils.rendering import admin_render
 from core_main_app.utils.rendering import render
 from core_main_app.views.admin.forms import UploadXSLTForm, TemplateXsltRenderingForm
+from future.utils import with_metaclass
 
 
-class CommonView(View):
+class CommonView(with_metaclass(ABCMeta, View)):
     """
         Abstract common view for admin and user.
     """
-    __metaclass__ = ABCMeta
 
     administration = False
 
@@ -213,7 +214,7 @@ class ViewData(CommonView):
         except exceptions.ModelError:
             error_message = 'Model error'
         except Exception as e:
-            error_message = e.message
+            error_message = str(e)
 
         return self.common_render(request, 'core_main_app/common/commons/error.html',
                                   context={"error": "Unable to access the requested " + get_data_label() + ": {}.".format(error_message)})
@@ -310,7 +311,7 @@ class UploadXSLTView(View):
 
             return HttpResponseRedirect(reverse("core_main_app_xslt"))
         except Exception as e:
-            self.context.update({'errors': html_escape(e.message)})
+            self.context.update({'errors': html_escape(str(e))})
             return render(request, 'core_main_app/common/xslt/upload.html', context=self.context)
 
 
@@ -414,5 +415,5 @@ class TemplateXSLRenderingView(View):
             version_manager = version_manager_api.get_from_version(template)
             return HttpResponseRedirect(reverse(self.save_redirect, args=[version_manager.id]))
         except Exception as e:
-            self.context.update({'errors': html_escape(e.message)})
+            self.context.update({'errors': html_escape(str(e))})
             return self.rendering(request, self.template_name, context=self.context)

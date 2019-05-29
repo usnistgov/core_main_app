@@ -1,6 +1,8 @@
 """
  Lock model
 """
+from builtins import str
+from builtins import object
 import datetime
 import threading
 
@@ -13,7 +15,7 @@ from core_main_app.commons import exceptions
 sem = threading.Semaphore()
 
 
-class Lock():
+class Lock(object):
     """
     Class Lock. Singleton thread safe.
     Only this object should be called to be used for an action regarding locking a Document.
@@ -69,9 +71,9 @@ class Lock():
         try:
             return DatabaseLockObject.get_lock_by_object(object)
         except mongoengine_errors.DoesNotExist as e:
-            raise exceptions.DoesNotExist(e.message)
+            raise exceptions.DoesNotExist(str(e))
         except Exception as ex:
-            raise exceptions.ModelError(ex.message)
+            raise exceptions.ModelError(str(ex))
 
 
 class DatabaseLockObject(Document):

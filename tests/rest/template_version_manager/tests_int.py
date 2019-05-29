@@ -1,5 +1,6 @@
 """ Integration Test for Template Version Manager Rest API
 """
+from builtins import str
 import json
 import unittest
 

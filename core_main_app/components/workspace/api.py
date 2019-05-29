@@ -1,6 +1,7 @@
 """
 Workspace API
 """
+from builtins import str
 from core_main_app import settings
 from core_main_app.commons import exceptions
 from core_main_app.components.group import api as group_api
@@ -32,7 +33,7 @@ def create_and_save(title, owner_id=None, is_public=False):
         # Rollback permissions
         permission_api.delete_permission(workspace.read_perm_id)
         permission_api.delete_permission(workspace.write_perm_id)
-        raise exceptions.ModelError(ex.message)
+        raise exceptions.ModelError(str(ex))
 
 
 def _create_workspace(title, owner_id=None, is_public=False):

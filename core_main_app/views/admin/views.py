@@ -1,6 +1,7 @@
 """
     Admin views
 """
+from builtins import str
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
@@ -140,7 +141,7 @@ def manage_template_versions(request, version_manager_id):
     except Exception as e:
         return admin_render(request,
                             'core_main_app/common/commons/error.html',
-                            context={'error': e.message})
+                            context={'error': str(e)})
 
 
 @staff_member_required
@@ -273,7 +274,7 @@ def _save_template(request, assets, context):
         context['errors'] = html_escape("A template with the same name already exists. Please choose another name.")
         return _upload_template_response(request, assets, context)
     except Exception as e:
-        context['errors'] = html_escape(e.message)
+        context['errors'] = html_escape(str(e))
         return _upload_template_response(request, assets, context)
 
 
@@ -302,7 +303,7 @@ def _save_template_version(request, assets, context, template_version_manager):
     except exceptions.XSDError as xsd_error:
         return handle_xsd_errors(request, assets, context, xsd_error, xsd_data, xsd_file.name)
     except Exception as e:
-        context['errors'] = html_escape(e.message)
+        context['errors'] = html_escape(str(e))
         return _upload_template_response(request, assets, context)
 
 
@@ -401,7 +402,7 @@ class UploadXSLTView(View):
             self.context.update({'errors': html_escape("This name already exists.")})
             return admin_render(request, 'core_main_app/admin/xslt/upload.html', context=self.context)
         except Exception as e:
-            self.context.update({'errors': html_escape(e.message)})
+            self.context.update({'errors': html_escape(str(e))})
             return admin_render(request, 'core_main_app/admin/xslt/upload.html', context=self.context)
 
 
@@ -426,7 +427,7 @@ def handle_xsd_errors(request, assets, context, xsd_error, xsd_content, filename
         context['dependency_resolver'] = get_dependency_resolver_html(imports, includes, xsd_content, filename)
         return _upload_template_response(request, assets, context)
     else:
-        context['errors'] = html_escape(xsd_error.message)
+        context['errors'] = html_escape(str(xsd_error))
         return _upload_template_response(request, assets, context)
 
 

@@ -19,13 +19,12 @@ from core_main_app.rest.template_version_manager.utils import can_user_modify_te
 from core_main_app.utils.access_control.exceptions import AccessControlError
 from core_main_app.utils.boolean import to_bool
 from core_main_app.utils.decorators import api_staff_member_required
+from future.utils import with_metaclass
 
 
-class AbstractTemplateVersionManagerList(APIView):
+class AbstractTemplateVersionManagerList(with_metaclass(ABCMeta, APIView)):
     """ List template version managers
     """
-
-    __metaclass__ = ABCMeta
 
     @abstractmethod
     def get_template_version_managers(self):
@@ -69,15 +68,13 @@ class AbstractTemplateVersionManagerList(APIView):
             serializer = TemplateVersionManagerSerializer(object_list, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as api_exception:
-            content = {'message': api_exception.message}
+            content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class AbstractStatusTemplateVersion(APIView):
+class AbstractStatusTemplateVersion(with_metaclass(ABCMeta, APIView)):
     """ Set template version status
     """
-
-    __metaclass__ = ABCMeta
 
     def get_object(self, pk):
         """ Get template from db
@@ -138,24 +135,22 @@ class AbstractStatusTemplateVersion(APIView):
             content = {'message': 'Template not found.'}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except AccessControlError as access_error:
-            content = {'message': access_error.message}
+            content = {'message': str(access_error)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except ValidationError as validation_exception:
             content = {'message': validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except ApiError as api_error:
-            content = {'message': api_error.message}
+            content = {'message': str(api_error)}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
-            content = {'message': api_exception.message}
+            content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class AbstractTemplateVersionManagerDetail(APIView):
+class AbstractTemplateVersionManagerDetail(with_metaclass(ABCMeta, APIView)):
     """ Template Version Manager Detail
     """
-
-    __metaclass__ = ABCMeta
 
     def get_object(self, pk):
         """ Get template version manager from db
@@ -176,11 +171,9 @@ class AbstractTemplateVersionManagerDetail(APIView):
             raise Http404
 
 
-class AbstractStatusTemplateVersionManager(AbstractTemplateVersionManagerDetail):
+class AbstractStatusTemplateVersionManager(with_metaclass(ABCMeta, AbstractTemplateVersionManagerDetail)):
     """ Set template version manager status
     """
-
-    __metaclass__ = ABCMeta
 
     @abstractmethod
     def status_update(self, template_version_manager_object):
@@ -221,21 +214,19 @@ class AbstractStatusTemplateVersionManager(AbstractTemplateVersionManagerDetail)
             content = {'message': 'Template Version Manager not found.'}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except AccessControlError as access_error:
-            content = {'message': access_error.message}
+            content = {'message': str(access_error)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except ValidationError as validation_exception:
             content = {'message': validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
-            content = {'message': api_exception.message}
+            content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class AbstractTemplateList(APIView):
+class AbstractTemplateList(with_metaclass(ABCMeta, APIView)):
     """ Create a template
     """
-
-    __metaclass__ = ABCMeta
 
     def post(self, request):
         """ Create a template
@@ -286,10 +277,10 @@ class AbstractTemplateList(APIView):
             content = {'message': "A template with the same title already exists."}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except XSDError as xsd_error:
-            content = {'message': "XSD Error: " + xsd_error.message}
+            content = {'message': "XSD Error: " + str(xsd_error)}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
-            content = {'message': api_exception.message}
+            content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @abstractmethod

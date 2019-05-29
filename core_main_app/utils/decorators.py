@@ -1,13 +1,15 @@
 """ Method's decorators
 """
 
+from future import standard_library
+standard_library.install_aliases()
 from functools import wraps
 from django.contrib.auth.models import Group, User
 from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.shortcuts import resolve_url
-from urlparse import urlparse
+from urllib.parse import urlparse
 from django.core.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework import status

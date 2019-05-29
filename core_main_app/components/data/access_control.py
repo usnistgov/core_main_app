@@ -1,6 +1,7 @@
 """ Set of functions to define the rules for access control
 """
 
+from builtins import str
 import core_main_app.permissions.rights as rights
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.permissions import api as permissions_api

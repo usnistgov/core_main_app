@@ -1,5 +1,6 @@
 """ Unit Test Data
 """
+from builtins import str
 from core_main_app.utils.integration_tests.integration_base_test_case import MongoIntegrationBaseTestCase
 from tests.components.data.fixtures.fixtures import DataFixtures
 from core_main_app.components.data.models import Data

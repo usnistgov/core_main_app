@@ -1,5 +1,6 @@
 """ TemplateXslRendering model
 """
+from builtins import str
 from django_mongoengine import fields, Document
 from mongoengine import errors as mongoengine_errors
 from core_main_app.commons import exceptions
@@ -33,9 +34,9 @@ class TemplateXslRendering(Document):
         try:
             return TemplateXslRendering.objects.get(pk=str(template_xsl_rendering_id))
         except mongoengine_errors.DoesNotExist as e:
-            raise exceptions.DoesNotExist(e.message)
+            raise exceptions.DoesNotExist(str(e))
         except Exception as ex:
-            raise exceptions.ModelError(ex.message)
+            raise exceptions.ModelError(str(ex))
 
     @staticmethod
     def get_by_template_id(template_id):
@@ -55,9 +56,9 @@ class TemplateXslRendering(Document):
         try:
             return TemplateXslRendering.objects.get(template=template_id)
         except mongoengine_errors.DoesNotExist as e:
-            raise exceptions.DoesNotExist(e.message)
+            raise exceptions.DoesNotExist(str(e))
         except Exception as e:
-            raise exceptions.ModelError(e.message)
+            raise exceptions.ModelError(str(e))
 
     @staticmethod
     def get_all():

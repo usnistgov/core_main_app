@@ -13,11 +13,11 @@ def _compile_regex(query):
     Returns:
 
     """
-    for key, value in query.iteritems():
+    for key, value in query.items():
         if key == "$and" or key == "$or":
             for sub_value in value:
                 _compile_regex(sub_value)
-        elif isinstance(value, unicode) or isinstance(value, str):
+        elif isinstance(value, str) or isinstance(value, str):
             if len(value) >= 2 and value[0] == "/" and value[-1] == "/":
                 query[key] = re.compile(value[1:-1])
         elif isinstance(value, dict):
@@ -30,7 +30,7 @@ def _add_sub_document_root(query, sub_document_root):
     Returns:
 
     """
-    for key in query.keys():
+    for key in list(query.keys()):
         if key == "$and" or key == "$or":
             for value in query[key]:
                 _add_sub_document_root(value, sub_document_root)

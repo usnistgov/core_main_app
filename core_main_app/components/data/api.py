@@ -1,5 +1,6 @@
 """ Data API
 """
+from builtins import str
 import datetime
 
 import pytz
@@ -160,12 +161,12 @@ def check_xml_file_is_valid(data):
     try:
         xml_tree = XSDTree.build_tree(data.xml_content)
     except Exception as e:
-        raise exceptions.XMLError(e.message)
+        raise exceptions.XMLError(str(e))
 
     try:
         xsd_tree = XSDTree.build_tree(template.content)
     except Exception as e:
-        raise exceptions.XSDError(e.message)
+        raise exceptions.XSDError(str(e))
 
     error = validate_xml_data(xsd_tree, xml_tree)
     if error is not None:

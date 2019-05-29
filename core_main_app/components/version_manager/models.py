@@ -1,6 +1,7 @@
 """
 Version Manager model
 """
+from builtins import str
 from django_mongoengine import fields, Document
 from mongoengine import errors as mongoengine_errors
 from core_main_app.commons import exceptions
@@ -87,7 +88,7 @@ class VersionManager(Document):
         try:
             return self.versions.index(str(version_id)) + 1
         except Exception as e:
-            raise exceptions.DoesNotExist(e.message)
+            raise exceptions.DoesNotExist(str(e))
 
     def insert(self, version):
         """Insert a version in the Version Manager.
@@ -123,7 +124,7 @@ class VersionManager(Document):
         try:
             return self.versions[version_number - 1]
         except Exception as e:
-            raise exceptions.DoesNotExist(e.message)
+            raise exceptions.DoesNotExist(str(e))
 
     @staticmethod
     def get_all():
@@ -147,9 +148,9 @@ class VersionManager(Document):
         try:
             return VersionManager.objects.get(pk=str(version_manager_id))
         except mongoengine_errors.DoesNotExist as e:
-            raise exceptions.DoesNotExist(e.message)
+            raise exceptions.DoesNotExist(str(e))
         except Exception as e:
-            raise exceptions.ModelError(e.message)
+            raise exceptions.ModelError(str(e))
 
     @staticmethod
     def get_by_id_list(list_id):
@@ -177,9 +178,9 @@ class VersionManager(Document):
         try:
             return VersionManager.objects.get(is_disabled=False, title=version_manager_title, user=None)
         except mongoengine_errors.DoesNotExist as e:
-            raise exceptions.DoesNotExist(e.message)
+            raise exceptions.DoesNotExist(str(e))
         except Exception as e:
-            raise exceptions.ModelError(e.message)
+            raise exceptions.ModelError(str(e))
 
     @staticmethod
     def get_global_version_managers():
@@ -260,9 +261,9 @@ class VersionManager(Document):
         try:
             return self.save()
         except mongoengine_errors.NotUniqueError as e:
-            raise exceptions.NotUniqueError(e.message)
+            raise exceptions.NotUniqueError(str(e))
         except Exception as ex:
-            raise exceptions.ModelError(ex.message)
+            raise exceptions.ModelError(str(ex))
 
     def clean(self):
         """ Clean is called before saving

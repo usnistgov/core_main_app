@@ -1,6 +1,7 @@
 """
 Version Manager unit tests
 """
+from builtins import str
 from unittest.case import TestCase
 from bson.objectid import ObjectId
 from mock.mock import Mock, patch

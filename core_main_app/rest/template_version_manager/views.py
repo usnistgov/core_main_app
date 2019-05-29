@@ -1,5 +1,6 @@
 """ REST views for the template version manager API
 """
+from builtins import str
 from django.http import Http404
 from django.utils.decorators import method_decorator
 from rest_framework import status
@@ -101,7 +102,7 @@ class TemplateVersionManagerDetail(APIView):
             content = {'message': 'Template Version Manager not found.'}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': api_exception.message}
+            content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -160,7 +161,7 @@ class TemplateVersion(AbstractTemplateVersionManagerDetail):
             content = {'message': validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
-            content = {'message': api_exception.message}
+            content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

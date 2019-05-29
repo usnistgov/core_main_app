@@ -1,5 +1,6 @@
 """ Mock a Request object.
 """
+from builtins import object
 import json
 
 from django.core.wsgi import get_wsgi_application

@@ -1,5 +1,6 @@
 """Forms for admin views
 """
+from builtins import object
 from django import forms
 from mongodbforms import DocumentForm
 
@@ -16,7 +17,7 @@ class EditTemplateForm(DocumentForm):
                             widget=forms.TextInput(attrs={'class': 'form-control',
                                                           'placeholder': 'Type the new name'}))
 
-    class Meta:
+    class Meta(object):
         document = TemplateVersionManager
         fields = ['title']
 
@@ -26,7 +27,7 @@ class EditXSLTForm(DocumentForm):
                             widget=forms.TextInput(attrs={'class': 'form-control',
                                                           'placeholder': 'Type the new name'}))
 
-    class Meta:
+    class Meta(object):
         document = XslTransformation
         fields = ['name']
 

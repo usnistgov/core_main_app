@@ -1,5 +1,7 @@
 """Serializers used throughout the data Rest API
 """
+from builtins import str
+from builtins import object
 from rest_framework import serializers
 from rest_framework_mongoengine.serializers import DocumentSerializer
 
@@ -23,7 +25,7 @@ class DataSerializer(DocumentSerializer):
     """
     xml_content = XMLContentField()
 
-    class Meta:
+    class Meta(object):
         """ Meta
         """
         model = Data
@@ -67,7 +69,7 @@ class DataSerializer(DocumentSerializer):
 class DataWithTemplateInfoSerializer(DocumentSerializer):
     """ Data Full serializer
     """
-    class Meta:
+    class Meta(object):
         """ Meta
         """
         model = Data

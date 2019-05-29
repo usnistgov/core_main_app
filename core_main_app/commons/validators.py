@@ -1,5 +1,6 @@
 """ Common Validators
 """
+from builtins import object
 from django.utils.translation import ungettext
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _

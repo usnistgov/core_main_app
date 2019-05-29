@@ -87,9 +87,9 @@ class TemplateVersionManager(VersionManager):
         try:
             return TemplateVersionManager.objects.get(versions__contains=version_id)
         except mongoengine_errors.DoesNotExist as e:
-            raise exceptions.DoesNotExist(e.message)
+            raise exceptions.DoesNotExist(str(e))
         except Exception as ex:
-            raise exceptions.ModelError(ex.message)
+            raise exceptions.ModelError(str(ex))
 
     @staticmethod
     def get_all_by_version_ids(version_ids):

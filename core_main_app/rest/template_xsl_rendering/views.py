@@ -42,7 +42,7 @@ class TemplateXslRenderingList(APIView):
             # Return response
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as api_exception:
-            content = {'message': api_exception.message}
+            content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
@@ -81,16 +81,16 @@ class TemplateXslRenderingList(APIView):
             content = {'message': validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except exceptions.ModelError as validation_exception:
-            content = {'message': validation_exception.message}
+            content = {'message': str(validation_exception)}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except exceptions.NotUniqueError as validation_exception:
-            content = {'message': validation_exception.message}
+            content = {'message': str(validation_exception)}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except KeyError as validation_exception:
             content = {'message': validation_exception}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
-            content = {'message': api_exception.message}
+            content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -124,7 +124,7 @@ class TemplateXslRenderingDetail(APIView):
             content = {'message': 'XSL rendering object not found.'}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': api_exception.message}
+            content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def patch(self, request, pk):
@@ -160,7 +160,7 @@ class TemplateXslRenderingDetail(APIView):
             content = {'message': 'Data not found.'}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': api_exception.message}
+            content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request, pk):
@@ -193,8 +193,8 @@ class TemplateXslRenderingDetail(APIView):
             content = {'message': 'Template XSL rendering not found.'}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except AccessControlError as ace:
-            content = {'message': ace.message}
+            content = {'message': str(ace)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
-            content = {'message': api_exception.message}
+            content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

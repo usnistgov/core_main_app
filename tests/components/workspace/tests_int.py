@@ -1,5 +1,6 @@
 """ Integration Test for Workspace API
 """
+from builtins import str
 from core_main_app.commons import exceptions
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.utils.integration_tests.integration_base_transaction_test_case import \

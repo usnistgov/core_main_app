@@ -1,5 +1,6 @@
 """ Serializers used throughout the TemplateXslRendering Rest API
 """
+from builtins import object
 from rest_framework_mongoengine.fields import ReferenceField
 from rest_framework_mongoengine.serializers import DocumentSerializer
 
@@ -13,7 +14,7 @@ class TemplateXslRenderingSerializer(DocumentSerializer):
     """
     template = ReferenceField(model=Template)
 
-    class Meta:
+    class Meta(object):
         """ Meta class
         """
         model = TemplateXslRendering

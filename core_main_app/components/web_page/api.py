@@ -13,7 +13,7 @@ def get(page_type):
 
         Returns: web page corresponding to the given id
     """
-    if page_type not in WEB_PAGE_TYPES.keys():
+    if page_type not in list(WEB_PAGE_TYPES.keys()):
         return None
     try:
         return WebPage.get_by_type(page_type)
@@ -41,7 +41,7 @@ def upsert(web_page):
 
         Returns: content of the web page
     """
-    if web_page.type not in WEB_PAGE_TYPES.values():
+    if web_page.type not in list(WEB_PAGE_TYPES.values()):
         raise exceptions.ApiError("Web page type does not exist")
 
     # strip in case of whitespaces only
