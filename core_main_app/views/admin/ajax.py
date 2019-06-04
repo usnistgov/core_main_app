@@ -51,7 +51,7 @@ def resolve_dependencies(request):
             template_version_manager = TemplateVersionManager(title=name)
         template_version_manager_api.insert(template_version_manager, template)
     except Exception as e:
-        return HttpResponseBadRequest(e.message)
+        return HttpResponseBadRequest(str(e))
 
     return HttpResponse(json.dumps({}), content_type='application/javascript')
 
