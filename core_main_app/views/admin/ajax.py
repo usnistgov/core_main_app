@@ -86,7 +86,8 @@ def _get_xsd_content_from_html(xsd_content):
 
     """
     html_parser = html.parser.HTMLParser()
-    xsd_content = str(html_parser.unescape(xsd_content).encode("utf-8"))
+    #FIXME: deprecated unescape
+    xsd_content = html_parser.unescape(xsd_content)
     return xsd_content
 
 
