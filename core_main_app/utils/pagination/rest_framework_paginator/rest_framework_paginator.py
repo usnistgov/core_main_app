@@ -28,7 +28,7 @@ def get_page_number(url):
         if "page=" not in query_url:
             return 1
         else:
-            return query_url.split('=')[1]
+            return int(query_url.split('=')[1])
     except Exception as e:
         return PaginationError("An error occurred when getting page number from url: {}.".format(str(e)))
 
