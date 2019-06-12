@@ -14,7 +14,10 @@ class XMLContentField(serializers.Field):
     XML content is decoded when retrieved - not supported by CharField
     """
     def to_representation(self, obj):
-        return obj.decode('utf-8')
+        try:
+            return obj.decode('utf-8')
+        except AttributeError:
+            return obj
 
     def to_internal_value(self, data):
         return data

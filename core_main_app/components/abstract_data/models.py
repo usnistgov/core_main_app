@@ -33,7 +33,11 @@ class AbstractData(Document):
         # private field xml_content not set yet, and reference to xml_file to read is set
         if self._xml_content is None and self.xml_file is not None:
             # read xml file into xml_content field
-            self._xml_content = self.xml_file.read()
+            xml_content = self.xml_file.read()
+            try:
+                self._xml_content = xml_content.decode('utf-8') if xml_content else xml_content
+            except AttributeError:
+                self._xml_content = xml_content
         # return xml content
         return self._xml_content
 
