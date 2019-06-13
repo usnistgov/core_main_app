@@ -1,7 +1,6 @@
 """XSL Transformation tag
 """
 
-from builtins import object
 from django import template
 from django.contrib.staticfiles import finders
 

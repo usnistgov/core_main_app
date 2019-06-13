@@ -2,7 +2,6 @@
 Version Manager API
 """
 
-from builtins import str
 from core_main_app.commons import exceptions
 from core_main_app.commons.exceptions import ApiError
 from core_main_app.components.version_manager.models import VersionManager

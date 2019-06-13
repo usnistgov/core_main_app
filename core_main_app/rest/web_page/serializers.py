@@ -1,6 +1,5 @@
 """ Web Page serializer
 """
-from builtins import object
 from rest_framework_mongoengine.serializers import DocumentSerializer
 
 import core_main_app.components.web_page.api as web_page_api

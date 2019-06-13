@@ -1,6 +1,5 @@
 """Query builder class
 """
-from builtins import object
 import json
 import logging
 

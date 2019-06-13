@@ -1,8 +1,6 @@
 """ Method's decorators
 """
 
-from future import standard_library
-standard_library.install_aliases()
 from functools import wraps
 from django.contrib.auth.models import Group, User
 from django.db.models import Q

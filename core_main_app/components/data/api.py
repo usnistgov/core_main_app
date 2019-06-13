@@ -1,6 +1,5 @@
 """ Data API
 """
-from builtins import str
 import datetime
 
 import pytz

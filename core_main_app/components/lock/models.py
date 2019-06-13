@@ -1,8 +1,6 @@
 """
  Lock model
 """
-from builtins import str
-from builtins import object
 import datetime
 import threading
 

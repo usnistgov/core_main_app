@@ -1,6 +1,5 @@
 """ Integration Test for Blob Rest API
 """
-from builtins import str
 import unittest
 from os.path import join, dirname, abspath
 

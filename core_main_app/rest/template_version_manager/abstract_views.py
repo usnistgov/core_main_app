@@ -19,10 +19,9 @@ from core_main_app.rest.template_version_manager.utils import can_user_modify_te
 from core_main_app.utils.access_control.exceptions import AccessControlError
 from core_main_app.utils.boolean import to_bool
 from core_main_app.utils.decorators import api_staff_member_required
-from future.utils import with_metaclass
 
 
-class AbstractTemplateVersionManagerList(with_metaclass(ABCMeta, APIView)):
+class AbstractTemplateVersionManagerList(APIView, metaclass=ABCMeta):
     """ List template version managers
     """
 
@@ -72,7 +71,7 @@ class AbstractTemplateVersionManagerList(with_metaclass(ABCMeta, APIView)):
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class AbstractStatusTemplateVersion(with_metaclass(ABCMeta, APIView)):
+class AbstractStatusTemplateVersion(APIView, metaclass=ABCMeta):
     """ Set template version status
     """
 
@@ -148,7 +147,7 @@ class AbstractStatusTemplateVersion(with_metaclass(ABCMeta, APIView)):
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class AbstractTemplateVersionManagerDetail(with_metaclass(ABCMeta, APIView)):
+class AbstractTemplateVersionManagerDetail(APIView, metaclass=ABCMeta):
     """ Template Version Manager Detail
     """
 
@@ -171,7 +170,7 @@ class AbstractTemplateVersionManagerDetail(with_metaclass(ABCMeta, APIView)):
             raise Http404
 
 
-class AbstractStatusTemplateVersionManager(with_metaclass(ABCMeta, AbstractTemplateVersionManagerDetail)):
+class AbstractStatusTemplateVersionManager(AbstractTemplateVersionManagerDetail, metaclass=ABCMeta):
     """ Set template version manager status
     """
 
@@ -224,7 +223,7 @@ class AbstractStatusTemplateVersionManager(with_metaclass(ABCMeta, AbstractTempl
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class AbstractTemplateList(with_metaclass(ABCMeta, APIView)):
+class AbstractTemplateList(APIView, metaclass=ABCMeta):
     """ Create a template
     """
 

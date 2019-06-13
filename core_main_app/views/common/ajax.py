@@ -1,7 +1,6 @@
 """
     Common ajax
 """
-from builtins import str
 import json
 
 from django.contrib import messages

@@ -1,8 +1,5 @@
 """ Xml utils for the core applications
 """
-from future import standard_library
-standard_library.install_aliases()
-from builtins import str
 import json
 from collections import OrderedDict
 from urllib.parse import urlparse

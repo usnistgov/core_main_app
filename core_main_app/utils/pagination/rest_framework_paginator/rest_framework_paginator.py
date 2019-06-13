@@ -1,7 +1,5 @@
 """Pagination utils for rest_framework package
 """
-from future import standard_library
-standard_library.install_aliases()
 from urllib.parse import urlparse
 from core_main_app.commons.exceptions import PaginationError
 from core_main_app.utils.pagination.rest_framework_paginator.pagination import StandardResultsSetPagination

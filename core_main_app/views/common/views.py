@@ -1,7 +1,6 @@
 """
     Common views
 """
-from builtins import str
 from abc import ABCMeta
 
 from django.core.urlresolvers import reverse
@@ -26,10 +25,9 @@ from core_main_app.utils.labels import get_data_label
 from core_main_app.utils.rendering import admin_render
 from core_main_app.utils.rendering import render
 from core_main_app.views.admin.forms import UploadXSLTForm, TemplateXsltRenderingForm
-from future.utils import with_metaclass
 
 
-class CommonView(with_metaclass(ABCMeta, View)):
+class CommonView(View, metaclass=ABCMeta):
     """
         Abstract common view for admin and user.
     """

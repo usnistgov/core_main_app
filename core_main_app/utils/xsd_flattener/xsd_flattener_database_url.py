@@ -1,7 +1,5 @@
 """ XSD Flattener Database or URL class
 """
-from future import standard_library
-standard_library.install_aliases()
 from urllib.parse import urlparse
 
 from core_main_app.commons import exceptions

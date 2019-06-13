@@ -1,6 +1,5 @@
 """Integration tests for xsl transformation rest api
 """
-from builtins import str
 from bson import ObjectId
 from rest_framework import status
 

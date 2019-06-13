@@ -1,7 +1,5 @@
 """Serializers used throughout the data Rest API
 """
-from builtins import str
-from builtins import object
 from rest_framework import serializers
 from rest_framework_mongoengine.serializers import DocumentSerializer
 

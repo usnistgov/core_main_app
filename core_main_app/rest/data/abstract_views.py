@@ -10,10 +10,9 @@ from rest_framework.views import APIView
 from core_main_app.components.data import api as data_api
 from core_main_app.utils.query.constants import VISIBILITY_OPTION
 from core_main_app.utils.query.mongo.query_builder import QueryBuilder
-from future.utils import with_metaclass
 
 
-class AbstractExecuteLocalQueryView(with_metaclass(ABCMeta, APIView)):
+class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
     sub_document_root = 'dict_content'
 
     def get(self, request):

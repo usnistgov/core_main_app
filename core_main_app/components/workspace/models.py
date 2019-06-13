@@ -1,7 +1,6 @@
 """
 Workspace model
 """
-from builtins import str
 from django_mongoengine import fields, Document
 from mongoengine import errors as mongoengine_errors
 from mongoengine.queryset.visitor import Q

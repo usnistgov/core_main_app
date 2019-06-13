@@ -1,6 +1,5 @@
 """Serializers used throughout the Rest API
 """
-from builtins import object
 from rest_framework_mongoengine.serializers import DocumentSerializer
 
 from core_main_app.components.template.api import init_template_with_dependencies

@@ -2,7 +2,6 @@
 """
 
 
-from builtins import object
 class FixtureInterface(object):
     """ Represent the fixture interface with methods which must be implemented.
     """

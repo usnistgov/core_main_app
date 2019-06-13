@@ -1,8 +1,6 @@
 """
     Serializers used throughout the Rest API
 """
-from builtins import str
-from builtins import object
 from django.http import Http404
 from rest_framework.fields import CharField
 from rest_framework.fields import FileField, SerializerMethodField

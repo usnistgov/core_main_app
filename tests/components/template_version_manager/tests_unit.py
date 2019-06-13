@@ -1,6 +1,5 @@
 """ Template Version Manager unit tests
 """
-from builtins import str
 from unittest.case import TestCase
 from bson.objectid import ObjectId
 from django.core import exceptions as django_exceptions

@@ -1,6 +1,5 @@
 """ Login page api
 """
-from builtins import str
 import core_main_app.components.web_page.api as web_page_api
 from core_main_app.commons.enums import WEB_PAGE_TYPES
 from core_main_app.commons.exceptions import ApiError

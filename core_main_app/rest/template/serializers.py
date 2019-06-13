@@ -1,6 +1,5 @@
 """Serializers used throughout the Rest API
 """
-from builtins import object
 from rest_framework.fields import CharField
 from rest_framework_mongoengine.serializers import DocumentSerializer
 

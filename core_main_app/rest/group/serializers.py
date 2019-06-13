@@ -1,6 +1,5 @@
 """ Serializers for Django Group
 """
-from builtins import object
 from rest_framework import serializers
 from django.contrib.auth.models import Group
 

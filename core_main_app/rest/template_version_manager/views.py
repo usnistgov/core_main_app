@@ -1,6 +1,5 @@
 """ REST views for the template version manager API
 """
-from builtins import str
 from django.http import Http404
 from django.utils.decorators import method_decorator
 from rest_framework import status

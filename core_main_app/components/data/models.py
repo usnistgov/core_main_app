@@ -1,7 +1,6 @@
 """ Data model
 """
 
-from builtins import str
 from django_mongoengine import fields
 from mongoengine import errors as mongoengine_errors
 from mongoengine.queryset.base import NULLIFY

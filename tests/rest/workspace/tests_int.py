@@ -1,7 +1,6 @@
 """ Integration Test for Workspace Rest API
 """
 
-from builtins import str
 from rest_framework import status
 
 from core_main_app.components.workspace import api as workspace_api

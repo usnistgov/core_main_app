@@ -1,6 +1,5 @@
 """ REST views for the blob API
 """
-from builtins import str
 from django.http import Http404
 from rest_framework import status
 from rest_framework.exceptions import ValidationError

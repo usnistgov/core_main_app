@@ -1,7 +1,6 @@
 """ Integration Test for Data Rest API
 """
 
-from builtins import str
 from mock import patch
 from rest_framework import status
 

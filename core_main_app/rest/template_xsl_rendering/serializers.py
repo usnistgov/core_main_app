@@ -1,6 +1,5 @@
 """ Serializers used throughout the TemplateXslRendering Rest API
 """
-from builtins import object
 from rest_framework_mongoengine.fields import ReferenceField
 from rest_framework_mongoengine.serializers import DocumentSerializer
 

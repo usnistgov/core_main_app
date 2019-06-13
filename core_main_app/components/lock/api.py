@@ -1,7 +1,6 @@
 """
     Lock API
 """
-from builtins import str
 import datetime
 
 from core_main_app.commons.exceptions import LockError

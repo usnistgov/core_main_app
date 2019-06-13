@@ -1,6 +1,5 @@
 """Serializers for Xsl transformation
 """
-from builtins import object
 from rest_framework.serializers import CharField
 from rest_framework_mongoengine.serializers import DocumentSerializer
 

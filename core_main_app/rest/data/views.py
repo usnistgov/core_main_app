@@ -1,6 +1,5 @@
 """ REST views for the data API
 """
-from builtins import str
 import json
 
 from django.http import Http404

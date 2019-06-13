@@ -1,6 +1,5 @@
 """ Fixtures files for template version manager
 """
-from builtins import str
 from core_main_app.components.template.models import Template
 from core_main_app.components.template_version_manager.models import TemplateVersionManager
 from core_main_app.utils.integration_tests.fixture_interface import FixtureInterface

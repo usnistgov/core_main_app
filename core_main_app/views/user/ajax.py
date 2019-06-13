@@ -1,6 +1,5 @@
 """ Ajax API
 """
-from builtins import str
 import json
 
 from django.http import HttpResponse, HttpResponseBadRequest

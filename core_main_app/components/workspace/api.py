@@ -1,7 +1,6 @@
 """
 Workspace API
 """
-from builtins import str
 from core_main_app import settings
 from core_main_app.commons import exceptions
 from core_main_app.components.group import api as group_api

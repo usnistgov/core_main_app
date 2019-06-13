@@ -1,6 +1,5 @@
 """Blob model
 """
-from builtins import str
 from django_mongoengine import fields, Document
 
 from blob_utils.blob_host_factory import BLOBHostFactory
