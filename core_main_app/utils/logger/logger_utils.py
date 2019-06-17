@@ -1,5 +1,32 @@
 """ Logger utils
 """
+import copy
+
+
+def update_logger_with_local_app(logging_dict, local_logger_conf, list_app):
+    """ Update the logger with local app.
+
+    Args:
+        logging_dict:
+        local_logger_conf:
+        list_app:
+    Returns:
+    """
+    logging_dict['loggers'].update({app: copy.deepcopy(local_logger_conf) for app in get_list_local_app(list_app)})
+
+
+def get_list_local_app(list_app):
+    """ Get the list of local apps.
+
+    Args:
+         list_app:
+    Return:
+    """
+    local_apps = []
+    for app in list_app:
+        if app.startswith("core") and "." not in app:
+            local_apps.append(app)
+    return local_apps
 
 
 def set_generic_handler(logging_dict, name, level, filename, max_size, backup_count, class_name):
