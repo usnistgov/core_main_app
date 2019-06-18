@@ -1,10 +1,14 @@
 """
 Template API
 """
+import logging
+
 from core_main_app.commons import exceptions
 from core_main_app.components.template.models import Template
 from core_main_app.utils.xml import is_schema_valid, get_hash, \
     get_template_with_server_dependencies, get_local_dependencies
+
+logger = logging.getLogger(__name__)
 
 
 def upsert(template):
@@ -146,8 +150,8 @@ def _register_local_dependencies(template):
             dependency_object = get(local_dependency)
             # add the dependency
             template.dependencies.append(dependency_object)
-        except exceptions.DoesNotExist:
-            pass
+        except exceptions.DoesNotExist as e:
+            logger.warning("Dependency {0} throw an exception: {1}".format(local_dependency, str(e)))
 
 
 def get_all_templates_by_dependencies(dependency_id_list):

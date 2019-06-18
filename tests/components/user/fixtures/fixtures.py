@@ -1,6 +1,5 @@
 """ Fixtures files for User
 """
-
 from django.contrib.auth.models import User
 
 import core_main_app.permissions.rights as rights

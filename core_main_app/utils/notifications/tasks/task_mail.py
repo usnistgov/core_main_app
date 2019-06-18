@@ -5,7 +5,7 @@ from __future__ import absolute_import
 from logging import getLogger
 
 from celery import shared_task
-from django.core.mail import send_mail as django_send_mail, mail_admins, mail_managers, BadHeaderError
+from django.core.mail import send_mail as django_send_mail, mail_admins, mail_managers
 from django.template import loader
 
 from core_main_app.settings import SERVER_EMAIL, EMAIL_SUBJECT_PREFIX
@@ -36,8 +36,6 @@ def send_mail(recipient_list, subject, path_to_template, context={}, fail_silent
         django_send_mail(subject=EMAIL_SUBJECT_PREFIX+subject, message='', from_email=sender,
                          recipient_list=recipient_list,
                          html_message=message, fail_silently=fail_silently)
-    except BadHeaderError as e:
-        raise e
     except Exception as e:
         raise e
 
@@ -61,10 +59,8 @@ def send_mail_to_administrators(subject, path_to_template, context={}, fail_sile
         message = template.render(context)
         # Send mail
         mail_admins(subject=subject, message='', html_message=message, fail_silently=fail_silently)
-    except BadHeaderError:
-        pass
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("send_mail_to_administrators threw an exception: ".format(str(e)))
 
 
 @shared_task
@@ -86,8 +82,7 @@ def send_mail_to_managers(subject, path_to_template, context={}, fail_silently=T
         message = template.render(context)
         # Send mail
         mail_managers(subject=subject, message='', html_message=message, fail_silently=fail_silently)
-    except BadHeaderError:
-        pass
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("send_mail_to_managers throws an exception: ".format(str(e)))
+
 

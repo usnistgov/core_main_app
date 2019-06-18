@@ -1,6 +1,7 @@
 """
 Permissions API
 """
+import logging
 
 from django.contrib.auth.models import Permission, ContentType
 from django.db import IntegrityError
@@ -10,6 +11,8 @@ from core_main_app.commons import exceptions
 from core_main_app.components.group import api as group_api
 from core_main_app.permissions.rights import CAN_READ_NAME, CAN_READ_CODENAME, CONTENT_TYPE_APP_LABEL, \
     CAN_WRITE_NAME, CAN_WRITE_CODENAME
+
+logger = logging.getLogger(__name__)
 
 
 def _title_to_codename(title):
@@ -203,7 +206,7 @@ def delete_permission(permission_id):
         perm = get_by_id(permission_id)
         perm.delete()
     except Exception as e:
-        pass
+        logger.warning("delete_permission threw an exception: ".format(str(e)))
 
 
 def get_permission_label(permission_id):

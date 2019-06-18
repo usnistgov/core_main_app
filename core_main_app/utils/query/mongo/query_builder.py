@@ -9,7 +9,7 @@ from core_main_app.components.workspace import api as workspace_api
 from core_main_app.utils.query.constants import VISIBILITY_PUBLIC, VISIBILITY_ALL, VISIBILITY_USER
 from core_main_app.utils.query.mongo.prepare import prepare_query
 
-logger = logging.getLogger("core_main_app.utils.query.mongo.query_builder")
+logger = logging.getLogger(__name__)
 
 
 class QueryBuilder(object):
@@ -64,10 +64,10 @@ class QueryBuilder(object):
                                                in workspace_api.get_all_public_workspaces().values_list('id')]}})
         elif visibility == VISIBILITY_ALL:
             # NOTE: get all data, no restriction needed
-            pass
+            logger.info("add_visibility_criteria case not implemented.")
         elif visibility == VISIBILITY_USER:
             # TODO: get only user data
-            pass
+            logger.info("add_visibility_criteria case not implemented.")
 
     def add_title_criteria(self, title):
         """ Add a criteria on title

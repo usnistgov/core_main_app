@@ -1,6 +1,7 @@
 """ Xml utils for the core applications
 """
 import json
+import logging
 from collections import OrderedDict
 from urllib.parse import urlparse
 
@@ -18,6 +19,8 @@ from xml_utils.commons.constants import XSL_NAMESPACE
 from xml_utils.xsd_hash import xsd_hash
 from xml_utils.xsd_tree.operations.namespaces import get_namespaces
 from xml_utils.xsd_tree.xsd_tree import XSDTree
+
+logger = logging.getLogger(__name__)
 
 
 def validate_xml_schema(xsd_tree):
@@ -114,8 +117,8 @@ def has_xsl_namespace(xml_string):
     has_namespace = False
     try:
         has_namespace = XSL_NAMESPACE in list(get_namespaces(xml_string).values())
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("has_xsl_namespace threw an exception: ".format(str(e)))
 
     return has_namespace
 

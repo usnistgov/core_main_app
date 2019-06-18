@@ -2,10 +2,13 @@
     Lock API
 """
 import datetime
+import logging
 
 from core_main_app.commons.exceptions import LockError
 from core_main_app.components.lock.models import Lock
 from core_main_app.settings import LOCK_OBJECT_TTL
+
+logger = logging.getLogger(__name__)
 
 
 def is_object_locked(object, user):
@@ -37,8 +40,6 @@ def set_lock_object(object, user):
         lock = Lock.acquire()
         if not _check_object_locked(object, user, lock):
             lock.set_lock(object, user)
-    except LockError as ler:
-        raise ler
     finally:
         Lock.release()
 
@@ -57,8 +58,8 @@ def remove_lock_on_object(object, user):
         # Only the user who created the lock can remove it
         if database_lock_object.user_id == str(user.id):
             lock.remove_lock(database_lock_object)
-    except:
-        pass
+    except Exception as e:
+        logger.warning("remove_lock_on_object threw an exception: ".format(str(e)))
     finally:
         Lock.release()
 
@@ -78,7 +79,7 @@ def _check_object_locked(object, user, lock):
     """
     try:
         database_lock_object = lock.get_object_locked(object)
-    except:
+    except Exception:
         return False
 
     # Check if lock has expired
@@ -92,4 +93,5 @@ def _check_object_locked(object, user, lock):
     if database_lock_object.user_id == str(user.id):
         return True
 
+    logger.warning("_check_object_locked: A user asked to access a locked object.")
     raise LockError('The object is used by another user and is locked.')

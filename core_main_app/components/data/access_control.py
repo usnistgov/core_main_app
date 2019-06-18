@@ -1,5 +1,6 @@
 """ Set of functions to define the rules for access control
 """
+import logging
 
 import core_main_app.permissions.rights as rights
 from core_main_app.components.workspace import api as workspace_api
@@ -9,6 +10,8 @@ from core_main_app.utils.access_control.exceptions import AccessControlError
 from core_main_app.utils.labels import get_data_label
 from core_main_app.utils.raw_query.mongo_raw_query import add_access_criteria, \
     add_aggregate_access_criteria
+
+logger = logging.getLogger(__name__)
 
 
 def has_perm_publish_data(user):
@@ -38,8 +41,9 @@ def has_perm_administration(func, *args, **kwargs):
     try:
         if args[0].is_superuser:
             return func(*args, **kwargs)
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("has_perm_administration threw an exception: ".format(str(e)))
+
     raise AccessControlError("The user doesn't have enough rights to access this " + get_data_label() + ".")
 
 
