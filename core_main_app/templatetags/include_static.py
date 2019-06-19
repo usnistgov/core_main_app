@@ -1,4 +1,5 @@
 import io
+
 from django import template
 from django.contrib.staticfiles import finders
 from django.template.base import Template

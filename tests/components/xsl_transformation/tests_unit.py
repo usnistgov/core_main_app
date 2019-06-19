@@ -1,7 +1,7 @@
+from os.path import join, dirname, realpath
 from unittest.case import TestCase
 
 from mock.mock import Mock, patch
-from os.path import join, dirname, realpath
 
 import core_main_app.components.xsl_transformation.api as xsl_transformation_api
 from core_main_app.commons import exceptions

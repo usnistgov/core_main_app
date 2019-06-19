@@ -2,17 +2,19 @@
 """
 
 from functools import wraps
-from django.contrib.auth.models import Group, User
-from django.db.models import Q
+from urllib.parse import urlparse
+
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.shortcuts import resolve_url
-from urllib.parse import urlparse
+from django.contrib.auth.models import Group, User
 from django.core.exceptions import PermissionDenied
-from rest_framework.response import Response
-from rest_framework import status
+from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.shortcuts import resolve_url
+from rest_framework import status
+from rest_framework.response import Response
+
 import core_main_app.permissions.rights as rights
 
 

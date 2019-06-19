@@ -1,10 +1,9 @@
 """ Fixtures files for Data
 """
-from core_main_app.utils.databases.mongoengine_database import init_text_index
-from core_main_app.utils.integration_tests.fixture_interface import FixtureInterface
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
 from core_main_app.components.workspace.models import Workspace
+from core_main_app.utils.integration_tests.fixture_interface import FixtureInterface
 
 
 class DataFixtures(FixtureInterface):

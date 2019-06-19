@@ -9,12 +9,12 @@ from django.views.generic import View
 from core_main_app.commons import exceptions
 from core_main_app.commons.exceptions import DoesNotExist, NotUniqueError, ModelError
 from core_main_app.components.data import api as data_api
+from core_main_app.components.data import api as data_workspace_api
 from core_main_app.components.group import api as group_api
 from core_main_app.components.user import api as user_api
-from core_main_app.utils.access_control.exceptions import AccessControlError
-from core_main_app.utils import group as group_utils
-from core_main_app.components.data import api as data_workspace_api
 from core_main_app.components.workspace import api as workspace_api
+from core_main_app.utils import group as group_utils
+from core_main_app.utils.access_control.exceptions import AccessControlError
 from core_main_app.views.user.forms import ChangeWorkspaceForm, UserRightForm, GroupRightForm
 
 GROUP = "group"

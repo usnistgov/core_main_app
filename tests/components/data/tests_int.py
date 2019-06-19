@@ -1,10 +1,11 @@
 """ Unit Test Data
 """
+from bson.objectid import ObjectId
+
+from core_main_app.commons import exceptions
+from core_main_app.components.data.models import Data
 from core_main_app.utils.integration_tests.integration_base_test_case import MongoIntegrationBaseTestCase
 from tests.components.data.fixtures.fixtures import DataFixtures
-from core_main_app.components.data.models import Data
-from core_main_app.commons import exceptions
-from bson.objectid import ObjectId
 
 fixture_data = DataFixtures()
 

@@ -4,14 +4,13 @@ from django.test import SimpleTestCase
 from mock import Mock
 from mock.mock import patch
 from rest_framework import status
+
 import core_main_app.components.blob.api as blob_api
 from core_main_app.components.blob.models import Blob
-
-from core_main_app.rest.blob.serializers import BlobSerializer, DeleteBlobsSerializer
-from core_main_app.rest.blob.views import BlobDetail
-from core_main_app.utils.tests_tools.RequestMock import RequestMock
 from core_main_app.rest.blob import views as blob_rest_views
+from core_main_app.rest.blob.serializers import BlobSerializer, DeleteBlobsSerializer
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
+from core_main_app.utils.tests_tools.RequestMock import RequestMock
 
 
 class TestBlobListGetPermissions(SimpleTestCase):

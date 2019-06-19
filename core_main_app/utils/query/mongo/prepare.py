@@ -1,7 +1,7 @@
 """Mongo query builder tools
 """
-import re
 import copy
+import re
 
 
 def _compile_regex(query):

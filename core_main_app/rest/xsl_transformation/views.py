@@ -1,7 +1,6 @@
 """ REST Views for XSLT Transformation
 """
 from django.http import Http404
-from django.utils.decorators import method_decorator
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -11,7 +10,6 @@ from rest_framework.views import APIView
 import core_main_app.components.xsl_transformation.api as xsl_api
 from core_main_app.commons import exceptions
 from core_main_app.rest.xsl_transformation.serializers import XslTransformationSerializer, TransformSerializer
-from core_main_app.utils.decorators import api_staff_member_required
 
 
 class XslTransformationList(APIView):

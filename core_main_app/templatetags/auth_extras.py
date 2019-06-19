@@ -2,8 +2,9 @@
 """
 
 from django import template
-from core_main_app.components.group import api as group_api
+
 import core_main_app.permissions.rights as RIGHTS
+from core_main_app.components.group import api as group_api
 
 register = template.Library()
 

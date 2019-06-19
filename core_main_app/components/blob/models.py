@@ -1,12 +1,12 @@
 """Blob model
 """
 from django_mongoengine import fields, Document
+from mongoengine import errors as mongoengine_errors
 
 from blob_utils.blob_host_factory import BLOBHostFactory
+from core_main_app.commons import exceptions
 from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
 from core_main_app.settings import BLOB_HOST, BLOB_HOST_URI, BLOB_HOST_USER, BLOB_HOST_PASSWORD
-from core_main_app.commons import exceptions
-from mongoengine import errors as mongoengine_errors
 
 
 class Blob(Document):

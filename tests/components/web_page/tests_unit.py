@@ -5,11 +5,11 @@ from unittest.case import TestCase
 
 from mock import Mock, patch
 
+from core_main_app.commons.enums import WEB_PAGE_TYPES
 from core_main_app.commons.exceptions import ApiError
+from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.web_page import api as web_page_api
 from core_main_app.components.web_page.models import WebPage
-from core_main_app.commons.enums import WEB_PAGE_TYPES
-from core_main_app.commons.exceptions import DoesNotExist
 
 
 class TestsWebPageApiGet(TestCase):

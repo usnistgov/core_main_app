@@ -1,8 +1,9 @@
 """ Rendering utils
 """
+from os.path import splitext
+
 from django.contrib.staticfiles import finders
 from django.shortcuts import render as django_render
-from os.path import splitext
 
 
 def _build_js_assets(js_assets):

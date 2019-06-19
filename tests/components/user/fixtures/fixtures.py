@@ -2,8 +2,9 @@
 """
 
 from django.contrib.auth.models import User
-from core_main_app.permissions import api as permissions_api
+
 import core_main_app.permissions.rights as rights
+from core_main_app.permissions import api as permissions_api
 from core_main_app.utils.integration_tests.fixture_interface import FixtureInterface
 
 

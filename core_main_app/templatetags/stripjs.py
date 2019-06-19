@@ -1,10 +1,11 @@
 """ Templatetags for core_website_app
 """
+import re
+
 from django import template
 from django.template.defaultfilters import stringfilter
-from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
-import re
+from django.utils.safestring import mark_safe
 
 register = template.Library()
 

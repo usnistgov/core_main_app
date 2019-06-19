@@ -2,6 +2,7 @@
     The Database pymongo tool contains the available function relative to database operation (connection)
 """
 import re
+
 from pymongo import MongoClient
 from pymongo.errors import OperationFailure
 

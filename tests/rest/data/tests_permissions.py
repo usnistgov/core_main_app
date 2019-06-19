@@ -7,14 +7,14 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK
 
+from core_main_app.components.data import api as data_api
 from core_main_app.components.data.models import Data
+from core_main_app.components.workspace import api as workspace_api
+from core_main_app.rest.data import views as data_rest_views
 from core_main_app.rest.data.abstract_views import AbstractExecuteLocalQueryView
 from core_main_app.rest.data.serializers import DataSerializer, DataWithTemplateInfoSerializer
-from core_main_app.utils.tests_tools.RequestMock import RequestMock
-from core_main_app.rest.data import views as data_rest_views
-from core_main_app.components.data import api as data_api
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
-from core_main_app.components.workspace import api as workspace_api
+from core_main_app.utils.tests_tools.RequestMock import RequestMock
 
 
 class TestDataListPostPermissions(SimpleTestCase):

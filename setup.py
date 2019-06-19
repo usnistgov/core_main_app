@@ -1,7 +1,8 @@
 from os import chdir, pardir
 from os.path import join, exists, dirname, normpath, abspath
-from setuptools import find_packages, setup
 from re import sub
+
+from setuptools import find_packages, setup
 
 
 def req_link(external_url):

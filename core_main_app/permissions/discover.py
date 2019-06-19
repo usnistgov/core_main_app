@@ -4,7 +4,6 @@ import logging
 
 import core_main_app.permissions.rights as rights
 
-
 logger = logging.getLogger(__name__)
 
 

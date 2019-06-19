@@ -8,8 +8,7 @@ from django.db.models import Q
 
 from core_main_app.commons import exceptions
 from core_main_app.components.group import api as group_api
-from core_main_app.components.user import api as user_api
-from core_main_app.permissions.rights import CAN_READ_NAME, CAN_READ_CODENAME, CONTENT_TYPE_APP_LABEL,\
+from core_main_app.permissions.rights import CAN_READ_NAME, CAN_READ_CODENAME, CONTENT_TYPE_APP_LABEL, \
     CAN_WRITE_NAME, CAN_WRITE_CODENAME
 
 

@@ -2,6 +2,7 @@
 """
 
 from rest_framework.pagination import PageNumberPagination
+
 from core_main_app.settings import RESULTS_PER_PAGE
 
 

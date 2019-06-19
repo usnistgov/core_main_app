@@ -1,9 +1,10 @@
 from unittest.case import TestCase
+
 from bson.objectid import ObjectId
+from django.core import exceptions as django_exceptions
 from django.test import override_settings
 from mock.mock import Mock, patch
 from mongoengine import errors as mongoengine_errors
-from django.core import exceptions as django_exceptions
 
 from core_main_app.commons import exceptions
 from core_main_app.components.template import api as template_api

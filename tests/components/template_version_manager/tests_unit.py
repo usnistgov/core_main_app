@@ -1,11 +1,12 @@
 """ Template Version Manager unit tests
 """
 from unittest.case import TestCase
+
 from bson.objectid import ObjectId
 from django.core import exceptions as django_exceptions
 from django.test import override_settings
-from mongoengine import errors as mongoengine_errors
 from mock.mock import Mock, patch, MagicMock
+from mongoengine import errors as mongoengine_errors
 
 from core_main_app.commons.exceptions import NotUniqueError, ModelError
 from core_main_app.components.template.models import Template

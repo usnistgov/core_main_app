@@ -2,9 +2,11 @@
 Version Manager unit tests
 """
 from unittest.case import TestCase
+
 from bson.objectid import ObjectId
 from mock.mock import Mock, patch
 from mongoengine import errors as mongoengine_errors
+
 from core_main_app.commons import exceptions
 from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.components.version_manager.models import VersionManager

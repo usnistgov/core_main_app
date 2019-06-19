@@ -3,8 +3,8 @@
 from django import forms
 
 from core_main_app.commons.exceptions import DoesNotExist
-from core_main_app.components.workspace import api as workspace_api
 from core_main_app.components.user import api as user_api
+from core_main_app.components.workspace import api as workspace_api
 from core_main_app.utils.labels import get_data_label
 
 

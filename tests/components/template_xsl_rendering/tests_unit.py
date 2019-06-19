@@ -1,14 +1,16 @@
 """ Unit Test TemplateXslRendering
 """
 from unittest.case import TestCase
+
 from bson.objectid import ObjectId
 from mock.mock import Mock, patch
-from core_main_app.components.template_xsl_rendering import api as template_xsl_rendering_api
-from core_main_app.components.template import api as template_api
-from core_main_app.components.template_xsl_rendering.models import TemplateXslRendering
+
 from core_main_app.commons import exceptions
-from core_main_app.components.xsl_transformation.models import XslTransformation
+from core_main_app.components.template import api as template_api
 from core_main_app.components.template.models import Template
+from core_main_app.components.template_xsl_rendering import api as template_xsl_rendering_api
+from core_main_app.components.template_xsl_rendering.models import TemplateXslRendering
+from core_main_app.components.xsl_transformation.models import XslTransformation
 
 
 class TestTemplateXslRenderingUpsert(TestCase):

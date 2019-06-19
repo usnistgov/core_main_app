@@ -1,8 +1,9 @@
 """ Common custom fields
 """
 from django import forms
-from core_main_app import settings
 from password_policies.forms.fields import PasswordPoliciesField
+
+from core_main_app import settings
 from core_main_app.commons.validators import UpperCaseLetterCountValidator, LowerCaseLetterCountValidator
 
 

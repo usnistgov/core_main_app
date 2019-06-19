@@ -2,8 +2,8 @@
 Template Version Manager API
 """
 from core_main_app.components.template import api as template_api
-from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.components.template_version_manager.models import TemplateVersionManager
+from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.components.version_manager.utils import get_latest_version_name, get_version_name
 
 

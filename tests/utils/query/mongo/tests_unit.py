@@ -1,9 +1,10 @@
 """Query tool unit tests
 """
-from core_main_app.utils.query.mongo.prepare import _compile_regex, _add_sub_document_root
-from unittest import TestCase
 import copy
 import re
+from unittest import TestCase
+
+from core_main_app.utils.query.mongo.prepare import _compile_regex, _add_sub_document_root
 
 
 class TestCompileRegex(TestCase):

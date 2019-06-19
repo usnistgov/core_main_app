@@ -1,10 +1,11 @@
 """
     Xml operation test class
 """
-import core_main_app.commons.exceptions as exceptions
-from unittest import TestCase
-from core_main_app.utils.xml import raw_xml_to_dict, remove_lists_from_xml_dict
 from collections import OrderedDict
+from unittest import TestCase
+
+import core_main_app.commons.exceptions as exceptions
+from core_main_app.utils.xml import raw_xml_to_dict, remove_lists_from_xml_dict
 
 
 class TestRawToDict(TestCase):

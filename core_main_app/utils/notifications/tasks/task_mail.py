@@ -6,7 +6,7 @@ from logging import getLogger
 
 from celery import shared_task
 from django.core.mail import send_mail as django_send_mail, mail_admins, mail_managers, BadHeaderError
-from django.template import loader, Context
+from django.template import loader
 
 from core_main_app.settings import SERVER_EMAIL, EMAIL_SUBJECT_PREFIX
 

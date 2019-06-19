@@ -1,7 +1,6 @@
 """ Integration Test for Template Version Manager Rest API
 """
 import json
-import unittest
 
 from django.test import override_settings
 from django.urls import reverse

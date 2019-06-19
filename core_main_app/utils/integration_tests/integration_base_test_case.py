@@ -5,7 +5,6 @@ from django.test.testcases import SimpleTestCase
 from core_main_app.commons.exceptions import CoreError
 from core_main_app.utils.databases.mongoengine_database import Database
 
-
 MOCK_DATABASE_NAME = 'db_mock'
 MOCK_DATABASE_HOST = 'mongomock://localhost'
 

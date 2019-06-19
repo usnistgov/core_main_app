@@ -1,8 +1,8 @@
 """Admin AJAX views
 """
-from builtins import zip
 import html.parser
 import json
+from builtins import zip
 
 from django.core.urlresolvers import reverse_lazy
 from django.http.response import HttpResponse, HttpResponseBadRequest
