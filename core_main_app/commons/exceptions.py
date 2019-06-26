@@ -8,18 +8,12 @@ class CoreError(Exception):
     def __init__(self, message):
         self.message = message
 
-    def __str__(self):
-        return repr(self.message)
-
 
 class ApiError(Exception):
     """ Exception raised by the API.
     """
     def __init__(self, message):
         self.message = message
-
-    def __str__(self):
-        return repr(self.message)
 
 
 class ModelError(Exception):
@@ -28,18 +22,12 @@ class ModelError(Exception):
     def __init__(self, message):
         self.message = message
 
-    def __str__(self):
-        return repr(self.message)
-
 
 class RestApiError(Exception):
     """ Exception raised by the the REST API.
     """
     def __init__(self, message):
         self.message = message
-
-    def __str__(self):
-        return repr(self.message)
 
 
 class DoesNotExist(Exception):
@@ -48,18 +36,12 @@ class DoesNotExist(Exception):
     def __init__(self, message):
         self.message = message
 
-    def __str__(self):
-        return repr(self.message)
-
 
 class NotUniqueError(Exception):
     """ Exception raised when an object is not unique.
     """
     def __init__(self, message):
         self.message = message
-
-    def __str__(self):
-        return repr(self.message)
 
 
 class XMLError(Exception):
@@ -68,18 +50,12 @@ class XMLError(Exception):
     def __init__(self, message):
         self.message = message
 
-    def __str__(self):
-        return repr(self.message)
-
 
 class XSDError(Exception):
     """ Exception raised by XSD validation.
     """
     def __init__(self, message):
         self.message = message
-
-    def __str__(self):
-        return repr(self.message)
 
 
 class LockError(Exception):
@@ -89,15 +65,9 @@ class LockError(Exception):
     def __init__(self, message):
         self.message = message
 
-    def __str__(self):
-        return repr(self.message)
-
 
 class PaginationError(Exception):
     """ Exception raised when an error occurs during pagination.
     """
     def __init__(self, message):
         self.message = message
-
-    def __str__(self):
-        return repr(self.message)
