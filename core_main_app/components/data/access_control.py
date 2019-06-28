@@ -5,7 +5,8 @@ import logging
 import core_main_app.permissions.rights as rights
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.permissions import api as permissions_api
-from core_main_app.settings import CAN_SET_PUBLIC_DATA_TO_PRIVATE, CAN_ANONYMOUS_ACCESS_PUBLIC_DATA
+from core_main_app.settings import CAN_SET_PUBLIC_DATA_TO_PRIVATE, CAN_ANONYMOUS_ACCESS_PUBLIC_DATA, \
+    VERIFY_DATA_ACCESS
 from core_main_app.utils.access_control.exceptions import AccessControlError
 from core_main_app.utils.labels import get_data_label
 from core_main_app.utils.raw_query.mongo_raw_query import add_access_criteria, \
@@ -225,7 +226,8 @@ def can_read_data_query(func, query, user, order_by_field=None):
     data_list = func(query, user, order_by_field)
     # TODO: check if necessary because it is time consuming (checking that user has access to list of returned data)
     # check that user can access the list of data
-    _check_can_read_data_list(data_list, user)
+    if VERIFY_DATA_ACCESS:
+        _check_can_read_data_list(data_list, user)
     return data_list
 
 
