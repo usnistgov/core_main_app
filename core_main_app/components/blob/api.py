@@ -1,6 +1,10 @@
 """ BLOB API
 """
 import core_main_app.commons.exceptions as exceptions
+from core_main_app.access_control.api import can_write, can_read_id, has_perm_administration, can_read, \
+    can_read_or_write_in_workspace
+from core_main_app.access_control.decorators import access_control
+from core_main_app.components.blob.access_control import can_write_blob_workspace
 from core_main_app.components.blob.models import Blob
 
 
@@ -22,7 +26,24 @@ def insert(blob):
     return blob.save()
 
 
-def delete(blob):
+@access_control(can_write_blob_workspace)
+def assign(blob, workspace, user):
+    """ Assign blob to a workspace.
+
+    Args:
+        blob:
+        workspace:
+        user:
+
+    Returns:
+
+    """
+    blob.workspace = workspace
+    return blob.save()
+
+
+@access_control(can_write)
+def delete(blob, user):
     """ Delete the blob.
 
     Args:
@@ -37,7 +58,8 @@ def delete(blob):
     return blob.delete()
 
 
-def get_by_id(blob_id):
+@access_control(can_read_id)
+def get_by_id(blob_id, user):
     """ Return blob by its id.
 
     Args:
@@ -49,7 +71,8 @@ def get_by_id(blob_id):
     return Blob.get_by_id(blob_id)
 
 
-def get_all():
+@access_control(has_perm_administration)
+def get_all(user):
     """ Return all blobs.
 
     Args:
@@ -61,27 +84,27 @@ def get_all():
     return Blob.get_all()
 
 
-def get_all_by_user_id(user_id):
+def get_all_by_user(user):
     """ Return all blobs by user.
 
     Args:
-        user_id: User id.
+        user: User
 
     Returns:
         List of Blob instances for the given user id.
 
     """
-    return Blob.get_all_by_user_id(user_id)
+    return Blob.get_all_by_user_id(str(user.id))
 
 
-def get_all_except_user_id(user_id):
-    """ Return all blobs except the ones of user.
+@access_control(can_read_or_write_in_workspace)
+def get_all_by_workspace(workspace, user):
+    """ Get all data that belong to the workspace.
 
     Args:
-        user_id: User id.
+        workspace:
 
     Returns:
-        List of Blob instances except the given user id.
 
     """
-    return Blob.get_all_except_user_id(user_id)
+    return Blob.get_all_by_workspace(workspace)

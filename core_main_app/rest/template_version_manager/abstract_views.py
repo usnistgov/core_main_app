@@ -16,7 +16,7 @@ from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.rest.template_version_manager.serializers import TemplateVersionManagerSerializer, \
     CreateTemplateSerializer
 from core_main_app.rest.template_version_manager.utils import can_user_modify_template_version_manager
-from core_main_app.utils.access_control.exceptions import AccessControlError
+from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.utils.boolean import to_bool
 from core_main_app.utils.decorators import api_staff_member_required
 

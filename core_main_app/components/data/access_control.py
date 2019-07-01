@@ -3,14 +3,12 @@
 import logging
 
 import core_main_app.permissions.rights as rights
+from core_main_app.access_control.api import check_can_read_list, has_perm_publish, can_write_in_workspace
+from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.workspace import api as workspace_api
-from core_main_app.permissions import api as permissions_api
-from core_main_app.settings import CAN_SET_PUBLIC_DATA_TO_PRIVATE, CAN_ANONYMOUS_ACCESS_PUBLIC_DATA, \
-    VERIFY_DATA_ACCESS
-from core_main_app.utils.access_control.exceptions import AccessControlError
+from core_main_app.settings import CAN_ANONYMOUS_ACCESS_PUBLIC_DATA, VERIFY_DATA_ACCESS
 from core_main_app.utils.labels import get_data_label
-from core_main_app.utils.raw_query.mongo_raw_query import add_access_criteria, \
-    add_aggregate_access_criteria
+from core_main_app.utils.raw_query.mongo_raw_query import add_access_criteria, add_aggregate_access_criteria
 
 logger = logging.getLogger(__name__)
 
@@ -23,47 +21,7 @@ def has_perm_publish_data(user):
 
     Returns
     """
-    publish_perm = permissions_api.get_by_codename(rights.publish_data)
-    if not user.has_perm(publish_perm.content_type.app_label + '.' + publish_perm.codename):
-        raise AccessControlError("The user doesn't have enough rights to publish this " + get_data_label() + ".")
-
-
-def has_perm_administration(func, *args, **kwargs):
-    """ Is the given user has administration rights.
-
-        Args:
-            func:
-            *args:
-            **kwargs:
-
-        Returns:
-
-        """
-    try:
-        if args[0].is_superuser:
-            return func(*args, **kwargs)
-    except Exception as e:
-        logger.warning("has_perm_administration threw an exception: ".format(str(e)))
-
-    raise AccessControlError("The user doesn't have enough rights to access this " + get_data_label() + ".")
-
-
-def can_read_or_write_data_workspace(func, workspace, user):
-    """ Can user read or write in workspace.
-
-    Args:
-        func:
-        workspace:
-        user:
-
-    Returns:
-
-    """
-    if user.is_superuser:
-        return func(workspace, user)
-
-    _check_can_read_or_write_workspace(workspace, user)
-    return func(workspace, user)
+    has_perm_publish(user, rights.publish_data)
 
 
 def can_write_data_workspace(func, data, workspace, user):
@@ -78,56 +36,7 @@ def can_write_data_workspace(func, data, workspace, user):
     Returns:
 
     """
-    if user.is_superuser:
-        return func(data, workspace, user)
-    if workspace is not None:
-            if workspace_api.is_workspace_public(workspace):
-                has_perm_publish_data(user)
-            else:
-                _check_can_write_workspace(workspace, user)
-
-    check_can_write_data(data, user)
-
-    # if we can not unpublish data
-    if CAN_SET_PUBLIC_DATA_TO_PRIVATE is False:
-        # if data is in public workspace
-        if data.workspace is not None and workspace_api.is_workspace_public(data.workspace):
-            # if target workspace is private
-            if workspace is None or workspace_api.is_workspace_public(workspace) is False:
-                raise AccessControlError("The " + get_data_label() + " can not be unpublished.")
-
-    return func(data, workspace, user)
-
-
-def _check_can_write_workspace(workspace, user):
-    """ Check that user can write in the workspace.
-
-    Args:
-        workspace:
-        user:
-
-    Returns:
-
-    """
-    accessible_workspaces = workspace_api.get_all_workspaces_with_write_access_by_user(user)
-    if workspace not in accessible_workspaces:
-        raise AccessControlError("The user does not have the permission to write into this workspace.")
-
-
-def _check_can_read_or_write_workspace(workspace, user):
-    """ Check that user can read or write in the workspace.
-
-    Args:
-        workspace:
-        user:
-
-    Returns:
-
-    """
-    accessible_write_workspaces = workspace_api.get_all_workspaces_with_write_access_by_user(user)
-    accessible_read_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(user)
-    if workspace not in list(accessible_write_workspaces) + list(accessible_read_workspaces):
-        raise AccessControlError("The user does not have the permission to write into this workspace.")
+    return can_write_in_workspace(func, data, workspace, user, rights.publish_data)
 
 
 def can_read_list_data_id(func, list_data_id, user):
@@ -145,64 +54,9 @@ def can_read_list_data_id(func, list_data_id, user):
         return func(list_data_id, user)
 
     list_data = func(list_data_id, user)
-    _check_can_read_data_list(list_data, user)
+    check_can_read_list(list_data, user)
 
     return list_data
-
-
-def can_read_data_id(func, data_id, user):
-    """ Can read data.
-
-    Args:
-        func:
-        data_id:
-        user:
-
-    Returns:
-
-    """
-    if user.is_superuser:
-        return func(data_id, user)
-
-    data = func(data_id, user)
-    _check_can_read_data(data, user)
-    return data
-
-
-def can_write_data(func, data, user):
-    """ Can write data.
-
-    Args:
-        func:
-        data:
-        user:
-
-    Returns:
-
-    """
-    if user.is_superuser:
-        return func(data, user)
-
-    check_can_write_data(data, user)
-    return func(data, user)
-
-
-def can_read_data(func, data, user):
-    """ Can read data.
-
-    Args:
-        func:
-        data:
-        user:
-
-    Returns:
-
-    """
-    if user.is_superuser:
-        return func(data, user)
-
-    _check_can_read_data(data, user)
-    return func(data, user)
 
 
 def can_read_data_query(func, query, user, order_by_field=None):
@@ -227,7 +81,7 @@ def can_read_data_query(func, query, user, order_by_field=None):
     # TODO: check if necessary because it is time consuming (checking that user has access to list of returned data)
     # check that user can access the list of data
     if VERIFY_DATA_ACCESS:
-        _check_can_read_data_list(data_list, user)
+        check_can_read_list(data_list, user)
     return data_list
 
 
@@ -253,27 +107,6 @@ def can_read_aggregate_query(func, query, user):
     return data
 
 
-def can_read_user(func, user):
-    """ Can read data, given a user.
-
-    Args:
-        func:
-        user:
-
-    Returns:
-
-    """
-    if user.is_superuser:
-        return func(user)
-
-    # get list of data
-    data_list = func(user)
-    # check that the user can access the list of data
-    _check_can_read_data_list(data_list, user)
-    # return list of data
-    return data_list
-
-
 def can_change_owner(func, data, new_user, user):
     """ Can user change data's owner.
 
@@ -293,75 +126,6 @@ def can_change_owner(func, data, new_user, user):
         raise AccessControlError("The user doesn't have enough rights to access this " + get_data_label() + ".")
 
     return func(data, new_user, user)
-
-
-def check_can_write_data(data, user):
-    """ Check that the user can write a data.
-
-    Args:
-        data:
-        user:
-
-    Returns:
-
-    """
-    if data.user_id != str(user.id):
-        if hasattr(data, 'workspace') and data.workspace is not None:
-            # get list of accessible workspaces
-            accessible_workspaces = workspace_api.get_all_workspaces_with_write_access_by_user(user)
-            # check that accessed data belongs to an accessible workspace
-            if data.workspace not in accessible_workspaces:
-                raise AccessControlError("The user doesn't have enough rights to access this " + get_data_label() + ".")
-        # workspace is not set
-        else:
-            raise AccessControlError("The user doesn't have enough rights to access this " + get_data_label() + ".")
-
-
-def _check_can_read_data(data, user):
-    """ Check that the user can read a data.
-
-    Args:
-        data:
-        user:
-
-    Returns:
-
-    """
-    # workspace case
-    if data.user_id != str(user.id):
-        # workspace is set
-        if hasattr(data, 'workspace') and data.workspace is not None:
-            # get list of accessible workspaces
-            accessible_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(user)
-            # check that accessed data belongs to an accessible workspace
-            if data.workspace not in accessible_workspaces:
-                raise AccessControlError("The user doesn't have enough rights to access this " + get_data_label() + ".")
-        # workspace is not set
-        else:
-            raise AccessControlError("The user doesn't have enough rights to access this " + get_data_label() + ".")
-
-
-def _check_can_read_data_list(data_list, user):
-    """ Check that the user can read each data of the list.
-
-    Args:
-        data_list:
-        user:
-
-    Returns:
-
-    """
-    if len(data_list) > 0:
-        # get list of accessible workspaces
-        accessible_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(user)
-        # check access is correct
-        for data in data_list:
-            # user is data owner
-            if data.user_id == str(user.id):
-                continue
-            # user is not owner or data not in accessible workspace
-            if data.workspace is None or data.workspace not in accessible_workspaces:
-                raise AccessControlError("The user doesn't have enough rights to access this " + get_data_label() + ".")
 
 
 def _update_can_read_query(query, user):
@@ -416,3 +180,5 @@ def _get_read_accessible_workspaces_by_user(user):
                                  workspace_api.get_all_workspaces_with_read_access_by_user(user)]
 
     return accessible_workspaces
+
+

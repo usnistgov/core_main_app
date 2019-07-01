@@ -3,7 +3,7 @@
 import json
 
 from core_main_app.commons.exceptions import RestApiError
-from core_main_app.utils.access_control.exceptions import AccessControlError
+from core_main_app.access_control.exceptions import AccessControlError
 
 
 def load_dependencies(validated_data):

@@ -5,12 +5,13 @@ import datetime
 import pytz
 
 from core_main_app.commons import exceptions as exceptions
-from core_main_app.components.data.access_control import can_read_data_id, can_read_user, can_write_data, \
-    can_read_data_query, can_change_owner, can_read_list_data_id, can_write_data_workspace, \
-    can_read_or_write_data_workspace, has_perm_administration, can_read_aggregate_query
+from core_main_app.components.data.access_control import can_read_data_query, can_change_owner, can_read_list_data_id, can_write_data_workspace, \
+    can_read_aggregate_query
+from core_main_app.access_control.api import can_read_or_write_in_workspace, can_read, can_write, \
+    can_read_id, has_perm_administration
 from core_main_app.components.data.models import Data
 from core_main_app.components.workspace import api as workspace_api
-from core_main_app.utils.access_control.decorators import access_control
+from core_main_app.access_control.decorators import access_control
 from core_main_app.utils.xml import validate_xml_data
 from xml_utils.xsd_tree.xsd_tree import XSDTree
 
@@ -31,7 +32,7 @@ def assign(data, workspace, user):
     return data.save()
 
 
-@access_control(can_read_or_write_data_workspace)
+@access_control(can_read_or_write_in_workspace)
 def get_all_by_workspace(workspace, user):
     """ Get all data that belong to the workspace.
 
@@ -57,7 +58,7 @@ def get_by_id_list(list_data_id, user):
     return Data.get_all_by_id_list(list_data_id)
 
 
-@access_control(can_read_data_id)
+@access_control(can_read_id)
 def get_by_id(data_id, user):
     """ Return data object with the given id.
 
@@ -114,7 +115,7 @@ def get_all_by_user(user, order_by_field=None):
     return Data.get_all_by_user_id(str(user.id), order_by_field)
 
 
-@access_control(can_read_user)
+@access_control(can_read)
 def get_all_except_user(user):
     """ Return all data which are not created by the user.
 
@@ -126,7 +127,7 @@ def get_all_except_user(user):
     return Data.get_all_except_user_id(str(user.id))
 
 
-@access_control(can_write_data)
+@access_control(can_write)
 def upsert(data, user):
     """ Save or update the data.
 
@@ -188,7 +189,7 @@ def execute_query(query, user, order_by_field=None):
     return Data.execute_query(query, order_by_field)
 
 
-@access_control(can_write_data)
+@access_control(can_write)
 def delete(data, user):
     """ Delete a data.
 

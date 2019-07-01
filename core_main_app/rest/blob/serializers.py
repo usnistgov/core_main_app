@@ -10,7 +10,7 @@ import core_main_app.components.blob.api as blob_api
 from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.blob.utils import get_blob_download_uri
-from core_main_app.utils.access_control.exceptions import AccessControlError
+from core_main_app.access_control.exceptions import AccessControlError
 
 
 class BlobSerializer(DocumentSerializer):
@@ -95,11 +95,7 @@ class DeleteBlobsSerializer(DocumentSerializer):
         """
         request = self.context.get('request')
         try:
-            blob_object = blob_api.get_by_id(id)
+            blob_api.get_by_id(id, request.user)
         except DoesNotExist:
             raise Http404
-
-        if request.user.is_superuser is False and str(request.user.id) != blob_object.user_id:
-            raise AccessControlError("You don't have the permission to delete this id: {0}".format(id))
-
         return id

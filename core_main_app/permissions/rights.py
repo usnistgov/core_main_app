@@ -17,6 +17,9 @@ edit_data = "edit_data"
 delete_data = "delete_data"
 publish_data = "publish_data"
 
+# Blob
+publish_blob = "publish_blob"
+
 # Form
 edit_form = "edit_form"
 delete_form = "delete_form"
@@ -29,4 +32,3 @@ CAN_READ_NAME = "Can read workspace "
 CAN_WRITE_NAME = "Can write workspace "
 
 CONTENT_TYPE_APP_LABEL = "core_main_app"
-

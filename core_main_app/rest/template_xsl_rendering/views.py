@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from core_main_app.commons import exceptions
 from core_main_app.components.template_xsl_rendering import api as template_xsl_rendering_api
 from core_main_app.rest.template_xsl_rendering.serializers import TemplateXslRenderingSerializer
-from core_main_app.utils.access_control.exceptions import AccessControlError
+from core_main_app.access_control.exceptions import AccessControlError
 
 
 class TemplateXslRenderingList(APIView):

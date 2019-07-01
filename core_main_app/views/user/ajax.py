@@ -14,7 +14,7 @@ from core_main_app.components.group import api as group_api
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.utils import group as group_utils
-from core_main_app.utils.access_control.exceptions import AccessControlError
+from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.views.user.forms import ChangeWorkspaceForm, UserRightForm, GroupRightForm
 
 GROUP = "group"

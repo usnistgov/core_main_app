@@ -14,7 +14,7 @@ from core_main_app.commons import exceptions
 from core_main_app.rest.group.serializers import GroupSerializer
 from core_main_app.rest.user.serializers import UserSerializer
 from core_main_app.rest.workspace.serializers import WorkspaceSerializer
-from core_main_app.utils.access_control.exceptions import AccessControlError
+from core_main_app.access_control.exceptions import AccessControlError
 
 
 class WorkspaceList(APIView):

@@ -1,26 +1,37 @@
 """ REST views for the blob API
 """
+from abc import abstractmethod, ABCMeta
+
 from django.http import Http404
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 import core_main_app.components.blob.api as blob_api
+from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
 from core_main_app.rest.blob.serializers import BlobSerializer, DeleteBlobsSerializer
-from core_main_app.utils.access_control.exceptions import AccessControlError
 from core_main_app.utils.file import get_file_http_response
 
 
-class BlobList(APIView):
-    """ List all user Blob, or create a new one
-    """
-    permission_classes = (IsAuthenticated, )
+class AbstractBlobList(APIView, metaclass=ABCMeta):
+
+    @abstractmethod
+    def _get_blobs(self, request):
+        """ Retrieve blobs
+
+        Args:
+            request:
+
+        Returns:
+
+        """
+        raise NotImplementedError("_get_blobs method is not implemented.")
 
     def get(self, request):
-        """ Get all user Blob
+        """ Get all Blob accessible
 
         Url Parameters:
 
@@ -39,15 +50,13 @@ class BlobList(APIView):
 
             - code: 200
               content: List of blob
+            - code: 403
+              content: Authentication error
             - code: 500
               content: Internal server error
         """
         try:
-            # FIXME: right perms? right location for this test?
-            if request.user.is_superuser:
-                blob_list = blob_api.get_all()
-            else:
-                blob_list = blob_api.get_all_by_user_id(user_id=request.user.id)
+            blob_list = self._get_blobs(request)
 
             # Apply filters
             filename = self.request.query_params.get('filename', None)
@@ -59,9 +68,46 @@ class BlobList(APIView):
 
             # Return response
             return Response(serializer.data, status=status.HTTP_200_OK)
+        except AccessControlError as e:
+            content = {'message': str(e)}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class BlobListAdmin(AbstractBlobList):
+    """ List all Blob
+    """
+    permission_classes = (IsAdminUser, )
+
+    def _get_blobs(self, request):
+        """ Retrieve blobs
+
+        Args:
+            request:
+
+        Returns:
+
+        """
+        return blob_api.get_all(request.user)
+
+
+class BlobList(AbstractBlobList):
+    """ List all user Blob, or create a new one
+    """
+    permission_classes = (IsAuthenticated, )
+
+    def _get_blobs(self, request):
+        """ Retrieve blobs
+
+        Args:
+            request:
+
+        Returns:
+
+        """
+        return blob_api.get_all_by_user(user=request.user)
 
     def post(self, request):
         """ Create Blob
@@ -112,13 +158,14 @@ class BlobList(APIView):
 class BlobDetail(APIView):
     """ Retrieve, update or delete a Blob
     """
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticatedOrReadOnly, )
 
-    def get_object(self, pk):
+    def get_object(self, request, pk):
         """ Get Blob from db
 
         Args:
 
+            request: HTTP request
             pk: ObjectId
 
         Returns:
@@ -126,7 +173,7 @@ class BlobDetail(APIView):
             Blob
         """
         try:
-            return blob_api.get_by_id(pk)
+            return blob_api.get_by_id(pk, request.user)
         except exceptions.DoesNotExist:
             raise Http404
 
@@ -142,6 +189,8 @@ class BlobDetail(APIView):
 
             - code: 200
               content: Blob
+            - code: 403
+              content: Authentication error
             - code: 404
               content: Object was not found
             - code: 500
@@ -149,13 +198,16 @@ class BlobDetail(APIView):
         """
         try:
             # Get object
-            blob_object = self.get_object(pk)
+            blob_object = self.get_object(request, pk)
 
             # Serialize object
             serializer = BlobSerializer(blob_object, context={'request': request})
 
             # Return response
             return Response(serializer.data)
+        except AccessControlError as e:
+            content = {'message': str(e)}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Http404:
             content = {'message': 'Blob not found.'}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
@@ -184,16 +236,15 @@ class BlobDetail(APIView):
         """
         try:
             # Get object
-            blob_object = self.get_object(pk)
-
-            # Check rights
-            if request.user.is_superuser is False and str(request.user.id) != blob_object.user_id:
-                return Response(status=status.HTTP_403_FORBIDDEN)
+            blob_object = self.get_object(request, pk)
 
             # delete object
-            blob_api.delete(blob_object)
+            blob_api.delete(blob_object, request.user)
 
             return Response(status=status.HTTP_204_NO_CONTENT)
+        except AccessControlError as e:
+            content = {'message': str(e)}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Http404:
             content = {'message': 'Blob not found.'}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
@@ -207,11 +258,12 @@ class BlobDownload(APIView):
     """
     permission_classes = (IsAuthenticated, )
 
-    def get_object(self, pk):
+    def get_object(self, request, pk):
         """ Get Blob from db
 
         Args:
 
+            request: HTTP request
             pk: ObjectId
 
         Returns:
@@ -219,7 +271,7 @@ class BlobDownload(APIView):
             Blob
         """
         try:
-            return blob_api.get_by_id(pk)
+            return blob_api.get_by_id(pk, request.user)
         except exceptions.DoesNotExist:
             raise Http404
 
@@ -235,6 +287,8 @@ class BlobDownload(APIView):
 
             - code: 200
               content: Blob file
+            - code: 403
+              content: Authentication error
             - code: 404
               content: Object was not found
             - code: 500
@@ -242,9 +296,12 @@ class BlobDownload(APIView):
         """
         try:
             # Get object
-            blob_object = self.get_object(pk)
+            blob_object = self.get_object(request, pk)
 
             return get_file_http_response(blob_object.blob, blob_object.filename)
+        except AccessControlError as e:
+            content = {'message': str(e)}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Http404:
             content = {'message': 'Blob not found.'}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
@@ -256,7 +313,7 @@ class BlobDownload(APIView):
 class BlobDeleteList(APIView):
     """ Delete a list of Blob
     """
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticatedOrReadOnly, )
 
     def patch(self, request):
         """ Delete a list of Blob
@@ -299,9 +356,9 @@ class BlobDeleteList(APIView):
 
             for blob_id in blob_ids:
                 # Get blob with its id
-                blob = blob_api.get_by_id(blob_id)
+                blob = blob_api.get_by_id(blob_id, request.user)
                 # Delete blob
-                blob_api.delete(blob)
+                blob_api.delete(blob, request.user)
 
             # Return the serialized data
             return Response(status=status.HTTP_204_NO_CONTENT)

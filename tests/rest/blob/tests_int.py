@@ -17,6 +17,34 @@ RESOURCES_PATH = join(dirname(abspath(__file__)), 'data')
 fixture_blob = BlobFixtures()
 
 
+class TestBlobListAdmin(MongoIntegrationBaseTestCase):
+    fixture = fixture_blob
+
+    @override_settings(ROOT_URLCONF="core_main_app.urls")
+    def test_get_as_user_returns_http_403(self):
+        # Arrange
+        user = create_mock_user('1')
+
+        # Act
+        response = RequestMock.do_request_get(views.BlobListAdmin.as_view(),
+                                              user)
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @override_settings(ROOT_URLCONF="core_main_app.urls")
+    def test_get_as_superuser_returns_all_blobs(self):
+        # Arrange
+        user = create_mock_user('1', is_staff=True, is_superuser=True)
+
+        # Act
+        response = RequestMock.do_request_get(views.BlobListAdmin.as_view(),
+                                              user)
+
+        # Assert
+        self.assertEqual(len(response.data), 3)
+
+
 class TestBlobList(MongoIntegrationBaseTestCase):
     fixture = fixture_blob
 
@@ -59,7 +87,7 @@ class TestBlobList(MongoIntegrationBaseTestCase):
                                               user)
 
         # Assert
-        self.assertEqual(len(response.data), 3)
+        self.assertEqual(len(response.data), 2)
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_get_filtered_by_correct_name_returns_http_200(self):
@@ -202,7 +230,7 @@ class TestBlobDetail(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
-    def test_get_other_user_blob_returns_http_200(self):
+    def test_get_other_user_blob_returns_http_403(self):
         # Arrange
         user = create_mock_user('2')
 
@@ -212,7 +240,7 @@ class TestBlobDetail(MongoIntegrationBaseTestCase):
                                               param={'pk': str(self.fixture.blob_1.id)})
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @unittest.skip("need to mock GridFS Blob Host")
     @override_settings(ROOT_URLCONF="core_main_app.urls")

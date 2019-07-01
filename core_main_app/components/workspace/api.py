@@ -9,7 +9,7 @@ from core_main_app.components.workspace.access_control import can_delete_workspa
     is_workspace_owner_to_perform_action_for_others, can_user_set_workspace_public
 from core_main_app.components.workspace.models import Workspace
 from core_main_app.permissions import api as permission_api
-from core_main_app.utils.access_control.decorators import access_control
+from core_main_app.access_control.decorators import access_control
 
 
 def create_and_save(title, owner_id=None, is_public=False):

@@ -15,7 +15,7 @@ from core_main_app.components.data import api as data_api
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.rest.data.abstract_views import AbstractExecuteLocalQueryView
 from core_main_app.rest.data.serializers import DataSerializer, DataWithTemplateInfoSerializer
-from core_main_app.utils.access_control.exceptions import AccessControlError
+from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.utils.boolean import to_bool
 from core_main_app.utils.databases.pymongo_database import get_full_text_query
 from core_main_app.utils.file import get_file_http_response

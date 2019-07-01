@@ -1,11 +1,13 @@
-"""Blob model
+""" Blob model
 """
 from django_mongoengine import fields, Document
 from mongoengine import errors as mongoengine_errors
+from mongoengine.queryset.base import NULLIFY
 
 from blob_utils.blob_host_factory import BLOBHostFactory
 from core_main_app.commons import exceptions
 from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
+from core_main_app.components.workspace.models import Workspace
 from core_main_app.settings import BLOB_HOST, BLOB_HOST_URI, BLOB_HOST_USER, BLOB_HOST_PASSWORD
 
 
@@ -13,8 +15,9 @@ class Blob(Document):
     """ Blob object
     """
     filename = fields.StringField(blank=False, regex=NOT_EMPTY_OR_WHITESPACES)
-    user_id = fields.StringField(blank=False)
     handle = fields.StringField(blank=False)
+    user_id = fields.StringField(blank=False)
+    workspace = fields.ReferenceField(Workspace, reverse_delete_rule=NULLIFY, blank=True)
 
     _blob_host = None
     _blob = None
@@ -61,6 +64,30 @@ class Blob(Document):
 
         """
         return Blob.objects(user_id=str(user_id)).all()
+
+    @staticmethod
+    def get_all_by_workspace(workspace):
+        """ Get all blobs that belong to the workspace.
+
+        Args:
+            workspace:
+
+        Returns:
+
+        """
+        return Blob.objects(workspace=workspace).all()
+
+    @staticmethod
+    def get_all_by_list_workspace(list_workspace):
+        """ Get all blobs that belong to the list of workspace.
+
+        Args:
+            list_workspace:
+
+        Returns:
+
+        """
+        return Blob.objects(workspace__in=list_workspace).all()
 
     @classmethod
     def blob_host(cls):
@@ -119,16 +146,3 @@ class Blob(Document):
 
         """
         Blob.blob_host().delete(self.handle)
-
-    @staticmethod
-    def get_all_except_user_id(user_id):
-        """ Return all blobs except the ones of user.
-
-        Args:
-            user_id: User id.
-
-        Returns:
-            List of Blob instances except for the given user id.
-
-        """
-        return Blob.objects(user_id__nin=str(user_id)).all()

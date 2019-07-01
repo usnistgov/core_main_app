@@ -92,6 +92,9 @@ urlpatterns = [
     url(r'^data/(?P<pk>\w+)/$', data_views.DataDetail.as_view(),
         name='core_main_app_rest_data_detail'),
 
+    url(r'^admin/blob/$', blob_views.BlobListAdmin.as_view(),
+        name='core_main_app_rest_blob_list_admin'),
+
     url(r'^blob/$', blob_views.BlobList.as_view(),
         name='core_main_app_rest_blob_list'),
 
