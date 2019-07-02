@@ -1,5 +1,6 @@
 <!-- FIXME: menu-->
 {% load staticfiles %}
+{% load get_attribute %}
 
 <section class="content-header">
   <h1>
@@ -15,7 +16,7 @@
         {{ data.upload_form }}
 
         <div id="upload_errors" style="color:red;">
-            {{ data.errors | safe}}
+            {{ data|get_attribute:'error' | safe}}
         </div>
 
         <br/>

@@ -1,3 +1,4 @@
+{% load get_attribute %}
 {% load menu %}
 <section class="sidebar" id="admin-menu">
     <ul class="sidebar-menu">
@@ -10,7 +11,7 @@
                     {% for child in item.children %}
                     <li {% if request.path == child.url %}class="active"{% endif %}>
                         <a href="{{ child.url }}">
-                            <i class="fa fa-{{ child.icon }}"></i>
+                            <i class="fa fa-{{ child|get_attribute:'icon' }}"></i>
                             <span>{{ child.title }}</span>
                             {% if child.external %}
                             <span class="pull-right-container">
@@ -32,7 +33,7 @@
                 {% else %} {# Single element (direct link without parent) #}
                     <li {% if request.path == item.url %}class="active"{% endif %}>
                         <a href="{{ item.url }}">
-                            <i class="fa fa-{{ item.icon }}"></i>
+                            <i class="fa fa-{{ item|get_attribute:'icon'}}"></i>
                             <span>
                                 {{ item.title }}
                             </span>

@@ -1,4 +1,5 @@
+{%load get_attribute%}
 <h1>Error</h1>
 <p>
-    {{ data.error }}
+    {{ data|get_attribute:'error' }}
 </p>
