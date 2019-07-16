@@ -44,7 +44,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
         response = RequestMock.do_request_get(data_rest_views.DataList.as_view(), user)
 
         # Assert
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data), 2)
 
     def test_get_filtered_by_correct_title_returns_data(self):
         # Arrange

@@ -37,5 +37,7 @@ PASSWORD_HASHERS = (
 MOCK_DATABASE_NAME = 'db_mock'
 MOCK_DATABASE_HOST = 'mongomock://localhost'
 
+DATA_SORTING_FIELDS = ['+title']
+
 database = Database(MOCK_DATABASE_HOST, MOCK_DATABASE_NAME)
 database.connect()

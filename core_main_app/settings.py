@@ -191,3 +191,8 @@ XSD_URI_RESOLVER = getattr(settings, 'XSD_URI_RESOLVER', None)
 VERIFY_DATA_ACCESS = getattr(settings, 'VERIFY_DATA_ACCESS', True)
 """ :py:class:`bool`: Verify that data returned by a query can be accessed.
 """
+
+DATA_SORTING_FIELDS = getattr(settings, 'DATA_SORTING_FIELDS', [])
+""" ::py:class:`str` Set the default sort fields for the data query. all the field must be prefixed by "+" or "-" (asc or desc sort)
+    the sort can be multi field and each field must be delimited by "," (ex. ["-title","+name","+date"]) 
+"""

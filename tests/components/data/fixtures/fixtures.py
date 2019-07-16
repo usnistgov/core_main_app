@@ -11,6 +11,7 @@ class DataFixtures(FixtureInterface):
     """
     data_1 = None
     data_2 = None
+    data_3 = None
     template = None
     data_collection = None
 
@@ -35,7 +36,9 @@ class DataFixtures(FixtureInterface):
                            title='title').save()
         self.data_2 = Data(template=self.template, user_id='2', dict_content=None,
                            title='title2').save()
-        self.data_collection = [self.data_1, self.data_2]
+        self.data_3 = Data(template=self.template, user_id='1', dict_content=None,
+                           title='title3').save()
+        self.data_collection = [self.data_1, self.data_2, self.data_3]
 
     def generate_template(self):
         """ Generate an unique Template.
@@ -100,6 +103,11 @@ class AccessControlDataFixture(FixtureInterface):
     workspace_1 = None
     workspace_2 = None
     data_collection = None
+    data_1 = None
+    data_2 = None
+    data_3 = None
+    data_4 = None
+    data_5 = None
 
     def insert_data(self):
         """ Insert a set of Data.
@@ -118,21 +126,25 @@ class AccessControlDataFixture(FixtureInterface):
         Returns:
 
         """
-        data_1 = Data(template=self.template,
+        self.data_1 = Data(template=self.template,
                       title='Data 1',
                       user_id='1').save()
-        data_2 = Data(template=self.template,
+        self.data_2 = Data(template=self.template,
                       title='Data 2',
                       user_id='2').save()
-        data_3 = Data(template=self.template,
+        self.data_3 = Data(template=self.template,
                       title='Data 3',
                       user_id='1',
                       workspace=self.workspace_1.id).save()
-        data_4 = Data(template=self.template,
-                      title='Data 4',
+        self.data_4 = Data(template=self.template,
+                      title='DataDoubleTitle',
                       user_id='2',
                       workspace=self.workspace_2.id).save()
-        self.data_collection = [data_1, data_2, data_3, data_4]
+        self.data_5 = Data(template=self.template,
+                      title='DataDoubleTitle',
+                      user_id='1',
+                      workspace=self.workspace_1.id).save()
+        self.data_collection = [self.data_1, self.data_2, self.data_3, self.data_4, self.data_5]
 
     def generate_template(self):
         """ Generate an unique Template.

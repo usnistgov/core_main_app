@@ -9,6 +9,7 @@ from core_main_app.components.workspace import api as workspace_api
 from core_main_app.settings import CAN_ANONYMOUS_ACCESS_PUBLIC_DATA, VERIFY_DATA_ACCESS
 from core_main_app.utils.labels import get_data_label
 from core_main_app.utils.raw_query.mongo_raw_query import add_access_criteria, add_aggregate_access_criteria
+from core_main_app.settings import DATA_SORTING_FIELDS
 
 logger = logging.getLogger(__name__)
 
@@ -44,14 +45,14 @@ def can_read_list_data_id(func, list_data_id, user):
     return list_data
 
 
-def can_read_data_query(func, query, user, order_by_field=None):
+def can_read_data_query(func, query, user, order_by_field=DATA_SORTING_FIELDS):
     """ Can read a data, given a query.
 
     Args:
         func:
         query:
         user:
-        order_by_field
+        order_by_field:
 
     Returns:
 
