@@ -6,15 +6,13 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader
 from django.views.generic import View
 
+from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
 from core_main_app.commons.exceptions import DoesNotExist, NotUniqueError, ModelError
-from core_main_app.components.data import api as data_api
-from core_main_app.components.data import api as data_workspace_api
 from core_main_app.components.group import api as group_api
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.utils import group as group_utils
-from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.views.user.forms import ChangeWorkspaceForm, UserRightForm, GroupRightForm
 
 GROUP = "group"
@@ -66,40 +64,6 @@ def set_private_workspace(request):
             workspace_api.set_workspace_private(workspace, request.user)
     except:
         return HttpResponseBadRequest("Something wrong happened.")
-
-    return HttpResponse(json.dumps({}), content_type='application/javascript')
-
-
-def assign_workspace(request):
-    """ Assign the record to a workspace.
-
-    Args:
-        request:
-
-    Returns:
-    """
-    document_ids = request.POST.getlist('document_id[]', [])
-    workspace_id = request.POST.get('workspace_id', None)
-
-    if workspace_id is None or workspace_id == '':
-        workspace = None
-    else:
-        try:
-            workspace = workspace_api.get_by_id(str(workspace_id))
-        except DoesNotExist:
-            return HttpResponseBadRequest("The selected workspace does not exist anymore.")
-        except Exception as exc:
-            return HttpResponseBadRequest("Something wrong happened.")
-
-    for data_id in document_ids:
-        try:
-            data_workspace_api.assign(data_api.get_by_id(data_id, request.user),
-                                      workspace,
-                                      request.user)
-        except AccessControlError as ace:
-            return HttpResponseBadRequest(str(ace))
-        except Exception as exc:
-            return HttpResponseBadRequest("Something wrong happened.")
 
     return HttpResponse(json.dumps({}), content_type='application/javascript')
 
@@ -455,3 +419,43 @@ def add_group_right_to_workspace(request):
         return HttpResponseBadRequest('Something wrong happened.')
 
     return HttpResponse(json.dumps({}), content_type='application/javascript')
+
+
+class AssignView(View):
+    """  Assign Ajax view
+    """
+
+    api = None
+
+    def post(self, request):
+        """ Assign the record to a workspace.
+
+            Args:
+                request:
+
+            Returns:
+            """
+        document_ids = request.POST.getlist('document_id[]', [])
+        workspace_id = request.POST.get('workspace_id', None)
+
+        if workspace_id is None or workspace_id == '':
+            workspace = None
+        else:
+            try:
+                workspace = workspace_api.get_by_id(str(workspace_id))
+            except DoesNotExist:
+                return HttpResponseBadRequest("The selected workspace does not exist anymore.")
+            except Exception as exc:
+                return HttpResponseBadRequest("Something wrong happened.")
+
+        for data_id in document_ids:
+            try:
+                self.api.assign(self.api.get_by_id(data_id, request.user),
+                                workspace,
+                                request.user)
+            except AccessControlError as ace:
+                return HttpResponseBadRequest(str(ace))
+            except Exception as exc:
+                return HttpResponseBadRequest("Something wrong happened.")
+
+        return HttpResponse(json.dumps({}), content_type='application/javascript')

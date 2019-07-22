@@ -4,35 +4,19 @@ import datetime
 
 import pytz
 
+import core_main_app.access_control.api
+import core_main_app.components.workspace.access_control
+from core_main_app.access_control import api as api_access_control
+from core_main_app.access_control.decorators import access_control
 from core_main_app.commons import exceptions as exceptions
-from core_main_app.components.data.access_control import can_read_data_query, can_change_owner, can_read_list_data_id, can_write_data_workspace, \
-    can_read_aggregate_query
-from core_main_app.access_control.api import can_read_or_write_in_workspace, can_read, can_write, \
-    can_read_id, has_perm_administration
+from core_main_app.components.data import access_control as data_api_access_control
 from core_main_app.components.data.models import Data
 from core_main_app.components.workspace import api as workspace_api
-from core_main_app.access_control.decorators import access_control
 from core_main_app.utils.xml import validate_xml_data
 from xml_utils.xsd_tree.xsd_tree import XSDTree
 
 
-@access_control(can_write_data_workspace)
-def assign(data, workspace, user):
-    """ Assign data to a workspace.
-
-    Args:
-        data:
-        workspace:
-        user:
-
-    Returns:
-
-    """
-    data.workspace = workspace
-    return data.save()
-
-
-@access_control(can_read_or_write_in_workspace)
+@access_control(core_main_app.access_control.api.can_read_or_write_in_workspace)
 def get_all_by_workspace(workspace, user):
     """ Get all data that belong to the workspace.
 
@@ -45,7 +29,7 @@ def get_all_by_workspace(workspace, user):
     return Data.get_all_by_workspace(workspace)
 
 
-@access_control(can_read_list_data_id)
+@access_control(data_api_access_control.can_read_list_data_id)
 def get_by_id_list(list_data_id, user):
     """ Return a list of data object with the given list id.
 
@@ -58,7 +42,7 @@ def get_by_id_list(list_data_id, user):
     return Data.get_all_by_id_list(list_data_id)
 
 
-@access_control(can_read_id)
+@access_control(core_main_app.access_control.api.can_read_id)
 def get_by_id(data_id, user):
     """ Return data object with the given id.
 
@@ -71,7 +55,7 @@ def get_by_id(data_id, user):
     return Data.get_by_id(data_id)
 
 
-@access_control(has_perm_administration)
+@access_control(api_access_control.has_perm_administration)
 def get_all(user, order_by_field=None):
     """ Get all the data if superuser. Raise exception otherwise.
 
@@ -115,7 +99,7 @@ def get_all_by_user(user, order_by_field=None):
     return Data.get_all_by_user_id(str(user.id), order_by_field)
 
 
-@access_control(can_read)
+@access_control(core_main_app.access_control.api.can_read)
 def get_all_except_user(user):
     """ Return all data which are not created by the user.
 
@@ -127,7 +111,7 @@ def get_all_except_user(user):
     return Data.get_all_except_user_id(str(user.id))
 
 
-@access_control(can_write)
+@access_control(core_main_app.access_control.api.can_write)
 def upsert(data, user):
     """ Save or update the data.
 
@@ -174,7 +158,7 @@ def check_xml_file_is_valid(data):
         return True
 
 
-@access_control(can_read_data_query)
+@access_control(data_api_access_control.can_read_data_query)
 def execute_query(query, user, order_by_field=None):
     """Execute a query on the Data collection.
 
@@ -189,7 +173,7 @@ def execute_query(query, user, order_by_field=None):
     return Data.execute_query(query, order_by_field)
 
 
-@access_control(can_write)
+@access_control(core_main_app.access_control.api.can_write)
 def delete(data, user):
     """ Delete a data.
 
@@ -203,7 +187,7 @@ def delete(data, user):
     data.delete()
 
 
-@access_control(can_change_owner)
+@access_control(data_api_access_control.can_change_owner)
 def change_owner(data, new_user, user):
     """ Change data's owner.
 
@@ -230,7 +214,7 @@ def is_data_public(data):
     return workspace_api.is_workspace_public(data.workspace) if data.workspace is not None else False
 
 
-@access_control(can_read_aggregate_query)
+@access_control(data_api_access_control.can_read_aggregate_query)
 def aggregate(pipeline, user):
     """Execute an aggregate on the Data collection.
 
@@ -242,3 +226,19 @@ def aggregate(pipeline, user):
 
     """
     return Data.aggregate(pipeline)
+
+
+@access_control(data_api_access_control.can_write_data_workspace)
+def assign(data, workspace, user):
+    """ Assign blob to a workspace.
+
+    Args:
+        data:
+        workspace:
+        user:
+
+    Returns:
+
+    """
+    data.workspace = workspace
+    return data.save()

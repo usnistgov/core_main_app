@@ -9,9 +9,9 @@ from django.http.response import HttpResponseRedirect
 from django.utils.html import escape as html_escape
 from django.views.generic import View
 
-import core_main_app.components.data.api as data_api
 from core_main_app.commons import exceptions
 from core_main_app.commons.exceptions import DoesNotExist
+from core_main_app.components.data import api as data_api
 from core_main_app.components.group import api as group_api
 from core_main_app.components.template import api as template_api
 from core_main_app.components.template_xsl_rendering import api as template_xsl_rendering_api

@@ -3,7 +3,7 @@
 import logging
 
 import core_main_app.permissions.rights as rights
-from core_main_app.access_control.api import check_can_read_list, has_perm_publish, can_write_in_workspace
+from core_main_app.access_control.api import has_perm_publish, check_can_read_list, can_write_in_workspace
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.settings import CAN_ANONYMOUS_ACCESS_PUBLIC_DATA, VERIFY_DATA_ACCESS
@@ -22,21 +22,6 @@ def has_perm_publish_data(user):
     Returns
     """
     has_perm_publish(user, rights.publish_data)
-
-
-def can_write_data_workspace(func, data, workspace, user):
-    """ Can user write data in workspace.
-
-    Args:
-        func:
-        data:
-        workspace:
-        user:
-
-    Returns:
-
-    """
-    return can_write_in_workspace(func, data, workspace, user, rights.publish_data)
 
 
 def can_read_list_data_id(func, list_data_id, user):
@@ -182,3 +167,16 @@ def _get_read_accessible_workspaces_by_user(user):
     return accessible_workspaces
 
 
+def can_write_data_workspace(func, data, workspace, user):
+    """ Can user write data in workspace.
+
+    Args:
+        func:
+        data:
+        workspace:
+        user:
+
+    Returns:
+
+    """
+    return can_write_in_workspace(func, data, workspace, user, rights.publish_data)

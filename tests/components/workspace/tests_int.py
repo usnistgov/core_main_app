@@ -1,6 +1,8 @@
 """ Integration Test for Workspace API
 """
 from core_main_app.commons import exceptions
+from core_main_app.components.data.models import Data
+from core_main_app.components.template.models import Template
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.utils.integration_tests.integration_base_transaction_test_case import \
     MongoIntegrationTransactionTestCase
@@ -102,3 +104,60 @@ class TestGetGlobalWorkspace(MongoIntegrationTransactionTestCase):
         # Act
         with self.assertRaises(exceptions.DoesNotExist):
             workspace_api.get_global_workspace()
+
+
+class TestCheckIfWorkspaceCanBeChanged(MongoIntegrationTransactionTestCase):
+    """ Test Check If Workspace Can Be Changed """
+
+    def test_check_if_workspace_can_be_changed_return_true_if_workspace_is_none_and_allow_public_is_false(self):
+        # A global workspace is public
+        data = Data(template=Template(),
+                    user_id='1',
+                    dict_content=None,
+                    title='title',
+                    workspace=None)
+
+        # Act
+        result = workspace_api.check_if_workspace_can_be_changed(data, False)
+        # Assert
+        self.assertEquals(result, True)
+
+    def test_check_if_workspace_can_be_changed_return_true_if_workspace_is_none_and_allow_public_is_true(self):
+        # A global workspace is public
+        data = Data(template=Template(),
+                    user_id='1',
+                    dict_content=None,
+                    title='title',
+                    workspace=None)
+
+        # Act
+        result = workspace_api.check_if_workspace_can_be_changed(data, True)
+        # Assert
+        self.assertEquals(result, True)
+
+    def test_check_if_workspace_can_be_changed_return_false_if_workspace_is_public_and_allow_public_is_false(self):
+        # A global workspace is public
+        workspace = WorkspaceFixtures.create_global_workspace(TITLE_1)
+        data = Data(template=Template(),
+                    user_id='1',
+                    dict_content=None,
+                    title='title',
+                    workspace=workspace)
+
+        # Act
+        result = workspace_api.check_if_workspace_can_be_changed(data, False)
+        # Assert
+        self.assertEquals(result, False)
+
+    def test_check_if_workspace_can_be_changed_return_true_if_workspace_is_public_and_allow_public_is_true(self):
+        # A global workspace is public
+        workspace = WorkspaceFixtures.create_global_workspace(TITLE_1)
+        data = Data(template=Template(),
+                    user_id='1',
+                    dict_content=None,
+                    title='title',
+                    workspace=workspace)
+        # Act
+        result = workspace_api.check_if_workspace_can_be_changed(data, True)
+        # Assert
+        self.assertEquals(result, True)
