@@ -89,6 +89,9 @@ urlpatterns = [
     url(r'^data/(?P<pk>\w+)/assign/(?P<workspace_id>\w+)$', data_views.DataAssign.as_view(),
         name='core_main_app_rest_data_assign'),
 
+    url(r'^data/(?P<pk>\w+)/change-owner/(?P<user_id>\w+)$', data_views.DataChangeOwner.as_view(),
+        name='core_main_app_rest_data_change_owner'),
+
     url(r'^data/(?P<pk>\w+)/$', data_views.DataDetail.as_view(),
         name='core_main_app_rest_data_detail'),
 

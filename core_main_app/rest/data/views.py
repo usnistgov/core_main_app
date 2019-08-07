@@ -6,16 +6,17 @@ from django.http import Http404
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
 from core_main_app.components.data import api as data_api
+from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.rest.data.abstract_views import AbstractExecuteLocalQueryView
 from core_main_app.rest.data.serializers import DataSerializer, DataWithTemplateInfoSerializer
-from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.utils.boolean import to_bool
 from core_main_app.utils.databases.pymongo_database import get_full_text_query
 from core_main_app.utils.file import get_file_http_response
@@ -258,6 +259,84 @@ class DataDetail(APIView):
         except Http404:
             content = {'message': 'Data not found.'}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
+        except Exception as api_exception:
+            content = {'message': str(api_exception)}
+            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class DataChangeOwner(APIView):
+    """ Change the Owner of a data
+    """
+    permission_classes = (IsAdminUser,)
+
+    def get_object(self, request, pk):
+        """ Get data from db
+
+        Args:
+
+            request: HTTP request
+            pk: ObjectId
+
+        Returns:
+
+            Data
+        """
+        try:
+            return data_api.get_by_id(pk, request.user)
+        except exceptions.DoesNotExist:
+            raise Http404
+
+    def get_user(self, user_id):
+        """ Retrieve a User
+
+        Args:
+
+            user_id: ObjectId
+
+        Returns:
+
+            - code: 404
+              content: Object was not found
+        """
+        try:
+            return user_api.get_user_by_id(user_id)
+        except exceptions.DoesNotExist:
+            raise Http404
+
+    def patch(self, request, pk, user_id):
+        """ Change the Owner of a data
+
+        Args:
+
+            request: HTTP request
+            pk: ObjectId
+            user_id: ObjectId
+
+        Returns:
+
+            - code: 200
+              content: None
+            - code: 403
+              content: Authentication error
+            - code: 404
+              content: Object was not found
+            - code: 500
+              content: Internal server error
+        """
+        try:
+            # get object
+            data_object = self.get_object(request, pk)
+            user_object = self.get_user(user_id)
+
+            # change owner
+            data_api.change_owner(data_object, user_object, request.user)
+            return Response({}, status=status.HTTP_200_OK)
+        except Http404:
+            content = {'message': 'Data or user not found.'}
+            return Response(content, status=status.HTTP_404_NOT_FOUND)
+        except AccessControlError as ace:
+            content = {'message': str(ace)}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

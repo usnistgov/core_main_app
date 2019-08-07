@@ -1,6 +1,5 @@
 """ Integration Test for Data Rest API
 """
-
 from mock import patch
 from rest_framework import status
 
@@ -514,3 +513,76 @@ class TestDataAssign(MongoIntegrationBaseTestCase):
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class TestDataChangeOwner(MongoIntegrationBaseTestCase):
+    fixture = fixture_data_workspace
+
+    @patch('core_main_app.components.user.api.get_user_by_id')
+    @patch.object(Data, 'get_by_id')
+    def test_get_returns_http_200_if_user_is_superuser(self,
+                                                       data_get_by_id,
+                                                       user_get_by_id):
+        # Arrange
+        data = self.fixture.data_collection[self.fixture.USER_1_WORKSPACE_1]
+        user_request = create_mock_user("65467", is_staff=True, is_superuser=True)
+        user_new_owner = create_mock_user("123")
+        data_get_by_id.return_value = data
+        user_get_by_id.return_value = user_new_owner
+
+        # Act
+        response = RequestMock.do_request_patch(data_rest_views.DataChangeOwner.as_view(),
+                                                user_request,
+                                                param={'pk': data.id,
+                                                       'user_id': self.fixture.workspace_1.id})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch('core_main_app.components.user.api.get_user_by_id')
+    @patch.object(Data, 'get_by_id')
+    def test_get_returns_http_200_if_user_is_not_superuser_but_have_access_to_the_data(self,
+                                                                                       data_get_by_id,
+                                                                                       user_get_by_id):
+        # Arrange
+        data = self.fixture.data_collection[self.fixture.USER_1_WORKSPACE_1]
+        user_request = create_mock_user("1", is_staff=True)
+        user_new_owner = create_mock_user("123")
+        data_get_by_id.return_value = data
+        user_get_by_id.return_value = user_new_owner
+
+        # Act
+        response = RequestMock.do_request_patch(data_rest_views.DataChangeOwner.as_view(),
+                                                user_request,
+                                                param={'pk': data.id,
+                                                       'user_id': self.fixture.workspace_1.id})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch("core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user")
+    @patch('core_main_app.components.user.api.get_user_by_id')
+    @patch.object(Data, 'get_by_id')
+    def test_get_returns_http_403_if_user_is_not_superuser_or_have_no_access_to_the_data(self,
+                                                                                         data_get_by_id,
+                                                                                         user_get_by_id,
+                                                                                         read_access_mock):
+        # Arrange
+        data = self.fixture.data_collection[self.fixture.USER_1_WORKSPACE_1]
+        user_request = create_mock_user("65467", is_staff=True)
+        user_new_owner = create_mock_user("123")
+        data_get_by_id.return_value = data
+        user_get_by_id.return_value = user_new_owner
+        read_access_mock.return_value = []
+
+        # Act
+        response = RequestMock.do_request_patch(data_rest_views.DataChangeOwner.as_view(),
+                                                user_request,
+                                                param={'pk': data.id,
+                                                       'user_id': self.fixture.workspace_1.id})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+
