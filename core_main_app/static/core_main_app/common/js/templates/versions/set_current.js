@@ -19,9 +19,12 @@ set_current_version = function(objectID){
         },
         success: function(data){
             location.reload();
+        },
+        error:function(data){
+            $.notify(data.responseText);
         }
     });
-}
+};
 
 $(document).ready(function() {
     $('.current').on('click', setCurrentVersion);
