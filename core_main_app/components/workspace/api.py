@@ -341,7 +341,8 @@ def get_list_user_can_access_workspace(workspace, user):
     return list(set(all_users_read + all_users_write))
 
 
-def check_if_workspace_can_be_changed(document, allow_change_workspace_if_public=True):
+def check_if_workspace_can_be_changed(document,
+                                      allow_change_workspace_if_public=settings.CAN_SET_PUBLIC_DATA_TO_PRIVATE):
     """ Check if a workspace of a document can be changed
 
     Args:
