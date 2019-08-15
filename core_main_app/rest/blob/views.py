@@ -31,7 +31,7 @@ class AbstractBlobList(APIView, metaclass=ABCMeta):
         raise NotImplementedError("_get_blobs method is not implemented.")
 
     def get(self, request):
-        """ Get all Blob accessible
+        """ Get all Blob
 
         Url Parameters:
 
@@ -92,6 +92,33 @@ class BlobListAdmin(AbstractBlobList):
         """
         return blob_api.get_all(request.user)
 
+    def get(self, request):
+        """ Get all accessible Blob for admin user
+
+        Url Parameters:
+
+            filename: document_filename
+
+        Examples:
+
+            ../blob/
+            ../blob?filename=[filename]
+
+        Args:
+
+            request: HTTP request
+
+        Returns:
+
+            - code: 200
+              content: List of blob
+            - code: 403
+              content: Authentication error
+            - code: 500
+              content: Internal server error
+        """
+        return super(BlobListAdmin, self).get(request)
+
 
 class BlobList(AbstractBlobList):
     """ List all user Blob, or create a new one
@@ -108,6 +135,33 @@ class BlobList(AbstractBlobList):
 
         """
         return blob_api.get_all_by_user(user=request.user)
+
+    def get(self, request):
+        """ Get all blob by user
+
+        Url Parameters:
+
+            filename: document_filename
+
+        Examples:
+
+            ../blob/
+            ../blob?filename=[filename]
+
+        Args:
+
+            request: HTTP request
+
+        Returns:
+
+            - code: 200
+              content: List of blob
+            - code: 403
+              content: Authentication error
+            - code: 500
+              content: Internal server error
+        """
+        return super(BlobList, self).get(request)
 
     def post(self, request):
         """ Create Blob
