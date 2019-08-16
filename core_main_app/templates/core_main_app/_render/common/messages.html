@@ -11,7 +11,7 @@
 <script>
     $( document ).ready(function() {
         {% for message in messages %}
-            $.notify("{{ message }}", {style: "{{ message.tags }}"});
+            $.notify("{{ message | safe }}", {style: "{{ message.tags }}"});
         {% endfor %}
     });
 </script>
