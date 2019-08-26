@@ -17,6 +17,9 @@ INSTALLED_APPS = [
     "tests",
 ]
 
+# SERVER URI
+SERVER_URI = "http://my.curator.com"
+
 # IN-MEMORY TEST DATABASE
 DATABASES = {
     "default": {

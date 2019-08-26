@@ -71,3 +71,17 @@ class PaginationError(Exception):
     """
     def __init__(self, message):
         self.message = message
+
+
+class BlobDownloaderUrlParseError(Exception):
+    """ Exception raised when an error occurs during url parse.
+    """
+    def __init__(self, message):
+        self.message = message
+
+
+class BlobDownloaderError(Exception):
+    """ Exception raised when an error occurs during blob download.
+    """
+    def __init__(self, message):
+        self.message = message

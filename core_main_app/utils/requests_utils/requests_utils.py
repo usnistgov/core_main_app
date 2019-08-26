@@ -37,3 +37,16 @@ def send_post_request(url, data=None, json=None, **kwargs):
         kwargs['verify'] = SSL_CERTIFICATES_DIR
     return requests.post(url, data, json, **kwargs)
 
+
+def send_get_request_with_access_token(url, access_token):
+    """ Send a GET request using python requests adding access token in headers.
+
+    Args:
+        url:
+        access_token:
+
+    Returns:
+
+    """
+    headers = {'Authorization': 'Bearer ' + access_token}
+    return send_get_request(url, headers=headers)
