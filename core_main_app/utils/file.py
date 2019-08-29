@@ -1,5 +1,6 @@
 """ File utils
 """
+import base64
 import re
 from io import BytesIO
 from mimetypes import guess_type
@@ -76,3 +77,19 @@ def get_filename_from_response(response):
     if len(file_name) == 0:
         return None
     return file_name[0]
+
+
+def get_base_64_content_from_response(response):
+    """ Get ascii content from HTTP response
+
+    Args:
+        response: HTTP response
+
+    Returns:
+
+    """
+    try:
+        b64_content = base64.b64encode(response.content)
+        return b64_content.decode('ascii')
+    except Exception:
+        raise CoreError('An error occurred while decoding the response.')
