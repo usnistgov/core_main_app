@@ -38,6 +38,37 @@ def send_post_request(url, data=None, json=None, **kwargs):
     return requests.post(url, data, json, **kwargs)
 
 
+def send_put_request(url, data=None, **kwargs):
+    """ Send a PUT request using python requests.
+
+    Args:
+        url:
+        data:
+        **kwargs:
+
+    Returns:
+
+    """
+    if 'verify' not in kwargs:
+        kwargs['verify'] = SSL_CERTIFICATES_DIR
+    return requests.put(url, data, **kwargs)
+
+
+def send_delete_request(url, **kwargs):
+    """ Send a DELETE request using python requests.
+
+    Args:
+        url:
+        **kwargs:
+
+    Returns:
+
+    """
+    if 'verify' not in kwargs:
+        kwargs['verify'] = SSL_CERTIFICATES_DIR
+    return requests.delete(url, **kwargs)
+
+
 def send_get_request_with_access_token(url, access_token):
     """ Send a GET request using python requests adding access token in headers.
 
