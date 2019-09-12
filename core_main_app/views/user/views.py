@@ -16,9 +16,39 @@ from core_main_app.settings import INSTALLED_APPS
 from core_main_app.utils.rendering import render
 from core_main_app.views.user.forms import LoginForm
 
+if "defender" in INSTALLED_APPS:
+    from defender.decorators import watch_login
+
+    @watch_login()
+    def defender_custom_login(request):
+        """ Custom login page with defender controls.
+
+        Args:
+            request:
+
+        Returns:
+
+        """
+        return default_custom_login(request)
+
 
 def custom_login(request):
-    """ Custom login page.
+    """ Custom login page calls default page or page with defender if installed.
+
+    Args:
+        request:
+
+    Returns:
+
+    """
+    if "defender" in INSTALLED_APPS:
+        return defender_custom_login(request)
+    else:
+        return default_custom_login(request)
+
+
+def default_custom_login(request):
+    """ Default custom login page.
     
         Parameters:
             request: 

@@ -16,6 +16,7 @@ urlpatterns = [
 
     url(r'^login', user_views.custom_login, name='core_main_app_login'),
     url(r'^logout', user_views.custom_logout, name='core_main_app_logout'),
+    url(r'^locked', common_views.defender_error_page, name='core_main_app_locked'),
 
     url(r'^rest/', include('core_main_app.rest.urls')),
     url(r'^data',  common_views.ViewData.as_view(), name='core_main_app_data_detail'),

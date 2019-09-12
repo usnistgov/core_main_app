@@ -415,3 +415,15 @@ class TemplateXSLRenderingView(View):
         except Exception as e:
             self.context.update({'errors': html_escape(str(e))})
             return self.rendering(request, self.template_name, context=self.context)
+
+
+def defender_error_page(request):
+    """ Error page for defender package.
+
+    Args:
+        request:
+
+    Returns:
+
+    """
+    return render(request, "core_main_app/common/defender/error.html")

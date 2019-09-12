@@ -11,6 +11,7 @@ INSTALLED_APPS = [
 
     # Extra apps
     "password_policies",
+    "defender",
 
     # Local apps
     "core_main_app",
