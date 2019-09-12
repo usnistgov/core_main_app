@@ -9,6 +9,7 @@ from django.test.utils import get_runner
 
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tests.test_settings")
+    execute_from_command_line(["", "makemigrations"])
     execute_from_command_line(["", "migrate"])
     django.setup()
     TestRunner = get_runner(settings)

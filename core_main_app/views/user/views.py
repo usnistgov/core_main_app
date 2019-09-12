@@ -1,14 +1,21 @@
 """ Core main app user views
 """
 from django.conf import settings
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import (
+    PasswordResetForm, SetPasswordForm)
+from django.contrib.auth.tokens import default_token_generator
 from django.contrib.staticfiles import finders
 from django.core.urlresolvers import reverse
-from django.http.response import HttpResponse
-from django.shortcuts import redirect
+from django.http.response import HttpResponse, HttpResponseRedirect
+from django.shortcuts import redirect, resolve_url
 from django.urls import reverse_lazy
+from django.utils.http import urlsafe_base64_decode
+from django.views.decorators.cache import never_cache
+from django.views.decorators.debug import sensitive_post_parameters
 from rest_framework.status import HTTP_405_METHOD_NOT_ALLOWED
+from django.utils.encoding import force_text
 
 import core_main_app.components.web_page_login.api as web_page_login_api
 from core_main_app.components.version_manager import api as version_manager_api
@@ -55,6 +62,7 @@ def default_custom_login(request):
     
         Returns:
     """
+
     def _login_redirect(to_page):
         if to_page is not None and to_page != "":
             return redirect(to_page)
@@ -113,7 +121,7 @@ def default_custom_login(request):
                 ]
             })
             modals = ["core_main_app/user/web_page_login/modals/web_page_login_modal.html"]
-            
+
             # render the page with context, assets and modals
             return render(request,
                           "core_main_app/user/login.html",
@@ -191,21 +199,21 @@ def manage_template_versions(request, version_manager_id):
             context.update({"module_url": "core_parser_app_template_modules"})
 
         assets = {
-                    "js": [
-                        {
-                            "path": 'core_main_app/common/js/templates/versions/set_current.js',
-                            "is_raw": False
-                        },
-                        {
-                            "path": 'core_main_app/common/js/templates/versions/restore.js',
-                            "is_raw": False
-                        },
-                        {
-                            "path": 'core_main_app/common/js/templates/versions/modals/disable.js',
-                            "is_raw": False
-                        }
-                    ]
+            "js": [
+                {
+                    "path": 'core_main_app/common/js/templates/versions/set_current.js',
+                    "is_raw": False
+                },
+                {
+                    "path": 'core_main_app/common/js/templates/versions/restore.js',
+                    "is_raw": False
+                },
+                {
+                    "path": 'core_main_app/common/js/templates/versions/modals/disable.js',
+                    "is_raw": False
                 }
+            ]
+        }
 
         modals = ["core_main_app/admin/templates/versions/modals/disable.html"]
 
@@ -255,3 +263,183 @@ def get_context_manage_template_versions(version_manager, object_name="Template"
     }
 
     return context
+
+
+def custom_reset_password(request,
+                          template_name='core_main_app/user/registration/password_reset_form.html',
+                          email_template_name='core_main_app/user/registration/password_reset_email.html',
+                          subject_template_name='core_main_app/user/registration/password_reset_subject.txt',
+                          password_reset_form=PasswordResetForm,
+                          token_generator=default_token_generator,
+                          post_reset_redirect=None,
+                          from_email=None,
+                          extra_context=None,
+                          html_email_template_name=None,
+                          extra_email_context=None):
+    """ Custom reset password page.
+
+        Parameters:
+        :param request:
+        :param template_name:
+        :param email_template_name:
+        :param subject_template_name:
+        :param password_reset_form:
+        :param token_generator:
+        :param post_reset_redirect:
+        :param from_email:
+        :param extra_context:
+        :param extra_email_context:
+        :param html_email_template_name:
+
+        Returns:
+        :return request
+    """
+
+    if post_reset_redirect is None:
+        post_reset_redirect = reverse('password_reset_done')
+    else:
+        post_reset_redirect = resolve_url(post_reset_redirect)
+    if request.method == "POST":
+        form = password_reset_form(request.POST)
+        if form.is_valid():
+            opts = {
+                'use_https': request.is_secure(),
+                'token_generator': token_generator,
+                'from_email': from_email,
+                'email_template_name': email_template_name,
+                'subject_template_name': subject_template_name,
+                'request': request,
+                'html_email_template_name': html_email_template_name,
+                'extra_email_context': extra_email_context,
+            }
+            form.save(**opts)
+            return HttpResponseRedirect(post_reset_redirect)
+    else:
+        form = password_reset_form()
+    context = {
+        'form': form,
+        'title': 'Password reset',
+    }
+    if extra_context is not None:
+        context.update(extra_context)
+
+    return render(request, template_name, context=context)
+
+
+def custom_password_reset_done(request,
+                        template_name='core_main_app/user/registration/password_reset_done.html',
+                        extra_context=None):
+    """ Custom password reset done page.
+
+        Parameters:
+        :param request:
+        :param template_name:
+        :param extra_context:
+
+        Returns:
+        :return request
+    """
+
+    context = {
+        'title': 'Password reset sent',
+    }
+
+    assets = {
+        "css": ["core_main_app/user/css/registration.css"]
+    }
+
+    if extra_context is not None:
+        context.update(extra_context)
+
+    return render(request, template_name, assets=assets, context=context)
+
+def custom_password_reset_confirm(request, uidb64=None, token=None,
+                           template_name='core_main_app/user/registration/password_reset_confirm.html',
+                           token_generator=default_token_generator,
+                           set_password_form=SetPasswordForm,
+                           post_reset_redirect=None,
+                           extra_context=None):
+    """
+    View that checks the hash in a password reset link and presents a
+    form for entering a new password.
+
+        Parameters:
+        :param request:
+        :param uidb64:
+        :param token:
+        :param template_name:
+        :param token_generator:
+        :param set_password_form:
+        :param post_reset_redirect:
+        :param extra_context:
+
+        Returns:
+        :return request
+    """
+
+    UserModel = get_user_model()
+
+    assert uidb64 is not None and token is not None  # checked by URLconf
+    if post_reset_redirect is None:
+        post_reset_redirect = reverse('password_reset_complete')
+    else:
+        post_reset_redirect = resolve_url(post_reset_redirect)
+    try:
+        # urlsafe_base64_decode() decodes to bytestring on Python 3
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = UserModel._default_manager.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, UserModel.DoesNotExist):
+        user = None
+
+    if user is not None and token_generator.check_token(user, token):
+        validlink = True
+        title = 'Enter new password'
+        if request.method == 'POST':
+            form = set_password_form(user, request.POST)
+            if form.is_valid():
+                form.save()
+                return HttpResponseRedirect(post_reset_redirect)
+        else:
+            form = set_password_form(user)
+    else:
+        validlink = False
+        form = None
+        title = 'Password reset unsuccessful'
+    context = {
+        'form': form,
+        'title': title,
+        'validlink': validlink,
+    }
+    if extra_context is not None:
+        context.update(extra_context)
+
+    return render(request, template_name, context=context)
+
+
+def custom_password_reset_complete(request,
+                            template_name='core_main_app/user/registration/password_reset_complete.html',
+                            extra_context=None):
+    """
+    Custom password reset complete page.
+
+        Parameters:
+        :param request:
+        :param template_name:
+        :param extra_context:
+
+        Returns:
+        :return request
+    """
+    context = {
+        'login_url': resolve_url(settings.LOGIN_URL),
+        'title': 'Password reset complete',
+    }
+
+    assets = {
+        "css": ["core_main_app/user/css/registration.css"]
+    }
+
+    if extra_context is not None:
+        context.update(extra_context)
+
+    return render(request, template_name, context=context, assets=assets)

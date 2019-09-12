@@ -31,14 +31,15 @@
                 {{ field }}
             {% endfor %}
 
-
-
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
                     {% if data.with_website_features %}
                     <a class="btn btn-default btn-lg request account"
                        href="{% url 'core_website_app_account_request' %}">
                         <i class="fa fa-user-plus"></i> Request an Account
+                    </a>
+                    <a class="btn btn-default btn-lg" href="{% url 'password_reset' %}">
+                        <i class="fa fa-lock" aria-hidden="true"></i> Forgot password
                     </a>
                     {% endif %}
                     <button type="submit" class="btn btn-lg btn-default pull-right">

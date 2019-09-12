@@ -1,6 +1,7 @@
 """ Url router for the main application
 """
 from django.conf.urls import url, include
+from django.contrib.auth import views as auth_views
 from rest_framework_swagger.views import get_swagger_view
 
 from core_main_app.components.blob import api as blob_api
@@ -70,4 +71,9 @@ urlpatterns = [
         name='core_main_add_group_right_to_workspace'),
     url(r'^docs/api$', schema_view, name='swagger_view'),
     url(r'^tz_detect/', include('tz_detect.urls')),
+    url(r'^password_reset/$', user_views.custom_reset_password, name='password_reset'),
+    url(r'^password_reset/done/$', user_views.custom_password_reset_done, name='password_reset_done'),
+    url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        user_views.custom_password_reset_confirm, name='password_reset_confirm'),
+    url(r'^reset/done/$', user_views.custom_password_reset_complete, name='password_reset_complete'),
 ]
