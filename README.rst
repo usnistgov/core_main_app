@@ -147,3 +147,26 @@ You should then update the CDCS settings using a Redis connection URL with the p
 
   BROKER_URL = 'redis://:<password>@localhost:6379/0'
   CELERY_RESULT_BACKEND = 'redis://:<password>@localhost:6379/0'
+
+
+Enable SMTP server
+==================
+
+Please follow these steps to configure the SMTP server:
+
+* Set these constants in your setting.py file (all these constants are required)
+
+.. code:: py
+
+  EMAIL_HOST = 'smtp.myserver.com'
+  EMAIL_PORT = 587
+  DEFAULT_FROM_EMAIL = 'TestSite Team <noreply@example.com>'
+
+
+* These optional constants can be added in your setting.py according to your SMTP server configuration
+
+.. code:: py
+
+  EMAIL_USE_TLS = True
+  EMAIL_HOST_USER = 'testsite_app'
+  EMAIL_HOST_PASSWORD = 'mys3cr3tp4ssw0rd'
