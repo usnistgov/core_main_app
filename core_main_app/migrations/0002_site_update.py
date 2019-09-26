@@ -20,7 +20,8 @@ def update_site(code, reverse_code):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sites', '0001_initial')
+        ('sites', '0001_initial'),
+        ('core_main_app', '0001_main'),
     ]
 
     operations = [
