@@ -3,7 +3,7 @@
 """
 from abc import ABCMeta
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import HttpResponseBadRequest, HttpResponseForbidden
 from django.http.response import HttpResponseRedirect
 from django.utils.html import escape as html_escape

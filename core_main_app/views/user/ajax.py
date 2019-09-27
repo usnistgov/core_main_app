@@ -111,7 +111,7 @@ def create_workspace(request):
     except exceptions.ModelError:
         return HttpResponseBadRequest("The given title does not meet the requirements for a title. "
                                       "Please provide another title.")
-    except Exception:
+    except Exception as e:
         return HttpResponseBadRequest("A problem occurred while creating the workspace.")
     return HttpResponse(json.dumps({}), content_type='application/javascript')
 
