@@ -1,6 +1,14 @@
 /**
  * CSS for tables
  */
+.fixed-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.fixed-table th,td {
+    word-wrap: break-word;
+}
 
 .template-name {
     width: 75%;
