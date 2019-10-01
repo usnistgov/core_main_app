@@ -242,7 +242,7 @@ def _check_can_read_or_write_in_workspace(workspace, user):
     accessible_write_workspaces = workspace_api.get_all_workspaces_with_write_access_by_user(user)
     accessible_read_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(user)
     if workspace not in list(accessible_write_workspaces) + list(accessible_read_workspaces):
-        raise AccessControlError("The user does not have the permission to write into this workspace.")
+        raise AccessControlError("The user does not have the permission to read or write into this workspace.")
 
 
 def _check_can_read(document, user):
