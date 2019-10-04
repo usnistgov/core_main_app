@@ -10,6 +10,12 @@
     word-wrap: break-word;
 }
 
+.fixed-table tr>td>i{
+    float: left;
+    padding-right: 0.5em;
+    padding-top: 0.2em;
+}
+
 .col-width-75 {
     width: 75%:
 }
