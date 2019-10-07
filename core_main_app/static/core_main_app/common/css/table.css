@@ -35,3 +35,10 @@
 .table-col-4 th {
     width: 25%;
 }
+
+/**
+ * Table pagination
+**/
+.pagination-container {
+    text-align: center;
+}
