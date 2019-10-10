@@ -516,7 +516,7 @@ class TestDataAssignPatchPermissions(SimpleTestCase):
     @patch.object(data_api, "assign")
     @patch.object(workspace_api, "get_by_id")
     @patch.object(data_api, "get_by_id")
-    def test_anonymous_returns_http_200(self, mock_data_api_get_by_id, mock_workspace_api_get_by_id,
+    def test_anonymous_returns_http_403(self, mock_data_api_get_by_id, mock_workspace_api_get_by_id,
                                         mock_data_api_assign):
         mock_data_api_get_by_id.return_value = None
         mock_workspace_api_get_by_id.return_value = None
@@ -528,7 +528,7 @@ class TestDataAssignPatchPermissions(SimpleTestCase):
             param={"pk": 0, "workspace_id": 0}
         )
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @patch.object(data_api, "assign")
     @patch.object(workspace_api, "get_by_id")

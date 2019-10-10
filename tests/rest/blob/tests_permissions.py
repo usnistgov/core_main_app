@@ -6,6 +6,7 @@ from mock.mock import patch
 from rest_framework import status
 
 import core_main_app.components.blob.api as blob_api
+from core_main_app.components.workspace import api as workspace_api
 from core_main_app.components.blob.models import Blob
 from core_main_app.rest.blob import views as blob_rest_views
 from core_main_app.rest.blob.serializers import BlobSerializer, DeleteBlobsSerializer
@@ -296,3 +297,60 @@ class TestBlobDeleteListPatchPermissions(SimpleTestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class TestBlobAssignPatchPermissions(SimpleTestCase):
+    @patch.object(blob_api, "assign")
+    @patch.object(workspace_api, "get_by_id")
+    @patch.object(blob_api, "get_by_id")
+    def test_anonymous_returns_http_403(self, mock_data_api_get_by_id, mock_workspace_api_get_by_id,
+                                        mock_data_api_assign):
+        mock_data_api_get_by_id.return_value = None
+        mock_workspace_api_get_by_id.return_value = None
+        mock_data_api_assign.return_value = None
+
+        response = RequestMock.do_request_patch(
+            blob_rest_views.BlobAssign.as_view(),
+            None,
+            param={"pk": 0, "workspace_id": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch.object(blob_api, "assign")
+    @patch.object(workspace_api, "get_by_id")
+    @patch.object(blob_api, "get_by_id")
+    def test_authenticated_returns_http_200(self, mock_blob_api_get_by_id, mock_workspace_api_get_by_id,
+                                            mock_blob_api_assign):
+        mock_blob_api_get_by_id.return_value = None
+        mock_workspace_api_get_by_id.return_value = None
+        mock_blob_api_assign.return_value = None
+
+        mock_user = create_mock_user('1')
+
+        response = RequestMock.do_request_patch(
+            blob_rest_views.BlobAssign.as_view(),
+            mock_user,
+            param={"pk": 0, "workspace_id": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(blob_api, "assign")
+    @patch.object(workspace_api, "get_by_id")
+    @patch.object(blob_api, "get_by_id")
+    def test_staff_returns_http_200(self, mock_blob_api_get_by_id, mock_workspace_api_get_by_id,
+                                    mock_blob_api_assign):
+        mock_blob_api_get_by_id.return_value = None
+        mock_workspace_api_get_by_id.return_value = None
+        mock_blob_api_assign.return_value = None
+
+        mock_user = create_mock_user('1', is_staff=True)
+
+        response = RequestMock.do_request_patch(
+            blob_rest_views.BlobAssign.as_view(),
+            mock_user,
+            param={"pk": 0, "workspace_id": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

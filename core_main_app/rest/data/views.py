@@ -546,6 +546,8 @@ class ExecuteLocalKeywordQueryView(ExecuteLocalQueryView):
 class DataAssign(APIView):
     """ Assign a Data to a Workspace.
     """
+    permission_classes = (IsAuthenticated,)
+
     def get_object(self, request, pk):
         """ Get data from db
 

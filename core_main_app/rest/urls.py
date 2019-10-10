@@ -110,6 +110,9 @@ urlpatterns = [
     url(r'^blob/download/(?P<pk>\w+)/$', blob_views.BlobDownload.as_view(),
         name='core_main_app_rest_blob_download'),
 
+    url(r'^blob/(?P<pk>\w+)/assign/(?P<workspace_id>\w+)$', blob_views.BlobAssign.as_view(),
+        name='core_main_app_rest_blob_assign'),
+
     url(r'^xslt/$', xsl_transformation_views.XslTransformationList.as_view(),
         name='core_main_app_rest_xslt'),
 
