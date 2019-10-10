@@ -10,7 +10,6 @@ INSTALLED_APPS = [
     'django.contrib.sites',
 
     # Extra apps
-    "password_policies",
     "defender",
 
     # Local apps

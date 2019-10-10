@@ -7,7 +7,6 @@ from django.utils.deconstruct import deconstructible
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ungettext
-from password_policies.forms.validators import BaseCountValidator
 
 
 @deconstructible
@@ -33,7 +32,8 @@ class ExtensionValidator(object):
             )
 
 
-class UpperCaseLetterCountValidator(BaseCountValidator):
+#TODO change this validator to fit the django.contrib.auth.password_validation.validate_password methode requirement
+class UpperCaseLetterCountValidator(object):
     """ Counts the occurrences of letters and raises a :class:`~django.core.exceptions.ValidationError` if the count
     is less than :func:`~UpperCaseLetterCountValidator.get_min_count`.
     """
@@ -71,7 +71,8 @@ class UpperCaseLetterCountValidator(BaseCountValidator):
         return self.min_uppercase_letters
 
 
-class LowerCaseLetterCountValidator(BaseCountValidator):
+#TODO change this validator to fit the django.contrib.auth.password_validation.validate_password methode requirement
+class LowerCaseLetterCountValidator(object):
     """ Counts the occurrences of letters and raises a :class:`~django.core.exceptions.ValidationError` if the count
     is less than :func:`~LowerCaseLetterCountValidator.get_min_count`.
     """
