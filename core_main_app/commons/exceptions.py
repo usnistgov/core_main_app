@@ -85,3 +85,10 @@ class BlobDownloaderError(Exception):
     """
     def __init__(self, message):
         self.message = message
+
+
+class SSLError(Exception):
+    """ Exception raised when an error occurs during SSL configuration.
+    """
+    def __init__(self, message):
+        self.message = message

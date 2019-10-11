@@ -180,7 +180,7 @@ CAN_SET_WORKSPACE_PUBLIC = getattr(settings, 'CAN_SET_WORKSPACE_PUBLIC', True)
 """ :py:class:`bool`: Can set workspace public.
 """
 
-SSL_CERTIFICATES_DIR = getattr(settings, 'SSL_CERTIFICATES_DIR', 'certs')
+SSL_CERTIFICATES_DIR = getattr(settings, 'SSL_CERTIFICATES_DIR', True)
 """ :py:class:`str`: SSL certificates directory location.
 """
 
