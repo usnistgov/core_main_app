@@ -39,6 +39,7 @@ class DataList(APIView):
         Examples:
 
             ../data/
+            ../data?workspace=[workspace_id]
             ../data?template=[template_id]
             ../data?title=[document_title]
             ../data?template=[template_id]&title=[document_title]
@@ -59,6 +60,10 @@ class DataList(APIView):
             data_object_list = data_api.get_all_by_user(request.user)
 
             # Apply filters
+            workspace = self.request.query_params.get('workspace', None)
+            if workspace is not None:
+                data_object_list = data_object_list.filter(workspace=workspace)
+
             template = self.request.query_params.get('template', None)
             if template is not None:
                 data_object_list = data_object_list.filter(template=template)

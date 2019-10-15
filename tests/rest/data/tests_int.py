@@ -16,6 +16,35 @@ fixture_data = DataFixtures()
 fixture_data_query = QueryDataFixtures()
 fixture_data_workspace = AccessControlDataFixture()
 
+class TestDataListbyWorkspace(MongoIntegrationBaseTestCase):
+    fixture = fixture_data_workspace
+
+    def setUp(self):
+        super(TestDataListbyWorkspace, self).setUp()
+
+    def test_get_filtered_by_correct_workspace_returns_data(self):
+        # Arrange
+        user = create_mock_user('1')
+
+        # Act
+        response = RequestMock.do_request_get(data_rest_views.DataList.as_view(),
+                                              user,
+                                              data={'workspace': self.fixture.workspace_1.id})
+
+        # Assert
+        self.assertEqual(len(response.data), 2)
+
+    def test_get_filtered_by_incorrect_workspace_returns_no_data(self):
+        # Arrange
+        user = create_mock_user('1')
+
+        # Act
+        response = RequestMock.do_request_get(data_rest_views.DataList.as_view(),
+                                              user,
+                                              data={'workspace': '5da8ac0622301d1240f2551b'})
+
+        # Assert
+        self.assertEqual(len(response.data), 0)
 
 class TestDataList(MongoIntegrationBaseTestCase):
     fixture = fixture_data
@@ -107,6 +136,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
     def test_post_data_incorrect_template_returns_http_400(self):
         # Arrange
