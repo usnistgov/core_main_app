@@ -7,7 +7,7 @@ https://github.com/MongoEngine/django-mongoengine/tarball/v0.2.1#egg=django-mong
 django-mongoengine-forms==0.4.5
 django-password-policies==0.4.2
 django-rest-framework-mongoengine==3.3.1
-django-rest-swagger==2.1.2
+drf-yasg==1.17.0
 django-tz-detect==0.2.9
 django-simple-menu==1.2.1
 djangorestframework==3.9.1
