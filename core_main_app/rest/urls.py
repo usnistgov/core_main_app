@@ -7,6 +7,7 @@ import core_main_app.rest.web_page.views as web_page_views
 import core_main_app.rest.xsl_transformation.views as xsl_transformation_views
 from core_main_app.rest.blob import views as blob_views
 from core_main_app.rest.data import views as data_views
+from core_main_app.rest.user import views as user_views
 from core_main_app.rest.template import views as template_views
 from core_main_app.rest.template_version_manager import views as template_version_manager_views
 from core_main_app.rest.template_xsl_rendering import views as template_xsl_rendering_views
@@ -198,6 +199,9 @@ urlpatterns = [
     url(r'^workspace/(?P<pk>\w+)/remove_write_right_to_group/(?P<group_id>\w+)/$',
         workspace_views.remove_group_write_right_to_workspace,
         name='core_main_app_rest_workspace_remove_group_write'),
+
+    url(r'^user/(?P<pk>[\w-]+)/$',  user_views.UserDetail.as_view(),
+        name='core_main_app_user_detail'),
 
     url(r'^workspace/(?P<workspace_id>\w+)/data/$',
         data_views.DataListByWorkspace.as_view(),
