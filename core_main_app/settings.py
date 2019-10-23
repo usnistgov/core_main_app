@@ -129,6 +129,7 @@ BLOB_HOST_PASSWORD = getattr(settings, 'BLOB_HOST_PASSWORD', None)
 """ :py:class:`str`: Password for file storage.
 """
 
+# Password settings for django.contrib.auth validators
 PASSWORD_MIN_LENGTH = getattr(settings, 'PASSWORD_MIN_LENGTH', 0)
 """ :py:class:`int`: Required minimum length of a password.
 """
@@ -139,6 +140,22 @@ PASSWORD_MIN_LOWERCASE_LETTERS = getattr(settings, 'PASSWORD_MIN_LOWERCASE_LETTE
 
 PASSWORD_MIN_UPPERCASE_LETTERS = getattr(settings, 'PASSWORD_MIN_UPPERCASE_LETTERS', 0)
 """ :py:class:`int`: Required number of uppercase chars in a password.
+"""
+
+PASSWORD_MIN_LETTERS = getattr(settings, 'PASSWORD_MIN_LETTERS', 0)
+""" :py:class:`int`: Specifies the minimum amount of required letters in a password.
+"""
+
+PASSWORD_MIN_NUMBERS = getattr(settings, 'PASSWORD_MIN_NUMBERS', 0)
+""" :py:class:`int`: Specifies the minimum amount of required numbers in a password.
+"""
+
+PASSWORD_MIN_SYMBOLS = getattr(settings, 'PASSWORD_MIN_SYMBOLS', 0)
+""" :py:class:`int`: Specifies the minimum amount of required symbols in a password.
+"""
+
+PASSWORD_MAX_OCCURRENCE = getattr(settings, 'PASSWORD_MAX_OCCURRENCE', None)
+""" :py:class:`int`: Specifies the maximum amount of consecutive characters allowed in passwords.
 """
 
 # Lock
