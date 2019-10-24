@@ -72,11 +72,11 @@ def login_or_anonymous_perm_required(anonymous_permission, function=None, redire
 
             """
             request.has_anonymous_access = False
-            if request.user.is_anonymous:
+            if request.user.is_anonymous():
                 access = Group.objects.filter(Q(name=rights.anonymous_group)
                                               & Q(permissions__codename=anonymous_permission))
             else:
-                access = request.user.is_authenticated
+                access = request.user.is_authenticated()
 
             if access:
                 return view_func(request, *args, **kwargs)
@@ -129,7 +129,7 @@ def permission_required(content_type, permission, login_url=None, raise_exceptio
             Returns:
 
             """
-            if request.user.is_anonymous:
+            if request.user.is_anonymous():
                 # Check in the anonymous_group
                 access = Group.objects.filter(Q(name=rights.anonymous_group) & Q(permissions__codename=permission))
             else:

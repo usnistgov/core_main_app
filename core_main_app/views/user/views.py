@@ -7,7 +7,7 @@ from django.contrib.auth.forms import (
     PasswordResetForm, SetPasswordForm)
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.staticfiles import finders
-from django.urls import reverse
+from django.core.urlresolvers import reverse
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, resolve_url
 from django.urls import reverse_lazy
@@ -90,7 +90,7 @@ def default_custom_login(request):
                           context={'login_form': LoginForm(initial={'next_page': next_page}), 'login_error': True,
                                    'with_website_features': "core_website_app" in INSTALLED_APPS})
     elif request.method == "GET":
-        if request.user.is_authenticated:
+        if request.user.is_authenticated():
             return redirect(reverse("core_main_app_homepage"))
 
         next_page = None

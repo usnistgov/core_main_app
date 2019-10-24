@@ -6,7 +6,7 @@ from collections import OrderedDict
 from urllib.parse import urlparse
 
 import xmltodict
-from django.urls import reverse
+from django.core.urlresolvers import reverse
 
 import core_main_app.commons.exceptions as exceptions
 import xml_utils.commons.constants as xml_utils_constants

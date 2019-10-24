@@ -12,7 +12,7 @@
     * Templates (list and upload)
     * XSLT (list and upload)
 """
-from django.urls import reverse
+from django.core.urlresolvers import reverse
 from menu import Menu, MenuItem
 
 

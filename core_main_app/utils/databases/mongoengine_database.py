@@ -42,7 +42,7 @@ class Database(object):
         # Clear the database for the next test
         if self.database[self.database_name] is not None:
             # Clear all collections
-            for collection in self.database[self.database_name].list_collection_names():
+            for collection in self.database[self.database_name].collection_names():
                 if collection != 'system.indexes':
                     # WARNING: Do not drop the collection but clear it. Drop collection with mongomock is not well
                     # supported. Please see https://github.com/mongomock/mongomock/issues/238

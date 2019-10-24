@@ -1,8 +1,9 @@
 celery==4.1.1
 # FIXME: upgrade celery and remove kombu
 kombu==4.3.0
-Django==2.2.4
-django-mongoengine==0.3.3
+Django==1.11.23
+# Installs: django-mongoengine==0.2.1
+https://github.com/MongoEngine/django-mongoengine/tarball/v0.2.1#egg=django-mongoengine-0.2.1
 django-mongoengine-forms==0.4.5
 django-password-policies==0.4.2
 django-rest-framework-mongoengine==3.3.1
@@ -12,8 +13,8 @@ django-simple-menu==1.2.1
 djangorestframework==3.9.1
 markdown==2.6.9
 mock==2.0.0
-mongoengine==0.18.2
-mongomock==3.18.0
+mongoengine==0.11.0
+mongomock==3.8.0
 pymongo==3.5.1
 python-dateutil==2.6.1
 redis==2.10.6

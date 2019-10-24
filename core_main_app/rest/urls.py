@@ -1,6 +1,6 @@
 """Url router for the REST API
 """
-from django.urls import re_path
+from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
 
 import core_main_app.rest.web_page.views as web_page_views
@@ -13,194 +13,194 @@ from core_main_app.rest.template_xsl_rendering import views as template_xsl_rend
 from core_main_app.rest.workspace import views as workspace_views
 
 urlpatterns = [
-    re_path(r'^template-version-manager/global/$',
-            template_version_manager_views.GlobalTemplateVersionManagerList.as_view(),
-            name='core_main_app_rest_template_version_manager_global_list'),
+    url(r'^template-version-manager/global/$',
+        template_version_manager_views.GlobalTemplateVersionManagerList.as_view(),
+        name='core_main_app_rest_template_version_manager_global_list'),
 
-    re_path(r'^template-version-manager/user/$',
-            template_version_manager_views.UserTemplateVersionManagerList.as_view(),
-            name='core_main_app_rest_template_version_manager_user_list'),
+    url(r'^template-version-manager/user/$',
+        template_version_manager_views.UserTemplateVersionManagerList.as_view(),
+        name='core_main_app_rest_template_version_manager_user_list'),
 
-    re_path(r'^template-version-manager/(?P<pk>\w+)/$',
-            template_version_manager_views.TemplateVersionManagerDetail.as_view(),
-            name='core_main_app_rest_template_version_manager_detail'),
+    url(r'^template-version-manager/(?P<pk>\w+)/$',
+        template_version_manager_views.TemplateVersionManagerDetail.as_view(),
+        name='core_main_app_rest_template_version_manager_detail'),
 
-    re_path(r'^template-version-manager/(?P<pk>\w+)/version/$',
-            template_version_manager_views.TemplateVersion.as_view(),
-            name='core_main_app_rest_template_version'),
+    url(r'^template-version-manager/(?P<pk>\w+)/version/$',
+        template_version_manager_views.TemplateVersion.as_view(),
+        name='core_main_app_rest_template_version'),
 
-    re_path(r'^template-version-manager/(?P<pk>\w+)/disable/$',
-            template_version_manager_views.DisableTemplateVersionManager.as_view(),
-            name='core_main_app_rest_template_version_manager_disable'),
+    url(r'^template-version-manager/(?P<pk>\w+)/disable/$',
+        template_version_manager_views.DisableTemplateVersionManager.as_view(),
+        name='core_main_app_rest_template_version_manager_disable'),
 
-    re_path(r'^template-version-manager/(?P<pk>\w+)/restore/$',
-            template_version_manager_views.RestoreTemplateVersionManager.as_view(),
-            name='core_main_app_rest_template_version_manager_restore'),
+    url(r'^template-version-manager/(?P<pk>\w+)/restore/$',
+        template_version_manager_views.RestoreTemplateVersionManager.as_view(),
+        name='core_main_app_rest_template_version_manager_restore'),
 
-    re_path(r'^template/version/(?P<pk>\w+)/current/$',
-            template_version_manager_views.CurrentTemplateVersion.as_view(),
-            name='core_main_app_rest_template_version_current'),
+    url(r'^template/version/(?P<pk>\w+)/current/$',
+        template_version_manager_views.CurrentTemplateVersion.as_view(),
+        name='core_main_app_rest_template_version_current'),
 
-    re_path(r'^template/version/(?P<pk>\w+)/disable/$',
-            template_version_manager_views.DisableTemplateVersion.as_view(),
-            name='core_main_app_rest_template_version_disable'),
+    url(r'^template/version/(?P<pk>\w+)/disable/$',
+        template_version_manager_views.DisableTemplateVersion.as_view(),
+        name='core_main_app_rest_template_version_disable'),
 
-    re_path(r'^template/version/(?P<pk>\w+)/restore/$',
-            template_version_manager_views.RestoreTemplateVersion.as_view(),
-            name='core_main_app_rest_template_version_restore'),
+    url(r'^template/version/(?P<pk>\w+)/restore/$',
+        template_version_manager_views.RestoreTemplateVersion.as_view(),
+        name='core_main_app_rest_template_version_restore'),
 
-    re_path(r'^template/xsl_rendering/$',
-            template_xsl_rendering_views.TemplateXslRenderingList.as_view(),
-            name='core_main_app_rest_template_detail'),
+    url(r'^template/xsl_rendering/$',
+        template_xsl_rendering_views.TemplateXslRenderingList.as_view(),
+        name='core_main_app_rest_template_detail'),
 
-    re_path(r'^template/xsl_rendering/(?P<pk>\w+)/$',
-            template_xsl_rendering_views.TemplateXslRenderingDetail.as_view(),
-            name='core_main_app_rest_template_download'),
+    url(r'^template/xsl_rendering/(?P<pk>\w+)/$',
+        template_xsl_rendering_views.TemplateXslRenderingDetail.as_view(),
+        name='core_main_app_rest_template_download'),
 
-    re_path(r'^template/global/$',
-            template_version_manager_views.GlobalTemplateList.as_view(),
-            name='core_main_app_rest_global_template_list'),
+    url(r'^template/global/$',
+        template_version_manager_views.GlobalTemplateList.as_view(),
+        name='core_main_app_rest_global_template_list'),
 
-    re_path(r'^template/user/$',
-            template_version_manager_views.UserTemplateList.as_view(),
-            name='core_main_app_rest_user_template_list'),
+    url(r'^template/user/$',
+        template_version_manager_views.UserTemplateList.as_view(),
+        name='core_main_app_rest_user_template_list'),
 
-    re_path(r'^template/(?P<pk>\w+)/download/$', template_views.TemplateDownload.as_view(),
-            name='core_main_app_rest_template_download'),
+    url(r'^template/(?P<pk>\w+)/download/$', template_views.TemplateDownload.as_view(),
+        name='core_main_app_rest_template_download'),
 
-    re_path(r'^template/(?P<pk>\w+)/$', template_views.TemplateDetail.as_view(),
-            name='core_main_app_rest_template_detail'),
+    url(r'^template/(?P<pk>\w+)/$', template_views.TemplateDetail.as_view(),
+        name='core_main_app_rest_template_detail'),
 
-    re_path(r'^data/$', data_views.DataList.as_view(),
-            name='core_main_app_rest_data_list'),
+    url(r'^data/$', data_views.DataList.as_view(),
+        name='core_main_app_rest_data_list'),
 
-    re_path(r'^data/download/(?P<pk>\w+)/$', data_views.DataDownload.as_view(),
-            name='core_main_app_rest_data_download'),
+    url(r'^data/download/(?P<pk>\w+)/$', data_views.DataDownload.as_view(),
+        name='core_main_app_rest_data_download'),
 
-    re_path(r'^data/get-full$', data_views.get_by_id_with_template_info,
-            name='core_main_app_rest_data_get_by_id_with_template_info'),
+    url(r'^data/get-full$', data_views.get_by_id_with_template_info,
+        name='core_main_app_rest_data_get_by_id_with_template_info'),
 
-    re_path(r'^data/query/keyword/$', data_views.ExecuteLocalKeywordQueryView.as_view(),
-            name='core_explore_common_local_query_keyword'),
+    url(r'^data/query/keyword/$', data_views.ExecuteLocalKeywordQueryView.as_view(),
+        name='core_explore_common_local_query_keyword'),
 
-    re_path(r'^data/query/$', data_views.ExecuteLocalQueryView.as_view(),
-            name='core_explore_common_local_query'),
+    url(r'^data/query/$', data_views.ExecuteLocalQueryView.as_view(),
+        name='core_explore_common_local_query'),
 
-    re_path(r'^data/(?P<pk>\w+)/assign/(?P<workspace_id>\w+)$', data_views.DataAssign.as_view(),
-            name='core_main_app_rest_data_assign'),
+    url(r'^data/(?P<pk>\w+)/assign/(?P<workspace_id>\w+)$', data_views.DataAssign.as_view(),
+        name='core_main_app_rest_data_assign'),
 
-    re_path(r'^data/(?P<pk>\w+)/change-owner/(?P<user_id>\w+)$', data_views.DataChangeOwner.as_view(),
-            name='core_main_app_rest_data_change_owner'),
+    url(r'^data/(?P<pk>\w+)/change-owner/(?P<user_id>\w+)$', data_views.DataChangeOwner.as_view(),
+        name='core_main_app_rest_data_change_owner'),
 
-    re_path(r'^data/(?P<pk>\w+)/$', data_views.DataDetail.as_view(),
-            name='core_main_app_rest_data_detail'),
+    url(r'^data/(?P<pk>\w+)/$', data_views.DataDetail.as_view(),
+        name='core_main_app_rest_data_detail'),
 
-    re_path(r'^admin/blob/$', blob_views.BlobListAdmin.as_view(),
-            name='core_main_app_rest_blob_list_admin'),
+    url(r'^admin/blob/$', blob_views.BlobListAdmin.as_view(),
+        name='core_main_app_rest_blob_list_admin'),
 
-    re_path(r'^blob/$', blob_views.BlobList.as_view(),
-            name='core_main_app_rest_blob_list'),
+    url(r'^blob/$', blob_views.BlobList.as_view(),
+        name='core_main_app_rest_blob_list'),
 
-    re_path(r'^blobs/delete/$', blob_views.BlobDeleteList.as_view(),
-            name='core_main_app_rest_blob_delete_list'),
+    url(r'^blobs/delete/$', blob_views.BlobDeleteList.as_view(),
+        name='core_main_app_rest_blob_delete_list'),
 
-    re_path(r'^blob/(?P<pk>\w+)/$', blob_views.BlobDetail.as_view(),
-            name='core_main_app_rest_blob_detail'),
+    url(r'^blob/(?P<pk>\w+)/$', blob_views.BlobDetail.as_view(),
+        name='core_main_app_rest_blob_detail'),
 
-    re_path(r'^blob/download/(?P<pk>\w+)/$', blob_views.BlobDownload.as_view(),
-            name='core_main_app_rest_blob_download'),
+    url(r'^blob/download/(?P<pk>\w+)/$', blob_views.BlobDownload.as_view(),
+        name='core_main_app_rest_blob_download'),
 
-    re_path(r'^xslt/$', xsl_transformation_views.XslTransformationList.as_view(),
-            name='core_main_app_rest_xslt'),
+    url(r'^xslt/$', xsl_transformation_views.XslTransformationList.as_view(),
+        name='core_main_app_rest_xslt'),
 
-    re_path(r'^xslt/transform/$', xsl_transformation_views.XslTransformationTransform.as_view(),
-            name='core_main_app_rest_xslt_transform'),
+    url(r'^xslt/transform/$', xsl_transformation_views.XslTransformationTransform.as_view(),
+        name='core_main_app_rest_xslt_transform'),
 
-    re_path(r'^xslt/(?P<pk>\w+)/$', xsl_transformation_views.XslTransformationDetail.as_view(),
-            name='core_main_app_rest_xslt_detail'),
+    url(r'^xslt/(?P<pk>\w+)/$', xsl_transformation_views.XslTransformationDetail.as_view(),
+        name='core_main_app_rest_xslt_detail'),
 
-    re_path(r'^workspace/$', workspace_views.WorkspaceList.as_view(),
-            name='core_main_app_rest_workspace_list'),
+    url(r'^workspace/$', workspace_views.WorkspaceList.as_view(),
+        name='core_main_app_rest_workspace_list'),
 
-    re_path(r'^workspace/(?P<pk>\w+)/detail/$', workspace_views.WorkspaceDetail.as_view(),
-            name='core_main_app_rest_workspace_detail'),
+    url(r'^workspace/(?P<pk>\w+)/detail/$', workspace_views.WorkspaceDetail.as_view(),
+        name='core_main_app_rest_workspace_detail'),
 
-    re_path(r'^workspace/read_access', workspace_views.get_workspaces_with_read_access,
-            name='core_main_app_rest_workspace_get_all_workspaces_with_read_access_by_user'),
+    url(r'^workspace/read_access', workspace_views.get_workspaces_with_read_access,
+        name='core_main_app_rest_workspace_get_all_workspaces_with_read_access_by_user'),
 
-    re_path(r'^workspace/write_access', workspace_views.get_workspaces_with_write_access,
-            name='core_main_app_rest_workspace_get_all_workspaces_with_write_access_by_user'),
+    url(r'^workspace/write_access', workspace_views.get_workspaces_with_write_access,
+        name='core_main_app_rest_workspace_get_all_workspaces_with_write_access_by_user'),
 
-    re_path(r'^workspace/(?P<pk>\w+)/is_public/$', workspace_views.is_workspace_public,
-            name='core_main_app_rest_workspace_is_public'),
+    url(r'^workspace/(?P<pk>\w+)/is_public/$', workspace_views.is_workspace_public,
+        name='core_main_app_rest_workspace_is_public'),
 
-    re_path(r'^workspace/(?P<pk>\w+)/set_public/$', workspace_views.set_workspace_public,
-            name='core_main_app_rest_workspace_set_public'),
+    url(r'^workspace/(?P<pk>\w+)/set_public/$', workspace_views.set_workspace_public,
+        name='core_main_app_rest_workspace_set_public'),
 
-    re_path(r'^workspace/(?P<pk>\w+)/set_private/$', workspace_views.set_workspace_private,
-            name='core_main_app_rest_workspace_set_private'),
+    url(r'^workspace/(?P<pk>\w+)/set_private/$', workspace_views.set_workspace_private,
+        name='core_main_app_rest_workspace_set_private'),
 
-    re_path(r'^workspace/(?P<pk>\w+)/list_user_can_read/$',
-            workspace_views.get_list_user_can_read_workspace,
-            name='core_main_app_rest_workspace_list_user_can_read'),
+    url(r'^workspace/(?P<pk>\w+)/list_user_can_read/$',
+        workspace_views.get_list_user_can_read_workspace,
+        name='core_main_app_rest_workspace_list_user_can_read'),
 
-    re_path(r'^workspace/(?P<pk>\w+)/list_user_can_write/$',
-            workspace_views.get_list_user_can_write_workspace,
-            name='core_main_app_rest_workspace_list_user_can_write'),
+    url(r'^workspace/(?P<pk>\w+)/list_user_can_write/$',
+        workspace_views.get_list_user_can_write_workspace,
+        name='core_main_app_rest_workspace_list_user_can_write'),
 
-    re_path(r'^workspace/(?P<pk>\w+)/list_user_can_access/$',
-            workspace_views.get_list_user_can_access_workspace,
-            name='core_main_app_rest_workspace_list_user_can_access'),
+    url(r'^workspace/(?P<pk>\w+)/list_user_can_access/$',
+        workspace_views.get_list_user_can_access_workspace,
+        name='core_main_app_rest_workspace_list_user_can_access'),
 
-    re_path(r'^workspace/(?P<pk>\w+)/list_group_can_read/$',
-            workspace_views.get_list_group_can_read_workspace,
-            name='core_main_app_rest_workspace_list_group_can_read'),
+    url(r'^workspace/(?P<pk>\w+)/list_group_can_read/$',
+        workspace_views.get_list_group_can_read_workspace,
+        name='core_main_app_rest_workspace_list_group_can_read'),
 
-    re_path(r'^workspace/(?P<pk>\w+)/list_group_can_write/$',
-            workspace_views.get_list_group_can_write_workspace,
-            name='core_main_app_rest_workspace_list_group_can_write'),
+    url(r'^workspace/(?P<pk>\w+)/list_group_can_write/$',
+        workspace_views.get_list_group_can_write_workspace,
+        name='core_main_app_rest_workspace_list_group_can_write'),
 
-    re_path(r'^workspace/(?P<pk>\w+)/list_group_can_access/$',
-            workspace_views.get_list_group_can_access_workspace,
-            name='core_main_app_rest_workspace_list_group_can_access'),
+    url(r'^workspace/(?P<pk>\w+)/list_group_can_access/$',
+        workspace_views.get_list_group_can_access_workspace,
+        name='core_main_app_rest_workspace_list_group_can_access'),
 
-    re_path(r'^workspace/(?P<pk>\w+)/add_read_right_to_user/(?P<user_id>\w+)/$',
-            workspace_views.add_user_read_right_to_workspace,
-            name='core_main_app_rest_workspace_add_user_read'),
+    url(r'^workspace/(?P<pk>\w+)/add_read_right_to_user/(?P<user_id>\w+)/$',
+        workspace_views.add_user_read_right_to_workspace,
+        name='core_main_app_rest_workspace_add_user_read'),
 
-    re_path(r'^workspace/(?P<pk>\w+)/add_write_right_to_user/(?P<user_id>\w+)/$',
-            workspace_views.add_user_write_right_to_workspace,
-            name='core_main_app_rest_workspace_add_user_write'),
+    url(r'^workspace/(?P<pk>\w+)/add_write_right_to_user/(?P<user_id>\w+)/$',
+        workspace_views.add_user_write_right_to_workspace,
+        name='core_main_app_rest_workspace_add_user_write'),
 
-    re_path(r'^workspace/(?P<pk>\w+)/add_read_right_to_group/(?P<group_id>\w+)/$',
-            workspace_views.add_group_read_right_to_workspace,
-            name='core_main_app_rest_workspace_add_group_read'),
+    url(r'^workspace/(?P<pk>\w+)/add_read_right_to_group/(?P<group_id>\w+)/$',
+        workspace_views.add_group_read_right_to_workspace,
+        name='core_main_app_rest_workspace_add_group_read'),
 
-    re_path(r'^workspace/(?P<pk>\w+)/add_write_right_to_group/(?P<group_id>\w+)/$',
-            workspace_views.add_group_write_right_to_workspace,
-            name='core_main_app_rest_workspace_add_group_write'),
+    url(r'^workspace/(?P<pk>\w+)/add_write_right_to_group/(?P<group_id>\w+)/$',
+        workspace_views.add_group_write_right_to_workspace,
+        name='core_main_app_rest_workspace_add_group_write'),
 
-    re_path(r'^workspace/(?P<pk>\w+)/remove_read_right_to_user/(?P<user_id>\w+)/$',
-            workspace_views.remove_user_read_right_to_workspace,
-            name='core_main_app_rest_workspace_remove_user_read'),
+    url(r'^workspace/(?P<pk>\w+)/remove_read_right_to_user/(?P<user_id>\w+)/$',
+        workspace_views.remove_user_read_right_to_workspace,
+        name='core_main_app_rest_workspace_remove_user_read'),
 
-    re_path(r'^workspace/(?P<pk>\w+)/remove_write_right_to_user/(?P<user_id>\w+)/$',
-            workspace_views.remove_user_write_right_to_workspace,
-            name='core_main_app_rest_workspace_remove_user_write'),
+    url(r'^workspace/(?P<pk>\w+)/remove_write_right_to_user/(?P<user_id>\w+)/$',
+        workspace_views.remove_user_write_right_to_workspace,
+        name='core_main_app_rest_workspace_remove_user_write'),
 
-    re_path(r'^workspace/(?P<pk>\w+)/remove_read_right_to_group/(?P<group_id>\w+)/$',
-            workspace_views.remove_group_read_right_to_workspace,
-            name='core_main_app_rest_workspace_remove_group_read'),
+    url(r'^workspace/(?P<pk>\w+)/remove_read_right_to_group/(?P<group_id>\w+)/$',
+        workspace_views.remove_group_read_right_to_workspace,
+        name='core_main_app_rest_workspace_remove_group_read'),
 
-    re_path(r'^workspace/(?P<pk>\w+)/remove_write_right_to_group/(?P<group_id>\w+)/$',
-            workspace_views.remove_group_write_right_to_workspace,
-            name='core_main_app_rest_workspace_remove_group_write'),
+    url(r'^workspace/(?P<pk>\w+)/remove_write_right_to_group/(?P<group_id>\w+)/$',
+        workspace_views.remove_group_write_right_to_workspace,
+        name='core_main_app_rest_workspace_remove_group_write'),
 
-    re_path(r'^login-page$',
-            web_page_views.WebPageList.as_view(
-                web_page_type="login"
-            ),
-            name='login_page_rest_views')
+    url(r'^login-page$',
+        web_page_views.WebPageList.as_view(
+            web_page_type="login"
+        ),
+        name='login_page_rest_views')
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

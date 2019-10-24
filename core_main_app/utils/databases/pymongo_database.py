@@ -71,7 +71,7 @@ class Database(object):
 
         """
         # clear all collections
-        for collection in db.list_collection_names():
+        for collection in db.collection_names():
             try:
                 if collection != 'system.indexes':
                     db.drop_collection(collection)
