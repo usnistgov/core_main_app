@@ -199,6 +199,10 @@ urlpatterns = [
         workspace_views.remove_group_write_right_to_workspace,
         name='core_main_app_rest_workspace_remove_group_write'),
 
+    url(r'^workspace/(?P<workspace_id>\w+)/data/$',
+        data_views.DataListByWorkspace.as_view(),
+        name='core_main_app_rest_data_workspace_list'),
+
     url(r'^login-page$',
         web_page_views.WebPageList.as_view(
             web_page_type="login"

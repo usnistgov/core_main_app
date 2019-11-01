@@ -26,7 +26,7 @@ from core_main_app.utils.pagination.rest_framework_paginator.pagination import S
 class DataList(APIView):
     """ List all user Data, or create a new one.
     """
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         """ Get all user Data
@@ -89,6 +89,7 @@ class DataList(APIView):
             {
                 "title": "document_title",
                 "template": "template_id",
+                "workspace": "workspace_id",
                 "xml_content": "document_content"
             }
 
@@ -132,7 +133,7 @@ class DataList(APIView):
 class DataDetail(APIView):
     """ Retrieve, update or delete a Data
     """
-    permission_classes = (IsAuthenticatedOrReadOnly, )
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_object(self, request, pk):
         """ Get data from db
@@ -350,6 +351,7 @@ class DataChangeOwner(APIView):
 class DataDownload(APIView):
     """ Download XML file in data
     """
+
     def get_object(self, request, pk):
         """ Get Data from db
 
@@ -621,6 +623,44 @@ class DataAssign(APIView):
         except AccessControlError as ace:
             content = {'message': str(ace)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
+        except Exception as api_exception:
+            content = {'message': str(api_exception)}
+            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class DataListByWorkspace(APIView):
+    """ List all Data by workspace.
+    """
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, workspace_id):
+        """ Get all workspace Data
+
+        Examples:
+
+            ../workspace/id/data
+
+
+        Args:
+
+            request: HTTP request
+
+        Returns:
+
+            - code: 200
+              content: List of data
+            - code: 500
+              content: Internal server error
+        """
+        try:
+            # Get object
+            data_object_list = data_api.get_all_by_workspace(workspace_id, request.user)
+
+            # Serialize object
+            data_serializer = DataSerializer(data_object_list, many=True)
+
+            # Return response
+            return Response(data_serializer.data, status=status.HTTP_200_OK)
         except Exception as api_exception:
             content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

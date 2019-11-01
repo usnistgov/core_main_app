@@ -97,6 +97,45 @@ class TestDataListGetPermissions(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
+class TestDataListByWorkspaceGetPermissions(SimpleTestCase):
+    def test_anonymous_returns_http_403(self):
+        response = RequestMock.do_request_get(
+            data_rest_views.DataListByWorkspace.as_view(),
+            None,
+            param={"workspace_id": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch.object(data_api, "get_all_by_workspace")
+    def test_authenticated_returns_http_200(self, data_get_all_by_workspace):
+        data_get_all_by_workspace.return_value = {}
+
+        mock_user = create_mock_user('1')
+
+        response = RequestMock.do_request_get(
+            data_rest_views.DataListByWorkspace.as_view(),
+            mock_user,
+            param={"workspace_id": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(data_api, "get_all_by_workspace")
+    def test_staff_returns_http_200(self, data_get_all_by_workspace):
+        data_get_all_by_workspace.return_value = {}
+
+        mock_user = create_mock_user('1', is_staff=True)
+
+        response = RequestMock.do_request_get(
+            data_rest_views.DataListByWorkspace.as_view(),
+            mock_user,
+            param={"workspace_id": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
 class TestDataDetailGetPermissions(SimpleTestCase):
     @patch.object(DataSerializer, "data")
     @patch.object(data_api, "get_by_id")

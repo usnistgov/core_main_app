@@ -32,6 +32,7 @@ class DataSerializer(DocumentSerializer):
         model = Data
         fields = ["id",
                   "template",
+                  "workspace",
                   "user_id",
                   "title",
                   "xml_content",
@@ -45,6 +46,7 @@ class DataSerializer(DocumentSerializer):
         # Create data
         instance = Data(
             template=validated_data['template'],
+            workspace=validated_data['workspace'],
             title=validated_data['title'],
             user_id=str(validated_data['user'].id),
         )

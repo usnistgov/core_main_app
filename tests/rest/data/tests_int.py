@@ -16,6 +16,7 @@ fixture_data = DataFixtures()
 fixture_data_query = QueryDataFixtures()
 fixture_data_workspace = AccessControlDataFixture()
 
+
 class TestDataListbyWorkspace(MongoIntegrationBaseTestCase):
     fixture = fixture_data_workspace
 
@@ -45,6 +46,19 @@ class TestDataListbyWorkspace(MongoIntegrationBaseTestCase):
 
         # Assert
         self.assertEqual(len(response.data), 0)
+
+    def test_get_all_by_correct_workspace_returns_data(self):
+        # Arrange
+        user = create_mock_user('1', is_superuser=True)
+
+        # Act
+        response = RequestMock.do_request_get(data_rest_views.DataListByWorkspace.as_view(),
+                                              user,
+                                              param={'workspace_id': self.fixture.workspace_1.id})
+
+        # Assert
+        self.assertEqual(len(response.data), 2)
+
 
 class TestDataList(MongoIntegrationBaseTestCase):
     fixture = fixture_data
@@ -136,7 +150,6 @@ class TestDataList(MongoIntegrationBaseTestCase):
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_post_data_incorrect_template_returns_http_400(self):
         # Arrange
@@ -431,7 +444,8 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
 
     def test_post_query_json_and_operator_returns_data_1(self):
         # Arrange
-        self.data.update({"query": {"$and": [{"root.complex.child2": {"$lt": 1}}, {"root.complex.child2": { "$gte": 0 }}]}})
+        self.data.update(
+            {"query": {"$and": [{"root.complex.child2": {"$lt": 1}}, {"root.complex.child2": {"$gte": 0}}]}})
 
         # Act
         response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
@@ -613,6 +627,3 @@ class TestDataChangeOwner(MongoIntegrationBaseTestCase):
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-
-
