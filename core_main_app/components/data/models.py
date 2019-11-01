@@ -175,7 +175,27 @@ class Data(AbstractData):
         Returns:
 
         """
-        return Data.objects(Q(workspace__in=list_workspace) | Q(user_id=str(user_id))).order_by(*order_by_field)
+        return Data.objects(
+            Q(workspace__in=list_workspace) | Q(user_id=str(user_id))
+        ).order_by(*order_by_field)
+
+    @staticmethod
+    def get_all_by_templates_and_workspaces(list_template, list_workspace,
+                                            order_by_field):
+        """ Get all data stored in the list of workspace and created from the
+        list of templates.
+
+        Args:
+            list_template:
+            list_workspace:
+            order_by_field:
+
+        Returns:
+
+        """
+        return Data.objects(
+            Q(workspace__in=list_workspace) & Q(template__in=list_template)
+        ).order_by(*order_by_field)
 
     @staticmethod
     def aggregate(pipeline):

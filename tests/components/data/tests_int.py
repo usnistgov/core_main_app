@@ -490,108 +490,106 @@ class TestGetAllByWorkspace(MongoIntegrationBaseTestCase):
         self.assertListEqual(list(data), [self.fixture.data_3, self.fixture.data_5])
 
 
-class TestGetAllByListWorkspace(MongoIntegrationBaseTestCase):
-
-    fixture = access_control_data_fixture
-
-    def test_get_all_by_list_workspace_data_ordering(self):
-        # Arrange
-        workspace = self.fixture.workspace_1.id
-        ascending_order_by_field = ["+title"]
-        descending_order_by_field = ["-title"]
-        # Act
-        ascending_result = Data.get_all_by_list_workspace([workspace], ascending_order_by_field)
-        descending_result = Data.get_all_by_list_workspace([workspace], descending_order_by_field)
-        # Assert
-        for i in range(len(ascending_result)):
-            self.assertTrue(ascending_result.all()[i].title == descending_result.all()[len(ascending_result) - i - 1].title)
-
-    def test_get_all_by_list_workspace_data_ascending_sorting(self):
-        # Arrange
-        ascending_order_by_field = ["+title"]
-        workspace = self.fixture.workspace_1.id
-        # Act
-        ascending_result = Data.get_all_by_list_workspace([workspace], ascending_order_by_field)
-        # Assert
-        self.assertTrue(self.fixture.data_3.title == ascending_result.all()[0].title)
-        self.assertTrue(self.fixture.data_5.title == ascending_result.all()[1].title)
-
-    def test_get_all_by_list_workspace_data_descending_sorting(self):
-        # Arrange
-        descending_order_by_field = ["-title"]
-        workspace = self.fixture.workspace_1.id
-        # Act
-        descending_result = Data.get_all_by_list_workspace([workspace], descending_order_by_field)
-        # Assert
-        self.assertTrue(self.fixture.data_5.title == descending_result.all()[len(descending_result)-2].title)
-        self.assertTrue(self.fixture.data_3.title == descending_result.all()[len(descending_result)-1].title)
-
-    def test_get_all_by_list_workspace_multi_field_sorting(self):
-        # Arrange
-        ascending_order_by_multi_field = ["+workspace", "+title"]
-        descending_order_by_multi_field = ["+workspace", "-title"]
-        workspace = self.fixture.workspace_1.id
-        # Act
-        ascending_result = Data.get_all_by_list_workspace([workspace], ascending_order_by_multi_field)
-        descending_result = Data.get_all_by_list_workspace([workspace], descending_order_by_multi_field)
-        # Assert
-        self.assertEqual(self.fixture.data_3.user_id, ascending_result.all()[0].user_id)
-        self.assertEqual(self.fixture.data_5.user_id, ascending_result.all()[1].user_id)
-
-        self.assertEqual(self.fixture.data_3.user_id, descending_result.all()[1].user_id)
-        self.assertEqual(self.fixture.data_5.user_id, descending_result.all()[0].user_id)
-
-
 class TestGetAllByListTemplate(MongoIntegrationBaseTestCase):
-
     fixture = access_control_data_fixture
-    
-    def test_get_all_by_list_template_data_ordering(self):
-        # Arrange
-        template = self.fixture.template.id
-        ascending_order_by_field = ["+title"]
-        descending_order_by_field = ["-title"]
-        # Act
-        ascending_result = Data.get_all_by_list_template([template], ascending_order_by_field)
-        descending_result = Data.get_all_by_list_template([template], descending_order_by_field)
-        # Assert
-        for i in range(len(ascending_result)):
-            self.assertTrue(ascending_result.all()[i].title == descending_result.all()[len(ascending_result) - i - 1].title)
 
-    def test_get_all_by_list_template_data_ascending_sorting(self):
-        # Arrange
-        ascending_order_by_field = ["+title"]
-        template = self.fixture.template.id
-        # Act
-        ascending_result = Data.get_all_by_list_template([template], ascending_order_by_field)
-        # Assert
-        self.assertTrue(self.fixture.data_1.title == ascending_result.all()[0].title)
-        self.assertTrue(self.fixture.data_2.title == ascending_result.all()[1].title)
+    def test_returns_data_object(self):
+        result = Data.get_all_by_list_workspace(
+            [self.fixture.workspace_1.id, self.fixture.workspace_2.id],
+            DATA_SORTING_FIELDS
+        )
+        self.assertTrue(all(isinstance(item, Data) for item in result))
 
-    def test_get_all_by_list_template_data_descending_sorting(self):
-        # Arrange
-        descending_order_by_field = ["-title"]
-        template = self.fixture.template.id
-        # Act
-        descending_result = Data.get_all_by_list_template([template], descending_order_by_field)
-        # Assert
-        self.assertTrue(self.fixture.data_2.title == descending_result.all()[len(descending_result)-2].title)
-        self.assertTrue(self.fixture.data_1.title == descending_result.all()[len(descending_result)-1].title)
+    def test_returns_correct_count(self):
+        result = Data.get_all_by_list_workspace(
+            [self.fixture.workspace_1.id, self.fixture.workspace_2.id],
+            DATA_SORTING_FIELDS
+        )
+        self.assertEqual(len(result), 3)
 
-    def test_get_all_by_list_template_multi_field_sorting(self):
-        # Arrange
-        ascending_order_by_multi_field = ["+template", "+title"]
-        descending_order_by_multi_field = ["+template", "-title"]
-        template = self.fixture.template.id
-        # Act
-        ascending_result = Data.get_all_by_list_template([template], ascending_order_by_multi_field)
-        descending_result = Data.get_all_by_list_template([template], descending_order_by_multi_field)
-        # Assert
-        self.assertEqual(self.fixture.data_1.title, ascending_result.all()[0].title)
-        self.assertEqual(self.fixture.data_2.user_id, ascending_result.all()[1].user_id)
+    def test_none_returns_data_object(self):
+        result = Data.get_all_by_list_workspace([None], DATA_SORTING_FIELDS)
+        self.assertTrue(all(isinstance(item, Data) for item in result))
 
-        self.assertEqual(self.fixture.data_2.user_id, descending_result.all()[3].user_id)
-        self.assertEqual(self.fixture.data_1.user_id, descending_result.all()[4].user_id)
+    def test_none_returns_correct_count(self):
+        result = Data.get_all_by_list_workspace([None], DATA_SORTING_FIELDS)
+        self.assertEqual(len(result), 2)
+
+    def test_empty_list_returns_no_data(self):
+        result = Data.get_all_by_list_workspace([], DATA_SORTING_FIELDS)
+        self.assertEqual(len(result), 0)
+
+    def test_invalid_workspace_returns_no_data(self):
+        result = Data.get_all_by_list_workspace([ObjectId()], DATA_SORTING_FIELDS)
+        self.assertEqual(len(result), 0)
+
+
+class TestGetAllByTemplatesAndWorkspaces(MongoIntegrationBaseTestCase):
+    fixture = access_control_data_fixture
+
+    def test_returns_data_object(self):
+        result = Data.get_all_by_templates_and_workspaces(
+            [self.fixture.template.id],
+            [self.fixture.workspace_1.id, self.fixture.workspace_2.id],
+            DATA_SORTING_FIELDS
+        )
+        self.assertTrue(all(isinstance(item, Data) for item in result))
+
+    def test_returns_correct_count(self):
+        result = Data.get_all_by_templates_and_workspaces(
+            [self.fixture.template.id],
+            [self.fixture.workspace_1.id, self.fixture.workspace_2.id],
+            DATA_SORTING_FIELDS
+        )
+        self.assertEqual(len(result), 3)
+
+    def test_null_workspace_returns_data_object(self):
+        result = Data.get_all_by_templates_and_workspaces(
+            [self.fixture.template.id],
+            [None],
+            DATA_SORTING_FIELDS
+        )
+        self.assertTrue(all(isinstance(item, Data) for item in result))
+
+    def test_null_workspace_returns_correct_count(self):
+        result = Data.get_all_by_templates_and_workspaces(
+            [self.fixture.template.id],
+            [None],
+            DATA_SORTING_FIELDS
+        )
+        self.assertEqual(len(result), 2)
+
+    def test_empty_workspaces_returns_no_data(self):
+        result = Data.get_all_by_templates_and_workspaces(
+            [self.fixture.template.id],
+            [],
+            DATA_SORTING_FIELDS
+        )
+        self.assertEqual(len(result), 0)
+
+    def test_empty_templates_returns_no_data(self):
+        result = Data.get_all_by_templates_and_workspaces(
+            [],
+            [None],
+            DATA_SORTING_FIELDS
+        )
+        self.assertEqual(len(result), 0)
+
+    def test_invalid_workspace_returns_no_data(self):
+        result = Data.get_all_by_templates_and_workspaces(
+            [self.fixture.template.id],
+            [ObjectId()],
+            DATA_SORTING_FIELDS
+        )
+        self.assertEqual(len(result), 0)
+
+    def test_invalid_template_returns_no_data(self):
+        result = Data.get_all_by_templates_and_workspaces(
+            [ObjectId()],
+            [None],
+            DATA_SORTING_FIELDS
+        )
+        self.assertEqual(len(result), 0)
 
 
 class TestGetAllAccessibleByUser(MongoIntegrationBaseTestCase):
