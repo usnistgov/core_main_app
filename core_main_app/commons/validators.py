@@ -8,7 +8,8 @@ from django.utils.deconstruct import deconstructible
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ungettext
-from django.contrib.auth.password_validation import validate_password, MinimumLengthValidator, \
+from django.contrib.auth.password_validation import validate_password as django_validate_password
+from django.contrib.auth.password_validation import MinimumLengthValidator, \
     UserAttributeSimilarityValidator, CommonPasswordValidator
 
 from core_main_app.settings import PASSWORD_MIN_LENGTH, PASSWORD_MIN_UPPERCASE_LETTERS, PASSWORD_MIN_LOWERCASE_LETTERS, \
@@ -210,7 +211,7 @@ def validate_password(password):
     :param password:
     :return:
     """
-    validate_password(password, password_validators=
+    django_validate_password(password, password_validators=
     [MinimumLengthValidator(min_length=PASSWORD_MIN_LENGTH),
      UserAttributeSimilarityValidator(),
      CommonPasswordValidator(),
