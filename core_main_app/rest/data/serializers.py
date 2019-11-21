@@ -1,5 +1,6 @@
 """Serializers used throughout the data Rest API
 """
+
 from rest_framework import serializers
 from rest_framework_mongoengine.serializers import DocumentSerializer
 
@@ -46,7 +47,7 @@ class DataSerializer(DocumentSerializer):
         # Create data
         instance = Data(
             template=validated_data['template'],
-            workspace=validated_data['workspace'],
+            workspace=validated_data['workspace'] if 'workspace' in validated_data else None,
             title=validated_data['title'],
             user_id=str(validated_data['user'].id),
         )
