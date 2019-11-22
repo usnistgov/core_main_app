@@ -54,16 +54,16 @@ def check_can_write(document, user):
     Returns:
 
     """
-    if document.user_id != str(user.id):
-        if hasattr(document, 'workspace') and document.workspace is not None:
-            # get list of accessible workspaces
-            accessible_workspaces = workspace_api.get_all_workspaces_with_write_access_by_user(user)
-            # check that accessed document belongs to an accessible workspace
-            if document.workspace not in accessible_workspaces:
-                raise AccessControlError("The user doesn't have enough rights.")
-        # workspace is not set
+    #TODO: data will inherit of workspace rights, which means a owner can't edit or delete a data if data in wkp that doesn't give hin write rights
+    if hasattr(document, 'workspace') and document.workspace is not None:
+        if workspace_api.is_workspace_public(document.workspace):
+            has_perm_publish(user, rights.publish_data)
         else:
-            raise AccessControlError("The user doesn't have enough rights.")
+            _check_can_write_in_workspace(document.workspace, user)
+
+    # not the owner and workspace is not set or None
+    if document.user_id != str(user.id) and (not hasattr(document, 'workspace') or document.workspace is None):
+        raise AccessControlError("The user doesn't have enough rights.")
 
 
 def check_can_read_list(document_list, user):
@@ -138,10 +138,10 @@ def can_write_in_workspace(func, document, workspace, user, codename):
     if user.is_superuser:
         return func(document, workspace, user)
     if workspace is not None:
-            if workspace_api.is_workspace_public(workspace):
-                has_perm_publish(user, codename)
-            else:
-                _check_can_write_in_workspace(workspace, user)
+        if workspace_api.is_workspace_public(workspace):
+            has_perm_publish(user, codename)
+        else:
+            _check_can_write_in_workspace(workspace, user)
 
     check_can_write(document, user)
 
