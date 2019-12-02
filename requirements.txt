@@ -5,8 +5,9 @@ Django==2.2.4
 django-mongoengine==0.3.3
 django-mongoengine-forms==0.4.5
 django-password-policies==0.4.2
-django-rest-framework-mongoengine==3.3.1
 drf-yasg==1.17.0
+django-rest-framework-mongoengine==3.4.0
+django-rest-swagger==2.1.2
 django-tz-detect==0.2.9
 django-simple-menu==1.2.1
 djangorestframework==3.9.1
