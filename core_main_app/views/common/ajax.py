@@ -4,9 +4,8 @@
 import json
 
 from django.contrib import messages
-from django.urls import reverse_lazy
 from django.http.response import HttpResponse, HttpResponseBadRequest, JsonResponse
-from django.views.generic.edit import UpdateView, CreateView, DeleteView
+from django.urls import reverse_lazy
 
 from core_main_app.commons import exceptions
 from core_main_app.components.template import api as template_api
@@ -14,6 +13,7 @@ from core_main_app.components.template_version_manager import api as template_ve
 from core_main_app.components.template_version_manager.models import TemplateVersionManager
 from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.views.admin.forms import EditTemplateForm
+from django_mongoengine.views import UpdateView, DeleteView, CreateView
 
 
 class AddObjectModalView(CreateView):
@@ -22,7 +22,7 @@ class AddObjectModalView(CreateView):
     """
     template_name = 'core_main_app/common/commons/form.html'
     form_class = None
-    model = None
+    document = None
     success_url = None
     success_message = None
 
@@ -73,7 +73,7 @@ class EditObjectModalView(UpdateView):
     """
     template_name = 'core_main_app/common/commons/form.html'
     form_class = None
-    model = None
+    document = None
     success_url = None
     success_message = None
 
@@ -121,7 +121,7 @@ class DeleteObjectModalView(DeleteView):
         Should be used with delete_page_modal.html and delete.js.
     """
     template_name = 'core_main_app/common/commons/form_delete.html'
-    model = None
+    document = None
     field_for_name = None
     success_url = None
     success_message = None
@@ -181,7 +181,7 @@ class DeleteObjectModalView(DeleteView):
 
 class EditTemplateVersionManagerView(EditObjectModalView):
     form_class = EditTemplateForm
-    model = TemplateVersionManager
+    document = TemplateVersionManager
     success_url = reverse_lazy("admin:core_main_app_templates")
     success_message = 'Name edited with success.'
 

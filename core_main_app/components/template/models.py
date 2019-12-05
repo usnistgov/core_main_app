@@ -1,16 +1,16 @@
 """
 Template models
 """
-from django_mongoengine import fields, Document
 from mongoengine import errors as mongoengine_errors
 
 from core_main_app.commons import exceptions
-from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
+from core_main_app.utils.validation.regex_validation import not_empty_or_whitespaces
+from django_mongoengine import fields, Document
 
 
 class Template(Document):
     """Represents an XML schema template that defines the structure of data"""
-    filename = fields.StringField(regex=NOT_EMPTY_OR_WHITESPACES)
+    filename = fields.StringField(validation=not_empty_or_whitespaces)
     content = fields.StringField()
     hash = fields.StringField()
     _display_name = fields.StringField(blank=True)

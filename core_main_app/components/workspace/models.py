@@ -1,12 +1,12 @@
 """
 Workspace model
 """
-from django_mongoengine import fields, Document
 from mongoengine import errors as mongoengine_errors
 from mongoengine.queryset.visitor import Q
 
 from core_main_app.commons import exceptions
-from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
+from core_main_app.utils.validation.regex_validation import not_empty_or_whitespaces
+from django_mongoengine import fields, Document
 
 
 class Workspace(Document):
@@ -14,7 +14,7 @@ class Workspace(Document):
         Workspace class.
     """
 
-    title = fields.StringField(blank=False, regex=NOT_EMPTY_OR_WHITESPACES)
+    title = fields.StringField(blank=False, validation=not_empty_or_whitespaces)
     owner = fields.StringField(blank=True)
     read_perm_id = fields.StringField(blank=False)
     write_perm_id = fields.StringField(blank=False)

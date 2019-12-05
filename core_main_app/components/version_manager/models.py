@@ -1,11 +1,11 @@
 """
 Version Manager model
 """
-from django_mongoengine import fields, Document
 from mongoengine import errors as mongoengine_errors
 
 from core_main_app.commons import exceptions
-from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
+from core_main_app.utils.validation.regex_validation import not_empty_or_whitespaces
+from django_mongoengine import fields, Document
 
 
 # TODO: could change versions to ReferenceField (Document?)
@@ -15,7 +15,7 @@ from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
 
 class VersionManager(Document):
     """Version Manager"""
-    title = fields.StringField(unique=True, regex=NOT_EMPTY_OR_WHITESPACES)
+    title = fields.StringField(unique=True, validation=not_empty_or_whitespaces)
     user = fields.StringField(blank=True)
     versions = fields.ListField(default=[], blank=True)
     current = fields.StringField(blank=True)

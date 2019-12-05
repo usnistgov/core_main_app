@@ -2,18 +2,17 @@
 """
 from io import BytesIO
 
-from django_mongoengine import fields, Document
-
-from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
 from core_main_app.settings import GRIDFS_DATA_COLLECTION, SEARCHABLE_DATA_OCCURRENCES_LIMIT
 from core_main_app.utils import xml as xml_utils
+from core_main_app.utils.validation.regex_validation import not_empty_or_whitespaces
+from django_mongoengine import fields, Document
 
 
 class AbstractData(Document):
     """ AbstractData object
     """
     dict_content = fields.DictField(blank=True)
-    title = fields.StringField(blank=False, regex=NOT_EMPTY_OR_WHITESPACES)
+    title = fields.StringField(blank=False, validation=not_empty_or_whitespaces)
     last_modification_date = fields.DateTimeField(blank=True, default=None)
     xml_file = fields.FileField(blank=False, collection_name=GRIDFS_DATA_COLLECTION)
 
