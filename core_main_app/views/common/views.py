@@ -261,7 +261,7 @@ def read_xsd_file(xsd_file):
     # put the cursor at the beginning of the file
     xsd_file.seek(0)
     # read the content of the file
-    return xsd_file.read()
+    return xsd_file.read().decode('utf-8')
 
 
 class UploadXSLTView(View):
