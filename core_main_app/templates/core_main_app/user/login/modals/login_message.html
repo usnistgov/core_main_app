@@ -1,10 +1,10 @@
 {% extends 'core_main_app/_render/admin/theme/tools/modal.html' %}
+{% load stripjs %}
 
 {% block modal_id %}login-modal-id{% endblock %}
 {% block modal_title %}Warning{% endblock %}
-
 {% block modal_body %}
-<p class="word-wrap">{{ data.login_message | safe }}</p>
+<p class="word-wrap">{{ data.login_message | stripjs }}</p>
 {% endblock %}
 
 {% block modal_footer %}
