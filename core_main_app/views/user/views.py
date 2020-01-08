@@ -175,10 +175,10 @@ def homepage(request):
         assets["css"] = ["core_main_app/css/homepage.css"]
 
     if finders.find("core_main_app/js/homepage.js") is not None:
-        assets["js"] = {
+        assets["js"] = [{
             "path": "core_main_app/js/homepage.js",
             "is_raw": False
-        }
+        }]
 
     return render(request, "core_main_app/user/homepage.html", assets=assets)
 
