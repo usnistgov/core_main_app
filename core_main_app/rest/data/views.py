@@ -10,6 +10,7 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core_main_app.access_control.api import check_can_write
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
 from core_main_app.components.data import api as data_api
@@ -664,3 +665,101 @@ class DataListByWorkspace(APIView):
         except Exception as api_exception:
             content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class DataPermissions(APIView):
+    """
+    Get the permissions of the data according to the client user
+    """
+
+    def get_object(self, request, pk):
+        """ Get data from db
+
+        Args:
+
+            request: HTTP request
+            pk: ObjectId
+
+        Returns:
+
+            Data
+        """
+        try:
+            return data_api.get_by_id(pk, request.user)
+        except exceptions.DoesNotExist:
+            raise Http404
+
+    def get(self, request):
+        """ Give the user permissions for a list of data ids
+
+        Parameters:
+
+            [
+                "data_id1"
+                "data_id2"
+                "data_id3"
+                ...
+            ]
+
+        Args:
+
+            request: HTTP request
+
+        Returns:
+
+            - code: 200
+              content: JSON Array [ <data_id>: <boolean> ]
+            - code: 400
+              content: Validation error
+            - code: 404
+              content: Template was not found
+            - code: 500
+              content: Internal server error
+        """
+        try:
+            # Build serializer
+            data_ids = json.loads(request.query_params['ids'])
+            results = {}
+
+            for id in data_ids:
+                results[id] = (self.can_write_data(request, id))
+
+            return Response(results, status.HTTP_200_OK)
+
+        except ValidationError as validation_exception:
+            content = {'message': validation_exception.detail}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        except Http404:
+            content = {'message': 'Data not found.'}
+            return Response(content, status=status.HTTP_404_NOT_FOUND)
+        except Exception as api_exception:
+            content = {'message': str(api_exception)}
+            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def can_write_data(self, request, id):
+        """ Get the data permissions of a data
+
+        Args:
+
+            request: http request
+            id: data id
+
+        Returns:
+
+            - Boolean
+            - raise: Http404
+              content: Data was not found
+            - raise: Exception
+              content: Unknown error
+        """
+        try:
+            # Get object
+            data_object = self.get_object(request, id)
+
+            if not request.user.is_superuser:
+                check_can_write(data_object, request.user)
+            return True
+        except AccessControlError as ace:
+            return False
+        except Exception as e:
+            raise e

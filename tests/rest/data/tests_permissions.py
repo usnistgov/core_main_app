@@ -674,3 +674,58 @@ class TestDataChangeOwnerPatchPermissions(SimpleTestCase):
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestDataPermissions(SimpleTestCase):
+
+    @patch.object(Data, 'get_by_id')
+    def test_superuser_returns_http_200(self, get_by_id):
+        mock_user = create_mock_user('1', is_superuser=True)
+        mock_data = Data(user_id='1')
+        get_by_id.return_value = mock_data
+
+        response = RequestMock.do_request_get(data_rest_views.DataPermissions.as_view(),
+                                              mock_user,
+                                              data={'ids': f'["{mock_data.id}"]'})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(Data, 'get_by_id')
+    def test_authenticated_returns_http_200(self, get_by_id):
+        mock_user = create_mock_user('1')
+        mock_data = Data(user_id='1')
+        get_by_id.return_value = mock_data
+
+        response = RequestMock.do_request_get(data_rest_views.DataPermissions.as_view(),
+                                              mock_user,
+                                              data={'ids': f'["{mock_data.id}"]'})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(Data, 'get_by_id')
+    def test_staff_returns_http_200(self, get_by_id):
+        mock_user = create_mock_user('1', is_staff=True)
+        mock_data = Data(user_id='1')
+        get_by_id.return_value = mock_data
+
+        response = RequestMock.do_request_get(data_rest_views.DataPermissions.as_view(),
+                                              mock_user,
+                                              data={'ids': f'["{mock_data.id}"]'})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+    @patch.object(Data, 'get_by_id')
+    def test_get_returns_200_for_anonymous(self, get_by_id):
+        # Arrange
+        mock_user = create_mock_user('999', is_anonymous=True)
+        mock_data = Data(user_id='1')
+        get_by_id.return_value = mock_data
+
+        # Mock
+        response = RequestMock.do_request_get(data_rest_views.DataPermissions.as_view(),
+                                              mock_user,
+                                              data={'ids': '["1"]'})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

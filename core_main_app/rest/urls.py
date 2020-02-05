@@ -75,6 +75,10 @@ urlpatterns = [
     re_path(r'^data/$', data_views.DataList.as_view(),
             name='core_main_app_rest_data_list'),
 
+    re_path(r'^data/permissions/$',
+            data_views.DataPermissions.as_view(),
+            name='core_main_app_rest_data_permissions'),
+
     re_path(r'^data/download/(?P<pk>\w+)/$', data_views.DataDownload.as_view(),
             name='core_main_app_rest_data_download'),
 
@@ -206,6 +210,7 @@ urlpatterns = [
     re_path(r'^workspace/(?P<workspace_id>\w+)/data/$',
             data_views.DataListByWorkspace.as_view(),
             name='core_main_app_rest_data_workspace_list'),
+
 
     re_path(r'^login-page$',
             web_page_views.WebPageList.as_view(

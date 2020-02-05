@@ -126,3 +126,73 @@ class TestDataDownload(SimpleTestCase):
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class TestDataPermissions(SimpleTestCase):
+    def setUp(self):
+        super(TestDataPermissions, self).setUp()
+
+    @patch.object(Data, 'get_by_id')
+    def test_get_returns_http_404_when_data_not_found(self, mock_get_by_id):
+        # Arrange
+        mock_user = create_mock_user('1')
+        mock_get_by_id.side_effect = DoesNotExist("error")
+
+        # Mock
+        response = RequestMock.do_request_get(data_rest_views.DataPermissions.as_view(),
+                                              mock_user,
+                                              data={'ids': '["1"]'})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @patch.object(Data, 'get_by_id')
+    def test_get_returns_permissions_for_superuser(self, mock_get_by_id):
+        # Arrange
+        mock_user = create_mock_user('1', is_superuser=True)
+        mock_data = Data(user_id='1')
+        mock_get_by_id.return_value = mock_data
+
+        # Mock
+        response = RequestMock.do_request_get(data_rest_views.DataPermissions.as_view(),
+                                              mock_user,
+                                              data={'ids': '["1"]'})
+
+        # Assert
+        excepted_result = {}
+        excepted_result['1'] = True
+        self.assertEqual(response.data, excepted_result)
+
+    @patch.object(Data, 'get_by_id')
+    def test_get_returns_permissions_for_owner(self, mock_get_by_id):
+        # Arrange
+        mock_user = create_mock_user('1', is_staff=True)
+        mock_data = Data(user_id='1')
+        mock_get_by_id.return_value = mock_data
+
+        # Mock
+        response = RequestMock.do_request_get(data_rest_views.DataPermissions.as_view(),
+                                              mock_user,
+                                              data={'ids': '["1"]'})
+
+        # Assert
+        excepted_result = {}
+        excepted_result['1'] = True
+        self.assertEqual(response.data, excepted_result)
+
+    @patch.object(Data, 'get_by_id')
+    def test_get_returns_permissions_for_non_owner(self, mock_get_by_id):
+        # Arrange
+        mock_user = create_mock_user('2', is_staff=True)
+        mock_data = Data(user_id='1')
+        mock_get_by_id.return_value = mock_data
+
+        # Mock
+        response = RequestMock.do_request_get(data_rest_views.DataPermissions.as_view(),
+                                              mock_user,
+                                              data={'ids': '["1"]'})
+
+        # Assert
+        excepted_result = {}
+        excepted_result['1'] = False
+        self.assertEqual(response.data, excepted_result)

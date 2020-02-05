@@ -1,5 +1,7 @@
 """ Integration Test for Data Rest API
 """
+from copy import copy
+
 from mock import patch
 from rest_framework import status
 
@@ -8,9 +10,15 @@ from core_main_app.components.workspace.models import Workspace
 from core_main_app.rest.data import views as data_rest_views
 from core_main_app.utils.integration_tests.integration_base_test_case import \
     MongoIntegrationBaseTestCase
+from core_main_app.utils.integration_tests.integration_base_transaction_test_case import \
+    MongoIntegrationTransactionTestCase
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
 from tests.components.data.fixtures.fixtures import DataFixtures, QueryDataFixtures, AccessControlDataFixture
+from tests.components.user.fixtures.fixtures import UserFixtures
+from core_main_app.components.workspace import api as workspace_api
+from core_main_app.components.data import api as data_api
+
 
 fixture_data = DataFixtures()
 fixture_data_query = QueryDataFixtures()
@@ -627,3 +635,139 @@ class TestDataChangeOwner(MongoIntegrationBaseTestCase):
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class TestDataPermissions(MongoIntegrationTransactionTestCase):
+    fixture = fixture_data_workspace
+    admin_user = UserFixtures().create_super_user('admin')
+
+    def setUp(self):
+        """ Insert needed data.
+
+        Returns:
+
+        """
+        super().setUp()
+        self.fixture.insert_data()
+        self.fixture.generate_workspace_with_perm()
+
+    def test_get_returns_correct_permissions_if_user_is_superuser(self):
+        # Arrange
+        user_request = create_mock_user("1", is_superuser=True)
+        data = self.fixture.data_4
+
+        # Act
+        response = RequestMock.do_request_get(data_rest_views.DataPermissions.as_view(),
+                                                user_request,
+                                                data={'ids': f'["{data.id}"]'})
+
+        # Assert
+        excepted_result = {}
+        excepted_result[str(data.id)] = True
+        self.assertEqual(response.data, excepted_result)
+
+    def test_get_returns_correct_permissions_if_user_is_anonymous(self):
+        # Arrange
+        user_request = create_mock_user("1", is_anonymous=True)
+        data = self.fixture.data_4
+
+        # Act
+        response = RequestMock.do_request_get(data_rest_views.DataPermissions.as_view(),
+                                                user_request,
+                                                data={'ids': f'["{data.id}"]'})
+
+        # Assert
+        excepted_result = {}
+        excepted_result[str(data.id)] = False
+        self.assertEqual(response.data, excepted_result)
+
+    @patch.object(data_api, 'get_by_id')
+    def test_get_returns_correct_permissions_if_user_is_not_owner(self, data_get_by_id):
+        # Arrange
+        user_request = UserFixtures().create_user('no_owner_user', is_staff=True)
+        data = self.fixture.data_4
+        data_get_by_id.return_value = data
+
+        # Act
+        response = RequestMock.do_request_get(data_rest_views.DataPermissions.as_view(),
+                                                user_request,
+                                                data={'ids': f'["{data.id}"]'})
+
+        # Assert
+        excepted_result = {}
+        excepted_result[str(data.id)] = False
+        self.assertEqual(response.data, excepted_result)
+
+    @patch.object(data_api, 'get_by_id')
+    def test_get_returns_correct_permissions_if_user_is_owner(self, data_get_by_id):
+        # Arrange
+        user_request = UserFixtures().create_user('owner_user', is_staff=True)
+        data = copy(self.fixture.data_3) # do not alter the fixture object
+        data.user_id = str(user_request.id)
+        data.workspace = None
+        data_get_by_id.return_value = data
+
+        # Act
+        response = RequestMock.do_request_get(data_rest_views.DataPermissions.as_view(),
+                                                user_request,
+                                                data={'ids': f'["{data.id}"]'})
+
+        # Assert
+        excepted_result = {}
+        excepted_result[str(data.id)] = True
+        self.assertEqual(response.data, excepted_result)
+
+    @patch.object(data_api, 'get_by_id')
+    def test_get_if_user_has_read_permission_in_workspace(self, data_get_by_id):
+        # Arrange
+        user_request = UserFixtures().create_user('read_user')
+        data = self.fixture.data_collection[self.fixture.USER_2_WORKSPACE_2]
+        data_get_by_id.return_value = data
+        workspace_api.add_user_read_access_to_workspace(self.fixture.workspace_2, user_request, self.admin_user)
+
+        # Act
+        response = RequestMock.do_request_get(data_rest_views.DataPermissions.as_view(),
+                                                user_request,
+                                                data={'ids': f'["{data.id}"]'})
+
+        # Assert
+        excepted_result = {}
+        excepted_result[str(data.id)] = False
+        self.assertEqual(response.data, excepted_result)
+
+    @patch.object(data_api, 'get_by_id')
+    def test_get_if_user_has_write_permission_in_workspace(self, data_get_by_id):
+        # Arrange
+        user_request = UserFixtures().create_user('write_user')
+        data = self.fixture.data_collection[self.fixture.USER_2_WORKSPACE_2]
+        data_get_by_id.return_value = data
+        workspace_api.add_user_write_access_to_workspace(self.fixture.workspace_2, user_request, self.admin_user)
+
+        # Act
+        response = RequestMock.do_request_get(data_rest_views.DataPermissions.as_view(),
+                                                user_request,
+                                                data={'ids': f'["{data.id}"]'})
+
+        # Assert
+        excepted_result = {}
+        excepted_result[str(data.id)] = True
+        self.assertEqual(response.data, excepted_result)
+
+    @patch.object(data_api, 'get_by_id')
+    def test_get_if_user_has_write_read_permission_in_workspace(self, data_get_by_id):
+        # Arrange
+        user_request = UserFixtures().create_user('rw_user')
+        data = self.fixture.data_collection[self.fixture.USER_2_WORKSPACE_2]
+        data_get_by_id.return_value = data
+        workspace_api.add_user_read_access_to_workspace(self.fixture.workspace_2, user_request, self.admin_user)
+        workspace_api.add_user_write_access_to_workspace(self.fixture.workspace_2, user_request, self.admin_user)
+
+        # Act
+        response = RequestMock.do_request_get(data_rest_views.DataPermissions.as_view(),
+                                                user_request,
+                                                data={'ids': f'["{data.id}"]'})
+
+        # Assert
+        excepted_result = {}
+        excepted_result[str(data.id)] = True
+        self.assertEqual(response.data, excepted_result)

@@ -3,6 +3,8 @@
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
 from core_main_app.components.workspace.models import Workspace
+from core_main_app.components.workspace import api as workspace_api
+from core_main_app.permissions import api as permission_api
 from core_main_app.utils.integration_tests.fixture_interface import FixtureInterface
 
 
@@ -161,7 +163,7 @@ class AccessControlDataFixture(FixtureInterface):
         self.template = template.save()
 
     def generate_workspace(self):
-        """ Generate an unique Template.
+        """ Generate the workspaces.
 
         Returns:
 
@@ -174,3 +176,18 @@ class AccessControlDataFixture(FixtureInterface):
                                      owner='2',
                                      read_perm_id='2',
                                      write_perm_id='2').save()
+
+    def generate_workspace_with_perm(self):
+        """ Generate the workspaces and the perm object.
+
+        Returns:
+
+        """
+        try:
+            self.workspace_1 = workspace_api.create_and_save('Workspace 1')
+            self.workspace_2 = workspace_api.create_and_save('Workspace 2')
+            self.data_3.workspace = self.workspace_1
+            self.data_4.workspace = self.workspace_2
+            self.data_5.workspace = self.workspace_1
+        except Exception as e:
+            print(e.message)
