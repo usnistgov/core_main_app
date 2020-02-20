@@ -6,7 +6,7 @@ from core_main_app.access_control.api import has_perm_administration, can_read_o
 from core_main_app.access_control.decorators import access_control
 from core_main_app.components.blob.access_control import can_write_blob_workspace
 from core_main_app.components.blob.models import Blob
-
+from core_main_app.access_control.api import can_change_owner
 
 def insert(blob):
     """ Insert the blob in the blob repository.
@@ -108,3 +108,19 @@ def get_all_by_workspace(workspace, user):
 
     """
     return Blob.get_all_by_workspace(workspace)
+
+
+@access_control(can_change_owner)
+def change_owner(blob, new_user, user):
+    """ Change blob's owner.
+
+    Args:
+        blob:
+        user:
+        new_user:
+
+    Returns:
+    """
+    # FIXME: user can transfer data to anybody, too permissive
+    blob.user_id = str(new_user.id)
+    blob.save()

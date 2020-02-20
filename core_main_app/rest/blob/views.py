@@ -15,6 +15,7 @@ from core_main_app.commons import exceptions
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.rest.blob.serializers import BlobSerializer, DeleteBlobsSerializer
 from core_main_app.utils.file import get_file_http_response
+from core_main_app.components.user import api as user_api
 
 
 class AbstractBlobList(APIView, metaclass=ABCMeta):
@@ -505,3 +506,80 @@ class BlobAssign(APIView):
             content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+class BlobChangeOwner(APIView):
+    """ Change the Owner of a blob
+    """
+    permission_classes = (IsAdminUser,)
+
+    def get_object(self, request, pk):
+        """ Get blob from db
+
+        Args:
+
+            request: HTTP request
+            pk: ObjectId
+
+        Returns:
+
+            Blob
+        """
+        try:
+            return blob_api.get_by_id(pk, request.user)
+        except exceptions.DoesNotExist:
+            raise Http404
+
+    def get_user(self, user_id):
+        """ Retrieve a User
+
+        Args:
+
+            user_id: ObjectId
+
+        Returns:
+
+            - code: 404
+              content: Object was not found
+        """
+        try:
+            return user_api.get_user_by_id(user_id)
+        except exceptions.DoesNotExist:
+            raise Http404
+
+    def patch(self, request, pk, user_id):
+        """ Change the Owner of a blob
+
+        Args:
+
+            request: HTTP request
+            pk: ObjectId
+            user_id: ObjectId
+
+        Returns:
+
+            - code: 200
+              content: None
+            - code: 403
+              content: Authentication error
+            - code: 404
+              content: Object was not found
+            - code: 500
+              content: Internal server error
+        """
+        try:
+            # get object
+            data_object = self.get_object(request, pk)
+            user_object = self.get_user(user_id)
+
+            # change owner
+            blob_api.change_owner(data_object, user_object, request.user)
+            return Response({}, status=status.HTTP_200_OK)
+        except Http404:
+            content = {'message': 'Blob or user not found.'}
+            return Response(content, status=status.HTTP_404_NOT_FOUND)
+        except AccessControlError as ace:
+            content = {'message': str(ace)}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
+        except Exception as api_exception:
+            content = {'message': str(api_exception)}
+            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

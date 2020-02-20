@@ -180,5 +180,37 @@ class TestBlobDelete(MongoIntegrationBaseTestCase):
             blob_api.delete(fixture_blob.blob_collection[fixture_blob.USER_2_NO_WORKSPACE], mock_user)
 
 
+class TestBlobChangeOwner(MongoIntegrationBaseTestCase):
+
+    fixture = fixture_blob
+
+    def test_change_owner_from_owner_to_owner_ok(self):
+        mock_owner = _create_user('1')
+        blob_api.change_owner(document=fixture_blob.blob_collection[fixture_blob.USER_1_NO_WORKSPACE],
+                              new_user=mock_owner,
+                              user=mock_owner)
+
+    def test_change_owner_from_owner_to_user_ok(self):
+        mock_owner = _create_user('1')
+        mock_user = _create_user('2')
+        blob_api.change_owner(document=fixture_blob.blob_collection[fixture_blob.USER_1_NO_WORKSPACE],
+                              new_user=mock_user,
+                              user=mock_owner)
+
+    def test_change_owner_from_user_to_user_raises_exception(self):
+        mock_owner = _create_user('1')
+        mock_user = _create_user('2')
+        with self.assertRaises(AccessControlError):
+            blob_api.change_owner(document=fixture_blob.blob_collection[fixture_blob.USER_1_NO_WORKSPACE],
+                                  new_user=mock_owner,
+                                  user=mock_user)
+
+    def test_change_owner_as_superuser_ok(self):
+        mock_user = _create_user('2', is_superuser=True)
+        blob_api.change_owner(document=fixture_blob.blob_collection[fixture_blob.USER_1_NO_WORKSPACE],
+                              new_user=mock_user,
+                              user=mock_user)
+
+
 def _create_user(user_id, is_superuser=False):
     return create_mock_user(user_id, is_superuser=is_superuser)

@@ -267,3 +267,24 @@ def _check_can_read(document, user):
         # workspace is not set
         else:
             raise AccessControlError("The user doesn't have enough rights to access this.")
+
+
+def can_change_owner(func, document, new_user, user):
+    """ Can user change document's owner.
+
+    Args:
+        func:
+        document:
+        new_user:
+        user:
+
+    Returns:
+
+    """
+    if user.is_superuser:
+        return func(document, new_user, user)
+
+    if document.user_id != str(user.id):
+        raise AccessControlError("The user doesn't have enough rights to access this document.")
+
+    return func(document, new_user, user)

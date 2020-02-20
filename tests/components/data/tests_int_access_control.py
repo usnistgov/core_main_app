@@ -265,14 +265,14 @@ class TestDataChangeOwner(MongoIntegrationBaseTestCase):
 
     def test_change_owner_from_owner_to_owner_ok(self):
         mock_owner = _create_user('1')
-        data_api.change_owner(data=fixture_data.data_collection[fixture_data.USER_1_NO_WORKSPACE],
+        data_api.change_owner(document=fixture_data.data_collection[fixture_data.USER_1_NO_WORKSPACE],
                               new_user=mock_owner,
                               user=mock_owner)
 
     def test_change_owner_from_owner_to_user_ok(self):
         mock_owner = _create_user('1')
         mock_user = _create_user('2')
-        data_api.change_owner(data=fixture_data.data_collection[fixture_data.USER_1_NO_WORKSPACE],
+        data_api.change_owner(document=fixture_data.data_collection[fixture_data.USER_1_NO_WORKSPACE],
                               new_user=mock_user,
                               user=mock_owner)
 
@@ -280,13 +280,13 @@ class TestDataChangeOwner(MongoIntegrationBaseTestCase):
         mock_owner = _create_user('1')
         mock_user = _create_user('2')
         with self.assertRaises(AccessControlError):
-            data_api.change_owner(data=fixture_data.data_collection[fixture_data.USER_1_NO_WORKSPACE],
+            data_api.change_owner(document=fixture_data.data_collection[fixture_data.USER_1_NO_WORKSPACE],
                                   new_user=mock_owner,
                                   user=mock_user)
 
     def test_change_owner_as_superuser_ok(self):
         mock_user = _create_user('2', is_superuser=True)
-        data_api.change_owner(data=fixture_data.data_collection[fixture_data.USER_1_NO_WORKSPACE],
+        data_api.change_owner(document=fixture_data.data_collection[fixture_data.USER_1_NO_WORKSPACE],
                               new_user=mock_user,
                               user=mock_user)
 

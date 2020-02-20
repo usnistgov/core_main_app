@@ -93,27 +93,6 @@ def can_read_aggregate_query(func, query, user):
     return data
 
 
-def can_change_owner(func, data, new_user, user):
-    """ Can user change data's owner.
-
-    Args:
-        func:
-        data:
-        new_user:
-        user:
-
-    Returns:
-
-    """
-    if user.is_superuser:
-        return func(data, new_user, user)
-
-    if data.user_id != str(user.id):
-        raise AccessControlError("The user doesn't have enough rights to access this " + get_data_label() + ".")
-
-    return func(data, new_user, user)
-
-
 def _update_can_read_query(query, user):
     """ Update query with access control parameters.
 

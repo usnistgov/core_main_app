@@ -6,7 +6,7 @@ import pytz
 
 import core_main_app.access_control.api
 import core_main_app.components.workspace.access_control
-from core_main_app.access_control import api as api_access_control
+from core_main_app.access_control import api as access_control_api
 from core_main_app.access_control.decorators import access_control
 from core_main_app.commons import exceptions as exceptions
 from core_main_app.components.data import access_control as data_api_access_control
@@ -17,7 +17,7 @@ from core_main_app.settings import DATA_SORTING_FIELDS
 from xml_utils.xsd_tree.xsd_tree import XSDTree
 
 
-@access_control(core_main_app.access_control.api.can_read_or_write_in_workspace)
+@access_control(access_control_api.can_read_or_write_in_workspace)
 def get_all_by_workspace(workspace, user, order_by_field=DATA_SORTING_FIELDS):
     """ Get all data that belong to the workspace.
 
@@ -58,7 +58,7 @@ def get_by_id(data_id, user):
     return Data.get_by_id(data_id)
 
 
-@access_control(api_access_control.has_perm_administration)
+@access_control(access_control_api.has_perm_administration)
 def get_all(user, order_by_field=DATA_SORTING_FIELDS):
     """ Get all the data if superuser. Raise exception otherwise.
 
@@ -189,7 +189,7 @@ def delete(data, user):
     data.delete()
 
 
-@access_control(data_api_access_control.can_change_owner)
+@access_control(access_control_api.can_change_owner)
 def change_owner(data, new_user, user):
     """ Change data's owner.
 

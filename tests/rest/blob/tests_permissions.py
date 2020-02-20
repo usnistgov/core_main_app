@@ -354,3 +354,71 @@ class TestBlobAssignPatchPermissions(SimpleTestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestBlobChangeOwnerPatchPermissions(SimpleTestCase):
+
+    @patch.object(blob_api, "change_owner")
+    @patch('core_main_app.components.user.api.get_user_by_id')
+    @patch.object(Blob, 'get_by_id')
+    def test_anonymous_returns_http_403(self,
+                                        mock_blob_api_get_by_id,
+                                        mock_user_api_get_by_id,
+                                        mock_blob_api_change_owner):
+        mock_blob_api_get_by_id.return_value = None
+        mock_user_api_get_by_id.return_value = None
+        mock_blob_api_change_owner.return_value = None
+
+        response = RequestMock.do_request_patch(
+            blob_rest_views.BlobChangeOwner.as_view(),
+            None,
+            param={"pk": 0, "user_id": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch.object(blob_api, "change_owner")
+    @patch('core_main_app.components.user.api.get_user_by_id')
+    @patch.object(Blob, 'get_by_id')
+    def test_authenticated_returns_http_403(self,
+                                            mock_blob_api_get_by_id,
+                                            mock_user_api_get_by_id,
+                                            mock_blob_api_change_owner):
+        mock_blob_api_get_by_id.return_value = None
+        mock_user_api_get_by_id.return_value = None
+        mock_blob_api_change_owner.return_value = None
+
+        mock_user = create_mock_user('1')
+
+        response = RequestMock.do_request_patch(
+            blob_rest_views.BlobChangeOwner.as_view(),
+            mock_user,
+            param={"pk": 0, "user_id": 0}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch.object(blob_api, "change_owner")
+    @patch('core_main_app.components.user.api.get_user_by_id')
+    @patch.object(Blob, 'get_by_id')
+    def test_staff_returns_http_200(self,
+                                    mock_blob_api_get_by_id,
+                                    mock_user_api_get_by_id,
+                                    mock_blob_api_change_owner):
+        # Arrange
+        # is_staff to access the view
+        # is_superuser to be able to change the owner
+        user_request = create_mock_user("1", is_staff=True, is_superuser=True)
+        mock_blob_api_get_by_id.return_value = None
+        mock_user_api_get_by_id.return_value = None
+        mock_blob_api_change_owner.return_value = None
+
+        # Act
+        response = RequestMock.do_request_patch(
+            blob_rest_views.BlobChangeOwner.as_view(),
+            user_request,
+            param={"pk": 0, "user_id": 0}
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

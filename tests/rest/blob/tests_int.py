@@ -487,3 +487,254 @@ class TestBlobAssign(MongoIntegrationBaseTestCase):
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+class TestBlobAssign(MongoIntegrationBaseTestCase):
+    fixture = fixture_blob_workspace
+
+    @patch.object(Workspace, 'get_by_id')
+    @patch.object(Blob, 'get_by_id')
+    def test_get_returns_http_200(self, blob_get_by_id, workspace_get_by_id):
+        # Arrange
+        blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
+        user = create_mock_user(blob.user_id, is_superuser=True)
+        blob_get_by_id.return_value = blob
+        workspace_get_by_id.return_value = self.fixture.workspace_1
+
+        # Act
+        response = RequestMock.do_request_patch(views.BlobAssign.as_view(),
+                                                user,
+                                                param={'pk': blob.id,
+                                                       'workspace_id': self.fixture.workspace_1.id})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(Workspace, 'get_by_id')
+    @patch.object(Blob, 'get_by_id')
+    def test_assign_blob_to_workspace_updates_workspace(self, blob_get_by_id, workspace_get_by_id):
+        # Arrange
+        blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
+        user = create_mock_user(blob.user_id, is_superuser=True)
+        blob_get_by_id.return_value = blob
+        workspace_get_by_id.return_value = self.fixture.workspace_2
+
+        # Act
+        RequestMock.do_request_patch(views.BlobAssign.as_view(),
+                                     user,
+                                     param={'pk': blob.id,
+                                            'workspace_id': self.fixture.workspace_2.id})
+
+        # Assert
+        self.assertEqual(str(blob.workspace.id), str(self.fixture.workspace_2.id))
+
+    @patch.object(Workspace, 'get_by_id')
+    @patch.object(Blob, 'get_by_id')
+    def test_assign_blob_to_workspace_returns_http_200(self, blob_get_by_id, workspace_get_by_id):
+        # Arrange
+        blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
+        user = create_mock_user(blob.user_id, is_superuser=True)
+        blob_get_by_id.return_value = blob
+        workspace_get_by_id.return_value = self.fixture.workspace_2
+
+        # Act
+        response = RequestMock.do_request_patch(views.BlobAssign.as_view(),
+                                                user,
+                                                param={'pk': blob.id,
+                                                       'workspace_id': self.fixture.workspace_2.id})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(Workspace, 'get_by_id')
+    def test_assign_bad_blob_id_returns_http_404(self, workspace_get_by_id):
+        # Arrange
+        fake_blob_id = '507f1f77bcf86cd799439011'
+        user = create_mock_user('1', is_superuser=True)
+        workspace_get_by_id.return_value = self.fixture.workspace_2
+
+        # Act
+        response = RequestMock.do_request_patch(views.BlobAssign.as_view(),
+                                                user,
+                                                param={'pk': fake_blob_id,
+                                                       'workspace_id': self.fixture.workspace_2.id})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @patch.object(Blob, 'get_by_id')
+    def test_assign_bad_workspace_id_returns_http_404(self, blob_get_by_id):
+        # Arrange
+        fake_workspace_id = '507f1f77bcf86cd799439011'
+        blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
+        user = create_mock_user(blob.user_id, is_superuser=True)
+        blob_get_by_id.return_value = blob
+
+        # Act
+        response = RequestMock.do_request_patch(views.BlobAssign.as_view(),
+                                                user,
+                                                param={'pk': blob.id,
+                                                       'workspace_id': fake_workspace_id})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class TestBlobAssign(MongoIntegrationBaseTestCase):
+    fixture = fixture_blob_workspace
+
+    @patch.object(Workspace, 'get_by_id')
+    @patch.object(Blob, 'get_by_id')
+    def test_get_returns_http_200(self, blob_get_by_id, workspace_get_by_id):
+        # Arrange
+        blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
+        user = create_mock_user(blob.user_id, is_superuser=True)
+        blob_get_by_id.return_value = blob
+        workspace_get_by_id.return_value = self.fixture.workspace_1
+
+        # Act
+        response = RequestMock.do_request_patch(views.BlobAssign.as_view(),
+                                                user,
+                                                param={'pk': blob.id,
+                                                       'workspace_id': self.fixture.workspace_1.id})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(Workspace, 'get_by_id')
+    @patch.object(Blob, 'get_by_id')
+    def test_assign_blob_to_workspace_updates_workspace(self, blob_get_by_id, workspace_get_by_id):
+        # Arrange
+        blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
+        user = create_mock_user(blob.user_id, is_superuser=True)
+        blob_get_by_id.return_value = blob
+        workspace_get_by_id.return_value = self.fixture.workspace_2
+
+        # Act
+        RequestMock.do_request_patch(views.BlobAssign.as_view(),
+                                     user,
+                                     param={'pk': blob.id,
+                                            'workspace_id': self.fixture.workspace_2.id})
+
+        # Assert
+        self.assertEqual(str(blob.workspace.id), str(self.fixture.workspace_2.id))
+
+    @patch.object(Workspace, 'get_by_id')
+    @patch.object(Blob, 'get_by_id')
+    def test_assign_blob_to_workspace_returns_http_200(self, blob_get_by_id, workspace_get_by_id):
+        # Arrange
+        blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
+        user = create_mock_user(blob.user_id, is_superuser=True)
+        blob_get_by_id.return_value = blob
+        workspace_get_by_id.return_value = self.fixture.workspace_2
+
+        # Act
+        response = RequestMock.do_request_patch(views.BlobAssign.as_view(),
+                                                user,
+                                                param={'pk': blob.id,
+                                                       'workspace_id': self.fixture.workspace_2.id})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(Workspace, 'get_by_id')
+    def test_assign_bad_blob_id_returns_http_404(self, workspace_get_by_id):
+        # Arrange
+        fake_blob_id = '507f1f77bcf86cd799439011'
+        user = create_mock_user('1', is_superuser=True)
+        workspace_get_by_id.return_value = self.fixture.workspace_2
+
+        # Act
+        response = RequestMock.do_request_patch(views.BlobAssign.as_view(),
+                                                user,
+                                                param={'pk': fake_blob_id,
+                                                       'workspace_id': self.fixture.workspace_2.id})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @patch.object(Blob, 'get_by_id')
+    def test_assign_bad_workspace_id_returns_http_404(self, blob_get_by_id):
+        # Arrange
+        fake_workspace_id = '507f1f77bcf86cd799439011'
+        blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
+        user = create_mock_user(blob.user_id, is_superuser=True)
+        blob_get_by_id.return_value = blob
+
+        # Act
+        response = RequestMock.do_request_patch(views.BlobAssign.as_view(),
+                                                user,
+                                                param={'pk': blob.id,
+                                                       'workspace_id': fake_workspace_id})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class TestBlobChangeOwner(MongoIntegrationBaseTestCase):
+    fixture = fixture_blob_workspace
+
+    @patch('core_main_app.components.user.api.get_user_by_id')
+    @patch.object(Blob, 'get_by_id')
+    def test_get_returns_http_200_if_user_is_superuser(self,
+                                                       blob_get_by_id,
+                                                       user_get_by_id):
+        # Arrange
+        blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
+        user_request = create_mock_user("65467", is_staff=True, is_superuser=True)
+        user_new_owner = create_mock_user("123")
+        blob_get_by_id.return_value = blob
+        user_get_by_id.return_value = user_new_owner
+
+        # Act
+        response = RequestMock.do_request_patch(views.BlobChangeOwner.as_view(),
+                                                user_request,
+                                                param={'pk': blob.id,
+                                                       'user_id': self.fixture.workspace_1.id})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch('core_main_app.components.user.api.get_user_by_id')
+    @patch.object(Blob, 'get_by_id')
+    def test_get_returns_http_200_if_user_is_not_superuser_but_have_access_to_the_blob(self,
+                                                                                       blob_get_by_id,
+                                                                                       user_get_by_id):
+        # Arrange
+        blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
+        user_request = create_mock_user("1", is_staff=True)
+        user_new_owner = create_mock_user("123")
+        blob_get_by_id.return_value = blob
+        user_get_by_id.return_value = user_new_owner
+
+        # Act
+        response = RequestMock.do_request_patch(views.BlobChangeOwner.as_view(),
+                                                user_request,
+                                                param={'pk': blob.id,
+                                                       'user_id': self.fixture.workspace_1.id})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch("core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user")
+    @patch('core_main_app.components.user.api.get_user_by_id')
+    @patch.object(Blob, 'get_by_id')
+    def test_get_returns_http_403_if_user_is_not_superuser_or_have_no_access_to_the_blob(self,
+                                                                                         blob_get_by_id,
+                                                                                         user_get_by_id,
+                                                                                         read_access_mock):
+        # Arrange
+        blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
+        user_request = create_mock_user("65467", is_staff=True)
+        user_new_owner = create_mock_user("123")
+        blob_get_by_id.return_value = blob
+        user_get_by_id.return_value = user_new_owner
+        read_access_mock.return_value = []
+
+        # Act
+        response = RequestMock.do_request_patch(views.BlobChangeOwner.as_view(),
+                                                user_request,
+                                                param={'pk': blob.id,
+                                                       'user_id': self.fixture.workspace_1.id})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
