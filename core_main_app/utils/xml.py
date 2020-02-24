@@ -2,6 +2,7 @@
 """
 import json
 import logging
+import re
 from collections import OrderedDict
 from urllib.parse import urlparse
 
@@ -24,7 +25,8 @@ logger = logging.getLogger(__name__)
 
 
 def validate_xml_schema(xsd_tree):
-    """Check if XSD schema is valid, send XSD Schema to server to be validated if XERCES_VALIDATION is true.
+    """ Check if XSD schema is valid, send XSD Schema to server to be validated if
+    XERCES_VALIDATION is true.
 
     Args:
         xsd_tree:
@@ -199,13 +201,13 @@ def get_template_with_server_dependencies(xsd_string, dependencies):
     # replace includes/imports by API calls (get dependencies starting by the imports)
     try:
         xsd_tree = update_dependencies(xsd_string, dependencies)
-    except Exception as e:
+    except Exception:
         raise exceptions.XSDError("Something went wrong during dependency update.")
 
     # validate the schema
     try:
         error = validate_xml_schema(xsd_tree)
-    except Exception as e:
+    except Exception:
         raise exceptions.XSDError("Something went wrong during XSD validation.")
 
     # is it a valid XML document ?
@@ -228,7 +230,7 @@ def get_hash(xml_string):
     """
     try:
         return xsd_hash.get_hash(xml_string)
-    except Exception as e:
+    except Exception:
         raise exceptions.XSDError("Something wrong happened during the hashing.")
 
 
@@ -423,3 +425,26 @@ def xsl_transform(xml_string, xslt_string):
     except Exception:
         raise exceptions.CoreError("An unexpected exception happened while transforming the XML")
 
+
+def xpath_to_dot_notation(xpath, namespaces=None):
+    """Transforms XML xpath into dot notation
+
+    Args:
+        xpath:
+        namespaces:
+
+    Returns:
+
+    """
+    if namespaces is None:
+        namespaces = {'xml': xml_utils_constants.XML_NAMESPACE}
+
+    # remove indexes from xpath
+    xpath = re.sub(r'\[[0-9]+\]', '', xpath)
+    # remove namespaces
+    for prefix in list(namespaces.keys()):
+        xpath = re.sub(r'{}:'.format(prefix), '', xpath)
+    # replace / by .
+    xpath = xpath.replace("/", ".")
+
+    return xpath[1:]
