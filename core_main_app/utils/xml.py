@@ -11,6 +11,7 @@ from django.urls import reverse
 
 import core_main_app.commons.exceptions as exceptions
 import xml_utils.commons.constants as xml_utils_constants
+import xml_utils.commons.exceptions as xml_utils_exceptions
 import xml_utils.xml_validation.validation as xml_validation
 from core_main_app.commons.exceptions import XMLError
 from core_main_app.settings import XERCES_VALIDATION, SERVER_URI
@@ -20,6 +21,7 @@ from xml_utils.commons.constants import XSL_NAMESPACE
 from xml_utils.xsd_hash import xsd_hash
 from xml_utils.xsd_tree.operations.namespaces import get_namespaces
 from xml_utils.xsd_tree.xsd_tree import XSDTree
+from xml_utils import xpath as xml_utils_xpath
 
 logger = logging.getLogger(__name__)
 
@@ -427,7 +429,7 @@ def xsl_transform(xml_string, xslt_string):
 
 
 def xpath_to_dot_notation(xpath, namespaces=None):
-    """Transforms XML xpath into dot notation
+    """ Transforms XML xpath into dot notation
 
     Args:
         xpath:
@@ -447,4 +449,20 @@ def xpath_to_dot_notation(xpath, namespaces=None):
     # replace / by .
     xpath = xpath.replace("/", ".")
 
-    return xpath[1:]
+    # Return xpath without first .
+    return xpath[1:] if xpath[0] == "." else xpath
+
+
+def validate_xpath(xpath):
+    """ Validate a provided xpath.
+
+    Args:
+        xpath:
+
+    Raises:
+        core_main_app.commons.exceptions.CoreError
+    """
+    try:
+        xml_utils_xpath.validate_xpath(xpath)
+    except xml_utils_exceptions.XPathError as e:
+        raise exceptions.XMLError(str(e))
