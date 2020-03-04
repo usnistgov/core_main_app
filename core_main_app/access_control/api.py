@@ -5,7 +5,7 @@ import logging
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.permissions import api as permissions_api, rights as rights
-from core_main_app.settings import CAN_SET_PUBLIC_DATA_TO_PRIVATE
+from core_main_app.settings import CAN_SET_PUBLIC_DATA_TO_PRIVATE, CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +54,7 @@ def check_can_write(document, user):
     Returns:
 
     """
-    #TODO: data will inherit of workspace rights, which means a owner can't edit or delete a data if data in wkp that doesn't give hin write rights
+    # TODO: data will inherit of workspace rights, which means a owner can't edit or delete a data if data in wkp that doesn't give hin write rights
     if hasattr(document, 'workspace') and document.workspace is not None:
         if workspace_api.is_workspace_public(document.workspace):
             has_perm_publish(user, rights.publish_data)
@@ -255,6 +255,10 @@ def _check_can_read(document, user):
     Returns:
 
     """
+    # anonymous user case
+    if user.is_anonymous and not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
+        raise AccessControlError("The user doesn't have enough rights to access this document.")
+
     # workspace case
     if document.user_id != str(user.id):
         # workspace is set

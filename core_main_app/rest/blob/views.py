@@ -312,7 +312,6 @@ class BlobDetail(APIView):
 class BlobDownload(APIView):
     """ Download Blob
     """
-    permission_classes = (IsAuthenticated, )
 
     def get_object(self, request, pk):
         """ Get Blob from db

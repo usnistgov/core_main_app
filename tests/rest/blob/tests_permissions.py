@@ -212,13 +212,22 @@ class TestBlobDetailDeletePermissions(SimpleTestCase):
 
 
 class TestBlobDownloadGetPermissions(SimpleTestCase):
-    def test_anonymous_returns_http_403(self):
+
+    @patch.object(blob_api, "get_by_id")
+    def test_anonymous_returns_http_200(self, mock_blob_api_get_by_id):
+        mock_blob = Mock()
+        mock_blob.blob = "blob_text"
+        mock_blob.filename = "blob.txt"
+
+        mock_blob_api_get_by_id.return_value = mock_blob
+
         response = RequestMock.do_request_get(
             blob_rest_views.BlobDownload.as_view(),
-            None
+            None,
+            param={"pk": "0"}
         )
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @patch.object(blob_api, "get_by_id")
     def test_authenticated_returns_http_200(self, mock_blob_api_get_by_id):

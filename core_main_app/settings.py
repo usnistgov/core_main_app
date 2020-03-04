@@ -177,9 +177,9 @@ DEFAULT_DATA_RENDERING_XSLT = getattr(settings, 'DEFAULT_DATA_RENDERING_XSLT',
 """ :py:class:`str`: Path to default XSLT to render data.
 """
 
-# Can anonymous access public data
-CAN_ANONYMOUS_ACCESS_PUBLIC_DATA = getattr(settings, 'CAN_ANONYMOUS_ACCESS_PUBLIC_DATA', False)
-""" :py:class:`bool`: Can anonymous user access public data.
+# Can anonymous access public document
+CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT = getattr(settings, 'CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT', False)
+""" :py:class:`bool`: Can anonymous user access public document.
 """
 
 DISPLAY_NIST_HEADERS = getattr(settings, 'DISPLAY_NIST_HEADERS', False)

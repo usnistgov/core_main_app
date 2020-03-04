@@ -6,7 +6,7 @@ import core_main_app.permissions.rights as rights
 from core_main_app.access_control.api import has_perm_publish, check_can_read_list, can_write_in_workspace
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.workspace import api as workspace_api
-from core_main_app.settings import CAN_ANONYMOUS_ACCESS_PUBLIC_DATA, VERIFY_DATA_ACCESS
+from core_main_app.settings import CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT, VERIFY_DATA_ACCESS
 from core_main_app.utils.labels import get_data_label
 from core_main_app.utils.raw_query.mongo_raw_query import add_access_criteria, add_aggregate_access_criteria
 from core_main_app.settings import DATA_SORTING_FIELDS
@@ -136,7 +136,7 @@ def _get_read_accessible_workspaces_by_user(user):
     Returns:
 
     """
-    if not CAN_ANONYMOUS_ACCESS_PUBLIC_DATA and user.is_anonymous:
+    if not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT and user.is_anonymous:
         accessible_workspaces = []
     else:
         # workspace case
