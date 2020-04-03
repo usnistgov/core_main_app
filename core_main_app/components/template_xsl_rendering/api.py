@@ -11,7 +11,8 @@ logger = logging.getLogger(__name__)
 
 
 def add_or_delete(template_id, list_xslt, detail_xslt, template_xsl_rendering_id=None):
-    """ Manage the saving of a TemplateXslRendering. If no XSLTs have been given, deletes the instance.
+    """ Manage the saving of a TemplateXslRendering. If no XSLTs have been given,
+    deletes the instance.
 
     Args:
         template_id: TemplateXslRendering.
@@ -29,8 +30,10 @@ def add_or_delete(template_id, list_xslt, detail_xslt, template_xsl_rendering_id
         return upsert(template_id, list_xslt, detail_xslt, template_xsl_rendering_id)
     else:
         try:
-            template_xsl_rendering = get_by_id(template_xsl_rendering_id)
-            delete(template_xsl_rendering)
+            if template_xsl_rendering_id:
+                template_xsl_rendering = get_by_id(template_xsl_rendering_id)
+                delete(template_xsl_rendering)
+
             return None
         except Exception:
             raise ApiError("An error occured while deleting the TemplateXSLRendering")
