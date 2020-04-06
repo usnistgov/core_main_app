@@ -32,12 +32,12 @@
 
                <td>
                    {% block box_actions %}
-                    <a class="btn btn-default results-xslt"
+                    <a class="btn btn-secondary results-xslt"
                         href="{% url 'core_main_app_template_xslt' version.object %}">
                         <i class="fa fa-file-code-o"></i> XSLT
                     </a>
                    {% if 'core_parser_app' in INSTALLED_APPS %}
-                    <a class="btn btn-default modules"
+                    <a class="btn btn-secondary modules"
                         href="{% url 'core_parser_app_template_modules' version.object %}">
                         <i class="fa fa-cubes"></i> Modules
                     </a>

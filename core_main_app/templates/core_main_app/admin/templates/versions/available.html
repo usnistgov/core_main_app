@@ -9,7 +9,7 @@
     <!-- If no user is linked to the version manager, it means that we come from the global template list -->
     {% url 'admin:core_main_app_templates' as template_list_url %}
     <a href="{% url 'admin:core_main_app_upload_template_version' data.version_manager.id %}"
-       class="pull-right btn btn-default">
+       class="pull-right btn btn-secondary">
         <i class="fa fa-upload"></i> Upload New Version
     </a>
 {% else %}
@@ -44,22 +44,22 @@
                </td>
                <td>
                    {% block box_actions %}
-                        <a class="btn btn-default results-xslt"
+                        <a class="btn btn-secondary results-xslt"
                             href="{% url 'admin:core_main_app_template_xslt' version.object %}">
                             <i class="fa fa-file-code-o"></i> XSLT
                         </a>
                         {% if 'core_parser_app' in INSTALLED_APPS %}
-                            <a class="btn btn-default modules"
+                            <a class="btn btn-secondary modules"
                                 href="{% url data.module_url version.object %}">
                                 <i class="fa fa-cubes"></i> Modules
                             </a>
                        {% endif %}
                        {% if version.object != data.version_manager.current %}
                             <span class='icon legend long current' objectid='{{ version.object }}'>
-                               <a class="btn btn-default" href="#"><i class="fa fa-bookmark"></i> Set Current</a>
+                               <a class="btn btn-secondary" href="#"><i class="fa fa-bookmark"></i> Set Current</a>
                             </span>
                             <span class='icon legend delete' objectid='{{ version.object }}'>
-                               <a class="btn btn-danger" href="#"><i class="fa fa-trash"></i> Disable</a>
+                               <button class="btn btn-danger"><i class="fa fa-trash"></i> Disable</button>
                             </span>
                         {% endif %}
                    {% endblock %}

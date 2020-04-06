@@ -7,7 +7,7 @@
 <form id="form_start" action='{{data.url}}' method="post" enctype=multipart/form-data>
     {% csrf_token %}
     {{ data.upload_form }}
-    <input type="submit" class="btn btn-default pull-right" value="Upload"/>
+    <input type="submit" class="btn btn-secondary pull-right" value="Upload"/>
 </form>
 
 {% block upload_addons %}{% endblock %}
