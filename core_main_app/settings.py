@@ -209,7 +209,7 @@ XSD_URI_RESOLVER = getattr(settings, 'XSD_URI_RESOLVER', None)
 """ :py:class:`str`: XSD URI Resolver for lxml validation. Choose from:  None, 'REQUESTS_RESOLVER'.
 """
 
-VERIFY_DATA_ACCESS = getattr(settings, 'VERIFY_DATA_ACCESS', True)
+VERIFY_DATA_ACCESS = getattr(settings, 'VERIFY_DATA_ACCESS', False)
 """ :py:class:`bool`: Verify that data returned by a query can be accessed.
 """
 
