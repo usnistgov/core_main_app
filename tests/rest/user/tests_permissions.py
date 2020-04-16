@@ -46,3 +46,36 @@ class TestUserGetPermissions(SimpleTestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestUserListGetPermissions(SimpleTestCase):
+    def test_anonymous_returns_http_403(self):
+        response = RequestMock.do_request_get(
+            user_rest_views.UserList.as_view(),
+            None
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_authenticated_returns_http_403(self):
+        mock_user = create_mock_user('1')
+        response = RequestMock.do_request_get(
+            user_rest_views.UserList.as_view(),
+            mock_user
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch.object(user_api, "get_all_users")
+    def test_staff_returns_http_200(self, get_all_users):
+        get_all_users.return_value = {}
+        mock_user = create_mock_user('1', is_staff=True)
+        response = RequestMock.do_request_get(
+            user_rest_views.UserList.as_view(),
+            mock_user
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+

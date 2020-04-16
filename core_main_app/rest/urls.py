@@ -214,6 +214,9 @@ urlpatterns = [
     re_path(r'^blob/(?P<pk>\w+)/change-owner/(?P<user_id>\w+)$', blob_views.BlobChangeOwner.as_view(),
             name='core_main_app_rest_blob_change_owner'),
 
+    re_path(r'^user/$', user_views.UserList.as_view(),
+            name='core_main_app_user_detail'),
+
     re_path(r'^login-page$',
             web_page_views.WebPageList.as_view(
                 web_page_type="login"
