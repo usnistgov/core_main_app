@@ -15,14 +15,14 @@
                             <span>{{ child.title }}</span>
                             {% if child.external %}
                             <span class="pull-right-container">
-                                <span class="pull-right">
+                                <span class="float-right">
                                     <i class="fa fa-external-link"></i>
                                 </span>
                             </span>
                             {% endif %}
                             {% if child.item_count_url %}
                             <span class="item_count pull-right-container">
-                                <span class="label label-default pull-right badge badge-light hidden" id="{% url child.item_count_url %}">
+                                <span class="label label-default float-right badge badge-light hidden" id="{% url child.item_count_url %}">
                                     N/A
                                 </span>
                             </span>
@@ -39,14 +39,14 @@
                             </span>
                             {% if item.external %}
                             <span class="pull-right-container">
-                                <span class="pull-right">
+                                <span class="float-right">
                                     <i class="fa fa-external-link"></i>
                                 </span>
                             </span>
                             {% endif %}
                             {% if item.item_count_url %}
                             <span class="item_count pull-right-container">
-                                <span class="label label-default pull-right badge badge-light" id="{% url item.item_count_url %}">
+                                <span class="label label-default float-right badge badge-light" id="{% url item.item_count_url %}">
                                         N/A
                                 </span>
                             </span>

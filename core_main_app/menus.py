@@ -21,7 +21,7 @@ Menu.add_item(
 )
 
 Menu.add_item(
-    "admin", MenuItem("Dashboard", reverse("admin:core_main_app_admin_home"), icon="dashboard", weight=-90000),
+    "admin", MenuItem("Dashboard", reverse("admin:core_main_app_admin_home"), icon="tachometer-alt", weight=-90000),
 )
 
 Menu.add_item(
@@ -29,7 +29,7 @@ Menu.add_item(
 )
 
 Menu.add_item(
-    "admin", MenuItem("Login message", reverse("admin:core_main_app_login_page"), icon="file-text", weight=-70000),
+    "admin", MenuItem("Login message", reverse("admin:core_main_app_login_page"), icon="file-alt", weight=-70000),
 )
 
 templates_children = (

@@ -1,9 +1,9 @@
 <div>
-    <button id="btn-previous-page" type="button" class="btn btn-secondary pull-right">
+    <button id="btn-previous-page" type="button" class="btn btn-secondary float-right">
         <i class="fa fa-arrow-left"></i> Back to previous
     </button>
     {% if 'core_tsne_app' in installed_apps %}
-        <a style="margin-top: 1em;" class="btn btn-primary pull-right"
+        <a style="margin-top: 1em;" class="btn btn-primary float-right"
            href="{% url 'core_tsne_app_data' data.data.id %}">
             view on t-sne map
         </a>
