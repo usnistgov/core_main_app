@@ -24,6 +24,7 @@ from core_main_app.utils.decorators import api_staff_member_required
 class AbstractTemplateVersionManagerList(APIView, metaclass=ABCMeta):
     """ List template version managers
     """
+    serializer = TemplateVersionManagerSerializer
 
     @abstractmethod
     def get_template_version_managers(self):
@@ -64,7 +65,7 @@ class AbstractTemplateVersionManagerList(APIView, metaclass=ABCMeta):
                 object_list = object_list.filter(is_disabled=to_bool(is_disabled))
 
             # Serialize object
-            serializer = TemplateVersionManagerSerializer(object_list, many=True)
+            serializer = self.serializer(object_list, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as api_exception:
             content = {'message': str(api_exception)}
@@ -226,6 +227,8 @@ class AbstractStatusTemplateVersionManager(AbstractTemplateVersionManagerDetail,
 class AbstractTemplateList(APIView, metaclass=ABCMeta):
     """ Create a template
     """
+    serializer = TemplateVersionManagerSerializer
+    create_serializer = CreateTemplateSerializer
 
     def post(self, request):
         """ Create a template
@@ -257,8 +260,8 @@ class AbstractTemplateList(APIView, metaclass=ABCMeta):
         """
         try:
             # Build serializers
-            template_serializer = CreateTemplateSerializer(data=request.data)
-            template_version_manager_serializer = TemplateVersionManagerSerializer(data=request.data)
+            template_serializer = self.create_serializer(data=request.data)
+            template_version_manager_serializer = self.serializer(data=request.data)
 
             # Validate data
             template_serializer.is_valid(True)

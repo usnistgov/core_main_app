@@ -28,6 +28,7 @@ class DataList(APIView):
     """ List all user Data, or create a new one.
     """
     permission_classes = (IsAuthenticated,)
+    serializer = DataSerializer
 
     def get(self, request):
         """ Get all user Data
@@ -74,7 +75,7 @@ class DataList(APIView):
                 data_object_list = data_object_list.filter(title=title)
 
             # Serialize object
-            data_serializer = DataSerializer(data_object_list, many=True)
+            data_serializer = self.serializer(data_object_list, many=True)
 
             # Return response
             return Response(data_serializer.data, status=status.HTTP_200_OK)
@@ -111,7 +112,7 @@ class DataList(APIView):
         """
         try:
             # Build serializer
-            data_serializer = DataSerializer(data=request.data)
+            data_serializer = self.serializer(data=request.data)
 
             # Validate data
             data_serializer.is_valid(True)
@@ -135,6 +136,7 @@ class DataDetail(APIView):
     """ Retrieve, update or delete a Data
     """
     permission_classes = (IsAuthenticatedOrReadOnly,)
+    serializer = DataSerializer
 
     def get_object(self, request, pk):
         """ Get data from db
@@ -175,7 +177,7 @@ class DataDetail(APIView):
             data_object = self.get_object(request, pk)
 
             # Serialize object
-            serializer = DataSerializer(data_object)
+            serializer = self.serializer(data_object)
 
             # Return response
             return Response(serializer.data)
@@ -250,9 +252,9 @@ class DataDetail(APIView):
             data_object = self.get_object(request, pk)
 
             # Build serializer
-            data_serializer = DataSerializer(instance=data_object,
-                                             data=request.data,
-                                             partial=True)
+            data_serializer = self.serializer(instance=data_object,
+                                              data=request.data,
+                                              partial=True)
 
             # Validate data
             data_serializer.is_valid(True)
@@ -454,6 +456,8 @@ def get_by_id_with_template_info(request):
 
 
 class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
+    serializer = DataSerializer
+
     def post(self, request):
         """ Execute a query
 
@@ -513,7 +517,7 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
         """
         if 'all' in self.request.data and to_bool(self.request.data['all']):
             # Serialize data list
-            data_serializer = DataSerializer(data_list, many=True)
+            data_serializer = self.serializer(data_list, many=True)
             # Return response
             return Response(data_serializer.data)
         else:
@@ -524,7 +528,7 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
             page = paginator.paginate_queryset(data_list, self.request)
 
             # Serialize page
-            data_serializer = DataSerializer(page, many=True)
+            data_serializer = self.serializer(page, many=True)
 
             # Return paginated response
             return paginator.get_paginated_response(data_serializer.data)
@@ -633,6 +637,7 @@ class DataListByWorkspace(APIView):
     """ List all Data by workspace.
     """
     permission_classes = (IsAuthenticated,)
+    serializer = DataSerializer
 
     def get(self, request, workspace_id):
         """ Get all workspace Data
@@ -658,7 +663,7 @@ class DataListByWorkspace(APIView):
             data_object_list = data_api.get_all_by_workspace(workspace_id, request.user)
 
             # Serialize object
-            data_serializer = DataSerializer(data_object_list, many=True)
+            data_serializer = self.serializer(data_object_list, many=True)
 
             # Return response
             return Response(data_serializer.data, status=status.HTTP_200_OK)
