@@ -1,5 +1,7 @@
 """ Apps file for setting core package when app is ready.
 """
+import sys
+
 from django.apps import AppConfig
 
 import core_main_app.permissions.discover as discover
@@ -20,7 +22,8 @@ class InitApp(AppConfig):
     def ready(self):
         """ When the app is ready, run the discovery and init the indexes.
         """
-        check_ssl_certificates_dir_setting(SSL_CERTIFICATES_DIR)
-        discover.init_rules(self.apps)
-        discover.create_public_workspace()
-        init_text_index(Data)
+        if 'migrate' not in sys.argv:
+            check_ssl_certificates_dir_setting(SSL_CERTIFICATES_DIR)
+            discover.init_rules(self.apps)
+            discover.create_public_workspace()
+            init_text_index(Data)
