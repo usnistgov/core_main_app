@@ -127,11 +127,12 @@ def has_xsl_namespace(xml_string):
     return has_namespace
 
 
-def unparse(json_dict):
+def unparse(json_dict, full_document=True):
     """Unparse JSON data.
 
     Args:
         json_dict:
+        full_document:
 
     Returns:
 
@@ -141,7 +142,7 @@ def unparse(json_dict):
                                    parse_float=_parse_numbers,
                                    parse_int=_parse_numbers,
                                    object_pairs_hook=OrderedDict)
-    return xmltodict.unparse(preprocessed_dict)
+    return xmltodict.unparse(preprocessed_dict, full_document=full_document)
 
 
 def raw_xml_to_dict(raw_xml, postprocessor=None):
