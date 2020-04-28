@@ -14,6 +14,16 @@ def get_all_users():
     return User.objects.all()
 
 
+def get_active_users():
+    """ Return active Users.
+
+    Returns:
+        List of active Users
+
+    """
+    return User.objects.filter(is_active=True)
+
+
 def get_user_by_username(username):
     """Return a user given its username.
 
