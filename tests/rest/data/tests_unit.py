@@ -159,8 +159,7 @@ class TestDataPermissions(SimpleTestCase):
                                               data={'ids': '["1"]'})
 
         # Assert
-        excepted_result = {}
-        excepted_result['1'] = True
+        excepted_result = {'1': True}
         self.assertEqual(response.data, excepted_result)
 
     @patch.object(Data, 'get_by_id')
@@ -176,8 +175,7 @@ class TestDataPermissions(SimpleTestCase):
                                               data={'ids': '["1"]'})
 
         # Assert
-        excepted_result = {}
-        excepted_result['1'] = True
+        excepted_result = {'1': True}
         self.assertEqual(response.data, excepted_result)
 
     @patch.object(Data, 'get_by_id')
@@ -193,6 +191,5 @@ class TestDataPermissions(SimpleTestCase):
                                               data={'ids': '["1"]'})
 
         # Assert
-        excepted_result = {}
-        excepted_result['1'] = False
+        excepted_result = {'1': False}
         self.assertEqual(response.data, excepted_result)

@@ -37,16 +37,24 @@ class QueryBuilder(object):
                                        regex=True,
                                        sub_document_root=sub_document_root)]
 
-    def add_list_templates_criteria(self, list_template_ids):
+    def add_list_criteria(self, object_name, list_ids):
         """ Add a criteria on template ids
 
         Args:
-            list_template_ids:
+            object_name
+            list_ids:
 
         Returns:
 
         """
-        self.criteria.append({'template': {'$in': [ObjectId(template_id) for template_id in list_template_ids]}})
+        criteria_ids = []
+        for object_id in list_ids:
+            if object_id == 'None':
+                criteria_ids.append(None)
+            else:
+                criteria_ids.append(ObjectId(object_id))
+
+        self.criteria.append({object_name: {'$in': criteria_ids}})
 
     def add_visibility_criteria(self, visibility):
         """ Add a criteria on visibility

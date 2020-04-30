@@ -473,12 +473,19 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
             {"query": "{}", "all": "true"}
             # get all results filtered by title
             {"query": "{}", "title": "title_string"}
+            # get all results filtered by workspaces
+            {"query": "{}", "workspaces": "[{\\"id\\":\\"[workspace_id]\\"}]"}
+            # get all results filtered by private workspace
+            {"query": "{}", "workspaces": "[{\\"id\\":\\"None\\"}]"}
             # get all results filtered by templates
             {"query": "{}", "templates": "[{\\"id\\":\\"[template_id]\\"}]"}
             # get all results that verify a given criteria
             {"query": "{\\"root.element.value\\": 2}"}
             # get results using multiple options
+            {"query": "{\\"root.element.value\\": 2}", "workspaces": "[{\\"id\\":\\"workspace_id\\"}]", "all": "true"}
             {"query": "{\\"root.element.value\\": 2}", "templates": "[{\\"id\\":\\"template_id\\"}]", "all": "true"}
+            {"query": "{\\"root.element.value\\": 2}", "templates": "[{\\"id\\":\\"template_id\\"}]",
+            "workspaces": "[{\\"id\\":\\"[workspace_id]\\"}]","all": "true"}
 
         Warning:
 
@@ -535,13 +542,14 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
 
 
 class ExecuteLocalKeywordQueryView(ExecuteLocalQueryView):
-    def build_query(self, query, templates, options, title=None):
+    def build_query(self, query, workspaces, templates, options, title=None):
         """ Build the raw query
         Prepare the query for a keyword search
 
         Args:
 
             query: ObjectId
+            workspaces: ObjectId
             templates: ObjectId
             options: Query options
             title: title filter
@@ -552,7 +560,7 @@ class ExecuteLocalKeywordQueryView(ExecuteLocalQueryView):
         """
         # build query builder
         query = json.dumps(get_full_text_query(query))
-        return super(ExecuteLocalKeywordQueryView, self).build_query(str(query), templates, options, title)
+        return super(ExecuteLocalKeywordQueryView, self).build_query(str(query), workspaces, templates, options, title)
 
 
 class DataAssign(APIView):

@@ -19,7 +19,6 @@ from tests.components.user.fixtures.fixtures import UserFixtures
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.components.data import api as data_api
 
-
 fixture_data = DataFixtures()
 fixture_data_query = QueryDataFixtures()
 fixture_data_workspace = AccessControlDataFixture()
@@ -476,6 +475,237 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
         self.assertEqual(len(response.data), 1)
 
 
+class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase):
+    fixture = fixture_data_workspace
+
+    def setUp(self):
+        super(TestExecuteLocalQueryViewWorkspaceCase, self).setUp()
+
+        self.data = {"all": "true"}
+
+        # create user with superuser access to skip access control
+        self.user = create_mock_user('1', is_superuser=True)
+
+        self.user2 = UserFixtures().create_user()
+
+        self.user2.id = self.fixture.data_4.user_id
+
+    def test_post_empty_query_with_no_specific_workspace_returns_all_accessible_data_as_superuser(self):
+
+        # Arrange
+        self.data.update({"query": "{}", "workspaces": "{}"})
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), 5)
+
+    def test_post_empty_query_with_no_specific_workspace_returns_all_accessible_data_as_user(self):
+
+        # Arrange
+        self.data.update({"query": "{}", "workspaces": "{}"})
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user2,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), 2)
+
+        for data in response.data:
+            self.assertEqual(data['user_id'], str(self.user2.id))
+
+    def test_post_empty_query_string_filter_by_one_workspace_returns_all_data_of_the_workspace(self):
+
+        # Arrange
+        self.data.update({"query": "{}",
+                          "workspaces": '[{"id": "' + str(self.fixture.workspace_1.id) + '"}]'})
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), 2)
+
+        for data in response.data:
+            self.assertEqual(data['workspace'], str(self.fixture.workspace_1.id))
+
+    def test_post_empty_query_string_filter_by_workspaces_returns_all_data_of_those_workspaces(self):
+
+        # Arrange
+        self.data.update(dict(query="{}",
+                              workspaces='[{"id": "' + str(self.fixture.workspace_1.id) + '"},{"id": "' + str(
+                                  self.fixture.workspace_2.id) + '"}]'))
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), 3)
+
+        list_ids = [str(self.fixture.workspace_1.id), str(self.fixture.workspace_2.id)]
+        for data in response.data:
+            self.assertIn(data['workspace'], list_ids)
+
+    def test_post_query_filter_by_correct_and_wrong_workspaces_returns_data_from_correct_workspace_only_as_superuser(self):
+
+        # Arrange
+        self.data.update(dict(query="{}",
+                              workspaces='[{"id": "507f1f77bcf86cd799439011"},{"id": "' + str(
+                                  self.fixture.workspace_2.id) + '"}]'))
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), 1)
+
+        for data in response.data:
+            self.assertEqual(data['workspace'], str(self.fixture.workspace_2.id))
+
+    def test_post_query_filter_by_correct_and_wrong_workspaces_returns_data_from_correct_workspace_only_as_user(self):
+
+        # Arrange
+        self.data.update(dict(query="{}",
+                              workspaces='[{"id": "' + str(self.fixture.workspace_1.id) + '"},{"id": "' + str(
+                                  self.fixture.workspace_2.id) + '"}]'))
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user2,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), 1)
+
+        list_ids = [str(self.fixture.workspace_2.id)]
+        for data in response.data:
+            self.assertIn(data['workspace'], list_ids)
+
+    def test_post_query_string_filter_by_workspace_returns_data_3(self):
+
+        # Arrange
+        self.data.update({"query": "{\"root.element\": \"value2\"}",
+                          "workspaces": '[{"id": "' + str(self.fixture.workspace_1.id) + '"}]'})
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), 1)
+
+        for data in response.data:
+            self.assertEqual(data['id'], str(self.fixture.data_3.id))
+            self.assertEqual(data['workspace'], str(self.fixture.workspace_1.id))
+
+    def test_post_query_string_filter_by_workspace_returns_no_data(self):
+
+        # Arrange
+        self.data.update({"query": "{\"root.element\": \"value2\"}",
+                          "workspaces": '[{"id": "' + str(self.fixture.workspace_2.id) + '"}]'})
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), 0)
+
+    def test_post_query_string_filter_by_private_workspace_returns_all_data_with_no_workspace_as_superuser(self):
+
+        # Arrange
+        self.data.update({"query": "{}",
+                          "workspaces": '[{"id": "None"}]'})
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), 2)
+        for data in response.data:
+            self.assertEqual(data['workspace'], None)
+
+    def test_post_query_string_filter_by_private_workspace_returns_all_data_with_no_workspace_as_user(self):
+
+        # Arrange
+        self.data.update({"query": "{}",
+                          "workspaces": '[{"id": "None"}]'})
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user2,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), 1)
+        for data in response.data:
+            self.assertEqual(data['workspace'], None)
+            self.assertEqual(data['user_id'], self.user2.id)
+
+    def test_post_query_filter_by_private_and_normal_workspaces_returns_all_data_of_those_workspaces_as_superuser(self):
+
+        # Arrange
+        self.data.update({"query": "{}",
+                          "workspaces": '[{"id": "None"},{"id": "' + str(self.fixture.workspace_2.id) + '"}]'})
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), 3)
+
+        list_ids = [None, str(self.fixture.workspace_2.id)]
+        for data in response.data:
+            self.assertIn(data['workspace'], list_ids)
+
+    def test_post_query_filter_by_private_and_normal_workspaces_returns_all_data_of_those_workspaces_as_user(self):
+
+        # Arrange
+        self.data.update({"query": "{}",
+                          "workspaces": '[{"id": "None"},{"id": "' + str(self.fixture.workspace_2.id) + '"}]'})
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user2,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), 2)
+
+        list_ids = [None, str(self.fixture.workspace_2.id)]
+        for data in response.data:
+            self.assertIn(data['workspace'], list_ids)
+
+    def test_post_filtered_by_wrong_workspace_id_returns_no_data(self):
+        # Arrange
+        self.data.update({"query": "{}",
+                          "workspaces": '[{"id": "507f1f77bcf86cd799439011"}]'})
+
+        # Act
+        response = RequestMock.do_request_post(data_rest_views.ExecuteLocalQueryView.as_view(),
+                                               self.user,
+                                               data=self.data)
+
+        # Assert
+        self.assertEqual(len(response.data), 0)
+
+
 class TestDataAssign(MongoIntegrationBaseTestCase):
     fixture = fixture_data_workspace
 
@@ -658,8 +888,8 @@ class TestDataPermissions(MongoIntegrationTransactionTestCase):
 
         # Act
         response = RequestMock.do_request_get(data_rest_views.DataPermissions.as_view(),
-                                                user_request,
-                                                data={'ids': f'["{data.id}"]'})
+                                              user_request,
+                                              data={'ids': f'["{data.id}"]'})
 
         # Assert
         excepted_result = {}
@@ -673,8 +903,8 @@ class TestDataPermissions(MongoIntegrationTransactionTestCase):
 
         # Act
         response = RequestMock.do_request_get(data_rest_views.DataPermissions.as_view(),
-                                                user_request,
-                                                data={'ids': f'["{data.id}"]'})
+                                              user_request,
+                                              data={'ids': f'["{data.id}"]'})
 
         # Assert
         excepted_result = {}
@@ -690,8 +920,8 @@ class TestDataPermissions(MongoIntegrationTransactionTestCase):
 
         # Act
         response = RequestMock.do_request_get(data_rest_views.DataPermissions.as_view(),
-                                                user_request,
-                                                data={'ids': f'["{data.id}"]'})
+                                              user_request,
+                                              data={'ids': f'["{data.id}"]'})
 
         # Assert
         excepted_result = {}
@@ -702,15 +932,15 @@ class TestDataPermissions(MongoIntegrationTransactionTestCase):
     def test_get_returns_correct_permissions_if_user_is_owner(self, data_get_by_id):
         # Arrange
         user_request = UserFixtures().create_user('owner_user', is_staff=True)
-        data = copy(self.fixture.data_3) # do not alter the fixture object
+        data = copy(self.fixture.data_3)  # do not alter the fixture object
         data.user_id = str(user_request.id)
         data.workspace = None
         data_get_by_id.return_value = data
 
         # Act
         response = RequestMock.do_request_get(data_rest_views.DataPermissions.as_view(),
-                                                user_request,
-                                                data={'ids': f'["{data.id}"]'})
+                                              user_request,
+                                              data={'ids': f'["{data.id}"]'})
 
         # Assert
         excepted_result = {}
@@ -727,8 +957,8 @@ class TestDataPermissions(MongoIntegrationTransactionTestCase):
 
         # Act
         response = RequestMock.do_request_get(data_rest_views.DataPermissions.as_view(),
-                                                user_request,
-                                                data={'ids': f'["{data.id}"]'})
+                                              user_request,
+                                              data={'ids': f'["{data.id}"]'})
 
         # Assert
         excepted_result = {}
@@ -745,8 +975,8 @@ class TestDataPermissions(MongoIntegrationTransactionTestCase):
 
         # Act
         response = RequestMock.do_request_get(data_rest_views.DataPermissions.as_view(),
-                                                user_request,
-                                                data={'ids': f'["{data.id}"]'})
+                                              user_request,
+                                              data={'ids': f'["{data.id}"]'})
 
         # Assert
         excepted_result = {}
@@ -764,8 +994,8 @@ class TestDataPermissions(MongoIntegrationTransactionTestCase):
 
         # Act
         response = RequestMock.do_request_get(data_rest_views.DataPermissions.as_view(),
-                                                user_request,
-                                                data={'ids': f'["{data.id}"]'})
+                                              user_request,
+                                              data={'ids': f'["{data.id}"]'})
 
         # Assert
         excepted_result = {}

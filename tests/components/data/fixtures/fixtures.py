@@ -128,6 +128,13 @@ class AccessControlDataFixture(FixtureInterface):
         Returns:
 
         """
+
+        content = {
+            "root": {
+                "element": "value2"
+            }
+        }
+
         self.data_1 = Data(template=self.template,
                       title='Data 1',
                       user_id='1').save()
@@ -137,7 +144,8 @@ class AccessControlDataFixture(FixtureInterface):
         self.data_3 = Data(template=self.template,
                       title='Data 3',
                       user_id='1',
-                      workspace=self.workspace_1.id).save()
+                      workspace=self.workspace_1.id,
+                      dict_content=content).save()
         self.data_4 = Data(template=self.template,
                       title='DataDoubleTitle',
                       user_id='2',
