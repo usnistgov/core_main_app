@@ -4,12 +4,6 @@
     color: gray;
 }
 
-.btn.btn-secondary {
-    background-color: #f9f9f9 !important;
-    border-color: #949494 !important;
-    color: black !important;
-}
-
 form>input {
     margin-bottom: 0.5em;
 }
