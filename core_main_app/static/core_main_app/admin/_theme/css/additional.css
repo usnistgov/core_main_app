@@ -1,3 +1,7 @@
+#form_start {
+    overflow: auto;
+}
+
 .empty {
     text-align: center;
     font-style: italic;
