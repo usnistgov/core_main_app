@@ -21,7 +21,7 @@ class WorkspaceList(APIView):
     """ List all user Workspace, or create a new one
     """
 
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         """ Get all user workspaces
@@ -49,7 +49,7 @@ class WorkspaceList(APIView):
             # Return response
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
@@ -86,19 +86,19 @@ class WorkspaceList(APIView):
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except ValidationError as validation_exception:
-            content = {'message': validation_exception.detail}
+            content = {"message": validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except exceptions.ModelError as validation_exception:
-            content = {'message': str(validation_exception)}
+            content = {"message": str(validation_exception)}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except exceptions.NotUniqueError as validation_exception:
-            content = {'message': str(validation_exception)}
+            content = {"message": str(validation_exception)}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except KeyError as validation_exception:
-            content = {'message': validation_exception}
+            content = {"message": validation_exception}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -130,10 +130,10 @@ class WorkspaceDetail(APIView):
             # Return response
             return Response(serializer.data)
         except exceptions.DoesNotExist:
-            content = {'message': 'Workspace not found.'}
+            content = {"message": "Workspace not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request, pk):
@@ -165,18 +165,18 @@ class WorkspaceDetail(APIView):
             # Return response
             return Response(status=status.HTTP_204_NO_CONTENT)
         except exceptions.DoesNotExist:
-            content = {'message': 'Workspace not found.'}
+            content = {"message": "Workspace not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except AccessControlError as ace:
-            content = {'message': str(ace)}
+            content = {"message": str(ace)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(['GET'])
-@permission_classes((IsAuthenticated, ))
+@api_view(["GET"])
+@permission_classes((IsAuthenticated,))
 def get_workspaces_with_read_access(request):
     """ Get all workspaces with read access
 
@@ -191,11 +191,13 @@ def get_workspaces_with_read_access(request):
         - code: 500
           content: Internal server error
     """
-    return _list_of_workspaces_to_response(workspace_api.get_all_workspaces_with_read_access_by_user(request.user))
+    return _list_of_workspaces_to_response(
+        workspace_api.get_all_workspaces_with_read_access_by_user(request.user)
+    )
 
 
-@api_view(['GET'])
-@permission_classes((IsAuthenticated, ))
+@api_view(["GET"])
+@permission_classes((IsAuthenticated,))
 def get_workspaces_with_write_access(request):
     """ Get all workspaces with write access
 
@@ -210,7 +212,9 @@ def get_workspaces_with_write_access(request):
         - code: 500
           content: Internal server error
     """
-    return _list_of_workspaces_to_response(workspace_api.get_all_workspaces_with_write_access_by_user(request.user))
+    return _list_of_workspaces_to_response(
+        workspace_api.get_all_workspaces_with_write_access_by_user(request.user)
+    )
 
 
 def _list_of_workspaces_to_response(func):
@@ -238,12 +242,12 @@ def _list_of_workspaces_to_response(func):
         return Response(return_value.data, status=status.HTTP_200_OK)
 
     except Exception as api_exception:
-        content = {'message': str(api_exception)}
+        content = {"message": str(api_exception)}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(['GET'])
-@permission_classes((IsAuthenticated, ))
+@api_view(["GET"])
+@permission_classes((IsAuthenticated,))
 def is_workspace_public(request, pk):
     """ Is the workspace public
 
@@ -266,17 +270,20 @@ def is_workspace_public(request, pk):
         workspace_object = workspace_api.get_by_id(pk)
 
         # Return response
-        return Response(workspace_api.is_workspace_public(workspace_object), status=status.HTTP_200_OK)
+        return Response(
+            workspace_api.is_workspace_public(workspace_object),
+            status=status.HTTP_200_OK,
+        )
     except exceptions.DoesNotExist:
-        content = {'message': 'Workspace not found.'}
+        content = {"message": "Workspace not found."}
         return Response(content, status=status.HTTP_404_NOT_FOUND)
     except Exception as api_exception:
-        content = {'message': str(api_exception)}
+        content = {"message": str(api_exception)}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(['PATCH'])
-@permission_classes((IsAuthenticated, ))
+@api_view(["PATCH"])
+@permission_classes((IsAuthenticated,))
 def set_workspace_public(request, pk):
     """ Set the workspace public
 
@@ -306,18 +313,18 @@ def set_workspace_public(request, pk):
         # Return response
         return Response(status=status.HTTP_200_OK)
     except exceptions.DoesNotExist:
-        content = {'message': 'Workspace not found.'}
+        content = {"message": "Workspace not found."}
         return Response(content, status=status.HTTP_404_NOT_FOUND)
     except AccessControlError as ace:
-        content = {'message': str(ace)}
+        content = {"message": str(ace)}
         return Response(content, status=status.HTTP_403_FORBIDDEN)
     except Exception as api_exception:
-        content = {'message': str(api_exception)}
+        content = {"message": str(api_exception)}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(['PATCH'])
-@permission_classes((IsAuthenticated, ))
+@api_view(["PATCH"])
+@permission_classes((IsAuthenticated,))
 def set_workspace_private(request, pk):
     """ Set the workspace private
 
@@ -347,18 +354,18 @@ def set_workspace_private(request, pk):
         # Return response
         return Response(status=status.HTTP_200_OK)
     except exceptions.DoesNotExist:
-        content = {'message': 'Workspace not found.'}
+        content = {"message": "Workspace not found."}
         return Response(content, status=status.HTTP_404_NOT_FOUND)
     except AccessControlError as ace:
-        content = {'message': str(ace)}
+        content = {"message": str(ace)}
         return Response(content, status=status.HTTP_403_FORBIDDEN)
     except Exception as api_exception:
-        content = {'message': str(api_exception)}
+        content = {"message": str(api_exception)}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(['GET'])
-@permission_classes((IsAuthenticated, ))
+@api_view(["GET"])
+@permission_classes((IsAuthenticated,))
 def get_list_user_can_write_workspace(request, pk):
     """ Get list of users that have write access to workspace
 
@@ -377,12 +384,16 @@ def get_list_user_can_write_workspace(request, pk):
         - code: 500
           content: Internal server error
     """
-    return _list_of_users_or_groups_to_response(pk, workspace_api.get_list_user_can_write_workspace,
-                                                request.user, UserSerializer)
+    return _list_of_users_or_groups_to_response(
+        pk,
+        workspace_api.get_list_user_can_write_workspace,
+        request.user,
+        UserSerializer,
+    )
 
 
-@api_view(['GET'])
-@permission_classes((IsAuthenticated, ))
+@api_view(["GET"])
+@permission_classes((IsAuthenticated,))
 def get_list_user_can_read_workspace(request, pk):
     """ Get list of users that have read access to workspace
 
@@ -401,12 +412,13 @@ def get_list_user_can_read_workspace(request, pk):
         - code: 500
           content: Internal server error
     """
-    return _list_of_users_or_groups_to_response(pk, workspace_api.get_list_user_can_read_workspace,
-                                                request.user, UserSerializer)
+    return _list_of_users_or_groups_to_response(
+        pk, workspace_api.get_list_user_can_read_workspace, request.user, UserSerializer
+    )
 
 
-@api_view(['GET'])
-@permission_classes((IsAuthenticated, ))
+@api_view(["GET"])
+@permission_classes((IsAuthenticated,))
 def get_list_user_can_access_workspace(request, pk):
     """ Get list of users that have read or write access to workspace
 
@@ -425,12 +437,16 @@ def get_list_user_can_access_workspace(request, pk):
         - code: 500
           content: Internal server error
     """
-    return _list_of_users_or_groups_to_response(pk, workspace_api.get_list_user_can_access_workspace,
-                                                request.user, UserSerializer)
+    return _list_of_users_or_groups_to_response(
+        pk,
+        workspace_api.get_list_user_can_access_workspace,
+        request.user,
+        UserSerializer,
+    )
 
 
-@api_view(['GET'])
-@permission_classes((IsAuthenticated, ))
+@api_view(["GET"])
+@permission_classes((IsAuthenticated,))
 def get_list_group_can_write_workspace(request, pk):
     """ Get list of groups that have write access to workspace
 
@@ -449,12 +465,16 @@ def get_list_group_can_write_workspace(request, pk):
         - code: 500
           content: Internal server error
     """
-    return _list_of_users_or_groups_to_response(pk, workspace_api.get_list_group_can_write_workspace,
-                                                request.user, GroupSerializer)
+    return _list_of_users_or_groups_to_response(
+        pk,
+        workspace_api.get_list_group_can_write_workspace,
+        request.user,
+        GroupSerializer,
+    )
 
 
-@api_view(['GET'])
-@permission_classes((IsAuthenticated, ))
+@api_view(["GET"])
+@permission_classes((IsAuthenticated,))
 def get_list_group_can_read_workspace(request, pk):
     """ Get list of groups that have read access to workspace
 
@@ -473,12 +493,16 @@ def get_list_group_can_read_workspace(request, pk):
         - code: 500
           content: Internal server error
     """
-    return _list_of_users_or_groups_to_response(pk, workspace_api.get_list_group_can_read_workspace,
-                                                request.user, GroupSerializer)
+    return _list_of_users_or_groups_to_response(
+        pk,
+        workspace_api.get_list_group_can_read_workspace,
+        request.user,
+        GroupSerializer,
+    )
 
 
-@api_view(['GET'])
-@permission_classes((IsAuthenticated, ))
+@api_view(["GET"])
+@permission_classes((IsAuthenticated,))
 def get_list_group_can_access_workspace(request, pk):
     """ Get list of groups that have read or write access to workspace
 
@@ -497,8 +521,12 @@ def get_list_group_can_access_workspace(request, pk):
         - code: 500
           content: Internal server error
     """
-    return _list_of_users_or_groups_to_response(pk, workspace_api.get_list_group_can_access_workspace,
-                                                request.user, GroupSerializer)
+    return _list_of_users_or_groups_to_response(
+        pk,
+        workspace_api.get_list_group_can_access_workspace,
+        request.user,
+        GroupSerializer,
+    )
 
 
 def _list_of_users_or_groups_to_response(pk, func, user, serializer):
@@ -535,17 +563,19 @@ def _list_of_users_or_groups_to_response(pk, func, user, serializer):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     except exceptions.DoesNotExist:
-        content = {'message': 'Workspace not found.'}
+        content = {"message": "Workspace not found."}
         return Response(content, status=status.HTTP_404_NOT_FOUND)
     except AccessControlError as ace:
-        content = {'message': str(ace)}
+        content = {"message": str(ace)}
         return Response(content, status=status.HTTP_403_FORBIDDEN)
     except Exception as api_exception:
-        content = {'message': str(api_exception)}
+        content = {"message": str(api_exception)}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-def _add_or_remove_to_user_or_group_right_to_workspace(request, pk, user_or_group_id, func, get_group_or_user_func):
+def _add_or_remove_to_user_or_group_right_to_workspace(
+    request, pk, user_or_group_id, func, get_group_or_user_func
+):
     """ Add or remove a right to a user or a group
 
     Args:
@@ -581,18 +611,18 @@ def _add_or_remove_to_user_or_group_right_to_workspace(request, pk, user_or_grou
         return Response(status=status.HTTP_200_OK)
 
     except exceptions.DoesNotExist:
-        content = {'message': 'Workspace not found.'}
+        content = {"message": "Workspace not found."}
         return Response(content, status=status.HTTP_404_NOT_FOUND)
     except AccessControlError as ace:
-        content = {'message': str(ace)}
+        content = {"message": str(ace)}
         return Response(content, status=status.HTTP_403_FORBIDDEN)
     except Exception as api_exception:
-        content = {'message': str(api_exception)}
+        content = {"message": str(api_exception)}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(['PATCH'])
-@permission_classes((IsAuthenticated, ))
+@api_view(["PATCH"])
+@permission_classes((IsAuthenticated,))
 def add_user_read_right_to_workspace(request, pk, user_id):
     """ Add to the user the read right to the Workspace
 
@@ -613,13 +643,17 @@ def add_user_read_right_to_workspace(request, pk, user_id):
         - code: 500
           content: Internal server error
     """
-    return _add_or_remove_to_user_or_group_right_to_workspace(request, pk, user_id,
-                                                              workspace_api.add_user_read_access_to_workspace,
-                                                              user_api.get_user_by_id)
+    return _add_or_remove_to_user_or_group_right_to_workspace(
+        request,
+        pk,
+        user_id,
+        workspace_api.add_user_read_access_to_workspace,
+        user_api.get_user_by_id,
+    )
 
 
-@api_view(['PATCH'])
-@permission_classes((IsAuthenticated, ))
+@api_view(["PATCH"])
+@permission_classes((IsAuthenticated,))
 def add_user_write_right_to_workspace(request, pk, user_id):
     """ Add to the user the write right to the workspace
 
@@ -640,13 +674,17 @@ def add_user_write_right_to_workspace(request, pk, user_id):
         - code: 500
           content: Internal server error
     """
-    return _add_or_remove_to_user_or_group_right_to_workspace(request, pk, user_id,
-                                                              workspace_api.add_user_write_access_to_workspace,
-                                                              user_api.get_user_by_id)
+    return _add_or_remove_to_user_or_group_right_to_workspace(
+        request,
+        pk,
+        user_id,
+        workspace_api.add_user_write_access_to_workspace,
+        user_api.get_user_by_id,
+    )
 
 
-@api_view(['PATCH'])
-@permission_classes((IsAuthenticated, ))
+@api_view(["PATCH"])
+@permission_classes((IsAuthenticated,))
 def add_group_read_right_to_workspace(request, pk, group_id):
     """ Add to the group the read right to the workspace
 
@@ -667,13 +705,17 @@ def add_group_read_right_to_workspace(request, pk, group_id):
         - code: 500
           content: Internal server error
     """
-    return _add_or_remove_to_user_or_group_right_to_workspace(request, pk, group_id,
-                                                              workspace_api.add_group_read_access_to_workspace,
-                                                              group_api.get_group_by_id)
+    return _add_or_remove_to_user_or_group_right_to_workspace(
+        request,
+        pk,
+        group_id,
+        workspace_api.add_group_read_access_to_workspace,
+        group_api.get_group_by_id,
+    )
 
 
-@api_view(['PATCH'])
-@permission_classes((IsAuthenticated, ))
+@api_view(["PATCH"])
+@permission_classes((IsAuthenticated,))
 def add_group_write_right_to_workspace(request, pk, group_id):
     """ Add to the group the write right to the workspace
 
@@ -694,13 +736,17 @@ def add_group_write_right_to_workspace(request, pk, group_id):
         - code: 500
           content: Internal server error
     """
-    return _add_or_remove_to_user_or_group_right_to_workspace(request, pk, group_id,
-                                                              workspace_api.add_group_write_access_to_workspace,
-                                                              group_api.get_group_by_id)
+    return _add_or_remove_to_user_or_group_right_to_workspace(
+        request,
+        pk,
+        group_id,
+        workspace_api.add_group_write_access_to_workspace,
+        group_api.get_group_by_id,
+    )
 
 
-@api_view(['PATCH'])
-@permission_classes((IsAuthenticated, ))
+@api_view(["PATCH"])
+@permission_classes((IsAuthenticated,))
 def remove_user_read_right_to_workspace(request, pk, user_id):
     """ Remove from the user the read right to the workspace
 
@@ -721,13 +767,17 @@ def remove_user_read_right_to_workspace(request, pk, user_id):
         - code: 500
           content: Internal server error
     """
-    return _add_or_remove_to_user_or_group_right_to_workspace(request, pk, user_id,
-                                                              workspace_api.remove_user_read_access_to_workspace,
-                                                              user_api.get_user_by_id)
+    return _add_or_remove_to_user_or_group_right_to_workspace(
+        request,
+        pk,
+        user_id,
+        workspace_api.remove_user_read_access_to_workspace,
+        user_api.get_user_by_id,
+    )
 
 
-@api_view(['PATCH'])
-@permission_classes((IsAuthenticated, ))
+@api_view(["PATCH"])
+@permission_classes((IsAuthenticated,))
 def remove_user_write_right_to_workspace(request, pk, user_id):
     """ Remove from the user the write right to the workspace
 
@@ -748,13 +798,17 @@ def remove_user_write_right_to_workspace(request, pk, user_id):
         - code: 500
           content: Internal server error
     """
-    return _add_or_remove_to_user_or_group_right_to_workspace(request, pk, user_id,
-                                                              workspace_api.remove_user_write_access_to_workspace,
-                                                              user_api.get_user_by_id)
+    return _add_or_remove_to_user_or_group_right_to_workspace(
+        request,
+        pk,
+        user_id,
+        workspace_api.remove_user_write_access_to_workspace,
+        user_api.get_user_by_id,
+    )
 
 
-@api_view(['PATCH'])
-@permission_classes((IsAuthenticated, ))
+@api_view(["PATCH"])
+@permission_classes((IsAuthenticated,))
 def remove_group_read_right_to_workspace(request, pk, group_id):
     """ Remove from the group the read right to the workspace
 
@@ -775,13 +829,17 @@ def remove_group_read_right_to_workspace(request, pk, group_id):
         - code: 500
           content: Internal server error
     """
-    return _add_or_remove_to_user_or_group_right_to_workspace(request, pk, group_id,
-                                                              workspace_api.remove_group_read_access_to_workspace,
-                                                              group_api.get_group_by_id)
+    return _add_or_remove_to_user_or_group_right_to_workspace(
+        request,
+        pk,
+        group_id,
+        workspace_api.remove_group_read_access_to_workspace,
+        group_api.get_group_by_id,
+    )
 
 
-@api_view(['PATCH'])
-@permission_classes((IsAuthenticated, ))
+@api_view(["PATCH"])
+@permission_classes((IsAuthenticated,))
 def remove_group_write_right_to_workspace(request, pk, group_id):
     """ Remove from the group the write right to the workspace
 
@@ -802,8 +860,10 @@ def remove_group_write_right_to_workspace(request, pk, group_id):
         - code: 500
           content: Internal server error
     """
-    return _add_or_remove_to_user_or_group_right_to_workspace(request, pk, group_id,
-                                                              workspace_api.remove_group_write_access_to_workspace,
-                                                              group_api.get_group_by_id)
-
-
+    return _add_or_remove_to_user_or_group_right_to_workspace(
+        request,
+        pk,
+        group_id,
+        workspace_api.remove_group_write_access_to_workspace,
+        group_api.get_group_by_id,
+    )

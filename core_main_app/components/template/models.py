@@ -10,13 +10,16 @@ from django_mongoengine import fields, Document
 
 class Template(Document):
     """Represents an XML schema template that defines the structure of data"""
+
     filename = fields.StringField(validation=not_empty_or_whitespaces)
     content = fields.StringField()
     hash = fields.StringField()
     _display_name = fields.StringField(blank=True)
-    dependencies = fields.ListField(fields.ReferenceField("self"), default=[], blank=True)
+    dependencies = fields.ListField(
+        fields.ReferenceField("self"), default=[], blank=True
+    )
 
-    meta = {'allow_inheritance': True}
+    meta = {"allow_inheritance": True}
 
     @staticmethod
     def get_all(is_cls):

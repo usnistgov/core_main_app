@@ -81,4 +81,6 @@ def xsl_transform(xml_content, xslt_name):
     try:
         return xml.xsl_transform(xml_content, xslt_object.content)
     except Exception:
-        raise exceptions.ApiError("An unexpected exception happened while transforming the XML")
+        raise exceptions.ApiError(
+            "An unexpected exception happened while transforming the XML"
+        )

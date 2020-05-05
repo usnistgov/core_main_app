@@ -9,7 +9,10 @@ from rest_framework.views import APIView
 
 import core_main_app.components.xsl_transformation.api as xsl_api
 from core_main_app.commons import exceptions
-from core_main_app.rest.xsl_transformation.serializers import XslTransformationSerializer, TransformSerializer
+from core_main_app.rest.xsl_transformation.serializers import (
+    XslTransformationSerializer,
+    TransformSerializer,
+)
 
 
 class XslTransformationList(APIView):
@@ -40,7 +43,7 @@ class XslTransformationList(APIView):
             # Return response
             return Response(return_value.data)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
@@ -76,10 +79,10 @@ class XslTransformationList(APIView):
             xsl_serializer.save()
             return Response(xsl_serializer.data, status=status.HTTP_201_CREATED)
         except ValidationError as validation_exception:
-            content = {'message': validation_exception.detail}
+            content = {"message": validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -130,10 +133,10 @@ class XslTransformationDetail(APIView):
             # Return response
             return Response(return_value.data)
         except Http404:
-            content = {'message': 'Xsl not found.'}
+            content = {"message": "Xsl not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request, pk):
@@ -161,10 +164,10 @@ class XslTransformationDetail(APIView):
             # Return response
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Http404:
-            content = {'message': 'Xsl not found.'}
+            content = {"message": "Xsl not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def patch(self, request, pk):
@@ -198,22 +201,22 @@ class XslTransformationDetail(APIView):
             # Get object
             xsl_object = self.get_object(pk)
             # Build serializer
-            xsl_serializer = XslTransformationSerializer(instance=xsl_object,
-                                                         data=request.data,
-                                                         partial=True)
+            xsl_serializer = XslTransformationSerializer(
+                instance=xsl_object, data=request.data, partial=True
+            )
             # Validate xsl
             xsl_serializer.is_valid(True)
             # Save xsl
             xsl_serializer.save()
             return Response(xsl_serializer.data, status=status.HTTP_200_OK)
         except ValidationError as validation_exception:
-            content = {'message': validation_exception.detail}
+            content = {"message": validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Http404:
-            content = {'message': 'Xsl not found.'}
+            content = {"message": "Xsl not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -255,8 +258,8 @@ class XslTransformationTransform(APIView):
             return_value = xsl_api.xsl_transform(**serializer.validated_data)
             return Response(return_value, status=status.HTTP_200_OK)
         except ValidationError as validation_exception:
-            content = {'message': validation_exception.detail}
+            content = {"message": validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -11,7 +11,7 @@ class TemplateVersionManager(VersionManager):
     """Manager of templates versions"""
 
     # TODO: see if better way to find _cls
-    class_name = 'VersionManager.TemplateVersionManager'
+    class_name = "VersionManager.TemplateVersionManager"
 
     @staticmethod
     def get_global_version_managers(_cls=True):
@@ -20,7 +20,9 @@ class TemplateVersionManager(VersionManager):
         Returns:
             _cls: if True, restricts to TemplateVersionManager _cls
         """
-        queryset = super(TemplateVersionManager, TemplateVersionManager).get_global_version_managers()
+        queryset = super(
+            TemplateVersionManager, TemplateVersionManager
+        ).get_global_version_managers()
         if _cls:
             queryset = queryset.filter(_cls=TemplateVersionManager.class_name).all()
         return queryset
@@ -32,7 +34,9 @@ class TemplateVersionManager(VersionManager):
         Returns:
 
         """
-        queryset = super(TemplateVersionManager, TemplateVersionManager).get_active_global_version_manager()
+        queryset = super(
+            TemplateVersionManager, TemplateVersionManager
+        ).get_active_global_version_manager()
         if _cls:
             queryset = queryset.filter(_cls=TemplateVersionManager.class_name).all()
         return queryset
@@ -44,7 +48,9 @@ class TemplateVersionManager(VersionManager):
         Returns:
 
         """
-        queryset = super(TemplateVersionManager, TemplateVersionManager).get_disable_global_version_manager()
+        queryset = super(
+            TemplateVersionManager, TemplateVersionManager
+        ).get_disable_global_version_manager()
         if _cls:
             queryset = queryset.filter(_cls=TemplateVersionManager.class_name).all()
         return queryset
@@ -56,7 +62,9 @@ class TemplateVersionManager(VersionManager):
         Returns:
 
         """
-        queryset = super(TemplateVersionManager, TemplateVersionManager).get_active_version_manager_by_user_id(user_id)
+        queryset = super(
+            TemplateVersionManager, TemplateVersionManager
+        ).get_active_version_manager_by_user_id(user_id)
         if _cls:
             queryset = queryset.filter(_cls=TemplateVersionManager.class_name).all()
         return queryset
@@ -68,7 +76,9 @@ class TemplateVersionManager(VersionManager):
         Returns:
 
         """
-        queryset = super(TemplateVersionManager, TemplateVersionManager).get_disable_version_manager_by_user_id(user_id)
+        queryset = super(
+            TemplateVersionManager, TemplateVersionManager
+        ).get_disable_version_manager_by_user_id(user_id)
         if _cls:
             queryset = queryset.filter(_cls=TemplateVersionManager.class_name).all()
         return queryset
@@ -115,7 +125,9 @@ class TemplateVersionManager(VersionManager):
         Returns:
 
         """
-        queryset = super(TemplateVersionManager, TemplateVersionManager).get_all_version_manager_except_user_id(user_id)
+        queryset = super(
+            TemplateVersionManager, TemplateVersionManager
+        ).get_all_version_manager_except_user_id(user_id)
         if _cls:
             queryset = queryset.filter(_cls=TemplateVersionManager.class_name).all()
         return queryset
@@ -131,7 +143,9 @@ class TemplateVersionManager(VersionManager):
         Returns:
 
         """
-        queryset = super(TemplateVersionManager, TemplateVersionManager).get_all_version_manager_by_user_id(user_id)
+        queryset = super(
+            TemplateVersionManager, TemplateVersionManager
+        ).get_all_version_manager_by_user_id(user_id)
         if _cls:
             queryset = queryset.filter(_cls=TemplateVersionManager.class_name).all()
         return queryset

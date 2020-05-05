@@ -68,10 +68,10 @@ class WebPageList(APIView):
             # Return response
             return Response(serializer.data)
         except Http404:
-            content = {'message': 'No custom web page has been created'}
+            content = {"message": "No custom web page has been created"}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @method_decorator(api_staff_member_required())
@@ -105,12 +105,11 @@ class WebPageList(APIView):
 
             # Build serializer
             if web_page:
-                web_page_serializer = WebPageSerializer(instance=web_page,
-                                                        data=request.data,
-                                                        partial=True)
+                web_page_serializer = WebPageSerializer(
+                    instance=web_page, data=request.data, partial=True
+                )
             else:
-                web_page_serializer = WebPageSerializer(data=request.data,
-                                                        partial=True)
+                web_page_serializer = WebPageSerializer(data=request.data, partial=True)
 
             # Validate web page
             web_page_serializer.is_valid(True)
@@ -121,10 +120,10 @@ class WebPageList(APIView):
             # Return the serialized web page
             return Response(web_page_serializer.data, status=status.HTTP_201_CREATED)
         except ValidationError as validation_exception:
-            content = {'message': validation_exception.detail}
+            content = {"message": validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @method_decorator(api_staff_member_required())
@@ -151,5 +150,5 @@ class WebPageList(APIView):
             # Return response
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -34,15 +34,19 @@ class BlobDownloader:
         """
         if self.is_url_from_local_instance():
             # call the local instance giving sessionid through the call
-            return requests_utils.send_get_request(url=self.url,
-                                                   cookies={"sessionid": self.session_key})
+            return requests_utils.send_get_request(
+                url=self.url, cookies={"sessionid": self.session_key}
+            )
         else:
             # so it can be from a federated instance
-            if 'core_federated_search_app' in settings.INSTALLED_APPS:
+            if "core_federated_search_app" in settings.INSTALLED_APPS:
                 # import the api where we need to
                 import core_federated_search_app.components.instance.api as instance_api
+
                 try:
-                    return instance_api.get_blob_response_from_url(self.url_base, self.url)
+                    return instance_api.get_blob_response_from_url(
+                        self.url_base, self.url
+                    )
                 except exceptions.DoesNotExist as e:
                     logger.info("BlobDownloader: The blob's url is not a known source")
             else:
@@ -67,5 +71,7 @@ class BlobDownloader:
         """
         parsed_uri = urlparse(self.url)
         if not parsed_uri.scheme or not parsed_uri.netloc:
-            raise exceptions.BlobDownloaderUrlParseError("the url given is not parsable")
-        return '{uri.scheme}://{uri.netloc}'.format(uri=parsed_uri)
+            raise exceptions.BlobDownloaderUrlParseError(
+                "the url given is not parsable"
+            )
+        return "{uri.scheme}://{uri.netloc}".format(uri=parsed_uri)

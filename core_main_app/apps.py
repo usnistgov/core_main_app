@@ -15,14 +15,14 @@ class InitApp(AppConfig):
     """ Core application settings.
     """
 
-    name = 'core_main_app'
+    name = "core_main_app"
     """ :py:class:`str`: Package name
     """
 
     def ready(self):
         """ When the app is ready, run the discovery and init the indexes.
         """
-        if 'migrate' not in sys.argv:
+        if "migrate" not in sys.argv:
             check_ssl_certificates_dir_setting(SSL_CERTIFICATES_DIR)
             discover.init_rules(self.apps)
             discover.create_public_workspace()

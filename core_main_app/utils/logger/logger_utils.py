@@ -12,7 +12,9 @@ def update_logger_with_local_app(logging_dict, local_logger_conf, list_app):
         list_app:
     Returns:
     """
-    logging_dict['loggers'].update({app: copy.deepcopy(local_logger_conf) for app in get_list_local_app(list_app)})
+    logging_dict["loggers"].update(
+        {app: copy.deepcopy(local_logger_conf) for app in get_list_local_app(list_app)}
+    )
 
 
 def get_list_local_app(list_app):
@@ -29,7 +31,9 @@ def get_list_local_app(list_app):
     return local_apps
 
 
-def set_generic_handler(logging_dict, name, level, filename, max_size, backup_count, class_name):
+def set_generic_handler(
+    logging_dict, name, level, filename, max_size, backup_count, class_name
+):
     """ Set a handler based on the parameters.
 
     Args
@@ -43,16 +47,18 @@ def set_generic_handler(logging_dict, name, level, filename, max_size, backup_co
 
     Returns:
     """
-    logging_dict['handlers'].update({
-        name: {
-            'level': level,
-            'class': class_name,
-            'filename': filename,
-            'maxBytes': max_size,
-            'backupCount': backup_count,
-            'formatter': 'fmt-default',
-        },
-    })
+    logging_dict["handlers"].update(
+        {
+            name: {
+                "level": level,
+                "class": class_name,
+                "filename": filename,
+                "maxBytes": max_size,
+                "backupCount": backup_count,
+                "formatter": "fmt-default",
+            },
+        }
+    )
 
 
 def set_generic_logger(logging_dict, name, level, list_handler):
@@ -66,10 +72,6 @@ def set_generic_logger(logging_dict, name, level, list_handler):
 
     Returns:
     """
-    logging_dict['loggers'].update({
-        name: {
-            'handlers': list_handler,
-            'level': level,
-            'propagate': False,
-        },
-    })
+    logging_dict["loggers"].update(
+        {name: {"handlers": list_handler, "level": level, "propagate": False,},}
+    )

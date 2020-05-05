@@ -2,8 +2,9 @@
 """
 
 from core_main_app.components.workspace import api as workspace_api
-from core_main_app.utils.integration_tests.integration_base_transaction_test_case import \
-    MongoIntegrationTransactionTestCase
+from core_main_app.utils.integration_tests.integration_base_transaction_test_case import (
+    MongoIntegrationTransactionTestCase,
+)
 from tests.components.workspace.fixtures.fixtures import WorkspaceFixtures
 
 TITLE = "title"

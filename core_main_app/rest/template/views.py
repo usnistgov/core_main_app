@@ -14,6 +14,7 @@ from core_main_app.utils.file import get_file_http_response
 class TemplateDetail(APIView):
     """ Retrieve a Template.
     """
+
     def get_object(self, pk):
         """ Get Template from db
 
@@ -57,16 +58,17 @@ class TemplateDetail(APIView):
             # Return response
             return Response(serializer.data)
         except Http404:
-            content = {'message': 'Template not found.'}
+            content = {"message": "Template not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class TemplateDownload(APIView):
     """ Download a Template
     """
+
     def get_object(self, pk):
         """ Get Template from db
 
@@ -104,10 +106,12 @@ class TemplateDownload(APIView):
             # Get object
             template_object = self.get_object(pk)
 
-            return get_file_http_response(template_object.content, template_object.filename, 'text/xsd', 'xsd')
+            return get_file_http_response(
+                template_object.content, template_object.filename, "text/xsd", "xsd"
+            )
         except Http404:
-            content = {'message': 'Template not found.'}
+            content = {"message": "Template not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

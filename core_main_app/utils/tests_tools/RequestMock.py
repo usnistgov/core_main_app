@@ -107,13 +107,21 @@ class RequestMock(object):
         if http_method == "GET":
             request = factory.get(url, data=data)
         elif http_method == "POST":
-            request = factory.post(url, data=json.dumps(data), content_type="application/json")
+            request = factory.post(
+                url, data=json.dumps(data), content_type="application/json"
+            )
         elif http_method == "PUT":
-            request = factory.put(url, data=json.dumps(data), content_type="application/json")
+            request = factory.put(
+                url, data=json.dumps(data), content_type="application/json"
+            )
         elif http_method == "DELETE":
-            request = factory.delete(url, data=json.dumps(data), content_type="application/json")
+            request = factory.delete(
+                url, data=json.dumps(data), content_type="application/json"
+            )
         elif http_method == "PATCH":
-            request = factory.patch(url, data=json.dumps(data), content_type="application/json")
+            request = factory.patch(
+                url, data=json.dumps(data), content_type="application/json"
+            )
         else:
             return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
         # Set the user

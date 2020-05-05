@@ -2,9 +2,14 @@
 Template Version Manager API
 """
 from core_main_app.components.template import api as template_api
-from core_main_app.components.template_version_manager.models import TemplateVersionManager
+from core_main_app.components.template_version_manager.models import (
+    TemplateVersionManager,
+)
 from core_main_app.components.version_manager import api as version_manager_api
-from core_main_app.components.version_manager.utils import get_latest_version_name, get_version_name
+from core_main_app.components.version_manager.utils import (
+    get_latest_version_name,
+    get_version_name,
+)
 
 
 def insert(template_version_manager, template):
@@ -69,7 +74,7 @@ def update_templates_display_name(template_version_manager):
         # get template from template id
         template = template_api.get(template_id)
         # get display name for the template
-        display_name = get_version_name(template_version_manager.title, i+1)
+        display_name = get_version_name(template_version_manager.title, i + 1)
         # update template's display name
         template_api.set_display_name(template, display_name)
 

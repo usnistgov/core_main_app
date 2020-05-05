@@ -17,6 +17,7 @@ def get_or_create(name):
     group, created = Group.objects.get_or_create(name=name)
     return group, created
 
+
 def get_all_groups():
     """ Return all Groups.
 
@@ -37,7 +38,9 @@ def get_by_name_and_permission(name, permission_codename):
     Returns:
 
     """
-    return Group.objects.filter(Q(name=name) & Q(permissions__codename=permission_codename))
+    return Group.objects.filter(
+        Q(name=name) & Q(permissions__codename=permission_codename)
+    )
 
 
 def get_group_by_id(group_id):

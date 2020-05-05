@@ -4,8 +4,13 @@ from bson.objectid import ObjectId
 
 from core_main_app.commons import exceptions
 from core_main_app.components.blob.models import Blob
-from core_main_app.utils.integration_tests.integration_base_test_case import MongoIntegrationBaseTestCase
-from tests.components.blob.fixtures.fixtures import BlobFixtures, AccessControlBlobFixture
+from core_main_app.utils.integration_tests.integration_base_test_case import (
+    MongoIntegrationBaseTestCase,
+)
+from tests.components.blob.fixtures.fixtures import (
+    BlobFixtures,
+    AccessControlBlobFixture,
+)
 
 fixture_blob = BlobFixtures()
 fixture_blob_workspace = AccessControlBlobFixture()
@@ -56,7 +61,9 @@ class TestBlobGetAllByUserId(MongoIntegrationBaseTestCase):
         # Assert
         self.assertTrue(all(item.user_id == str(user_id) for item in result))
 
-    def test_blob_get_all_by_user_id_return_empty_collection_of_blob_from_user_with_no_associated_blob(self):
+    def test_blob_get_all_by_user_id_return_empty_collection_of_blob_from_user_with_no_associated_blob(
+        self,
+    ):
         # Arrange
         user_id = 800
         # Act
@@ -73,9 +80,13 @@ class TestBlobGetAllByWorkspace(MongoIntegrationBaseTestCase):
         # Act
         result = Blob.get_all_by_workspace(self.fixture.workspace_1)
         # Assert
-        self.assertTrue(all(item.user_id == str(self.fixture.workspace_1.owner) for item in result))
+        self.assertTrue(
+            all(item.user_id == str(self.fixture.workspace_1.owner) for item in result)
+        )
 
-    def test_blob_get_all_by_workspace_return_empty_collection_of_blob_from_empty_workspace(self):
+    def test_blob_get_all_by_workspace_return_empty_collection_of_blob_from_empty_workspace(
+        self,
+    ):
         # Act
         result = Blob.get_all_by_workspace(self.fixture.workspace_without_data)
         # Assert
@@ -88,12 +99,21 @@ class TestBlobGetAllByListWorkspace(MongoIntegrationBaseTestCase):
 
     def test_blob_get_all_by_workspace_return_collection_of_blob_from_user(self):
         # Act
-        result = Blob.get_all_by_list_workspace([self.fixture.workspace_1, self.fixture.workspace_2])
+        result = Blob.get_all_by_list_workspace(
+            [self.fixture.workspace_1, self.fixture.workspace_2]
+        )
         # Assert
-        self.assertTrue(all(item.user_id == str(self.fixture.workspace_1.owner)
-                            or item.user_id == str(self.fixture.workspace_2.owner) for item in result))
+        self.assertTrue(
+            all(
+                item.user_id == str(self.fixture.workspace_1.owner)
+                or item.user_id == str(self.fixture.workspace_2.owner)
+                for item in result
+            )
+        )
 
-    def test_blob_get_all_by_workspace_return_empty_collection_of_blob_from_empty_workspace(self):
+    def test_blob_get_all_by_workspace_return_empty_collection_of_blob_from_empty_workspace(
+        self,
+    ):
         # Act
         result = Blob.get_all_by_list_workspace([self.fixture.workspace_without_data])
         # Assert

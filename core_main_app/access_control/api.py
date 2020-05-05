@@ -5,7 +5,10 @@ import logging
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.permissions import api as permissions_api, rights as rights
-from core_main_app.settings import CAN_SET_PUBLIC_DATA_TO_PRIVATE, CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT
+from core_main_app.settings import (
+    CAN_SET_PUBLIC_DATA_TO_PRIVATE,
+    CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +23,9 @@ def has_perm_publish(user, codename):
     Returns
     """
     publish_perm = permissions_api.get_by_codename(codename)
-    if not user.has_perm(publish_perm.content_type.app_label + '.' + publish_perm.codename):
+    if not user.has_perm(
+        publish_perm.content_type.app_label + "." + publish_perm.codename
+    ):
         raise AccessControlError("The user doesn't have enough rights to publish.")
 
 
@@ -55,14 +60,16 @@ def check_can_write(document, user):
 
     """
     # TODO: data will inherit of workspace rights, which means a owner can't edit or delete a data if data in wkp that doesn't give hin write rights
-    if hasattr(document, 'workspace') and document.workspace is not None:
+    if hasattr(document, "workspace") and document.workspace is not None:
         if workspace_api.is_workspace_public(document.workspace):
             has_perm_publish(user, rights.publish_data)
         else:
             _check_can_write_in_workspace(document.workspace, user)
 
     # not the owner and workspace is not set or None
-    if document.user_id != str(user.id) and (not hasattr(document, 'workspace') or document.workspace is None):
+    if document.user_id != str(user.id) and (
+        not hasattr(document, "workspace") or document.workspace is None
+    ):
         raise AccessControlError("The user doesn't have enough rights.")
 
 
@@ -78,14 +85,19 @@ def check_can_read_list(document_list, user):
     """
     if len(document_list) > 0:
         # get list of accessible workspaces
-        accessible_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(user)
+        accessible_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(
+            user
+        )
         # check access is correct
         for document in document_list:
             # user is document owner
             if document.user_id == str(user.id):
                 continue
             # user is not owner or document not in accessible workspace
-            if document.workspace is None or document.workspace not in accessible_workspaces:
+            if (
+                document.workspace is None
+                or document.workspace not in accessible_workspaces
+            ):
                 raise AccessControlError("The user doesn't have enough rights.")
 
 
@@ -148,9 +160,14 @@ def can_write_in_workspace(func, document, workspace, user, codename):
     # if we can not unpublish
     if CAN_SET_PUBLIC_DATA_TO_PRIVATE is False:
         # if document is in public workspace
-        if document.workspace is not None and workspace_api.is_workspace_public(document.workspace):
+        if document.workspace is not None and workspace_api.is_workspace_public(
+            document.workspace
+        ):
             # if target workspace is private
-            if workspace is None or workspace_api.is_workspace_public(workspace) is False:
+            if (
+                workspace is None
+                or workspace_api.is_workspace_public(workspace) is False
+            ):
                 raise AccessControlError("The document can not be unpublished.")
 
     return func(document, workspace, user)
@@ -224,9 +241,13 @@ def _check_can_write_in_workspace(workspace, user):
     Returns:
 
     """
-    accessible_workspaces = workspace_api.get_all_workspaces_with_write_access_by_user(user)
+    accessible_workspaces = workspace_api.get_all_workspaces_with_write_access_by_user(
+        user
+    )
     if workspace not in accessible_workspaces:
-        raise AccessControlError("The user does not have the permission to write into this workspace.")
+        raise AccessControlError(
+            "The user does not have the permission to write into this workspace."
+        )
 
 
 def _check_can_read_or_write_in_workspace(workspace, user):
@@ -239,10 +260,18 @@ def _check_can_read_or_write_in_workspace(workspace, user):
     Returns:
 
     """
-    accessible_write_workspaces = workspace_api.get_all_workspaces_with_write_access_by_user(user)
-    accessible_read_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(user)
-    if workspace not in list(accessible_write_workspaces) + list(accessible_read_workspaces):
-        raise AccessControlError("The user does not have the permission to read or write into this workspace.")
+    accessible_write_workspaces = workspace_api.get_all_workspaces_with_write_access_by_user(
+        user
+    )
+    accessible_read_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(
+        user
+    )
+    if workspace not in list(accessible_write_workspaces) + list(
+        accessible_read_workspaces
+    ):
+        raise AccessControlError(
+            "The user does not have the permission to read or write into this workspace."
+        )
 
 
 def _check_can_read(document, user):
@@ -257,20 +286,28 @@ def _check_can_read(document, user):
     """
     # anonymous user case
     if user.is_anonymous and not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
-        raise AccessControlError("The user doesn't have enough rights to access this document.")
+        raise AccessControlError(
+            "The user doesn't have enough rights to access this document."
+        )
 
     # workspace case
     if document.user_id != str(user.id):
         # workspace is set
-        if hasattr(document, 'workspace') and document.workspace is not None:
+        if hasattr(document, "workspace") and document.workspace is not None:
             # get list of accessible workspaces
-            accessible_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(user)
+            accessible_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(
+                user
+            )
             # check that accessed document belongs to an accessible workspace
             if document.workspace not in accessible_workspaces:
-                raise AccessControlError("The user doesn't have enough rights to access this.")
+                raise AccessControlError(
+                    "The user doesn't have enough rights to access this."
+                )
         # workspace is not set
         else:
-            raise AccessControlError("The user doesn't have enough rights to access this.")
+            raise AccessControlError(
+                "The user doesn't have enough rights to access this."
+            )
 
 
 def can_change_owner(func, document, new_user, user):
@@ -289,6 +326,8 @@ def can_change_owner(func, document, new_user, user):
         return func(document, new_user, user)
 
     if document.user_id != str(user.id):
-        raise AccessControlError("The user doesn't have enough rights to access this document.")
+        raise AccessControlError(
+            "The user doesn't have enough rights to access this document."
+        )
 
     return func(document, new_user, user)

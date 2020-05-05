@@ -15,12 +15,12 @@ def load_dependencies(validated_data):
     Returns:
 
     """
-    if 'dependencies_dict' in validated_data:
-        dependencies_dict = validated_data['dependencies_dict']
+    if "dependencies_dict" in validated_data:
+        dependencies_dict = validated_data["dependencies_dict"]
         try:
             return json.loads(dependencies_dict)
         except:
-            raise RestApiError('Incorrect format of the dependencies parameter.')
+            raise RestApiError("Incorrect format of the dependencies parameter.")
     return None
 
 
@@ -36,4 +36,6 @@ def can_user_modify_template_version_manager(template_version_manager, user):
     """
     if user.is_superuser is False and user.is_staff is False:
         if template_version_manager.user != user.id:
-            raise AccessControlError("You don't have the permission to update this object.")
+            raise AccessControlError(
+                "You don't have the permission to update this object."
+            )

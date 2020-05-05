@@ -56,9 +56,12 @@ def upsert(template_id, list_xslt, detail_xslt, template_xsl_rendering_id=None):
         template_xsl_rendering.list_xslt = list_xslt
         template_xsl_rendering.detail_xslt = detail_xslt
     except Exception as exception:
-        logger.warning("Exception when saving TemplateXSLRendering object: %s" % str(exception))
-        template_xsl_rendering = TemplateXslRendering(template=template_id, list_xslt=list_xslt,
-                                                      detail_xslt=detail_xslt)
+        logger.warning(
+            "Exception when saving TemplateXSLRendering object: %s" % str(exception)
+        )
+        template_xsl_rendering = TemplateXslRendering(
+            template=template_id, list_xslt=list_xslt, detail_xslt=detail_xslt
+        )
 
     return _upsert(template_xsl_rendering)
 
@@ -139,7 +142,9 @@ def get_by_template_hash(template_hash):
             logger.warning("get_by_template_hash threw an exception: ".format(str(e)))
 
     if instance is None:
-        raise exceptions.DoesNotExist("No TemplateXslRendering found with the given template hash")
+        raise exceptions.DoesNotExist(
+            "No TemplateXslRendering found with the given template hash"
+        )
 
     return instance
 

@@ -9,13 +9,21 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core_main_app.commons import exceptions as exceptions
-from core_main_app.components.template_version_manager import api as template_version_manager_api
+from core_main_app.components.template_version_manager import (
+    api as template_version_manager_api,
+)
 from core_main_app.components.version_manager import api as version_manager_api
-from core_main_app.rest.template_version_manager.abstract_views import AbstractTemplateVersionManagerList, \
-    AbstractTemplateList, AbstractStatusTemplateVersion, AbstractStatusTemplateVersionManager, \
-    AbstractTemplateVersionManagerDetail
-from core_main_app.rest.template_version_manager.serializers import TemplateVersionManagerSerializer, \
-    CreateTemplateSerializer
+from core_main_app.rest.template_version_manager.abstract_views import (
+    AbstractTemplateVersionManagerList,
+    AbstractTemplateList,
+    AbstractStatusTemplateVersion,
+    AbstractStatusTemplateVersionManager,
+    AbstractTemplateVersionManagerDetail,
+)
+from core_main_app.rest.template_version_manager.serializers import (
+    TemplateVersionManagerSerializer,
+    CreateTemplateSerializer,
+)
 from core_main_app.utils.decorators import api_staff_member_required
 
 
@@ -37,7 +45,7 @@ class UserTemplateVersionManagerList(AbstractTemplateVersionManagerList):
     """ List all UserTemplateVersionManager
     """
 
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated,)
 
     def get_template_version_managers(self):
         """ Get all UserTemplateVersionManager
@@ -46,7 +54,9 @@ class UserTemplateVersionManagerList(AbstractTemplateVersionManagerList):
 
             List of UserTemplateVersionManager
         """
-        return template_version_manager_api.get_all_by_user_id(user_id=str(self.request.user.id))
+        return template_version_manager_api.get_all_by_user_id(
+            user_id=str(self.request.user.id)
+        )
 
 
 class TemplateVersionManagerDetail(APIView):
@@ -93,15 +103,17 @@ class TemplateVersionManagerDetail(APIView):
             template_version_manager_object = self.get_object(pk)
 
             # Serialize object
-            serializer = TemplateVersionManagerSerializer(template_version_manager_object)
+            serializer = TemplateVersionManagerSerializer(
+                template_version_manager_object
+            )
 
             # Return response
             return Response(serializer.data)
         except Http404:
-            content = {'message': 'Template Version Manager not found.'}
+            content = {"message": "Template Version Manager not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -150,17 +162,19 @@ class TemplateVersion(AbstractTemplateVersionManagerDetail):
             template_serializer.is_valid(True)
 
             # Save data
-            template_serializer.save(template_version_manager=template_version_manager_object)
+            template_serializer.save(
+                template_version_manager=template_version_manager_object
+            )
 
             return Response(template_serializer.data, status=status.HTTP_201_CREATED)
         except Http404:
-            content = {'message': 'Template Version Manager not found.'}
+            content = {"message": "Template Version Manager not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except ValidationError as validation_exception:
-            content = {'message': validation_exception.detail}
+            content = {"message": validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -168,7 +182,7 @@ class UserTemplateList(AbstractTemplateList):
     """ Create a Template (linked to the user)
     """
 
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         """ Create a Template (linked to the user)
@@ -259,7 +273,7 @@ class CurrentTemplateVersion(AbstractStatusTemplateVersion):
     """ Update status to current
     """
 
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated,)
 
     def status_update(self, template_object):
         """ Update status to current

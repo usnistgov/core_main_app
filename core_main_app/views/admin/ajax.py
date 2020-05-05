@@ -10,8 +10,12 @@ from django.http.response import HttpResponse, HttpResponseBadRequest
 from core_main_app.commons.exceptions import NotUniqueError
 from core_main_app.components.template.api import init_template_with_dependencies
 from core_main_app.components.template.models import Template
-from core_main_app.components.template_version_manager import api as template_version_manager_api
-from core_main_app.components.template_version_manager.models import TemplateVersionManager
+from core_main_app.components.template_version_manager import (
+    api as template_version_manager_api,
+)
+from core_main_app.components.template_version_manager.models import (
+    TemplateVersionManager,
+)
 from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.components.xsl_transformation import api as xsl_transformation_api
 from core_main_app.components.xsl_transformation.models import XslTransformation
@@ -30,19 +34,23 @@ def resolve_dependencies(request):
     """
     try:
         # Get the parameters
-        name = request.POST.get('name', None)
-        version_manager_id = request.POST.get('version_manager_id', '')
-        filename = request.POST['filename']
-        xsd_content = request.POST['xsd_content']
-        schema_locations = request.POST.getlist('schemaLocations[]')
-        dependencies = request.POST.getlist('dependencies[]')
+        name = request.POST.get("name", None)
+        version_manager_id = request.POST.get("version_manager_id", "")
+        filename = request.POST["filename"]
+        xsd_content = request.POST["xsd_content"]
+        schema_locations = request.POST.getlist("schemaLocations[]")
+        dependencies = request.POST.getlist("dependencies[]")
 
         # create new object
-        template = Template(filename=filename, content=_get_xsd_content_from_html(xsd_content))
-        init_template_with_dependencies(template, _get_dependencies_dict(schema_locations, dependencies))
+        template = Template(
+            filename=filename, content=_get_xsd_content_from_html(xsd_content)
+        )
+        init_template_with_dependencies(
+            template, _get_dependencies_dict(schema_locations, dependencies)
+        )
 
         # get the version manager or create a new one
-        if version_manager_id != '':
+        if version_manager_id != "":
             template_version_manager = version_manager_api.get(version_manager_id)
         else:
             template_version_manager = TemplateVersionManager(title=name)
@@ -50,7 +58,7 @@ def resolve_dependencies(request):
     except Exception as e:
         return HttpResponseBadRequest(str(e))
 
-    return HttpResponse(json.dumps({}), content_type='application/javascript')
+    return HttpResponse(json.dumps({}), content_type="application/javascript")
 
 
 def _get_dependencies_dict(schema_locations, dependencies):
@@ -66,7 +74,7 @@ def _get_dependencies_dict(schema_locations, dependencies):
     string_to_python_dependencies = []
     # transform 'None' into python None
     for dependency in dependencies:
-        if dependency == 'None':
+        if dependency == "None":
             string_to_python_dependencies.append(None)
         else:
             string_to_python_dependencies.append(dependency)
@@ -83,7 +91,7 @@ def _get_xsd_content_from_html(xsd_content):
 
     """
     html_parser = html.parser.HTMLParser()
-    #FIXME: deprecated unescape
+    # FIXME: deprecated unescape
     xsd_content = html_parser.unescape(xsd_content)
     return xsd_content
 
@@ -92,15 +100,18 @@ class EditXSLTView(EditObjectModalView):
     form_class = EditXSLTForm
     document = XslTransformation
     success_url = reverse_lazy("admin:core_main_app_xslt")
-    success_message = 'XSLT edited with success.'
+    success_message = "XSLT edited with success."
 
     def _save(self, form):
         # Save treatment.
         try:
             xsl_transformation_api.upsert(self.object)
         except NotUniqueError:
-            form.add_error(None, "An object with the same name already exists. Please choose "
-                                 "another name.")
+            form.add_error(
+                None,
+                "An object with the same name already exists. Please choose "
+                "another name.",
+            )
         except Exception as e:
             form.add_error(None, str(e))
 
@@ -108,8 +119,8 @@ class EditXSLTView(EditObjectModalView):
 class DeleteXSLTView(DeleteObjectModalView):
     document = XslTransformation
     success_url = reverse_lazy("admin:core_main_app_xslt")
-    success_message = 'XSLT deleted with success.'
-    field_for_name = 'name'
+    success_message = "XSLT deleted with success."
+    field_for_name = "name"
 
     def _delete(self, request, *args, **kwargs):
         # Delete treatment.

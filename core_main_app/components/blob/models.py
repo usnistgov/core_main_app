@@ -6,7 +6,12 @@ from mongoengine.queryset.base import NULLIFY
 from blob_utils.blob_host_factory import BLOBHostFactory
 from core_main_app.commons import exceptions
 from core_main_app.components.workspace.models import Workspace
-from core_main_app.settings import BLOB_HOST, BLOB_HOST_URI, BLOB_HOST_USER, BLOB_HOST_PASSWORD
+from core_main_app.settings import (
+    BLOB_HOST,
+    BLOB_HOST_URI,
+    BLOB_HOST_USER,
+    BLOB_HOST_PASSWORD,
+)
 from core_main_app.utils.validation.regex_validation import not_empty_or_whitespaces
 from django_mongoengine import fields, Document
 
@@ -14,10 +19,13 @@ from django_mongoengine import fields, Document
 class Blob(Document):
     """ Blob object
     """
+
     filename = fields.StringField(blank=False, validation=not_empty_or_whitespaces)
     handle = fields.StringField(blank=False)
     user_id = fields.StringField(blank=False)
-    workspace = fields.ReferenceField(Workspace, reverse_delete_rule=NULLIFY, blank=True)
+    workspace = fields.ReferenceField(
+        Workspace, reverse_delete_rule=NULLIFY, blank=True
+    )
 
     _blob_host = None
     _blob = None
@@ -97,10 +105,12 @@ class Blob(Document):
 
         """
         if cls._blob_host is None:
-            blob_host_factory = BLOBHostFactory(blob_host=BLOB_HOST,
-                                                blob_host_uri=BLOB_HOST_URI,
-                                                blob_host_user=BLOB_HOST_USER,
-                                                blob_host_password=BLOB_HOST_PASSWORD)
+            blob_host_factory = BLOBHostFactory(
+                blob_host=BLOB_HOST,
+                blob_host_uri=BLOB_HOST_URI,
+                blob_host_user=BLOB_HOST_USER,
+                blob_host_password=BLOB_HOST_PASSWORD,
+            )
             cls._blob_host = blob_host_factory.create_blob_host()
         return cls._blob_host
 

@@ -5,8 +5,12 @@ import logging
 
 from core_main_app.commons import exceptions
 from core_main_app.components.template.models import Template
-from core_main_app.utils.xml import is_schema_valid, get_hash, \
-    get_template_with_server_dependencies, get_local_dependencies
+from core_main_app.utils.xml import (
+    is_schema_valid,
+    get_hash,
+    get_template_with_server_dependencies,
+    get_local_dependencies,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +46,9 @@ def init_template_with_dependencies(template, dependencies_dict):
     """
     if dependencies_dict is not None:
         # update template content
-        template.content = get_template_with_server_dependencies(template.content, dependencies_dict)
+        template.content = get_template_with_server_dependencies(
+            template.content, dependencies_dict
+        )
 
     return template
 
@@ -151,7 +157,11 @@ def _register_local_dependencies(template):
             # add the dependency
             template.dependencies.append(dependency_object)
         except exceptions.DoesNotExist as e:
-            logger.warning("Dependency {0} throw an exception: {1}".format(local_dependency, str(e)))
+            logger.warning(
+                "Dependency {0} throw an exception: {1}".format(
+                    local_dependency, str(e)
+                )
+            )
 
 
 def get_all_templates_by_dependencies(dependency_id_list):

@@ -16,8 +16,8 @@ def send_get_request(url, params=None, **kwargs):
     Returns:
 
     """
-    if 'verify' not in kwargs:
-        kwargs['verify'] = SSL_CERTIFICATES_DIR
+    if "verify" not in kwargs:
+        kwargs["verify"] = SSL_CERTIFICATES_DIR
     return requests.get(url, params, **kwargs)
 
 
@@ -33,8 +33,8 @@ def send_post_request(url, data=None, json=None, **kwargs):
     Returns:
 
     """
-    if 'verify' not in kwargs:
-        kwargs['verify'] = SSL_CERTIFICATES_DIR
+    if "verify" not in kwargs:
+        kwargs["verify"] = SSL_CERTIFICATES_DIR
     return requests.post(url, data, json, **kwargs)
 
 
@@ -49,8 +49,8 @@ def send_put_request(url, data=None, **kwargs):
     Returns:
 
     """
-    if 'verify' not in kwargs:
-        kwargs['verify'] = SSL_CERTIFICATES_DIR
+    if "verify" not in kwargs:
+        kwargs["verify"] = SSL_CERTIFICATES_DIR
     return requests.put(url, data, **kwargs)
 
 
@@ -64,8 +64,8 @@ def send_delete_request(url, **kwargs):
     Returns:
 
     """
-    if 'verify' not in kwargs:
-        kwargs['verify'] = SSL_CERTIFICATES_DIR
+    if "verify" not in kwargs:
+        kwargs["verify"] = SSL_CERTIFICATES_DIR
     return requests.delete(url, **kwargs)
 
 
@@ -79,5 +79,5 @@ def send_get_request_with_access_token(url, access_token):
     Returns:
 
     """
-    headers = {'Authorization': 'Bearer ' + access_token}
+    headers = {"Authorization": "Bearer " + access_token}
     return send_get_request(url, headers=headers)

@@ -14,7 +14,14 @@ logger = getLogger(__name__)
 
 
 @shared_task
-def send_mail(recipient_list, subject, path_to_template, context={}, fail_silently=True, sender=SERVER_EMAIL):
+def send_mail(
+    recipient_list,
+    subject,
+    path_to_template,
+    context={},
+    fail_silently=True,
+    sender=SERVER_EMAIL,
+):
     """Send email.
 
     Args:
@@ -33,15 +40,22 @@ def send_mail(recipient_list, subject, path_to_template, context={}, fail_silent
         template = loader.get_template(path_to_template)
         message = template.render(context)
         # Send mail
-        django_send_mail(subject=EMAIL_SUBJECT_PREFIX+subject, message='', from_email=sender,
-                         recipient_list=recipient_list,
-                         html_message=message, fail_silently=fail_silently)
+        django_send_mail(
+            subject=EMAIL_SUBJECT_PREFIX + subject,
+            message="",
+            from_email=sender,
+            recipient_list=recipient_list,
+            html_message=message,
+            fail_silently=fail_silently,
+        )
     except Exception as e:
         raise e
 
 
 @shared_task
-def send_mail_to_administrators(subject, path_to_template, context={}, fail_silently=True):
+def send_mail_to_administrators(
+    subject, path_to_template, context={}, fail_silently=True
+):
     """Send email to administrators.
 
     Args:
@@ -58,9 +72,16 @@ def send_mail_to_administrators(subject, path_to_template, context={}, fail_sile
         template = loader.get_template(path_to_template)
         message = template.render(context)
         # Send mail
-        mail_admins(subject=subject, message='', html_message=message, fail_silently=fail_silently)
+        mail_admins(
+            subject=subject,
+            message="",
+            html_message=message,
+            fail_silently=fail_silently,
+        )
     except Exception as e:
-        logger.warning("send_mail_to_administrators threw an exception: ".format(str(e)))
+        logger.warning(
+            "send_mail_to_administrators threw an exception: ".format(str(e))
+        )
 
 
 @shared_task
@@ -81,8 +102,11 @@ def send_mail_to_managers(subject, path_to_template, context={}, fail_silently=T
         template = loader.get_template(path_to_template)
         message = template.render(context)
         # Send mail
-        mail_managers(subject=subject, message='', html_message=message, fail_silently=fail_silently)
+        mail_managers(
+            subject=subject,
+            message="",
+            html_message=message,
+            fail_silently=fail_silently,
+        )
     except Exception as e:
         logger.warning("send_mail_to_managers throws an exception: ".format(str(e)))
-
-

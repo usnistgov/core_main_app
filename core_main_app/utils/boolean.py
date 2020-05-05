@@ -13,10 +13,10 @@ def to_bool(value):
     """
     if isinstance(value, bool):
         return value
-    if hasattr(value, 'upper'):
-        if value.upper() == 'FALSE':
+    if hasattr(value, "upper"):
+        if value.upper() == "FALSE":
             return False
-        elif value.upper() == 'TRUE':
+        elif value.upper() == "TRUE":
             return True
 
-    raise ValueError('Error: a boolean value is expected.')
+    raise ValueError("Error: a boolean value is expected.")

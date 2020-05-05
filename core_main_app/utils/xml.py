@@ -61,9 +61,13 @@ def validate_xml_data(xsd_tree, xml_tree):
         try:
             error = xml_validation.xerces_validate_xml(xsd_tree, xml_tree)
         except Exception:
-            error = xml_validation.lxml_validate_xml(xsd_tree, xml_tree, lmxl_uri_resolver())
+            error = xml_validation.lxml_validate_xml(
+                xsd_tree, xml_tree, lmxl_uri_resolver()
+            )
     else:
-        error = xml_validation.lxml_validate_xml(xsd_tree, xml_tree, lmxl_uri_resolver())
+        error = xml_validation.lxml_validate_xml(
+            xsd_tree, xml_tree, lmxl_uri_resolver()
+        )
 
     return error
 
@@ -78,7 +82,7 @@ def is_schema_valid(xsd_string):
 
     """
     if not is_well_formed_xml(xsd_string):
-        raise exceptions.XMLError('Uploaded file is not well formatted XML.')
+        raise exceptions.XMLError("Uploaded file is not well formatted XML.")
 
     # Check schema support by the core
     errors = _check_core_support(xsd_string)
@@ -138,10 +142,12 @@ def unparse(json_dict, full_document=True):
 
     """
     json_dump_string = json.dumps(json_dict)
-    preprocessed_dict = json.loads(json_dump_string,
-                                   parse_float=_parse_numbers,
-                                   parse_int=_parse_numbers,
-                                   object_pairs_hook=OrderedDict)
+    preprocessed_dict = json.loads(
+        json_dump_string,
+        parse_float=_parse_numbers,
+        parse_int=_parse_numbers,
+        object_pairs_hook=OrderedDict,
+    )
     return xmltodict.unparse(preprocessed_dict, full_document=full_document)
 
 
@@ -159,7 +165,9 @@ def raw_xml_to_dict(raw_xml, postprocessor=None):
         dict_raw = xmltodict.parse(raw_xml, postprocessor=postprocessor)
         return dict_raw
     except xmltodict.expat.ExpatError:
-        raise exceptions.XMLError("An unexpected error happened during the XML parsing.")
+        raise exceptions.XMLError(
+            "An unexpected error happened during the XML parsing."
+        )
 
 
 def remove_lists_from_xml_dict(xml_dict, max_list_size=0):
@@ -279,9 +287,13 @@ def get_imports_and_includes(xsd_string):
     """
     xsd_tree = XSDTree.build_tree(xsd_string)
     # get the imports
-    imports = xsd_tree.findall("{}import".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE))
+    imports = xsd_tree.findall(
+        "{}import".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE)
+    )
     # get the includes
-    includes = xsd_tree.findall("{}include".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE))
+    includes = xsd_tree.findall(
+        "{}include".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE)
+    )
     return imports, includes
 
 
@@ -298,19 +310,27 @@ def update_dependencies(xsd_string, dependencies):
     # build the tree
     xsd_tree = XSDTree.build_tree(xsd_string)
     # get the imports
-    xsd_imports = xsd_tree.findall("{}import".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE))
+    xsd_imports = xsd_tree.findall(
+        "{}import".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE)
+    )
     # get the includes
-    xsd_includes = xsd_tree.findall("{}include".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE))
+    xsd_includes = xsd_tree.findall(
+        "{}include".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE)
+    )
 
     for schema_location, dependency_id in dependencies.items():
         if dependency_id is not None:
             for xsd_include in xsd_includes:
-                if schema_location == xsd_include.attrib['schemaLocation']:
-                    xsd_include.attrib['schemaLocation'] = _get_schema_location_uri(dependency_id)
+                if schema_location == xsd_include.attrib["schemaLocation"]:
+                    xsd_include.attrib["schemaLocation"] = _get_schema_location_uri(
+                        dependency_id
+                    )
 
             for xsd_import in xsd_imports:
-                if schema_location == xsd_import.attrib['schemaLocation']:
-                    xsd_import.attrib['schemaLocation'] = _get_schema_location_uri(dependency_id)
+                if schema_location == xsd_import.attrib["schemaLocation"]:
+                    xsd_import.attrib["schemaLocation"] = _get_schema_location_uri(
+                        dependency_id
+                    )
     return xsd_tree
 
 
@@ -335,12 +355,12 @@ def get_local_dependencies(xsd_string):
     pattern = get_template_download_pattern()
 
     for xsd_include_import in xsd_includes_imports:
-        if xsd_include_import.attrib['schemaLocation'].startswith(SERVER_URI):
+        if xsd_include_import.attrib["schemaLocation"].startswith(SERVER_URI):
             try:
                 # parse dependency url
-                url = urlparse(xsd_include_import.attrib['schemaLocation'])
+                url = urlparse(xsd_include_import.attrib["schemaLocation"])
                 # get id from url
-                object_id = pattern.match(url.path).group('pk')
+                object_id = pattern.match(url.path).group("pk")
                 # add id to list of internal dependencies
                 dependencies.append(object_id)
             except Exception:
@@ -365,21 +385,33 @@ def _check_core_support(xsd_string):
     xsd_tree = XSDTree.build_tree(xsd_string)
 
     # get the imports
-    imports = xsd_tree.findall("{}import".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE))
+    imports = xsd_tree.findall(
+        "{}import".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE)
+    )
     # get the includes
-    includes = xsd_tree.findall("{}include".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE))
+    includes = xsd_tree.findall(
+        "{}include".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE)
+    )
 
     if len(imports) != 0 or len(includes) != 0:
         for el_import in imports:
-            if 'schemaLocation' not in el_import.attrib:
-                errors.append("The attribute schemaLocation of import is required but missing.")
-            elif ' ' in el_import.attrib['schemaLocation']:
-                errors.append("The use of namespace in import elements is not supported.")
+            if "schemaLocation" not in el_import.attrib:
+                errors.append(
+                    "The attribute schemaLocation of import is required but missing."
+                )
+            elif " " in el_import.attrib["schemaLocation"]:
+                errors.append(
+                    "The use of namespace in import elements is not supported."
+                )
         for el_include in includes:
-            if 'schemaLocation' not in el_include.attrib:
-                errors.append("The attribute schemaLocation of include is required but missing.")
-            elif ' ' in el_include.attrib['schemaLocation']:
-                errors.append("The use of namespace in include elements is not supported.")
+            if "schemaLocation" not in el_include.attrib:
+                errors.append(
+                    "The attribute schemaLocation of include is required but missing."
+                )
+            elif " " in el_include.attrib["schemaLocation"]:
+                errors.append(
+                    "The use of namespace in include elements is not supported."
+                )
 
     return errors
 
@@ -402,7 +434,7 @@ def _get_schema_location_uri(schema_id):
     Returns:
 
     """
-    url = reverse('core_main_app_rest_template_download', kwargs={'pk': str(schema_id)})
+    url = reverse("core_main_app_rest_template_download", kwargs={"pk": str(schema_id)})
     return str(SERVER_URI) + url
 
 
@@ -426,7 +458,9 @@ def xsl_transform(xml_string, xslt_string):
         transformed_tree = transform(xsd_tree)
         return str(transformed_tree)
     except Exception:
-        raise exceptions.CoreError("An unexpected exception happened while transforming the XML")
+        raise exceptions.CoreError(
+            "An unexpected exception happened while transforming the XML"
+        )
 
 
 def xpath_to_dot_notation(xpath, namespaces=None):
@@ -440,13 +474,13 @@ def xpath_to_dot_notation(xpath, namespaces=None):
 
     """
     if namespaces is None:
-        namespaces = {'xml': xml_utils_constants.XML_NAMESPACE}
+        namespaces = {"xml": xml_utils_constants.XML_NAMESPACE}
 
     # remove indexes from xpath
-    xpath = re.sub(r'\[[0-9]+\]', '', xpath)
+    xpath = re.sub(r"\[[0-9]+\]", "", xpath)
     # remove namespaces
     for prefix in list(namespaces.keys()):
-        xpath = re.sub(r'{}:'.format(prefix), '', xpath)
+        xpath = re.sub(r"{}:".format(prefix), "", xpath)
     # replace / by .
     xpath = xpath.replace("/", ".")
 

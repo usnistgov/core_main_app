@@ -6,9 +6,14 @@ from core_main_app.commons import exceptions
 from core_main_app.components.data.models import Data
 from core_main_app.components.data import api as data_api
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
-from core_main_app.utils.integration_tests.integration_base_test_case import MongoIntegrationBaseTestCase
+from core_main_app.utils.integration_tests.integration_base_test_case import (
+    MongoIntegrationBaseTestCase,
+)
 from core_main_app.settings import DATA_SORTING_FIELDS
-from tests.components.data.fixtures.fixtures import DataFixtures, AccessControlDataFixture
+from tests.components.data.fixtures.fixtures import (
+    DataFixtures,
+    AccessControlDataFixture,
+)
 
 fixture_data = DataFixtures()
 access_control_data_fixture = AccessControlDataFixture()
@@ -40,7 +45,10 @@ class TestDataGetAll(MongoIntegrationBaseTestCase):
         descending_result = Data.get_all(descending_order_by_field)
         # Assert
         for i in range(len(ascending_result)):
-            self.assertTrue(ascending_result.all()[i].title == descending_result.all()[len(ascending_result) - i - 1].title)
+            self.assertTrue(
+                ascending_result.all()[i].title
+                == descending_result.all()[len(ascending_result) - i - 1].title
+            )
 
     def test_data_get_all_ascending_sorting(self):
         # Arrange
@@ -57,8 +65,14 @@ class TestDataGetAll(MongoIntegrationBaseTestCase):
         # Act
         descending_result = Data.get_all(descending_order_by_field)
         # Assert
-        self.assertTrue(self.fixture.data_2.title == descending_result.all()[len(descending_result)-2].title)
-        self.assertTrue(self.fixture.data_1.title == descending_result.all()[len(descending_result)-1].title)
+        self.assertTrue(
+            self.fixture.data_2.title
+            == descending_result.all()[len(descending_result) - 2].title
+        )
+        self.assertTrue(
+            self.fixture.data_1.title
+            == descending_result.all()[len(descending_result) - 1].title
+        )
 
     def test_data_get_all_multi_field_sorting(self):
         # Arrange
@@ -71,12 +85,18 @@ class TestDataGetAll(MongoIntegrationBaseTestCase):
         self.assertEqual(self.fixture.data_4.user_id, ascending_result.all()[4].user_id)
         self.assertEqual(self.fixture.data_5.user_id, ascending_result.all()[3].user_id)
 
-        self.assertEqual(self.fixture.data_4.user_id, descending_result.all()[3].user_id)
-        self.assertEqual(self.fixture.data_5.user_id, descending_result.all()[4].user_id)
+        self.assertEqual(
+            self.fixture.data_4.user_id, descending_result.all()[3].user_id
+        )
+        self.assertEqual(
+            self.fixture.data_5.user_id, descending_result.all()[4].user_id
+        )
 
-    def test_data_get_all_api_without_sorting_param_use_default_data_sorting_setting(self):
+    def test_data_get_all_api_without_sorting_param_use_default_data_sorting_setting(
+        self,
+    ):
         # Arrange
-        mock_user = _create_user('1', is_superuser=True)
+        mock_user = _create_user("1", is_superuser=True)
         # Act
         data = data_api.get_all(mock_user)
         # Assert
@@ -103,7 +123,9 @@ class TestDataGetAllExcept(MongoIntegrationBaseTestCase):
 
         result = Data.get_all_except([], excluded_id_list)
         # Assert
-        self.assertTrue(result.count() == len(self.fixture.data_collection) - len(excluded_id_list))
+        self.assertTrue(
+            result.count() == len(self.fixture.data_collection) - len(excluded_id_list)
+        )
 
     def test_data_get_all_except_empty_list_return_collection_of_data(self):
         # Act
@@ -168,7 +190,10 @@ class TestDataGetAllExcept(MongoIntegrationBaseTestCase):
         descending_result = Data.get_all_except(descending_order_by_field)
         # Assert
         for i in range(len(ascending_result)):
-            self.assertTrue(ascending_result.all()[i].title == descending_result.all()[len(ascending_result) - i - 1].title)
+            self.assertTrue(
+                ascending_result.all()[i].title
+                == descending_result.all()[len(ascending_result) - i - 1].title
+            )
 
     def test_get_all_except_data_ascending_sorting(self):
         # Arrange
@@ -185,8 +210,14 @@ class TestDataGetAllExcept(MongoIntegrationBaseTestCase):
         # Act
         descending_result = Data.get_all_except(descending_order_by_field)
         # Assert
-        self.assertTrue(self.fixture.data_2.title == descending_result.all()[len(descending_result)-2].title)
-        self.assertTrue(self.fixture.data_1.title == descending_result.all()[len(descending_result)-1].title)
+        self.assertTrue(
+            self.fixture.data_2.title
+            == descending_result.all()[len(descending_result) - 2].title
+        )
+        self.assertTrue(
+            self.fixture.data_1.title
+            == descending_result.all()[len(descending_result) - 1].title
+        )
 
     def test_get_all_except_data_multi_field_sorting(self):
         # Arrange
@@ -199,8 +230,12 @@ class TestDataGetAllExcept(MongoIntegrationBaseTestCase):
         self.assertEqual(self.fixture.data_4.user_id, ascending_result.all()[4].user_id)
         self.assertEqual(self.fixture.data_5.user_id, ascending_result.all()[3].user_id)
 
-        self.assertEqual(self.fixture.data_4.user_id, descending_result.all()[3].user_id)
-        self.assertEqual(self.fixture.data_5.user_id, descending_result.all()[4].user_id)
+        self.assertEqual(
+            self.fixture.data_4.user_id, descending_result.all()[3].user_id
+        )
+        self.assertEqual(
+            self.fixture.data_5.user_id, descending_result.all()[4].user_id
+        )
 
 
 class TestDataGetById(MongoIntegrationBaseTestCase):
@@ -231,7 +266,9 @@ class TestDataGetAllByUserId(MongoIntegrationBaseTestCase):
         # Assert
         self.assertTrue(all(item.user_id == str(user_id) for item in result))
 
-    def test_data_get_all_by_user_id_return_empty_collection_of_data_from_user_does_not_exist(self):
+    def test_data_get_all_by_user_id_return_empty_collection_of_data_from_user_does_not_exist(
+        self,
+    ):
         # Arrange
         user_id = 800
         # Act
@@ -249,7 +286,10 @@ class TestDataGetAllByUserId(MongoIntegrationBaseTestCase):
         descending_result = Data.get_all_by_user_id(user_id, descending_order_by_field)
         # Assert
         for i in range(len(ascending_result)):
-            self.assertTrue(ascending_result.all()[i].title == descending_result.all()[len(ascending_result) - i - 1].title)
+            self.assertTrue(
+                ascending_result.all()[i].title
+                == descending_result.all()[len(ascending_result) - i - 1].title
+            )
 
     def test_get_all_by_user_id_data_ascending_sorting(self):
         # Arrange
@@ -268,8 +308,14 @@ class TestDataGetAllByUserId(MongoIntegrationBaseTestCase):
         # Act
         descending_result = Data.get_all_by_user_id(user_id, descending_order_by_field)
         # Assert
-        self.assertTrue(self.fixture.data_3.title == descending_result.all()[len(descending_result)-2].title)
-        self.assertTrue(self.fixture.data_1.title == descending_result.all()[len(descending_result)-1].title)
+        self.assertTrue(
+            self.fixture.data_3.title
+            == descending_result.all()[len(descending_result) - 2].title
+        )
+        self.assertTrue(
+            self.fixture.data_1.title
+            == descending_result.all()[len(descending_result) - 1].title
+        )
 
     def test_get_all_by_user_id_multi_field_sorting(self):
         # Arrange
@@ -285,20 +331,26 @@ class TestDataGetAllByUserId(MongoIntegrationBaseTestCase):
         self.assertEqual(self.fixture.data_3.title, descending_result.all()[1].title)
         self.assertEqual(self.fixture.data_1.title, descending_result.all()[2].title)
 
-    def test_data_get_all_api_without_sorting_param_use_default_data_sorting_setting(self):
+    def test_data_get_all_api_without_sorting_param_use_default_data_sorting_setting(
+        self,
+    ):
         # Arrange
-        mock_user = _create_user('1', is_superuser=True)
+        mock_user = _create_user("1", is_superuser=True)
         # Act
         data = data_api.get_all_by_user(mock_user)
         # Assert
-        self.assertListEqual(list(data), [self.fixture.data_1, self.fixture.data_3, self.fixture.data_5])
+        self.assertListEqual(
+            list(data), [self.fixture.data_1, self.fixture.data_3, self.fixture.data_5]
+        )
 
 
 class TestDataGetAllExceptUserId(MongoIntegrationBaseTestCase):
 
     fixture = access_control_data_fixture
 
-    def test_data_get_all_except_user_id_return_collection_of_data_where_user_is_not_owner(self):
+    def test_data_get_all_except_user_id_return_collection_of_data_where_user_is_not_owner(
+        self,
+    ):
         # Arrange
         user_id = 1
         # Act
@@ -306,7 +358,9 @@ class TestDataGetAllExceptUserId(MongoIntegrationBaseTestCase):
         # Assert
         self.assertTrue(item.user_id != user_id for item in result)
 
-    def test_data_get_all_by_user_id_return_full_collection_of_data_from_user_does_not_exist(self):
+    def test_data_get_all_by_user_id_return_full_collection_of_data_from_user_does_not_exist(
+        self,
+    ):
         # Arrange
         user_id = 800
         # Act
@@ -320,18 +374,27 @@ class TestDataGetAllExceptUserId(MongoIntegrationBaseTestCase):
         ascending_order_by_field = ["+title"]
         descending_order_by_field = ["-title"]
         # Act
-        ascending_result = Data.get_all_except_user_id(user_id, ascending_order_by_field)
-        descending_result = Data.get_all_except_user_id(user_id, descending_order_by_field)
+        ascending_result = Data.get_all_except_user_id(
+            user_id, ascending_order_by_field
+        )
+        descending_result = Data.get_all_except_user_id(
+            user_id, descending_order_by_field
+        )
         # Assert
         for i in range(len(ascending_result)):
-            self.assertTrue(ascending_result.all()[i].title == descending_result.all()[len(ascending_result) - i - 1].title)
+            self.assertTrue(
+                ascending_result.all()[i].title
+                == descending_result.all()[len(ascending_result) - i - 1].title
+            )
 
     def test_get_all_except_user_id_data_ascending_sorting(self):
         # Arrange
         ascending_order_by_field = ["+title"]
         user_id = 2
         # Act
-        ascending_result = Data.get_all_except_user_id(user_id, ascending_order_by_field)
+        ascending_result = Data.get_all_except_user_id(
+            user_id, ascending_order_by_field
+        )
         # Assert
         self.assertTrue(self.fixture.data_1.title == ascending_result.all()[0].title)
         self.assertTrue(self.fixture.data_3.title == ascending_result.all()[1].title)
@@ -341,31 +404,49 @@ class TestDataGetAllExceptUserId(MongoIntegrationBaseTestCase):
         descending_order_by_field = ["-title"]
         user_id = 2
         # Act
-        descending_result = Data.get_all_except_user_id(user_id, descending_order_by_field)
+        descending_result = Data.get_all_except_user_id(
+            user_id, descending_order_by_field
+        )
         # Assert
-        self.assertTrue(self.fixture.data_3.title == descending_result.all()[len(descending_result)-2].title)
-        self.assertTrue(self.fixture.data_1.title == descending_result.all()[len(descending_result)-1].title)
+        self.assertTrue(
+            self.fixture.data_3.title
+            == descending_result.all()[len(descending_result) - 2].title
+        )
+        self.assertTrue(
+            self.fixture.data_1.title
+            == descending_result.all()[len(descending_result) - 1].title
+        )
 
     def test_get_all_except_user_id_multi_field_sorting(self):
         # Arrange
         ascending_order_by_multi_field = ["+title", "+user_id"]
         descending_order_by_multi_field = ["+title", "-user_id"]
         # Act
-        ascending_result = Data.get_all_except_user_id(3, ascending_order_by_multi_field)
-        descending_result = Data.get_all_except_user_id(3, descending_order_by_multi_field)
+        ascending_result = Data.get_all_except_user_id(
+            3, ascending_order_by_multi_field
+        )
+        descending_result = Data.get_all_except_user_id(
+            3, descending_order_by_multi_field
+        )
         # Assert
         self.assertEqual(self.fixture.data_4.user_id, ascending_result.all()[4].user_id)
         self.assertEqual(self.fixture.data_5.user_id, ascending_result.all()[3].user_id)
 
-        self.assertEqual(self.fixture.data_4.user_id, descending_result.all()[3].user_id)
-        self.assertEqual(self.fixture.data_5.user_id, descending_result.all()[4].user_id)
+        self.assertEqual(
+            self.fixture.data_4.user_id, descending_result.all()[3].user_id
+        )
+        self.assertEqual(
+            self.fixture.data_5.user_id, descending_result.all()[4].user_id
+        )
 
-    def test_data_get_all_except_user_api_without_sorting_param_use_default_data_sorting_setting(self):
+    def test_data_get_all_except_user_api_without_sorting_param_use_default_data_sorting_setting(
+        self,
+    ):
         # Arrange
-        mock_user = _create_user('1', is_superuser=True)
+        mock_user = _create_user("1", is_superuser=True)
         # Act
         data = data_api.get_all_except_user(mock_user)
-        #Assert
+        # Assert
         self.assertListEqual(list(data), [self.fixture.data_2, self.fixture.data_4])
 
 
@@ -383,7 +464,10 @@ class TestExecuteQuery(MongoIntegrationBaseTestCase):
         descending_result = Data.execute_query(query, descending_order_by_field)
         # Assert
         for i in range(len(ascending_result)):
-            self.assertTrue(ascending_result.all()[i].title == descending_result.all()[len(ascending_result) - i - 1].title)
+            self.assertTrue(
+                ascending_result.all()[i].title
+                == descending_result.all()[len(ascending_result) - i - 1].title
+            )
 
     def test_execute_query_data_ascending_sorting(self):
         # Arrange
@@ -402,8 +486,14 @@ class TestExecuteQuery(MongoIntegrationBaseTestCase):
         # Act
         descending_result = Data.execute_query(query, descending_order_by_field)
         # Assert
-        self.assertTrue(self.fixture.data_2.title == descending_result.all()[len(descending_result)-2].title)
-        self.assertTrue(self.fixture.data_1.title == descending_result.all()[len(descending_result)-1].title)
+        self.assertTrue(
+            self.fixture.data_2.title
+            == descending_result.all()[len(descending_result) - 2].title
+        )
+        self.assertTrue(
+            self.fixture.data_1.title
+            == descending_result.all()[len(descending_result) - 1].title
+        )
 
     def test_execute_query_multi_field_sorting(self):
         # Arrange
@@ -417,15 +507,21 @@ class TestExecuteQuery(MongoIntegrationBaseTestCase):
         self.assertEqual(self.fixture.data_4.user_id, ascending_result.all()[4].user_id)
         self.assertEqual(self.fixture.data_5.user_id, ascending_result.all()[3].user_id)
 
-        self.assertEqual(self.fixture.data_4.user_id, descending_result.all()[3].user_id)
-        self.assertEqual(self.fixture.data_5.user_id, descending_result.all()[4].user_id)
+        self.assertEqual(
+            self.fixture.data_4.user_id, descending_result.all()[3].user_id
+        )
+        self.assertEqual(
+            self.fixture.data_5.user_id, descending_result.all()[4].user_id
+        )
 
-    def test_data_execute_query_api_without_sorting_param_use_default_data_sorting_setting(self):
+    def test_data_execute_query_api_without_sorting_param_use_default_data_sorting_setting(
+        self,
+    ):
         # Arrange
-        mock_user = _create_user('1', is_superuser=True)
+        mock_user = _create_user("1", is_superuser=True)
         # Act
         data = data_api.execute_query({}, mock_user)
-        #Assert
+        # Assert
         self.assertListEqual(list(data), self.fixture.data_collection)
 
 
@@ -439,18 +535,27 @@ class TestGetAllByWorkspace(MongoIntegrationBaseTestCase):
         ascending_order_by_field = ["+title"]
         descending_order_by_field = ["-title"]
         # Act
-        ascending_result = Data.get_all_by_workspace(workspace, ascending_order_by_field)
-        descending_result = Data.get_all_by_workspace(workspace, descending_order_by_field)
+        ascending_result = Data.get_all_by_workspace(
+            workspace, ascending_order_by_field
+        )
+        descending_result = Data.get_all_by_workspace(
+            workspace, descending_order_by_field
+        )
         # Assert
         for i in range(len(ascending_result)):
-            self.assertTrue(ascending_result.all()[i].title == descending_result.all()[len(ascending_result) - i - 1].title)
+            self.assertTrue(
+                ascending_result.all()[i].title
+                == descending_result.all()[len(ascending_result) - i - 1].title
+            )
 
     def test_get_all_by_workspace_data_ascending_sorting(self):
         # Arrange
         ascending_order_by_field = ["+title"]
         workspace = self.fixture.workspace_1.id
         # Act
-        ascending_result = Data.get_all_by_workspace(workspace, ascending_order_by_field)
+        ascending_result = Data.get_all_by_workspace(
+            workspace, ascending_order_by_field
+        )
         # Assert
         self.assertTrue(self.fixture.data_3.title == ascending_result.all()[0].title)
         self.assertTrue(self.fixture.data_5.title == ascending_result.all()[1].title)
@@ -460,10 +565,18 @@ class TestGetAllByWorkspace(MongoIntegrationBaseTestCase):
         descending_order_by_field = ["-title"]
         workspace = self.fixture.workspace_1.id
         # Act
-        descending_result = Data.get_all_by_workspace(workspace, descending_order_by_field)
+        descending_result = Data.get_all_by_workspace(
+            workspace, descending_order_by_field
+        )
         # Assert
-        self.assertTrue(self.fixture.data_5.title == descending_result.all()[len(descending_result)-2].title)
-        self.assertTrue(self.fixture.data_3.title == descending_result.all()[len(descending_result)-1].title)
+        self.assertTrue(
+            self.fixture.data_5.title
+            == descending_result.all()[len(descending_result) - 2].title
+        )
+        self.assertTrue(
+            self.fixture.data_3.title
+            == descending_result.all()[len(descending_result) - 1].title
+        )
 
     def test_get_all_by_workspace_multi_field_sorting(self):
         # Arrange
@@ -471,18 +584,28 @@ class TestGetAllByWorkspace(MongoIntegrationBaseTestCase):
         descending_order_by_multi_field = ["+workspace", "-title"]
         workspace = self.fixture.workspace_1.id
         # Act
-        ascending_result = Data.get_all_by_workspace(workspace, ascending_order_by_multi_field)
-        descending_result = Data.get_all_by_workspace(workspace, descending_order_by_multi_field)
+        ascending_result = Data.get_all_by_workspace(
+            workspace, ascending_order_by_multi_field
+        )
+        descending_result = Data.get_all_by_workspace(
+            workspace, descending_order_by_multi_field
+        )
         # Assert
         self.assertEqual(self.fixture.data_3.user_id, ascending_result.all()[0].user_id)
         self.assertEqual(self.fixture.data_5.user_id, ascending_result.all()[1].user_id)
 
-        self.assertEqual(self.fixture.data_3.user_id, descending_result.all()[1].user_id)
-        self.assertEqual(self.fixture.data_5.user_id, descending_result.all()[0].user_id)
+        self.assertEqual(
+            self.fixture.data_3.user_id, descending_result.all()[1].user_id
+        )
+        self.assertEqual(
+            self.fixture.data_5.user_id, descending_result.all()[0].user_id
+        )
 
-    def test_data_get_all_by_workspace_api_without_sorting_param_use_default_data_sorting_setting(self):
+    def test_data_get_all_by_workspace_api_without_sorting_param_use_default_data_sorting_setting(
+        self,
+    ):
         # Arrange
-        mock_user = _create_user('1', is_superuser=True)
+        mock_user = _create_user("1", is_superuser=True)
         workspace = self.fixture.workspace_1.id
         # Act
         data = data_api.get_all_by_workspace(workspace, mock_user)
@@ -496,14 +619,14 @@ class TestGetAllByListTemplate(MongoIntegrationBaseTestCase):
     def test_returns_data_object(self):
         result = Data.get_all_by_list_workspace(
             [self.fixture.workspace_1.id, self.fixture.workspace_2.id],
-            DATA_SORTING_FIELDS
+            DATA_SORTING_FIELDS,
         )
         self.assertTrue(all(isinstance(item, Data) for item in result))
 
     def test_returns_correct_count(self):
         result = Data.get_all_by_list_workspace(
             [self.fixture.workspace_1.id, self.fixture.workspace_2.id],
-            DATA_SORTING_FIELDS
+            DATA_SORTING_FIELDS,
         )
         self.assertEqual(len(result), 3)
 
@@ -531,7 +654,7 @@ class TestGetAllByTemplatesAndWorkspaces(MongoIntegrationBaseTestCase):
         result = Data.get_all_by_templates_and_workspaces(
             [self.fixture.template.id],
             [self.fixture.workspace_1.id, self.fixture.workspace_2.id],
-            DATA_SORTING_FIELDS
+            DATA_SORTING_FIELDS,
         )
         self.assertTrue(all(isinstance(item, Data) for item in result))
 
@@ -539,55 +662,43 @@ class TestGetAllByTemplatesAndWorkspaces(MongoIntegrationBaseTestCase):
         result = Data.get_all_by_templates_and_workspaces(
             [self.fixture.template.id],
             [self.fixture.workspace_1.id, self.fixture.workspace_2.id],
-            DATA_SORTING_FIELDS
+            DATA_SORTING_FIELDS,
         )
         self.assertEqual(len(result), 3)
 
     def test_null_workspace_returns_data_object(self):
         result = Data.get_all_by_templates_and_workspaces(
-            [self.fixture.template.id],
-            [None],
-            DATA_SORTING_FIELDS
+            [self.fixture.template.id], [None], DATA_SORTING_FIELDS
         )
         self.assertTrue(all(isinstance(item, Data) for item in result))
 
     def test_null_workspace_returns_correct_count(self):
         result = Data.get_all_by_templates_and_workspaces(
-            [self.fixture.template.id],
-            [None],
-            DATA_SORTING_FIELDS
+            [self.fixture.template.id], [None], DATA_SORTING_FIELDS
         )
         self.assertEqual(len(result), 2)
 
     def test_empty_workspaces_returns_no_data(self):
         result = Data.get_all_by_templates_and_workspaces(
-            [self.fixture.template.id],
-            [],
-            DATA_SORTING_FIELDS
+            [self.fixture.template.id], [], DATA_SORTING_FIELDS
         )
         self.assertEqual(len(result), 0)
 
     def test_empty_templates_returns_no_data(self):
         result = Data.get_all_by_templates_and_workspaces(
-            [],
-            [None],
-            DATA_SORTING_FIELDS
+            [], [None], DATA_SORTING_FIELDS
         )
         self.assertEqual(len(result), 0)
 
     def test_invalid_workspace_returns_no_data(self):
         result = Data.get_all_by_templates_and_workspaces(
-            [self.fixture.template.id],
-            [ObjectId()],
-            DATA_SORTING_FIELDS
+            [self.fixture.template.id], [ObjectId()], DATA_SORTING_FIELDS
         )
         self.assertEqual(len(result), 0)
 
     def test_invalid_template_returns_no_data(self):
         result = Data.get_all_by_templates_and_workspaces(
-            [ObjectId()],
-            [None],
-            DATA_SORTING_FIELDS
+            [ObjectId()], [None], DATA_SORTING_FIELDS
         )
         self.assertEqual(len(result), 0)
 
@@ -596,13 +707,17 @@ class TestGetAllAccessibleByUser(MongoIntegrationBaseTestCase):
 
     fixture = access_control_data_fixture
 
-    def test_data_get_all_accessible_by_user_api_without_sorting_param_use_default_data_sorting_setting(self):
+    def test_data_get_all_accessible_by_user_api_without_sorting_param_use_default_data_sorting_setting(
+        self,
+    ):
         # Arrange
-        mock_user = _create_user('1', is_superuser=True)
+        mock_user = _create_user("1", is_superuser=True)
         # Act
         data = data_api.get_all_accessible_by_user(mock_user)
         # Assert
-        self.assertListEqual(list(data), [self.fixture.data_1, self.fixture.data_3, self.fixture.data_5])
+        self.assertListEqual(
+            list(data), [self.fixture.data_1, self.fixture.data_3, self.fixture.data_5]
+        )
 
 
 class TestGetAllByUserAndWorkspace(MongoIntegrationBaseTestCase):
@@ -611,32 +726,51 @@ class TestGetAllByUserAndWorkspace(MongoIntegrationBaseTestCase):
 
     def test_get_all_data_from_user_and_from_workspace_for_user_within_workspace(self):
         # Arrange
-        mock_user = create_mock_user('1', is_superuser=False)
+        mock_user = create_mock_user("1", is_superuser=False)
         # Act
-        data = Data.get_all_by_user_and_workspace(mock_user.id, [self.fixture.workspace_1,
-                                                                 self.fixture.workspace_2], ['+title'])
+        data = Data.get_all_by_user_and_workspace(
+            mock_user.id,
+            [self.fixture.workspace_1, self.fixture.workspace_2],
+            ["+title"],
+        )
         # Assert
-        self.assertListEqual(list(data), [self.fixture.data_1, self.fixture.data_3,
-                                          self.fixture.data_4, self.fixture.data_5])
+        self.assertListEqual(
+            list(data),
+            [
+                self.fixture.data_1,
+                self.fixture.data_3,
+                self.fixture.data_4,
+                self.fixture.data_5,
+            ],
+        )
 
     def test_get_all_data_from_user_and_from_workspace_data_ordering(self):
         # Arrange
-        mock_user = create_mock_user('1', is_superuser=False)
+        mock_user = create_mock_user("1", is_superuser=False)
         ascending_order_by_field = ["+title"]
         descending_order_by_field = ["-title"]
         # Act
-        ascending_result = Data.get_all_by_user_and_workspace(mock_user.id, [self.fixture.workspace_1], ascending_order_by_field)
-        descending_result = Data.get_all_by_user_and_workspace(mock_user.id, [self.fixture.workspace_1], descending_order_by_field)
+        ascending_result = Data.get_all_by_user_and_workspace(
+            mock_user.id, [self.fixture.workspace_1], ascending_order_by_field
+        )
+        descending_result = Data.get_all_by_user_and_workspace(
+            mock_user.id, [self.fixture.workspace_1], descending_order_by_field
+        )
         # Assert
         for i in range(len(ascending_result)):
-            self.assertTrue(ascending_result.all()[i].title == descending_result.all()[len(ascending_result) - i - 1].title)
+            self.assertTrue(
+                ascending_result.all()[i].title
+                == descending_result.all()[len(ascending_result) - i - 1].title
+            )
 
     def test_get_all_data_from_user_and_from_workspace_data_ascending_sorting(self):
         # Arrange
         ascending_order_by_field = ["+title"]
-        mock_user = create_mock_user('1', is_superuser=False)
+        mock_user = create_mock_user("1", is_superuser=False)
         # Act
-        ascending_result = Data.get_all_by_user_and_workspace(mock_user.id, [self.fixture.workspace_1], ascending_order_by_field)
+        ascending_result = Data.get_all_by_user_and_workspace(
+            mock_user.id, [self.fixture.workspace_1], ascending_order_by_field
+        )
         # Assert
         self.assertTrue(self.fixture.data_1.title == ascending_result.all()[0].title)
         self.assertTrue(self.fixture.data_3.title == ascending_result.all()[1].title)
@@ -644,27 +778,43 @@ class TestGetAllByUserAndWorkspace(MongoIntegrationBaseTestCase):
     def test_get_all_data_from_user_and_from_workspace_data_descending_sorting(self):
         # Arrange
         descending_order_by_field = ["-title"]
-        mock_user = create_mock_user('1', is_superuser=False)
+        mock_user = create_mock_user("1", is_superuser=False)
         # Act
-        descending_result = Data.get_all_by_user_and_workspace(mock_user.id, [self.fixture.workspace_1], descending_order_by_field)
+        descending_result = Data.get_all_by_user_and_workspace(
+            mock_user.id, [self.fixture.workspace_1], descending_order_by_field
+        )
         # Assert
-        self.assertTrue(self.fixture.data_3.title == descending_result.all()[len(descending_result)-2].title)
-        self.assertTrue(self.fixture.data_1.title == descending_result.all()[len(descending_result)-1].title)
+        self.assertTrue(
+            self.fixture.data_3.title
+            == descending_result.all()[len(descending_result) - 2].title
+        )
+        self.assertTrue(
+            self.fixture.data_1.title
+            == descending_result.all()[len(descending_result) - 1].title
+        )
 
     def test_get_all_data_from_user_and_from_workspace_multi_field_sorting(self):
         # Arrange
         ascending_order_by_multi_field = ["+template", "+title"]
         descending_order_by_multi_field = ["+template", "-title"]
-        mock_user = create_mock_user('1', is_superuser=False)
+        mock_user = create_mock_user("1", is_superuser=False)
         # Act
-        ascending_result = Data.get_all_by_user_and_workspace(mock_user.id, [self.fixture.workspace_1], ascending_order_by_multi_field)
-        descending_result = Data.get_all_by_user_and_workspace(mock_user.id, [self.fixture.workspace_1], descending_order_by_multi_field)
+        ascending_result = Data.get_all_by_user_and_workspace(
+            mock_user.id, [self.fixture.workspace_1], ascending_order_by_multi_field
+        )
+        descending_result = Data.get_all_by_user_and_workspace(
+            mock_user.id, [self.fixture.workspace_1], descending_order_by_multi_field
+        )
         # Assert
         self.assertEqual(self.fixture.data_1.title, ascending_result.all()[0].title)
         self.assertEqual(self.fixture.data_3.user_id, ascending_result.all()[1].user_id)
 
-        self.assertEqual(self.fixture.data_3.user_id, descending_result.all()[1].user_id)
-        self.assertEqual(self.fixture.data_1.user_id, descending_result.all()[2].user_id)
+        self.assertEqual(
+            self.fixture.data_3.user_id, descending_result.all()[1].user_id
+        )
+        self.assertEqual(
+            self.fixture.data_1.user_id, descending_result.all()[2].user_id
+        )
 
 
 def _create_user(user_id, is_superuser=False):

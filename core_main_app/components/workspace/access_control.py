@@ -20,7 +20,7 @@ def is_workspace_owner_to_perform_action_for_others(func, workspace, new_user_id
     if user.is_superuser:
         return func(workspace, new_user_id, user)
 
-    _check_is_owner_workspace(workspace,  user)
+    _check_is_owner_workspace(workspace, user)
     return func(workspace, new_user_id, user)
 
 
@@ -41,8 +41,12 @@ def can_user_set_workspace_public(func, workspace, user):
     _check_is_owner_workspace(workspace, user)
 
     publish_perm = permissions_api.get_by_codename(rights.publish_data)
-    if not user.has_perm(publish_perm.content_type.app_label + '.' + publish_perm.codename):
-        raise AccessControlError("You don't have enough rights to set public this workspace.")
+    if not user.has_perm(
+        publish_perm.content_type.app_label + "." + publish_perm.codename
+    ):
+        raise AccessControlError(
+            "You don't have enough rights to set public this workspace."
+        )
 
     return func(workspace, user)
 
@@ -99,4 +103,6 @@ def _check_is_owner_workspace(workspace, user):
 
     """
     if workspace.owner != str(user.id):
-        raise AccessControlError("The user does not have the permission. The user is not the owner of this workspace.")
+        raise AccessControlError(
+            "The user does not have the permission. The user is not the owner of this workspace."
+        )

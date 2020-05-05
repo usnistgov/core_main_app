@@ -9,8 +9,12 @@ from django.urls import reverse_lazy
 
 from core_main_app.commons import exceptions
 from core_main_app.components.template import api as template_api
-from core_main_app.components.template_version_manager import api as template_version_manager_api
-from core_main_app.components.template_version_manager.models import TemplateVersionManager
+from core_main_app.components.template_version_manager import (
+    api as template_version_manager_api,
+)
+from core_main_app.components.template_version_manager.models import (
+    TemplateVersionManager,
+)
 from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.views.admin.forms import EditTemplateForm
 from django_mongoengine.views import UpdateView, DeleteView, CreateView
@@ -20,7 +24,8 @@ class AddObjectModalView(CreateView):
     """ Common AddObjectModalView.
         Should be used with add.html and add.js.
     """
-    template_name = 'core_main_app/common/commons/form.html'
+
+    template_name = "core_main_app/common/commons/form.html"
     form_class = None
     document = None
     success_url = None
@@ -29,10 +34,7 @@ class AddObjectModalView(CreateView):
     def form_invalid(self, form):
         # Get initial response
         response = super(AddObjectModalView, self).form_invalid(form)
-        data = {
-            'is_valid': False,
-            'responseText': response.rendered_content
-        }
+        data = {"is_valid": False, "responseText": response.rendered_content}
         return JsonResponse(data)
 
     def form_valid(self, form):
@@ -43,8 +45,8 @@ class AddObjectModalView(CreateView):
         self._save(form)
         if form.is_valid():
             data = {
-                'is_valid': True,
-                'url': self.get_success_url(),
+                "is_valid": True,
+                "url": self.get_success_url(),
             }
 
             if self.success_message:
@@ -64,14 +66,15 @@ class AddObjectModalView(CreateView):
 
     @staticmethod
     def get_modal_js_path():
-        return {"path": 'core_main_app/common/js/modals/add.js', "is_raw": False}
+        return {"path": "core_main_app/common/js/modals/add.js", "is_raw": False}
 
 
 class EditObjectModalView(UpdateView):
     """ Common EditObjectModalView.
         Should be used with edit_page_modal.html and edit.js.
     """
-    template_name = 'core_main_app/common/commons/form.html'
+
+    template_name = "core_main_app/common/commons/form.html"
     form_class = None
     document = None
     success_url = None
@@ -80,10 +83,7 @@ class EditObjectModalView(UpdateView):
     def form_invalid(self, form):
         # Get initial response
         response = super(EditObjectModalView, self).form_invalid(form)
-        data = {
-            'is_valid': False,
-            'responseText': response.rendered_content
-        }
+        data = {"is_valid": False, "responseText": response.rendered_content}
         return JsonResponse(data)
 
     def form_valid(self, form):
@@ -92,8 +92,8 @@ class EditObjectModalView(UpdateView):
         self._save(form)
         if form.is_valid():
             data = {
-                'is_valid': True,
-                'url': self.get_success_url(),
+                "is_valid": True,
+                "url": self.get_success_url(),
             }
 
             if self.success_message:
@@ -113,14 +113,15 @@ class EditObjectModalView(UpdateView):
 
     @staticmethod
     def get_modal_js_path():
-        return {"path": 'core_main_app/common/js/modals/edit.js', "is_raw": False}
+        return {"path": "core_main_app/common/js/modals/edit.js", "is_raw": False}
 
 
 class DeleteObjectModalView(DeleteView):
     """ Common DeleteObjectModalView.
         Should be used with delete_page_modal.html and delete.js.
     """
-    template_name = 'core_main_app/common/commons/form_delete.html'
+
+    template_name = "core_main_app/common/commons/form_delete.html"
     document = None
     field_for_name = None
     success_url = None
@@ -139,7 +140,7 @@ class DeleteObjectModalView(DeleteView):
         except Exception as e:
             messages.error(self.request, str(e))
 
-        data = {'url': self.get_success_url()}
+        data = {"url": self.get_success_url()}
         return JsonResponse(data)
 
     def _delete(self, request, *args, **kwargs):
@@ -153,10 +154,12 @@ class DeleteObjectModalView(DeleteView):
         """
         Get object name
         """
-        object_name = ''
+        object_name = ""
         if self.object:
             if self.field_for_name:
-                object_name = getattr(self.object, self.field_for_name, str(self.object))
+                object_name = getattr(
+                    self.object, self.field_for_name, str(self.object)
+                )
             else:
                 object_name = str(self.object)
 
@@ -166,7 +169,7 @@ class DeleteObjectModalView(DeleteView):
         # Call the base implementation first to get a context
         context = super(DeleteObjectModalView, self).get_context_data(**kwargs)
         # Add the object representation
-        context['object_name'] = self._get_object_name()
+        context["object_name"] = self._get_object_name()
 
         return context
 
@@ -176,22 +179,27 @@ class DeleteObjectModalView(DeleteView):
 
     @staticmethod
     def get_modal_js_path():
-        return {"path": 'core_main_app/common/js/modals/delete.js', "is_raw": False}
+        return {"path": "core_main_app/common/js/modals/delete.js", "is_raw": False}
 
 
 class EditTemplateVersionManagerView(EditObjectModalView):
     form_class = EditTemplateForm
     document = TemplateVersionManager
     success_url = reverse_lazy("admin:core_main_app_templates")
-    success_message = 'Name edited with success.'
+    success_message = "Name edited with success."
 
     def _save(self, form):
         # Save treatment.
         try:
-            template_version_manager_api.edit_title(self.object, form.cleaned_data.get('title'))
+            template_version_manager_api.edit_title(
+                self.object, form.cleaned_data.get("title")
+            )
         except exceptions.NotUniqueError:
-            form.add_error(None, "An object with the same name already exists. Please choose "
-                                 "another name.")
+            form.add_error(
+                None,
+                "An object with the same name already exists. Please choose "
+                "another name.",
+            )
         except Exception as e:
             form.add_error(None, str(e))
 
@@ -206,12 +214,12 @@ def disable_version_manager(request):
 
     """
     try:
-        version_manager = version_manager_api.get(request.GET['id'])
+        version_manager = version_manager_api.get(request.GET["id"])
         version_manager_api.disable(version_manager)
     except Exception as e:
-        return HttpResponseBadRequest(str(e), content_type='application/javascript')
+        return HttpResponseBadRequest(str(e), content_type="application/javascript")
 
-    return HttpResponse(json.dumps({}), content_type='application/javascript')
+    return HttpResponse(json.dumps({}), content_type="application/javascript")
 
 
 def restore_version_manager(request):
@@ -224,12 +232,12 @@ def restore_version_manager(request):
 
     """
     try:
-        version_manager = version_manager_api.get(request.GET['id'])
+        version_manager = version_manager_api.get(request.GET["id"])
         version_manager_api.restore(version_manager)
     except Exception as e:
-        return HttpResponseBadRequest(str(e), content_type='application/javascript')
+        return HttpResponseBadRequest(str(e), content_type="application/javascript")
 
-    return HttpResponse(json.dumps({}), content_type='application/javascript')
+    return HttpResponse(json.dumps({}), content_type="application/javascript")
 
 
 def disable_template_version_from_version_manager(request):
@@ -242,11 +250,11 @@ def disable_template_version_from_version_manager(request):
 
     """
     try:
-        disable_version_of_version_manager(template_api.get(request.GET['id']))
+        disable_version_of_version_manager(template_api.get(request.GET["id"]))
     except Exception as e:
-        return HttpResponseBadRequest(str(e), content_type='application/javascript')
+        return HttpResponseBadRequest(str(e), content_type="application/javascript")
 
-    return HttpResponse(json.dumps({}), content_type='application/javascript')
+    return HttpResponse(json.dumps({}), content_type="application/javascript")
 
 
 def disable_version_of_version_manager(version):
@@ -261,7 +269,7 @@ def disable_version_of_version_manager(version):
     try:
         version_manager_api.disable_version(version)
     except Exception as e:
-        return HttpResponseBadRequest(str(e), content_type='application/javascript')
+        return HttpResponseBadRequest(str(e), content_type="application/javascript")
 
 
 def restore_template_version_from_version_manager(request):
@@ -274,11 +282,11 @@ def restore_template_version_from_version_manager(request):
 
     """
     try:
-        restore_version_from_version_manager(template_api.get(request.GET['id']))
+        restore_version_from_version_manager(template_api.get(request.GET["id"]))
     except Exception as e:
-        return HttpResponseBadRequest(str(e), content_type='application/javascript')
+        return HttpResponseBadRequest(str(e), content_type="application/javascript")
 
-    return HttpResponse(json.dumps({}), content_type='application/javascript')
+    return HttpResponse(json.dumps({}), content_type="application/javascript")
 
 
 def restore_version_from_version_manager(version):
@@ -293,7 +301,7 @@ def restore_version_from_version_manager(version):
     try:
         version_manager_api.restore_version(version)
     except Exception as e:
-        return HttpResponseBadRequest(str(e), content_type='application/javascript')
+        return HttpResponseBadRequest(str(e), content_type="application/javascript")
 
 
 def set_current_template_version_from_version_manager(request):
@@ -306,11 +314,11 @@ def set_current_template_version_from_version_manager(request):
 
     """
     try:
-        set_current_version_from_version_manager(template_api.get(request.GET['id']))
+        set_current_version_from_version_manager(template_api.get(request.GET["id"]))
     except Exception as e:
-        return HttpResponseBadRequest(str(e), content_type='application/javascript')
+        return HttpResponseBadRequest(str(e), content_type="application/javascript")
 
-    return HttpResponse(json.dumps({}), content_type='application/javascript')
+    return HttpResponse(json.dumps({}), content_type="application/javascript")
 
 
 def set_current_version_from_version_manager(version):
@@ -325,5 +333,4 @@ def set_current_version_from_version_manager(version):
     try:
         version_manager_api.set_current(version)
     except Exception as e:
-        return HttpResponseBadRequest(str(e), content_type='application/javascript')
-
+        return HttpResponseBadRequest(str(e), content_type="application/javascript")

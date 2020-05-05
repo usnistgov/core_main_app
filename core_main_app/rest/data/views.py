@@ -6,7 +6,11 @@ from django.http import Http404
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+    IsAdminUser,
+)
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -17,16 +21,22 @@ from core_main_app.components.data import api as data_api
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.rest.data.abstract_views import AbstractExecuteLocalQueryView
-from core_main_app.rest.data.serializers import DataSerializer, DataWithTemplateInfoSerializer
+from core_main_app.rest.data.serializers import (
+    DataSerializer,
+    DataWithTemplateInfoSerializer,
+)
 from core_main_app.utils.boolean import to_bool
 from core_main_app.utils.databases.pymongo_database import get_full_text_query
 from core_main_app.utils.file import get_file_http_response
-from core_main_app.utils.pagination.rest_framework_paginator.pagination import StandardResultsSetPagination
+from core_main_app.utils.pagination.rest_framework_paginator.pagination import (
+    StandardResultsSetPagination,
+)
 
 
 class DataList(APIView):
     """ List all user Data, or create a new one.
     """
+
     permission_classes = (IsAuthenticated,)
     serializer = DataSerializer
 
@@ -62,15 +72,15 @@ class DataList(APIView):
             data_object_list = data_api.get_all_by_user(request.user)
 
             # Apply filters
-            workspace = self.request.query_params.get('workspace', None)
+            workspace = self.request.query_params.get("workspace", None)
             if workspace is not None:
                 data_object_list = data_object_list.filter(workspace=workspace)
 
-            template = self.request.query_params.get('template', None)
+            template = self.request.query_params.get("template", None)
             if template is not None:
                 data_object_list = data_object_list.filter(template=template)
 
-            title = self.request.query_params.get('title', None)
+            title = self.request.query_params.get("title", None)
             if title is not None:
                 data_object_list = data_object_list.filter(title=title)
 
@@ -80,7 +90,7 @@ class DataList(APIView):
             # Return response
             return Response(data_serializer.data, status=status.HTTP_200_OK)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
@@ -122,19 +132,20 @@ class DataList(APIView):
             # Return the serialized data
             return Response(data_serializer.data, status=status.HTTP_201_CREATED)
         except ValidationError as validation_exception:
-            content = {'message': validation_exception.detail}
+            content = {"message": validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except exceptions.DoesNotExist:
-            content = {'message': 'Template not found.'}
+            content = {"message": "Template not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class DataDetail(APIView):
     """ Retrieve, update or delete a Data
     """
+
     permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer = DataSerializer
 
@@ -182,10 +193,10 @@ class DataDetail(APIView):
             # Return response
             return Response(serializer.data)
         except Http404:
-            content = {'message': 'Data not found.'}
+            content = {"message": "Data not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request, pk):
@@ -215,10 +226,10 @@ class DataDetail(APIView):
             # Return response
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Http404:
-            content = {'message': 'Data not found.'}
+            content = {"message": "Data not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def patch(self, request, pk):
@@ -252,9 +263,9 @@ class DataDetail(APIView):
             data_object = self.get_object(request, pk)
 
             # Build serializer
-            data_serializer = self.serializer(instance=data_object,
-                                              data=request.data,
-                                              partial=True)
+            data_serializer = self.serializer(
+                instance=data_object, data=request.data, partial=True
+            )
 
             # Validate data
             data_serializer.is_valid(True)
@@ -263,19 +274,20 @@ class DataDetail(APIView):
 
             return Response(data_serializer.data, status=status.HTTP_200_OK)
         except ValidationError as validation_exception:
-            content = {'message': validation_exception.detail}
+            content = {"message": validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Http404:
-            content = {'message': 'Data not found.'}
+            content = {"message": "Data not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class DataChangeOwner(APIView):
     """ Change the Owner of a data
     """
+
     permission_classes = (IsAdminUser,)
 
     def get_object(self, request, pk):
@@ -341,13 +353,13 @@ class DataChangeOwner(APIView):
             data_api.change_owner(data_object, user_object, request.user)
             return Response({}, status=status.HTTP_200_OK)
         except Http404:
-            content = {'message': 'Data or user not found.'}
+            content = {"message": "Data or user not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except AccessControlError as ace:
-            content = {'message': str(ace)}
+            content = {"message": str(ace)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -393,18 +405,20 @@ class DataDownload(APIView):
             # Get object
             data_object = self.get_object(request, pk)
 
-            return get_file_http_response(data_object.xml_content, data_object.title, 'text/xml', 'xml')
+            return get_file_http_response(
+                data_object.xml_content, data_object.title, "text/xml", "xml"
+            )
         except Http404:
-            content = {'message': 'Data not found.'}
+            content = {"message": "Data not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # FIXME: Should use in the future an serializer with dynamic fields (init depth with parameter for example)
 # FIXME: Should avoid the duplicated code with get_by_id
-@api_view(['GET'])
+@api_view(["GET"])
 def get_by_id_with_template_info(request):
     """ Retrieve a Data with template information
 
@@ -429,11 +443,11 @@ def get_by_id_with_template_info(request):
     """
     try:
         # Get parameters
-        data_id = request.query_params.get('id', None)
+        data_id = request.query_params.get("id", None)
 
         # Check parameters
         if data_id is None:
-            content = {'message': 'Expected parameters not provided.'}
+            content = {"message": "Expected parameters not provided."}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
         # Get object
@@ -445,13 +459,13 @@ def get_by_id_with_template_info(request):
         # Return response
         return Response(return_value.data, status=status.HTTP_200_OK)
     except exceptions.DoesNotExist as e:
-        content = {'message': 'No data found with the given id.'}
+        content = {"message": "No data found with the given id."}
         return Response(content, status=status.HTTP_404_NOT_FOUND)
     except exceptions.ModelError:
-        content = {'message': 'Invalid input.'}
+        content = {"message": "Invalid input."}
         return Response(content, status=status.HTTP_400_BAD_REQUEST)
     except Exception:
-        content = {'message': 'An unexpected error occurred.'}
+        content = {"message": "An unexpected error occurred."}
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -522,7 +536,7 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
 
             The response paginated
         """
-        if 'all' in self.request.data and to_bool(self.request.data['all']):
+        if "all" in self.request.data and to_bool(self.request.data["all"]):
             # Serialize data list
             data_serializer = self.serializer(data_list, many=True)
             # Return response
@@ -560,12 +574,15 @@ class ExecuteLocalKeywordQueryView(ExecuteLocalQueryView):
         """
         # build query builder
         query = json.dumps(get_full_text_query(query))
-        return super(ExecuteLocalKeywordQueryView, self).build_query(str(query), templates, options, workspaces, title)
+        return super(ExecuteLocalKeywordQueryView, self).build_query(
+            str(query), templates, options, workspaces, title
+        )
 
 
 class DataAssign(APIView):
     """ Assign a Data to a Workspace.
     """
+
     permission_classes = (IsAuthenticated,)
 
     def get_object(self, request, pk):
@@ -631,19 +648,20 @@ class DataAssign(APIView):
             data_api.assign(data_object, workspace_object, request.user)
             return Response({}, status=status.HTTP_200_OK)
         except Http404:
-            content = {'message': 'Data or workspace not found.'}
+            content = {"message": "Data or workspace not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except AccessControlError as ace:
-            content = {'message': str(ace)}
+            content = {"message": str(ace)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class DataListByWorkspace(APIView):
     """ List all Data by workspace.
     """
+
     permission_classes = (IsAuthenticated,)
     serializer = DataSerializer
 
@@ -676,7 +694,7 @@ class DataListByWorkspace(APIView):
             # Return response
             return Response(data_serializer.data, status=status.HTTP_200_OK)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -731,22 +749,22 @@ class DataPermissions(APIView):
         """
         try:
             # Build serializer
-            data_ids = json.loads(request.query_params['ids'])
+            data_ids = json.loads(request.query_params["ids"])
             results = {}
 
             for id in data_ids:
-                results[id] = (self.can_write_data(request, id))
+                results[id] = self.can_write_data(request, id)
 
             return Response(results, status.HTTP_200_OK)
 
         except ValidationError as validation_exception:
-            content = {'message': validation_exception.detail}
+            content = {"message": validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Http404:
-            content = {'message': 'Data not found.'}
+            content = {"message": "Data not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def can_write_data(self, request, id):

@@ -8,6 +8,7 @@ from core_main_app.utils.integration_tests.fixture_interface import FixtureInter
 class BlobFixtures(FixtureInterface):
     """ Blob fixtures
     """
+
     blob_1 = None
     blob_2 = None
     blob_3 = None
@@ -32,24 +33,17 @@ class BlobFixtures(FixtureInterface):
 
         """
         # NOTE: no real file to avoid using unsupported GridFS mock
-        self.blob_1 = Blob(filename='blob1',
-                           user_id='1',
-                           handle='handle1').save()
-        self.blob_2 = Blob(filename='blob2',
-                           user_id='1',
-                           handle='handle2').save()
-        self.blob_3 = Blob(filename='blob3',
-                           user_id='2',
-                           handle='handle3').save()
+        self.blob_1 = Blob(filename="blob1", user_id="1", handle="handle1").save()
+        self.blob_2 = Blob(filename="blob2", user_id="1", handle="handle2").save()
+        self.blob_3 = Blob(filename="blob3", user_id="2", handle="handle3").save()
 
-        self.blob_collection = [self.blob_1,
-                                self.blob_2,
-                                self.blob_3]
+        self.blob_collection = [self.blob_1, self.blob_2, self.blob_3]
 
 
 class AccessControlBlobFixture(FixtureInterface):
     """ Access Control Blob fixture
     """
+
     USER_1_NO_WORKSPACE = 0
     USER_2_NO_WORKSPACE = 1
     USER_1_WORKSPACE_1 = 2
@@ -76,20 +70,20 @@ class AccessControlBlobFixture(FixtureInterface):
         Returns:
 
         """
-        blob_1 = Blob(filename='blob1',
-                      user_id='1',
-                      handle='handle1').save()
-        blob_2 = Blob(filename='blob2',
-                      user_id='2',
-                      handle='handle2').save()
-        blob_3 = Blob(filename='blob3',
-                      user_id='1',
-                      handle='handle3',
-                      workspace=self.workspace_1.id).save()
-        blob_4 = Blob(filename='blob4',
-                      user_id='2',
-                      handle='handle4',
-                      workspace=self.workspace_2.id).save()
+        blob_1 = Blob(filename="blob1", user_id="1", handle="handle1").save()
+        blob_2 = Blob(filename="blob2", user_id="2", handle="handle2").save()
+        blob_3 = Blob(
+            filename="blob3",
+            user_id="1",
+            handle="handle3",
+            workspace=self.workspace_1.id,
+        ).save()
+        blob_4 = Blob(
+            filename="blob4",
+            user_id="2",
+            handle="handle4",
+            workspace=self.workspace_2.id,
+        ).save()
         self.blob_collection = [blob_1, blob_2, blob_3, blob_4]
 
     def generate_workspace(self):
@@ -98,15 +92,12 @@ class AccessControlBlobFixture(FixtureInterface):
         Returns:
 
         """
-        self.workspace_1 = Workspace(title="Workspace 1",
-                                     owner='1',
-                                     read_perm_id='1',
-                                     write_perm_id='1').save()
-        self.workspace_2 = Workspace(title="Workspace 2",
-                                     owner='2',
-                                     read_perm_id='2',
-                                     write_perm_id='2').save()
-        self.workspace_without_data = Workspace(title="Workspace 3",
-                                                owner='3',
-                                                read_perm_id='3',
-                                                write_perm_id='3').save()
+        self.workspace_1 = Workspace(
+            title="Workspace 1", owner="1", read_perm_id="1", write_perm_id="1"
+        ).save()
+        self.workspace_2 = Workspace(
+            title="Workspace 2", owner="2", read_perm_id="2", write_perm_id="2"
+        ).save()
+        self.workspace_without_data = Workspace(
+            title="Workspace 3", owner="3", read_perm_id="3", write_perm_id="3"
+        ).save()

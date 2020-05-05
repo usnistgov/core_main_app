@@ -14,13 +14,15 @@ class TestGetAllUserList(SimpleTestCase):
         super(TestGetAllUserList, self).setUp()
         self.data = None
 
-    @patch.object(user_api, 'get_all_users')
+    @patch.object(user_api, "get_all_users")
     def test_get_all_returns_list(self, get_all_users):
         # Arrange
-        user = create_mock_user('0', is_staff=True)
+        user = create_mock_user("0", is_staff=True)
 
         # Act
-        response = RequestMock.do_request_get(user_rest_views.UserList.as_view(), user, self.data)
+        response = RequestMock.do_request_get(
+            user_rest_views.UserList.as_view(), user, self.data
+        )
 
         # Assert
         excepted_result = []

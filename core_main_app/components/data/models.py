@@ -19,14 +19,15 @@ from core_main_app.components.workspace.models import Workspace
 class Data(AbstractData):
     """ Data object
     """
+
     template = fields.ReferenceField(Template, blank=False)
     user_id = fields.StringField()
-    workspace = fields.ReferenceField(Workspace, reverse_delete_rule=NULLIFY, blank=True)
+    workspace = fields.ReferenceField(
+        Workspace, reverse_delete_rule=NULLIFY, blank=True
+    )
 
-    meta = {
-        'indexes': ['title', 'last_modification_date', 'template', 'user_id']
-    }
-    
+    meta = {"indexes": ["title", "last_modification_date", "template", "user_id"]}
+
     @staticmethod
     def get_all(order_by_field):
         """ Get all data.
@@ -180,8 +181,9 @@ class Data(AbstractData):
         ).order_by(*order_by_field)
 
     @staticmethod
-    def get_all_by_templates_and_workspaces(list_template, list_workspace,
-                                            order_by_field):
+    def get_all_by_templates_and_workspaces(
+        list_template, list_workspace, order_by_field
+    ):
         """ Get all data stored in the list of workspace and created from the
         list of templates.
 

@@ -2,7 +2,10 @@
 """
 from io import BytesIO
 
-from core_main_app.settings import GRIDFS_DATA_COLLECTION, SEARCHABLE_DATA_OCCURRENCES_LIMIT
+from core_main_app.settings import (
+    GRIDFS_DATA_COLLECTION,
+    SEARCHABLE_DATA_OCCURRENCES_LIMIT,
+)
 from core_main_app.utils import xml as xml_utils
 from core_main_app.utils.validation.regex_validation import not_empty_or_whitespaces
 from django_mongoengine import fields, Document
@@ -11,6 +14,7 @@ from django_mongoengine import fields, Document
 class AbstractData(Document):
     """ AbstractData object
     """
+
     dict_content = fields.DictField(blank=True)
     title = fields.StringField(blank=False, validation=not_empty_or_whitespaces)
     last_modification_date = fields.DateTimeField(blank=True, default=None)
@@ -19,7 +23,7 @@ class AbstractData(Document):
     _xml_content = None
 
     meta = {
-        'abstract': True,
+        "abstract": True,
     }
 
     @property
@@ -34,7 +38,9 @@ class AbstractData(Document):
             # read xml file into xml_content field
             xml_content = self.xml_file.read()
             try:
-                self._xml_content = xml_content.decode('utf-8') if xml_content else xml_content
+                self._xml_content = (
+                    xml_content.decode("utf-8") if xml_content else xml_content
+                )
             except AttributeError:
                 self._xml_content = xml_content
         # return xml content
@@ -70,12 +76,15 @@ class AbstractData(Document):
 
         """
         # transform xml content into a dictionary
-        dict_content = xml_utils.raw_xml_to_dict(self.xml_content, xml_utils.post_processor)
+        dict_content = xml_utils.raw_xml_to_dict(
+            self.xml_content, xml_utils.post_processor
+        )
         # if limit on element occurrences is set
         if SEARCHABLE_DATA_OCCURRENCES_LIMIT is not None:
             # Remove lists which size exceed the limit size
-            xml_utils.remove_lists_from_xml_dict(dict_content,
-                                                 SEARCHABLE_DATA_OCCURRENCES_LIMIT)
+            xml_utils.remove_lists_from_xml_dict(
+                dict_content, SEARCHABLE_DATA_OCCURRENCES_LIMIT
+            )
         # store dictionary
         self.dict_content = dict_content
 
@@ -86,7 +95,7 @@ class AbstractData(Document):
 
         """
         try:
-            xml_file = BytesIO(self.xml_content.encode('utf-8'))
+            xml_file = BytesIO(self.xml_content.encode("utf-8"))
         except Exception:
             xml_file = BytesIO(self.xml_content)
 

@@ -27,25 +27,33 @@ def _build_js_assets(js_assets):
         if "is_external" not in asset:
             asset["is_external"] = False
 
-        if not asset["is_raw"]:  # If an asset is not raw js, we look for raw js child file
+        if not asset[
+            "is_raw"
+        ]:  # If an asset is not raw js, we look for raw js child file
             js_asset_splitext = splitext(asset["path"])
             js_raw_file = js_asset_splitext[0] + ".raw" + js_asset_splitext[1]
 
             # Test that the file exists and is not already included
-            if finders.find(js_raw_file) is not None and js_raw_file not in included_js_paths:
-                updated_js_assets.append(
-                    {
-                        "path": js_raw_file,
-                        "is_raw": True
-                    }
-                )
+            if (
+                finders.find(js_raw_file) is not None
+                and js_raw_file not in included_js_paths
+            ):
+                updated_js_assets.append({"path": js_raw_file, "is_raw": True})
 
         updated_js_assets.append(asset)
 
     return updated_js_assets
 
 
-def _render(request, template_name, wrapper_name, modals=None, assets=None, context=None, use_theme=True):
+def _render(
+    request,
+    template_name,
+    wrapper_name,
+    modals=None,
+    assets=None,
+    context=None,
+    use_theme=True,
+):
     """Render a selected template.
 
     Args:
@@ -78,7 +86,9 @@ def _render(request, template_name, wrapper_name, modals=None, assets=None, cont
     return django_render(request, wrapper_name, context)
 
 
-def render(request, template_name, modals=None, assets=None, context=None, use_theme=True):
+def render(
+    request, template_name, modals=None, assets=None, context=None, use_theme=True
+):
     """Render a selected template with the project's theme or a default one.
 
     Parameters:
@@ -92,13 +102,15 @@ def render(request, template_name, modals=None, assets=None, context=None, use_t
     Returns:
         HTTPResponse
     """
-    return _render(request,
-                   template_name,
-                   "core_main_app/_render/user/app_wrapper.html",
-                   modals,
-                   assets,
-                   context,
-                   use_theme)
+    return _render(
+        request,
+        template_name,
+        "core_main_app/_render/user/app_wrapper.html",
+        modals,
+        assets,
+        context,
+        use_theme,
+    )
 
 
 def admin_render(request, template_name, modals=None, assets=None, context=None):
@@ -114,4 +126,11 @@ def admin_render(request, template_name, modals=None, assets=None, context=None)
     Returns:
         HTTPResponse
     """
-    return _render(request, template_name, "core_main_app/_render/admin/app_wrapper.html", modals, assets, context)
+    return _render(
+        request,
+        template_name,
+        "core_main_app/_render/admin/app_wrapper.html",
+        modals,
+        assets,
+        context,
+    )

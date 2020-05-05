@@ -12,6 +12,7 @@ class XslTransformationSerializer(DocumentSerializer):
     """
         XslTransformation serializer
     """
+
     class Meta(object):
         model = XslTransformation
         fields = "__all__"
@@ -20,9 +21,9 @@ class XslTransformationSerializer(DocumentSerializer):
         return xsl_api.upsert(XslTransformation(**validated_data))
 
     def update(self, instance, validated_data):
-        instance.name = validated_data.get('name', instance.name)
-        instance.content = validated_data.get('content', instance.content)
-        instance.filename = validated_data.get('filename', instance.filename)
+        instance.name = validated_data.get("name", instance.name)
+        instance.content = validated_data.get("content", instance.content)
+        instance.filename = validated_data.get("filename", instance.filename)
         return xsl_api.upsert(instance)
 
 

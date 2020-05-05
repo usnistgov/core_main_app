@@ -16,19 +16,21 @@ from core_main_app.access_control.exceptions import AccessControlError
 class BlobSerializer(DocumentSerializer):
     """ Blob serializer
     """
+
     blob = FileField(write_only=True)
     handle = SerializerMethodField()
     upload_date = SerializerMethodField()
 
     class Meta(object):
         model = Blob
-        fields = ['id',
-                  'user_id',
-                  'filename',
-                  'handle',
-                  'blob',
-                  'upload_date']
-        read_only_fields = ('id', 'user_id', 'filename', 'handle', 'upload_date',)
+        fields = ["id", "user_id", "filename", "handle", "blob", "upload_date"]
+        read_only_fields = (
+            "id",
+            "user_id",
+            "filename",
+            "handle",
+            "upload_date",
+        )
 
     def get_handle(self, instance):
         """ Return handle
@@ -40,7 +42,7 @@ class BlobSerializer(DocumentSerializer):
 
         """
         # get request from context
-        request = self.context.get('request')
+        request = self.context.get("request")
         # return download handle
         return get_blob_download_uri(instance, request)
 
@@ -66,10 +68,11 @@ class BlobSerializer(DocumentSerializer):
 
         """
         # Create blob
-        blob_object = Blob(filename=validated_data['blob'].name,
-                           user_id=str(validated_data['user'].id))
+        blob_object = Blob(
+            filename=validated_data["blob"].name, user_id=str(validated_data["user"].id)
+        )
         # Set file content
-        blob_object.blob = validated_data['blob'].file
+        blob_object.blob = validated_data["blob"].file
 
         # Save the blob
         return blob_api.insert(blob_object)
@@ -78,11 +81,12 @@ class BlobSerializer(DocumentSerializer):
 class DeleteBlobsSerializer(DocumentSerializer):
     """ Delete Blob serializer.
     """
+
     id = CharField()
 
     class Meta(object):
         model = Blob
-        fields = ('id', )
+        fields = ("id",)
 
     def validate_id(self, id):
         """ Validate id field
@@ -93,7 +97,7 @@ class DeleteBlobsSerializer(DocumentSerializer):
         Returns:
 
         """
-        request = self.context.get('request')
+        request = self.context.get("request")
         try:
             blob_api.get_by_id(id, request.user)
         except DoesNotExist:

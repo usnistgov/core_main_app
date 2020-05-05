@@ -10,11 +10,14 @@ from django_mongoengine import fields, Document
 class XslTransformation(Document):
     """ XslTransformation object
     """
-    name = fields.StringField(blank=False, unique=True, validation=not_empty_or_whitespaces)
+
+    name = fields.StringField(
+        blank=False, unique=True, validation=not_empty_or_whitespaces
+    )
     filename = fields.StringField(blank=False, validation=not_empty_or_whitespaces)
     content = fields.StringField(blank=False)
 
-    meta = {'allow_inheritance': True}
+    meta = {"allow_inheritance": True}
 
     def __str__(self):
         """ String representation of an object.
@@ -91,4 +94,3 @@ class XslTransformation(Document):
         """
         self.name = self.name.strip()
         self.filename = self.filename.strip()
-

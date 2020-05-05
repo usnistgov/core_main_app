@@ -6,7 +6,7 @@ register = template.Library()
 
 
 # TODO: see if we can do it directly in the template
-@register.filter(name='get')
+@register.filter(name="get")
 def get(d, k):
     """Get the value of the dictionary d with the key k.
     Args:

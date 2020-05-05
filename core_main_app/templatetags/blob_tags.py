@@ -9,7 +9,7 @@ from core_main_app.utils.urls import get_blob_download_regex
 register = template.Library()
 
 
-@register.simple_tag(name='render_blob_links_in_span')
+@register.simple_tag(name="render_blob_links_in_span")
 def render_blob_links_in_span(*args, **kwargs):
     """ Find all blobs link then frame then with <span>
 
@@ -20,7 +20,7 @@ def render_blob_links_in_span(*args, **kwargs):
     Returns:
 
     """
-    xml_string = kwargs['xml_string']
+    xml_string = kwargs["xml_string"]
     # get all blobs link
     url_blobs = re.findall(get_blob_download_regex(), xml_string)
     # we attend to frame then with a specific class selector

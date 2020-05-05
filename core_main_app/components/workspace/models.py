@@ -27,7 +27,9 @@ class Workspace(Document):
         """
         # Check the title
         if self.owner is not None and self.title.lower() == "global public workspace":
-            raise exceptions.ModelError("You can't create a workspace with the title: " + self.title)
+            raise exceptions.ModelError(
+                "You can't create a workspace with the title: " + self.title
+            )
 
     @staticmethod
     def get_all():
@@ -79,7 +81,11 @@ class Workspace(Document):
         Returns:
 
         """
-        return Workspace.objects(Q(owner=str(user_id)) | Q(read_perm_id__in=read_permissions) | Q(is_public=True)).all()
+        return Workspace.objects(
+            Q(owner=str(user_id))
+            | Q(read_perm_id__in=read_permissions)
+            | Q(is_public=True)
+        ).all()
 
     @staticmethod
     def get_all_workspaces_with_write_access_by_user_id(user_id, write_permissions):
@@ -92,10 +98,14 @@ class Workspace(Document):
         Returns:
 
         """
-        return Workspace.objects(Q(owner=str(user_id)) | Q(write_perm_id__in=write_permissions)).all()
+        return Workspace.objects(
+            Q(owner=str(user_id)) | Q(write_perm_id__in=write_permissions)
+        ).all()
 
     @staticmethod
-    def get_all_workspaces_with_read_access_not_owned_by_user_id(user_id, read_permissions):
+    def get_all_workspaces_with_read_access_not_owned_by_user_id(
+        user_id, read_permissions
+    ):
         """ Get all workspaces with read access not owned by the given user id.
 
         Args:
@@ -106,10 +116,15 @@ class Workspace(Document):
 
         """
 
-        return Workspace.objects(Q(read_perm_id__in=read_permissions) | Q(is_public=True), owner__ne=str(user_id)).all()
+        return Workspace.objects(
+            Q(read_perm_id__in=read_permissions) | Q(is_public=True),
+            owner__ne=str(user_id),
+        ).all()
 
     @staticmethod
-    def get_all_workspaces_with_write_access_not_owned_by_user_id(user_id, write_permissions):
+    def get_all_workspaces_with_write_access_not_owned_by_user_id(
+        user_id, write_permissions
+    ):
         """ Get all workspaces with write access not owned by the given user id.
 
         Args:
@@ -119,7 +134,9 @@ class Workspace(Document):
         Returns:
 
         """
-        return Workspace.objects(owner__ne=str(user_id), write_perm_id__in=write_permissions).all()
+        return Workspace.objects(
+            owner__ne=str(user_id), write_perm_id__in=write_permissions
+        ).all()
 
     @staticmethod
     def get_all_public_workspaces():

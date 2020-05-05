@@ -94,4 +94,4 @@ def _check_object_locked(object, user, lock):
         return True
 
     logger.warning("_check_object_locked: A user asked to access a locked object.")
-    raise LockError('The object is used by another user and is locked.')
+    raise LockError("The object is used by another user and is locked.")

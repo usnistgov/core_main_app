@@ -61,11 +61,13 @@ def create_and_save_user(username, password, first_name, last_name, email):
         Returns:
             User object
     """
-    user = User.objects.create_user(username=username,
-                                    password=password,
-                                    first_name=first_name,
-                                    last_name=last_name,
-                                    email=email)
+    user = User.objects.create_user(
+        username=username,
+        password=password,
+        first_name=first_name,
+        last_name=last_name,
+        email=email,
+    )
     return upsert(user)
 
 

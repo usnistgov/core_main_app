@@ -10,7 +10,7 @@ from django.http.response import HttpResponse
 from core_main_app.commons.exceptions import CoreError
 
 
-def get_file_http_response(file_content, file_name, content_type=None, extension=''):
+def get_file_http_response(file_content, file_name, content_type=None, extension=""):
     """ Return http response with file to download
 
     Args:
@@ -25,7 +25,7 @@ def get_file_http_response(file_content, file_name, content_type=None, extension
     try:
         # set file content
         try:
-            _file = BytesIO(file_content.encode('utf-8'))
+            _file = BytesIO(file_content.encode("utf-8"))
         except Exception:
             _file = BytesIO(file_content)
 
@@ -40,11 +40,11 @@ def get_file_http_response(file_content, file_name, content_type=None, extension
                 extension = "." + extension
             file_name += extension
         # set content disposition in response
-        response['Content-Disposition'] = 'attachment; filename=' + file_name
+        response["Content-Disposition"] = "attachment; filename=" + file_name
         # return response
         return response
     except Exception:
-        raise CoreError('An unexpected error occurred.')
+        raise CoreError("An unexpected error occurred.")
 
 
 def read_file_content(file_path):
@@ -70,10 +70,10 @@ def get_filename_from_response(response):
     Returns:
 
     """
-    content_disposition = response.headers.get('content-disposition')
+    content_disposition = response.headers.get("content-disposition")
     if not content_disposition:
         return None
-    file_name = re.findall('filename=(.+)', content_disposition)
+    file_name = re.findall("filename=(.+)", content_disposition)
     if len(file_name) == 0:
         return None
     return file_name[0]
@@ -90,6 +90,6 @@ def get_base_64_content_from_response(response):
     """
     try:
         b64_content = base64.b64encode(response.content)
-        return b64_content.decode('ascii')
+        return b64_content.decode("ascii")
     except Exception:
-        raise CoreError('An error occurred while decoding the response.')
+        raise CoreError("An error occurred while decoding the response.")

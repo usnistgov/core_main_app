@@ -10,6 +10,7 @@ from core_main_app.commons.enums import WEB_PAGE_TYPES
 class WebPage(Document):
     """ Represents a WebPage
     """
+
     type = fields.IntField()
     content = fields.StringField()
 

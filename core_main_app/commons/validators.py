@@ -8,12 +8,24 @@ from django.utils.deconstruct import deconstructible
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ungettext
-from django.contrib.auth.password_validation import validate_password as django_validate_password
-from django.contrib.auth.password_validation import MinimumLengthValidator, \
-    UserAttributeSimilarityValidator, CommonPasswordValidator
+from django.contrib.auth.password_validation import (
+    validate_password as django_validate_password,
+)
+from django.contrib.auth.password_validation import (
+    MinimumLengthValidator,
+    UserAttributeSimilarityValidator,
+    CommonPasswordValidator,
+)
 
-from core_main_app.settings import PASSWORD_MIN_LENGTH, PASSWORD_MIN_UPPERCASE_LETTERS, PASSWORD_MIN_LOWERCASE_LETTERS, \
-    PASSWORD_MIN_NUMBERS, PASSWORD_MIN_SYMBOLS, PASSWORD_MIN_LETTERS, PASSWORD_MAX_OCCURRENCE
+from core_main_app.settings import (
+    PASSWORD_MIN_LENGTH,
+    PASSWORD_MIN_UPPERCASE_LETTERS,
+    PASSWORD_MIN_LOWERCASE_LETTERS,
+    PASSWORD_MIN_NUMBERS,
+    PASSWORD_MIN_SYMBOLS,
+    PASSWORD_MIN_LETTERS,
+    PASSWORD_MAX_OCCURRENCE,
+)
 
 
 @deconstructible
@@ -21,9 +33,7 @@ class BlankSpacesValidator(object):
     def __call__(self, value):
         value = force_text(value)
         if len(value.strip()) == 0:
-            raise ValidationError(
-                _('This field should not be empty.'),
-            )
+            raise ValidationError(_("This field should not be empty."),)
 
 
 @deconstructible
@@ -34,9 +44,7 @@ class ExtensionValidator(object):
     def __call__(self, value):
         ext = os.path.splitext(value.name)[1]
         if not ext.lower() in self.valid_extensions:
-            raise ValidationError(
-                _('Unsupported file extension.'),
-            )
+            raise ValidationError(_("Unsupported file extension."),)
 
 
 class UpperCaseLetterCountValidator(object):
@@ -54,9 +62,14 @@ class UpperCaseLetterCountValidator(object):
     def get_help_text(self):
         """ Returns this validator's error message.
         """
-        msg = ungettext("The new password must contain %d or more uppercase letter.",
-                        "The new password must contain %d or more uppercase letters.",
-                        self.get_min_count()) % self.get_min_count()
+        msg = (
+            ungettext(
+                "The new password must contain %d or more uppercase letter.",
+                "The new password must contain %d or more uppercase letters.",
+                self.get_min_count(),
+            )
+            % self.get_min_count()
+        )
         return msg
 
     def get_min_count(self):
@@ -80,9 +93,14 @@ class LowerCaseLetterCountValidator(object):
     def get_help_text(self):
         """ Returns this validator's error message.
         """
-        msg = ungettext("The new password must contain %d or more lowercase letter.",
-                        "The new password must contain %d or more lowercase letters.",
-                        self.get_min_count()) % self.get_min_count()
+        msg = (
+            ungettext(
+                "The new password must contain %d or more lowercase letter.",
+                "The new password must contain %d or more lowercase letters.",
+                self.get_min_count(),
+            )
+            % self.get_min_count()
+        )
         return msg
 
     def get_min_count(self):
@@ -106,9 +124,14 @@ class AlphabeticCharCountValidator(object):
     def get_help_text(self):
         """ Returns this validator's error message.
         """
-        msg = ungettext("The new password must contain %d or more alphabetic letter.",
-                        "The new password must contain %d or more alphabetic letters.",
-                        self.get_min_count()) % self.get_min_count()
+        msg = (
+            ungettext(
+                "The new password must contain %d or more alphabetic letter.",
+                "The new password must contain %d or more alphabetic letters.",
+                self.get_min_count(),
+            )
+            % self.get_min_count()
+        )
         return msg
 
     def is_alpha(self, char):
@@ -133,15 +156,23 @@ class MaxOccurrenceCountValidator(object):
     def validate(self, password, user=None):
         if self.max_occurrence and self.max_occurrence > 0:
             for current_char in password:
-                if sum(1 for char in password if char == current_char) >= self.get_max_count():
+                if (
+                    sum(1 for char in password if char == current_char)
+                    >= self.get_max_count()
+                ):
                     raise ValidationError(self.get_help_text())
 
     def get_help_text(self):
         """ Returns this validator's error message.
         """
-        msg = ungettext("The new password must contain less than %d time the same letter.",
-                        "The new password must contain less than %d times the same letter.",
-                        self.get_max_count()) % self.get_max_count()
+        msg = (
+            ungettext(
+                "The new password must contain less than %d time the same letter.",
+                "The new password must contain less than %d times the same letter.",
+                self.get_max_count(),
+            )
+            % self.get_max_count()
+        )
         return msg
 
     def get_max_count(self):
@@ -154,6 +185,7 @@ class NonAlphanumericCountValidator(object):
     """ Counts the occurrences of Non-Alphanumeric and raises a :class:`~django.core.exceptions.ValidationError` if the count
     is less than :func:`~NonAlphanumericCountValidator.get_min_count`.
     """
+
     regex = r"[^0-9a-zA-Z]"
 
     def __init__(self, min_nonalphanumeric_letters=0):
@@ -167,9 +199,14 @@ class NonAlphanumericCountValidator(object):
     def get_help_text(self):
         """ Returns this validator's error message.
         """
-        msg = ungettext("The new password must contain %d or more Non-Alphanumeric letter.",
-                        "The new password must contain %d or more Non-Alphanumeric letters.",
-                        self.get_min_count()) % self.get_min_count()
+        msg = (
+            ungettext(
+                "The new password must contain %d or more Non-Alphanumeric letter.",
+                "The new password must contain %d or more Non-Alphanumeric letters.",
+                self.get_min_count(),
+            )
+            % self.get_min_count()
+        )
         return msg
 
     def get_min_count(self):
@@ -182,6 +219,7 @@ class DigitsCountValidator(object):
     """ Counts the occurrences of digits and raises a :class:`~django.core.exceptions.ValidationError` if the count
     is less than :func:`~DigitsCountValidator.get_min_count`.
     """
+
     regex = r"[0-9]"
 
     def __init__(self, min_digits_letters=0):
@@ -195,9 +233,14 @@ class DigitsCountValidator(object):
     def get_help_text(self):
         """ Returns this validator's error message.
         """
-        msg = ungettext("The new password must contain %d or more digits.",
-                        "The new password must contain %d or more digit.",
-                        self.get_min_count()) % self.get_min_count()
+        msg = (
+            ungettext(
+                "The new password must contain %d or more digits.",
+                "The new password must contain %d or more digit.",
+                self.get_min_count(),
+            )
+            % self.get_min_count()
+        )
         return msg
 
     def get_min_count(self):
@@ -211,14 +254,23 @@ def validate_password(password):
     :param password:
     :return:
     """
-    django_validate_password(password, password_validators=
-    [MinimumLengthValidator(min_length=PASSWORD_MIN_LENGTH),
-     UserAttributeSimilarityValidator(),
-     CommonPasswordValidator(),
-     UpperCaseLetterCountValidator(min_uppercase_letters=PASSWORD_MIN_UPPERCASE_LETTERS),
-     LowerCaseLetterCountValidator(min_lowercase_letters=PASSWORD_MIN_LOWERCASE_LETTERS),
-     NonAlphanumericCountValidator(min_nonalphanumeric_letters=PASSWORD_MIN_SYMBOLS),
-     AlphabeticCharCountValidator(min_alphabetic_letters=PASSWORD_MIN_LETTERS),
-     DigitsCountValidator(min_digits_letters=PASSWORD_MIN_NUMBERS),
-     MaxOccurrenceCountValidator(
-         max_occurrence=PASSWORD_MAX_OCCURRENCE)])
+    django_validate_password(
+        password,
+        password_validators=[
+            MinimumLengthValidator(min_length=PASSWORD_MIN_LENGTH),
+            UserAttributeSimilarityValidator(),
+            CommonPasswordValidator(),
+            UpperCaseLetterCountValidator(
+                min_uppercase_letters=PASSWORD_MIN_UPPERCASE_LETTERS
+            ),
+            LowerCaseLetterCountValidator(
+                min_lowercase_letters=PASSWORD_MIN_LOWERCASE_LETTERS
+            ),
+            NonAlphanumericCountValidator(
+                min_nonalphanumeric_letters=PASSWORD_MIN_SYMBOLS
+            ),
+            AlphabeticCharCountValidator(min_alphabetic_letters=PASSWORD_MIN_LETTERS),
+            DigitsCountValidator(min_digits_letters=PASSWORD_MIN_NUMBERS),
+            MaxOccurrenceCountValidator(max_occurrence=PASSWORD_MAX_OCCURRENCE),
+        ],
+    )

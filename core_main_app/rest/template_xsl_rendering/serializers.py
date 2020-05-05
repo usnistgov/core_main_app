@@ -4,18 +4,22 @@ from rest_framework_mongoengine.fields import ReferenceField
 from rest_framework_mongoengine.serializers import DocumentSerializer
 
 from core_main_app.components.template.models import Template
-from core_main_app.components.template_xsl_rendering import api as template_xsl_rendering_api
+from core_main_app.components.template_xsl_rendering import (
+    api as template_xsl_rendering_api,
+)
 from core_main_app.components.template_xsl_rendering.models import TemplateXslRendering
 
 
 class TemplateXslRenderingSerializer(DocumentSerializer):
     """ TemplateXslRendering Serializer
     """
+
     template = ReferenceField(model=Template)
 
     class Meta(object):
         """ Meta class
         """
+
         model = TemplateXslRendering
         fields = "__all__"
 

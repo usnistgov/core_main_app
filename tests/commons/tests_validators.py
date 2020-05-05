@@ -4,8 +4,14 @@ import unittest
 
 from django.core.exceptions import ValidationError
 
-from core_main_app.commons.validators import UpperCaseLetterCountValidator, LowerCaseLetterCountValidator, \
-    AlphabeticCharCountValidator, MaxOccurrenceCountValidator, NonAlphanumericCountValidator, DigitsCountValidator
+from core_main_app.commons.validators import (
+    UpperCaseLetterCountValidator,
+    LowerCaseLetterCountValidator,
+    AlphabeticCharCountValidator,
+    MaxOccurrenceCountValidator,
+    NonAlphanumericCountValidator,
+    DigitsCountValidator,
+)
 
 
 class TestValidators(unittest.TestCase):
@@ -98,4 +104,3 @@ class TestValidators(unittest.TestCase):
         digits_validator = DigitsCountValidator(5)
         with self.assertRaises(ValidationError):
             digits_validator.validate("abbccc1234dddd")
-

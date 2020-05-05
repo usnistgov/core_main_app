@@ -13,7 +13,7 @@ from core_main_app.utils.query.mongo.query_builder import QueryBuilder
 
 
 class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
-    sub_document_root = 'dict_content'
+    sub_document_root = "dict_content"
 
     def get(self, request):
         """ Execute query on local instance and return results
@@ -90,31 +90,35 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
         """
         try:
             # get query and templates
-            query = self.request.data.get('query', None)
-            templates = json.loads(self.request.data.get('templates', '[]'))
-            workspaces = json.loads(self.request.data.get('workspaces', '[]'))
-            options = json.loads(self.request.data.get('options', '{}'))
-            title = self.request.data.get('title', None)
-            order_by_field = self.request.data.get('order_by_field', '').split(',')
+            query = self.request.data.get("query", None)
+            templates = json.loads(self.request.data.get("templates", "[]"))
+            workspaces = json.loads(self.request.data.get("workspaces", "[]"))
+            options = json.loads(self.request.data.get("options", "{}"))
+            title = self.request.data.get("title", None)
+            order_by_field = self.request.data.get("order_by_field", "").split(",")
             if query is not None:
                 # prepare query
-                raw_query = self.build_query(query=query,
-                                             templates=templates,
-                                             options=options,
-                                             workspaces=workspaces,
-                                             title=title)
+                raw_query = self.build_query(
+                    query=query,
+                    templates=templates,
+                    options=options,
+                    workspaces=workspaces,
+                    title=title,
+                )
                 # execute query
                 data_list = self.execute_raw_query(raw_query, order_by_field)
                 # build and return response
                 return self.build_response(data_list)
             else:
-                content = {'message': 'Expected parameters not provided.'}
+                content = {"message": "Expected parameters not provided."}
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def build_query(self, query, workspaces=None, templates=None, options=None, title=None):
+    def build_query(
+        self, query, workspaces=None, templates=None, options=None, title=None
+    ):
         """ Build the raw query
 
         Args:
@@ -134,12 +138,12 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
         query_builder = QueryBuilder(query, self.sub_document_root)
         # update the criteria with workspaces information
         if workspaces is not None and len(workspaces) > 0:
-            list_workspace_ids = [workspace['id'] for workspace in workspaces]
-            query_builder.add_list_criteria('workspace', list_workspace_ids)
+            list_workspace_ids = [workspace["id"] for workspace in workspaces]
+            query_builder.add_list_criteria("workspace", list_workspace_ids)
         # update the criteria with templates information
         if templates is not None and len(templates) > 0:
-            list_template_ids = [template['id'] for template in templates]
-            query_builder.add_list_criteria('template', list_template_ids)
+            list_template_ids = [template["id"] for template in templates]
+            query_builder.add_list_criteria("template", list_template_ids)
         # update the criteria with visibility information
         if options is not None and VISIBILITY_OPTION in options:
             query_builder.add_visibility_criteria(options[VISIBILITY_OPTION])

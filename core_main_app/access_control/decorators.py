@@ -11,6 +11,7 @@ def access_control(check_func):
     Returns:
 
     """
+
     def _access_control(func):
         """ Decorator.
 
@@ -20,6 +21,7 @@ def access_control(check_func):
         Returns:
 
         """
+
         def wrapper(*args, **kwargs):
             """ Function wrapper.
 
@@ -31,5 +33,7 @@ def access_control(check_func):
 
             """
             return check_func(func, *args, **kwargs)
+
         return wrapper
+
     return _access_control

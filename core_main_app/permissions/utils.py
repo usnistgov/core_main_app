@@ -12,4 +12,3 @@ def get_formatted_name(permission):
 
     """
     return "Can {}".format(permission.replace("_", " "))
-

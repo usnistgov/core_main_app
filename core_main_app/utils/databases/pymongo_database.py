@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 class Database(object):
     """ Represent Database.
     """
+
     def __init__(self):
         self.client = None
 
@@ -31,10 +32,10 @@ class Database(object):
         """
         # create a connection
         self.client = MongoClient(db_uri, document_class=doc_class)
-        db = self.client[db_name]    # connect to the database
+        db = self.client[db_name]  # connect to the database
         if db is not None:
-            return db           # return db connection
-        else:                   # or raise an exception
+            return db  # return db connection
+        else:  # or raise an exception
             raise exceptions.CoreError("Database connection error")
 
     def close_connection(self):
@@ -73,7 +74,7 @@ class Database(object):
         # clear all collections
         for collection in db.list_collection_names():
             try:
-                if collection != 'system.indexes':
+                if collection != "system.indexes":
                     db.drop_collection(collection)
             except OperationFailure as e:
                 logger.warning("clean_database threw an exception: ".format(str(e)))
@@ -90,9 +91,9 @@ def get_full_text_query(text):
     """
     full_text_query = {}
     word_list = re.sub("[^\w]", " ", text, flags=re.UNICODE).split()
-    word_list = ['"'+x+'"' for x in word_list]
-    word_list = ' '.join(word_list)
+    word_list = ['"' + x + '"' for x in word_list]
+    word_list = " ".join(word_list)
     if len(word_list) > 0:
-        full_text_query = {'$text': {'$search': word_list}}
+        full_text_query = {"$text": {"$search": word_list}}
 
     return full_text_query

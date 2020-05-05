@@ -8,7 +8,7 @@ def get_data_label():
 
     Returns:
     """
-    return _('record_label')
+    return _("record_label")
 
 
 def get_form_label():
@@ -16,4 +16,4 @@ def get_form_label():
 
     Returns:
     """
-    return _('form_label')
+    return _("form_label")

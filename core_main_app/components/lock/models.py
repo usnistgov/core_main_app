@@ -18,6 +18,7 @@ class Lock(object):
     Class Lock. Singleton thread safe.
     Only this object should be called to be used for an action regarding locking a Document.
     """
+
     __singleton_lock = threading.Lock()
     __singleton_instance = None
 

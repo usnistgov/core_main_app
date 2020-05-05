@@ -3,7 +3,7 @@ from django import template
 register = template.Library()
 
 
-@register.filter(name='get_attribute')
+@register.filter(name="get_attribute")
 def get_attribute(value, arg):
     """@see https://stackoverflow.com/questions/844746/performing-a-getattr-style-lookup-in-a-django-template"""
 

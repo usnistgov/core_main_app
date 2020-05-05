@@ -16,8 +16,8 @@ class MongoIntegrationTransactionTestCase(TransactionTestCase):
     """
         Fields
     """
-    database = settings_database     # database to use
-    fixture = None      # data fixture from component's tests
+    database = settings_database  # database to use
+    fixture = None  # data fixture from component's tests
 
     """
         Methods

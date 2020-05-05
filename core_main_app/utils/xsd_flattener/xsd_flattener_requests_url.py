@@ -15,7 +15,9 @@ class XSDFlattenerRequestsURL(XSDFlattenerURL):
             xml_string:
             download_enabled:
         """
-        XSDFlattenerURL.__init__(self, xml_string=xml_string, download_enabled=download_enabled)
+        XSDFlattenerURL.__init__(
+            self, xml_string=xml_string, download_enabled=download_enabled
+        )
 
     def get_dependency_content(self, uri):
         """ Get the content of the dependency from the URL using request util for HTTPS compliance

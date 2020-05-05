@@ -5,8 +5,8 @@ from django.test.testcases import SimpleTestCase
 from core_main_app.commons.exceptions import CoreError
 from core_main_app.utils.databases.mongoengine_database import Database
 
-MOCK_DATABASE_NAME = 'db_mock'
-MOCK_DATABASE_HOST = 'mongomock://localhost'
+MOCK_DATABASE_NAME = "db_mock"
+MOCK_DATABASE_HOST = "mongomock://localhost"
 
 
 class MongoIntegrationBaseTestCase(SimpleTestCase):
@@ -17,8 +17,8 @@ class MongoIntegrationBaseTestCase(SimpleTestCase):
     """
         Fields
     """
-    database = None     # database to use
-    fixture = None      # data fixture from component's tests
+    database = None  # database to use
+    fixture = None  # data fixture from component's tests
 
     """
         Methods

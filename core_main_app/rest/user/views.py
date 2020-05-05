@@ -5,7 +5,11 @@ import json
 from django.http import Http404
 from django.utils.decorators import method_decorator
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+    IsAdminUser,
+)
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -17,8 +21,9 @@ from core_main_app.utils.decorators import api_staff_member_required
 class UserDetail(APIView):
     """ Retrieve  User
     """
-    permission_classes = (IsAdminUser, )
-    
+
+    permission_classes = (IsAdminUser,)
+
     def get(self, request, pk):
         """ Get user from db
 
@@ -41,16 +46,17 @@ class UserDetail(APIView):
             # Return response
             return Response(serializer.data)
         except Http404:
-            content = {'message': 'User not found.'}
+            content = {"message": "User not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class UserList(APIView):
     """   List all Users
     """
+
     permission_classes = (IsAdminUser,)
 
     def get(self, request):
@@ -75,5 +81,5 @@ class UserList(APIView):
             return Response(serializer.data)
 
         except Exception as api_exception:
-            content = {'message': str(api_exception)}
+            content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

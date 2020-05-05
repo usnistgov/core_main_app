@@ -21,5 +21,10 @@ def stripjs(value):
     Returns:
 
     """
-    stripped = re.sub(r'<script(?:\s[^>]*)?(>(?:.(?!/script>))*</script>|/>)', '', force_text(value), flags=re.S)
+    stripped = re.sub(
+        r"<script(?:\s[^>]*)?(>(?:.(?!/script>))*</script>|/>)",
+        "",
+        force_text(value),
+        flags=re.S,
+    )
     return mark_safe(stripped)

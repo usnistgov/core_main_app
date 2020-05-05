@@ -7,8 +7,10 @@ from rest_framework import serializers
 class GroupSerializer(serializers.ModelSerializer):
     """ Group serializer
     """
+
     class Meta(object):
         """ Meta
         """
+
         model = Group
-        fields = ('id', 'name')
+        fields = ("id", "name")

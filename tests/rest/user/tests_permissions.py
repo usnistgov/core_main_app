@@ -14,35 +14,31 @@ from core_main_app.utils.tests_tools.RequestMock import RequestMock
 class TestUserGetPermissions(SimpleTestCase):
     def test_anonymous_returns_http_403(self):
         response = RequestMock.do_request_get(
-            user_rest_views.UserDetail.as_view(),
-            None,
-            param={"pk": 0}
+            user_rest_views.UserDetail.as_view(), None, param={"pk": 0}
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_authenticated_returns_http_403(self):
-        mock_user = create_mock_user('1')
+        mock_user = create_mock_user("1")
 
         response = RequestMock.do_request_get(
-            user_rest_views.UserDetail.as_view(),
-            mock_user,
-            param={"pk": 0}
+            user_rest_views.UserDetail.as_view(), mock_user, param={"pk": 0}
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @patch.object(user_api, "get_user_by_id")
     def test_staff_returns_http_200(self, user_get_by_id):
-        mock_get_user = create_mock_user('0')
+        mock_get_user = create_mock_user("0")
         user_get_by_id.return_value = mock_get_user
 
-        mock_user = create_mock_user('1', is_staff=True)
+        mock_user = create_mock_user("1", is_staff=True)
 
         response = RequestMock.do_request_get(
             user_rest_views.UserDetail.as_view(),
             mock_user,
-            param={"pk": mock_get_user.id}
+            param={"pk": mock_get_user.id},
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -50,18 +46,14 @@ class TestUserGetPermissions(SimpleTestCase):
 
 class TestUserListGetPermissions(SimpleTestCase):
     def test_anonymous_returns_http_403(self):
-        response = RequestMock.do_request_get(
-            user_rest_views.UserList.as_view(),
-            None
-        )
+        response = RequestMock.do_request_get(user_rest_views.UserList.as_view(), None)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_authenticated_returns_http_403(self):
-        mock_user = create_mock_user('1')
+        mock_user = create_mock_user("1")
         response = RequestMock.do_request_get(
-            user_rest_views.UserList.as_view(),
-            mock_user
+            user_rest_views.UserList.as_view(), mock_user
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -69,13 +61,9 @@ class TestUserListGetPermissions(SimpleTestCase):
     @patch.object(user_api, "get_all_users")
     def test_staff_returns_http_200(self, get_all_users):
         get_all_users.return_value = {}
-        mock_user = create_mock_user('1', is_staff=True)
+        mock_user = create_mock_user("1", is_staff=True)
         response = RequestMock.do_request_get(
-            user_rest_views.UserList.as_view(),
-            mock_user
+            user_rest_views.UserList.as_view(), mock_user
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-
-

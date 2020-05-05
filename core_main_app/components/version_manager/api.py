@@ -86,7 +86,7 @@ def restore_version(version):
     try:
         version_manager.restore_version(version)
     except ValueError as value_error:
-        raise ApiError('Unable to restore this version: status is not disabled.')
+        raise ApiError("Unable to restore this version: status is not disabled.")
     return upsert(version_manager)
 
 
@@ -106,11 +106,13 @@ def disable_version(version, new_current=None):
     if version_manager.current == str(version.id):
         # no version to be current provided
         if new_current is None:
-            raise exceptions.ApiError('Unable to disable the current version.')
+            raise exceptions.ApiError("Unable to disable the current version.")
 
         # id doesn't match a version
         if new_current.id not in version_manager.versions:
-            raise exceptions.ApiError('The id provided to be the next current version, could not be found.')
+            raise exceptions.ApiError(
+                "The id provided to be the next current version, could not be found."
+            )
 
         # set the new current version
         version_manager.set_current_version(new_current)
@@ -133,7 +135,9 @@ def set_current(version):
 
     # a disabled version cannot be current
     if str(version.id) in version_manager.get_disabled_versions():
-        raise exceptions.ApiError("Unable to set the current version because it is disabled.")
+        raise exceptions.ApiError(
+            "Unable to set the current version because it is disabled."
+        )
 
     version_manager.set_current_version(version)
     return upsert(version_manager)
@@ -201,7 +205,9 @@ def get_active_global_version_manager_by_title(version_manager_title):
         Version Manager instance
 
     """
-    return VersionManager.get_active_global_version_manager_by_title(version_manager_title)
+    return VersionManager.get_active_global_version_manager_by_title(
+        version_manager_title
+    )
 
 
 def get_version_number(version_manager, version):

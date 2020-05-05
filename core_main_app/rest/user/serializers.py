@@ -7,8 +7,10 @@ from rest_framework import serializers
 class UserSerializer(serializers.ModelSerializer):
     """ User serializer
     """
+
     class Meta(object):
         """ Meta
         """
+
         model = User
-        fields = ('id', 'username')
+        fields = ("id", "username")

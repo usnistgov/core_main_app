@@ -4,8 +4,9 @@ from django.contrib.auth.models import User
 from mock.mock import Mock
 
 
-def create_mock_user(user_id, is_staff=False, is_superuser=False, has_perm=False,
-                     is_anonymous=False):
+def create_mock_user(
+    user_id, is_staff=False, is_superuser=False, has_perm=False, is_anonymous=False
+):
     """ Mock a User.
 
         Args:

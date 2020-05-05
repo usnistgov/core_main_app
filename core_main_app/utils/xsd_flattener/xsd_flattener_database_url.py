@@ -5,7 +5,9 @@ from urllib.parse import urlparse
 from core_main_app.commons import exceptions
 from core_main_app.components.template import api as template_api
 from core_main_app.utils.urls import get_template_download_pattern
-from core_main_app.utils.xsd_flattener.xsd_flattener_requests_url import XSDFlattenerRequestsURL
+from core_main_app.utils.xsd_flattener.xsd_flattener_requests_url import (
+    XSDFlattenerRequestsURL,
+)
 from xml_utils.xsd_flattener.xsd_flattener_url import XSDFlattenerURL
 
 
@@ -20,7 +22,9 @@ class XSDFlattenerDatabaseOrURL(XSDFlattenerRequestsURL):
             xml_string:
             download_enabled:
         """
-        XSDFlattenerURL.__init__(self, xml_string=xml_string, download_enabled=download_enabled)
+        XSDFlattenerURL.__init__(
+            self, xml_string=xml_string, download_enabled=download_enabled
+        )
 
     def get_dependency_content(self, uri):
         """ Get the content of the dependency from the database or from the URL. Try to get the content from the
@@ -43,13 +47,15 @@ class XSDFlattenerDatabaseOrURL(XSDFlattenerRequestsURL):
         if match:
             try:
                 # get pk from match
-                object_id = match.group('pk')
+                object_id = match.group("pk")
                 # get template object using pk
                 template = template_api.get(object_id)
                 # get template content
                 content = template.content
             except (exceptions.DoesNotExist, exceptions.ModelError, Exception):
-                content = super(XSDFlattenerDatabaseOrURL, self).get_dependency_content(uri)
+                content = super(XSDFlattenerDatabaseOrURL, self).get_dependency_content(
+                    uri
+                )
         else:
             content = super(XSDFlattenerDatabaseOrURL, self).get_dependency_content(uri)
 

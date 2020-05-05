@@ -26,7 +26,8 @@ def upsert(login_page):
     """
     if login_page.type != LOGIN_PAGE_TYPE:
         raise ApiError(
-            "Webpage type not coherent (expected: %s; actual %s" % (str(LOGIN_PAGE_TYPE), str(login_page.type))
+            "Webpage type not coherent (expected: %s; actual %s"
+            % (str(LOGIN_PAGE_TYPE), str(login_page.type))
         )
 
     return web_page_api.upsert(login_page)

@@ -4,8 +4,12 @@ from rest_framework_mongoengine.serializers import DocumentSerializer
 
 from core_main_app.components.template.api import init_template_with_dependencies
 from core_main_app.components.template.models import Template
-from core_main_app.components.template_version_manager import api as template_version_manager_api
-from core_main_app.components.template_version_manager.models import TemplateVersionManager
+from core_main_app.components.template_version_manager import (
+    api as template_version_manager_api,
+)
+from core_main_app.components.template_version_manager.models import (
+    TemplateVersionManager,
+)
 from core_main_app.rest.template.serializers import TemplateSerializer
 from core_main_app.rest.template_version_manager.utils import load_dependencies
 
@@ -14,15 +18,18 @@ class TemplateVersionManagerSerializer(DocumentSerializer):
     """
         Template Version Manager serializer
     """
+
     class Meta(object):
         model = TemplateVersionManager
         fields = "__all__"
-        read_only_fields = ['id',
-                            'user',
-                            'versions',
-                            'current',
-                            'is_disabled',
-                            'disabled_versions']
+        read_only_fields = [
+            "id",
+            "user",
+            "versions",
+            "current",
+            "is_disabled",
+            "disabled_versions",
+        ]
 
     def create(self, validated_data):
         """ Create.
@@ -40,13 +47,15 @@ class CreateTemplateSerializer(TemplateSerializer):
     """
         Template Version Manager serializer
     """
+
     def create(self, validated_data):
         """
         Create and return a new `Template` instance, given the validated data.
         """
-        template_object = Template(filename=validated_data['filename'],
-                                   content=validated_data['content'])
-        template_version_manager_object = validated_data['template_version_manager']
+        template_object = Template(
+            filename=validated_data["filename"], content=validated_data["content"]
+        )
+        template_version_manager_object = validated_data["template_version_manager"]
 
         # load dependencies
         dependencies_dict = load_dependencies(validated_data)
@@ -55,9 +64,13 @@ class CreateTemplateSerializer(TemplateSerializer):
         init_template_with_dependencies(template_object, dependencies_dict)
 
         # Create the template and its template version manager
-        template_version_manager_api.insert(template_version_manager_object, template_object)
+        template_version_manager_api.insert(
+            template_version_manager_object, template_object
+        )
 
         return template_object
 
     def update(self, instance, validated_data):
-        raise NotImplementedError("Template Version Manager should only be updated using specialized APIs.")
+        raise NotImplementedError(
+            "Template Version Manager should only be updated using specialized APIs."
+        )

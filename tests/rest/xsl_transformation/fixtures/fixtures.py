@@ -7,6 +7,7 @@ from core_main_app.utils.integration_tests.fixture_interface import FixtureInter
 class XslTransformationFixtures(FixtureInterface):
     """ Xsl Transformation fixtures
     """
+
     data_1 = None
     data_collection = None
 
@@ -25,8 +26,12 @@ class XslTransformationFixtures(FixtureInterface):
         Returns:
 
         """
-        content = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>' \
-                  '<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"1.0\">' \
-                  '<xsl:template></xsl:template></xsl:stylesheet>'
-        self.data_1 = XslTransformation(name="name_1", filename='filename_1.xsd', content=content).save()
+        content = (
+            '<?xml version="1.0" encoding="UTF-8"?>'
+            '<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">'
+            "<xsl:template></xsl:template></xsl:stylesheet>"
+        )
+        self.data_1 = XslTransformation(
+            name="name_1", filename="filename_1.xsd", content=content
+        ).save()
         self.data_collection = [self.data_1]

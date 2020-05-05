@@ -15,6 +15,7 @@ from django_mongoengine import fields, Document
 
 class VersionManager(Document):
     """Version Manager"""
+
     title = fields.StringField(unique=True, validation=not_empty_or_whitespaces)
     user = fields.StringField(blank=True)
     versions = fields.ListField(default=[], blank=True)
@@ -22,7 +23,7 @@ class VersionManager(Document):
     is_disabled = fields.BooleanField(default=False)
     disabled_versions = fields.ListField(default=[], blank=True)
 
-    meta = {'allow_inheritance': True}
+    meta = {"allow_inheritance": True}
 
     def disable(self):
         """Disable the Version Manager.
@@ -176,7 +177,9 @@ class VersionManager(Document):
 
         """
         try:
-            return VersionManager.objects.get(is_disabled=False, title=version_manager_title, user=None)
+            return VersionManager.objects.get(
+                is_disabled=False, title=version_manager_title, user=None
+            )
         except mongoengine_errors.DoesNotExist as e:
             raise exceptions.DoesNotExist(str(e))
         except Exception as e:

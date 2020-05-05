@@ -16,6 +16,8 @@ def get_blob_download_uri(blob, request):
 
     """
     # get URI to download blob
-    blob_download_uri = SERVER_URI + reverse("core_main_app_rest_blob_download", kwargs={'pk': str(blob.id)})
+    blob_download_uri = SERVER_URI + reverse(
+        "core_main_app_rest_blob_download", kwargs={"pk": str(blob.id)}
+    )
 
     return blob_download_uri

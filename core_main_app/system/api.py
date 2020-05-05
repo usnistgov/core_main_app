@@ -54,7 +54,9 @@ def get_all_except(id_list, order_by_field=DATA_SORTING_FIELDS):
     return Data.get_all_except(order_by_field, id_list)
 
 
-def execute_query_with_projection(query, projection, order_by_field=DATA_SORTING_FIELDS):
+def execute_query_with_projection(
+    query, projection, order_by_field=DATA_SORTING_FIELDS
+):
     """ Execute a given query with a projection.
 
     Args:

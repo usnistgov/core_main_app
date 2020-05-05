@@ -13,14 +13,22 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Main',
+            name="Main",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'core_main_app',
-                'permissions': (('publish_data', 'Can publish data'),),
-                'default_permissions': (),
+                "verbose_name": "core_main_app",
+                "permissions": (("publish_data", "Can publish data"),),
+                "default_permissions": (),
             },
         ),
     ]

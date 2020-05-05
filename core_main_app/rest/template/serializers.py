@@ -10,17 +10,22 @@ class TemplateSerializer(DocumentSerializer):
     """
         Template serializer
     """
+
     dependencies_dict = CharField(write_only=True, required=False)
 
     class Meta(object):
         model = Template
-        fields = ['id',
-                  'filename',
-                  'content',
-                  'hash',
-                  'dependencies',
-                  'dependencies_dict']
+        fields = [
+            "id",
+            "filename",
+            "content",
+            "hash",
+            "dependencies",
+            "dependencies_dict",
+        ]
 
-        read_only_fields = ['id',
-                            'hash',
-                            '_display_name', ]
+        read_only_fields = [
+            "id",
+            "hash",
+            "_display_name",
+        ]

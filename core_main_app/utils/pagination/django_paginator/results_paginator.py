@@ -3,11 +3,12 @@
 from django.core.paginator import PageNotAnInteger, EmptyPage
 
 from core_main_app.settings import RESULTS_PER_PAGE
-from core_main_app.utils.pagination.mongoengine_paginator.paginator import MongoenginePaginator
+from core_main_app.utils.pagination.mongoengine_paginator.paginator import (
+    MongoenginePaginator,
+)
 
 
 class ResultsPaginator(object):
-
     @staticmethod
     def get_results(results_list, page, results_per_page=RESULTS_PER_PAGE):
         # Pagination

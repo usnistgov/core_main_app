@@ -6,7 +6,7 @@ from setuptools import find_packages, setup
 
 
 def req_link(external_url):
-    egg_link = sub(r'https://[^=]+=', '', external_url)
+    egg_link = sub(r"https://[^=]+=", "", external_url)
     return "==".join(egg_link.rsplit("-", 1))
 
 

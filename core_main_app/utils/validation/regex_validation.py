@@ -18,4 +18,4 @@ def not_empty_or_whitespaces(value):
     """
     pattern = re.compile(NOT_EMPTY_OR_WHITESPACES)
     if not pattern.match(value):
-        raise ValidationError('Value can not be empty')
+        raise ValidationError("Value can not be empty")

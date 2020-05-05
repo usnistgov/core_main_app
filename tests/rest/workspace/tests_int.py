@@ -5,18 +5,19 @@ from rest_framework import status
 
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.rest.workspace import views as workspace_rest_views
-from core_main_app.utils.integration_tests.integration_base_transaction_test_case import \
-    MongoIntegrationTransactionTestCase
+from core_main_app.utils.integration_tests.integration_base_transaction_test_case import (
+    MongoIntegrationTransactionTestCase,
+)
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
 from tests.components.group.fixtures.fixtures import GroupFixtures
 from tests.components.user.fixtures.fixtures import UserFixtures
 from tests.components.workspace.fixtures.fixtures import WorkspaceFixtures
 
-TITLE_1 = 'title 1'
-TITLE_2 = 'title 2'
-TITLE_3 = 'title 3'
+TITLE_1 = "title 1"
+TITLE_2 = "title 2"
+TITLE_3 = "title 3"
 
-FAKE_WORKSPACE_ID = '507f1f77bcf86cd799439011'
+FAKE_WORKSPACE_ID = "507f1f77bcf86cd799439011"
 
 
 class TestWorkspaceDetail(MongoIntegrationTransactionTestCase):
@@ -30,9 +31,11 @@ class TestWorkspaceDetail(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.WorkspaceDetail.as_view(),
-                                              user,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.WorkspaceDetail.as_view(),
+            user,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -44,12 +47,14 @@ class TestWorkspaceDetail(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.WorkspaceDetail.as_view(),
-                                              user,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.WorkspaceDetail.as_view(),
+            user,
+            param={"pk": workspace.id},
+        )
 
         # Assert
-        self.assertEqual(response.data['title'], workspace.title)
+        self.assertEqual(response.data["title"], workspace.title)
 
     def test_get_wrong_id_returns_http_404(self):
         # Context
@@ -58,9 +63,11 @@ class TestWorkspaceDetail(MongoIntegrationTransactionTestCase):
         WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.WorkspaceDetail.as_view(),
-                                              user,
-                                              param={'pk': FAKE_WORKSPACE_ID})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.WorkspaceDetail.as_view(),
+            user,
+            param={"pk": FAKE_WORKSPACE_ID},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -70,9 +77,11 @@ class TestWorkspaceDetail(MongoIntegrationTransactionTestCase):
         user = UserFixtures().create_user()
 
         # Act
-        response = RequestMock.do_request_delete(workspace_rest_views.WorkspaceDetail.as_view(),
-                                                 user,
-                                                 param={'pk': FAKE_WORKSPACE_ID})
+        response = RequestMock.do_request_delete(
+            workspace_rest_views.WorkspaceDetail.as_view(),
+            user,
+            param={"pk": FAKE_WORKSPACE_ID},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -84,9 +93,11 @@ class TestWorkspaceDetail(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_delete(workspace_rest_views.WorkspaceDetail.as_view(),
-                                                 user,
-                                                 param={'pk': workspace.id})
+        response = RequestMock.do_request_delete(
+            workspace_rest_views.WorkspaceDetail.as_view(),
+            user,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -98,9 +109,11 @@ class TestWorkspaceDetail(MongoIntegrationTransactionTestCase):
         self.assertEqual(len(workspace_api.get_all_by_owner(user)), 1)
 
         # Act
-        response = RequestMock.do_request_delete(workspace_rest_views.WorkspaceDetail.as_view(),
-                                                 user,
-                                                 param={'pk': workspace.id})
+        response = RequestMock.do_request_delete(
+            workspace_rest_views.WorkspaceDetail.as_view(),
+            user,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEqual(len(workspace_api.get_all_by_owner(user)), 0)
@@ -113,9 +126,11 @@ class TestWorkspaceDetail(MongoIntegrationTransactionTestCase):
         self.assertEqual(len(workspace_api.get_all_by_owner(user)), 1)
 
         # Act
-        response = RequestMock.do_request_delete(workspace_rest_views.WorkspaceDetail.as_view(),
-                                                 user2,
-                                                 param={'pk': workspace.id})
+        response = RequestMock.do_request_delete(
+            workspace_rest_views.WorkspaceDetail.as_view(),
+            user2,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -133,8 +148,9 @@ class TestWorkspaceList(MongoIntegrationTransactionTestCase):
         WorkspaceFixtures().create_workspace(user.id, TITLE_2)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.WorkspaceList.as_view(),
-                                              user)
+        response = RequestMock.do_request_get(
+            workspace_rest_views.WorkspaceList.as_view(), user
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -149,7 +165,9 @@ class TestWorkspaceList(MongoIntegrationTransactionTestCase):
         WorkspaceFixtures().create_workspace(other_user.id, TITLE_3)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.WorkspaceList.as_view(), user)
+        response = RequestMock.do_request_get(
+            workspace_rest_views.WorkspaceList.as_view(), user
+        )
 
         # Assert
         self.assertEqual(len(response.data), 2)
@@ -164,7 +182,9 @@ class TestWorkspaceList(MongoIntegrationTransactionTestCase):
         WorkspaceFixtures().create_workspace(other_user.id, TITLE_3)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.WorkspaceList.as_view(), user)
+        response = RequestMock.do_request_get(
+            workspace_rest_views.WorkspaceList.as_view(), user
+        )
 
         # Assert
         self.assertEqual(len(response.data), 3)
@@ -175,9 +195,9 @@ class TestWorkspaceList(MongoIntegrationTransactionTestCase):
         mock_data = {"title": "title 1"}
 
         # Act
-        response = RequestMock.do_request_post(workspace_rest_views.WorkspaceList.as_view(),
-                                               user,
-                                               data=mock_data)
+        response = RequestMock.do_request_post(
+            workspace_rest_views.WorkspaceList.as_view(), user, data=mock_data
+        )
         # Assert
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -187,9 +207,9 @@ class TestWorkspaceList(MongoIntegrationTransactionTestCase):
         mock_data = {"title": TITLE_1}
 
         # Act
-        RequestMock.do_request_post(workspace_rest_views.WorkspaceList.as_view(),
-                                               user,
-                                               data=mock_data)
+        RequestMock.do_request_post(
+            workspace_rest_views.WorkspaceList.as_view(), user, data=mock_data
+        )
 
         # Assert
         workspace = workspace_api.get_all_by_owner(user)
@@ -201,13 +221,12 @@ class TestWorkspaceList(MongoIntegrationTransactionTestCase):
         # Context
         FAKE_USER_ID = 123456
         user = UserFixtures().create_user(username="user1")
-        mock_data = {"title": TITLE_1,
-                     "owner": FAKE_USER_ID}
+        mock_data = {"title": TITLE_1, "owner": FAKE_USER_ID}
 
         # Act
-        response = RequestMock.do_request_post(workspace_rest_views.WorkspaceList.as_view(),
-                                               user,
-                                               data=mock_data)
+        response = RequestMock.do_request_post(
+            workspace_rest_views.WorkspaceList.as_view(), user, data=mock_data
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -223,9 +242,9 @@ class TestWorkspaceList(MongoIntegrationTransactionTestCase):
         mock_data = {"owner": user.id}
 
         # Act
-        response = RequestMock.do_request_post(workspace_rest_views.WorkspaceList.as_view(),
-                                               user,
-                                               data=mock_data)
+        response = RequestMock.do_request_post(
+            workspace_rest_views.WorkspaceList.as_view(), user, data=mock_data
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -240,7 +259,9 @@ class TestWorkspaceReadAccess(MongoIntegrationTransactionTestCase):
         user = UserFixtures().create_user(username="user1")
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_workspaces_with_read_access, user)
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_workspaces_with_read_access, user
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -251,10 +272,12 @@ class TestWorkspaceReadAccess(MongoIntegrationTransactionTestCase):
         WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_workspaces_with_read_access, user)
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_workspaces_with_read_access, user
+        )
 
         # Assert
-        self.assertEqual(response.data[0]['title'], TITLE_1)
+        self.assertEqual(response.data[0]["title"], TITLE_1)
 
     def test_get_workspace_with_read_access_admin(self):
         # Context
@@ -263,10 +286,12 @@ class TestWorkspaceReadAccess(MongoIntegrationTransactionTestCase):
         WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_workspaces_with_read_access, user2)
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_workspaces_with_read_access, user2
+        )
 
         # Assert
-        self.assertEqual(response.data[0]['title'], TITLE_1)
+        self.assertEqual(response.data[0]["title"], TITLE_1)
 
     def test_get_workspace_with_read_access_other_workspace(self):
         # Context
@@ -276,10 +301,12 @@ class TestWorkspaceReadAccess(MongoIntegrationTransactionTestCase):
         workspace_api.add_user_read_access_to_workspace(workspace, user2, user)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_workspaces_with_read_access, user2)
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_workspaces_with_read_access, user2
+        )
 
         # Assert
-        self.assertEqual(response.data[0]['title'], TITLE_1)
+        self.assertEqual(response.data[0]["title"], TITLE_1)
 
     def test_get_workspace_with_read_access_public_workspace(self):
         # Context
@@ -290,10 +317,12 @@ class TestWorkspaceReadAccess(MongoIntegrationTransactionTestCase):
         workspace_api.set_workspace_public(workspace, user)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_workspaces_with_read_access, user2)
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_workspaces_with_read_access, user2
+        )
 
         # Assert
-        self.assertEqual(response.data[0]['title'], TITLE_1)
+        self.assertEqual(response.data[0]["title"], TITLE_1)
 
 
 class TestWorkspaceWriteAccess(MongoIntegrationTransactionTestCase):
@@ -305,7 +334,9 @@ class TestWorkspaceWriteAccess(MongoIntegrationTransactionTestCase):
         user = UserFixtures().create_user(username="user1")
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_workspaces_with_write_access, user)
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_workspaces_with_write_access, user
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -316,10 +347,12 @@ class TestWorkspaceWriteAccess(MongoIntegrationTransactionTestCase):
         WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_workspaces_with_write_access, user)
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_workspaces_with_write_access, user
+        )
 
         # Assert
-        self.assertEqual(response.data[0]['title'], TITLE_1)
+        self.assertEqual(response.data[0]["title"], TITLE_1)
 
     def test_get_workspace_with_write_access_admin(self):
         # Context
@@ -328,10 +361,12 @@ class TestWorkspaceWriteAccess(MongoIntegrationTransactionTestCase):
         WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_workspaces_with_write_access, user2)
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_workspaces_with_write_access, user2
+        )
 
         # Assert
-        self.assertEqual(response.data[0]['title'], TITLE_1)
+        self.assertEqual(response.data[0]["title"], TITLE_1)
 
     def test_get_workspace_with_write_access_other_workspace(self):
         # Context
@@ -341,10 +376,12 @@ class TestWorkspaceWriteAccess(MongoIntegrationTransactionTestCase):
         workspace_api.add_user_write_access_to_workspace(workspace, user2, user)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_workspaces_with_write_access, user2)
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_workspaces_with_write_access, user2
+        )
 
         # Assert
-        self.assertEqual(response.data[0]['title'], TITLE_1)
+        self.assertEqual(response.data[0]["title"], TITLE_1)
 
     def test_get_workspace_with_write_access_public_workspace(self):
         # Context
@@ -355,7 +392,9 @@ class TestWorkspaceWriteAccess(MongoIntegrationTransactionTestCase):
         workspace_api.set_workspace_public(workspace, user)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_workspaces_with_write_access, user2)
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_workspaces_with_write_access, user2
+        )
 
         # Assert
         self.assertEqual(len(response.data), 0)
@@ -371,9 +410,9 @@ class TestWorkspaceIsPublic(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.is_workspace_public,
-                                              user,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.is_workspace_public, user, param={"pk": workspace.id}
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -384,9 +423,9 @@ class TestWorkspaceIsPublic(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.is_workspace_public,
-                                              user,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.is_workspace_public, user, param={"pk": workspace.id}
+        )
 
         # Assert
         self.assertFalse(response.data)
@@ -399,9 +438,9 @@ class TestWorkspaceIsPublic(MongoIntegrationTransactionTestCase):
         workspace_api.set_workspace_public(workspace, user)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.is_workspace_public,
-                                              user,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.is_workspace_public, user, param={"pk": workspace.id}
+        )
 
         # Assert
         self.assertTrue(response.data)
@@ -411,9 +450,11 @@ class TestWorkspaceIsPublic(MongoIntegrationTransactionTestCase):
         user = UserFixtures().create_user(username="user1")
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.is_workspace_public,
-                                              user,
-                                              param={'pk': FAKE_WORKSPACE_ID})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.is_workspace_public,
+            user,
+            param={"pk": FAKE_WORKSPACE_ID},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -430,9 +471,9 @@ class TestWorkspaceSetPublic(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.set_workspace_public,
-                                                user,
-                                                param={'pk': workspace.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.set_workspace_public, user, param={"pk": workspace.id}
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -443,9 +484,9 @@ class TestWorkspaceSetPublic(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.set_workspace_public,
-                                                user,
-                                                param={'pk': workspace.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.set_workspace_public, user, param={"pk": workspace.id}
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -456,9 +497,11 @@ class TestWorkspaceSetPublic(MongoIntegrationTransactionTestCase):
         UserFixtures().add_publish_perm(user)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.set_workspace_public,
-                                                user,
-                                                param={'pk': FAKE_WORKSPACE_ID})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.set_workspace_public,
+            user,
+            param={"pk": FAKE_WORKSPACE_ID},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -471,9 +514,9 @@ class TestWorkspaceSetPublic(MongoIntegrationTransactionTestCase):
         self.assertFalse(workspace_api.is_workspace_public(workspace))
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.set_workspace_public,
-                                                user,
-                                                param={'pk': workspace.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.set_workspace_public, user, param={"pk": workspace.id}
+        )
 
         # Assert
         workspace = workspace_api.get_by_id(workspace.id)
@@ -487,9 +530,9 @@ class TestWorkspaceSetPublic(MongoIntegrationTransactionTestCase):
         self.assertFalse(workspace_api.is_workspace_public(workspace))
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.set_workspace_public,
-                                                user2,
-                                                param={'pk': workspace.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.set_workspace_public, user2, param={"pk": workspace.id}
+        )
 
         # Assert
         workspace = workspace_api.get_by_id(workspace.id)
@@ -503,9 +546,9 @@ class TestWorkspaceSetPublic(MongoIntegrationTransactionTestCase):
         self.assertFalse(workspace_api.is_workspace_public(workspace))
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.set_workspace_public,
-                                                user2,
-                                                param={'pk': workspace.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.set_workspace_public, user2, param={"pk": workspace.id}
+        )
 
         # Assert
         workspace = workspace_api.get_by_id(workspace.id)
@@ -519,9 +562,9 @@ class TestWorkspaceSetPublic(MongoIntegrationTransactionTestCase):
         self.assertFalse(workspace_api.is_workspace_public(workspace))
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.set_workspace_public,
-                                                user2,
-                                                param={'pk': workspace.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.set_workspace_public, user2, param={"pk": workspace.id}
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -537,9 +580,9 @@ class TestWorkspaceSetPrivate(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.set_workspace_private,
-                                                user,
-                                                param={'pk': workspace.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.set_workspace_private, user, param={"pk": workspace.id}
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -549,9 +592,11 @@ class TestWorkspaceSetPrivate(MongoIntegrationTransactionTestCase):
         user = UserFixtures().create_user(username="user1")
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.set_workspace_private,
-                                                user,
-                                                param={'pk': FAKE_WORKSPACE_ID})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.set_workspace_private,
+            user,
+            param={"pk": FAKE_WORKSPACE_ID},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -565,9 +610,9 @@ class TestWorkspaceSetPrivate(MongoIntegrationTransactionTestCase):
         self.assertTrue(workspace_api.is_workspace_public(workspace))
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.set_workspace_private,
-                                                user,
-                                                param={'pk': workspace.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.set_workspace_private, user, param={"pk": workspace.id}
+        )
 
         # Assert
         workspace = workspace_api.get_by_id(workspace.id)
@@ -583,9 +628,11 @@ class TestWorkspaceSetPrivate(MongoIntegrationTransactionTestCase):
         self.assertTrue(workspace_api.is_workspace_public(workspace))
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.set_workspace_private,
-                                                user2,
-                                                param={'pk': workspace.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.set_workspace_private,
+            user2,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         workspace = workspace_api.get_by_id(workspace.id)
@@ -601,9 +648,11 @@ class TestWorkspaceSetPrivate(MongoIntegrationTransactionTestCase):
         self.assertTrue(workspace_api.is_workspace_public(workspace))
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.set_workspace_private,
-                                                user2,
-                                                param={'pk': workspace.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.set_workspace_private,
+            user2,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         workspace = workspace_api.get_by_id(workspace.id)
@@ -617,9 +666,11 @@ class TestWorkspaceSetPrivate(MongoIntegrationTransactionTestCase):
         self.assertFalse(workspace_api.is_workspace_public(workspace))
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.set_workspace_private,
-                                                user2,
-                                                param={'pk': workspace.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.set_workspace_private,
+            user2,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -635,9 +686,11 @@ class TestWorkspaceListUserCanRead(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_user_can_read_workspace,
-                                              user,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_user_can_read_workspace,
+            user,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -647,9 +700,11 @@ class TestWorkspaceListUserCanRead(MongoIntegrationTransactionTestCase):
         user = UserFixtures().create_user(username="user1")
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_user_can_read_workspace,
-                                              user,
-                                              param={'pk': FAKE_WORKSPACE_ID})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_user_can_read_workspace,
+            user,
+            param={"pk": FAKE_WORKSPACE_ID},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -661,9 +716,11 @@ class TestWorkspaceListUserCanRead(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_user_can_read_workspace,
-                                              user2,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_user_can_read_workspace,
+            user2,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -675,9 +732,11 @@ class TestWorkspaceListUserCanRead(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_user_can_read_workspace,
-                                              user,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_user_can_read_workspace,
+            user,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEquals(len(response.data), 0)
@@ -690,14 +749,16 @@ class TestWorkspaceListUserCanRead(MongoIntegrationTransactionTestCase):
         workspace_api.add_user_read_access_to_workspace(workspace, user2, user)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_user_can_read_workspace,
-                                              user,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_user_can_read_workspace,
+            user,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEquals(len(response.data), 1)
-        self.assertEquals(response.data[0]['id'], user2.id)
-        self.assertEquals(response.data[0]['username'], user2.username)
+        self.assertEquals(response.data[0]["id"], user2.id)
+        self.assertEquals(response.data[0]["username"], user2.username)
 
     def test_get_list_user_can_read_workspace_public(self):
         # Context
@@ -708,9 +769,11 @@ class TestWorkspaceListUserCanRead(MongoIntegrationTransactionTestCase):
         workspace_api.set_workspace_public(workspace, user)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_user_can_read_workspace,
-                                              user,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_user_can_read_workspace,
+            user,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEquals(len(response.data), 2)
@@ -724,14 +787,16 @@ class TestWorkspaceListUserCanRead(MongoIntegrationTransactionTestCase):
         workspace_api.add_user_read_access_to_workspace(workspace, user2, user)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_user_can_read_workspace,
-                                              user3,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_user_can_read_workspace,
+            user3,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEquals(len(response.data), 1)
-        self.assertEquals(response.data[0]['id'], user2.id)
-        self.assertEquals(response.data[0]['username'], user2.username)
+        self.assertEquals(response.data[0]["id"], user2.id)
+        self.assertEquals(response.data[0]["username"], user2.username)
 
 
 class TestWorkspaceListUserCanWrite(MongoIntegrationTransactionTestCase):
@@ -744,9 +809,11 @@ class TestWorkspaceListUserCanWrite(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_user_can_write_workspace,
-                                              user,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_user_can_write_workspace,
+            user,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -756,9 +823,11 @@ class TestWorkspaceListUserCanWrite(MongoIntegrationTransactionTestCase):
         user = UserFixtures().create_user(username="user1")
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_user_can_write_workspace,
-                                              user,
-                                              param={'pk': FAKE_WORKSPACE_ID})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_user_can_write_workspace,
+            user,
+            param={"pk": FAKE_WORKSPACE_ID},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -770,9 +839,11 @@ class TestWorkspaceListUserCanWrite(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_user_can_write_workspace,
-                                              user2,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_user_can_write_workspace,
+            user2,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -784,9 +855,11 @@ class TestWorkspaceListUserCanWrite(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_user_can_write_workspace,
-                                              user,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_user_can_write_workspace,
+            user,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEquals(len(response.data), 0)
@@ -799,14 +872,16 @@ class TestWorkspaceListUserCanWrite(MongoIntegrationTransactionTestCase):
         workspace_api.add_user_write_access_to_workspace(workspace, user2, user)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_user_can_write_workspace,
-                                              user,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_user_can_write_workspace,
+            user,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEquals(len(response.data), 1)
-        self.assertEquals(response.data[0]['id'], user2.id)
-        self.assertEquals(response.data[0]['username'], user2.username)
+        self.assertEquals(response.data[0]["id"], user2.id)
+        self.assertEquals(response.data[0]["username"], user2.username)
 
     def test_get_list_user_can_write_workspace_public(self):
         # Context
@@ -817,9 +892,11 @@ class TestWorkspaceListUserCanWrite(MongoIntegrationTransactionTestCase):
         workspace_api.set_workspace_public(workspace, user)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_user_can_write_workspace,
-                                              user,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_user_can_write_workspace,
+            user,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEquals(len(response.data), 0)
@@ -833,14 +910,16 @@ class TestWorkspaceListUserCanWrite(MongoIntegrationTransactionTestCase):
         workspace_api.add_user_write_access_to_workspace(workspace, user2, user)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_user_can_write_workspace,
-                                              user3,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_user_can_write_workspace,
+            user3,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEquals(len(response.data), 1)
-        self.assertEquals(response.data[0]['id'], user2.id)
-        self.assertEquals(response.data[0]['username'], user2.username)
+        self.assertEquals(response.data[0]["id"], user2.id)
+        self.assertEquals(response.data[0]["username"], user2.username)
 
 
 class TestWorkspaceListGroupCanRead(MongoIntegrationTransactionTestCase):
@@ -853,9 +932,11 @@ class TestWorkspaceListGroupCanRead(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_group_can_read_workspace,
-                                              user,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_group_can_read_workspace,
+            user,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -865,9 +946,11 @@ class TestWorkspaceListGroupCanRead(MongoIntegrationTransactionTestCase):
         user = UserFixtures().create_user(username="user1")
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_group_can_read_workspace,
-                                              user,
-                                              param={'pk': FAKE_WORKSPACE_ID})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_group_can_read_workspace,
+            user,
+            param={"pk": FAKE_WORKSPACE_ID},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -879,9 +962,11 @@ class TestWorkspaceListGroupCanRead(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_group_can_read_workspace,
-                                              user2,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_group_can_read_workspace,
+            user2,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -894,14 +979,16 @@ class TestWorkspaceListGroupCanRead(MongoIntegrationTransactionTestCase):
         workspace_api.add_group_read_access_to_workspace(workspace, group, user)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_group_can_read_workspace,
-                                              user,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_group_can_read_workspace,
+            user,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEquals(len(response.data), 1)
-        self.assertEquals(response.data[0]['id'], group.id)
-        self.assertEquals(response.data[0]['name'], group.name)
+        self.assertEquals(response.data[0]["id"], group.id)
+        self.assertEquals(response.data[0]["name"], group.name)
 
     def test_get_list_group_can_read_workspace_public(self):
         # Context
@@ -912,9 +999,11 @@ class TestWorkspaceListGroupCanRead(MongoIntegrationTransactionTestCase):
         GroupFixtures().create_group(name="group1")
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_group_can_read_workspace,
-                                              user,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_group_can_read_workspace,
+            user,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEquals(len(response.data), 3)
@@ -928,14 +1017,16 @@ class TestWorkspaceListGroupCanRead(MongoIntegrationTransactionTestCase):
         workspace_api.add_group_read_access_to_workspace(workspace, group, user)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_group_can_read_workspace,
-                                              user3,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_group_can_read_workspace,
+            user3,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEquals(len(response.data), 1)
-        self.assertEquals(response.data[0]['id'], group.id)
-        self.assertEquals(response.data[0]['name'], group.name)
+        self.assertEquals(response.data[0]["id"], group.id)
+        self.assertEquals(response.data[0]["name"], group.name)
 
 
 class TestWorkspaceListGroupCanWrite(MongoIntegrationTransactionTestCase):
@@ -948,9 +1039,11 @@ class TestWorkspaceListGroupCanWrite(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_group_can_write_workspace,
-                                              user,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_group_can_write_workspace,
+            user,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -960,9 +1053,11 @@ class TestWorkspaceListGroupCanWrite(MongoIntegrationTransactionTestCase):
         user = UserFixtures().create_user(username="user1")
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_group_can_write_workspace,
-                                              user,
-                                              param={'pk': FAKE_WORKSPACE_ID})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_group_can_write_workspace,
+            user,
+            param={"pk": FAKE_WORKSPACE_ID},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -974,9 +1069,11 @@ class TestWorkspaceListGroupCanWrite(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_user_can_write_workspace,
-                                              user2,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_user_can_write_workspace,
+            user2,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -989,14 +1086,16 @@ class TestWorkspaceListGroupCanWrite(MongoIntegrationTransactionTestCase):
         workspace_api.add_group_write_access_to_workspace(workspace, group, user)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_group_can_write_workspace,
-                                              user,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_group_can_write_workspace,
+            user,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEquals(len(response.data), 1)
-        self.assertEquals(response.data[0]['id'], group.id)
-        self.assertEquals(response.data[0]['name'], group.name)
+        self.assertEquals(response.data[0]["id"], group.id)
+        self.assertEquals(response.data[0]["name"], group.name)
 
     def test_get_list_group_can_write_workspace_public(self):
         # Context
@@ -1007,9 +1106,11 @@ class TestWorkspaceListGroupCanWrite(MongoIntegrationTransactionTestCase):
         GroupFixtures().create_group(name="group1")
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_group_can_write_workspace,
-                                              user,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_group_can_write_workspace,
+            user,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEquals(len(response.data), 0)
@@ -1023,14 +1124,16 @@ class TestWorkspaceListGroupCanWrite(MongoIntegrationTransactionTestCase):
         workspace_api.add_group_write_access_to_workspace(workspace, group, user)
 
         # Act
-        response = RequestMock.do_request_get(workspace_rest_views.get_list_group_can_write_workspace,
-                                              user3,
-                                              param={'pk': workspace.id})
+        response = RequestMock.do_request_get(
+            workspace_rest_views.get_list_group_can_write_workspace,
+            user3,
+            param={"pk": workspace.id},
+        )
 
         # Assert
         self.assertEquals(len(response.data), 1)
-        self.assertEquals(response.data[0]['id'], group.id)
-        self.assertEquals(response.data[0]['name'], group.name)
+        self.assertEquals(response.data[0]["id"], group.id)
+        self.assertEquals(response.data[0]["name"], group.name)
 
 
 class TestAddUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
@@ -1044,9 +1147,11 @@ class TestAddUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.add_user_read_right_to_workspace,
-                                                user,
-                                                param={'pk': workspace.id, 'user_id': user2.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.add_user_read_right_to_workspace,
+            user,
+            param={"pk": workspace.id, "user_id": user2.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1058,9 +1163,11 @@ class TestAddUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.add_user_read_right_to_workspace,
-                                                user,
-                                                param={'pk': FAKE_WORKSPACE_ID, 'user_id': user2.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.add_user_read_right_to_workspace,
+            user,
+            param={"pk": FAKE_WORKSPACE_ID, "user_id": user2.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -1072,9 +1179,11 @@ class TestAddUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.add_user_read_right_to_workspace,
-                                                user2,
-                                                param={'pk': workspace.id, 'user_id': user2.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.add_user_read_right_to_workspace,
+            user2,
+            param={"pk": workspace.id, "user_id": user2.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -1084,15 +1193,21 @@ class TestAddUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
-        self.assertEqual(len(workspace_api.get_list_user_can_read_workspace(workspace, user)), 0)
+        self.assertEqual(
+            len(workspace_api.get_list_user_can_read_workspace(workspace, user)), 0
+        )
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.add_user_read_right_to_workspace,
-                                                user,
-                                                param={'pk': workspace.id, 'user_id': user2.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.add_user_read_right_to_workspace,
+            user,
+            param={"pk": workspace.id, "user_id": user2.id},
+        )
 
         # Assert
-        self.assertEqual(len(workspace_api.get_list_user_can_read_workspace(workspace, user)), 1)
+        self.assertEqual(
+            len(workspace_api.get_list_user_can_read_workspace(workspace, user)), 1
+        )
 
 
 class TestAddUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
@@ -1106,9 +1221,11 @@ class TestAddUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.add_user_write_right_to_workspace,
-                                                user,
-                                                param={'pk': workspace.id, 'user_id': user2.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.add_user_write_right_to_workspace,
+            user,
+            param={"pk": workspace.id, "user_id": user2.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1120,9 +1237,11 @@ class TestAddUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.add_user_write_right_to_workspace,
-                                                user,
-                                                param={'pk': FAKE_WORKSPACE_ID, 'user_id': user2.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.add_user_write_right_to_workspace,
+            user,
+            param={"pk": FAKE_WORKSPACE_ID, "user_id": user2.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -1134,9 +1253,11 @@ class TestAddUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.add_user_write_right_to_workspace,
-                                                user2,
-                                                param={'pk': workspace.id, 'user_id': user2.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.add_user_write_right_to_workspace,
+            user2,
+            param={"pk": workspace.id, "user_id": user2.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -1146,15 +1267,21 @@ class TestAddUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
-        self.assertEqual(len(workspace_api.get_list_user_can_write_workspace(workspace, user)), 0)
+        self.assertEqual(
+            len(workspace_api.get_list_user_can_write_workspace(workspace, user)), 0
+        )
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.add_user_write_right_to_workspace,
-                                                user,
-                                                param={'pk': workspace.id, 'user_id': user2.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.add_user_write_right_to_workspace,
+            user,
+            param={"pk": workspace.id, "user_id": user2.id},
+        )
 
         # Assert
-        self.assertEqual(len(workspace_api.get_list_user_can_write_workspace(workspace, user)), 1)
+        self.assertEqual(
+            len(workspace_api.get_list_user_can_write_workspace(workspace, user)), 1
+        )
 
 
 class TestAddGroupReadRightToWorkspace(MongoIntegrationTransactionTestCase):
@@ -1168,9 +1295,11 @@ class TestAddGroupReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.add_group_read_right_to_workspace,
-                                                user,
-                                                param={'pk': workspace.id, 'group_id': group.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.add_group_read_right_to_workspace,
+            user,
+            param={"pk": workspace.id, "group_id": group.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1182,9 +1311,11 @@ class TestAddGroupReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.add_group_read_right_to_workspace,
-                                                user,
-                                                param={'pk': FAKE_WORKSPACE_ID, 'group_id': group.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.add_group_read_right_to_workspace,
+            user,
+            param={"pk": FAKE_WORKSPACE_ID, "group_id": group.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -1197,9 +1328,11 @@ class TestAddGroupReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.add_group_read_right_to_workspace,
-                                                user2,
-                                                param={'pk': workspace.id, 'group_id': group.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.add_group_read_right_to_workspace,
+            user2,
+            param={"pk": workspace.id, "group_id": group.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -1209,15 +1342,21 @@ class TestAddGroupReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         user = UserFixtures().create_user(username="user1")
         group = GroupFixtures().create_group(name="group1")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
-        self.assertEqual(len(workspace_api.get_list_group_can_read_workspace(workspace, user)), 0)
+        self.assertEqual(
+            len(workspace_api.get_list_group_can_read_workspace(workspace, user)), 0
+        )
 
         # Act
-        RequestMock.do_request_patch(workspace_rest_views.add_group_read_right_to_workspace,
-                                     user,
-                                     param={'pk': workspace.id, 'group_id': group.id})
+        RequestMock.do_request_patch(
+            workspace_rest_views.add_group_read_right_to_workspace,
+            user,
+            param={"pk": workspace.id, "group_id": group.id},
+        )
 
         # Assert
-        self.assertEqual(len(workspace_api.get_list_group_can_read_workspace(workspace, user)), 1)
+        self.assertEqual(
+            len(workspace_api.get_list_group_can_read_workspace(workspace, user)), 1
+        )
 
 
 class TestAddGroupWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
@@ -1231,9 +1370,11 @@ class TestAddGroupWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.add_group_write_right_to_workspace,
-                                                user,
-                                                param={'pk': workspace.id, 'group_id': group.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.add_group_write_right_to_workspace,
+            user,
+            param={"pk": workspace.id, "group_id": group.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1245,9 +1386,11 @@ class TestAddGroupWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.add_group_write_right_to_workspace,
-                                                user,
-                                                param={'pk': FAKE_WORKSPACE_ID, 'group_id': group.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.add_group_write_right_to_workspace,
+            user,
+            param={"pk": FAKE_WORKSPACE_ID, "group_id": group.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -1260,9 +1403,11 @@ class TestAddGroupWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.add_group_write_right_to_workspace,
-                                                user2,
-                                                param={'pk': workspace.id, 'group_id': group.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.add_group_write_right_to_workspace,
+            user2,
+            param={"pk": workspace.id, "group_id": group.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -1273,15 +1418,21 @@ class TestAddGroupWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         group = GroupFixtures().create_group(name="group1")
 
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
-        self.assertEqual(len(workspace_api.get_list_group_can_write_workspace(workspace, user)), 0)
+        self.assertEqual(
+            len(workspace_api.get_list_group_can_write_workspace(workspace, user)), 0
+        )
 
         # Act
-        RequestMock.do_request_patch(workspace_rest_views.add_group_write_right_to_workspace,
-                                     user,
-                                     param={'pk': workspace.id, 'group_id': group.id})
+        RequestMock.do_request_patch(
+            workspace_rest_views.add_group_write_right_to_workspace,
+            user,
+            param={"pk": workspace.id, "group_id": group.id},
+        )
 
         # Assert
-        self.assertEqual(len(workspace_api.get_list_group_can_write_workspace(workspace, user)), 1)
+        self.assertEqual(
+            len(workspace_api.get_list_group_can_write_workspace(workspace, user)), 1
+        )
 
 
 class TestRemoveUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
@@ -1295,9 +1446,11 @@ class TestRemoveUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.remove_user_read_right_to_workspace,
-                                                user,
-                                                param={'pk': workspace.id, 'user_id': user2.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.remove_user_read_right_to_workspace,
+            user,
+            param={"pk": workspace.id, "user_id": user2.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1309,9 +1462,11 @@ class TestRemoveUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.remove_user_read_right_to_workspace,
-                                                user,
-                                                param={'pk': FAKE_WORKSPACE_ID, 'user_id': user2.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.remove_user_read_right_to_workspace,
+            user,
+            param={"pk": FAKE_WORKSPACE_ID, "user_id": user2.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -1323,9 +1478,11 @@ class TestRemoveUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.remove_user_read_right_to_workspace,
-                                                user2,
-                                                param={'pk': workspace.id, 'user_id': user2.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.remove_user_read_right_to_workspace,
+            user2,
+            param={"pk": workspace.id, "user_id": user2.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -1336,15 +1493,21 @@ class TestRemoveUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         user2 = UserFixtures().create_user(username="user2")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
         workspace_api.add_user_read_access_to_workspace(workspace, user2, user)
-        self.assertEqual(len(workspace_api.get_list_user_can_read_workspace(workspace, user)), 1)
+        self.assertEqual(
+            len(workspace_api.get_list_user_can_read_workspace(workspace, user)), 1
+        )
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.remove_user_read_right_to_workspace,
-                                                user,
-                                                param={'pk': workspace.id, 'user_id': user2.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.remove_user_read_right_to_workspace,
+            user,
+            param={"pk": workspace.id, "user_id": user2.id},
+        )
 
         # Assert
-        self.assertEqual(len(workspace_api.get_list_user_can_read_workspace(workspace, user)), 0)
+        self.assertEqual(
+            len(workspace_api.get_list_user_can_read_workspace(workspace, user)), 0
+        )
 
 
 class TestRemoveUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
@@ -1358,9 +1521,11 @@ class TestRemoveUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.remove_user_write_right_to_workspace,
-                                                user,
-                                                param={'pk': workspace.id, 'user_id': user2.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.remove_user_write_right_to_workspace,
+            user,
+            param={"pk": workspace.id, "user_id": user2.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1372,9 +1537,11 @@ class TestRemoveUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.remove_user_write_right_to_workspace,
-                                                user,
-                                                param={'pk': FAKE_WORKSPACE_ID, 'user_id': user2.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.remove_user_write_right_to_workspace,
+            user,
+            param={"pk": FAKE_WORKSPACE_ID, "user_id": user2.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -1386,9 +1553,11 @@ class TestRemoveUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.remove_user_write_right_to_workspace,
-                                                user2,
-                                                param={'pk': workspace.id, 'user_id': user2.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.remove_user_write_right_to_workspace,
+            user2,
+            param={"pk": workspace.id, "user_id": user2.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -1399,15 +1568,21 @@ class TestRemoveUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         user2 = UserFixtures().create_user(username="user2")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
         workspace_api.add_user_write_access_to_workspace(workspace, user2, user)
-        self.assertEqual(len(workspace_api.get_list_user_can_write_workspace(workspace, user)), 1)
+        self.assertEqual(
+            len(workspace_api.get_list_user_can_write_workspace(workspace, user)), 1
+        )
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.remove_user_write_right_to_workspace,
-                                                user,
-                                                param={'pk': workspace.id, 'user_id': user2.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.remove_user_write_right_to_workspace,
+            user,
+            param={"pk": workspace.id, "user_id": user2.id},
+        )
 
         # Assert
-        self.assertEqual(len(workspace_api.get_list_user_can_write_workspace(workspace, user)), 0)
+        self.assertEqual(
+            len(workspace_api.get_list_user_can_write_workspace(workspace, user)), 0
+        )
 
 
 class TestRemoveGroupReadRightToWorkspace(MongoIntegrationTransactionTestCase):
@@ -1421,9 +1596,11 @@ class TestRemoveGroupReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.remove_group_read_right_to_workspace,
-                                                user,
-                                                param={'pk': workspace.id, 'group_id': group.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.remove_group_read_right_to_workspace,
+            user,
+            param={"pk": workspace.id, "group_id": group.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1435,9 +1612,11 @@ class TestRemoveGroupReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.remove_group_read_right_to_workspace,
-                                                user,
-                                                param={'pk': FAKE_WORKSPACE_ID, 'group_id': group.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.remove_group_read_right_to_workspace,
+            user,
+            param={"pk": FAKE_WORKSPACE_ID, "group_id": group.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -1450,9 +1629,11 @@ class TestRemoveGroupReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.remove_group_read_right_to_workspace,
-                                                user2,
-                                                param={'pk': workspace.id, 'group_id': group.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.remove_group_read_right_to_workspace,
+            user2,
+            param={"pk": workspace.id, "group_id": group.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -1463,15 +1644,21 @@ class TestRemoveGroupReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         group = GroupFixtures().create_group(name="group1")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
         workspace_api.add_group_read_access_to_workspace(workspace, group, user)
-        self.assertEqual(len(workspace_api.get_list_group_can_read_workspace(workspace, user)), 1)
+        self.assertEqual(
+            len(workspace_api.get_list_group_can_read_workspace(workspace, user)), 1
+        )
 
         # Act
-        RequestMock.do_request_patch(workspace_rest_views.remove_group_read_right_to_workspace,
-                                     user,
-                                     param={'pk': workspace.id, 'group_id': group.id})
+        RequestMock.do_request_patch(
+            workspace_rest_views.remove_group_read_right_to_workspace,
+            user,
+            param={"pk": workspace.id, "group_id": group.id},
+        )
 
         # Assert
-        self.assertEqual(len(workspace_api.get_list_group_can_read_workspace(workspace, user)), 0)
+        self.assertEqual(
+            len(workspace_api.get_list_group_can_read_workspace(workspace, user)), 0
+        )
 
 
 class TestRemoveGroupWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
@@ -1485,9 +1672,11 @@ class TestRemoveGroupWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.remove_group_write_right_to_workspace,
-                                                user,
-                                                param={'pk': workspace.id, 'group_id': group.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.remove_group_write_right_to_workspace,
+            user,
+            param={"pk": workspace.id, "group_id": group.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1499,9 +1688,11 @@ class TestRemoveGroupWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.remove_group_write_right_to_workspace,
-                                                user,
-                                                param={'pk': FAKE_WORKSPACE_ID, 'group_id': group.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.remove_group_write_right_to_workspace,
+            user,
+            param={"pk": FAKE_WORKSPACE_ID, "group_id": group.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -1514,9 +1705,11 @@ class TestRemoveGroupWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
 
         # Act
-        response = RequestMock.do_request_patch(workspace_rest_views.remove_group_write_right_to_workspace,
-                                                user2,
-                                                param={'pk': workspace.id, 'group_id': group.id})
+        response = RequestMock.do_request_patch(
+            workspace_rest_views.remove_group_write_right_to_workspace,
+            user2,
+            param={"pk": workspace.id, "group_id": group.id},
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -1527,12 +1720,18 @@ class TestRemoveGroupWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         group = GroupFixtures().create_group(name="group1")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
         workspace_api.add_group_write_access_to_workspace(workspace, group, user)
-        self.assertEqual(len(workspace_api.get_list_group_can_write_workspace(workspace, user)), 1)
+        self.assertEqual(
+            len(workspace_api.get_list_group_can_write_workspace(workspace, user)), 1
+        )
 
         # Act
-        RequestMock.do_request_patch(workspace_rest_views.remove_group_write_right_to_workspace,
-                                     user,
-                                     param={'pk': workspace.id, 'group_id': group.id})
+        RequestMock.do_request_patch(
+            workspace_rest_views.remove_group_write_right_to_workspace,
+            user,
+            param={"pk": workspace.id, "group_id": group.id},
+        )
 
         # Assert
-        self.assertEqual(len(workspace_api.get_list_group_can_write_workspace(workspace, user)), 0)
+        self.assertEqual(
+            len(workspace_api.get_list_group_can_write_workspace(workspace, user)), 0
+        )

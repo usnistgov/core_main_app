@@ -11,6 +11,7 @@ from core_main_app.utils.integration_tests.fixture_interface import FixtureInter
 class DataFixtures(FixtureInterface):
     """ Data fixtures
     """
+
     data_1 = None
     data_2 = None
     data_3 = None
@@ -34,12 +35,15 @@ class DataFixtures(FixtureInterface):
 
         """
         # NOTE: no xml_content to avoid using unsupported GridFS mock
-        self.data_1 = Data(template=self.template, user_id='1', dict_content=None,
-                           title='title').save()
-        self.data_2 = Data(template=self.template, user_id='2', dict_content=None,
-                           title='title2').save()
-        self.data_3 = Data(template=self.template, user_id='1', dict_content=None,
-                           title='title3').save()
+        self.data_1 = Data(
+            template=self.template, user_id="1", dict_content=None, title="title"
+        ).save()
+        self.data_2 = Data(
+            template=self.template, user_id="2", dict_content=None, title="title2"
+        ).save()
+        self.data_3 = Data(
+            template=self.template, user_id="1", dict_content=None, title="title3"
+        ).save()
         self.data_collection = [self.data_1, self.data_2, self.data_3]
 
     def generate_template(self):
@@ -49,8 +53,10 @@ class DataFixtures(FixtureInterface):
 
         """
         template = Template()
-        xsd = '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">' \
-              '<xs:element name="tag"></xs:element></xs:schema>'
+        xsd = (
+            '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">'
+            '<xs:element name="tag"></xs:element></xs:schema>'
+        )
         template.content = xsd
         template.hash = ""
         template.filename = "filename"
@@ -70,32 +76,25 @@ class QueryDataFixtures(DataFixtures):
         content_1 = {
             "root": {
                 "element": "value",
-                "list": [
-                    {"element_list_1": 1},
-                    {"element_list_2": 2}
-                ],
-                "complex": {
-                    "child1": "test",
-                    "child2": 0
-                }
+                "list": [{"element_list_1": 1}, {"element_list_2": 2}],
+                "complex": {"child1": "test", "child2": 0},
             }
         }
-        content_2 = {
-            "root": {
-                "element": "value2"
-            }
-        }
+        content_2 = {"root": {"element": "value2"}}
         # NOTE: no xml_content to avoid using unsupported GridFS mock
-        self.data_1 = Data(template=self.template, user_id='1', dict_content=content_1,
-                           title='title').save()
-        self.data_2 = Data(template=self.template, user_id='2', dict_content=content_2,
-                           title='title2').save()
+        self.data_1 = Data(
+            template=self.template, user_id="1", dict_content=content_1, title="title"
+        ).save()
+        self.data_2 = Data(
+            template=self.template, user_id="2", dict_content=content_2, title="title2"
+        ).save()
         self.data_collection = [self.data_1, self.data_2]
 
 
 class AccessControlDataFixture(FixtureInterface):
     """ Access Control Data fixture
     """
+
     USER_1_NO_WORKSPACE = 0
     USER_2_NO_WORKSPACE = 1
     USER_1_WORKSPACE_1 = 2
@@ -129,32 +128,36 @@ class AccessControlDataFixture(FixtureInterface):
 
         """
 
-        content = {
-            "root": {
-                "element": "value2"
-            }
-        }
+        content = {"root": {"element": "value2"}}
 
-        self.data_1 = Data(template=self.template,
-                      title='Data 1',
-                      user_id='1').save()
-        self.data_2 = Data(template=self.template,
-                      title='Data 2',
-                      user_id='2').save()
-        self.data_3 = Data(template=self.template,
-                      title='Data 3',
-                      user_id='1',
-                      workspace=self.workspace_1.id,
-                      dict_content=content).save()
-        self.data_4 = Data(template=self.template,
-                      title='DataDoubleTitle',
-                      user_id='2',
-                      workspace=self.workspace_2.id).save()
-        self.data_5 = Data(template=self.template,
-                      title='DataDoubleTitle',
-                      user_id='1',
-                      workspace=self.workspace_1.id).save()
-        self.data_collection = [self.data_1, self.data_2, self.data_3, self.data_4, self.data_5]
+        self.data_1 = Data(template=self.template, title="Data 1", user_id="1").save()
+        self.data_2 = Data(template=self.template, title="Data 2", user_id="2").save()
+        self.data_3 = Data(
+            template=self.template,
+            title="Data 3",
+            user_id="1",
+            workspace=self.workspace_1.id,
+            dict_content=content,
+        ).save()
+        self.data_4 = Data(
+            template=self.template,
+            title="DataDoubleTitle",
+            user_id="2",
+            workspace=self.workspace_2.id,
+        ).save()
+        self.data_5 = Data(
+            template=self.template,
+            title="DataDoubleTitle",
+            user_id="1",
+            workspace=self.workspace_1.id,
+        ).save()
+        self.data_collection = [
+            self.data_1,
+            self.data_2,
+            self.data_3,
+            self.data_4,
+            self.data_5,
+        ]
 
     def generate_template(self):
         """ Generate an unique Template.
@@ -163,8 +166,10 @@ class AccessControlDataFixture(FixtureInterface):
 
         """
         template = Template()
-        xsd = '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">' \
-              '<xs:element name="tag"></xs:element></xs:schema>'
+        xsd = (
+            '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">'
+            '<xs:element name="tag"></xs:element></xs:schema>'
+        )
         template.content = xsd
         template.hash = ""
         template.filename = "filename"
@@ -176,14 +181,12 @@ class AccessControlDataFixture(FixtureInterface):
         Returns:
 
         """
-        self.workspace_1 = Workspace(title="Workspace 1",
-                                     owner='1',
-                                     read_perm_id='1',
-                                     write_perm_id='1').save()
-        self.workspace_2 = Workspace(title="Workspace 2",
-                                     owner='2',
-                                     read_perm_id='2',
-                                     write_perm_id='2').save()
+        self.workspace_1 = Workspace(
+            title="Workspace 1", owner="1", read_perm_id="1", write_perm_id="1"
+        ).save()
+        self.workspace_2 = Workspace(
+            title="Workspace 2", owner="2", read_perm_id="2", write_perm_id="2"
+        ).save()
 
     def generate_workspace_with_perm(self):
         """ Generate the workspaces and the perm object.
@@ -192,8 +195,8 @@ class AccessControlDataFixture(FixtureInterface):
 
         """
         try:
-            self.workspace_1 = workspace_api.create_and_save('Workspace 1')
-            self.workspace_2 = workspace_api.create_and_save('Workspace 2')
+            self.workspace_1 = workspace_api.create_and_save("Workspace 1")
+            self.workspace_2 = workspace_api.create_and_save("Workspace 2")
             self.data_3.workspace = self.workspace_1
             self.data_4.workspace = self.workspace_2
             self.data_5.workspace = self.workspace_1

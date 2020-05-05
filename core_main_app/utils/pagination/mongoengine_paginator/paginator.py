@@ -21,7 +21,7 @@ class MongoenginePaginator(DjangoPaginator):
             count method in /mongoengine/queryset/queryset.py has a with_limit_and_skip arg, thus the test fails and
             this results in len(queryset) being called (bad for performances)
         """
-        c = getattr(self.object_list, 'count', None)
+        c = getattr(self.object_list, "count", None)
         if callable(c) and not inspect.isbuiltin(c):
             return c()
 
