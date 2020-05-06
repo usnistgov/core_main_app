@@ -90,7 +90,7 @@ def _get_xsd_content_from_html(xsd_content):
 
 class EditXSLTView(EditObjectModalView):
     form_class = EditXSLTForm
-    model = XslTransformation
+    document = XslTransformation
     success_url = reverse_lazy("admin:core_main_app_xslt")
     success_message = 'XSLT edited with success.'
 
@@ -106,7 +106,7 @@ class EditXSLTView(EditObjectModalView):
 
 
 class DeleteXSLTView(DeleteObjectModalView):
-    model = XslTransformation
+    document = XslTransformation
     success_url = reverse_lazy("admin:core_main_app_xslt")
     success_message = 'XSLT deleted with success.'
     field_for_name = 'name'
