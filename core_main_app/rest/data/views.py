@@ -560,7 +560,7 @@ class ExecuteLocalKeywordQueryView(ExecuteLocalQueryView):
         """
         # build query builder
         query = json.dumps(get_full_text_query(query))
-        return super(ExecuteLocalKeywordQueryView, self).build_query(str(query), workspaces, templates, options, title)
+        return super(ExecuteLocalKeywordQueryView, self).build_query(str(query), templates, options, workspaces, title)
 
 
 class DataAssign(APIView):

@@ -98,7 +98,11 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
             order_by_field = self.request.data.get('order_by_field', '').split(',')
             if query is not None:
                 # prepare query
-                raw_query = self.build_query(query, workspaces, templates, options, title)
+                raw_query = self.build_query(query=query,
+                                             templates=templates,
+                                             options=options,
+                                             workspaces=workspaces,
+                                             title=title)
                 # execute query
                 data_list = self.execute_raw_query(raw_query, order_by_field)
                 # build and return response
@@ -110,7 +114,7 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
             content = {'message': str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def build_query(self, query, workspaces, templates,  options, title=None):
+    def build_query(self, query, workspaces=None, templates=None, options=None, title=None):
         """ Build the raw query
 
         Args:
@@ -129,15 +133,15 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
         # build query builder
         query_builder = QueryBuilder(query, self.sub_document_root)
         # update the criteria with workspaces information
-        if len(workspaces) > 0:
+        if workspaces is not None and len(workspaces) > 0:
             list_workspace_ids = [workspace['id'] for workspace in workspaces]
             query_builder.add_list_criteria('workspace', list_workspace_ids)
         # update the criteria with templates information
-        if len(templates) > 0:
+        if templates is not None and len(templates) > 0:
             list_template_ids = [template['id'] for template in templates]
             query_builder.add_list_criteria('template', list_template_ids)
         # update the criteria with visibility information
-        if VISIBILITY_OPTION in options:
+        if options is not None and VISIBILITY_OPTION in options:
             query_builder.add_visibility_criteria(options[VISIBILITY_OPTION])
         # update the criteria with title information
         if title is not None:
