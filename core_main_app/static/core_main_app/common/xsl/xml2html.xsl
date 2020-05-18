@@ -17,7 +17,7 @@
 			</xsl:if>			
 			<xsl:choose>
 				<xsl:when test="*">
-					<span class="collapse" style="cursor:pointer;" onclick="showhide(event);"></span>
+					<span class="collapse show" style="cursor:pointer;" onclick="showhide(event);"></span>
 					<span class="category">						
 						<xsl:value-of select="name(.)" />
 					</span>
