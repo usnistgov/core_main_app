@@ -487,19 +487,19 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
             {"query": "{}", "all": "true"}
             # get all results filtered by title
             {"query": "{}", "title": "title_string"}
-            # get all results filtered by workspaces
-            {"query": "{}", "workspaces": "[{\\"id\\":\\"[workspace_id]\\"}]"}
+             # get all results filtered by workspaces
+            {"query": "{}", "workspaces": [{"id":"[workspace_id]"}]}
             # get all results filtered by private workspace
-            {"query": "{}", "workspaces": "[{\\"id\\":\\"None\\"}]"}
+            {"query": "{}", "workspaces": [{"id":"None"}]}
             # get all results filtered by templates
-            {"query": "{}", "templates": "[{\\"id\\":\\"[template_id]\\"}]"}
+            {"query": "{}", "templates": [{"id":"[template_id]"}] }
             # get all results that verify a given criteria
             {"query": "{\\"root.element.value\\": 2}"}
             # get results using multiple options
-            {"query": "{\\"root.element.value\\": 2}", "workspaces": "[{\\"id\\":\\"workspace_id\\"}]", "all": "true"}
-            {"query": "{\\"root.element.value\\": 2}", "templates": "[{\\"id\\":\\"template_id\\"}]", "all": "true"}
-            {"query": "{\\"root.element.value\\": 2}", "templates": "[{\\"id\\":\\"template_id\\"}]",
-            "workspaces": "[{\\"id\\":\\"[workspace_id]\\"}]","all": "true"}
+            {"query": "{\\"root.element.value\\": 2}", "workspaces": [{"id":"workspace_id"}] , "all": "true"}
+            {"query": "{\\"root.element.value\\": 2}", "templates": [{"id":"template_id"}] , "all": "true"}
+            {"query": "{\\"root.element.value\\": 2}", "templates": [{"id":"template_id"}],
+            "workspaces": [{"id":"[workspace_id]"}] ,"all": "true"}
 
         Warning:
 

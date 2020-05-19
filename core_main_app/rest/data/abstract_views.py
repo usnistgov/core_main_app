@@ -27,18 +27,18 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
             # get all results filtered by title
             {"query": "{}", "title": "title_string"}
             # get all results filtered by workspaces
-            {"query": "{}", "workspaces": "[{\\"id\\":\\"[workspace_id]\\"}]"}
+            {"query": "{}", "workspaces": [{"id":"[workspace_id]"}]}
             # get all results filtered by private workspace
-            {"query": "{}", "workspaces": "[{\\"id\\":\\"None\\"}]"}
+            {"query": "{}", "workspaces": [{"id":"None"}]}
             # get all results filtered by templates
-            {"query": "{}", "templates": "[{\\"id\\":\\"[template_id]\\"}]"}
+            {"query": "{}", "templates": [{"id":"[template_id]"}] }
             # get all results that verify a given criteria
             {"query": "{\\"root.element.value\\": 2}"}
             # get results using multiple options
-            {"query": "{\\"root.element.value\\": 2}", "workspaces": "[{\\"id\\":\\"workspace_id\\"}]", "all": "true"}
-            {"query": "{\\"root.element.value\\": 2}", "templates": "[{\\"id\\":\\"template_id\\"}]", "all": "true"}
-            {"query": "{\\"root.element.value\\": 2}", "templates": "[{\\"id\\":\\"template_id\\"}]",
-            "workspaces": "[{\\"id\\":\\"[workspace_id]\\"}]","all": "true"}
+            {"query": "{\\"root.element.value\\": 2}", "workspaces": [{"id":"workspace_id"}] , "all": "true"}
+            {"query": "{\\"root.element.value\\": 2}", "templates": [{"id":"template_id"}] , "all": "true"}
+            {"query": "{\\"root.element.value\\": 2}", "templates": [{"id":"template_id"}],
+            "workspaces": [{"id":"[workspace_id]"}] ,"all": "true"}
 
 
         Warning:
@@ -91,9 +91,9 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
         try:
             # get query and templates
             query = self.request.data.get("query", None)
-            templates = json.loads(self.request.data.get("templates", "[]"))
-            workspaces = json.loads(self.request.data.get("workspaces", "[]"))
-            options = json.loads(self.request.data.get("options", "{}"))
+            templates = self.request.data.get("templates", [])
+            workspaces = self.request.data.get("workspaces", [])
+            options = self.request.data.get("options", {})
             title = self.request.data.get("title", None)
             order_by_field = self.request.data.get("order_by_field", "").split(",")
             if query is not None:
