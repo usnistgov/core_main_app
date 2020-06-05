@@ -1,21 +1,14 @@
 """ REST views for the User API
 """
-import json
 
 from django.http import Http404
-from django.utils.decorators import method_decorator
 from rest_framework import status
-from rest_framework.permissions import (
-    IsAuthenticated,
-    IsAuthenticatedOrReadOnly,
-    IsAdminUser,
-)
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core_main_app.components.user import api as user_api
 from core_main_app.rest.user.serializers import UserSerializer
-from core_main_app.utils.decorators import api_staff_member_required
 
 
 class UserDetail(APIView):

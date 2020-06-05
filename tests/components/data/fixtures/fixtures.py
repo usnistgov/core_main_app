@@ -4,7 +4,6 @@ from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
 from core_main_app.components.workspace.models import Workspace
 from core_main_app.components.workspace import api as workspace_api
-from core_main_app.permissions import api as permission_api
 from core_main_app.utils.integration_tests.fixture_interface import FixtureInterface
 
 
@@ -202,3 +201,116 @@ class AccessControlDataFixture(FixtureInterface):
             self.data_5.workspace = self.workspace_1
         except Exception as e:
             print(e.message)
+
+
+class DataMigrationFixture(FixtureInterface):
+    """ Data Template Fixture
+    """
+
+    template_1 = None
+    template_2 = None
+    template_3 = None
+    data_collection = None
+    data_1 = None
+    data_2 = None
+    data_3 = None
+    data_4 = None
+    data_5 = None
+
+    def insert_data(self):
+        """ Insert a set of Data.
+
+        Returns:
+
+        """
+        # Make a connexion with a mock database
+        self.generate_template()
+        self.generate_data_collection()
+
+    def generate_data_collection(self):
+        """ Generate a Data collection.
+
+        Returns:
+
+        """
+        self.data_1 = Data(template=self.template_1, title="Data 1", user_id="1")
+        self.data_1.xml_content = '<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
+                                    <test>test</test> \
+                                  </root>'
+        self.data_1.save()
+
+        self.data_2 = Data(template=self.template_1, title="Data 2", user_id="1")
+        self.data_2.xml_content = '<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
+                                    <test>test</test> \
+                                  </root>'
+        self.data_2.save()
+
+        self.data_3 = Data(template=self.template_2, title="Data 3", user_id="1")
+        self.data_3.xml_content = '<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
+                                    <test>test</test> \
+                                  </root>'
+
+        self.data_3.save()
+
+        self.data_4 = Data(template=self.template_3, title="Data4", user_id="1")
+        self.data_4.xml_content = '<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
+                                    <other>test</other> \
+                                  </root>'
+        self.data_4.save()
+
+        self.data_5 = Data(template=self.template_3, title="Data5", user_id="1")
+        self.data_5.xml_content = '<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
+                                    <other>test</other> \
+                                  </root>'
+        self.data_5.save()
+
+        self.data_collection = [
+            self.data_1,
+            self.data_2,
+            self.data_3,
+            self.data_4,
+            self.data_5,
+        ]
+
+    def generate_template(self):
+        """ Generate an unique Template.
+
+        Returns:
+
+        """
+        template1 = Template()
+        template2 = Template()
+        template3 = Template()
+        xsd1 = '<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"> \
+                <xsd:element name="root" type="simpleString"/> \
+                <xsd:complexType name="simpleString"> \
+                    <xsd:sequence> \
+                    <xsd:element name="test" type="xsd:string"/></xsd:sequence> \
+                </xsd:complexType> \
+            </xsd:schema>'
+        xsd2 = '<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"> \
+                <xsd:element name="root" type="simpleString"/> \
+                <xsd:complexType name="simpleString"> \
+                    <xsd:sequence> \
+                    <xsd:element name="test" type="xsd:string"/></xsd:sequence> \
+                </xsd:complexType> \
+            </xsd:schema>'
+        xsd3 = '<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"> \
+                <xsd:element name="root" type="simpleString"/> \
+                <xsd:complexType name="simpleString"> \
+                    <xsd:sequence> \
+                    <xsd:element name="other" type="xsd:string"/></xsd:sequence> \
+                </xsd:complexType> \
+            </xsd:schema>'
+        template1.content = xsd1
+        template1.hash = ""
+        template1.filename = "filename"
+        template2.content = xsd2
+        template2.hash = ""
+        template2.filename = "filename"
+        template3.content = xsd3
+        template3.hash = ""
+        template3.filename = "filename"
+        self.template_1 = template1.save()
+        self.template_2 = template2.save()
+        self.template_3 = template2.save()

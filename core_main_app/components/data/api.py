@@ -12,6 +12,10 @@ from core_main_app.components.workspace import api as workspace_api
 from core_main_app.settings import DATA_SORTING_FIELDS
 from core_main_app.utils.datetime_tools.utils import datetime_now
 from core_main_app.utils.xml import validate_xml_data
+from core_main_app.components.data.tasks import (
+    async_migration_task,
+    async_template_migration_task,
+)
 from xml_utils.xsd_tree.xsd_tree import XSDTree
 
 
@@ -244,7 +248,7 @@ def is_data_public(data):
 
 @access_control(data_api_access_control.can_read_aggregate_query)
 def aggregate(pipeline, user):
-    """Execute an aggregate on the Data collection.
+    """ Execute an aggregate on the Data collection.
 
     Args:
         pipeline:
@@ -270,3 +274,45 @@ def assign(data, workspace, user):
     """
     data.workspace = workspace
     return data.save()
+
+
+@access_control(has_perm_administration)
+def migrate_data_list(data_list, target_template_id, migrate, user):
+    """ Perform a migration / validation of the data list for the given target template id
+    NB: This action is executed with an async task, use the progress / result function to retrieve
+    information about the task status
+
+    Args:
+        data_list:
+        target_template_id:
+        migrate: (boolean) Perform the migration
+        user:
+
+    Return:
+        Async task id
+    """
+    task = async_migration_task.delay(
+        data_list, str(target_template_id), user.id, migrate
+    )
+    return task.task_id
+
+
+@access_control(has_perm_administration)
+def migrate_template_list(template_id_list, target_template_id, migrate, user):
+    """ Perform a migration / validation of all the data which belong to the given template id list
+    NB: This action is executed with an async task, use the progress / result function to retrieve
+    information about the task status
+
+    Args:
+        template_id_list:
+        target_template_id:
+        migrate: (boolean) Perform the migration
+        user:
+
+    Return:
+        Async task id
+    """
+    task = async_template_migration_task.delay(
+        template_id_list, str(target_template_id), user.id, migrate
+    )
+    return task.task_id

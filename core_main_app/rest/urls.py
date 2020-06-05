@@ -137,6 +137,26 @@ urlpatterns = [
         name="core_main_app_rest_data_detail",
     ),
     re_path(
+        r"^data/template/(?P<pk>\w+)/validate/$",
+        data_views.Validation.as_view(),
+        name="core_main_app_rest_data_validate",
+    ),
+    re_path(
+        r"^data/template/(?P<pk>\w+)/migrate/$",
+        data_views.Migration.as_view(),
+        name="core_main_app_rest_data_migrate",
+    ),
+    re_path(
+        r"^data/migration/task/(?P<task_id>[\w-]+)/progress/$",
+        data_views.get_progress,
+        name="core_main_app_rest_data_migration_task_progress",
+    ),
+    re_path(
+        r"^data/migration/task/(?P<task_id>[\w-]+)/result/$",
+        data_views.get_result,
+        name="core_main_app_rest_data_migration_task_result",
+    ),
+    re_path(
         r"^admin/blob/$",
         blob_views.BlobListAdmin.as_view(),
         name="core_main_app_rest_blob_list_admin",

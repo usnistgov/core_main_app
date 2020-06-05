@@ -1,6 +1,9 @@
 """ Unit Test Data
 """
 from bson.objectid import ObjectId
+import datetime
+import pytz
+from mock.mock import patch
 
 from core_main_app.commons import exceptions
 from core_main_app.components.data.models import Data
@@ -14,7 +17,15 @@ from tests.components.data.fixtures.fixtures import (
     DataFixtures,
     AccessControlDataFixture,
 )
+from core_main_app.components.data import tasks as data_task
+from core_main_app.components.template import api as template_api
+from core_main_app.utils.integration_tests.integration_base_transaction_test_case import (
+    MongoIntegrationTransactionTestCase,
+)
+from tests.components.user.fixtures.fixtures import UserFixtures
+from tests.components.data.fixtures.fixtures import DataMigrationFixture
 
+fixture_data_template = DataMigrationFixture()
 fixture_data = DataFixtures()
 access_control_data_fixture = AccessControlDataFixture()
 
@@ -450,7 +461,7 @@ class TestDataGetAllExceptUserId(MongoIntegrationBaseTestCase):
         self.assertListEqual(list(data), [self.fixture.data_2, self.fixture.data_4])
 
 
-class TestExecuteQuery(MongoIntegrationBaseTestCase):
+class TestExecuteQuery(MongoIntegrationTransactionTestCase):
 
     fixture = access_control_data_fixture
 
@@ -703,7 +714,7 @@ class TestGetAllByTemplatesAndWorkspaces(MongoIntegrationBaseTestCase):
         self.assertEqual(len(result), 0)
 
 
-class TestGetAllAccessibleByUser(MongoIntegrationBaseTestCase):
+class TestGetAllAccessibleByUser(MongoIntegrationTransactionTestCase):
 
     fixture = access_control_data_fixture
 
@@ -815,6 +826,475 @@ class TestGetAllByUserAndWorkspace(MongoIntegrationBaseTestCase):
         self.assertEqual(
             self.fixture.data_1.user_id, descending_result.all()[2].user_id
         )
+
+
+class TestDataMigration(MongoIntegrationTransactionTestCase):
+    fixture = fixture_data_template
+
+    def setUp(self):
+        """ Insert needed data.
+
+        Returns:
+
+        """
+        super().setUp()
+        self.fixture.insert_data()
+
+    @patch.object(data_api, "get_by_id")
+    @patch.object(template_api, "get")
+    def test_data_template_validation_success_for_one_data(
+        self, template_get, data_get_by_id
+    ):
+        # Arrange
+        request_user = UserFixtures().create_super_user("admin_test")
+        template_get.return_value = self.fixture.template_2
+        data_get_by_id.return_value = self.fixture.data_1
+
+        # Act
+        response = data_task.async_migration_task(
+            [self.fixture.data_1.id], self.fixture.template_2.id, request_user.id, False
+        )
+
+        # Assert
+        expected_result = {"valid": [str(self.fixture.data_1.id)], "wrong": []}
+        self.assertEqual(response, expected_result)
+
+    @patch.object(data_api, "get_by_id")
+    @patch.object(template_api, "get")
+    def test_data_template_validation_success_for_multi_data(
+        self, template_get, data_get_by_id
+    ):
+        # Arrange
+        data_get_by_id.side_effect = [self.fixture.data_1, self.fixture.data_2]
+        template_get.return_value = self.fixture.template_2
+        request_user = UserFixtures().create_super_user("admin_test")
+
+        # Act
+        response = data_task.async_migration_task(
+            [self.fixture.data_1.id, self.fixture.data_2.id],
+            self.fixture.template_2.id,
+            request_user.id,
+            False,
+        )
+
+        # Assert
+        expected_result = {
+            "valid": [str(self.fixture.data_1.id), str(self.fixture.data_2.id)],
+            "wrong": [],
+        }
+        self.assertEqual(response, expected_result)
+
+    @patch.object(data_api, "get_by_id")
+    @patch.object(template_api, "get")
+    def test_data_template_validation_error_for_one_data(
+        self, template_get, data_get_by_id
+    ):
+        # Arrange
+        data_get_by_id.return_value = self.fixture.data_5
+        template_get.return_value = self.fixture.template_2
+        request_user = UserFixtures().create_super_user("admin_test")
+
+        # Act
+        response = data_task.async_migration_task(
+            [self.fixture.data_5.id],
+            self.fixture.template_2.id,
+            request_user.id,
+            False,
+        )
+
+        # Assert
+        expected_result = {"valid": [], "wrong": [str(self.fixture.data_5.id)]}
+        self.assertEqual(response, expected_result)
+
+    @patch.object(data_api, "get_by_id")
+    @patch.object(template_api, "get")
+    def test_data_template_validation_for_multi_data(
+        self, template_get, data_get_by_id
+    ):
+        # Arrange
+        data_get_by_id.side_effect = [self.fixture.data_1, self.fixture.data_5]
+        template_get.return_value = self.fixture.template_2
+        request_user = UserFixtures().create_super_user("admin_test")
+
+        # Act
+        response = data_task.async_migration_task(
+            [self.fixture.data_1.id, self.fixture.data_5.id],
+            self.fixture.template_2.id,
+            request_user.id,
+            False,
+        )
+
+        # Assert
+        expected_result = {
+            "valid": [str(self.fixture.data_1.id)],
+            "wrong": [str(self.fixture.data_5.id)],
+        }
+        self.assertEqual(response, expected_result)
+
+    @patch.object(data_api, "execute_query")
+    @patch.object(template_api, "get")
+    def test_data_template_group_validation_success(
+        self, template_get, data_execute_query
+    ):
+        # Arrange
+        data_execute_query.return_value = [self.fixture.data_1, self.fixture.data_2]
+        template_get.return_value = self.fixture.template_2
+        request_user = UserFixtures().create_super_user("admin_test")
+
+        # Act
+        response = data_task.async_template_migration_task(
+            [self.fixture.template_1.id],
+            self.fixture.template_2.id,
+            request_user.id,
+            False,
+        )
+
+        # Assert
+        expected_result = {
+            "valid": [str(self.fixture.data_1.id), str(self.fixture.data_2.id)],
+            "wrong": [],
+        }
+        self.assertEqual(response, expected_result)
+
+    @patch.object(data_api, "execute_query")
+    @patch.object(template_api, "get")
+    def test_data_template_group_validation_error(
+        self, template_get, data_execute_query
+    ):
+        # Arrange
+        data_execute_query.return_value = [self.fixture.data_4, self.fixture.data_5]
+        template_get.return_value = self.fixture.template_1
+        request_user = UserFixtures().create_super_user("admin_test")
+
+        # Act
+        response = data_task.async_template_migration_task(
+            [self.fixture.template_3.id],
+            self.fixture.template_1.id,
+            request_user.id,
+            False,
+        )
+
+        # Assert
+        expected_result = {
+            "valid": [],
+            "wrong": [str(self.fixture.data_4.id), str(self.fixture.data_5.id)],
+        }
+        self.assertEqual(response, expected_result)
+
+    @patch.object(data_api, "get_by_id")
+    @patch.object(data_api, "upsert")
+    @patch.object(template_api, "get")
+    def test_data_template_migration_success_for_one_data(
+        self, template_get, data_upsert, data_get_by_id
+    ):
+        # Arrange
+        request_user = UserFixtures().create_super_user("admin_test")
+        data_upsert.side_effect = mock_upsert
+        template_get.return_value = self.fixture.template_2
+        data_get_by_id.return_value = self.fixture.data_1
+
+        # Act
+        response = data_task.async_migration_task(
+            [self.fixture.data_1.id], self.fixture.template_2.id, request_user.id, True
+        )
+
+        # Assert
+        migrated_data = data_api.get_by_id(self.fixture.data_1.id, request_user)
+        self.assertEqual(migrated_data.template.id, self.fixture.template_2.id)
+
+    @patch.object(data_api, "get_by_id")
+    @patch.object(data_api, "upsert")
+    @patch.object(template_api, "get")
+    def test_data_template_migration_success_for_multi_data(
+        self, template_get, data_upsert, data_get_by_id
+    ):
+        # Arrange
+        data_get_by_id.side_effect = [self.fixture.data_1, self.fixture.data_2]
+        template_get.return_value = self.fixture.template_2
+        data_upsert.side_effect = mock_upsert
+        request_user = UserFixtures().create_super_user("admin_test")
+
+        # Act
+        response = data_task.async_migration_task(
+            [self.fixture.data_1.id, self.fixture.data_2.id],
+            self.fixture.template_2.id,
+            request_user.id,
+            False,
+        )
+
+        # Assert
+        migrated_data_template = [
+            self.fixture.data_1.template.id,
+            self.fixture.data_2.template.id,
+        ]
+        self.assertListEqual(
+            migrated_data_template,
+            [self.fixture.template_2.id, self.fixture.template_2.id],
+        )
+
+    @patch.object(data_api, "get_by_id")
+    @patch.object(data_api, "upsert")
+    @patch.object(template_api, "get")
+    def test_data_template_migration_error_for_one_data(
+        self, template_get, data_upsert, data_get_by_id
+    ):
+        # Arrange
+        request_user = UserFixtures().create_super_user("admin_test")
+        data_upsert.side_effect = mock_upsert
+        template_get.return_value = self.fixture.template_2
+        data_get_by_id.return_value = self.fixture.data_5
+
+        # Act
+        response = data_task.async_migration_task(
+            [self.fixture.data_5.id], self.fixture.template_2.id, request_user.id, True
+        )
+
+        # Assert
+        migrated_data = data_api.get_by_id(self.fixture.data_5.id, request_user)
+        self.assertEqual(migrated_data.template.id, self.fixture.template_2.id)
+
+    @patch.object(data_api, "get_by_id")
+    @patch.object(data_api, "upsert")
+    @patch.object(template_api, "get")
+    def test_data_template_migration_for_multi_data(
+        self, template_get, data_upsert, data_get_by_id
+    ):
+        # Arrange
+        data_get_by_id.side_effect = [self.fixture.data_1, self.fixture.data_5]
+        template_get.return_value = self.fixture.template_2
+        data_upsert.side_effect = mock_upsert
+        request_user = UserFixtures().create_super_user("admin_test")
+
+        # Act
+        response = data_task.async_migration_task(
+            [self.fixture.data_1.id, self.fixture.data_5.id],
+            self.fixture.template_2.id,
+            request_user.id,
+            False,
+        )
+
+        # Assert
+        migrated_data_template = [
+            self.fixture.data_1.template.id,
+            self.fixture.data_5.template.id,
+        ]
+        self.assertListEqual(
+            migrated_data_template,
+            [self.fixture.template_2.id, self.fixture.template_2.id],
+        )
+
+        @patch.object(data_api, "execute_query")
+        @patch.object(template_api, "get")
+        def test_data_template_group_migration_success(
+            self, template_get, data_execute_query
+        ):
+            # Arrange
+            data_execute_query.return_value = [self.fixture.data_1, self.fixture.data_2]
+            template_get.return_value = self.fixture.template_2
+            request_user = UserFixtures().create_super_user("admin_test")
+
+            # Act
+            response = data_task.async_template_migration_task(
+                [self.fixture.template_1.id],
+                self.fixture.template_2.id,
+                request_user.id,
+                True,
+            )
+
+            # Assert
+            migrated_data_template = [
+                self.fixture.data_1.template.id,
+                self.fixture.data_2.template.id,
+            ]
+            self.assertListEqual(
+                migrated_data_template,
+                [self.fixture.template_2.id, self.fixture.template_2.id],
+            )
+
+    @patch.object(data_api, "execute_query")
+    @patch.object(template_api, "get")
+    def test_data_template_group_migration_error(
+        self, template_get, data_execute_query
+    ):
+        # Arrange
+        data_execute_query.return_value = [self.fixture.data_4, self.fixture.data_5]
+        template_get.return_value = self.fixture.template_2
+        request_user = UserFixtures().create_super_user("admin_test")
+
+        # Act
+        response = data_task.async_template_migration_task(
+            [self.fixture.template_3.id],
+            self.fixture.template_1.id,
+            request_user.id,
+            True,
+        )
+
+        # Assert
+        migrated_data_template = [
+            self.fixture.data_4.template.id,
+            self.fixture.data_5.template.id,
+        ]
+        self.assertListEqual(
+            migrated_data_template,
+            [self.fixture.template_3.id, self.fixture.template_3.id],
+        )
+
+
+@patch.object(data_api, "get_by_id")
+@patch.object(data_api, "upsert")
+@patch.object(template_api, "get")
+def test_result_data_template_migration_success_for_one_data(
+    self, template_get, data_upsert, data_get_by_id
+):
+    # Arrange
+    request_user = UserFixtures().create_super_user("admin_test")
+    data_upsert.side_effect = mock_upsert
+    template_get.return_value = self.fixture.template_2
+    data_get_by_id.return_value = self.fixture.data_1
+
+    # Act
+    response = data_task.async_migration_task(
+        [self.fixture.data_1.id], self.fixture.template_2.id, request_user.id, True
+    )
+
+    # Assert
+    expected_result = {"valid": [str(self.fixture.data_1.id)], "wrong": []}
+    self.assertEqual(response, expected_result)
+
+
+@patch.object(data_api, "get_by_id")
+@patch.object(data_api, "upsert")
+@patch.object(template_api, "get")
+def test_result_data_template_migration_success_for_multi_data(
+    self, template_get, data_upsert, data_get_by_id
+):
+    # Arrange
+    data_get_by_id.side_effect = [self.fixture.data_1, self.fixture.data_2]
+    template_get.return_value = self.fixture.template_2
+    data_upsert.side_effect = mock_upsert
+    request_user = UserFixtures().create_super_user("admin_test")
+
+    # Act
+    response = data_task.async_migration_task(
+        [self.fixture.data_1.id, self.fixture.data_2.id],
+        self.fixture.template_2.id,
+        request_user.id,
+        False,
+    )
+
+    # Assert
+    expected_result = {
+        "valid": [str(self.fixture.data_1.id), str(self.fixture.data_2.id)],
+        "wrong": [],
+    }
+    self.assertEqual(response, expected_result)
+
+
+@patch.object(data_api, "get_by_id")
+@patch.object(data_api, "upsert")
+@patch.object(template_api, "get")
+def test_result_data_template_migration_error_for_one_data(
+    self, template_get, data_upsert, data_get_by_id
+):
+    # Arrange
+    request_user = UserFixtures().create_super_user("admin_test")
+    data_upsert.side_effect = mock_upsert
+    template_get.return_value = self.fixture.template_2
+    data_get_by_id.return_value = self.fixture.data_5
+
+    # Act
+    response = data_task.async_migration_task(
+        [self.fixture.data_5.id], self.fixture.template_2.id, request_user.id, True
+    )
+
+    # Assert
+    expected_result = {"valid": [], "wrong": [str(self.fixture.data_5.id)]}
+    self.assertEqual(response, expected_result)
+
+
+@patch.object(data_api, "get_by_id")
+@patch.object(data_api, "upsert")
+@patch.object(template_api, "get")
+def test_result_data_template_migration_for_multi_data(
+    self, template_get, data_upsert, data_get_by_id
+):
+    # Arrange
+    data_get_by_id.side_effect = [self.fixture.data_1, self.fixture.data_5]
+    template_get.return_value = self.fixture.template_2
+    data_upsert.side_effect = mock_upsert
+    request_user = UserFixtures().create_super_user("admin_test")
+
+    # Act
+    response = data_task.async_migration_task(
+        [self.fixture.data_1.id, self.fixture.data_5.id],
+        self.fixture.template_2.id,
+        request_user.id,
+        False,
+    )
+
+    # Assert
+    expected_result = {
+        "valid": [str(self.fixture.data_1.id)],
+        "wrong": [str(self.fixture.data_5.id)],
+    }
+    self.assertEqual(response, expected_result)
+
+    @patch.object(data_api, "execute_query")
+    @patch.object(template_api, "get")
+    def test_result_data_template_group_migration_success(
+        self, template_get, data_execute_query
+    ):
+        # Arrange
+        data_execute_query.return_value = [self.fixture.data_1, self.fixture.data_2]
+        template_get.return_value = self.fixture.template_2
+        request_user = UserFixtures().create_super_user("admin_test")
+
+        # Act
+        response = data_task.async_template_migration_task(
+            [self.fixture.template_1.id],
+            self.fixture.template_2.id,
+            request_user.id,
+            True,
+        )
+
+        # Assert
+        expected_result = {
+            "valid": [str(self.fixture.data_1.id), str(self.fixture.data_2.id)],
+            "wrong": [],
+        }
+        self.assertEqual(response, expected_result)
+
+
+@patch.object(data_api, "execute_query")
+@patch.object(template_api, "get")
+def test_result_data_template_group_migration_error(
+    self, template_get, data_execute_query
+):
+    # Arrange
+    data_execute_query.return_value = [self.fixture.data_4, self.fixture.data_5]
+    template_get.return_value = self.fixture.template_2
+    request_user = UserFixtures().create_super_user("admin_test")
+
+    # Act
+    response = data_task.async_template_migration_task(
+        [self.fixture.template_3.id], self.fixture.template_1.id, request_user.id, True,
+    )
+
+    # Assert
+    expected_result = {
+        "valid": [],
+        "wrong": [str(self.fixture.data_4.id), str(self.fixture.data_5.id)],
+    }
+    self.assertEqual(response, expected_result)
+
+
+def mock_upsert(data, user):
+    if data.xml_content is None:
+        raise exceptions.ApiError("Unable to save data: xml_content field is not set.")
+
+    data.last_modification_date = datetime.datetime.now(pytz.utc)
+    data_api.check_xml_file_is_valid(data)
+    return data.save()
 
 
 def _create_user(user_id, is_superuser=False):

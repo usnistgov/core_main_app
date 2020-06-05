@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.data import api as data_api
 from core_main_app.utils.query.constants import VISIBILITY_OPTION
 from core_main_app.utils.query.mongo.query_builder import QueryBuilder
@@ -187,3 +188,63 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
             The response
         """
         raise NotImplementedError("build_response method is not implemented.")
+
+
+class AbstractMigrationView(APIView, metaclass=ABCMeta):
+    def post(self, request, template_id, migrate):
+        """ Retrieve all the Data and validate the associated
+        Template and perform a migration if migrate = True
+
+        Parameters:
+            {
+                "data": [
+                    "data_id1",
+                    "data_id2",
+                    "data_id3"
+                ]
+            }
+
+        Args:
+            request: HTTP request
+            template_id: Target template id
+            migrate: (boolean) Perform the migration
+
+        Returns:
+
+            - code: 200
+              content: Task id
+            - code: 400
+              content: Bad request
+            - code: 403
+              content: Forbidden
+            - code: 500
+              content: Internal server error
+        """
+        try:
+            if template_id and "data" in request.data:
+                data_list = request.data["data"]
+                # launch the migration task
+                task_id = data_api.migrate_data_list(
+                    data_list, template_id, migrate, request.user
+                )
+                return Response(task_id, status=status.HTTP_200_OK)
+            elif template_id and "template" in request.data:
+                data_list = request.data["template"]
+                # launch the migration task
+                task_id = data_api.migrate_template_list(
+                    data_list, template_id, migrate, request.user
+                )
+                return Response(task_id, status=status.HTTP_200_OK)
+            else:
+                return Response(
+                    "The target template id is not correct."
+                    if not template_id
+                    else "Please provide a template or data id to process.",
+                    status.HTTP_400_BAD_REQUEST,
+                )
+        except AccessControlError as ace:
+            return Response(str(ace), status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response(
+                f"Wrong request, {str(e)}", status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

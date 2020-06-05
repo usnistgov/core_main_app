@@ -2,6 +2,12 @@
 """
 import json
 
+from bson import ObjectId
+
+from core_main_app.settings import RESULTS_PER_PAGE
+from core_main_app.utils.pagination.mongoengine_paginator.paginator import (
+    MongoenginePaginator,
+)
 from django.http import Http404
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -26,9 +32,11 @@ from core_main_app.rest.data.serializers import (
     DataSerializer,
     DataWithTemplateInfoSerializer,
 )
+from core_main_app.rest.data.abstract_views import AbstractMigrationView
 from core_main_app.utils.boolean import to_bool
 from core_main_app.utils.databases.pymongo_database import get_full_text_query
 from core_main_app.utils.file import get_file_http_response
+from core_main_app.components.data.tasks import get_task_progress, get_task_result
 from core_main_app.utils.pagination.rest_framework_paginator.pagination import (
     StandardResultsSetPagination,
 )
@@ -870,3 +878,115 @@ class DataPermissions(APIView):
             return False
         except Exception as e:
             raise e
+
+
+class Validation(AbstractMigrationView):
+    """ Check for a set of data if the migration is possible for the given target template
+    """
+
+    def post(self, request, pk):
+        """ Check if a migration if possible for the given template id
+
+        Parameters:
+
+            {
+                "data || template": [
+                    "id1",
+                    "id2",
+                    "id3"
+                ]
+            }
+
+        Args:
+
+            request: HTTP request
+            pk: Target template id
+
+        Returns:
+
+            - code: 200
+              content: Migration done
+            - code: 400
+              content: Bad request
+            - code: 403
+              content: Access denied
+            - code: 500
+              content: Internal server error
+        """
+        return super(Validation, self).post(
+            request=request, template_id=pk, migrate=False
+        )
+
+
+class Migration(AbstractMigrationView):
+    """ Data template migration
+    """
+
+    def post(self, request, pk):
+        """ Migrate data to the given template id
+
+        Parameters:
+
+            {
+                "data || template": [
+                    "id1",
+                    "id2",
+                    "id3"
+                ]
+            }
+
+        Args:
+
+            request: HTTP request
+            pk: Target template id
+
+        Returns:
+
+            - code: 200
+              content: Migration done
+            - code: 400
+              content: Bad request
+            - code: 403
+              content: Access denied
+            - code: 500
+              content: Internal server error
+        """
+        return super(Migration, self).post(
+            request=request, template_id=pk, migrate=True
+        )
+
+
+@api_view(["GET"])
+def get_progress(request, task_id):
+    """ Get the progress of the migration / validation async task
+
+    Args:
+        request:
+        task_id:
+
+    Return:
+        {
+            'state': PENDING | PROGRESS | SUCCESS,
+            'details': result (for SUCCESS) | null (for PENDING) | { PROGRESS info }
+        }
+    """
+    result = get_task_progress(task_id)
+    return Response(result, content_type="application/json")
+
+
+@api_view(["GET"])
+def get_result(request, task_id):
+    """ Get the result of the migration / validation async task
+
+    Args:
+        request:
+        task_id:
+
+    Return:
+        {
+                "valid": ["data_id_1", "data_id_2" ...],
+                "wrong": ["data_id_3", "data_id_4" ...]
+        }
+    """
+    result = get_task_result(task_id)
+    return Response(result, content_type="application/json")

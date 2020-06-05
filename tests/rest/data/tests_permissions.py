@@ -17,6 +17,8 @@ from core_main_app.rest.data.serializers import (
     DataSerializer,
     DataWithTemplateInfoSerializer,
 )
+from core_main_app.rest.data.views import Validation as data_validation
+from core_main_app.rest.data.views import Migration as data_migration
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
 
@@ -831,4 +833,97 @@ class TestDataPermissions(SimpleTestCase):
         )
 
         # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestDataMigrationPermission(SimpleTestCase):
+    def setUp(self):
+        self.fake_id = "507f1f77bcf86cd799439011"
+
+    def test_anonymous_validation_returns_http_403(self):
+        # Arrange
+        mock_user = create_mock_user("1", is_anonymous=True)
+
+        # Act
+        response = RequestMock.do_request_post(
+            data_validation.as_view(),
+            mock_user,
+            param={"pk": self.fake_id},
+            data={"data": f'["{self.fake_id}"]'},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_staff_validation_returns_http_403(self):
+        # Arrange
+        request_user = create_mock_user("1", is_staff=True)
+
+        # Act
+        response = RequestMock.do_request_post(
+            data_validation.as_view(),
+            request_user,
+            param={"pk": self.fake_id},
+            data={"data": f'["{self.fake_id}"]'},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch.object(data_api, "migrate_data_list")
+    def test_admin_validation_returns_http_200(self, migration):
+        # Arrange
+        migration.return_value = "123"
+        request_user = create_mock_user("1", is_superuser=True)
+
+        # Act
+        response = RequestMock.do_request_post(
+            data_validation.as_view(),
+            request_user,
+            param={"pk": self.fake_id},
+            data={"data": f'["{self.fake_id}"]'},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_anonymous_migration_returns_http_403(self):
+        # Arrange
+        mock_user = create_mock_user("1", is_anonymous=True)
+
+        # Act
+        response = RequestMock.do_request_post(
+            data_migration.as_view(),
+            mock_user,
+            param={"pk": self.fake_id},
+            data={"data": f'["{self.fake_id}"]'},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_staff_migration_returns_http_403(self):
+        # Arrange
+        request_user = create_mock_user("1", is_staff=True)
+
+        # Act
+        response = RequestMock.do_request_post(
+            data_migration.as_view(),
+            request_user,
+            param={"pk": self.fake_id},
+            data={"data": f'["{self.fake_id}"]'},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch.object(data_api, "migrate_data_list")
+    def test_admin_migration_returns_http_200(self, migration):
+        # Arrange
+        migration.return_value = "123"
+        request_user = create_mock_user("1", is_superuser=True)
+
+        # Act
+        response = RequestMock.do_request_post(
+            data_migration.as_view(),
+            request_user,
+            param={"pk": self.fake_id},
+            data={"data": f'["{self.fake_id}"]'},
+        )
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
