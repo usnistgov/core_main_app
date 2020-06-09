@@ -1,0 +1,15 @@
+{% extends 'core_main_app/_render/admin/theme/tools/modal.html' %}
+
+{% block modal_title %}Shareable links{% endblock %}
+
+{% block modal_body %}
+<textarea disabled="disabled"></textarea>
+{% endblock %}
+
+{% block modal_footer %}
+<div class="w-100 d-flex flex-row-reverse">
+    <a id="shareable-link-button" class="btn btn-primary" href="#">
+        <i class="fas fa-copy"></i> Copy and close
+    </a>
+</div>
+{% endblock %}

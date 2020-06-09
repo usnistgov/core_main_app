@@ -1,0 +1,16 @@
+{% extends 'core_main_app/_render/admin/theme/tools/modal.html' %}
+
+{% block modal_title %}Shareable link{% endblock %}
+
+{% block modal_body %}
+<input type="text" id="{% block modal_input_id %}{% endblock %}" class="shared-data"
+       disabled="disabled"/>
+{% endblock %}
+
+{% block modal_footer %}
+<div class="w-100 d-flex flex-row-reverse">
+    <a id="{% block modal_submit_id %}{% endblock %}" class="btn btn-primary" href="#">
+        <i class="fas fa-copy"></i> Copy and close
+    </a>
+</div>
+{% endblock %}
