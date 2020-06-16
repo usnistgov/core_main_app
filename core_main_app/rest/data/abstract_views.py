@@ -92,8 +92,14 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
             # get query and templates
             query = self.request.data.get("query", None)
             templates = self.request.data.get("templates", [])
+            if type(templates) is str:
+                templates = json.loads(templates)
             workspaces = self.request.data.get("workspaces", [])
+            if type(workspaces) is str:
+                workspaces = json.loads(workspaces)
             options = self.request.data.get("options", {})
+            if type(options) is str:
+                options = json.loads(options)
             title = self.request.data.get("title", None)
             order_by_field = self.request.data.get("order_by_field", "").split(",")
             if query is not None:
