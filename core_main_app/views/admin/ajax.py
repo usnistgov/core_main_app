@@ -4,8 +4,9 @@ import html.parser
 import json
 from builtins import zip
 
-from django.urls import reverse_lazy
 from django.http.response import HttpResponse, HttpResponseBadRequest
+from django.urls import reverse_lazy
+from django.utils.html import escape
 
 from core_main_app.commons.exceptions import NotUniqueError
 from core_main_app.components.template.api import init_template_with_dependencies
@@ -56,7 +57,7 @@ def resolve_dependencies(request):
             template_version_manager = TemplateVersionManager(title=name)
         template_version_manager_api.insert(template_version_manager, template)
     except Exception as e:
-        return HttpResponseBadRequest(str(e))
+        return HttpResponseBadRequest(escape(str(e)))
 
     return HttpResponse(json.dumps({}), content_type="application/javascript")
 

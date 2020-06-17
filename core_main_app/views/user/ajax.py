@@ -4,6 +4,7 @@ import json
 
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader
+from django.utils.html import escape
 from django.views.generic import View
 
 from core_main_app.access_control.exceptions import AccessControlError
@@ -38,12 +39,12 @@ def set_public_workspace(request):
     try:
         list_workspace = workspace_api.get_by_id_list(workspace_id_list)
     except DoesNotExist as dne:
-        return HttpResponseBadRequest(str(dne))
+        return HttpResponseBadRequest(escape(str(dne)))
     try:
         for workspace in list_workspace:
             workspace_api.set_workspace_public(workspace, request.user)
     except AccessControlError as ace:
-        return HttpResponseBadRequest(str(ace))
+        return HttpResponseBadRequest(escape(str(ace)))
     except:
         return HttpResponseBadRequest("Something wrong happened.")
 
@@ -62,7 +63,7 @@ def set_private_workspace(request):
     try:
         list_workspace = workspace_api.get_by_id_list(workspace_id_list)
     except DoesNotExist as dne:
-        return HttpResponseBadRequest(str(dne))
+        return HttpResponseBadRequest(escape(str(dne)))
     try:
         for workspace in list_workspace:
             workspace_api.set_workspace_private(workspace, request.user)
@@ -86,7 +87,7 @@ class LoadFormChangeWorkspace(View):
                 request.user, list(), is_administration, self.show_global_workspace
             )
         except DoesNotExist as dne:
-            return HttpResponseBadRequest(str(dne))
+            return HttpResponseBadRequest(escape(str(dne)))
         except Exception as e:
             return HttpResponseBadRequest("Something wrong happened.")
 
@@ -167,9 +168,9 @@ def load_add_user_form(request):
 
         form = UserRightForm(users_with_no_access)
     except AccessControlError as ace:
-        return HttpResponseBadRequest(str(ace))
+        return HttpResponseBadRequest(escape(str(ace)))
     except DoesNotExist as dne:
-        return HttpResponseBadRequest(str(dne))
+        return HttpResponseBadRequest(escape(str(dne)))
     except:
         return HttpResponseBadRequest("Something wrong happened.")
 
@@ -220,9 +221,9 @@ def add_user_right_to_workspace(request):
                     workspace, user, request.user
                 )
     except AccessControlError as ace:
-        return HttpResponseBadRequest(str(ace))
+        return HttpResponseBadRequest(escape(str(ace)))
     except DoesNotExist as dne:
-        return HttpResponseBadRequest(str(dne))
+        return HttpResponseBadRequest(escape(str(dne)))
     except Exception as exc:
         return HttpResponseBadRequest("Something wrong happened.")
 
@@ -253,9 +254,9 @@ def switch_right(request):
             _switch_group_right(object_id, action, value, workspace, request.user)
 
     except AccessControlError as ace:
-        return HttpResponseBadRequest(str(ace))
+        return HttpResponseBadRequest(escape(str(ace)))
     except DoesNotExist as dne:
-        return HttpResponseBadRequest(str(dne))
+        return HttpResponseBadRequest(escape(str(dne)))
     except Exception as exc:
         return HttpResponseBadRequest("Something wrong happened.")
 
@@ -352,11 +353,11 @@ def remove_user_or_group_rights(request):
             _remove_group_rights(object_id, workspace, request.user)
 
     except AccessControlError as ace:
-        return HttpResponseBadRequest(str(ace))
+        return HttpResponseBadRequest(escape(str(ace)))
     except ModelError:
         return HttpResponseBadRequest("Invalid input.")
     except DoesNotExist as dne:
-        return HttpResponseBadRequest(str(dne))
+        return HttpResponseBadRequest(escape(str(dne)))
     except Exception:
         return HttpResponseBadRequest("Something wrong happened.")
 
@@ -427,9 +428,9 @@ def load_add_group_form(request):
 
         form = GroupRightForm(groups_with_no_access)
     except AccessControlError as ace:
-        return HttpResponseBadRequest(str(ace))
+        return HttpResponseBadRequest(escape(str(ace)))
     except DoesNotExist as dne:
-        return HttpResponseBadRequest(str(dne))
+        return HttpResponseBadRequest(escape(str(dne)))
     except:
         return HttpResponseBadRequest("Something wrong happened.")
 
@@ -480,9 +481,9 @@ def add_group_right_to_workspace(request):
                     workspace, group, request.user
                 )
     except AccessControlError as ace:
-        return HttpResponseBadRequest(str(ace))
+        return HttpResponseBadRequest(escape(str(ace)))
     except DoesNotExist as dne:
-        return HttpResponseBadRequest(str(dne))
+        return HttpResponseBadRequest(escape(str(dne)))
     except Exception as exc:
         return HttpResponseBadRequest("Something wrong happened.")
 
@@ -524,7 +525,7 @@ class AssignView(View):
                     self.api.get_by_id(data_id, request.user), workspace, request.user
                 )
             except AccessControlError as ace:
-                return HttpResponseBadRequest(str(ace))
+                return HttpResponseBadRequest(escape(str(ace)))
             except Exception as exc:
                 return HttpResponseBadRequest("Something wrong happened.")
 

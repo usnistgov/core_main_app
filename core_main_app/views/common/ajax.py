@@ -6,6 +6,8 @@ import json
 from django.contrib import messages
 from django.http.response import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.urls import reverse_lazy
+from django.utils.html import escape
+from django_mongoengine.views import UpdateView, DeleteView, CreateView
 
 from core_main_app.commons import exceptions
 from core_main_app.components.template import api as template_api
@@ -17,7 +19,6 @@ from core_main_app.components.template_version_manager.models import (
 )
 from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.views.admin.forms import EditTemplateForm
-from django_mongoengine.views import UpdateView, DeleteView, CreateView
 
 
 class AddObjectModalView(CreateView):
@@ -217,7 +218,9 @@ def disable_version_manager(request):
         version_manager = version_manager_api.get(request.GET["id"])
         version_manager_api.disable(version_manager)
     except Exception as e:
-        return HttpResponseBadRequest(str(e), content_type="application/javascript")
+        return HttpResponseBadRequest(
+            escape(str(e)), content_type="application/javascript"
+        )
 
     return HttpResponse(json.dumps({}), content_type="application/javascript")
 
@@ -235,7 +238,9 @@ def restore_version_manager(request):
         version_manager = version_manager_api.get(request.GET["id"])
         version_manager_api.restore(version_manager)
     except Exception as e:
-        return HttpResponseBadRequest(str(e), content_type="application/javascript")
+        return HttpResponseBadRequest(
+            escape(str(e)), content_type="application/javascript"
+        )
 
     return HttpResponse(json.dumps({}), content_type="application/javascript")
 
@@ -252,7 +257,9 @@ def disable_template_version_from_version_manager(request):
     try:
         disable_version_of_version_manager(template_api.get(request.GET["id"]))
     except Exception as e:
-        return HttpResponseBadRequest(str(e), content_type="application/javascript")
+        return HttpResponseBadRequest(
+            escape(str(e)), content_type="application/javascript"
+        )
 
     return HttpResponse(json.dumps({}), content_type="application/javascript")
 
@@ -269,7 +276,9 @@ def disable_version_of_version_manager(version):
     try:
         version_manager_api.disable_version(version)
     except Exception as e:
-        return HttpResponseBadRequest(str(e), content_type="application/javascript")
+        return HttpResponseBadRequest(
+            escape(str(e)), content_type="application/javascript"
+        )
 
 
 def restore_template_version_from_version_manager(request):
@@ -284,7 +293,9 @@ def restore_template_version_from_version_manager(request):
     try:
         restore_version_from_version_manager(template_api.get(request.GET["id"]))
     except Exception as e:
-        return HttpResponseBadRequest(str(e), content_type="application/javascript")
+        return HttpResponseBadRequest(
+            escape(str(e)), content_type="application/javascript"
+        )
 
     return HttpResponse(json.dumps({}), content_type="application/javascript")
 
@@ -301,7 +312,9 @@ def restore_version_from_version_manager(version):
     try:
         version_manager_api.restore_version(version)
     except Exception as e:
-        return HttpResponseBadRequest(str(e), content_type="application/javascript")
+        return HttpResponseBadRequest(
+            escape(str(e)), content_type="application/javascript"
+        )
 
 
 def set_current_template_version_from_version_manager(request):
@@ -316,7 +329,9 @@ def set_current_template_version_from_version_manager(request):
     try:
         set_current_version_from_version_manager(template_api.get(request.GET["id"]))
     except Exception as e:
-        return HttpResponseBadRequest(str(e), content_type="application/javascript")
+        return HttpResponseBadRequest(
+            escape(str(e)), content_type="application/javascript"
+        )
 
     return HttpResponse(json.dumps({}), content_type="application/javascript")
 
@@ -333,4 +348,6 @@ def set_current_version_from_version_manager(version):
     try:
         version_manager_api.set_current(version)
     except Exception as e:
-        return HttpResponseBadRequest(str(e), content_type="application/javascript")
+        return HttpResponseBadRequest(
+            escape(str(e)), content_type="application/javascript"
+        )
