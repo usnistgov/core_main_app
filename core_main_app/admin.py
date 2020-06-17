@@ -1,6 +1,7 @@
 """ Url router for the administration site
 """
 from django.contrib import admin
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.sites.models import Site
 from django.urls import re_path
 from django.urls import reverse_lazy
@@ -69,7 +70,7 @@ admin_urls = [
     ),
     re_path(
         r"^xslt/(?P<pk>[\w-]+)/edit/$",
-        admin_ajax.EditXSLTView.as_view(),
+        staff_member_required(admin_ajax.EditXSLTView.as_view()),
         name="core_main_app_edit_xslt",
     ),
     re_path(r"^xslt$", admin_views.XSLTView.as_view(), name="core_main_app_xslt"),
@@ -80,7 +81,7 @@ admin_urls = [
     ),
     re_path(
         r"^xslt/(?P<pk>[\w-]+)/delete/$",
-        admin_ajax.DeleteXSLTView.as_view(),
+        staff_member_required(admin_ajax.DeleteXSLTView.as_view()),
         name="core_main_app_delete_xslt",
     ),
     re_path(

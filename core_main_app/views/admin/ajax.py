@@ -4,6 +4,7 @@ import html.parser
 import json
 from builtins import zip
 
+from django.contrib.admin.views.decorators import staff_member_required
 from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.urls import reverse_lazy
 from django.utils.html import escape
@@ -24,6 +25,7 @@ from core_main_app.views.admin.forms import EditXSLTForm
 from core_main_app.views.common.ajax import EditObjectModalView, DeleteObjectModalView
 
 
+@staff_member_required
 def resolve_dependencies(request):
     """Resolve import/includes to avoid local references.
 
