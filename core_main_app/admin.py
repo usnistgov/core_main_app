@@ -76,7 +76,7 @@ admin_urls = [
     re_path(r"^xslt$", admin_views.XSLTView.as_view(), name="core_main_app_xslt"),
     re_path(
         r"^xslt/upload$",
-        admin_views.UploadXSLTView.as_view(),
+        staff_member_required(admin_views.UploadXSLTView.as_view()),
         name="core_main_app_upload_xslt",
     ),
     re_path(
@@ -86,9 +86,11 @@ admin_urls = [
     ),
     re_path(
         r"^edit-rights/(?P<workspace_id>\w+)$",
-        common_views.EditWorkspaceRights.as_view(
-            administration=True,
-            template="core_main_app/admin/workspaces/edit_rights.html",
+        staff_member_required(
+            common_views.EditWorkspaceRights.as_view(
+                administration=True,
+                template="core_main_app/admin/workspaces/edit_rights.html",
+            )
         ),
         name="core_main_edit_rights_workspace",
     ),
