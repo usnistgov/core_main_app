@@ -1,6 +1,7 @@
 """ Url router for the main application
 """
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.decorators import login_required
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from django.conf.urls import include
@@ -30,7 +31,7 @@ urlpatterns = [
     ),
     re_path(
         r"^template/(?P<pk>[\w-]+)/edit/$",
-        common_ajax.EditTemplateVersionManagerView.as_view(),
+        login_required(common_ajax.EditTemplateVersionManagerView.as_view()),
         name="core_main_app_edit_template",
     ),
     re_path(
@@ -61,21 +62,23 @@ urlpatterns = [
     re_path(r"^xslt$", common_views.XSLTView.as_view(), name="core_main_app_xslt"),
     re_path(
         r"^xslt/upload$",
-        common_views.UploadXSLTView.as_view(),
+        login_required(common_views.UploadXSLTView.as_view()),
         name="core_main_app_upload_xslt",
     ),
     re_path(
         r"^template/xslt/(?P<template_id>\w+)",
-        common_views.TemplateXSLRenderingView.as_view(
-            rendering=render,
-            template_name="core_main_app/common/templates_xslt/main.html",
-            save_redirect="core_main_app_manage_template_versions",
+        login_required(
+            common_views.TemplateXSLRenderingView.as_view(
+                rendering=render,
+                template_name="core_main_app/common/templates_xslt/main.html",
+                save_redirect="core_main_app_manage_template_versions",
+            )
         ),
         name="core_main_app_template_xslt",
     ),
     re_path(
         r"^edit-rights/(?P<workspace_id>\w+)$",
-        common_views.EditWorkspaceRights.as_view(),
+        login_required(common_views.EditWorkspaceRights.as_view()),
         name="core_main_edit_rights_workspace",
     ),
     re_path(
@@ -85,17 +88,17 @@ urlpatterns = [
     ),
     re_path(
         r"^change-workspace",
-        user_ajax.LoadFormChangeWorkspace.as_view(),
+        login_required(user_ajax.LoadFormChangeWorkspace.as_view()),
         name="core_main_change_workspace",
     ),
     re_path(
         r"^assign-blob-workspace",
-        user_ajax.AssignView.as_view(api=blob_api),
+        login_required(user_ajax.AssignView.as_view(api=blob_api)),
         name="core_main_assign_blob_workspace",
     ),
     re_path(
         r"^assign-data-workspace",
-        user_ajax.AssignView.as_view(api=data_api),
+        login_required(user_ajax.AssignView.as_view(api=data_api)),
         name="core_main_assign_data_workspace",
     ),
     re_path(

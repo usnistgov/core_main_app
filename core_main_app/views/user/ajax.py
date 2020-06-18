@@ -2,6 +2,7 @@
 """
 import json
 
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader
 from django.utils.html import escape
@@ -27,6 +28,7 @@ ACTION_READ = "action_read"
 ACTION_WRITE = "action_write"
 
 
+@login_required
 def set_public_workspace(request):
     """ Set a workspace public.
 
@@ -51,6 +53,7 @@ def set_public_workspace(request):
     return HttpResponse(json.dumps({}), content_type="application/javascript")
 
 
+@login_required
 def set_private_workspace(request):
     """ Set a workspace private.
 
@@ -106,6 +109,7 @@ class LoadFormChangeWorkspace(View):
         )
 
 
+@login_required
 def create_workspace(request):
     """ Create a workspace.
 
@@ -135,6 +139,7 @@ def create_workspace(request):
     return HttpResponse(json.dumps({}), content_type="application/javascript")
 
 
+@login_required
 def load_add_user_form(request):
     """ Load the form to list the users with no access to the workspace.
 
@@ -189,6 +194,7 @@ def load_add_user_form(request):
     )
 
 
+@login_required
 def add_user_right_to_workspace(request):
     """ Add rights to user for the workspace.
 
@@ -230,6 +236,7 @@ def add_user_right_to_workspace(request):
     return HttpResponse(json.dumps({}), content_type="application/javascript")
 
 
+@login_required
 def switch_right(request):
     """ Switch user's right for the workspace.
 
@@ -331,6 +338,7 @@ def _switch_group_right(group_id, action, value, workspace, request_user):
             )
 
 
+@login_required
 def remove_user_or_group_rights(request):
     """ Remove user's right for the workspace.
 
@@ -394,6 +402,7 @@ def _remove_group_rights(object_id, workspace, request_user):
     workspace_api.remove_group_write_access_to_workspace(workspace, group, request_user)
 
 
+@login_required
 def load_add_group_form(request):
     """ Load the form to list the groups with no access to the workspace.
 
@@ -449,6 +458,7 @@ def load_add_group_form(request):
     )
 
 
+@login_required
 def add_group_right_to_workspace(request):
     """ Add rights to group for the workspace.
 

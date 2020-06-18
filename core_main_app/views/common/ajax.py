@@ -4,6 +4,7 @@
 import json
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http.response import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.urls import reverse_lazy
 from django.utils.html import escape
@@ -205,6 +206,7 @@ class EditTemplateVersionManagerView(EditObjectModalView):
             form.add_error(None, str(e))
 
 
+@login_required
 def disable_version_manager(request):
     """Disable a version manager.
 
@@ -225,6 +227,7 @@ def disable_version_manager(request):
     return HttpResponse(json.dumps({}), content_type="application/javascript")
 
 
+@login_required
 def restore_version_manager(request):
     """Restore a disabled version manager.
 
@@ -245,6 +248,7 @@ def restore_version_manager(request):
     return HttpResponse(json.dumps({}), content_type="application/javascript")
 
 
+@login_required
 def disable_template_version_from_version_manager(request):
     """ Disable a template version of a version manager.
 
@@ -264,6 +268,7 @@ def disable_template_version_from_version_manager(request):
     return HttpResponse(json.dumps({}), content_type="application/javascript")
 
 
+@login_required
 def disable_version_of_version_manager(version):
     """ Disable a version of a version manager.
 
@@ -281,6 +286,7 @@ def disable_version_of_version_manager(version):
         )
 
 
+@login_required
 def restore_template_version_from_version_manager(request):
     """ Restore a disabled template version of a version manager.
 
@@ -300,6 +306,7 @@ def restore_template_version_from_version_manager(request):
     return HttpResponse(json.dumps({}), content_type="application/javascript")
 
 
+@login_required
 def restore_version_from_version_manager(version):
     """ Restore a disabled version of a version manager.
 
@@ -317,6 +324,7 @@ def restore_version_from_version_manager(version):
         )
 
 
+@login_required
 def set_current_template_version_from_version_manager(request):
     """ Set the current version of a template.
 
@@ -336,6 +344,7 @@ def set_current_template_version_from_version_manager(request):
     return HttpResponse(json.dumps({}), content_type="application/javascript")
 
 
+@login_required
 def set_current_version_from_version_manager(version):
     """ Set the current version of a version manager.
 
