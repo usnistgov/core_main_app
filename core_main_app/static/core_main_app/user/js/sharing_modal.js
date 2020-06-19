@@ -13,13 +13,15 @@ copyLink = function(link){
     link.prop('disabled', true);
 };
 
-initSharingModal = function(sharingData, sharingButtonId, sharingModalId,
+initSharingModal = function(sharingConfigurationFunction, sharingButtonId, sharingModalId,
                             sharingInputId, sharingSubmitId) {
-    $(sharingInputId).val(sharingData);
-
     $(document).on('click', sharingButtonId, function(event) {
         event.preventDefault();
-        $(sharingModalId).modal("show");
+        let success = sharingConfigurationFunction();
+
+        if (success) {
+            $(sharingModalId).modal("show");
+        }
     });
     $(document).on('click', sharingSubmitId, function(event) {
         event.preventDefault();

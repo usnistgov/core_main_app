@@ -3,13 +3,13 @@
 {% block modal_title %}Shareable links{% endblock %}
 
 {% block modal_body %}
-<textarea disabled="disabled"></textarea>
+<textarea id="{% block modal_input_id %}{% endblock %}" disabled="true"></textarea>
 {% endblock %}
 
 {% block modal_footer %}
 <div class="w-100 d-flex flex-row-reverse">
-    <a id="shareable-link-button" class="btn btn-primary" href="#">
+    <button id="{% block modal_submit_id %}{% endblock %}" class="btn btn-primary">
         <i class="fas fa-copy"></i> Copy and close
-    </a>
+    </button>
 </div>
 {% endblock %}

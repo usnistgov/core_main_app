@@ -45,6 +45,9 @@ class CommonView(View, metaclass=ABCMeta):
             else render(request, template_name, modals, assets, context)
         )
 
+    def is_administration(self):
+        return self.administration
+
 
 class EditWorkspaceRights(CommonView):
     """
@@ -198,7 +201,7 @@ class ViewData(CommonView):
         try:
             data = data_api.get_by_id(data_id, request.user)
 
-            context = {"data": data}
+            context = {"data": data, "share_pid_button": False}
 
             assets = {
                 "js": [
@@ -221,6 +224,27 @@ class ViewData(CommonView):
                 )
                 assets["css"].append("core_file_preview_app/user/css/file_preview.css")
                 modals.append("core_file_preview_app/user/file_preview_modal.html")
+
+            if (
+                "core_linked_records_app" in INSTALLED_APPS
+                and not self.is_administration()
+            ):
+                context["share_pid_button"] = True
+                assets["js"].extend(
+                    [
+                        {
+                            "path": "core_main_app/user/js/sharing_modal.js",
+                            "is_raw": False,
+                        },
+                        {
+                            "path": "core_linked_records_app/user/js/sharing/data_detail.js",
+                            "is_raw": False,
+                        },
+                    ]
+                )
+                modals.append(
+                    "core_linked_records_app/user/sharing/data_detail/modal.html"
+                )
 
             return self.common_render(
                 request, self.template, context=context, assets=assets, modals=modals

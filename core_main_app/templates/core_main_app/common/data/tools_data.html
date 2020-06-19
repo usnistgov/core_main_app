@@ -2,7 +2,10 @@
     <button id="btn-previous-page" type="button" class="btn btn-secondary float-right">
         <i class="fa fa-arrow-left"></i> Back to previous
     </button>
-    {% if 'core_tsne_app' in installed_apps %}
+    {% if data.share_pid_button %}
+        {% include 'core_linked_records_app/user/sharing/data_detail/button.html' %}
+    {% endif %}
+    {% if 'core_tsne_app' in INSTALLED_APPS %}
         <a style="margin-top: 1em;" class="btn btn-primary float-right"
            href="{% url 'core_tsne_app_data' data.data.id %}">
             view on t-sne map
