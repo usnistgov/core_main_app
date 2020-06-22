@@ -15,6 +15,7 @@ from core_main_app.rest.data.abstract_views import AbstractExecuteLocalQueryView
 from core_main_app.rest.data.serializers import (
     DataSerializer,
     DataWithTemplateInfoSerializer,
+    AdminDataSerializer,
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
@@ -89,6 +90,86 @@ class TestDataListGetPermissions(SimpleTestCase):
 
         response = RequestMock.do_request_get(
             data_rest_views.DataList.as_view(), mock_user
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestAdminDataListPostPermissions(SimpleTestCase):
+    def test_anonymous_returns_http_403(self):
+        response = RequestMock.do_request_post(
+            data_rest_views.AdminDataList.as_view(), None
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_authenticated_returns_http_403(self):
+        mock_user = create_mock_user("1")
+        response = RequestMock.do_request_post(
+            data_rest_views.AdminDataList.as_view(), mock_user
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_staff_returns_http_403(self):
+        mock_user = create_mock_user("1", is_staff=True)
+        response = RequestMock.do_request_post(
+            data_rest_views.AdminDataList.as_view(), mock_user
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch.object(AdminDataSerializer, "is_valid")
+    @patch.object(AdminDataSerializer, "save")
+    @patch.object(AdminDataSerializer, "data")
+    def test_superuser_returns_http_201(
+        self, data_serializer_data, data_serializer_save, data_serializer_valid
+    ):
+        data_serializer_valid.return_value = True
+        data_serializer_save.return_value = None
+        data_serializer_data.return_value = {}
+
+        mock_user = create_mock_user("1", is_staff=True, is_superuser=True)
+
+        response = RequestMock.do_request_post(
+            data_rest_views.AdminDataList.as_view(), mock_user
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+
+class TestAdminDataListGetPermissions(SimpleTestCase):
+    def test_anonymous_returns_http_403(self):
+        response = RequestMock.do_request_get(
+            data_rest_views.AdminDataList.as_view(), None
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_authenticated_returns_http_403(self):
+        mock_user = create_mock_user("1")
+        response = RequestMock.do_request_get(
+            data_rest_views.AdminDataList.as_view(), mock_user
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_staff_returns_http_403(self):
+        mock_user = create_mock_user("1", is_staff=True)
+        response = RequestMock.do_request_get(
+            data_rest_views.AdminDataList.as_view(), mock_user
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch.object(Data, "get_all_by_user_id")
+    def test_superuser_returns_http_200(self, data_get_all_by_user):
+        data_get_all_by_user.return_value = {}
+
+        mock_user = create_mock_user("1", is_staff=True, is_superuser=True)
+
+        response = RequestMock.do_request_get(
+            data_rest_views.AdminDataList.as_view(), mock_user
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

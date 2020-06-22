@@ -307,6 +307,11 @@ urlpatterns = [
         web_page_views.WebPageList.as_view(web_page_type="login"),
         name="login_page_rest_views",
     ),
+    re_path(
+        r"^admin/data/$",
+        data_views.AdminDataList.as_view(),
+        name="core_main_app_rest_admin_data_list",
+    ),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

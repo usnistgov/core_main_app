@@ -129,7 +129,9 @@ def upsert(data, user):
     if data.xml_content is None:
         raise exceptions.ApiError("Unable to save data: xml_content field is not set.")
 
-    data.last_modification_date = datetime.datetime.now(pytz.utc)
+    if not data.last_modification_date:
+        data.last_modification_date = datetime.datetime.now(pytz.utc)
+
     check_xml_file_is_valid(data)
     return data.convert_and_save()
 

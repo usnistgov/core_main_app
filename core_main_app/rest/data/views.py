@@ -24,6 +24,7 @@ from core_main_app.rest.data.abstract_views import AbstractExecuteLocalQueryView
 from core_main_app.rest.data.serializers import (
     DataSerializer,
     DataWithTemplateInfoSerializer,
+    AdminDataSerializer,
 )
 from core_main_app.utils.boolean import to_bool
 from core_main_app.utils.databases.pymongo_database import get_full_text_query
@@ -140,6 +141,23 @@ class DataList(APIView):
         except Exception as api_exception:
             content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class AdminDataList(DataList):
+    permission_classes = (IsAdminUser,)
+    serializer = AdminDataSerializer
+
+    def get(self, request):
+        if not request.user.is_superuser:
+            content = {"message": "Only a superuser can use this feature."}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
+        return super(AdminDataList, self).get(request)
+
+    def post(self, request):
+        if not request.user.is_superuser:
+            content = {"message": "Only a superuser can use this feature."}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
+        return super(AdminDataList, self).post(request)
 
 
 class DataDetail(APIView):
