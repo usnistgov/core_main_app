@@ -2,6 +2,8 @@
 """
 import logging
 
+from django.contrib.auth.models import User
+
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.permissions import api as permissions_api, rights as rights
@@ -30,7 +32,7 @@ def has_perm_publish(user, codename):
 
 
 def has_perm_administration(func, *args, **kwargs):
-    """ Is the given user has administration rights.
+    """ Does the given user have administration rights.
 
         Args:
             func:
@@ -41,7 +43,8 @@ def has_perm_administration(func, *args, **kwargs):
 
         """
     try:
-        if args[0].is_superuser:
+        user = next((arg for arg in args if isinstance(arg, User)), None)
+        if user and user.is_superuser:
             return func(*args, **kwargs)
     except Exception as e:
         logger.warning("has_perm_administration threw an exception: ".format(str(e)))

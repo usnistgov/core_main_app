@@ -1,19 +1,17 @@
 """ Data API
 """
-import datetime
-
-import pytz
-
 import core_main_app.access_control.api
 import core_main_app.components.workspace.access_control
 from core_main_app.access_control import api as access_control_api
+from core_main_app.access_control.api import has_perm_administration
 from core_main_app.access_control.decorators import access_control
 from core_main_app.commons import exceptions as exceptions
 from core_main_app.components.data import access_control as data_api_access_control
 from core_main_app.components.data.models import Data
 from core_main_app.components.workspace import api as workspace_api
-from core_main_app.utils.xml import validate_xml_data
 from core_main_app.settings import DATA_SORTING_FIELDS
+from core_main_app.utils.datetime_tools.utils import datetime_now
+from core_main_app.utils.xml import validate_xml_data
 from xml_utils.xsd_tree.xsd_tree import XSDTree
 
 
@@ -129,8 +127,28 @@ def upsert(data, user):
     if data.xml_content is None:
         raise exceptions.ApiError("Unable to save data: xml_content field is not set.")
 
+    data.last_modification_date = datetime_now()
+
+    check_xml_file_is_valid(data)
+    return data.convert_and_save()
+
+
+@access_control(has_perm_administration)
+def admin_insert(data, user):
+    """ Save the data.
+
+    Args:
+        data:
+        user:
+
+    Returns:
+
+    """
+    if data.xml_content is None:
+        raise exceptions.ApiError("Unable to save data: xml_content field is not set.")
+
     if not data.last_modification_date:
-        data.last_modification_date = datetime.datetime.now(pytz.utc)
+        data.last_modification_date = datetime_now()
 
     check_xml_file_is_valid(data)
     return data.convert_and_save()

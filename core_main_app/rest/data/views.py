@@ -21,10 +21,10 @@ from core_main_app.components.data import api as data_api
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.rest.data.abstract_views import AbstractExecuteLocalQueryView
+from core_main_app.rest.data.admin_serializers import AdminDataSerializer
 from core_main_app.rest.data.serializers import (
     DataSerializer,
     DataWithTemplateInfoSerializer,
-    AdminDataSerializer,
 )
 from core_main_app.utils.boolean import to_bool
 from core_main_app.utils.databases.pymongo_database import get_full_text_query
@@ -46,6 +46,7 @@ class DataList(APIView):
 
         Url Parameters:
 
+            workspace: workspace_id
             template: template_id
             title: document_title
 
@@ -148,10 +149,67 @@ class AdminDataList(DataList):
     serializer = AdminDataSerializer
 
     def get(self, request):
+        """ Get all Data
+
+        Url Parameters:
+
+            user: user_id
+            workspace: workspace_id
+            template: template_id
+            title: document_title
+
+        Examples:
+
+            ../data/
+            ../data?user=[user_id]
+            ../data?workspace=[workspace_id]
+            ../data?template=[template_id]
+            ../data?title=[document_title]
+            ../data?template=[template_id]&title=[document_title]
+
+        Args:
+
+            request: HTTP request
+
+        Returns:
+
+            - code: 200
+              content: List of data
+            - code: 500
+              content: Internal server error
+        """
         if not request.user.is_superuser:
             content = {"message": "Only a superuser can use this feature."}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
-        return super(AdminDataList, self).get(request)
+        try:
+            # Get object
+            data_object_list = data_api.get_all(request.user)
+
+            # Apply filters
+            user = self.request.query_params.get("user", None)
+            if user is not None:
+                data_object_list = data_object_list.filter(user_id=user)
+
+            workspace = self.request.query_params.get("workspace", None)
+            if workspace is not None:
+                data_object_list = data_object_list.filter(workspace=workspace)
+
+            template = self.request.query_params.get("template", None)
+            if template is not None:
+                data_object_list = data_object_list.filter(template=template)
+
+            title = self.request.query_params.get("title", None)
+            if title is not None:
+                data_object_list = data_object_list.filter(title=title)
+
+            # Serialize object
+            data_serializer = self.serializer(data_object_list, many=True)
+
+            # Return response
+            return Response(data_serializer.data, status=status.HTTP_200_OK)
+        except Exception as api_exception:
+            content = {"message": str(api_exception)}
+            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
         if not request.user.is_superuser:

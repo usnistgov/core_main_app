@@ -3,6 +3,7 @@
 from collections import OrderedDict
 from unittest.case import TestCase
 
+import datetime
 from mock import patch
 
 import core_main_app.components.data.api as data_api
@@ -10,6 +11,7 @@ from core_main_app.commons import exceptions
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
 from core_main_app.access_control.exceptions import AccessControlError
+from core_main_app.utils.datetime_tools.utils import datetime_now
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 
 
@@ -140,6 +142,27 @@ class TestDataUpsert(TestCase):
         # Assert
         self.assertIsNotNone(result.last_modification_date)
 
+    @patch.object(Data, "convert_to_file")
+    @patch.object(data_api, "check_xml_file_is_valid")
+    @patch.object(Data, "save")
+    def test_data_upsert_updates_last_modification_date(
+        self, mock_save, mock_check, mock_convert_file
+    ):
+        # Arrange
+        data = _create_data(
+            _get_template(), user_id="3", title="title", content="<tag></tag>"
+        )
+        mock_save.return_value = data
+        mock_check.return_value = None
+        mock_convert_file.return_value = None
+        mock_user = _create_user("3")
+        # Act
+        result = data_api.upsert(data, mock_user)
+        creation_date = result.last_modification_date
+        # Assert
+        data_api.upsert(data, mock_user)
+        self.assertNotEqual(creation_date, data.last_modification_date)
+
     def test_data_upsert_raises_xml_error_if_failed_during_xml_validation(self):
         # Arrange
         data = _create_data(None, user_id="3", title="title", content="")
@@ -170,6 +193,48 @@ class TestDataUpsert(TestCase):
         # Act # Assert
         with self.assertRaises(exceptions.XMLError):
             data_api.upsert(data, mock_user)
+
+
+class TestAdminDataInsert(TestCase):
+    @patch.object(Data, "convert_to_file")
+    @patch.object(data_api, "check_xml_file_is_valid")
+    @patch.object(Data, "save")
+    def test_data_admin_insert_sets_custom_last_modification_date_if_provided(
+        self, mock_save, mock_check, mock_convert_file
+    ):
+        # Arrange
+        data = _create_data(
+            _get_template(), user_id="3", title="title", content="<tag></tag>"
+        )
+        mock_save.return_value = data
+        mock_check.return_value = None
+        mock_convert_file.return_value = None
+        mock_user = _create_user("3")
+        # Act
+        yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
+        data.last_modification_date = yesterday
+        result = data_api.upsert(data, mock_user)
+        # Assert
+        self.assertNotEqual(result.last_modification_date, yesterday)
+
+    @patch.object(Data, "convert_to_file")
+    @patch.object(data_api, "check_xml_file_is_valid")
+    @patch.object(Data, "save")
+    def test_data_admin_insert_sets_last_modification_date_if_not_provided(
+        self, mock_save, mock_check, mock_convert_file
+    ):
+        # Arrange
+        data = _create_data(
+            _get_template(), user_id="3", title="title", content="<tag></tag>"
+        )
+        mock_save.return_value = data
+        mock_check.return_value = None
+        mock_convert_file.return_value = None
+        mock_user = _create_user("3")
+        # Act
+        result = data_api.upsert(data, mock_user)
+        # Assert
+        self.assertIsNotNone(result.last_modification_date)
 
 
 class TestDataCheckXmlFileIsValid(TestCase):
