@@ -1,0 +1,80 @@
+/** Admin migration data CSS **/
+
+#template-table {
+    cursor: pointer;
+}
+
+.table {
+    margin: 0 !important;
+}
+
+.table td div {
+    width: 100%;
+    min-width: 350px;
+    overflow: auto;
+}
+
+.migration-arrow {
+    font-size: 1.5em;
+    margin-top: .3em;
+}
+
+.list-card {
+    width: 33%;
+    border-radius: 0;
+}
+
+.button-container {
+    float: right;
+    margin: 1% 1% 0 0;
+}
+
+.card-header {
+    padding: 0;
+    margin: 0;
+}
+
+.card-header td {
+    padding-left: 20px;
+}
+
+
+.card-body {
+    padding: 0;
+    max-height: 300px;
+    overflow: auto;
+}
+
+.card-body td {
+    padding-left: 20px;
+}
+
+.bt-more {
+    cursor: default;
+    text-align: center;
+}
+
+.circle-icon {
+    display: block;
+    background: #cacaca;
+    padding: 10px 5px 0 5px;
+    border-radius: 50%;
+    font-size: 0.8em;
+    width: 50px;
+    cursor: pointer;
+    margin-left: calc(50% - 20px);
+}
+
+.circle-icon i {
+    margin-top: -15px;
+    font-size: 3em;
+}
+
+.circle-icon:hover {
+    background: #dedede;
+}
+
+.summary-dropdown {
+    max-height: 400px;
+    overflow: scroll;
+}

@@ -1,0 +1,9 @@
+{% extends "core_main_app/_render/admin/theme/tools/section.html" %}
+
+{% block section_title %}Data Migration{% endblock %}
+
+{% block section_content %}
+    <div class="row">
+        {% include 'core_main_app/admin/templates/data_migration/templates_list.html' %}
+    </div>
+{% endblock %}

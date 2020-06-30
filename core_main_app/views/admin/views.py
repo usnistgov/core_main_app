@@ -320,11 +320,22 @@ def _save_template_version(request, assets, context, template_version_manager):
     try:
         template = Template(filename=xsd_file.name, content=xsd_data)
         template_version_manager_api.insert(template_version_manager, template)
+
+        # create the fragment url with all the version of the template (minus the new template)
+        version_manager_string = ""
+        for version in template_version_manager.versions:
+            if version != str(template.id):
+                current_version_string = (
+                    version if version_manager_string == "" else f",{version}"
+                )
+
+                version_manager_string += current_version_string
+
+        # add the fragment data to the url
+        fragment = f"#from={version_manager_string}&to={template.id}"
+
         return HttpResponseRedirect(
-            reverse(
-                "admin:core_main_app_manage_template_versions",
-                kwargs={"version_manager_id": str(template_version_manager.id)},
-            )
+            reverse("admin:core_main_app_data_migration") + fragment
         )
     except exceptions.XSDError as xsd_error:
         return handle_xsd_errors(
@@ -594,3 +605,53 @@ class WebPageView(View):
             )
 
             return redirect(reverse(self.post_redirect))
+
+
+@staff_member_required
+def data_migration(request):
+    """Migrate data to a new template version
+
+    Args:
+        request:
+
+    Returns:
+    """
+    assets = {
+        "js": [
+            {
+                "path": "core_main_app/admin/js/templates/data_migration.js",
+                "is_raw": False,
+            }
+        ],
+        "css": ["core_main_app/admin/css/data_migration.css"],
+    }
+
+    # get all current templates
+    templates = []
+    template_managers = [
+        template
+        for template in template_version_manager_api.get_global_version_managers()
+        if not template.is_disabled
+    ]
+
+    for template_manager in template_managers:
+        version_index = 1
+        for version in template_manager.versions:
+            templates.append(
+                {
+                    "id": version,
+                    "title": f"{template_manager.title} (version {version_index})",
+                }
+            )
+            version_index += 1
+
+    context = {
+        "templates": templates,
+    }
+
+    return admin_render(
+        request,
+        "core_main_app/admin/templates/data_migration.html",
+        assets=assets,
+        context=context,
+    )

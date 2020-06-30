@@ -1,0 +1,105 @@
+{% extends 'core_main_app/_render/admin/theme/tools/box.html' %} {% block box_title %}Templates{% endblock %} {% block box_body %}
+<div class="alert alert-warning hidden" role="alert">
+    <i class="fas fa-circle-notch fa-spin"></i> Checking the data template compatibility ...
+</div>
+<div class="alert alert-error hidden" role="alert">
+    <i class="fas fa-circle-notch fa-spin"></i> The data are not compatible with the targeted template version
+</div>
+<div class="alert alert-success hidden" role="alert">
+    <i class="fas fa-circle-notch fa-spin"></i> The data are ready for the migration to the targeted template version
+</div>
+<p>This page allow you to perform a data migration from a given template to another. First select a template. Then you can select the data you want to migrate (or all the data of the selected template). When you are done picking the data you can select a
+    target template. When you will hit the "migrate" button below all the selected data will be tested against the target template and if the data structure match with the target template the migration will be perform. You can also just perform the validation
+    with the "validate" button below.
+</p>
+<div class="w-100 d-flex">
+    <div class="card list-card">
+        <div class="card-header">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <td width="20px"><input id="select-all-template" type="checkbox"></td>
+                        <td>1 - Source template</td>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div class="card-body">
+            <table id="template-table" class="table table-bordered table-striped">
+                <tbody>
+                    {% for template in data.templates %}
+                    <tr>
+                        <td width="20px"><input class="template-checkbox" type="checkbox"></td>
+                        <td data-template-id={{template.id}}>
+                            <div>{{template.title}}</div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card list-card">
+        <div class="card-header">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <td width="20px"><input id="select-all-data" type="checkbox" disabled></td>
+                        <td>2 - Data to migrate</td>
+                        <td class="data-count text-right hidden"><strong id="data-number">235</strong> data selected</td>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div class="card-body">
+            <table id="data-table" class="table table-bordered table-striped">
+                <tbody>
+                    <tr id="empty-data-text" class="bg-transparent text-center">
+                        <td>
+                            <strong class="text-primary">Please select a template on the left panel.</strong>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card list-card">
+        <div class="card-header">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <td width="20px"></td>
+                        <td>3 - Target template</td>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-striped">
+                <tbody id="target-template-text">
+                    <tr class="bg-transparent text-center">
+                        <td>
+                            <strong class="text-primary">Please select at lease one data to migrate.</strong>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="progress-container m-5 hidden">
+    <div id="progress-text"></div>
+    <div class="progress">
+        <div id="migration-progress-bar" class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+        </div>
+    </div>
+</div>
+<div class="button-container">
+    <button id="validate-button" class="btn btn-secondary action-button" disabled>
+            <i class="fa fa-check"></i> Validate
+        </button>
+    <button id="migrate-button" class="btn btn-success action-button" disabled>
+            <i class="fa fa-exchange-alt"></i> Migrate
+        </button>
+</div>
+{% endblock %}

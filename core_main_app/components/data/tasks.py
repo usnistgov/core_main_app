@@ -41,7 +41,6 @@ def async_migration_task(data_list, template_id, user_id, migrate):
             data.template = target_template
 
             try:
-
                 # save the new template for the data if the migration is True
                 if migrate:
                     data_api.upsert(data, user)

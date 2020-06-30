@@ -14,6 +14,7 @@ from core_main_app.views.admin import views as admin_views, ajax as admin_ajax
 from core_main_app.views.admin.views import WebPageView
 from core_main_app.views.common import views as common_views
 
+
 admin_urls = [
     re_path(
         r"^login/message/$",
@@ -45,6 +46,11 @@ admin_urls = [
         r"^template/upload$",
         admin_views.upload_template,
         name="core_main_app_upload_template",
+    ),
+    re_path(
+        r"^template/data-migration",
+        admin_views.data_migration,
+        name="core_main_app_data_migration",
     ),
     re_path(
         r"^template/upload/(?P<version_manager_id>\w+)",

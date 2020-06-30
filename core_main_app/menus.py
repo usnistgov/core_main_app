@@ -15,7 +15,6 @@
 from django.urls import reverse
 from menu import Menu, MenuItem
 
-
 Menu.add_item(
     "main",
     MenuItem("Home", reverse("core_main_app_homepage"), icon="home", weight=-1000),
@@ -52,6 +51,11 @@ templates_children = (
         "Upload New Template",
         reverse("admin:core_main_app_upload_template"),
         icon="upload",
+    ),
+    MenuItem(
+        "Data Migration",
+        reverse("admin:core_main_app_data_migration"),
+        icon="exchange-alt",
     ),
 )
 
