@@ -1,5 +1,7 @@
 """ Unit Test Data
 """
+from types import SimpleNamespace
+
 from bson.objectid import ObjectId
 import datetime
 import pytz
@@ -932,12 +934,25 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         self.assertEqual(response, expected_result)
 
     @patch.object(data_api, "execute_query")
+    @patch.object(data_api, "get_by_id")
     @patch.object(template_api, "get")
     def test_data_template_group_validation_success(
-        self, template_get, data_execute_query
+        self, template_get, data_get_by_id, data_execute_query
     ):
         # Arrange
-        data_execute_query.return_value = [self.fixture.data_1, self.fixture.data_2]
+        mock_query_set = {
+            "values_list": lambda param: [
+                self.fixture.data_1.id,
+                self.fixture.data_2.id,
+            ],
+            "count": lambda: 2,
+        }
+        data_execute_query.return_value = SimpleNamespace(**mock_query_set)
+        data_get_by_id.side_effect = [
+            self.fixture.data_1,
+            self.fixture.data_2,
+        ]
+
         template_get.return_value = self.fixture.template_2
         request_user = UserFixtures().create_super_user("admin_test")
 
@@ -957,12 +972,25 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         self.assertEqual(response, expected_result)
 
     @patch.object(data_api, "execute_query")
+    @patch.object(data_api, "get_by_id")
     @patch.object(template_api, "get")
     def test_data_template_group_validation_error(
-        self, template_get, data_execute_query
+        self, template_get, data_get_by_id, data_execute_query
     ):
         # Arrange
-        data_execute_query.return_value = [self.fixture.data_4, self.fixture.data_5]
+        mock_query_set = {
+            "values_list": lambda param: [
+                self.fixture.data_4.id,
+                self.fixture.data_5.id,
+            ],
+            "count": lambda: 2,
+        }
+        data_execute_query.return_value = SimpleNamespace(**mock_query_set)
+        data_get_by_id.side_effect = [
+            self.fixture.data_4,
+            self.fixture.data_5,
+        ]
+
         template_get.return_value = self.fixture.template_1
         request_user = UserFixtures().create_super_user("admin_test")
 
@@ -1112,12 +1140,25 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
             )
 
     @patch.object(data_api, "execute_query")
+    @patch.object(data_api, "get_by_id")
     @patch.object(template_api, "get")
     def test_data_template_group_migration_error(
-        self, template_get, data_execute_query
+        self, template_get, data_get_by_id, data_execute_query
     ):
         # Arrange
-        data_execute_query.return_value = [self.fixture.data_4, self.fixture.data_5]
+        mock_query_set = {
+            "values_list": lambda param: [
+                self.fixture.data_4.id,
+                self.fixture.data_5.id,
+            ],
+            "count": lambda: 2,
+        }
+        data_execute_query.return_value = SimpleNamespace(**mock_query_set)
+        data_get_by_id.side_effect = [
+            self.fixture.data_4,
+            self.fixture.data_5,
+        ]
+
         template_get.return_value = self.fixture.template_2
         request_user = UserFixtures().create_super_user("admin_test")
 

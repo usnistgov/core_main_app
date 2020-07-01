@@ -81,9 +81,8 @@ def async_template_migration_task(templates, target_template_id, user_id, migrat
         {"valid": <number>, "wrong": <number>}
     """
     # get the data list to check
-    per_page = 100
     current_data_progress = 0
-    current_template_progress = 0
+    current_template_progress = -1
     total_data = 0
     total_template = len(templates)
     success = []
@@ -107,41 +106,41 @@ def async_template_migration_task(templates, target_template_id, user_id, migrat
                     {"template": ObjectId(template_id)}, user=user
                 )
 
-                # paginate the QuerySet
-                paginator = MongoenginePaginator(data_list, per_page)
+                total_data = data_list.count()
 
-                # get the count of all the data for this template
-                total_data = paginator.count
+                # extract the data id from the list
+                data_list_id = data_list.values_list("id")
 
-                # iterate through the generator to process the Data pages
-                for page in page_generator(paginator):
-                    # process the Data in the current page
-                    for data in page:
-                        # modify the data temporarily with the new targeted template
-                        data.template = target_template
-                        # check if the data is valid
-                        try:
-                            # save the new template for the data if the migration is True
-                            if migrate:
-                                data_api.upsert(data, user)
-                            else:
-                                data_api.check_xml_file_is_valid(data)
+                for data_id in data_list_id:
 
-                            success.append(str(data.id))
-                        except Exception as e:
-                            error.append(str(data.id))
-                        finally:
-                            # increase the current progress and update the task state
-                            current_data_progress += 1
-                            async_template_migration_task.update_state(
-                                state="PROGRESS",
-                                meta={
-                                    "template_current": current_template_progress,
-                                    "template_total": total_template,
-                                    "data_current": current_data_progress,
-                                    "data_total": total_data,
-                                },
-                            )
+                    # get the data
+                    data = data_api.get_by_id(data_id, user)
+
+                    # modify the data temporarily with the new targeted template
+                    data.template = target_template
+                    # check if the data is valid
+                    try:
+                        # save the new template for the data if the migration is True
+                        if migrate:
+                            data_api.upsert(data, user)
+                        else:
+                            data_api.check_xml_file_is_valid(data)
+
+                        success.append(str(data.id))
+                    except Exception as e:
+                        error.append(str(data.id))
+                    finally:
+                        # increase the current progress and update the task state
+                        current_data_progress += 1
+                        async_template_migration_task.update_state(
+                            state="PROGRESS",
+                            meta={
+                                "template_current": current_template_progress,
+                                "template_total": total_template,
+                                "data_current": current_data_progress,
+                                "data_total": total_data,
+                            },
+                        )
 
             return {"valid": success, "wrong": error}
 
@@ -171,18 +170,6 @@ def async_template_migration_task(templates, target_template_id, user_id, migrat
             },
         )
         raise Exception(f"Something went wrong: {str(e)}")
-
-
-def page_generator(paginator):
-    """ Generator which iterate through the data pages
-
-    Args:
-        paginator:
-
-    Return:
-        Page"""
-    for i in paginator.page_range:
-        yield paginator.page(i)
 
 
 def get_task_progress(task_id):
