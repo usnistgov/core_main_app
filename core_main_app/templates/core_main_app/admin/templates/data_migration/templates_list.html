@@ -1,4 +1,4 @@
-{% extends 'core_main_app/_render/admin/theme/tools/box.html' %} {% block box_title %}Templates{% endblock %} {% block box_body %}
+{% extends 'core_main_app/_render/admin/theme/tools/box.html' %} {% block box_title %}Migrate Data to a new template{% endblock %} {% block box_body %}
 <div class="alert alert-warning hidden" role="alert">
     <i class="fas fa-circle-notch fa-spin"></i> Checking the data template compatibility ...
 </div>
@@ -8,9 +8,11 @@
 <div class="alert alert-success hidden" role="alert">
     <i class="fas fa-circle-notch fa-spin"></i> The data are ready for the migration to the targeted template version
 </div>
-<p>This page allow you to perform a data migration from a given template to another. First select a template. Then you can select the data you want to migrate (or all the data of the selected template). When you are done picking the data you can select a
-    target template. When you will hit the "migrate" button below all the selected data will be tested against the target template and if the data structure match with the target template the migration will be perform. You can also just perform the validation
-    with the "validate" button below.
+<p> Use the migration tool below to migrate data between template versions. Start by selecting one or more source
+    templates (Step 1). Then, select the data to migrate, or all the data for the selected templates (Step 2).
+    Finally,  select a new target template for those data (Step 3). Once the selection is done, use the "validate"
+    button to check if the selected data can be migrated to the selected target template. Use the "migrate" button
+    to perform the migration.
 </p>
 <div class="w-100 d-flex">
     <div class="card list-card">
@@ -19,7 +21,7 @@
                 <thead>
                     <tr>
                         <td width="20px"><input id="select-all-template" type="checkbox"></td>
-                        <td>1 - Source template</td>
+                        <td>1 - Select Source template(s)</td>
                     </tr>
                 </thead>
             </table>
@@ -45,7 +47,7 @@
                 <thead>
                     <tr>
                         <td width="20px"><input id="select-all-data" type="checkbox" disabled></td>
-                        <td>2 - Data to migrate</td>
+                        <td>2 - Select Data</td>
                         <td class="data-count text-right hidden"><strong id="data-number">235</strong> data selected</td>
                     </tr>
                 </thead>
@@ -56,7 +58,7 @@
                 <tbody>
                     <tr id="empty-data-text" class="bg-transparent text-center">
                         <td>
-                            <strong class="text-primary">Please select a template on the left panel.</strong>
+                            <strong class="text-primary">Please select source template(s)</strong>
                         </td>
                     </tr>
                 </tbody>
@@ -69,7 +71,7 @@
                 <thead>
                     <tr>
                         <td width="20px"></td>
-                        <td>3 - Target template</td>
+                        <td>3 - Select a Target template</td>
                     </tr>
                 </thead>
             </table>
@@ -79,7 +81,7 @@
                 <tbody id="target-template-text">
                     <tr class="bg-transparent text-center">
                         <td>
-                            <strong class="text-primary">Please select at lease one data to migrate.</strong>
+                            <strong class="text-primary">Please select data to migrate</strong>
                         </td>
                     </tr>
                 </tbody>
