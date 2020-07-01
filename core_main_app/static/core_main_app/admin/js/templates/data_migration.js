@@ -147,9 +147,10 @@ let fillTheData = function(templateIdList) {
             contentType: "application/json",
             data: JSON.stringify({ query: {}, templates: templateIdList }),
             success: (data) => {
+                totalDataCount = data.count;
+                
                 createDataListHtml(data, false, "#data-table tbody");
 
-                totalDataCount = data.count;
 
                 if (data.next) {
                     // add the infinite scroll listener
