@@ -114,12 +114,12 @@ urlpatterns = [
     re_path(
         r"^data/query/keyword/$",
         data_views.ExecuteLocalKeywordQueryView.as_view(),
-        name="core_explore_common_local_query_keyword",
+        name="core_main_app_rest_data_keyword_query",
     ),
     re_path(
         r"^data/query/$",
         data_views.ExecuteLocalQueryView.as_view(),
-        name="core_explore_common_local_query",
+        name="core_main_app_rest_data_query",
     ),
     re_path(
         r"^data/(?P<pk>\w+)/assign/(?P<workspace_id>\w+)$",

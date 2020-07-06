@@ -619,9 +619,13 @@ def data_migration(request):
     assets = {
         "js": [
             {
+                "path": "core_main_app/admin/js/templates/data_migration.raw.js",
+                "is_raw": True,
+            },
+            {
                 "path": "core_main_app/admin/js/templates/data_migration.js",
                 "is_raw": False,
-            }
+            },
         ],
         "css": ["core_main_app/admin/css/data_migration.css"],
     }

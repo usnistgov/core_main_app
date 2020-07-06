@@ -4,13 +4,11 @@ let jqWarning = $('.alert-warning');
 let jqError = $('.alert-error');
 let isAllDataSelected = false;
 let isAllTemplateSelected = false;
-let loadDataUrlBase = "/rest/data/query/";
-let taskUrlBase = "/rest/data/template/";
-let taskBaseUrl = "/rest/data/migration/task/";
 let nextPageUrl = null;
 let setStatesPending = 0;
 let setStatesTargetTemplateId;
 let totalDataCount = 0;
+let showError = false;
 /**
  * Init controllers for the results page
  */
@@ -416,7 +414,9 @@ let actionButtonClicked = function(migrate) {
 
     // launch the async task
     $.ajax({
-        url: taskUrlBase + targetTemplateId + (migrate ? "/migrate/" : "/validate/"),
+        url: migrationUrlBase
+            .replace("placeholder_id", targetTemplateId)
+            .replace("migrate", migrate ? "migrate" : "validate"),
         type: "POST",
         contentType: "application/json",
         data: JSON.stringify(queryData),
@@ -428,14 +428,14 @@ let actionButtonClicked = function(migrate) {
                             if (statusData && statusData.state === 'SUCCESS') {
                                 clearInterval(interval);
                             }
-                            displaySummary(statusData);
-                        }, (err) => {
+                            displaySummary(statusData, migrate);
+                        }, (taskResultError) => {
                             clearInterval(interval);
-                            displaySummary(err);
+                            displaySummary(taskResultError, migrate);
                         });
                     } catch (error) {
                         clearInterval(interval);
-                        jqError.html('Error during the task exectution: ' + JSON.stringify(error));
+                        jqError.html('Error during the task execution: ' + JSON.stringify(error));
                         jqError.show();
                     }
                 },
@@ -478,7 +478,7 @@ let extractIdFromTable = function(mainSelector, findSelector, attrToRead) {
  */
 let getTaskStatus = function(taskId, success, error) {
     $.ajax({
-        url: taskBaseUrl + taskId + '/progress/',
+        url: taskBaseUrl.replace("placeholder_id", taskId),
         type: "GET",
         contentType: "application/json",
         dataType: "json",
@@ -494,8 +494,9 @@ let getTaskStatus = function(taskId, success, error) {
 /**
  * Parse the task status and dispay it on the UI
  * @param {object} taskData Task status object
+ * @param {boolean} migrate If true the migration button has been clicked if not it is a validation
  */
-let displaySummary = function(taskData) {
+let displaySummary = function(taskData, migrate) {
     if (taskData) {
         let summaryHtml = '';
         switch (taskData.state) {
@@ -552,43 +553,56 @@ let displaySummary = function(taskData) {
                 // 100% progressbar
                 $("#migration-progress-bar").css({ "width": "100%" });
                 // show the summary
-                summaryHtml = '<p>Your task has been successfully executed.';
+                summaryHtml = '<p>Your task has been successfully executed ' +
+                        '<strong class="text-success">' + taskData.details.valid.length + ' data succeeded</strong>.';
                 let failedButtonHtml = "";
-                // check if there is wrong migrstion
+                // check if there is wrong migration
                 if (taskData.details.wrong.length > 0) {
 
-                    summaryHtml += " There is some errors during the data proccessing, " +
+                    summaryHtml += " Errors occurred while processing the data, " +
                         '<strong class="text-danger">' + taskData.details.wrong.length + ' data failed</strong> and ' +
-                        '<strong class="text-success">' + taskData.details.valid.length + ' data succeeded</strong>.' +
                         " It might be caused by a wrong data schema. " +
                         "You can get more information by clicking on the button bellow.";
 
-                    failedButtonHtml = '<div class="dropdown">' +
-                        '<button class="btn btn-secondary dropdown-toggle mb-3" type="button" id="more-dropdrown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-                        'More' +
+                    failedButtonHtml = '<button class="btn btn-secondary mb-3" type="button" onclick="toggleError()">' +
+                            'View error' +
                         '</button>' +
-                        '<div class="dropdown-menu summary-dropdown" aria-labelledby="more-dropdrown">';
+                        '<div id="error-list" class="hidden"><h4>Failed data files:</h4>' +
+                        '<ul class="list-group list-group-flush">';
 
                     taskData.details.wrong.forEach((dataId) => {
-                        failedButtonHtml += '<button class="dropdown-item" type="button"><a href="/admin/data?id=' + dataId + '">' +
-                            dataId + '</a></button>';
+                        failedButtonHtml += '<li class="list-group-item"><a href="/admin/data?id=' + dataId + '">' +
+                                dataId + '</a></li>';
                     });
 
-                    failedButtonHtml += '</div>' +
-                        '</div>';
+                    failedButtonHtml += '</ul></div>';
+                } else if(migrate === false) {
+                    summaryHtml += ' Start the migration by clicking on the "migrate" button below.';
                 }
                 summaryHtml += "</p>" + failedButtonHtml;
 
-                resetState();
+                // reset the state only if it is a migration
+                if (migrate)
+                    resetState();
 
                 break;
             default:
                 // error
-                jqError.html('Error during the task exectution: ' + JSON.stringify(taskData));
+                jqError.html('Error during the task execution: ' + JSON.stringify(taskData));
                 jqError.show();
         }
         $("#progress-text").html(summaryHtml);
     }
+}
+
+let toggleError = function() {
+    let jqErrorList = $("#error-list");
+    showError = !showError;
+
+    if(jqErrorList && showError)
+        jqErrorList.show();
+    else
+        jqErrorList.hide();
 }
 
 /**
