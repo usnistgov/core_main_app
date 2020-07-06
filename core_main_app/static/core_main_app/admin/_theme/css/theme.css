@@ -2227,6 +2227,11 @@ a:focus {
 .btn:focus {
   outline: none;
 }
+
+.btn:disabled {
+    cursor: default;
+}
+
 .btn.btn-file {
   position: relative;
   overflow: hidden;
@@ -2260,7 +2265,7 @@ a:focus {
     background-color: #007ac1 !important;
     border-color: #565656;
 }
-.btn-primary:hover,
+.btn-primary:hover:enabled,
 .btn-primary:active,
 .btn-primary.hover {
   background-color: #005f96 !important;
@@ -2270,14 +2275,14 @@ a:focus {
     border-color: #d4d4d4 !important;
     color: #313131 !important;
 }
-.btn.btn-secondary:hover {
+.btn.btn-secondary:hover:enabled {
     background-color: #e2e2e2 !important;
 }
 .btn-success {
   background-color: #00a65a;
   border-color: #008d4c;
 }
-.btn-success:hover,
+.btn-success:hover:enabled,
 .btn-success:active,
 .btn-success.hover {
   background-color: #008d4c;
@@ -4445,7 +4450,7 @@ table.text-center th {
 .alert-warning,
 .label-warning,
 .modal-warning .modal-body {
-  background-color: #f39c12 !important;
+  background-color: #ffd560 !important;
 }
 .bg-aqua,
 .callout.callout-info,
