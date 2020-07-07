@@ -29,14 +29,22 @@
         <div class="card-body">
             <table id="template-table" class="table table-bordered table-striped">
                 <tbody>
-                    {% for template in data.templates %}
-                    <tr>
-                        <td width="20px"><input class="template-checkbox" type="checkbox"></td>
-                        <td data-template-id={{template.id}}>
-                            <div>{{template.title}}</div>
-                        </td>
-                    </tr>
-                    {% endfor %}
+                    {% if data.templates %}
+                        {% for template in data.templates %}
+                            <tr>
+                                <td width="20px"><input class="template-checkbox" type="checkbox"></td>
+                                <td data-template-id={{template.id}}>
+                                    <div>{{template.title}}</div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr class="bg-transparent text-center">
+                            <td>
+                                <strong class="text-primary">No Template available.</strong>
+                            </td>
+                        </tr>
+                    {% endif %}
                 </tbody>
             </table>
         </div>
