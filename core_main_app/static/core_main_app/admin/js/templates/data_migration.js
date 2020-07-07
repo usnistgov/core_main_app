@@ -343,7 +343,7 @@ let createTargetTemplateListHtml = function(isDataSelected) {
     } else if (targetTemplateId.length === 0 || !isDataSelected) {
 
         emptyPanelMessage = isDataSelected ? 'You have selected all the ' +
-            'source template please uncheck at least one of them to have a correct target.' :
+            'source templates, please uncheck at least one of them to have at least a target template.' :
             'Please select at least one data to migrate.'
 
         targetTemplateHtml = '<tr class="bg-transparent text-center">' +
@@ -543,7 +543,7 @@ let displaySummary = function(taskData, migrate) {
                         '<li class="list-group-item">Data processed: <strong>' + taskData.details.current + '</strong></li>' +
                         '</ul>'
                 } else {
-                    throw 'Error when the task was runing, wrong object structure: ' + JSON.stringify(taskData);
+                    throw 'Error when the task was running, wrong object structure: ' + JSON.stringify(taskData);
                 }
 
                 $("#migration-progress-bar").css({ "width": percentage + "%" });
@@ -558,10 +558,9 @@ let displaySummary = function(taskData, migrate) {
                 let failedButtonHtml = "";
                 // check if there is wrong migration
                 if (taskData.details.wrong.length > 0) {
-
-                    summaryHtml += " Errors occurred while processing the data, " +
-                        '<strong class="text-danger">' + taskData.details.wrong.length + ' data failed</strong> and ' +
-                        " It might be caused by a wrong data schema. " +
+                    summaryHtml += " Some errors occurred during data validation: " +
+                        '<strong class="text-danger">' + taskData.details.wrong.length + ' data failed</strong>.' +
+                        " Data might not be valid for the selected target template. " +
                         "You can get more information by clicking on the button bellow.";
 
                     failedButtonHtml = '<button class="btn btn-secondary mb-3" type="button" onclick="toggleError()">' +
