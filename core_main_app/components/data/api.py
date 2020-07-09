@@ -232,6 +232,15 @@ def change_owner(data, new_user, user):
     data.save()
 
 
+def get_none():
+    """ Returns None object, used by data
+
+    Returns:
+
+    """
+    return Data.get_none()
+
+
 def is_data_public(data):
     """ Is data public.
 

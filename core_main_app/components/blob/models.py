@@ -97,6 +97,15 @@ class Blob(Document):
         """
         return Blob.objects(workspace__in=list_workspace).all()
 
+    @staticmethod
+    def get_none():
+        """ Return None object, used by blobs.
+
+        Returns:
+
+        """
+        return Blob.objects().none()
+
     @classmethod
     def blob_host(cls):
         """ Return blob host.

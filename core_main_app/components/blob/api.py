@@ -130,3 +130,12 @@ def change_owner(blob, new_user, user):
     # FIXME: user can transfer data to anybody, too permissive
     blob.user_id = str(new_user.id)
     blob.save()
+
+
+def get_none():
+    """ Returns None object, used by blobs
+
+    Returns:
+
+    """
+    return Blob.get_none()

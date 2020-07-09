@@ -210,3 +210,12 @@ class Data(AbstractData):
 
         """
         return Data.objects.aggregate(*pipeline)
+
+    @staticmethod
+    def get_none():
+        """ Return None object, used by data.
+
+        Returns:
+
+        """
+        return Data.objects().none()
