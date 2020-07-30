@@ -323,6 +323,26 @@ urlpatterns = [
         r"^user/$", user_views.UserList.as_view(), name="core_main_app_user_detail"
     ),
     re_path(
+        r"^template/xsl_rendering/(?P<pk>\w+)/set_default_xslt/(?P<xslt_id>\w+)/$",
+        template_xsl_rendering_views.TemplateXslRenderingSetDefaultDetailXslt.as_view(),
+        name="core_main_app_rest_template_xsl_rendering_set_default_xslt",
+    ),
+    re_path(
+        r"^template/xsl_rendering/(?P<pk>\w+)/remove_detail_xslt/(?P<xslt_id>\w+)/$",
+        template_xsl_rendering_views.TemplateXslRenderingRemoveDetailXslt.as_view(),
+        name="core_main_app_rest_template_xsl_rendering_delete_detail_xslt",
+    ),
+    re_path(
+        r"^template/xsl_rendering/(?P<pk>\w+)/add_detail_xslt/(?P<xslt_id>\w+)/$",
+        template_xsl_rendering_views.TemplateXslRenderingAddDetailXslt.as_view(),
+        name="core_main_app_rest_template_xsl_rendering_add_detail_xslt",
+    ),
+    re_path(
+        r"^template/xsl_rendering/(?P<pk>\w+)/set_list_detail_xslt/$",
+        template_xsl_rendering_views.TemplateXslRenderingSetListDetailXslt.as_view(),
+        name="core_main_app_rest_template_xsl_rendering_set_list_detail_xslt",
+    ),
+    re_path(
         r"^login-page$",
         web_page_views.WebPageList.as_view(web_page_type="login"),
         name="login_page_rest_views",

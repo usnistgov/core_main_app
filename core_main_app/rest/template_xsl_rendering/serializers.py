@@ -28,8 +28,13 @@ class TemplateXslRenderingSerializer(DocumentSerializer):
         """
         template_id = validated_data.get("template", None)
         list_xslt = validated_data.get("list_xslt", None)
-        detail_xslt = validated_data.get("detail_xslt", None)
+        default_detail_xslt = validated_data.get("default_detail_xslt", None)
+        list_detail_xslt = validated_data.get("list_detail_xslt", None)
 
         return template_xsl_rendering_api.upsert(
-            template_id, list_xslt, detail_xslt, template_xsl_rendering_id=instance.id
+            template_id,
+            list_xslt,
+            default_detail_xslt,
+            list_detail_xslt,
+            template_xsl_rendering_id=instance.id,
         )

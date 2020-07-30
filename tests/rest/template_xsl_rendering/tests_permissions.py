@@ -61,7 +61,7 @@ class TestTemplateXslRenderingListPostPermission(SimpleTestCase):
             data={
                 "template": str(ObjectId()),
                 "list_xslt": str(ObjectId()),
-                "detail_xslt": str(ObjectId()),
+                "default_detail_xslt": str(ObjectId()),
             },
         )
 
@@ -87,7 +87,7 @@ class TestTemplateXslRenderingListPostPermission(SimpleTestCase):
             data={
                 "template": str(ObjectId()),
                 "list_xslt": str(ObjectId()),
-                "detail_xslt": str(ObjectId()),
+                "default_detail_xslt": str(ObjectId()),
             },
         )
 
@@ -113,7 +113,7 @@ class TestTemplateXslRenderingListPostPermission(SimpleTestCase):
             data={
                 "template": str(ObjectId()),
                 "list_xslt": str(ObjectId()),
-                "detail_xslt": str(ObjectId()),
+                "default_detail_xslt": str(ObjectId()),
             },
         )
 
@@ -175,7 +175,7 @@ class TestTemplateXslRenderingDetailPatchPermission(SimpleTestCase):
             template_xsl_rendering_views.TemplateXslRenderingDetail.as_view(),
             None,
             param={"pk": str(ObjectId())},
-            data={"list_xslt": str(ObjectId()), "detail_xslt": str(ObjectId())},
+            data={"list_xslt": str(ObjectId()), "default_detail_xslt": str(ObjectId())},
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -201,7 +201,7 @@ class TestTemplateXslRenderingDetailPatchPermission(SimpleTestCase):
             template_xsl_rendering_views.TemplateXslRenderingDetail.as_view(),
             mock_user,
             param={"pk": str(ObjectId())},
-            data={"list_xslt": str(ObjectId()), "detail_xslt": str(ObjectId())},
+            data={"list_xslt": str(ObjectId()), "default_detail_xslt": str(ObjectId())},
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -227,7 +227,10 @@ class TestTemplateXslRenderingDetailPatchPermission(SimpleTestCase):
             template_xsl_rendering_views.TemplateXslRenderingDetail.as_view(),
             mock_user,
             param={"pk": str(ObjectId())},
-            data={"list_xslt": str(ObjectId()), "detail_xslt": str(ObjectId())},
+            data={
+                "list_xslt": str(ObjectId()),
+                "default_detail_xslt" "": str(ObjectId()),
+            },
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

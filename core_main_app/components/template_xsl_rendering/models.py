@@ -19,8 +19,14 @@ class TemplateXslRendering(Document):
     list_xslt = fields.ReferenceField(
         XslTransformation, reverse_delete_rule=NULLIFY, blank=True
     )
-    detail_xslt = fields.ReferenceField(
-        XslTransformation, reverse_delete_rule=NULLIFY, blank=True
+    default_detail_xslt = fields.ReferenceField(
+        XslTransformation, reverse_delete_rule=CASCADE, blank=True
+    )
+    list_detail_xslt = fields.ListField(
+        fields.ReferenceField(XslTransformation),
+        reverse_delete_rule=CASCADE,
+        blank=True,
+        default=[],
     )
 
     @staticmethod

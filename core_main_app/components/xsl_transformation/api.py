@@ -84,3 +84,14 @@ def xsl_transform(xml_content, xslt_name):
         raise exceptions.ApiError(
             "An unexpected exception happened while transforming the XML"
         )
+
+
+def get_by_id_list(list_data_id):
+    """ Return a list of xsl_transformation object with the given list id.
+
+        Parameters:
+            list_data_id:
+
+        Returns: data object
+    """
+    return XslTransformation.get_by_id_list(list_data_id)

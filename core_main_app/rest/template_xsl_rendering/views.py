@@ -1,7 +1,9 @@
 """ REST views for the template XSL rendering API
 """
+
 from django.http import Http404
 from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -11,6 +13,7 @@ from core_main_app.commons import exceptions
 from core_main_app.components.template_xsl_rendering import (
     api as template_xsl_rendering_api,
 )
+from core_main_app.components.xsl_transformation import api as xsl_transformation_api
 from core_main_app.rest.template_xsl_rendering.serializers import (
     TemplateXslRenderingSerializer,
 )
@@ -59,7 +62,8 @@ class TemplateXslRenderingList(APIView):
             {
                 "template": "template_object_id",
                 "list_xslt": "xslt_object_id",
-                "detail_xslt": "xslt_object_id"
+                "default_detail_xslt": "xslt_object_id"
+                "list_detail_xslt": "xslt_object_id"
             }
 
         Args:
@@ -204,6 +208,193 @@ class TemplateXslRenderingDetail(APIView):
         except AccessControlError as ace:
             content = {"message": str(ace)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
+        except Exception as api_exception:
+            content = {"message": str(api_exception)}
+            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class TemplateXslRenderingAddDetailXslt(APIView):
+    """ TemplateXslRendering details view
+    """
+
+    permission_classes = (IsAuthenticated,)
+
+    def patch(self, request, pk, xslt_id):
+        """ Add detail xslt to `TemplateXSLRendering` object from db
+
+        Args:
+            request: HTTP request
+            pk: ObjectId
+            xslt_id : XsltObjectId
+
+        Returns:
+            TemplateXSLRendering
+        """
+        try:
+            # Get objects
+            template_xsl_rendering_object = template_xsl_rendering_api.get_by_id(pk)
+            xsl_transformation_object = xsl_transformation_api.get_by_id(xslt_id)
+
+            # Add an xsl transformation
+            template_xsl_rendering_api.add_detail_xslt(
+                template_xsl_rendering_object, xsl_transformation_object
+            )
+
+            # Build serializer
+            template_xsl_rendering_serializer = TemplateXslRenderingSerializer(
+                instance=template_xsl_rendering_object
+            )
+
+            return Response(
+                template_xsl_rendering_serializer.data, status=status.HTTP_200_OK
+            )
+
+        except Http404:
+            content = {"message": "Data not found."}
+            return Response(content, status=status.HTTP_404_NOT_FOUND)
+        except Exception as api_exception:
+            content = {"message": str(api_exception)}
+            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class TemplateXslRenderingSetDefaultDetailXslt(APIView):
+    """ TemplateXslRendering details view
+    """
+
+    permission_classes = (IsAuthenticated,)
+
+    def patch(self, request, pk, xslt_id):
+        """ Set default detail xslt to `TemplateXSLRendering` object from db
+
+        Args:
+            request: HTTP request
+            pk: ObjectId
+            xslt_id : XsltObjectId
+
+        Returns:
+            TemplateXSLRendering
+        """
+        try:
+            # Get objects
+            template_xsl_rendering_object = template_xsl_rendering_api.get_by_id(pk)
+            xsl_transformation_object = xsl_transformation_api.get_by_id(xslt_id)
+
+            # Set default xsl transformation
+            template_xsl_rendering_api.set_default_detail_xslt(
+                template_xsl_rendering_object, xsl_transformation_object
+            )
+
+            # Build serializer
+            template_xsl_rendering_serializer = TemplateXslRenderingSerializer(
+                instance=template_xsl_rendering_object
+            )
+
+            return Response(
+                template_xsl_rendering_serializer.data, status=status.HTTP_200_OK
+            )
+        except Http404:
+            content = {"message": "Data not found."}
+            return Response(content, status=status.HTTP_404_NOT_FOUND)
+        except Exception as api_exception:
+            content = {"message": str(api_exception)}
+            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class TemplateXslRenderingRemoveDetailXslt(APIView):
+    """ TemplateXslRendering details view
+    """
+
+    permission_classes = (IsAuthenticated,)
+
+    def patch(self, request, pk, xslt_id):
+        """ Remove a detail xslt from `TemplateXSLRendering` object from db
+
+        Args:
+            request: HTTP request
+            pk: ObjectId
+            xslt_id : XsltObjectId
+
+        Returns:
+            TemplateXSLRendering
+        """
+        try:
+            # Get objects
+            template_xsl_rendering_object = template_xsl_rendering_api.get_by_id(pk)
+            xsl_transformation_object = xsl_transformation_api.get_by_id(xslt_id)
+
+            # Remove xsl transformation
+            template_xsl_rendering_api.delete_detail_xslt(
+                template_xsl_rendering_object, xsl_transformation_object
+            )
+
+            # Build serializer
+            template_xsl_rendering_serializer = TemplateXslRenderingSerializer(
+                instance=template_xsl_rendering_object
+            )
+
+            return Response(
+                template_xsl_rendering_serializer.data, status=status.HTTP_200_OK
+            )
+        except Http404:
+            content = {"message": "Data not found."}
+            return Response(content, status=status.HTTP_404_NOT_FOUND)
+        except Exception as api_exception:
+            content = {"message": str(api_exception)}
+            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class TemplateXslRenderingSetListDetailXslt(APIView):
+    """ TemplateXslRendering details view
+    """
+
+    permission_classes = (IsAuthenticated,)
+
+    def patch(self, request, pk):
+        """ Add detail xslt to `TemplateXSLRendering` object from db
+
+        Args:
+            request: HTTP request
+            pk: ObjectId
+
+        Parameters:
+
+            {
+                "ids":
+                     [
+                        "xslt_id_1",
+                        "xslt_id_2"
+                     ]
+            }
+
+        Returns:
+            TemplateXSLRendering
+        """
+        try:
+            # Get objects
+            template_xsl_rendering_object = template_xsl_rendering_api.get_by_id(pk)
+            xsl_transformation_objects = xsl_transformation_api.get_by_id_list(
+                request.data["ids"]
+            )
+
+            # Add an xsl transformation
+            template_xsl_rendering_api.set_list_detail_xslt(
+                template_xsl_rendering_object, xsl_transformation_objects
+            )
+
+            # Build serializer
+            template_xsl_rendering_serializer = TemplateXslRenderingSerializer(
+                instance=template_xsl_rendering_object
+            )
+
+            return Response(
+                template_xsl_rendering_serializer.data, status=status.HTTP_200_OK
+            )
+        except ValidationError as validation_exception:
+            content = {"message": validation_exception.detail}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        except Http404:
+            content = {"message": "Data not found."}
+            return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

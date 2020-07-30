@@ -105,7 +105,7 @@ class TemplateXsltRenderingForm(forms.Form):
         widget=forms.Select(attrs={"class": "form-control"}),
         queryset=xsl_transformation_api.get_all(),
     )
-    detail_xslt = forms.ModelChoiceField(
+    default_detail_xslt = forms.ModelChoiceField(
         label="Detail XSLT",
         empty_label="(No XSLT)",
         required=False,

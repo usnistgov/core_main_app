@@ -38,6 +38,18 @@ class XslTransformation(Document):
         return XslTransformation.objects.all()
 
     @staticmethod
+    def get_by_id_list(list_id):
+        """ Return the object with the given list id.
+
+        Args:
+            list_id:
+
+        Returns:
+            Object collection
+        """
+        return XslTransformation.objects(pk__in=list_id)
+
+    @staticmethod
     def get_by_name(xslt_name):
         """ Get XSL Transformation by name.
 

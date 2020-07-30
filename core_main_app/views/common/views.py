@@ -365,17 +365,25 @@ class TemplateXSLRenderingView(View):
                 "list_xslt": template_xsl_rendering.list_xslt.id
                 if template_xsl_rendering.list_xslt
                 else None,
-                "detail_xslt": template_xsl_rendering.detail_xslt.id
-                if template_xsl_rendering.detail_xslt
+                "default_detail_xslt": template_xsl_rendering.default_detail_xslt.id
+                if template_xsl_rendering.default_detail_xslt
+                else None,
+                "list_detail_xslt": [
+                    xslt.id for xslt in template_xsl_rendering.list_detail_xslt
+                ]
+                if template_xsl_rendering.list_detail_xslt
                 else None,
             }
         except (Exception, exceptions.DoesNotExist):
             # If no configuration, new form with pre-selected fields.
-            data = {"template": template.id, "list_xslt": None, "detail_xslt": None}
+            data = {
+                "template": template.id,
+                "list_xslt": None,
+                "default_detail_xslt": None,
+                "list_detail_xslt": None,
+            }
 
-        self.assets = {
-            "css": ["core_main_app/admin/css/templates_xslt/form.css"],
-        }
+        self.assets = {"css": ["core_main_app/admin/css/templates_xslt/form.css"]}
 
         self.context = {
             "template_title": version_manager.title,
@@ -425,19 +433,29 @@ class TemplateXSLRenderingView(View):
                 )
             except (Exception, exceptions.DoesNotExist):
                 list_xslt = None
-            # Get the detail xslt instance
+
+            # Get the list detail xslt instance
             try:
-                detail_xslt = xslt_transformation_api.get_by_id(
-                    request.POST.get("detail_xslt")
+                list_detail_xslt = xslt_transformation_api.get_by_id_list(
+                    request.POST.getlist("list_detail_xslt")
                 )
             except (Exception, exceptions.DoesNotExist):
-                detail_xslt = None
+                list_detail_xslt = None
+
+            # Get the default detail xslt instance
+            try:
+                default_detail_xslt = xslt_transformation_api.get_by_id(
+                    request.POST.get("default_detail_xslt")
+                )
+            except (Exception, exceptions.DoesNotExist):
+                default_detail_xslt = None
 
             template_xsl_rendering_api.add_or_delete(
                 template_xsl_rendering_id=request.POST.get("id"),
                 template_id=request.POST.get("template"),
                 list_xslt=list_xslt,
-                detail_xslt=detail_xslt,
+                default_detail_xslt=default_detail_xslt,
+                list_detail_xslt=list_detail_xslt,
             )
 
             template = template_api.get(request.POST.get("template"))
