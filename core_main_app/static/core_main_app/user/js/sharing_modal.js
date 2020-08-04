@@ -17,11 +17,17 @@ initSharingModal = function(sharingConfigurationFunction, sharingButtonId, shari
                             sharingInputId, sharingSubmitId) {
     $(document).on('click', sharingButtonId, function(event) {
         event.preventDefault();
-        let success = sharingConfigurationFunction();
+        let initialClasses = $(sharingButtonId+">i").attr("class");
 
-        if (success) {
+        $(sharingButtonId+" i").removeClass();
+        $(sharingButtonId+" i").addClass("fa fa-spinner fa-pulse");
+
+        if (sharingConfigurationFunction()) {
             $(sharingModalId).modal("show");
         }
+
+        $(sharingButtonId+" i").removeClass();
+        $(sharingButtonId+" i").addClass(initialClasses);
     });
     $(document).on('click', sharingSubmitId, function(event) {
         event.preventDefault();
