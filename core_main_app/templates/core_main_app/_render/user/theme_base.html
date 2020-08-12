@@ -14,7 +14,7 @@
     <title>{% block title %}{% endblock %}</title>
 
     {% block core_css %}
-        <link rel="stylesheet" href="{% static 'core_main_app/libs/bootstrap/4.4.1/css/bootstrap.min.css' %}" />
+        <link rel="stylesheet" href="{% static 'core_main_app/libs/bootstrap/4.5.2/css/bootstrap.min.css' %}" />
         <link rel="stylesheet" href="{% static 'core_main_app/libs/font-awesome/5.13.0/css/all.min.css' %}" />
         <link rel="stylesheet" href="{% static 'core_main_app/libs/jquery-ui/1.12.1/jquery-ui.css' %}" />
         <link rel="stylesheet" href="{% static 'core_main_app/libs/jquery-ui/1.12.1/jquery-ui.structure.css' %}" />
@@ -36,10 +36,10 @@
     {% block app_modals %}{% endblock %}
 
     {% block core_js %}
-        <script src="{% static 'core_main_app/libs/jquery/3.1.1/jquery.js' %}"></script>
+        <script src="{% static 'core_main_app/libs/jquery/3.5.1/jquery.js' %}"></script>
         <script src="{% static 'core_main_app/libs/jquery-ui/1.12.1/jquery-ui.js' %}"></script>
         <script src="{% static 'core_main_app/libs/popper-js/popper.min.js' %}"></script>
-        <script src="{% static 'core_main_app/libs/bootstrap/4.4.1/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'core_main_app/libs/bootstrap/4.5.2/js/bootstrap.min.js' %}"></script>
         <script src="{% static 'core_main_app/common/js/csrf.js' %}"></script>
         <script src="{% static 'core_main_app/common/js/leave_notice.js' %}"></script>
         {% if DISPLAY_NIST_HEADERS %}
