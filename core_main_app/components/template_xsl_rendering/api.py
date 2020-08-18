@@ -2,13 +2,10 @@
 """
 import logging
 
-from bson import ObjectId
-
 from core_main_app.commons import exceptions
 from core_main_app.commons.exceptions import ApiError
 from core_main_app.components.template import api as template_api
 from core_main_app.components.template_xsl_rendering.models import TemplateXslRendering
-from core_main_app.components.xsl_transformation.models import XslTransformation
 
 logger = logging.getLogger(__name__)
 
@@ -215,30 +212,6 @@ def get_by_id(template_xsl_rendering_id):
 
     """
     return TemplateXslRendering.get_by_id(template_xsl_rendering_id)
-
-
-def get_list_xsl_transformation_by_id(
-    template_xsl_rendering_id, default_detail_id=None
-):
-    """ Get an TemplateXslRendering document by its id.
-
-    Args:
-        template_xsl_rendering_id: Id.
-        default_detail_id: xslt_id
-
-    Returns:
-        TemplateXslRendering object.
-
-    Raises:
-        DoesNotExist: The TemplateXslRendering doesn't exist.
-        ModelError: Internal error during the process.
-
-    """
-    template_xsl_rendering = get_by_id(template_xsl_rendering_id)
-    list_data_ids = [xslt.id for xslt in template_xsl_rendering.list_detail_xslt]
-    if default_detail_id is not None:
-        list_data_ids.append(ObjectId(default_detail_id))
-    return XslTransformation.get_by_id_list(list_data_ids)
 
 
 def get_by_template_id(template_id):

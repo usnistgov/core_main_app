@@ -383,7 +383,15 @@ class TemplateXSLRenderingView(View):
                 "list_detail_xslt": None,
             }
 
-        self.assets = {"css": ["core_main_app/admin/css/templates_xslt/form.css"]}
+        self.assets = {
+            "css": ["core_main_app/admin/css/templates_xslt/form.css"],
+            "js": [
+                {
+                    "path": "core_main_app/admin/js/templates_xslt/detail_xslt.js",
+                    "is_raw": False,
+                }
+            ],
+        }
 
         self.context = {
             "template_title": version_manager.title,

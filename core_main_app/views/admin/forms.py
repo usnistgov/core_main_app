@@ -1,13 +1,16 @@
 """Forms for admin views
 """
 from django import forms
-
+from bson import ObjectId
 from core_main_app.commons.validators import ExtensionValidator
 from core_main_app.components.template import api as template_api
 from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
 )
 from core_main_app.components.xsl_transformation import api as xsl_transformation_api
+from core_main_app.components.template_xsl_rendering import (
+    api as template_xsl_rendering_api,
+)
 from core_main_app.components.xsl_transformation.models import XslTransformation
 from core_main_app.views.admin.commons.upload.forms import UploadForm
 from django_mongoengine.forms import DocumentForm
@@ -98,6 +101,7 @@ class TemplateXsltRenderingForm(forms.Form):
     template = forms.ModelChoiceField(
         widget=forms.HiddenInput(), required=False, queryset=template_api.get_all()
     )
+
     list_xslt = forms.ModelChoiceField(
         label="List XSLT",
         empty_label="(No XSLT)",
@@ -105,13 +109,40 @@ class TemplateXsltRenderingForm(forms.Form):
         widget=forms.Select(attrs={"class": "form-control"}),
         queryset=xsl_transformation_api.get_all(),
     )
+
+    list_detail_xslt = forms.MultipleChoiceField(
+        label="List Detail XSLT",
+        required=False,
+        widget=forms.widgets.CheckboxSelectMultiple,
+    )
+
     default_detail_xslt = forms.ModelChoiceField(
-        label="Detail XSLT",
+        label="Default Detail XSLT",
         empty_label="(No XSLT)",
         required=False,
         widget=forms.Select(attrs={"class": "form-control"}),
-        queryset=xsl_transformation_api.get_all(),
+        queryset=XslTransformation.objects.none(),
     )
+
+    def __init__(self, *args, **kwargs):
+        super(TemplateXsltRenderingForm, self).__init__(*args, **kwargs)
+        self.fields["list_detail_xslt"].choices = _get_xsl_transformation()
+        try:
+            if len(args) > 1:
+                self.fields[
+                    "default_detail_xslt"
+                ].queryset = _get_list_xsl_transformation_by_id(
+                    self.data["id"], self.data["default_detail_xslt"]
+                )
+            else:
+                self.fields[
+                    "default_detail_xslt"
+                ].queryset = _get_list_xsl_transformation_by_id(self.data["id"])
+
+        except:
+            self.fields[
+                "default_detail_xslt"
+            ].queryset = XslTransformation.objects.none()
 
 
 class TextAreaForm(forms.Form):
@@ -121,3 +152,43 @@ class TextAreaForm(forms.Form):
     content = forms.CharField(
         label="", widget=forms.Textarea(attrs={"class": "form-control"}), required=False
     )
+
+
+def _get_xsl_transformation():
+    """ Get XSLT.
+
+    Returns:
+        List of XSLT.
+
+    """
+    xsl_transformation = []
+    list_ = xsl_transformation_api.get_all()
+    for elt in list_:
+        xsl_transformation.append((elt.id, elt.name))
+    return xsl_transformation
+
+
+def _get_list_xsl_transformation_by_id(
+    template_xsl_rendering_id, default_detail_id=None
+):
+    """ Get an TemplateXslRendering document by its id.
+
+    Args:
+        template_xsl_rendering_id: Id.
+        default_detail_id: xslt_id
+
+    Returns:
+        TemplateXslRendering object.
+
+    Raises:
+        DoesNotExist: The TemplateXslRendering doesn't exist.
+        ModelError: Internal error during the process.
+
+    """
+    template_xsl_rendering = template_xsl_rendering_api.get_by_id(
+        template_xsl_rendering_id
+    )
+    list_data_ids = [xslt.id for xslt in template_xsl_rendering.list_detail_xslt]
+    if default_detail_id is not None:
+        list_data_ids.append(ObjectId(default_detail_id))
+    return xsl_transformation_api.get_by_id_list(list_data_ids)

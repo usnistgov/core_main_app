@@ -1,3 +1,8 @@
 .btn-cancel {
     margin-right: 10px;
 }
+
+ul
+{
+   list-style-type: none !important;
+}
