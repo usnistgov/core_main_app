@@ -268,7 +268,6 @@ def disable_template_version_from_version_manager(request):
     return HttpResponse(json.dumps({}), content_type="application/javascript")
 
 
-@login_required
 def disable_version_of_version_manager(version):
     """ Disable a version of a version manager.
 
@@ -306,7 +305,6 @@ def restore_template_version_from_version_manager(request):
     return HttpResponse(json.dumps({}), content_type="application/javascript")
 
 
-@login_required
 def restore_version_from_version_manager(version):
     """ Restore a disabled version of a version manager.
 
@@ -344,7 +342,6 @@ def set_current_template_version_from_version_manager(request):
     return HttpResponse(json.dumps({}), content_type="application/javascript")
 
 
-@login_required
 def set_current_version_from_version_manager(version):
     """ Set the current version of a version manager.
 
