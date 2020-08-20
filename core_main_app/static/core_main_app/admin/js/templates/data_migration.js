@@ -444,7 +444,7 @@ let actionButtonClicked = function(migrate) {
         error: (error) => {
             jqError.html('Impossible to start the ' +
                 (migrate ? 'migration' : 'validation') +
-                ' task :' + JSON.stringify(error));
+                ' task :' + (error.responseText ? error.responseText : JSON.stringify(error)));
             jqError.show();
         }
     });
