@@ -29,9 +29,11 @@ def init_rules(apps):
         # Get curate permissions
         permission = apps.get_model("auth", "Permission")
         publish_data_perm = permission.objects.get(codename=rights.publish_data)
+        publish_blob_perm = permission.objects.get(codename=rights.publish_blob)
 
         # Add permissions to default group
         default_group.permissions.add(publish_data_perm)
+        default_group.permissions.add(publish_blob_perm)
     except Exception as e:
         logger.error("Impossible to init the rules: %s" % str(e))
 
