@@ -18,7 +18,7 @@ INSTALLED_APPS = [
 ]
 
 # SERVER URI
-SERVER_URI = "http://my.curator.com"
+SERVER_URI = "http://example.com"
 
 # IN-MEMORY TEST DATABASE
 DATABASES = {
