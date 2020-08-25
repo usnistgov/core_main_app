@@ -23,8 +23,8 @@ from core_main_app.views.admin.forms import EditTemplateForm
 
 
 class AddObjectModalView(CreateView):
-    """ Common AddObjectModalView.
-        Should be used with add.html and add.js.
+    """Common AddObjectModalView.
+    Should be used with add.html and add.js.
     """
 
     template_name = "core_main_app/common/commons/form.html"
@@ -72,8 +72,8 @@ class AddObjectModalView(CreateView):
 
 
 class EditObjectModalView(UpdateView):
-    """ Common EditObjectModalView.
-        Should be used with edit_page_modal.html and edit.js.
+    """Common EditObjectModalView.
+    Should be used with edit_page_modal.html and edit.js.
     """
 
     template_name = "core_main_app/common/commons/form.html"
@@ -119,8 +119,8 @@ class EditObjectModalView(UpdateView):
 
 
 class DeleteObjectModalView(DeleteView):
-    """ Common DeleteObjectModalView.
-        Should be used with delete_page_modal.html and delete.js.
+    """Common DeleteObjectModalView.
+    Should be used with delete_page_modal.html and delete.js.
     """
 
     template_name = "core_main_app/common/commons/form_delete.html"
@@ -250,7 +250,7 @@ def restore_version_manager(request):
 
 @login_required
 def disable_template_version_from_version_manager(request):
-    """ Disable a template version of a version manager.
+    """Disable a template version of a version manager.
 
     Args:
         request:
@@ -269,7 +269,7 @@ def disable_template_version_from_version_manager(request):
 
 
 def disable_version_of_version_manager(version):
-    """ Disable a version of a version manager.
+    """Disable a version of a version manager.
 
     Args:
         version:
@@ -287,7 +287,7 @@ def disable_version_of_version_manager(version):
 
 @login_required
 def restore_template_version_from_version_manager(request):
-    """ Restore a disabled template version of a version manager.
+    """Restore a disabled template version of a version manager.
 
     Args:
         request:
@@ -306,7 +306,7 @@ def restore_template_version_from_version_manager(request):
 
 
 def restore_version_from_version_manager(version):
-    """ Restore a disabled version of a version manager.
+    """Restore a disabled version of a version manager.
 
     Args:
         version:
@@ -324,7 +324,7 @@ def restore_version_from_version_manager(version):
 
 @login_required
 def set_current_template_version_from_version_manager(request):
-    """ Set the current version of a template.
+    """Set the current version of a template.
 
     Args:
         request:
@@ -343,7 +343,7 @@ def set_current_template_version_from_version_manager(request):
 
 
 def set_current_version_from_version_manager(version):
-    """ Set the current version of a version manager.
+    """Set the current version of a version manager.
 
     Args:
         version:

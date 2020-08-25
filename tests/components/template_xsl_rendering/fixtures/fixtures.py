@@ -8,8 +8,7 @@ from core_main_app.utils.integration_tests.fixture_interface import FixtureInter
 
 
 class TemplateXslRenderingFixtures(FixtureInterface):
-    """  TemplateXslRendering fixtures
-    """
+    """TemplateXslRendering fixtures"""
 
     template_1 = None
     template_2 = None
@@ -22,7 +21,7 @@ class TemplateXslRenderingFixtures(FixtureInterface):
     xsl_transformation_collection = None
 
     def insert_data(self):
-        """ Insert a set of TemplateXslRendering and XslTransformation.
+        """Insert a set of TemplateXslRendering and XslTransformation.
 
         Returns:
 
@@ -32,7 +31,7 @@ class TemplateXslRenderingFixtures(FixtureInterface):
         self.generate_xsl_transformation_collection()
 
     def generate_template_xsl_rendering_collection(self):
-        """ Generate a TemplateXslRendering collection.
+        """Generate a TemplateXslRendering collection.
 
         Returns:
 
@@ -66,7 +65,7 @@ class TemplateXslRenderingFixtures(FixtureInterface):
         ]
 
     def generate_xsl_transformation_collection(self):
-        """ Generate a XslTransformation collection.
+        """Generate a XslTransformation collection.
 
         Returns:
 

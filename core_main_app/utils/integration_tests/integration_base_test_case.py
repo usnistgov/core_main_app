@@ -10,8 +10,8 @@ MOCK_DATABASE_HOST = "mongomock://localhost"
 
 
 class MongoIntegrationBaseTestCase(SimpleTestCase):
-    """ Represent the Integration base test case
-        The integration tests must inherit of this class
+    """Represent the Integration base test case
+    The integration tests must inherit of this class
     """
 
     """
@@ -26,7 +26,7 @@ class MongoIntegrationBaseTestCase(SimpleTestCase):
 
     @classmethod
     def setUpClass(cls):
-        """ Open a connection to the database.
+        """Open a connection to the database.
 
         Returns:
 
@@ -37,14 +37,14 @@ class MongoIntegrationBaseTestCase(SimpleTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        """ Disconnect the database.
+        """Disconnect the database.
         Returns:
 
         """
         cls.database.disconnect()
 
     def setUp(self):
-        """ Insert needed data.
+        """Insert needed data.
 
         Returns:
 
@@ -55,7 +55,7 @@ class MongoIntegrationBaseTestCase(SimpleTestCase):
         self.fixture.insert_data()
 
     def tearDown(self):
-        """ Clean the database.
+        """Clean the database.
 
         Returns:
 

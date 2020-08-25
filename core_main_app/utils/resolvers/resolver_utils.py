@@ -6,7 +6,7 @@ from core_main_app.utils.resolvers.xsd_uri_resolvers import XSD_URI_RESOLVERS
 
 
 def lmxl_uri_resolver():
-    """ Return lxml uri resolver according to the settings
+    """Return lxml uri resolver according to the settings
 
     Returns:
 

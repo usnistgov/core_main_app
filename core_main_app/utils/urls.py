@@ -7,7 +7,7 @@ from django.urls import reverse
 
 
 def get_template_download_pattern():
-    """ Return regex pattern to match an url to download a template.
+    """Return regex pattern to match an url to download a template.
 
     Returns:
 
@@ -27,7 +27,7 @@ def get_template_download_pattern():
 
 
 def get_blob_download_regex():
-    """ Return regex pattern to match an url to download a blob.
+    """Return regex pattern to match an url to download a blob.
 
     Returns:
 

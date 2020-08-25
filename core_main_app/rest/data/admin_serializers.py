@@ -7,14 +7,12 @@ from core_main_app.components.data import api as data_api
 
 
 class AdminDataSerializer(DataSerializer):
-    """ Admin Data serializer
-    """
+    """Admin Data serializer"""
 
     xml_content = XMLContentField()
 
     class Meta(object):
-        """ Meta
-        """
+        """Meta"""
 
         model = Data
         fields = [

@@ -5,12 +5,10 @@ from rest_framework import serializers
 
 
 class GroupSerializer(serializers.ModelSerializer):
-    """ Group serializer
-    """
+    """Group serializer"""
 
     class Meta(object):
-        """ Meta
-        """
+        """Meta"""
 
         model = Group
         fields = ("id", "name")

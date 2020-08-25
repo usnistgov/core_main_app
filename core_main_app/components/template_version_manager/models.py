@@ -29,7 +29,7 @@ class TemplateVersionManager(VersionManager):
 
     @staticmethod
     def get_active_global_version_manager(_cls=True):
-        """ Return all active Version Managers with user set to None.
+        """Return all active Version Managers with user set to None.
 
         Returns:
 
@@ -43,7 +43,7 @@ class TemplateVersionManager(VersionManager):
 
     @staticmethod
     def get_disable_global_version_manager(_cls=True):
-        """ Return all disabled Version Managers with user set to None.
+        """Return all disabled Version Managers with user set to None.
 
         Returns:
 
@@ -57,7 +57,7 @@ class TemplateVersionManager(VersionManager):
 
     @staticmethod
     def get_active_version_manager_by_user_id(user_id, _cls=True):
-        """ Return all active Version Managers with given user id.
+        """Return all active Version Managers with given user id.
 
         Returns:
 
@@ -71,7 +71,7 @@ class TemplateVersionManager(VersionManager):
 
     @staticmethod
     def get_disable_version_manager_by_user_id(user_id, _cls=True):
-        """ Return all disabled Version Managers with given user id.
+        """Return all disabled Version Managers with given user id.
 
         Returns:
 
@@ -116,7 +116,7 @@ class TemplateVersionManager(VersionManager):
 
     @staticmethod
     def get_all_version_manager_except_user_id(user_id, _cls=True):
-        """ Return all Version Managers of all users except user with given user id.
+        """Return all Version Managers of all users except user with given user id.
 
         Args:
             user_id:
@@ -134,7 +134,7 @@ class TemplateVersionManager(VersionManager):
 
     @staticmethod
     def get_all_version_manager_by_user_id(user_id, _cls=True):
-        """ Return all Version Managers with given user id.
+        """Return all Version Managers with given user id.
 
         Args:
             user_id:
@@ -152,21 +152,21 @@ class TemplateVersionManager(VersionManager):
 
     @staticmethod
     def get_all_version_manager(_cls=True):
-        """ Return all Version Managers.
+        """Return all Version Managers.
 
-            Args:
-                _cls:
+        Args:
+            _cls:
 
-            Returns:
+        Returns:
 
-            """
+        """
         queryset = super(TemplateVersionManager, TemplateVersionManager).get_all()
         if _cls:
             queryset = queryset.filter(_cls=TemplateVersionManager.class_name).all()
         return queryset
 
     def save_template_version_manager(self):
-        """ Custom save.
+        """Custom save.
 
         Returns:
             Saved Instance.

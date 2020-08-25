@@ -7,8 +7,7 @@ from core_main_app.components.web_page.models import WebPage
 
 
 class WebPageSerializer(DocumentSerializer):
-    """ Represents the web page serializer
-    """
+    """Represents the web page serializer"""
 
     class Meta(object):
         model = WebPage
@@ -18,17 +17,16 @@ class WebPageSerializer(DocumentSerializer):
         read_only_fields = ("id",)
 
     def create(self, validated_data):
-        """ Create and return a new `WebPage` instance, given the validated data
-        """
+        """Create and return a new `WebPage` instance, given the validated data"""
         # Create data
         web_page = WebPage(
-            content=validated_data["content"], type=validated_data["type"],
+            content=validated_data["content"],
+            type=validated_data["type"],
         )
         # Save the web page
         return web_page_api.upsert(web_page)
 
     def update(self, instance, validated_data):
-        """ Update and return an existing `WebPage` instance, given the validated data
-        """
+        """Update and return an existing `WebPage` instance, given the validated data"""
         instance.content = validated_data.get("content", instance.content)
         return web_page_api.upsert(instance)

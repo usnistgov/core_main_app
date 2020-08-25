@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 def _title_to_codename(title):
-    """ Change the title to a codename.
+    """Change the title to a codename.
 
     Args:
         title:
@@ -39,7 +39,7 @@ def _title_to_codename(title):
 
 
 def create_read_perm(title, owner_id):
-    """ Create read permission.
+    """Create read permission.
 
     Args:
         title
@@ -58,7 +58,7 @@ def create_read_perm(title, owner_id):
 
 
 def create_write_perm(title, owner_id):
-    """ Create write permission.
+    """Create write permission.
 
     Args:
         title
@@ -77,7 +77,7 @@ def create_write_perm(title, owner_id):
 
 
 def _create_perm(name, content_type, codename):
-    """ Create permission.
+    """Create permission.
 
     Args:
         name
@@ -102,7 +102,7 @@ def _create_perm(name, content_type, codename):
 
 
 def add_permission_to_user(user, permission):
-    """ Add permission to user.
+    """Add permission to user.
 
     Args:
         user_id
@@ -115,7 +115,7 @@ def add_permission_to_user(user, permission):
 
 
 def add_permission_to_group(group, permission):
-    """ Add permission to group.
+    """Add permission to group.
 
     Args:
         group
@@ -128,7 +128,7 @@ def add_permission_to_group(group, permission):
 
 
 def remove_permission_to_user(user, permission):
-    """ Remove permission from user.
+    """Remove permission from user.
 
     Args:
         user
@@ -141,7 +141,7 @@ def remove_permission_to_user(user, permission):
 
 
 def remove_permission_to_group(group, permission):
-    """ Remove permission from group.
+    """Remove permission from group.
 
     Args:
         group
@@ -154,7 +154,7 @@ def remove_permission_to_group(group, permission):
 
 
 def get_all_workspace_permissions_user_can_write(user):
-    """ Get a list of permission ids of workspaces that the user has write access.
+    """Get a list of permission ids of workspaces that the user has write access.
 
     Args:
         user
@@ -186,7 +186,7 @@ def get_all_workspace_permissions_user_can_write(user):
 
 
 def get_all_workspace_permissions_user_can_read(user):
-    """ Get a list of permission ids of workspaces that the user has read access.
+    """Get a list of permission ids of workspaces that the user has read access.
 
     Args:
         user
@@ -223,7 +223,7 @@ def get_all_workspace_permissions_user_can_read(user):
 
 
 def get_by_id(permission_id):
-    """ Get the permission by id.
+    """Get the permission by id.
 
     Args:
          permission_id:
@@ -233,7 +233,7 @@ def get_by_id(permission_id):
 
 
 def delete_permission(permission_id):
-    """ Delete a permission.
+    """Delete a permission.
 
     Args:
         permission_id:
@@ -249,7 +249,7 @@ def delete_permission(permission_id):
 
 
 def get_permission_label(permission_id):
-    """ Get the label of a permission.
+    """Get the label of a permission.
 
     Args:
         permission_id:
@@ -261,7 +261,7 @@ def get_permission_label(permission_id):
 
 
 def check_if_group_has_perm(group, permission):
-    """ Check if group has permission.
+    """Check if group has permission.
 
     Args:
         group:
@@ -272,7 +272,7 @@ def check_if_group_has_perm(group, permission):
 
 
 def get_by_codename(codename):
-    """ Get the permission by codename.
+    """Get the permission by codename.
 
     Args:
          codename:

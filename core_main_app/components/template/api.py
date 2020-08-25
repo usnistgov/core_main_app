@@ -82,7 +82,7 @@ def get(template_id):
 
 
 def get_all_by_hash(template_hash):
-    """ Return all template having the given hash.
+    """Return all template having the given hash.
 
     Args:
         template_hash: Template hash.
@@ -95,7 +95,7 @@ def get_all_by_hash(template_hash):
 
 
 def get_all_by_hash_list(template_hash_list):
-    """ Return all template having the given hash list.
+    """Return all template having the given hash list.
 
     Args:
         template_hash_list: Template hash list.
@@ -108,7 +108,7 @@ def get_all_by_hash_list(template_hash_list):
 
 
 def get_all_by_id_list(template_id_list):
-    """ Returns all template with id in list
+    """Returns all template with id in list
 
     Args:
         template_id_list:
@@ -138,7 +138,7 @@ def delete(template):
 
 
 def _register_local_dependencies(template):
-    """ Register local dependencies for the given template.
+    """Register local dependencies for the given template.
 
     Args:
         template: Template instance.

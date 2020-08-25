@@ -17,11 +17,10 @@ logger = logging.getLogger(__name__)
 
 
 class QueryBuilder(object):
-    """ Query builder class
-    """
+    """Query builder class"""
 
     def __init__(self, query, sub_document_root):
-        """ Create query builder
+        """Create query builder
 
         Args:
             query:
@@ -42,7 +41,7 @@ class QueryBuilder(object):
         ]
 
     def add_list_criteria(self, object_name, list_ids):
-        """ Add a criteria on template ids
+        """Add a criteria on template ids
 
         Args:
             object_name
@@ -61,7 +60,7 @@ class QueryBuilder(object):
         self.criteria.append({object_name: {"$in": criteria_ids}})
 
     def add_visibility_criteria(self, visibility):
-        """ Add a criteria on visibility
+        """Add a criteria on visibility
 
         Args:
             visibility:
@@ -90,7 +89,7 @@ class QueryBuilder(object):
             logger.info("add_visibility_criteria case not implemented.")
 
     def add_title_criteria(self, title):
-        """ Add a criteria on title
+        """Add a criteria on title
 
         Args:
             title:
@@ -101,7 +100,7 @@ class QueryBuilder(object):
         self.criteria.append({"title": title})
 
     def get_raw_query(self):
-        """ Return the raw query
+        """Return the raw query
 
         Returns:
 

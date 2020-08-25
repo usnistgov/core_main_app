@@ -11,21 +11,18 @@ from core_main_app.components.template_xsl_rendering.models import TemplateXslRe
 
 
 class TemplateXslRenderingSerializer(DocumentSerializer):
-    """ TemplateXslRendering Serializer
-    """
+    """TemplateXslRendering Serializer"""
 
     template = ReferenceField(model=Template)
 
     class Meta(object):
-        """ Meta class
-        """
+        """Meta class"""
 
         model = TemplateXslRendering
         fields = "__all__"
 
     def update(self, instance, validated_data):
-        """ Update and return an existing `TemplateXslRendering` instance, given the validated data.
-        """
+        """Update and return an existing `TemplateXslRendering` instance, given the validated data."""
         template_id = validated_data.get("template", None)
         list_xslt = validated_data.get("list_xslt", None)
         default_detail_xslt = validated_data.get("default_detail_xslt", None)

@@ -14,8 +14,7 @@ from core_main_app.access_control.exceptions import AccessControlError
 
 
 class BlobSerializer(DocumentSerializer):
-    """ Blob serializer
-    """
+    """Blob serializer"""
 
     blob = FileField(write_only=True)
     handle = SerializerMethodField()
@@ -33,7 +32,7 @@ class BlobSerializer(DocumentSerializer):
         )
 
     def get_handle(self, instance):
-        """ Return handle
+        """Return handle
 
         Args:
             instance:
@@ -47,7 +46,7 @@ class BlobSerializer(DocumentSerializer):
         return get_blob_download_uri(instance, request)
 
     def get_upload_date(self, instance):
-        """ Return upload date
+        """Return upload date
 
         Args:
             instance:
@@ -59,7 +58,7 @@ class BlobSerializer(DocumentSerializer):
         return str(instance.id.generation_time)
 
     def create(self, validated_data):
-        """ Create and return a new `Blob` instance, given the validated data.
+        """Create and return a new `Blob` instance, given the validated data.
 
         Args:
             validated_data:
@@ -79,8 +78,7 @@ class BlobSerializer(DocumentSerializer):
 
 
 class DeleteBlobsSerializer(DocumentSerializer):
-    """ Delete Blob serializer.
-    """
+    """Delete Blob serializer."""
 
     id = CharField()
 
@@ -89,7 +87,7 @@ class DeleteBlobsSerializer(DocumentSerializer):
         fields = ("id",)
 
     def validate_id(self, id):
-        """ Validate id field
+        """Validate id field
 
         Args:
             id:

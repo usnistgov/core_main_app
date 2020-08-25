@@ -15,7 +15,7 @@ from core_main_app.utils.pagination.mongoengine_paginator.paginator import (
 
 @shared_task
 def async_migration_task(data_list, template_id, user_id, migrate):
-    """ Async task which perform a migration / validation of the data list for the given target template id
+    """Async task which perform a migration / validation of the data list for the given target template id
 
     Args:
         data_list:
@@ -69,7 +69,7 @@ def async_migration_task(data_list, template_id, user_id, migrate):
 
 @shared_task
 def async_template_migration_task(templates, target_template_id, user_id, migrate):
-    """ Async task which perform a migration / validation of all the data which belong to the given template id list
+    """Async task which perform a migration / validation of all the data which belong to the given template id list
 
     Args:
         templates:
@@ -173,7 +173,7 @@ def async_template_migration_task(templates, target_template_id, user_id, migrat
 
 
 def get_task_progress(task_id):
-    """ Get task status for the given task id
+    """Get task status for the given task id
 
     Args:
         task_id:
@@ -193,7 +193,7 @@ def get_task_progress(task_id):
 
 
 def get_task_result(task_id):
-    """ Get task result for the given task id
+    """Get task result for the given task id
 
     Args:
         task_id:

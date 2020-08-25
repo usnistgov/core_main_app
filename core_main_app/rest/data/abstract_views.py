@@ -17,7 +17,7 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
     sub_document_root = "dict_content"
 
     def get(self, request):
-        """ Execute query on local instance and return results
+        """Execute query on local instance and return results
 
         Parameters:
 
@@ -62,7 +62,7 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
         return self.execute_query()
 
     def post(self, request):
-        """ Execute query on local instance and return results
+        """Execute query on local instance and return results
 
         Parameters:
 
@@ -87,8 +87,7 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
         return self.execute_query()
 
     def execute_query(self):
-        """ Compute and return query results
-        """
+        """Compute and return query results"""
         try:
             # get query and templates
             query = self.request.data.get("query", None)
@@ -126,7 +125,7 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
     def build_query(
         self, query, workspaces=None, templates=None, options=None, title=None
     ):
-        """ Build the raw query
+        """Build the raw query
 
         Args:
 
@@ -162,7 +161,7 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
         return query_builder.get_raw_query()
 
     def execute_raw_query(self, raw_query, order_by_field):
-        """ Execute the raw query in database
+        """Execute the raw query in database
 
         Args:
 
@@ -177,7 +176,7 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
 
     @abstractmethod
     def build_response(self, data_list):
-        """ Build the paginated response.
+        """Build the paginated response.
 
         Args:
 
@@ -192,7 +191,7 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
 
 class AbstractMigrationView(APIView, metaclass=ABCMeta):
     def post(self, request, template_id, migrate):
-        """ Retrieve all the Data and validate the associated
+        """Retrieve all the Data and validate the associated
         Template and perform a migration if migrate = True
 
         Parameters:

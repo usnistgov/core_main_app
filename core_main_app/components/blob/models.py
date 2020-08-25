@@ -17,8 +17,7 @@ from django_mongoengine import fields, Document
 
 
 class Blob(Document):
-    """ Blob object
-    """
+    """Blob object"""
 
     filename = fields.StringField(blank=False, validation=not_empty_or_whitespaces)
     handle = fields.StringField(blank=False)
@@ -32,7 +31,7 @@ class Blob(Document):
 
     @staticmethod
     def get_by_id(blob_id):
-        """ Return the object with the given id.
+        """Return the object with the given id.
 
         Args:
             blob_id:
@@ -50,7 +49,7 @@ class Blob(Document):
 
     @staticmethod
     def get_all():
-        """ Return all blobs.
+        """Return all blobs.
 
         Args:
 
@@ -62,7 +61,7 @@ class Blob(Document):
 
     @staticmethod
     def get_all_by_user_id(user_id):
-        """ Return all blobs by user.
+        """Return all blobs by user.
 
         Args:
             user_id: User id.
@@ -75,7 +74,7 @@ class Blob(Document):
 
     @staticmethod
     def get_all_by_workspace(workspace):
-        """ Get all blobs that belong to the workspace.
+        """Get all blobs that belong to the workspace.
 
         Args:
             workspace:
@@ -87,7 +86,7 @@ class Blob(Document):
 
     @staticmethod
     def get_all_by_list_workspace(list_workspace):
-        """ Get all blobs that belong to the list of workspace.
+        """Get all blobs that belong to the list of workspace.
 
         Args:
             list_workspace:
@@ -99,7 +98,7 @@ class Blob(Document):
 
     @staticmethod
     def get_none():
-        """ Return None object, used by blobs.
+        """Return None object, used by blobs.
 
         Returns:
 
@@ -108,7 +107,7 @@ class Blob(Document):
 
     @classmethod
     def blob_host(cls):
-        """ Return blob host.
+        """Return blob host.
 
         Returns:
 
@@ -125,7 +124,7 @@ class Blob(Document):
 
     @property
     def blob(self):
-        """ Return blob from blob host.
+        """Return blob from blob host.
 
         Returns:
 
@@ -151,7 +150,7 @@ class Blob(Document):
         self._blob = value
 
     def save_blob(self):
-        """ Save blob on the blob host.
+        """Save blob on the blob host.
 
         Returns:
 
@@ -159,7 +158,7 @@ class Blob(Document):
         self.handle = str(Blob.blob_host().save(self._blob))
 
     def delete_blob(self):
-        """ Delete blob on the blob host.
+        """Delete blob on the blob host.
 
         Returns:
 

@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 def init_rules(apps):
-    """ Init of group and permissions for the application.
+    """Init of group and permissions for the application.
     If the anonymous group does not exist, creation of the group
     If the default group does not exist, creation of the group
 
@@ -41,7 +41,7 @@ def init_rules(apps):
 
 
 def create_public_workspace():
-    """ Create and save a public workspace for registry. It will also create permissions.
+    """Create and save a public workspace for registry. It will also create permissions.
 
     Returns:
     """

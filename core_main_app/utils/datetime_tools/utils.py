@@ -7,7 +7,7 @@ import pytz
 
 
 def datetime_now():
-    """ Return the current date
+    """Return the current date
 
     Returns:
 

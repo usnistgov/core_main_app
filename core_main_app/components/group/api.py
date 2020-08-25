@@ -8,7 +8,7 @@ import core_main_app.permissions.rights as rights
 
 
 def get_or_create(name):
-    """ Get or create a group.
+    """Get or create a group.
     Args:
         name:
 
@@ -19,7 +19,7 @@ def get_or_create(name):
 
 
 def get_all_groups():
-    """ Return all Groups.
+    """Return all Groups.
 
     Returns:
         List of Groups
@@ -44,19 +44,19 @@ def get_by_name_and_permission(name, permission_codename):
 
 
 def get_group_by_id(group_id):
-    """ Return a group given its primary key.
+    """Return a group given its primary key.
 
-        Args:
-            group_id (str): Given group id
+    Args:
+        group_id (str): Given group id
 
-        Returns:
-            Group object
+    Returns:
+        Group object
     """
     return Group.objects.get(pk=group_id)
 
 
 def get_anonymous_group():
-    """ Get anonymous group of users.
+    """Get anonymous group of users.
 
     Returns:
     """
@@ -64,7 +64,7 @@ def get_anonymous_group():
 
 
 def get_default_group():
-    """ Get default group of users.
+    """Get default group of users.
 
     Returns:
     """
@@ -72,7 +72,7 @@ def get_default_group():
 
 
 def get_all_groups_by_list_id(list_groups_ids):
-    """ Get all groups by the given list of group ids.
+    """Get all groups by the given list of group ids.
 
     Args:
         list_groups_ids
@@ -83,7 +83,7 @@ def get_all_groups_by_list_id(list_groups_ids):
 
 
 def get_all_groups_except_list_id(list_groups_ids):
-    """ Get all groups except the given list of group ids.
+    """Get all groups except the given list of group ids.
 
     Args:
         list_groups_ids
@@ -94,7 +94,7 @@ def get_all_groups_except_list_id(list_groups_ids):
 
 
 def get_all_groups_except_list(list_group):
-    """ Get all groups except the given list of groups.
+    """Get all groups except the given list of groups.
 
     Args:
         list_group

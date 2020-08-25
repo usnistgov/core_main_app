@@ -13,7 +13,12 @@ from core_main_app.utils.rendering import render
 from core_main_app.views.common import ajax as common_ajax, views as common_views
 from core_main_app.views.user import views as user_views, ajax as user_ajax
 
-schema_view = get_schema_view(openapi.Info(title="REST API", default_version="v1",),)
+schema_view = get_schema_view(
+    openapi.Info(
+        title="REST API",
+        default_version="v1",
+    ),
+)
 
 urlpatterns = [
     re_path(r"^$", user_views.homepage, name="core_main_app_homepage"),
@@ -160,5 +165,10 @@ urlpatterns = [
         r"^reset/done/$",
         user_views.custom_password_reset_complete,
         name="password_reset_complete",
+    ),
+    re_path(
+        r"^change-data-display",
+        user_ajax.change_data_display,
+        name="core_main_add_change_data_display",
     ),
 ]

@@ -25,7 +25,7 @@ def load_dependencies(validated_data):
 
 
 def can_user_modify_template_version_manager(template_version_manager, user):
-    """ Check that user can modify the template version manager.
+    """Check that user can modify the template version manager.
 
     Args:
         template_version_manager:

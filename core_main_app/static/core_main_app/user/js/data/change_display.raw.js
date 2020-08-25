@@ -1,0 +1,1 @@
+var changeDataDisplayUrl = "{% url 'core_main_add_change_data_display' %}";

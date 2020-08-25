@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 
 def get_all_users():
-    """ Return all Users.
+    """Return all Users.
 
     Returns:
         List of Users
@@ -15,7 +15,7 @@ def get_all_users():
 
 
 def get_active_users():
-    """ Return active Users.
+    """Return active Users.
 
     Returns:
         List of active Users
@@ -27,11 +27,11 @@ def get_active_users():
 def get_user_by_username(username):
     """Return a user given its username.
 
-        Args:
-            username (str): Given username
+    Args:
+        username (str): Given username
 
-        Returns:
-            User object
+    Returns:
+        User object
     """
     return User.objects.get(username=username)
 
@@ -39,11 +39,11 @@ def get_user_by_username(username):
 def get_user_by_id(user_id):
     """Return a user given its primary key.
 
-        Args:
-            user_id (str): Given user id
+    Args:
+        user_id (str): Given user id
 
-        Returns:
-            User object
+    Returns:
+        User object
     """
     return User.objects.get(pk=user_id)
 
@@ -51,15 +51,15 @@ def get_user_by_id(user_id):
 def create_and_save_user(username, password, first_name, last_name, email):
     """Save a user with the given parameters.
 
-        Args:
-            username (str): Given user name
-            password (str): Given password
-            first_name (str): Given first name
-            last_name (str): Given last name
-            email (str): Given email
+    Args:
+        username (str): Given user name
+        password (str): Given password
+        first_name (str): Given first name
+        last_name (str): Given last name
+        email (str): Given email
 
-        Returns:
-            User object
+    Returns:
+        User object
     """
     user = User.objects.create_user(
         username=username,
@@ -72,7 +72,7 @@ def create_and_save_user(username, password, first_name, last_name, email):
 
 
 def upsert(user):
-    """ Upsert user.
+    """Upsert user.
 
     Args:
         user (User): The user to be saved
@@ -86,7 +86,7 @@ def upsert(user):
 
 
 def get_all_users_except_list(list_user):
-    """ Get all users except the given list of users.
+    """Get all users except the given list of users.
 
     Args:
         list_user
@@ -97,7 +97,7 @@ def get_all_users_except_list(list_user):
 
 
 def get_all_users_except_list_id(list_user_ids):
-    """ Get all users except the given list of user ids.
+    """Get all users except the given list of user ids.
 
     Args:
         list_user_ids
@@ -108,7 +108,7 @@ def get_all_users_except_list_id(list_user_ids):
 
 
 def get_all_users_by_list_id(list_user_ids):
-    """ Get all users by the given list of user ids.
+    """Get all users by the given list of user ids.
 
     Args:
         list_user_ids
@@ -119,7 +119,7 @@ def get_all_users_by_list_id(list_user_ids):
 
 
 def get_id_username_dict(list_user):
-    """ Get a usable key-value list
+    """Get a usable key-value list
 
     Args:
         list_user:

@@ -12,8 +12,7 @@ from django_mongoengine import fields, Document
 
 
 class AbstractData(Document):
-    """ AbstractData object
-    """
+    """AbstractData object"""
 
     dict_content = fields.DictField(blank=True)
     title = fields.StringField(blank=False, validation=not_empty_or_whitespaces)
@@ -59,7 +58,7 @@ class AbstractData(Document):
         self._xml_content = value
 
     def convert_and_save(self):
-        """ Save Data object and convert the xml to dict if needed.
+        """Save Data object and convert the xml to dict if needed.
 
         Returns:
 
@@ -70,7 +69,7 @@ class AbstractData(Document):
         return self.save()
 
     def convert_to_dict(self):
-        """ Convert the xml contained in xml_content into a dictionary.
+        """Convert the xml contained in xml_content into a dictionary.
 
         Returns:
 
@@ -89,7 +88,7 @@ class AbstractData(Document):
         self.dict_content = dict_content
 
     def convert_to_file(self):
-        """ Convert the xml string into a file.
+        """Convert the xml string into a file.
 
         Returns:
 

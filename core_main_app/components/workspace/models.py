@@ -11,7 +11,7 @@ from django_mongoengine import fields, Document
 
 class Workspace(Document):
     """
-        Workspace class.
+    Workspace class.
     """
 
     title = fields.StringField(blank=False, validation=not_empty_or_whitespaces)
@@ -33,7 +33,7 @@ class Workspace(Document):
 
     @staticmethod
     def get_all():
-        """ Get all workspaces.
+        """Get all workspaces.
 
         Returns:
 
@@ -42,7 +42,7 @@ class Workspace(Document):
 
     @staticmethod
     def get_all_by_owner(user_id):
-        """ Get all workspaces created by the given user id.
+        """Get all workspaces created by the given user id.
 
         Args:
             user_id
@@ -54,7 +54,7 @@ class Workspace(Document):
 
     @staticmethod
     def get_by_id(workspace_id):
-        """ Return the workspace with the given id.
+        """Return the workspace with the given id.
 
         Args:
             workspace_id
@@ -72,7 +72,7 @@ class Workspace(Document):
 
     @staticmethod
     def get_all_workspaces_with_read_access_by_user_id(user_id, read_permissions):
-        """ Get all workspaces with read access for the given user id.
+        """Get all workspaces with read access for the given user id.
 
         Args:
             user_id
@@ -89,7 +89,7 @@ class Workspace(Document):
 
     @staticmethod
     def get_all_workspaces_with_write_access_by_user_id(user_id, write_permissions):
-        """ Get all workspaces with write access for the given user id.
+        """Get all workspaces with write access for the given user id.
 
         Args:
             user_id
@@ -106,7 +106,7 @@ class Workspace(Document):
     def get_all_workspaces_with_read_access_not_owned_by_user_id(
         user_id, read_permissions
     ):
-        """ Get all workspaces with read access not owned by the given user id.
+        """Get all workspaces with read access not owned by the given user id.
 
         Args:
             user_id
@@ -125,7 +125,7 @@ class Workspace(Document):
     def get_all_workspaces_with_write_access_not_owned_by_user_id(
         user_id, write_permissions
     ):
-        """ Get all workspaces with write access not owned by the given user id.
+        """Get all workspaces with write access not owned by the given user id.
 
         Args:
             user_id
@@ -140,7 +140,7 @@ class Workspace(Document):
 
     @staticmethod
     def get_all_public_workspaces():
-        """ Get all public workspaces.
+        """Get all public workspaces.
 
         Args:
 
@@ -151,7 +151,7 @@ class Workspace(Document):
 
     @staticmethod
     def get_all_other_public_workspaces(user_id):
-        """ Get all other public workspaces.
+        """Get all other public workspaces.
 
         Args:
             user_id
@@ -163,7 +163,7 @@ class Workspace(Document):
 
     @staticmethod
     def get_non_public_workspace_owned_by_user_id(user_id):
-        """ Get the non public workspaces owned by the given user id.
+        """Get the non public workspaces owned by the given user id.
 
         Args:
             user_id
@@ -175,7 +175,7 @@ class Workspace(Document):
 
     @staticmethod
     def get_public_workspaces_owned_by_user_id(user_id):
-        """ Get the public workspaces owned the given user id.
+        """Get the public workspaces owned the given user id.
 
         Args:
             user_id
@@ -187,7 +187,7 @@ class Workspace(Document):
 
     @staticmethod
     def get_global_workspace():
-        """ Get global workspace.
+        """Get global workspace.
 
         Returns:
         """
@@ -200,7 +200,7 @@ class Workspace(Document):
 
     @property
     def is_global(self):
-        """ Get is global.
+        """Get is global.
 
         Returns:
         """

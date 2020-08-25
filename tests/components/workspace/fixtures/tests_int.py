@@ -11,8 +11,7 @@ TITLE = "title"
 
 
 class TestWorkspaceFixtures(MongoIntegrationTransactionTestCase):
-    """ Test Workspace fixtures
-    """
+    """Test Workspace fixtures"""
 
     def test_create_workspace(self):
         # Context

@@ -5,11 +5,10 @@ from mongoengine.connection import disconnect
 
 
 class Database(object):
-    """ Represent a Database.
-    """
+    """Represent a Database."""
 
     def __init__(self, host, name):
-        """ Constructor of the database Object
+        """Constructor of the database Object
 
         Args:
             host: host of the database (like an uri)
@@ -20,7 +19,7 @@ class Database(object):
         self.database = None
 
     def connect(self):
-        """ Open a connection to the database.
+        """Open a connection to the database.
 
         Returns:
             the database connection created
@@ -29,12 +28,11 @@ class Database(object):
         return self.database
 
     def disconnect(self):
-        """ Close the connection.
-        """
+        """Close the connection."""
         disconnect(self.database)
 
     def clean_database(self):
-        """ Clear all collections of the database.
+        """Clear all collections of the database.
 
         Returns:
 
@@ -52,8 +50,7 @@ class Database(object):
 
 
 def init_text_index(document_object):
-    """ Create index for full text search.
-    """
+    """Create index for full text search."""
     collection = document_object._get_collection()
     collection.create_index(
         [("$**", "text")], default_language="en", language_override="en"

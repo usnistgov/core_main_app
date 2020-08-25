@@ -127,7 +127,9 @@ class TestXslTransformationDetailDeletePermission(SimpleTestCase):
     def setUp(self):
         self.fake_id = "507f1f77bcf86cd799439011"
 
-    def test_anonymous_returns_http_403(self,):
+    def test_anonymous_returns_http_403(
+        self,
+    ):
         response = RequestMock.do_request_delete(
             xslt_views.XslTransformationDetail.as_view(),
             create_mock_user("1", is_anonymous=True),
@@ -167,7 +169,9 @@ class TestXslTransformationDetailPatchPermission(SimpleTestCase):
     def setUp(self):
         self.fake_id = "507f1f77bcf86cd799439011"
 
-    def test_anonymous_returns_http_403(self,):
+    def test_anonymous_returns_http_403(
+        self,
+    ):
         response = RequestMock.do_request_patch(
             xslt_views.XslTransformationDetail.as_view(),
             create_mock_user("1", is_anonymous=True),
@@ -213,9 +217,12 @@ class TestXslTransformationDetailPatchPermission(SimpleTestCase):
 
 
 class TestXslTransformationTransformPostPermission(SimpleTestCase):
-    def test_anonymous_returns_http_403(self,):
+    def test_anonymous_returns_http_403(
+        self,
+    ):
         response = RequestMock.do_request_post(
-            xslt_views.XslTransformationTransform.as_view(), None,
+            xslt_views.XslTransformationTransform.as_view(),
+            None,
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

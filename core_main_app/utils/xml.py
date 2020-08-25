@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 
 def validate_xml_schema(xsd_tree):
-    """ Check if XSD schema is valid, send XSD Schema to server to be validated if
+    """Check if XSD schema is valid, send XSD Schema to server to be validated if
     XERCES_VALIDATION is true.
 
     Args:
@@ -246,20 +246,20 @@ def get_hash(xml_string):
 
 
 def post_processor(path, key, value):
-    """ Called after XML to JSON transformation.
+    """Called after XML to JSON transformation.
 
-        Parameters:
-            path:
-            key:
-            value:
+    Parameters:
+        path:
+        key:
+        value:
 
-        Returns:
+    Returns:
     """
     return key, convert_value(value)
 
 
 def convert_value(value):
-    """ Convert the value to the true type
+    """Convert the value to the true type
 
     Args:
         value:
@@ -337,13 +337,13 @@ def update_dependencies(xsd_string, dependencies):
 def get_local_dependencies(xsd_string):
     """Get local dependencies from an xsd.
 
-        Args:
-            xsd_string: XSD as string.
+    Args:
+        xsd_string: XSD as string.
 
-        Returns:
-            Local dependencies
+    Returns:
+        Local dependencies
 
-        """
+    """
     # declare list of dependencies
     dependencies = []
     # Get includes and imports
@@ -464,7 +464,7 @@ def xsl_transform(xml_string, xslt_string):
 
 
 def xpath_to_dot_notation(xpath, namespaces=None):
-    """ Transforms XML xpath into dot notation
+    """Transforms XML xpath into dot notation
 
     Args:
         xpath:
@@ -489,7 +489,7 @@ def xpath_to_dot_notation(xpath, namespaces=None):
 
 
 def validate_xpath(xpath):
-    """ Validate a provided xpath.
+    """Validate a provided xpath.
 
     Args:
         xpath:

@@ -9,8 +9,7 @@ from tests.components.user.fixtures.fixtures import UserFixtures
 
 
 class TestUserFixtures(MongoIntegrationTransactionTestCase):
-    """ Test User fixtures
-    """
+    """Test User fixtures"""
 
     def test_create_user(self):
         # Context

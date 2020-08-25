@@ -13,14 +13,13 @@ logger = logging.getLogger(__name__)
 
 
 class Database(object):
-    """ Represent Database.
-    """
+    """Represent Database."""
 
     def __init__(self):
         self.client = None
 
     def connect(self, db_uri, db_name, doc_class=dict):
-        """ Connect to the database from settings.py.
+        """Connect to the database from settings.py.
 
         Args:
             db_uri:
@@ -40,13 +39,13 @@ class Database(object):
 
     def close_connection(self):
         """
-            Close the client connection.
+        Close the client connection.
         """
         self.client.close()
 
     @staticmethod
     def get_collection(db, collection_name):
-        """ Return cursor of collection name in parameters.
+        """Return cursor of collection name in parameters.
 
         Args:
             db:
@@ -63,7 +62,7 @@ class Database(object):
 
     @staticmethod
     def clean_database(db):
-        """ Clean the database.
+        """Clean the database.
 
         Args:
             db:
@@ -81,7 +80,7 @@ class Database(object):
 
 
 def get_full_text_query(text):
-    """ Return a full text query.
+    """Return a full text query.
 
     Args:
         text: List of keywords

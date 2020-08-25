@@ -19,13 +19,12 @@ logger = logging.getLogger("core_main_app.rest.web_page.views")
 
 
 class WebPageList(APIView):
-    """ Retrieve, create or delete the web page
-    """
+    """Retrieve, create or delete the web page"""
 
     web_page_type = None
 
     def get_object(self):
-        """ Get the web page from db
+        """Get the web page from db
 
         Args:
 
@@ -39,7 +38,7 @@ class WebPageList(APIView):
             raise Http404
 
     def get(self, request):
-        """ Retrieve the web page
+        """Retrieve the web page
 
         Args:
 
@@ -76,7 +75,7 @@ class WebPageList(APIView):
 
     @method_decorator(api_staff_member_required())
     def post(self, request):
-        """ Create or update the custom web page
+        """Create or update the custom web page
 
         Parameters:
 
@@ -128,7 +127,7 @@ class WebPageList(APIView):
 
     @method_decorator(api_staff_member_required())
     def delete(self, request):
-        """ Delete the custom web page
+        """Delete the custom web page
 
         Args:
 

@@ -24,14 +24,12 @@ class XMLContentField(serializers.Field):
 
 
 class DataSerializer(DocumentSerializer):
-    """ Data serializer
-    """
+    """Data serializer"""
 
     xml_content = XMLContentField()
 
     class Meta(object):
-        """ Meta
-        """
+        """Meta"""
 
         model = Data
         fields = [
@@ -84,12 +82,10 @@ class DataSerializer(DocumentSerializer):
 
 # FIXME: Should use in the future an serializer with dynamic fields (init depth with parameter for example)
 class DataWithTemplateInfoSerializer(DocumentSerializer):
-    """ Data Full serializer
-    """
+    """Data Full serializer"""
 
     class Meta(object):
-        """ Meta
-        """
+        """Meta"""
 
         model = Data
         depth = 2

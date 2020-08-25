@@ -8,8 +8,7 @@ from core_main_app.utils.integration_tests.fixture_interface import FixtureInter
 
 
 class WorkspaceFixtures(FixtureInterface):
-    """ Workspace Fixture
-    """
+    """Workspace Fixture"""
 
     def insert_data(self):
         pass

@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 
 def has_perm_publish_data(user):
-    """ Does the user have the permission to publish a data.
+    """Does the user have the permission to publish a data.
 
     Args:
         user
@@ -36,7 +36,7 @@ def has_perm_publish_data(user):
 
 
 def can_read_list_data_id(func, list_data_id, user):
-    """ Can read list of data.
+    """Can read list of data.
 
     Args:
         func:
@@ -56,7 +56,7 @@ def can_read_list_data_id(func, list_data_id, user):
 
 
 def can_read_data_query(func, query, user, order_by_field=DATA_SORTING_FIELDS):
-    """ Can read a data, given a query.
+    """Can read a data, given a query.
 
     Args:
         func:
@@ -82,7 +82,7 @@ def can_read_data_query(func, query, user, order_by_field=DATA_SORTING_FIELDS):
 
 
 def can_read_aggregate_query(func, query, user):
-    """ Can read a data, given an aggregate query.
+    """Can read a data, given an aggregate query.
 
     Args:
         func:
@@ -104,7 +104,7 @@ def can_read_aggregate_query(func, query, user):
 
 
 def _update_can_read_query(query, user):
-    """ Update query with access control parameters.
+    """Update query with access control parameters.
 
     Args:
         query:
@@ -121,7 +121,7 @@ def _update_can_read_query(query, user):
 
 
 def _update_can_read_aggregate_query(query, user):
-    """ Update query with access control parameters.
+    """Update query with access control parameters.
 
     Args:
         query:
@@ -138,7 +138,7 @@ def _update_can_read_aggregate_query(query, user):
 
 
 def _get_read_accessible_workspaces_by_user(user):
-    """ Get read accessible workspaces by user.
+    """Get read accessible workspaces by user.
 
     Args:
         user:
@@ -162,7 +162,7 @@ def _get_read_accessible_workspaces_by_user(user):
 
 
 def can_write_data_workspace(func, data, workspace, user):
-    """ Can user write data in workspace.
+    """Can user write data in workspace.
 
     Args:
         func:

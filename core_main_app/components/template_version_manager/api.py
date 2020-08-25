@@ -101,7 +101,7 @@ def get_global_version_managers(_cls=True):
 
 
 def get_active_global_version_manager(_cls=True):
-    """ Return all active Version Managers with user set to None.
+    """Return all active Version Managers with user set to None.
 
     Returns:
 
@@ -110,7 +110,7 @@ def get_active_global_version_manager(_cls=True):
 
 
 def get_disable_global_version_manager(_cls=True):
-    """ Return all disabled Version Managers with user set to None.
+    """Return all disabled Version Managers with user set to None.
 
     Returns:
 
@@ -119,7 +119,7 @@ def get_disable_global_version_manager(_cls=True):
 
 
 def get_active_version_manager_by_user_id(user_id, _cls=True):
-    """ Return all active Version Managers with given user id.
+    """Return all active Version Managers with given user id.
 
     Returns:
 
@@ -128,7 +128,7 @@ def get_active_version_manager_by_user_id(user_id, _cls=True):
 
 
 def get_disable_version_manager_by_user_id(user_id, _cls=True):
-    """ Return all disabled Version Managers with given user id.
+    """Return all disabled Version Managers with given user id.
 
     Returns:
 
@@ -137,7 +137,7 @@ def get_disable_version_manager_by_user_id(user_id, _cls=True):
 
 
 def get_version_number(template_version_manager, template):
-    """ Return version number from version id.
+    """Return version number from version id.
 
     Args:
         template_version_manager:
@@ -177,7 +177,7 @@ def get_all_by_version_ids(version_ids):
 
 
 def get_all_version_manager_except_user_id(user_id, _cls=True):
-    """ Return all  Version Managers of all users except user with given user id.
+    """Return all  Version Managers of all users except user with given user id.
 
     Returns:
 
@@ -186,7 +186,7 @@ def get_all_version_manager_except_user_id(user_id, _cls=True):
 
 
 def get_all_by_user_id(user_id, _cls=True):
-    """ Return all Template Version Managers with given user id.
+    """Return all Template Version Managers with given user id.
 
     Returns:
 
@@ -195,7 +195,7 @@ def get_all_by_user_id(user_id, _cls=True):
 
 
 def get_all(_cls=True):
-    """ Return all Template Version Managers.
+    """Return all Template Version Managers.
 
     Returns:
 

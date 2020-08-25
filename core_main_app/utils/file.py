@@ -11,7 +11,7 @@ from core_main_app.commons.exceptions import CoreError
 
 
 def get_file_http_response(file_content, file_name, content_type=None, extension=""):
-    """ Return http response with file to download
+    """Return http response with file to download
 
     Args:
         file_content:
@@ -48,7 +48,7 @@ def get_file_http_response(file_content, file_name, content_type=None, extension
 
 
 def read_file_content(file_path):
-    """ Read the content of a file
+    """Read the content of a file
 
     Args:
         file_path:
@@ -62,7 +62,7 @@ def read_file_content(file_path):
 
 
 def get_filename_from_response(response):
-    """ Get filename from HTTP response
+    """Get filename from HTTP response
 
     Args:
         response: HTTP response
@@ -80,7 +80,7 @@ def get_filename_from_response(response):
 
 
 def get_base_64_content_from_response(response):
-    """ Get ascii content from HTTP response
+    """Get ascii content from HTTP response
 
     Args:
         response: HTTP response

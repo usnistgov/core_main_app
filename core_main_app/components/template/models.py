@@ -54,7 +54,7 @@ class Template(Document):
 
     @staticmethod
     def get_all_by_hash(template_hash):
-        """ Return all template having the given hash.
+        """Return all template having the given hash.
 
         Args:
             template_hash: Template hash.
@@ -67,7 +67,7 @@ class Template(Document):
 
     @staticmethod
     def get_all_by_hash_list(template_hash_list):
-        """ Return all template having the given hash list.
+        """Return all template having the given hash list.
 
         Args:
             template_hash_list: Template hash list.
@@ -80,7 +80,7 @@ class Template(Document):
 
     @staticmethod
     def get_all_by_id_list(template_id_list):
-        """ Return all template with id in list.
+        """Return all template with id in list.
 
         Args:
             template_id_list:

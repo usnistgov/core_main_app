@@ -8,6 +8,7 @@ from core_main_app.commons import exceptions
 from core_main_app.components.template_xsl_rendering import (
     api as template_xsl_rendering_api,
 )
+from core_main_app.components.xsl_transformation import api as xsl_transformation_api
 from core_main_app.settings import DEFAULT_DATA_RENDERING_XSLT
 from core_main_app.utils.file import read_file_content
 from core_main_app.utils.xml import xsl_transform
@@ -22,7 +23,7 @@ class XSLType(object):
 
 @register.simple_tag(name="xsl_transform_list")
 def render_xml_as_html(*args, **kwargs):
-    """ Render an XML to HTML using the list xslt.
+    """Render an XML to HTML using the list xslt.
     Args:
         *args:
         **kwargs:
@@ -34,14 +35,15 @@ def render_xml_as_html(*args, **kwargs):
     xml_content = kwargs["xml_content"]
     template_id = kwargs.get("template_id", None)
     template_hash = kwargs.get("template_hash", None)
+    xsl_transform_id = kwargs.get("xslt_id", None)
     return _render_xml_as_html(
-        xml_content, template_id, template_hash, XSLType.type_list
+        xml_content, template_id, template_hash, XSLType.type_list, xsl_transform_id
     )
 
 
 @register.simple_tag(name="xsl_transform_detail")
 def render_xml_as_html(*args, **kwargs):
-    """ Render an XML to HTML using the detail xslt.
+    """Render an XML to HTML using the detail xslt.
     Args:
         *args:
         **kwargs:
@@ -53,19 +55,25 @@ def render_xml_as_html(*args, **kwargs):
     xml_content = kwargs["xml_content"]
     template_id = kwargs.get("template_id", None)
     template_hash = kwargs.get("template_hash", None)
+    xsl_transform_id = kwargs.get("xslt_id", None)
     return _render_xml_as_html(
-        xml_content, template_id, template_hash, XSLType.type_detail
+        xml_content, template_id, template_hash, XSLType.type_detail, xsl_transform_id
     )
 
 
 def _render_xml_as_html(
-    xml_string, template_id=None, template_hash=None, xslt_type=XSLType.type_list
+    xml_string,
+    template_id=None,
+    template_hash=None,
+    xslt_type=XSLType.type_list,
+    xsl_transform_id=None,
 ):
-    """ Render an XML to HTML according to an xslt type (list or detail).
+    """Render an XML to HTML according to an xslt type (list or detail).
     Args:
         xml_string:
         template_id:
         template_hash:
+
         xslt_type:
 
     Returns:
@@ -79,8 +87,8 @@ def _render_xml_as_html(
                     template_id
                 )
             elif template_hash:
-                template_xsl_rendering = template_xsl_rendering_api.get_by_template_hash(
-                    template_hash
+                template_xsl_rendering = (
+                    template_xsl_rendering_api.get_by_template_hash(template_hash)
                 )
             else:
                 raise Exception(
@@ -90,7 +98,7 @@ def _render_xml_as_html(
             if xslt_type == XSLType.type_list:
                 xslt_string = template_xsl_rendering.list_xslt.content
             elif xslt_type == XSLType.type_detail:
-                xslt_string = template_xsl_rendering.detail_xslt.content
+                xslt_string = xsl_transformation_api.get_by_id(xsl_transform_id).content
             else:
                 raise Exception("XSLT Type unknown. Default xslt will be used.")
         except (Exception, exceptions.DoesNotExist):

@@ -16,13 +16,12 @@ from core_main_app.rest.xsl_transformation.serializers import (
 
 
 class XslTransformationList(APIView):
-    """ List, create XSL document
-    """
+    """List, create XSL document"""
 
     permission_classes = (IsAdminUser,)
 
     def get(self, request):
-        """ Get all XSL document
+        """Get all XSL document
 
         Args:
 
@@ -47,7 +46,7 @@ class XslTransformationList(APIView):
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
-        """ Save an XSL document
+        """Save an XSL document
 
         Parameters:
 
@@ -87,13 +86,12 @@ class XslTransformationList(APIView):
 
 
 class XslTransformationDetail(APIView):
-    """" Get, delete, patch an XSL document
-    """
+    """ " Get, delete, patch an XSL document"""
 
     permission_classes = (IsAdminUser,)
 
     def get_object(self, pk):
-        """ Get XSL document from db
+        """Get XSL document from db
 
         Args:
 
@@ -109,7 +107,7 @@ class XslTransformationDetail(APIView):
             raise Http404
 
     def get(self, request, pk):
-        """ Retrieve XSLT
+        """Retrieve XSLT
 
         Args:
 
@@ -140,7 +138,7 @@ class XslTransformationDetail(APIView):
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request, pk):
-        """ Delete an xsl document
+        """Delete an xsl document
 
         Args:
 
@@ -171,7 +169,7 @@ class XslTransformationDetail(APIView):
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def patch(self, request, pk):
-        """ Update xsl
+        """Update xsl
 
         Parameters:
 
@@ -221,13 +219,12 @@ class XslTransformationDetail(APIView):
 
 
 class XslTransformationTransform(APIView):
-    """ Transform XML using a specific Xslt
-    """
+    """Transform XML using a specific Xslt"""
 
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
-        """ Transform XML using a specific Xslt
+        """Transform XML using a specific Xslt
 
         Parameters:
 

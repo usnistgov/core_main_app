@@ -6,7 +6,7 @@ from core_main_app.settings import CAN_SET_PUBLIC_DATA_TO_PRIVATE
 
 
 def is_workspace_owner_to_perform_action_for_others(func, workspace, new_user_id, user):
-    """ Check if the user is the owner of the workspace to perform action for other user.
+    """Check if the user is the owner of the workspace to perform action for other user.
 
     Args:
         func
@@ -25,7 +25,7 @@ def is_workspace_owner_to_perform_action_for_others(func, workspace, new_user_id
 
 
 def can_user_set_workspace_public(func, workspace, user):
-    """ Check if the user is the owner of the workspace.
+    """Check if the user is the owner of the workspace.
 
     Args:
         func:
@@ -52,7 +52,7 @@ def can_user_set_workspace_public(func, workspace, user):
 
 
 def is_workspace_owner(func, workspace, user):
-    """ Check if the user is the owner of the workspace.
+    """Check if the user is the owner of the workspace.
 
     Args:
         func:
@@ -70,7 +70,7 @@ def is_workspace_owner(func, workspace, user):
 
 
 def can_delete_workspace(func, workspace, user):
-    """ Can user delete a workspace.
+    """Can user delete a workspace.
 
     Args:
         func:
@@ -93,7 +93,7 @@ def can_delete_workspace(func, workspace, user):
 
 
 def _check_is_owner_workspace(workspace, user):
-    """ Check that user is the owner of the workspace.
+    """Check that user is the owner of the workspace.
 
     Args:
         workspace:

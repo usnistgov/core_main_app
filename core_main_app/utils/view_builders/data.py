@@ -6,7 +6,7 @@ from core_main_app.commons import exceptions
 
 
 def build_page(data_id, user, display_admin_version=False):
-    """ Generic page building data
+    """Generic page building data
 
     Args:
         data_id:

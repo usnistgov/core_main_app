@@ -12,13 +12,12 @@ from core_main_app.rest.user.serializers import UserSerializer
 
 
 class UserDetail(APIView):
-    """ Retrieve  User
-    """
+    """Retrieve  User"""
 
     permission_classes = (IsAdminUser,)
 
     def get(self, request, pk):
-        """ Get user from db
+        """Get user from db
 
         Args:
 
@@ -47,13 +46,12 @@ class UserDetail(APIView):
 
 
 class UserList(APIView):
-    """   List all Users
-    """
+    """List all Users"""
 
     permission_classes = (IsAdminUser,)
 
     def get(self, request):
-        """ Get all users from db
+        """Get all users from db
 
         Args:
 

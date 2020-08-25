@@ -6,8 +6,7 @@ from core_main_app.commons.validators import BlankSpacesValidator
 
 
 class RenameForm(forms.Form):
-    """ Rename form
-    """
+    """Rename form"""
 
     field = forms.CharField(
         label="",

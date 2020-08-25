@@ -9,8 +9,8 @@ from tests.test_settings import database as settings_database
 
 
 class MongoIntegrationTransactionTestCase(TransactionTestCase):
-    """ Represent the Integration base transaction test case
-        The integration tests must inherit of this class
+    """Represent the Integration base transaction test case
+    The integration tests must inherit of this class
     """
 
     """
@@ -24,7 +24,7 @@ class MongoIntegrationTransactionTestCase(TransactionTestCase):
     """
 
     def setUp(self):
-        """ Insert needed data.
+        """Insert needed data.
 
         Returns:
 

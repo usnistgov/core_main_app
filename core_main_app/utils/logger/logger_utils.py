@@ -4,7 +4,7 @@ import copy
 
 
 def update_logger_with_local_app(logging_dict, local_logger_conf, list_app):
-    """ Update the logger with local app.
+    """Update the logger with local app.
 
     Args:
         logging_dict:
@@ -18,7 +18,7 @@ def update_logger_with_local_app(logging_dict, local_logger_conf, list_app):
 
 
 def get_list_local_app(list_app):
-    """ Get the list of local apps.
+    """Get the list of local apps.
 
     Args:
          list_app:
@@ -34,7 +34,7 @@ def get_list_local_app(list_app):
 def set_generic_handler(
     logging_dict, name, level, filename, max_size, backup_count, class_name
 ):
-    """ Set a handler based on the parameters.
+    """Set a handler based on the parameters.
 
     Args
         logging_dict:
@@ -62,7 +62,7 @@ def set_generic_handler(
 
 
 def set_generic_logger(logging_dict, name, level, list_handler):
-    """ Set a logger based on the parameters.
+    """Set a logger based on the parameters.
 
     Args
         logging_dict:
@@ -73,5 +73,11 @@ def set_generic_logger(logging_dict, name, level, list_handler):
     Returns:
     """
     logging_dict["loggers"].update(
-        {name: {"handlers": list_handler, "level": level, "propagate": False,},}
+        {
+            name: {
+                "handlers": list_handler,
+                "level": level,
+                "propagate": False,
+            },
+        }
     )

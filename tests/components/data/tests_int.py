@@ -834,7 +834,7 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
     fixture = fixture_data_template
 
     def setUp(self):
-        """ Insert needed data.
+        """Insert needed data.
 
         Returns:
 
@@ -1318,7 +1318,10 @@ def test_result_data_template_group_migration_error(
 
     # Act
     response = data_task.async_template_migration_task(
-        [self.fixture.template_3.id], self.fixture.template_1.id, request_user.id, True,
+        [self.fixture.template_3.id],
+        self.fixture.template_1.id,
+        request_user.id,
+        True,
     )
 
     # Assert

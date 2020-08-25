@@ -16,7 +16,7 @@ from core_main_app.rest.template_version_manager.utils import load_dependencies
 
 class TemplateVersionManagerSerializer(DocumentSerializer):
     """
-        Template Version Manager serializer
+    Template Version Manager serializer
     """
 
     class Meta(object):
@@ -32,7 +32,7 @@ class TemplateVersionManagerSerializer(DocumentSerializer):
         ]
 
     def create(self, validated_data):
-        """ Create.
+        """Create.
 
         Args:
             validated_data:
@@ -45,7 +45,7 @@ class TemplateVersionManagerSerializer(DocumentSerializer):
 
 class CreateTemplateSerializer(TemplateSerializer):
     """
-        Template Version Manager serializer
+    Template Version Manager serializer
     """
 
     def create(self, validated_data):

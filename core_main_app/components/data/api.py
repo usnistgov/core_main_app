@@ -22,7 +22,7 @@ from xml_utils.xsd_tree.xsd_tree import XSDTree
 
 @access_control(access_control_api.can_read_or_write_in_workspace)
 def get_all_by_workspace(workspace, user, order_by_field=DATA_SORTING_FIELDS):
-    """ Get all data that belong to the workspace.
+    """Get all data that belong to the workspace.
 
     Args:
         workspace:
@@ -36,34 +36,34 @@ def get_all_by_workspace(workspace, user, order_by_field=DATA_SORTING_FIELDS):
 
 @access_control(data_api_access_control.can_read_list_data_id)
 def get_by_id_list(list_data_id, user, order_by_field=DATA_SORTING_FIELDS):
-    """ Return a list of data object with the given list id.
+    """Return a list of data object with the given list id.
 
-        Parameters:
-            list_data_id:
-            user:
-            order_by_field:
+    Parameters:
+        list_data_id:
+        user:
+        order_by_field:
 
-        Returns: data object
+    Returns: data object
     """
     return Data.get_all_by_id_list(list_data_id, order_by_field)
 
 
 @access_control(core_main_app.access_control.api.can_read_id)
 def get_by_id(data_id, user):
-    """ Return data object with the given id.
+    """Return data object with the given id.
 
-        Parameters:
-            data_id:
-            user:
+    Parameters:
+        data_id:
+        user:
 
-        Returns: data object
+    Returns: data object
     """
     return Data.get_by_id(data_id)
 
 
 @access_control(access_control_api.has_perm_administration)
 def get_all(user, order_by_field=DATA_SORTING_FIELDS):
-    """ Get all the data if superuser. Raise exception otherwise.
+    """Get all the data if superuser. Raise exception otherwise.
 
     Parameters:
             user:
@@ -75,13 +75,13 @@ def get_all(user, order_by_field=DATA_SORTING_FIELDS):
 
 
 def get_all_accessible_by_user(user, order_by_field=DATA_SORTING_FIELDS):
-    """ Return all data accessible by a user.
+    """Return all data accessible by a user.
 
-        Parameters:
-            user:
-            order_by_field:
+    Parameters:
+        user:
+        order_by_field:
 
-        Returns: data collection
+    Returns: data collection
     """
 
     read_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(user)
@@ -94,33 +94,33 @@ def get_all_accessible_by_user(user, order_by_field=DATA_SORTING_FIELDS):
 
 
 def get_all_by_user(user, order_by_field=DATA_SORTING_FIELDS):
-    """ Return all data owned by a user.
+    """Return all data owned by a user.
 
-        Parameters:
-            user:
-            order_by_field: Order by field.
+    Parameters:
+        user:
+        order_by_field: Order by field.
 
-        Returns: data collection
+    Returns: data collection
     """
     return Data.get_all_by_user_id(str(user.id), order_by_field)
 
 
 @access_control(core_main_app.access_control.api.can_read)
 def get_all_except_user(user, order_by_field=DATA_SORTING_FIELDS):
-    """ Return all data which are not created by the user.
+    """Return all data which are not created by the user.
 
-        Parameters:
-             user:
-             order_by_field:
+    Parameters:
+         user:
+         order_by_field:
 
-        Returns: data collection
+    Returns: data collection
     """
     return Data.get_all_except_user_id(str(user.id), order_by_field)
 
 
 @access_control(core_main_app.access_control.api.can_write)
 def upsert(data, user):
-    """ Save or update the data.
+    """Save or update the data.
 
     Args:
         data:
@@ -140,7 +140,7 @@ def upsert(data, user):
 
 @access_control(has_perm_administration)
 def admin_insert(data, user):
-    """ Save the data.
+    """Save the data.
 
     Args:
         data:
@@ -160,7 +160,7 @@ def admin_insert(data, user):
 
 
 def check_xml_file_is_valid(data):
-    """ Check if xml data is valid against a given schema.
+    """Check if xml data is valid against a given schema.
 
     Args:
         data:
@@ -204,7 +204,7 @@ def execute_query(query, user, order_by_field=DATA_SORTING_FIELDS):
 
 @access_control(core_main_app.access_control.api.can_write)
 def delete(data, user):
-    """ Delete a data.
+    """Delete a data.
 
     Args:
         data:
@@ -218,7 +218,7 @@ def delete(data, user):
 
 @access_control(access_control_api.can_change_owner)
 def change_owner(data, new_user, user):
-    """ Change data's owner.
+    """Change data's owner.
 
     Args:
         data:
@@ -233,7 +233,7 @@ def change_owner(data, new_user, user):
 
 
 def get_none():
-    """ Returns None object, used by data
+    """Returns None object, used by data
 
     Returns:
 
@@ -242,7 +242,7 @@ def get_none():
 
 
 def is_data_public(data):
-    """ Is data public.
+    """Is data public.
 
     Args:
         data:
@@ -258,7 +258,7 @@ def is_data_public(data):
 
 @access_control(data_api_access_control.can_read_aggregate_query)
 def aggregate(pipeline, user):
-    """ Execute an aggregate on the Data collection.
+    """Execute an aggregate on the Data collection.
 
     Args:
         pipeline:
@@ -272,7 +272,7 @@ def aggregate(pipeline, user):
 
 @access_control(data_api_access_control.can_write_data_workspace)
 def assign(data, workspace, user):
-    """ Assign blob to a workspace.
+    """Assign blob to a workspace.
 
     Args:
         data:
@@ -288,7 +288,7 @@ def assign(data, workspace, user):
 
 @access_control(has_perm_administration)
 def migrate_data_list(data_list, target_template_id, migrate, user):
-    """ Perform a migration / validation of the data list for the given target template id
+    """Perform a migration / validation of the data list for the given target template id
     NB: This action is executed with an async task, use the progress / result function to retrieve
     information about the task status
 
@@ -309,7 +309,7 @@ def migrate_data_list(data_list, target_template_id, migrate, user):
 
 @access_control(has_perm_administration)
 def migrate_template_list(template_id_list, target_template_id, migrate, user):
-    """ Perform a migration / validation of all the data which belong to the given template id list
+    """Perform a migration / validation of all the data which belong to the given template id list
     NB: This action is executed with an async task, use the progress / result function to retrieve
     information about the task status
 

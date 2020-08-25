@@ -8,8 +8,7 @@ from core_main_app.utils.integration_tests.fixture_interface import FixtureInter
 
 
 class UserFixtures(FixtureInterface):
-    """ User Fixture
-    """
+    """User Fixture"""
 
     def insert_data(self):
         pass

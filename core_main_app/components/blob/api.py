@@ -15,7 +15,7 @@ from core_main_app.access_control.api import can_change_owner
 
 
 def insert(blob):
-    """ Insert the blob in the blob repository.
+    """Insert the blob in the blob repository.
 
     Args:
         blob:
@@ -34,7 +34,7 @@ def insert(blob):
 
 @access_control(can_write_blob_workspace)
 def assign(blob, workspace, user):
-    """ Assign blob to a workspace.
+    """Assign blob to a workspace.
 
     Args:
         blob:
@@ -50,7 +50,7 @@ def assign(blob, workspace, user):
 
 @access_control(can_write)
 def delete(blob, user):
-    """ Delete the blob.
+    """Delete the blob.
 
     Args:
         blob:
@@ -66,7 +66,7 @@ def delete(blob, user):
 
 @access_control(can_read_id)
 def get_by_id(blob_id, user):
-    """ Return blob by its id.
+    """Return blob by its id.
 
     Args:
         blob_id:
@@ -79,7 +79,7 @@ def get_by_id(blob_id, user):
 
 @access_control(has_perm_administration)
 def get_all(user):
-    """ Return all blobs.
+    """Return all blobs.
 
     Args:
 
@@ -91,7 +91,7 @@ def get_all(user):
 
 
 def get_all_by_user(user):
-    """ Return all blobs by user.
+    """Return all blobs by user.
 
     Args:
         user: User
@@ -105,7 +105,7 @@ def get_all_by_user(user):
 
 @access_control(can_read_or_write_in_workspace)
 def get_all_by_workspace(workspace, user):
-    """ Get all data that belong to the workspace.
+    """Get all data that belong to the workspace.
 
     Args:
         workspace:
@@ -118,7 +118,7 @@ def get_all_by_workspace(workspace, user):
 
 @access_control(can_change_owner)
 def change_owner(blob, new_user, user):
-    """ Change blob's owner.
+    """Change blob's owner.
 
     Args:
         blob:
@@ -133,7 +133,7 @@ def change_owner(blob, new_user, user):
 
 
 def get_none():
-    """ Returns None object, used by blobs
+    """Returns None object, used by blobs
 
     Returns:
 

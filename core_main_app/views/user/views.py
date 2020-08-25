@@ -26,7 +26,7 @@ if "defender" in INSTALLED_APPS:
 
     @watch_login()
     def defender_custom_login(request):
-        """ Custom login page with defender controls.
+        """Custom login page with defender controls.
 
         Args:
             request:
@@ -38,7 +38,7 @@ if "defender" in INSTALLED_APPS:
 
 
 def custom_login(request):
-    """ Custom login page calls default page or page with defender if installed.
+    """Custom login page calls default page or page with defender if installed.
 
     Args:
         request:
@@ -53,12 +53,12 @@ def custom_login(request):
 
 
 def default_custom_login(request):
-    """ Default custom login page.
-    
-        Parameters:
-            request: 
-    
-        Returns:
+    """Default custom login page.
+
+    Parameters:
+        request:
+
+    Returns:
     """
 
     def _login_redirect(to_page):
@@ -155,24 +155,24 @@ def default_custom_login(request):
 
 
 def custom_logout(request):
-    """ Custom logout page.
-    
-        Parameters:
-            request: 
-    
-        Returns:
+    """Custom logout page.
+
+    Parameters:
+        request:
+
+    Returns:
     """
     logout(request)
     return redirect(reverse("core_main_app_homepage"))
 
 
 def homepage(request):
-    """ Homepage for the website
+    """Homepage for the website
 
-        Parameters:
-            request:
+    Parameters:
+        request:
 
-        Returns:
+    Returns:
     """
     assets = dict()
 
@@ -242,7 +242,7 @@ def manage_template_versions(request, version_manager_id):
 
 
 def get_context_manage_template_versions(version_manager, object_name="Template"):
-    """ Get the context to manage the template versions.
+    """Get the context to manage the template versions.
 
     Args:
         version_manager:
@@ -282,23 +282,23 @@ def custom_reset_password(
     html_email_template_name=None,
     extra_email_context=None,
 ):
-    """ Custom reset password page.
+    """Custom reset password page.
 
-        Parameters:
-        :param request:
-        :param template_name:
-        :param email_template_name:
-        :param subject_template_name:
-        :param password_reset_form:
-        :param token_generator:
-        :param post_reset_redirect:
-        :param from_email:
-        :param extra_context:
-        :param extra_email_context:
-        :param html_email_template_name:
+    Parameters:
+    :param request:
+    :param template_name:
+    :param email_template_name:
+    :param subject_template_name:
+    :param password_reset_form:
+    :param token_generator:
+    :param post_reset_redirect:
+    :param from_email:
+    :param extra_context:
+    :param extra_email_context:
+    :param html_email_template_name:
 
-        Returns:
-        :return request
+    Returns:
+    :return request
     """
 
     if post_reset_redirect is None:
@@ -337,15 +337,15 @@ def custom_password_reset_done(
     template_name="core_main_app/user/registration/password_reset_done.html",
     extra_context=None,
 ):
-    """ Custom password reset done page.
+    """Custom password reset done page.
 
-        Parameters:
-        :param request:
-        :param template_name:
-        :param extra_context:
+    Parameters:
+    :param request:
+    :param template_name:
+    :param extra_context:
 
-        Returns:
-        :return request
+    Returns:
+    :return request
     """
 
     context = {

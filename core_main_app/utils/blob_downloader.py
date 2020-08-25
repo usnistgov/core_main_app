@@ -12,11 +12,10 @@ logger = getLogger(__name__)
 
 
 class BlobDownloader:
-    """ Blob Downloader Class
-    """
+    """Blob Downloader Class"""
 
     def __init__(self, url, session_key=""):
-        """ Blob Downloader Constructor
+        """Blob Downloader Constructor
 
         Args:
             url: blob's url
@@ -27,7 +26,7 @@ class BlobDownloader:
         self.session_key = session_key
 
     def get_blob_response(self):
-        """ get the blob response from local or remote instance
+        """get the blob response from local or remote instance
 
         Returns: Http Response
 
@@ -56,7 +55,7 @@ class BlobDownloader:
         raise exceptions.BlobDownloaderError("Blob can't be downloaded")
 
     def is_url_from_local_instance(self):
-        """ is the url from a local instance or not
+        """is the url from a local instance or not
 
         Returns: Boolean
 
@@ -64,7 +63,7 @@ class BlobDownloader:
         return self.url_base in SERVER_URI
 
     def get_url_base(self):
-        """ get the url base
+        """get the url base
 
         Returns: String
 

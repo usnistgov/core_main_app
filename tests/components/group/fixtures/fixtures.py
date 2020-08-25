@@ -5,8 +5,7 @@ from core_main_app.utils.integration_tests.fixture_interface import FixtureInter
 
 
 class GroupFixtures(FixtureInterface):
-    """ Group Fixture
-    """
+    """Group Fixture"""
 
     def insert_data(self):
         pass

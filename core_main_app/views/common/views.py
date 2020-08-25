@@ -3,13 +3,15 @@
 """
 from abc import ABCMeta
 
+from django.urls import reverse
 from django.http import HttpResponseBadRequest, HttpResponseForbidden
 from django.http.response import HttpResponseRedirect
-from django.urls import reverse
 from django.utils.html import escape as html_escape
 from django.views.generic import View
 
 from core_main_app.commons import exceptions
+from core_main_app.commons.exceptions import DoesNotExist
+from core_main_app.components.data import api as data_api
 from core_main_app.components.group import api as group_api
 from core_main_app.components.template import api as template_api
 from core_main_app.components.template_xsl_rendering import (
@@ -19,16 +21,18 @@ from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.components.xsl_transformation import api as xslt_transformation_api
 from core_main_app.components.xsl_transformation.models import XslTransformation
+from core_main_app.settings import INSTALLED_APPS
 from core_main_app.utils import group as group_utils
 from core_main_app.utils.labels import get_data_label
-from core_main_app.utils.rendering import admin_render, render
-from core_main_app.utils.view_builders import data as data_view_builder
+from core_main_app.utils.rendering import admin_render
+from core_main_app.utils.rendering import render
 from core_main_app.views.admin.forms import UploadXSLTForm, TemplateXsltRenderingForm
+from bson import ObjectId
 
 
 class CommonView(View, metaclass=ABCMeta):
     """
-        Abstract common view for admin and user.
+    Abstract common view for admin and user.
     """
 
     administration = False
@@ -48,7 +52,7 @@ class CommonView(View, metaclass=ABCMeta):
 
 class EditWorkspaceRights(CommonView):
     """
-        Edit workspace rights
+    Edit workspace rights
     """
 
     template = "core_main_app/user/workspaces/edit_rights.html"
@@ -58,7 +62,7 @@ class EditWorkspaceRights(CommonView):
         try:
             workspace_id = kwargs["workspace_id"]
             workspace = workspace_api.get_by_id(workspace_id)
-        except exceptions.DoesNotExist:
+        except DoesNotExist as e:
             return HttpResponseBadRequest("The workspace does not exist.")
         except:
             return HttpResponseBadRequest("Something wrong happened.")
@@ -187,7 +191,7 @@ class EditWorkspaceRights(CommonView):
 
 class ViewData(CommonView):
     """
-        View detail data.
+    View detail data.
     """
 
     template = "core_main_app/user/data/detail.html"
@@ -195,32 +199,97 @@ class ViewData(CommonView):
     def get(self, request, *args, **kwargs):
         data_id = request.GET["id"]
 
-        page_info = data_view_builder.build_page(
-            data_id, request.user, self.is_administration()
-        )
+        try:
+            data = data_api.get_by_id(data_id, request.user)
+            template_xsl_rendering = template_xsl_rendering_api.get_by_template_id(
+                data.template.id
+            )
+            xsl_transformation_id = (
+                template_xsl_rendering.default_detail_xslt.id
+                if template_xsl_rendering.default_detail_xslt
+                else "None"
+            )
 
-        if page_info["error"] is None:
+            if xsl_transformation_id != "None":
+                xsl_transformation_id = ObjectId(xsl_transformation_id)
+
+            context = {
+                "data": data,
+                "share_pid_button": False,
+                "template_xsl_rendering": template_xsl_rendering,
+                "xsl_transformation_id": xsl_transformation_id,
+            }
+
+            assets = {
+                "js": [
+                    {"path": "core_main_app/common/js/XMLTree.js", "is_raw": False},
+                    {"path": "core_main_app/user/js/data/detail.js", "is_raw": False},
+                    {
+                        "path": "core_main_app/user/js/data/change_display.js",
+                        "is_raw": False,
+                    },
+                ],
+                "css": ["core_main_app/common/css/XMLTree.css"],
+            }
+
+            modals = []
+
+            if "core_file_preview_app" in INSTALLED_APPS:
+                assets["js"].extend(
+                    [
+                        {
+                            "path": "core_file_preview_app/user/js/file_preview.js",
+                            "is_raw": False,
+                        }
+                    ]
+                )
+                assets["css"].append("core_file_preview_app/user/css/file_preview.css")
+                modals.append("core_file_preview_app/user/file_preview_modal.html")
+
+            if (
+                "core_linked_records_app" in INSTALLED_APPS
+                and not self.is_administration()
+            ):
+                context["share_pid_button"] = True
+                assets["js"].extend(
+                    [
+                        {
+                            "path": "core_main_app/user/js/sharing_modal.js",
+                            "is_raw": False,
+                        },
+                        {
+                            "path": "core_linked_records_app/user/js/sharing/data_detail.js",
+                            "is_raw": False,
+                        },
+                    ]
+                )
+                modals.append(
+                    "core_linked_records_app/user/sharing/data_detail/modal.html"
+                )
+
             return self.common_render(
-                request,
-                self.template,
-                context=page_info["context"],
-                assets=page_info["assets"],
-                modals=page_info["modals"],
+                request, self.template, context=context, assets=assets, modals=modals
             )
-        else:
-            return self.common_render(
-                request,
-                "core_main_app/common/commons/error.html",
-                context={
-                    "error": "Unable to access the requested %s: %s."
-                    % (get_data_label(), page_info["error"])
-                },
-            )
+        except exceptions.DoesNotExist:
+            error_message = "Data not found"
+        except exceptions.ModelError:
+            error_message = "Model error"
+        except Exception as e:
+            error_message = str(e)
+
+        return self.common_render(
+            request,
+            "core_main_app/common/commons/error.html",
+            context={
+                "error": "Unable to access the requested "
+                + get_data_label()
+                + ": {}.".format(error_message)
+            },
+        )
 
 
 class XSLTView(View):
-    """XSLT view.
-    """
+    """XSLT view."""
 
     @staticmethod
     def get(request, *args, **kwargs):
@@ -270,8 +339,7 @@ def read_xsd_file(xsd_file):
 
 
 class UploadXSLTView(View):
-    """Upload XSLT view.
-    """
+    """Upload XSLT view."""
 
     form_class = UploadXSLTForm
     template_name = "core_main_app/common/xslt/upload.html"
@@ -324,8 +392,7 @@ class UploadXSLTView(View):
 
 
 class TemplateXSLRenderingView(View):
-    """Template XSL rendering view.
-    """
+    """Template XSL rendering view."""
 
     rendering = render
     save_redirect = "core_main_app_manage_template_versions"
@@ -336,7 +403,7 @@ class TemplateXSLRenderingView(View):
     assets = {}
 
     def get(self, request, *args, **kwargs):
-        """ GET request. Create/Show the form for the configuration.
+        """GET request. Create/Show the form for the configuration.
 
         Args:
             request:
@@ -407,7 +474,7 @@ class TemplateXSLRenderingView(View):
         )
 
     def post(self, request, *args, **kwargs):
-        """ POST request. Try to save the configuration.
+        """POST request. Try to save the configuration.
 
         Args:
             request:
@@ -478,7 +545,7 @@ class TemplateXSLRenderingView(View):
 
 
 def defender_error_page(request):
-    """ Error page for defender package.
+    """Error page for defender package.
 
     Args:
         request:

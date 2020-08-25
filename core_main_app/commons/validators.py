@@ -33,7 +33,9 @@ class BlankSpacesValidator(object):
     def __call__(self, value):
         value = force_text(value)
         if len(value.strip()) == 0:
-            raise ValidationError(_("This field should not be empty."),)
+            raise ValidationError(
+                _("This field should not be empty."),
+            )
 
 
 @deconstructible
@@ -44,11 +46,13 @@ class ExtensionValidator(object):
     def __call__(self, value):
         ext = os.path.splitext(value.name)[1]
         if not ext.lower() in self.valid_extensions:
-            raise ValidationError(_("Unsupported file extension."),)
+            raise ValidationError(
+                _("Unsupported file extension."),
+            )
 
 
 class UpperCaseLetterCountValidator(object):
-    """ Counts the occurrences of uppercase letters and raises a :class:`~django.core.exceptions.ValidationError` if the count
+    """Counts the occurrences of uppercase letters and raises a :class:`~django.core.exceptions.ValidationError` if the count
     is less than :func:`~UpperCaseLetterCountValidator.get_min_count`.
     """
 
@@ -60,8 +64,7 @@ class UpperCaseLetterCountValidator(object):
             raise ValidationError(self.get_help_text())
 
     def get_help_text(self):
-        """ Returns this validator's error message.
-        """
+        """Returns this validator's error message."""
         msg = (
             ungettext(
                 "The new password must contain %d or more uppercase letter.",
@@ -73,13 +76,12 @@ class UpperCaseLetterCountValidator(object):
         return msg
 
     def get_min_count(self):
-        """ Returns: Min uppercase letters
-        """
+        """Returns: Min uppercase letters"""
         return self.min_uppercase_letters
 
 
 class LowerCaseLetterCountValidator(object):
-    """ Counts the occurrences of lowercase letters and raises a :class:`~django.core.exceptions.ValidationError` if the count
+    """Counts the occurrences of lowercase letters and raises a :class:`~django.core.exceptions.ValidationError` if the count
     is less than :func:`~LowerCaseLetterCountValidator.get_min_count`.
     """
 
@@ -91,8 +93,7 @@ class LowerCaseLetterCountValidator(object):
             raise ValidationError(self.get_help_text())
 
     def get_help_text(self):
-        """ Returns this validator's error message.
-        """
+        """Returns this validator's error message."""
         msg = (
             ungettext(
                 "The new password must contain %d or more lowercase letter.",
@@ -104,13 +105,12 @@ class LowerCaseLetterCountValidator(object):
         return msg
 
     def get_min_count(self):
-        """ Returns: Min lowercase letters
-        """
+        """Returns: Min lowercase letters"""
         return self.min_lowercase_letters
 
 
 class AlphabeticCharCountValidator(object):
-    """ Counts the occurrences of letters and raises a :class:`~django.core.exceptions.ValidationError` if the count
+    """Counts the occurrences of letters and raises a :class:`~django.core.exceptions.ValidationError` if the count
     is less than :func:`~AlphabeticCharCountValidator.get_min_count`.
     """
 
@@ -122,8 +122,7 @@ class AlphabeticCharCountValidator(object):
             raise ValidationError(self.get_help_text())
 
     def get_help_text(self):
-        """ Returns this validator's error message.
-        """
+        """Returns this validator's error message."""
         msg = (
             ungettext(
                 "The new password must contain %d or more alphabetic letter.",
@@ -140,13 +139,12 @@ class AlphabeticCharCountValidator(object):
         return len(res) > 0
 
     def get_min_count(self):
-        """ Returns: Min alphabetic letters
-        """
+        """Returns: Min alphabetic letters"""
         return self.min_alphabetic_letters
 
 
 class MaxOccurrenceCountValidator(object):
-    """ Counts the occurrences of same letters and raises a :class:`~django.core.exceptions.ValidationError` if the count
+    """Counts the occurrences of same letters and raises a :class:`~django.core.exceptions.ValidationError` if the count
     is more than :func:`~MaxOccurrenceCountValidator.get_min_count`.
     """
 
@@ -163,8 +161,7 @@ class MaxOccurrenceCountValidator(object):
                     raise ValidationError(self.get_help_text())
 
     def get_help_text(self):
-        """ Returns this validator's error message.
-        """
+        """Returns this validator's error message."""
         msg = (
             ungettext(
                 "The new password must contain less than %d time the same letter.",
@@ -176,13 +173,12 @@ class MaxOccurrenceCountValidator(object):
         return msg
 
     def get_max_count(self):
-        """ Returns: Max occurrence
-        """
+        """Returns: Max occurrence"""
         return self.max_occurrence
 
 
 class NonAlphanumericCountValidator(object):
-    """ Counts the occurrences of Non-Alphanumeric and raises a :class:`~django.core.exceptions.ValidationError` if the count
+    """Counts the occurrences of Non-Alphanumeric and raises a :class:`~django.core.exceptions.ValidationError` if the count
     is less than :func:`~NonAlphanumericCountValidator.get_min_count`.
     """
 
@@ -197,8 +193,7 @@ class NonAlphanumericCountValidator(object):
             raise ValidationError(self.get_help_text())
 
     def get_help_text(self):
-        """ Returns this validator's error message.
-        """
+        """Returns this validator's error message."""
         msg = (
             ungettext(
                 "The new password must contain %d or more Non-Alphanumeric letter.",
@@ -210,13 +205,12 @@ class NonAlphanumericCountValidator(object):
         return msg
 
     def get_min_count(self):
-        """ Returns: Min Non-Alphanumeric letters
-        """
+        """Returns: Min Non-Alphanumeric letters"""
         return self.min_nonalphanumeric_letters
 
 
 class DigitsCountValidator(object):
-    """ Counts the occurrences of digits and raises a :class:`~django.core.exceptions.ValidationError` if the count
+    """Counts the occurrences of digits and raises a :class:`~django.core.exceptions.ValidationError` if the count
     is less than :func:`~DigitsCountValidator.get_min_count`.
     """
 
@@ -231,8 +225,7 @@ class DigitsCountValidator(object):
             raise ValidationError(self.get_help_text())
 
     def get_help_text(self):
-        """ Returns this validator's error message.
-        """
+        """Returns this validator's error message."""
         msg = (
             ungettext(
                 "The new password must contain %d or more digits.",
@@ -244,13 +237,12 @@ class DigitsCountValidator(object):
         return msg
 
     def get_min_count(self):
-        """ Returns: Min Non-Alphanumeric letters
-        """
+        """Returns: Min Non-Alphanumeric letters"""
         return self.min_digits_letters
 
 
 def validate_password(password):
-    """ Validate the given password, throw a ValidationError if at least on validator fail
+    """Validate the given password, throw a ValidationError if at least on validator fail
     :param password:
     :return:
     """

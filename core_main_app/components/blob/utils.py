@@ -6,7 +6,7 @@ from core_main_app.settings import SERVER_URI
 
 
 def get_blob_download_uri(blob, request):
-    """ Return download url for the blob.
+    """Return download url for the blob.
 
     Args:
         blob:

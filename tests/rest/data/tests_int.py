@@ -1010,7 +1010,7 @@ class TestDataPermissions(MongoIntegrationTransactionTestCase):
     admin_user = UserFixtures().create_super_user("admin")
 
     def setUp(self):
-        """ Insert needed data.
+        """Insert needed data.
 
         Returns:
 

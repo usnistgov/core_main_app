@@ -21,8 +21,7 @@ FAKE_WORKSPACE_ID = "507f1f77bcf86cd799439011"
 
 
 class TestWorkspaceDetail(MongoIntegrationTransactionTestCase):
-    """ Test Workspace Detail
-    """
+    """Test Workspace Detail"""
 
     def test_get_returns_http_200(self):
         # Context
@@ -137,8 +136,7 @@ class TestWorkspaceDetail(MongoIntegrationTransactionTestCase):
 
 
 class TestWorkspaceList(MongoIntegrationTransactionTestCase):
-    """ Test Workspace List
-    """
+    """Test Workspace List"""
 
     def test_get_returns_http_200(self):
         # Context
@@ -251,8 +249,7 @@ class TestWorkspaceList(MongoIntegrationTransactionTestCase):
 
 
 class TestWorkspaceReadAccess(MongoIntegrationTransactionTestCase):
-    """ Test Workspace Read Access
-    """
+    """Test Workspace Read Access"""
 
     def test_get_workspace_with_read_access_return_http_200(self):
         # Context
@@ -326,8 +323,7 @@ class TestWorkspaceReadAccess(MongoIntegrationTransactionTestCase):
 
 
 class TestWorkspaceWriteAccess(MongoIntegrationTransactionTestCase):
-    """ Test Workspace Write Access
-    """
+    """Test Workspace Write Access"""
 
     def test_get_workspace_with_write_access_return_http_200(self):
         # Context
@@ -401,8 +397,7 @@ class TestWorkspaceWriteAccess(MongoIntegrationTransactionTestCase):
 
 
 class TestWorkspaceIsPublic(MongoIntegrationTransactionTestCase):
-    """ Test Workspace Is Public
-    """
+    """Test Workspace Is Public"""
 
     def test_is_workspace_public_return_http_200(self):
         # Context
@@ -461,8 +456,7 @@ class TestWorkspaceIsPublic(MongoIntegrationTransactionTestCase):
 
 
 class TestWorkspaceSetPublic(MongoIntegrationTransactionTestCase):
-    """ Test Workspace Set Public
-    """
+    """Test Workspace Set Public"""
 
     def test_set_workspace_public_return_http_200(self):
         # Context
@@ -571,8 +565,7 @@ class TestWorkspaceSetPublic(MongoIntegrationTransactionTestCase):
 
 
 class TestWorkspaceSetPrivate(MongoIntegrationTransactionTestCase):
-    """ Test Workspace Set Private
-    """
+    """Test Workspace Set Private"""
 
     def test_set_workspace_private_return_http_200(self):
         # Context
@@ -677,8 +670,7 @@ class TestWorkspaceSetPrivate(MongoIntegrationTransactionTestCase):
 
 
 class TestWorkspaceListUserCanRead(MongoIntegrationTransactionTestCase):
-    """ Test Workspace List User Can read
-    """
+    """Test Workspace List User Can read"""
 
     def test_get_list_user_can_read_workspace_return_http_200(self):
         # Context
@@ -800,8 +792,7 @@ class TestWorkspaceListUserCanRead(MongoIntegrationTransactionTestCase):
 
 
 class TestWorkspaceListUserCanWrite(MongoIntegrationTransactionTestCase):
-    """ Test Workspace List User Can Write
-    """
+    """Test Workspace List User Can Write"""
 
     def test_get_list_user_can_write_workspace_return_http_200(self):
         # Context
@@ -923,8 +914,7 @@ class TestWorkspaceListUserCanWrite(MongoIntegrationTransactionTestCase):
 
 
 class TestWorkspaceListGroupCanRead(MongoIntegrationTransactionTestCase):
-    """ Test Workspace List Group Can read
-    """
+    """Test Workspace List Group Can read"""
 
     def test_get_list_group_can_read_workspace_return_http_200(self):
         # Context
@@ -1030,8 +1020,7 @@ class TestWorkspaceListGroupCanRead(MongoIntegrationTransactionTestCase):
 
 
 class TestWorkspaceListGroupCanWrite(MongoIntegrationTransactionTestCase):
-    """ Test Workspace List Group Can Write
-    """
+    """Test Workspace List Group Can Write"""
 
     def test_get_list_group_can_write_workspace_return_http_200(self):
         # Context
@@ -1137,8 +1126,7 @@ class TestWorkspaceListGroupCanWrite(MongoIntegrationTransactionTestCase):
 
 
 class TestAddUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
-    """ Test Add User Read Right To Workspace
-    """
+    """Test Add User Read Right To Workspace"""
 
     def test_add_user_read_right_to_workspace_return_http_200(self):
         # Context
@@ -1211,8 +1199,7 @@ class TestAddUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
 
 
 class TestAddUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
-    """ Test Add User Write Right To Workspace
-    """
+    """Test Add User Write Right To Workspace"""
 
     def test_add_user_write_right_to_workspace_return_http_200(self):
         # Context
@@ -1285,8 +1272,7 @@ class TestAddUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
 
 
 class TestAddGroupReadRightToWorkspace(MongoIntegrationTransactionTestCase):
-    """ Test Add Group Read Right To Workspace
-    """
+    """Test Add Group Read Right To Workspace"""
 
     def test_add_group_read_right_to_workspace_return_http_200(self):
         # Context
@@ -1360,8 +1346,7 @@ class TestAddGroupReadRightToWorkspace(MongoIntegrationTransactionTestCase):
 
 
 class TestAddGroupWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
-    """ Test Add Group Write Right To Workspace
-    """
+    """Test Add Group Write Right To Workspace"""
 
     def test_add_group_write_right_to_workspace_return_http_200(self):
         # Context
@@ -1436,8 +1421,7 @@ class TestAddGroupWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
 
 
 class TestRemoveUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
-    """ Test Remove User Read Right To Workspace
-    """
+    """Test Remove User Read Right To Workspace"""
 
     def test_remove_user_read_right_to_workspace_return_http_200(self):
         # Context
@@ -1511,8 +1495,7 @@ class TestRemoveUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
 
 
 class TestRemoveUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
-    """ Test Remove User Write Right To Workspace
-    """
+    """Test Remove User Write Right To Workspace"""
 
     def test_remove_user_write_right_to_workspace_return_http_200(self):
         # Context
@@ -1586,8 +1569,7 @@ class TestRemoveUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
 
 
 class TestRemoveGroupReadRightToWorkspace(MongoIntegrationTransactionTestCase):
-    """ Test Remove Group Read Right To Workspace
-    """
+    """Test Remove Group Read Right To Workspace"""
 
     def test_remove_group_read_right_to_workspace_return_http_200(self):
         # Context
@@ -1662,8 +1644,7 @@ class TestRemoveGroupReadRightToWorkspace(MongoIntegrationTransactionTestCase):
 
 
 class TestRemoveGroupWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
-    """ Test Remove Group Write Right To Workspace
-    """
+    """Test Remove Group Write Right To Workspace"""
 
     def test_remove_group_write_right_to_workspace_return_http_200(self):
         # Context

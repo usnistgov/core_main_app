@@ -13,7 +13,7 @@ from core_main_app.permissions import api as permission_api
 
 
 def create_and_save(title, owner_id=None, is_public=False):
-    """ Create and save a workspace. It will also create permissions.
+    """Create and save a workspace. It will also create permissions.
 
     Args:
         owner_id
@@ -36,7 +36,7 @@ def create_and_save(title, owner_id=None, is_public=False):
 
 
 def _create_workspace(title, owner_id=None, is_public=False):
-    """ Create workspace.
+    """Create workspace.
 
     Args:
         title
@@ -65,7 +65,7 @@ def _create_workspace(title, owner_id=None, is_public=False):
 
 
 def set_title(workspace, new_title):
-    """ Set the workspace's title.
+    """Set the workspace's title.
 
     Args:
         workspace
@@ -78,7 +78,7 @@ def set_title(workspace, new_title):
 
 
 def get_all():
-    """ Get all workspace.
+    """Get all workspace.
 
     Returns:
 
@@ -87,7 +87,7 @@ def get_all():
 
 
 def get_all_by_owner(user):
-    """ Get all workspaces created by the given user.
+    """Get all workspaces created by the given user.
 
     Args:
         user
@@ -99,7 +99,7 @@ def get_all_by_owner(user):
 
 
 def get_by_id(workspace_id):
-    """ Return the workspace with the given id.
+    """Return the workspace with the given id.
 
     Args:
         workspace_id
@@ -112,7 +112,7 @@ def get_by_id(workspace_id):
 
 
 def get_by_id_list(list_workspace_id):
-    """ Return a list of workspaces with the given id list.
+    """Return a list of workspaces with the given id list.
 
     Args:
         list_workspace_id
@@ -126,7 +126,7 @@ def get_by_id_list(list_workspace_id):
 
 
 def get_all_workspaces_with_read_access_by_user(user):
-    """ Get all workspaces with read access for the given user.
+    """Get all workspaces with read access for the given user.
 
     Args:
         user
@@ -141,7 +141,7 @@ def get_all_workspaces_with_read_access_by_user(user):
 
 
 def get_all_workspaces_with_write_access_by_user(user):
-    """ Get all workspaces with write access for the given user.
+    """Get all workspaces with write access for the given user.
 
     Args:
         user
@@ -158,7 +158,7 @@ def get_all_workspaces_with_write_access_by_user(user):
 
 
 def get_all_workspaces_with_read_access_not_owned_by_user(user):
-    """ Get the all workspaces with read access not owned by the given user.
+    """Get the all workspaces with read access not owned by the given user.
 
     Args:
         user
@@ -173,7 +173,7 @@ def get_all_workspaces_with_read_access_not_owned_by_user(user):
 
 
 def get_all_workspaces_with_write_access_not_owned_by_user_id(user):
-    """ Get the all workspaces with write access not owned by the given user.
+    """Get the all workspaces with write access not owned by the given user.
 
     Args:
         user
@@ -190,7 +190,7 @@ def get_all_workspaces_with_write_access_not_owned_by_user_id(user):
 
 
 def get_all_public_workspaces():
-    """ Get all public workspaces.
+    """Get all public workspaces.
 
     Args:
 
@@ -201,7 +201,7 @@ def get_all_public_workspaces():
 
 
 def get_all_other_public_workspaces(user):
-    """ Get all other public workspaces.
+    """Get all other public workspaces.
 
     Args:
         user
@@ -212,7 +212,7 @@ def get_all_other_public_workspaces(user):
 
 
 def get_non_public_workspace_owned_by_user(user):
-    """ Get the non public workspaces owned by the given user.
+    """Get the non public workspaces owned by the given user.
 
     Args:
         user:
@@ -224,7 +224,7 @@ def get_non_public_workspace_owned_by_user(user):
 
 
 def get_public_workspaces_owned_by_user(user):
-    """ Get the public workspaces owned the given user.
+    """Get the public workspaces owned the given user.
 
     Args:
         user
@@ -236,7 +236,7 @@ def get_public_workspaces_owned_by_user(user):
 
 
 def is_workspace_public(workspace):
-    """ Check if the workspace is public.
+    """Check if the workspace is public.
 
     Args:
         workspace
@@ -247,7 +247,7 @@ def is_workspace_public(workspace):
 
 
 def is_workspace_global(workspace):
-    """ Check if the workspace is global public.
+    """Check if the workspace is global public.
 
     Args:
         workspace
@@ -258,7 +258,7 @@ def is_workspace_global(workspace):
 
 
 def get_global_workspace():
-    """ Get global workspace.
+    """Get global workspace.
 
     Return:
     """
@@ -266,7 +266,7 @@ def get_global_workspace():
 
 
 def can_user_read_workspace(workspace, user):
-    """ Check if user has read permission on workspace.
+    """Check if user has read permission on workspace.
 
     Args:
         workspace
@@ -281,7 +281,7 @@ def can_user_read_workspace(workspace, user):
 
 
 def can_user_write_workspace(workspace, user):
-    """ Check if user has write permission on workspace.
+    """Check if user has write permission on workspace.
 
     Args:
         workspace
@@ -294,7 +294,7 @@ def can_user_write_workspace(workspace, user):
 
 
 def can_group_read_workspace(workspace, group):
-    """ Check if group has read permission on workspace.
+    """Check if group has read permission on workspace.
 
     Args:
         workspace
@@ -309,7 +309,7 @@ def can_group_read_workspace(workspace, group):
 
 
 def can_group_write_workspace(workspace, group):
-    """ Check if group has write permission on workspace.
+    """Check if group has write permission on workspace.
 
     Args:
         workspace
@@ -322,7 +322,7 @@ def can_group_write_workspace(workspace, group):
 
 
 def get_list_group_can_access_workspace(workspace, user):
-    """ Get the list of groups that have either read or write access to workspace.
+    """Get the list of groups that have either read or write access to workspace.
 
     Args:
         workspace
@@ -342,7 +342,7 @@ def get_list_group_can_access_workspace(workspace, user):
 
 
 def get_list_user_can_access_workspace(workspace, user):
-    """ Get the list of users that have either read or write access to workspace.
+    """Get the list of users that have either read or write access to workspace.
 
     Args:
         workspace
@@ -364,7 +364,7 @@ def get_list_user_can_access_workspace(workspace, user):
 def check_if_workspace_can_be_changed(
     document, allow_change_workspace_if_public=settings.CAN_SET_PUBLIC_DATA_TO_PRIVATE
 ):
-    """ Check if a workspace of a document can be changed
+    """Check if a workspace of a document can be changed
 
     Args:
         document:
@@ -385,7 +385,7 @@ def check_if_workspace_can_be_changed(
 
 @access_control(workspace_api_access_control.can_user_set_workspace_public)
 def set_workspace_public(workspace, user):
-    """ Set the workspace to public.
+    """Set the workspace to public.
 
     Args:
         workspace
@@ -404,7 +404,7 @@ def set_workspace_public(workspace, user):
 
 @access_control(workspace_api_access_control.is_workspace_owner)
 def set_workspace_private(workspace, user):
-    """ Set the workspace to private.
+    """Set the workspace to private.
 
     Args:
         workspace
@@ -426,7 +426,7 @@ def set_workspace_private(workspace, user):
 
 @access_control(workspace_api_access_control.can_delete_workspace)
 def delete(workspace, user):
-    """ Delete a workspace and its permissions.
+    """Delete a workspace and its permissions.
 
     Args:
          workspace:
@@ -445,7 +445,7 @@ def delete(workspace, user):
 
 @access_control(workspace_api_access_control.is_workspace_owner)
 def get_list_user_can_write_workspace(workspace, user):
-    """ Get list of users that have write access to workspace.
+    """Get list of users that have write access to workspace.
 
     Args:
         workspace
@@ -460,7 +460,7 @@ def get_list_user_can_write_workspace(workspace, user):
 
 @access_control(workspace_api_access_control.is_workspace_owner)
 def get_list_user_can_read_workspace(workspace, user):
-    """  Get list of users that have read access to workspace.
+    """Get list of users that have read access to workspace.
 
     Args:
         workspace
@@ -480,7 +480,7 @@ def get_list_user_can_read_workspace(workspace, user):
 
 @access_control(workspace_api_access_control.is_workspace_owner)
 def get_list_user_with_no_access_workspace(workspace, user):
-    """ Get list of users that don't have any access to the workspace.
+    """Get list of users that don't have any access to the workspace.
 
     Args:
          workspace
@@ -497,7 +497,7 @@ def get_list_user_with_no_access_workspace(workspace, user):
     workspace_api_access_control.is_workspace_owner_to_perform_action_for_others
 )
 def add_user_read_access_to_workspace(workspace, new_user, user):
-    """ Add to new user the read access to workspace.
+    """Add to new user the read access to workspace.
 
     Args:
           workspace
@@ -512,7 +512,7 @@ def add_user_read_access_to_workspace(workspace, new_user, user):
     workspace_api_access_control.is_workspace_owner_to_perform_action_for_others
 )
 def add_user_write_access_to_workspace(workspace, new_user, user):
-    """ Add to new user the write access to workspace.
+    """Add to new user the write access to workspace.
 
     Args:
           workspace
@@ -531,7 +531,7 @@ def add_user_write_access_to_workspace(workspace, new_user, user):
     workspace_api_access_control.is_workspace_owner_to_perform_action_for_others
 )
 def remove_user_read_access_to_workspace(workspace, new_user, user):
-    """ Remove to new user the read access to workspace.
+    """Remove to new user the read access to workspace.
 
     Args:
           workspace
@@ -546,7 +546,7 @@ def remove_user_read_access_to_workspace(workspace, new_user, user):
     workspace_api_access_control.is_workspace_owner_to_perform_action_for_others
 )
 def remove_user_write_access_to_workspace(workspace, new_user, user):
-    """ Remove to new user the write access to workspace.
+    """Remove to new user the write access to workspace.
 
     Args:
           workspace
@@ -563,7 +563,7 @@ def remove_user_write_access_to_workspace(workspace, new_user, user):
 
 @access_control(workspace_api_access_control.is_workspace_owner)
 def get_list_group_can_write_workspace(workspace, user):
-    """ Get the list of groups that have write access to workspace.
+    """Get the list of groups that have write access to workspace.
 
     Args:
         workspace
@@ -579,7 +579,7 @@ def get_list_group_can_write_workspace(workspace, user):
 
 @access_control(workspace_api_access_control.is_workspace_owner)
 def get_list_group_can_read_workspace(workspace, user):
-    """ Get the list of groups that have read access to workspace.
+    """Get the list of groups that have read access to workspace.
 
     Args:
         workspace
@@ -598,7 +598,7 @@ def get_list_group_can_read_workspace(workspace, user):
 
 @access_control(workspace_api_access_control.is_workspace_owner)
 def get_list_group_with_no_access_workspace(workspace, user):
-    """ Get list of groups that don't have any access to the workspace.
+    """Get list of groups that don't have any access to the workspace.
 
     Args:
          workspace
@@ -615,7 +615,7 @@ def get_list_group_with_no_access_workspace(workspace, user):
     workspace_api_access_control.is_workspace_owner_to_perform_action_for_others
 )
 def add_group_read_access_to_workspace(workspace, new_group, user):
-    """ Add to new group the read access to workspace.
+    """Add to new group the read access to workspace.
 
     Args:
           workspace
@@ -630,7 +630,7 @@ def add_group_read_access_to_workspace(workspace, new_group, user):
     workspace_api_access_control.is_workspace_owner_to_perform_action_for_others
 )
 def add_group_write_access_to_workspace(workspace, new_group, user):
-    """ Add to new group the write access to workspace.
+    """Add to new group the write access to workspace.
 
     Args:
           workspace
@@ -649,7 +649,7 @@ def add_group_write_access_to_workspace(workspace, new_group, user):
     workspace_api_access_control.is_workspace_owner_to_perform_action_for_others
 )
 def remove_group_read_access_to_workspace(workspace, group, user):
-    """ Remove to new group the read access to workspace.
+    """Remove to new group the read access to workspace.
 
     Args:
           workspace
@@ -664,7 +664,7 @@ def remove_group_read_access_to_workspace(workspace, group, user):
     workspace_api_access_control.is_workspace_owner_to_perform_action_for_others
 )
 def remove_group_write_access_to_workspace(workspace, group, user):
-    """ Remove to new group the write access to workspace.
+    """Remove to new group the write access to workspace.
 
     Args:
           workspace

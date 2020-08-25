@@ -8,7 +8,7 @@ from core_main_app.components.template.models import Template
 
 class TemplateSerializer(DocumentSerializer):
     """
-        Template serializer
+    Template serializer
     """
 
     dependencies_dict = CharField(write_only=True, required=False)

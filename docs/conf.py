@@ -179,7 +179,9 @@ html_theme_options = {"display_version": True}
 html_static_path = ["_static"]
 
 html_context = {
-    "css_files": ["_static/theme-override.css",],  # override wide tables in RTD theme
+    "css_files": [
+        "_static/theme-override.css",
+    ],  # override wide tables in RTD theme
 }
 
 # Add any extra paths that contain custom files (such as robots.txt or

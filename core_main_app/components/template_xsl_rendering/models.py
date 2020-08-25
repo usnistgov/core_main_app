@@ -10,8 +10,7 @@ from core_main_app.components.xsl_transformation.models import XslTransformation
 
 
 class TemplateXslRendering(Document):
-    """ TemplateXslRendering object
-    """
+    """TemplateXslRendering object"""
 
     template = fields.ReferenceField(
         Template, blank=False, reverse_delete_rule=CASCADE, unique=True
@@ -31,7 +30,7 @@ class TemplateXslRendering(Document):
 
     @staticmethod
     def get_by_id(template_xsl_rendering_id):
-        """ Get a TemplateXslRendering document by its id.
+        """Get a TemplateXslRendering document by its id.
 
         Args:
             template_xsl_rendering_id: Id.

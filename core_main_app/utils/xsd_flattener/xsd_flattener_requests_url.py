@@ -5,11 +5,10 @@ from xml_utils.xsd_flattener.xsd_flattener_url import XSDFlattenerURL
 
 
 class XSDFlattenerRequestsURL(XSDFlattenerURL):
-    """ Get the content of the dependency from the database or from the URL.
-    """
+    """Get the content of the dependency from the database or from the URL."""
 
     def __init__(self, xml_string, download_enabled=True):
-        """ Initializes the flattener
+        """Initializes the flattener
 
         Args:
             xml_string:
@@ -20,7 +19,7 @@ class XSDFlattenerRequestsURL(XSDFlattenerURL):
         )
 
     def get_dependency_content(self, uri):
-        """ Get the content of the dependency from the URL using request util for HTTPS compliance
+        """Get the content of the dependency from the URL using request util for HTTPS compliance
 
         Args:
             uri: Content URI

@@ -8,10 +8,10 @@ from core_main_app.components.web_page.models import WebPage
 def get(page_type):
     """Get the web page of a given type
 
-        Args:
-            page_type: type of the web page
+    Args:
+        page_type: type of the web page
 
-        Returns: web page corresponding to the given id
+    Returns: web page corresponding to the given id
     """
     if page_type not in list(WEB_PAGE_TYPES.keys()):
         return None
@@ -22,7 +22,7 @@ def get(page_type):
 
 
 def delete_by_type(page_type):
-    """ Delete the web pages with the given type
+    """Delete the web pages with the given type
 
     Args:
         page_type (int): page type
@@ -34,12 +34,12 @@ def delete_by_type(page_type):
 
 
 def upsert(web_page):
-    """ Upsert the page content
+    """Upsert the page content
 
-        Args:
-            web_page (obj): web page object
+    Args:
+        web_page (obj): web page object
 
-        Returns: content of the web page
+    Returns: content of the web page
     """
     if web_page.type not in list(WEB_PAGE_TYPES.values()):
         raise exceptions.ApiError("Web page type does not exist")

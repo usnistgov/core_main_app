@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 def is_object_locked(object, user):
-    """ Check if the object is locked.
+    """Check if the object is locked.
 
     Args:
         object:
@@ -29,7 +29,7 @@ def is_object_locked(object, user):
 
 
 def set_lock_object(object, user):
-    """ Set lock on object.
+    """Set lock on object.
 
     Args:
         object:
@@ -45,7 +45,7 @@ def set_lock_object(object, user):
 
 
 def remove_lock_on_object(object, user):
-    """ Remove lock on object.
+    """Remove lock on object.
 
     Args:
         object:
@@ -65,7 +65,7 @@ def remove_lock_on_object(object, user):
 
 
 def _check_object_locked(object, user, lock):
-    """ Check all conditions of a lock object to define if it is locked or not.
+    """Check all conditions of a lock object to define if it is locked or not.
         If there is no lock on object, return false.
         If there is a lock but owned by the user, return true.
         If there is a lock no owned by the user, raise LockError exception.

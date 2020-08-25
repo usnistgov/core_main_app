@@ -21,13 +21,12 @@ from core_main_app.access_control.exceptions import AccessControlError
 
 
 class TemplateXslRenderingList(APIView):
-    """ List all template XSL renderings, or create a new one
-    """
+    """List all template XSL renderings, or create a new one"""
 
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        """ Get all templates XSL renderings
+        """Get all templates XSL renderings
 
         Args:
             request: HTTP request
@@ -56,7 +55,7 @@ class TemplateXslRenderingList(APIView):
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
-        """ Create a XSL template rendering
+        """Create a XSL template rendering
 
         Parameters:
             {
@@ -106,13 +105,12 @@ class TemplateXslRenderingList(APIView):
 
 
 class TemplateXslRenderingDetail(APIView):
-    """ TemplateXslRendering details view
-    """
+    """TemplateXslRendering details view"""
 
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, pk):
-        """ Get `TemplateXSLRendering` object from db
+        """Get `TemplateXSLRendering` object from db
 
         Args:
             request: HTTP request
@@ -140,7 +138,7 @@ class TemplateXslRenderingDetail(APIView):
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def patch(self, request, pk):
-        """ Edit `TemplateXSLRendering` object from db
+        """Edit `TemplateXSLRendering` object from db
 
         Args:
             request: HTTP request
@@ -177,7 +175,7 @@ class TemplateXslRenderingDetail(APIView):
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request, pk):
-        """ Delete a TemplateXSLRendering
+        """Delete a TemplateXSLRendering
 
         Args:
             request: HTTP request
@@ -214,13 +212,12 @@ class TemplateXslRenderingDetail(APIView):
 
 
 class TemplateXslRenderingAddDetailXslt(APIView):
-    """ TemplateXslRendering details view
-    """
+    """TemplateXslRendering details view"""
 
     permission_classes = (IsAuthenticated,)
 
     def patch(self, request, pk, xslt_id):
-        """ Add detail xslt to `TemplateXSLRendering` object from db
+        """Add detail xslt to `TemplateXSLRendering` object from db
 
         Args:
             request: HTTP request
@@ -258,13 +255,12 @@ class TemplateXslRenderingAddDetailXslt(APIView):
 
 
 class TemplateXslRenderingSetDefaultDetailXslt(APIView):
-    """ TemplateXslRendering details view
-    """
+    """TemplateXslRendering details view"""
 
     permission_classes = (IsAuthenticated,)
 
     def patch(self, request, pk, xslt_id):
-        """ Set default detail xslt to `TemplateXSLRendering` object from db
+        """Set default detail xslt to `TemplateXSLRendering` object from db
 
         Args:
             request: HTTP request
@@ -301,13 +297,12 @@ class TemplateXslRenderingSetDefaultDetailXslt(APIView):
 
 
 class TemplateXslRenderingRemoveDetailXslt(APIView):
-    """ TemplateXslRendering details view
-    """
+    """TemplateXslRendering details view"""
 
     permission_classes = (IsAuthenticated,)
 
     def patch(self, request, pk, xslt_id):
-        """ Remove a detail xslt from `TemplateXSLRendering` object from db
+        """Remove a detail xslt from `TemplateXSLRendering` object from db
 
         Args:
             request: HTTP request
@@ -344,13 +339,12 @@ class TemplateXslRenderingRemoveDetailXslt(APIView):
 
 
 class TemplateXslRenderingSetListDetailXslt(APIView):
-    """ TemplateXslRendering details view
-    """
+    """TemplateXslRendering details view"""
 
     permission_classes = (IsAuthenticated,)
 
     def patch(self, request, pk):
-        """ Add detail xslt to `TemplateXSLRendering` object from db
+        """Add detail xslt to `TemplateXSLRendering` object from db
 
         Args:
             request: HTTP request

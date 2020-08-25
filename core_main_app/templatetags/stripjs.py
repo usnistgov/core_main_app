@@ -13,7 +13,7 @@ register = template.Library()
 @register.filter(name="stripjs")
 @stringfilter
 def stripjs(value):
-    """ Removes the javascript tags susceptible to be executed on the client side
+    """Removes the javascript tags susceptible to be executed on the client side
 
     Args:
         value:

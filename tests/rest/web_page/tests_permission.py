@@ -120,7 +120,6 @@ class TestWebPageListDeletePermission(SimpleTestCase):
 
 
 def _get_mock_web_page():
-    """ Returns a Web page
-    """
+    """Returns a Web page"""
     type_default_for_test = 0
     return WebPage(type=type_default_for_test, content="web page")

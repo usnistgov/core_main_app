@@ -7,9 +7,9 @@ from json import JSONEncoder
 
 
 class DateTimeEncoder(JSONEncoder):
-    """ Instead of letting the default encoder convert datetime to string,
-        convert datetime objects into a dict, which can be decoded by the
-        DateTimeDecoder
+    """Instead of letting the default encoder convert datetime to string,
+    convert datetime objects into a dict, which can be decoded by the
+    DateTimeDecoder
     """
 
     def default(self, obj):

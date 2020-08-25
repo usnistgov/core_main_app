@@ -26,21 +26,19 @@ from core_main_app.utils.decorators import api_staff_member_required
 
 
 class AbstractTemplateVersionManagerList(APIView, metaclass=ABCMeta):
-    """ List template version managers
-    """
+    """List template version managers"""
 
     serializer = TemplateVersionManagerSerializer
 
     @abstractmethod
     def get_template_version_managers(self):
-        """ Return template version managers
-        """
+        """Return template version managers"""
         raise NotImplementedError(
             "get_template_version_managers method is not implemented."
         )
 
     def get(self, request):
-        """ Get template version managers
+        """Get template version managers
 
         Url Parameters:
 
@@ -80,11 +78,10 @@ class AbstractTemplateVersionManagerList(APIView, metaclass=ABCMeta):
 
 
 class AbstractStatusTemplateVersion(APIView, metaclass=ABCMeta):
-    """ Set template version status
-    """
+    """Set template version status"""
 
     def get_object(self, pk):
-        """ Get template from db
+        """Get template from db
 
         Args:
 
@@ -108,13 +105,12 @@ class AbstractStatusTemplateVersion(APIView, metaclass=ABCMeta):
 
     @abstractmethod
     def status_update(self, template_object):
-        """ Perform an update of the object status
-        """
+        """Perform an update of the object status"""
         raise NotImplementedError("status_update method is not implemented.")
 
     @method_decorator(api_staff_member_required())
     def patch(self, request, pk):
-        """ Set status
+        """Set status
 
         Args:
 
@@ -160,11 +156,10 @@ class AbstractStatusTemplateVersion(APIView, metaclass=ABCMeta):
 
 
 class AbstractTemplateVersionManagerDetail(APIView, metaclass=ABCMeta):
-    """ Template Version Manager Detail
-    """
+    """Template Version Manager Detail"""
 
     def get_object(self, pk):
-        """ Get template version manager from db
+        """Get template version manager from db
 
         Args:
 
@@ -187,17 +182,15 @@ class AbstractTemplateVersionManagerDetail(APIView, metaclass=ABCMeta):
 class AbstractStatusTemplateVersionManager(
     AbstractTemplateVersionManagerDetail, metaclass=ABCMeta
 ):
-    """ Set template version manager status
-    """
+    """Set template version manager status"""
 
     @abstractmethod
     def status_update(self, template_version_manager_object):
-        """ Perform an update of the object status.
-        """
+        """Perform an update of the object status."""
         raise NotImplementedError("status_update method is not implemented.")
 
     def patch(self, request, pk):
-        """ Set status
+        """Set status
 
         Args:
 
@@ -240,14 +233,13 @@ class AbstractStatusTemplateVersionManager(
 
 
 class AbstractTemplateList(APIView, metaclass=ABCMeta):
-    """ Create a template
-    """
+    """Create a template"""
 
     serializer = TemplateVersionManagerSerializer
     create_serializer = CreateTemplateSerializer
 
     def post(self, request):
-        """ Create a template
+        """Create a template
 
         Parameters:
 
@@ -257,7 +249,7 @@ class AbstractTemplateList(APIView, metaclass=ABCMeta):
                 "content": "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element name='root'/></xs:schema>"
             }
 
-        Note: 
+        Note:
 
             "dependencies_dict": json.dumps({"schemaLocation1": "id1" ,"schemaLocation2":"id2"})
 
@@ -307,6 +299,5 @@ class AbstractTemplateList(APIView, metaclass=ABCMeta):
 
     @abstractmethod
     def get_user(self):
-        """ Retrieve a user
-        """
+        """Retrieve a user"""
         raise NotImplementedError("get_user method is not implemented.")

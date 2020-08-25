@@ -12,11 +12,10 @@ from core_main_app.utils.file import get_file_http_response
 
 
 class TemplateDetail(APIView):
-    """ Retrieve a Template.
-    """
+    """Retrieve a Template."""
 
     def get_object(self, pk):
-        """ Get Template from db
+        """Get Template from db
 
         Args:
 
@@ -32,7 +31,7 @@ class TemplateDetail(APIView):
             raise Http404
 
     def get(self, request, pk):
-        """ Retrieve a Template
+        """Retrieve a Template
 
         Args:
 
@@ -66,11 +65,10 @@ class TemplateDetail(APIView):
 
 
 class TemplateDownload(APIView):
-    """ Download a Template
-    """
+    """Download a Template"""
 
     def get_object(self, pk):
-        """ Get Template from db
+        """Get Template from db
 
         Args:
 
@@ -86,7 +84,7 @@ class TemplateDownload(APIView):
             raise Http404
 
     def get(self, request, pk):
-        """ Download the XSD file from a Template
+        """Download the XSD file from a Template
 
         Args:
 

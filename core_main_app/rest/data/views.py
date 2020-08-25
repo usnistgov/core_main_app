@@ -43,14 +43,13 @@ from core_main_app.utils.pagination.rest_framework_paginator.pagination import (
 
 
 class DataList(APIView):
-    """ List all user Data, or create a new one.
-    """
+    """List all user Data, or create a new one."""
 
     permission_classes = (IsAuthenticated,)
     serializer = DataSerializer
 
     def get(self, request):
-        """ Get all user Data
+        """Get all user Data
 
         Url Parameters:
 
@@ -104,7 +103,7 @@ class DataList(APIView):
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
-        """ Create a Data
+        """Create a Data
 
         Parameters:
 
@@ -157,7 +156,7 @@ class AdminDataList(DataList):
     serializer = AdminDataSerializer
 
     def get(self, request):
-        """ Get all Data
+        """Get all Data
 
         Url Parameters:
 
@@ -227,14 +226,13 @@ class AdminDataList(DataList):
 
 
 class DataDetail(APIView):
-    """ Retrieve, update or delete a Data
-    """
+    """Retrieve, update or delete a Data"""
 
     permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer = DataSerializer
 
     def get_object(self, request, pk):
-        """ Get data from db
+        """Get data from db
 
         Args:
 
@@ -251,7 +249,7 @@ class DataDetail(APIView):
             raise Http404
 
     def get(self, request, pk):
-        """ Retrieve a data
+        """Retrieve a data
 
         Args:
 
@@ -284,7 +282,7 @@ class DataDetail(APIView):
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request, pk):
-        """ Delete a Data
+        """Delete a Data
 
         Args:
 
@@ -317,7 +315,7 @@ class DataDetail(APIView):
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def patch(self, request, pk):
-        """ Update a Data
+        """Update a Data
 
         Parameters:
 
@@ -369,13 +367,12 @@ class DataDetail(APIView):
 
 
 class DataChangeOwner(APIView):
-    """ Change the Owner of a data
-    """
+    """Change the Owner of a data"""
 
     permission_classes = (IsAdminUser,)
 
     def get_object(self, request, pk):
-        """ Get data from db
+        """Get data from db
 
         Args:
 
@@ -392,7 +389,7 @@ class DataChangeOwner(APIView):
             raise Http404
 
     def get_user(self, user_id):
-        """ Retrieve a User
+        """Retrieve a User
 
         Args:
 
@@ -409,7 +406,7 @@ class DataChangeOwner(APIView):
             raise Http404
 
     def patch(self, request, pk, user_id):
-        """ Change the Owner of a data
+        """Change the Owner of a data
 
         Args:
 
@@ -448,11 +445,10 @@ class DataChangeOwner(APIView):
 
 
 class DataDownload(APIView):
-    """ Download XML file in data
-    """
+    """Download XML file in data"""
 
     def get_object(self, request, pk):
-        """ Get Data from db
+        """Get Data from db
 
         Args:
 
@@ -469,7 +465,7 @@ class DataDownload(APIView):
             raise Http404
 
     def get(self, request, pk):
-        """ Download the XML file from a data
+        """Download the XML file from a data
 
         Args:
 
@@ -504,7 +500,7 @@ class DataDownload(APIView):
 # FIXME: Should avoid the duplicated code with get_by_id
 @api_view(["GET"])
 def get_by_id_with_template_info(request):
-    """ Retrieve a Data with template information
+    """Retrieve a Data with template information
 
     Examples:
 
@@ -557,7 +553,7 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
     serializer = DataSerializer
 
     def post(self, request):
-        """ Execute a query
+        """Execute a query
 
         Url Parameters:
 
@@ -610,7 +606,7 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
         return super(ExecuteLocalQueryView, self).post(request)
 
     def build_response(self, data_list):
-        """ Build the response.
+        """Build the response.
 
         Args:
 
@@ -641,7 +637,7 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
 
 class ExecuteLocalKeywordQueryView(ExecuteLocalQueryView):
     def build_query(self, query, workspaces, templates, options, title=None):
-        """ Build the raw query
+        """Build the raw query
         Prepare the query for a keyword search
 
         Args:
@@ -651,7 +647,7 @@ class ExecuteLocalKeywordQueryView(ExecuteLocalQueryView):
             templates: ObjectId
             options: Query options
             title: title filter
-            
+
         Returns:
 
             The raw query
@@ -664,13 +660,12 @@ class ExecuteLocalKeywordQueryView(ExecuteLocalQueryView):
 
 
 class DataAssign(APIView):
-    """ Assign a Data to a Workspace.
-    """
+    """Assign a Data to a Workspace."""
 
     permission_classes = (IsAuthenticated,)
 
     def get_object(self, request, pk):
-        """ Get data from db
+        """Get data from db
 
         Args:
 
@@ -687,7 +682,7 @@ class DataAssign(APIView):
             raise Http404
 
     def get_workspace(self, workspace_id):
-        """ Retrieve a Workspace
+        """Retrieve a Workspace
 
         Args:
 
@@ -704,7 +699,7 @@ class DataAssign(APIView):
             raise Http404
 
     def patch(self, request, pk, workspace_id):
-        """ Assign Data to a Workspace
+        """Assign Data to a Workspace
 
         Args:
 
@@ -743,14 +738,13 @@ class DataAssign(APIView):
 
 
 class DataListByWorkspace(APIView):
-    """ List all Data by workspace.
-    """
+    """List all Data by workspace."""
 
     permission_classes = (IsAuthenticated,)
     serializer = DataSerializer
 
     def get(self, request, workspace_id):
-        """ Get all workspace Data
+        """Get all workspace Data
 
         Examples:
 
@@ -788,7 +782,7 @@ class DataPermissions(APIView):
     """
 
     def get_object(self, request, pk):
-        """ Get data from db
+        """Get data from db
 
         Args:
 
@@ -805,7 +799,7 @@ class DataPermissions(APIView):
             raise Http404
 
     def get(self, request):
-        """ Give the user permissions for a list of data ids
+        """Give the user permissions for a list of data ids
 
         Parameters:
 
@@ -852,7 +846,7 @@ class DataPermissions(APIView):
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def can_write_data(self, request, id):
-        """ Get the data permissions of a data
+        """Get the data permissions of a data
 
         Args:
 
@@ -881,11 +875,10 @@ class DataPermissions(APIView):
 
 
 class Validation(AbstractMigrationView):
-    """ Check for a set of data if the migration is possible for the given target template
-    """
+    """Check for a set of data if the migration is possible for the given target template"""
 
     def post(self, request, pk):
-        """ Check if a migration if possible for the given template id
+        """Check if a migration if possible for the given template id
 
         Parameters:
 
@@ -919,11 +912,10 @@ class Validation(AbstractMigrationView):
 
 
 class Migration(AbstractMigrationView):
-    """ Data template migration
-    """
+    """Data template migration"""
 
     def post(self, request, pk):
-        """ Migrate data to the given template id
+        """Migrate data to the given template id
 
         Parameters:
 
@@ -958,7 +950,7 @@ class Migration(AbstractMigrationView):
 
 @api_view(["GET"])
 def get_progress(request, task_id):
-    """ Get the progress of the migration / validation async task
+    """Get the progress of the migration / validation async task
 
     Args:
         request:
@@ -976,7 +968,7 @@ def get_progress(request, task_id):
 
 @api_view(["GET"])
 def get_result(request, task_id):
-    """ Get the result of the migration / validation async task
+    """Get the result of the migration / validation async task
 
     Args:
         request:

@@ -213,7 +213,7 @@ class TestTemplateXslRenderingGetAll(TestCase):
 
 
 def _create_template_xsl_rendering():
-    """ Mocks an TemplateXslRendering.
+    """Mocks an TemplateXslRendering.
 
     Returns:
         TemplateXslRendering mock.
@@ -226,7 +226,7 @@ def _create_template_xsl_rendering():
 
 
 def _create_mock_template_xsl_rendering():
-    """ Mocks an TemplateXslRendering.
+    """Mocks an TemplateXslRendering.
 
     Returns:
         TemplateXslRendering mock.
@@ -241,7 +241,7 @@ def _create_mock_template_xsl_rendering():
 
 
 def _set_template_xsl_rendering_fields(template_xsl_rendering):
-    """ Sets TemplateXslRendering fields.
+    """Sets TemplateXslRendering fields.
 
     Returns:
         TemplateXslRendering with assigned fields.

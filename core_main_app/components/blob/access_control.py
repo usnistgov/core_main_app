@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 def has_perm_publish_blob(user):
-    """ Does the user have the permission to publish a blob.
+    """Does the user have the permission to publish a blob.
 
     Args:
         user
@@ -20,7 +20,7 @@ def has_perm_publish_blob(user):
 
 
 def can_write_blob_workspace(func, data, workspace, user):
-    """ Can user write data in workspace.
+    """Can user write data in workspace.
 
     Args:
         func:

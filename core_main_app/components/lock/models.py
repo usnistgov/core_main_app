@@ -36,7 +36,7 @@ class Lock(object):
         sem.release()
 
     def set_lock(self, object, user):
-        """ Set lock on a Document.
+        """Set lock on a Document.
 
         Args:
             object:
@@ -51,7 +51,7 @@ class Lock(object):
         database_lock_object.save()
 
     def remove_lock(self, database_lock_object):
-        """ Remove a lock.
+        """Remove a lock.
 
         Args:
             database_lock_object:
@@ -61,7 +61,7 @@ class Lock(object):
         database_lock_object.delete()
 
     def get_object_locked(self, object):
-        """ Get the locked object.
+        """Get the locked object.
 
         Args:
             object:
@@ -86,7 +86,7 @@ class DatabaseLockObject(Document):
 
     @staticmethod
     def get_lock_by_object(object):
-        """ Get lock relative to the given object.
+        """Get lock relative to the given object.
 
         Args:
             object:

@@ -17,8 +17,7 @@ from core_main_app.components.workspace.models import Workspace
 
 
 class Data(AbstractData):
-    """ Data object
-    """
+    """Data object"""
 
     template = fields.ReferenceField(Template, blank=False)
     user_id = fields.StringField()
@@ -30,7 +29,7 @@ class Data(AbstractData):
 
     @staticmethod
     def get_all(order_by_field):
-        """ Get all data.
+        """Get all data.
 
         Args:
             order_by_field: Order by field.
@@ -42,7 +41,7 @@ class Data(AbstractData):
 
     @staticmethod
     def get_all_except(order_by_field, id_list=None):
-        """ Get all data except for the ones with ID within the provided list.
+        """Get all data except for the ones with ID within the provided list.
 
         Args:
             id_list:
@@ -57,7 +56,7 @@ class Data(AbstractData):
 
     @staticmethod
     def get_all_by_user_id(user_id, order_by_field):
-        """ Get all data relative to the given user id
+        """Get all data relative to the given user id
 
         Args:
             user_id:
@@ -70,7 +69,7 @@ class Data(AbstractData):
 
     @staticmethod
     def get_all_except_user_id(user_id, order_by_field):
-        """ Get all data non relative to the given user id
+        """Get all data non relative to the given user id
 
         Args:
             user_id:
@@ -83,7 +82,7 @@ class Data(AbstractData):
 
     @staticmethod
     def get_all_by_id_list(list_id, order_by_field):
-        """ Return the object with the given list id.
+        """Return the object with the given list id.
 
         Args:
             list_id:
@@ -96,7 +95,7 @@ class Data(AbstractData):
 
     @staticmethod
     def get_by_id(data_id):
-        """ Return the object with the given id.
+        """Return the object with the given id.
 
         Args:
             data_id:
@@ -127,7 +126,7 @@ class Data(AbstractData):
 
     @staticmethod
     def get_all_by_workspace(workspace, order_by_field):
-        """ Get all data that belong to the workspace.
+        """Get all data that belong to the workspace.
 
         Args:
             workspace:
@@ -140,7 +139,7 @@ class Data(AbstractData):
 
     @staticmethod
     def get_all_by_list_workspace(list_workspace, order_by_field):
-        """ Get all data that belong to the list of workspace.
+        """Get all data that belong to the list of workspace.
 
         Args:
             list_workspace:
@@ -153,7 +152,7 @@ class Data(AbstractData):
 
     @staticmethod
     def get_all_by_list_template(list_template, order_by_field):
-        """ Get all data that belong to the list of template.
+        """Get all data that belong to the list of template.
 
         Args:
             list_template:
@@ -166,7 +165,7 @@ class Data(AbstractData):
 
     @staticmethod
     def get_all_by_user_and_workspace(user_id, list_workspace, order_by_field):
-        """ Get all data that belong to the list of workspace and owned by a user.
+        """Get all data that belong to the list of workspace and owned by a user.
 
         Args:
             list_workspace:
@@ -184,7 +183,7 @@ class Data(AbstractData):
     def get_all_by_templates_and_workspaces(
         list_template, list_workspace, order_by_field
     ):
-        """ Get all data stored in the list of workspace and created from the
+        """Get all data stored in the list of workspace and created from the
         list of templates.
 
         Args:
@@ -213,7 +212,7 @@ class Data(AbstractData):
 
     @staticmethod
     def get_none():
-        """ Return None object, used by data.
+        """Return None object, used by data.
 
         Returns:
 

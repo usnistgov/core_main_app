@@ -6,7 +6,7 @@ from core_main_app.settings import SSL_CERTIFICATES_DIR
 
 
 def send_get_request(url, params=None, **kwargs):
-    """ Send a GET request using python requests.
+    """Send a GET request using python requests.
 
     Args:
         url:
@@ -22,7 +22,7 @@ def send_get_request(url, params=None, **kwargs):
 
 
 def send_post_request(url, data=None, json=None, **kwargs):
-    """ Send a POST request using python requests.
+    """Send a POST request using python requests.
 
     Args:
         url:
@@ -39,7 +39,7 @@ def send_post_request(url, data=None, json=None, **kwargs):
 
 
 def send_put_request(url, data=None, **kwargs):
-    """ Send a PUT request using python requests.
+    """Send a PUT request using python requests.
 
     Args:
         url:
@@ -55,7 +55,7 @@ def send_put_request(url, data=None, **kwargs):
 
 
 def send_delete_request(url, **kwargs):
-    """ Send a DELETE request using python requests.
+    """Send a DELETE request using python requests.
 
     Args:
         url:
@@ -70,7 +70,7 @@ def send_delete_request(url, **kwargs):
 
 
 def send_get_request_with_access_token(url, access_token):
-    """ Send a GET request using python requests adding access token in headers.
+    """Send a GET request using python requests adding access token in headers.
 
     Args:
         url:

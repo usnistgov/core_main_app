@@ -14,12 +14,15 @@ from core_main_app.commons.exceptions import DoesNotExist, NotUniqueError, Model
 from core_main_app.components.group import api as group_api
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
+from core_main_app.templatetags.xsl_transform_tag import render_xml_as_html
 from core_main_app.utils import group as group_utils
 from core_main_app.views.user.forms import (
     ChangeWorkspaceForm,
     UserRightForm,
     GroupRightForm,
 )
+from core_main_app.components.data import api as data_api
+
 
 GROUP = "group"
 USER = "user"
@@ -30,7 +33,7 @@ ACTION_WRITE = "action_write"
 
 @login_required
 def set_public_workspace(request):
-    """ Set a workspace public.
+    """Set a workspace public.
 
     Args:
         request:
@@ -55,7 +58,7 @@ def set_public_workspace(request):
 
 @login_required
 def set_private_workspace(request):
-    """ Set a workspace private.
+    """Set a workspace private.
 
     Args:
         request:
@@ -111,7 +114,7 @@ class LoadFormChangeWorkspace(View):
 
 @login_required
 def create_workspace(request):
-    """ Create a workspace.
+    """Create a workspace.
 
     Args:
         request
@@ -141,7 +144,7 @@ def create_workspace(request):
 
 @login_required
 def load_add_user_form(request):
-    """ Load the form to list the users with no access to the workspace.
+    """Load the form to list the users with no access to the workspace.
 
     Args:
         request:
@@ -196,7 +199,7 @@ def load_add_user_form(request):
 
 @login_required
 def add_user_right_to_workspace(request):
-    """ Add rights to user for the workspace.
+    """Add rights to user for the workspace.
 
     Args:
         request
@@ -238,7 +241,7 @@ def add_user_right_to_workspace(request):
 
 @login_required
 def switch_right(request):
-    """ Switch user's right for the workspace.
+    """Switch user's right for the workspace.
 
     Args:
         request
@@ -271,7 +274,7 @@ def switch_right(request):
 
 
 def _switch_user_right(user_id, action, value, workspace, request_user):
-    """ Change the user rights to the workspace.
+    """Change the user rights to the workspace.
 
     Args:
         user_id:
@@ -305,7 +308,7 @@ def _switch_user_right(user_id, action, value, workspace, request_user):
 
 
 def _switch_group_right(group_id, action, value, workspace, request_user):
-    """ Change the group rights to the workspace.
+    """Change the group rights to the workspace.
 
     Args:
         group_id:
@@ -340,7 +343,7 @@ def _switch_group_right(group_id, action, value, workspace, request_user):
 
 @login_required
 def remove_user_or_group_rights(request):
-    """ Remove user's right for the workspace.
+    """Remove user's right for the workspace.
 
     Args:
         request
@@ -373,7 +376,7 @@ def remove_user_or_group_rights(request):
 
 
 def _remove_user_rights(object_id, workspace, request_user):
-    """ Remove all user rights on the workspace.
+    """Remove all user rights on the workspace.
 
     Args:
         object_id:
@@ -388,7 +391,7 @@ def _remove_user_rights(object_id, workspace, request_user):
 
 
 def _remove_group_rights(object_id, workspace, request_user):
-    """ Remove all group rights on the workspace.
+    """Remove all group rights on the workspace.
 
     Args:
         object_id:
@@ -404,7 +407,7 @@ def _remove_group_rights(object_id, workspace, request_user):
 
 @login_required
 def load_add_group_form(request):
-    """ Load the form to list the groups with no access to the workspace.
+    """Load the form to list the groups with no access to the workspace.
 
     Args:
         request:
@@ -460,7 +463,7 @@ def load_add_group_form(request):
 
 @login_required
 def add_group_right_to_workspace(request):
-    """ Add rights to group for the workspace.
+    """Add rights to group for the workspace.
 
     Args:
         request
@@ -501,19 +504,18 @@ def add_group_right_to_workspace(request):
 
 
 class AssignView(View):
-    """  Assign Ajax view
-    """
+    """Assign Ajax view"""
 
     api = None
 
     def post(self, request):
-        """ Assign the record to a workspace.
+        """Assign the record to a workspace.
 
-            Args:
-                request:
+        Args:
+            request:
 
-            Returns:
-            """
+        Returns:
+        """
         document_ids = request.POST.getlist("document_id[]", [])
         workspace_id = request.POST.get("workspace_id", None)
 
@@ -540,3 +542,30 @@ class AssignView(View):
                 return HttpResponseBadRequest("Something wrong happened.")
 
         return HttpResponse(json.dumps({}), content_type="application/javascript")
+
+
+def change_data_display(request):
+    """Change data display
+
+    Args:
+        request:
+
+    Returns:
+    """
+    xsl_transformation_id = request.POST.get("xslt_id", None)
+    data_id = request.POST.get("data_id", None)
+    data = data_api.get_by_id(data_id, request.user)
+
+    return HttpResponse(
+        json.dumps(
+            {
+                "template": render_xml_as_html(
+                    xml_content=data.xml_content,
+                    template_id=data.template.id,
+                    template_hash=data.template.hash,
+                    xslt_id=xsl_transformation_id,
+                ),
+            }
+        ),
+        "application/javascript",
+    )

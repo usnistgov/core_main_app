@@ -9,8 +9,8 @@ from rest_framework.test import APIRequestFactory
 
 
 class RequestMock(object):
-    """ Represent a request.
-        Use this class to simulate an HTTP request.
+    """Represent a request.
+    Use this class to simulate an HTTP request.
     """
 
     @staticmethod

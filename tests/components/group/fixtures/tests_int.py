@@ -9,8 +9,7 @@ from tests.components.group.fixtures.fixtures import GroupFixtures
 
 
 class TestGroupFixtures(MongoIntegrationTransactionTestCase):
-    """ Test Group fixtures
-    """
+    """Test Group fixtures"""
 
     def test_create_group(self):
         # Context

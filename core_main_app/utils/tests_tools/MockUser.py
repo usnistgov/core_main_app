@@ -7,14 +7,14 @@ from mock.mock import Mock
 def create_mock_user(
     user_id, is_staff=False, is_superuser=False, has_perm=False, is_anonymous=False
 ):
-    """ Mock a User.
+    """Mock a User.
 
-        Args:
-            user_id:
-            is_staff:
-            is_superuser:
-            has_perm:
-            is_anonymous:
+    Args:
+        user_id:
+        is_staff:
+        is_superuser:
+        has_perm:
+        is_anonymous:
 
     """
     mock_user = Mock(spec=User)

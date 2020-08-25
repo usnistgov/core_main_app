@@ -13,8 +13,7 @@ from core_main_app.utils.tests_tools.RequestMock import RequestMock
 
 
 class TestGetWorkspaceDetail(SimpleTestCase):
-    """ Test Get Workspace Detail
-    """
+    """Test Get Workspace Detail"""
 
     def test_anonymous_returns_http_403(self):
         # Act
@@ -63,8 +62,7 @@ class TestGetWorkspaceDetail(SimpleTestCase):
 
 
 class TestDeleteWorkspace(SimpleTestCase):
-    """ Test Delete Workspace
-    """
+    """Test Delete Workspace"""
 
     def test_anonymous_returns_http_403(self):
         # Act
@@ -112,8 +110,7 @@ class TestDeleteWorkspace(SimpleTestCase):
 
 
 class TestGetWorkspace(SimpleTestCase):
-    """ Test Get Workspace
-    """
+    """Test Get Workspace"""
 
     def test_get_anonymous_returns_http_403(self):
         # Act
@@ -162,8 +159,7 @@ class TestGetWorkspace(SimpleTestCase):
 
 
 class TestCreateWorkspace(SimpleTestCase):
-    """ Test Create Workspace
-    """
+    """Test Create Workspace"""
 
     def test_post_anonymous_returns_http_403(self):
         # Act
@@ -225,8 +221,7 @@ class TestCreateWorkspace(SimpleTestCase):
 
 
 class TestWorkspaceReadAccess(SimpleTestCase):
-    """ Test Workspace Read Access
-    """
+    """Test Workspace Read Access"""
 
     def test_anonymous_returns_http_403(self):
         # Act
@@ -249,8 +244,8 @@ class TestWorkspaceReadAccess(SimpleTestCase):
         mock_workspace_api_get_all_workspaces_with_read_access_by_user.return_value = (
             None
         )
-        mock_workspace_rest_views__list_of_workspaces_to_response.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_workspace_rest_views__list_of_workspaces_to_response.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -273,8 +268,8 @@ class TestWorkspaceReadAccess(SimpleTestCase):
         mock_workspace_api_get_all_workspaces_with_read_access_by_user.return_value = (
             None
         )
-        mock_workspace_rest_views__list_of_workspaces_to_response.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_workspace_rest_views__list_of_workspaces_to_response.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -287,8 +282,7 @@ class TestWorkspaceReadAccess(SimpleTestCase):
 
 
 class TestWorkspaceWriteAccess(SimpleTestCase):
-    """ Test Workspace Write Access
-    """
+    """Test Workspace Write Access"""
 
     def test_anonymous_returns_http_403(self):
         # Act
@@ -311,8 +305,8 @@ class TestWorkspaceWriteAccess(SimpleTestCase):
         mock_workspace_api_get_all_workspaces_with_write_access_by_user.return_value = (
             None
         )
-        mock_workspace_rest_views__list_of_workspaces_to_response.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_workspace_rest_views__list_of_workspaces_to_response.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -335,8 +329,8 @@ class TestWorkspaceWriteAccess(SimpleTestCase):
         mock_workspace_api_get_all_workspaces_with_write_access_by_user.return_value = (
             None
         )
-        mock_workspace_rest_views__list_of_workspaces_to_response.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_workspace_rest_views__list_of_workspaces_to_response.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -349,8 +343,7 @@ class TestWorkspaceWriteAccess(SimpleTestCase):
 
 
 class TestWorkspaceIsPublic(SimpleTestCase):
-    """ Test Workspace Is Public
-    """
+    """Test Workspace Is Public"""
 
     def test_anonymous_returns_http_403(self):
         # Act
@@ -399,8 +392,7 @@ class TestWorkspaceIsPublic(SimpleTestCase):
 
 
 class TestWorkspaceSetPublic(SimpleTestCase):
-    """ Test Workspace Set Public
-    """
+    """Test Workspace Set Public"""
 
     def test_anonymous_returns_http_403(self):
         # Act
@@ -449,8 +441,7 @@ class TestWorkspaceSetPublic(SimpleTestCase):
 
 
 class TestWorkspaceSetPrivate(SimpleTestCase):
-    """ Test Workspace Set Private
-    """
+    """Test Workspace Set Private"""
 
     def test_anonymous_returns_http_403(self):
         # Act
@@ -499,8 +490,7 @@ class TestWorkspaceSetPrivate(SimpleTestCase):
 
 
 class TestWorkspaceListUserCanRead(SimpleTestCase):
-    """ Test Workspace List User Can read
-    """
+    """Test Workspace List User Can read"""
 
     def test_anonymous_returns_http_403(self):
         # Act
@@ -517,8 +507,8 @@ class TestWorkspaceListUserCanRead(SimpleTestCase):
     ):
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -535,8 +525,8 @@ class TestWorkspaceListUserCanRead(SimpleTestCase):
     ):
         # Context
         user = create_mock_user("1")
-        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -549,8 +539,7 @@ class TestWorkspaceListUserCanRead(SimpleTestCase):
 
 
 class TestWorkspaceListUserCanWrite(SimpleTestCase):
-    """ Test Workspace List User Can Write
-    """
+    """Test Workspace List User Can Write"""
 
     def test_anonymous_returns_http_403(self):
         # Act
@@ -569,8 +558,8 @@ class TestWorkspaceListUserCanWrite(SimpleTestCase):
     ):
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -589,8 +578,8 @@ class TestWorkspaceListUserCanWrite(SimpleTestCase):
     ):
         # Context
         user = create_mock_user("1")
-        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -605,8 +594,7 @@ class TestWorkspaceListUserCanWrite(SimpleTestCase):
 
 
 class TestWorkspaceListGroupCanRead(SimpleTestCase):
-    """ Test Workspace List Group Can read
-    """
+    """Test Workspace List Group Can read"""
 
     def test_anonymous_returns_http_403(self):
         # Act
@@ -625,8 +613,8 @@ class TestWorkspaceListGroupCanRead(SimpleTestCase):
     ):
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -645,8 +633,8 @@ class TestWorkspaceListGroupCanRead(SimpleTestCase):
     ):
         # Context
         user = create_mock_user("1")
-        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -661,8 +649,7 @@ class TestWorkspaceListGroupCanRead(SimpleTestCase):
 
 
 class TestWorkspaceListGroupCanWrite(SimpleTestCase):
-    """ Test Workspace List Group Can Write
-    """
+    """Test Workspace List Group Can Write"""
 
     def test_anonymous_returns_http_403(self):
         # Act
@@ -681,8 +668,8 @@ class TestWorkspaceListGroupCanWrite(SimpleTestCase):
     ):
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -701,8 +688,8 @@ class TestWorkspaceListGroupCanWrite(SimpleTestCase):
     ):
         # Context
         user = create_mock_user("1")
-        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -717,8 +704,7 @@ class TestWorkspaceListGroupCanWrite(SimpleTestCase):
 
 
 class TestAddUserReadRightToWorkspace(SimpleTestCase):
-    """ Test Add User Read Right To Workspace
-    """
+    """Test Add User Read Right To Workspace"""
 
     def test_anonymous_returns_http_403(self):
         # Act
@@ -779,8 +765,7 @@ class TestAddUserReadRightToWorkspace(SimpleTestCase):
 
 
 class TestAddUserWriteRightToWorkspace(SimpleTestCase):
-    """ Test Add User Write Right To Workspace
-    """
+    """Test Add User Write Right To Workspace"""
 
     def test_anonymous_returns_http_403(self):
         # Act
@@ -841,8 +826,7 @@ class TestAddUserWriteRightToWorkspace(SimpleTestCase):
 
 
 class TestAddGroupReadRightToWorkspace(SimpleTestCase):
-    """ Test Add Group Read Right To Workspace
-    """
+    """Test Add Group Read Right To Workspace"""
 
     def test_anonymous_returns_http_403(self):
         # Act
@@ -903,8 +887,7 @@ class TestAddGroupReadRightToWorkspace(SimpleTestCase):
 
 
 class TestAddGroupWriteRightToWorkspace(SimpleTestCase):
-    """ Test Add Group Write Right To Workspace
-    """
+    """Test Add Group Write Right To Workspace"""
 
     def test_anonymous_returns_http_403(self):
         # Act
@@ -965,8 +948,7 @@ class TestAddGroupWriteRightToWorkspace(SimpleTestCase):
 
 
 class TestRemoveUserReadRightToWorkspace(SimpleTestCase):
-    """ Test Remove User Read Right To Workspace
-    """
+    """Test Remove User Read Right To Workspace"""
 
     def test_anonymous_returns_http_403(self):
         # Act
@@ -1027,8 +1009,7 @@ class TestRemoveUserReadRightToWorkspace(SimpleTestCase):
 
 
 class TestRemoveUserWriteRightToWorkspace(SimpleTestCase):
-    """ Test Remove User Write Right To Workspace
-    """
+    """Test Remove User Write Right To Workspace"""
 
     def test_anonymous_returns_http_403(self):
         # Act
@@ -1089,8 +1070,7 @@ class TestRemoveUserWriteRightToWorkspace(SimpleTestCase):
 
 
 class TestRemoveGroupReadRightToWorkspace(SimpleTestCase):
-    """ Test Remove Group Read Right To Workspace
-    """
+    """Test Remove Group Read Right To Workspace"""
 
     def test_anonymous_returns_http_403(self):
         # Act
@@ -1151,8 +1131,7 @@ class TestRemoveGroupReadRightToWorkspace(SimpleTestCase):
 
 
 class TestRemoveGroupWriteRightToWorkspace(SimpleTestCase):
-    """ Test Remove Group Write Right To Workspace
-    """
+    """Test Remove Group Write Right To Workspace"""
 
     def test_anonymous_returns_http_403(self):
         # Act

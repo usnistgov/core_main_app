@@ -28,11 +28,10 @@ from core_main_app.utils.decorators import api_staff_member_required
 
 
 class GlobalTemplateVersionManagerList(AbstractTemplateVersionManagerList):
-    """ List all GlobalTemplateVersionManager
-    """
+    """List all GlobalTemplateVersionManager"""
 
     def get_template_version_managers(self):
-        """ Get GlobalTemplateVersionManager
+        """Get GlobalTemplateVersionManager
 
         Returns:
 
@@ -42,13 +41,12 @@ class GlobalTemplateVersionManagerList(AbstractTemplateVersionManagerList):
 
 
 class UserTemplateVersionManagerList(AbstractTemplateVersionManagerList):
-    """ List all UserTemplateVersionManager
-    """
+    """List all UserTemplateVersionManager"""
 
     permission_classes = (IsAuthenticated,)
 
     def get_template_version_managers(self):
-        """ Get all UserTemplateVersionManager
+        """Get all UserTemplateVersionManager
 
         Returns:
 
@@ -60,13 +58,12 @@ class UserTemplateVersionManagerList(AbstractTemplateVersionManagerList):
 
 
 class TemplateVersionManagerDetail(APIView):
-    """ Retrieve a TemplateVersionManager
-    """
+    """Retrieve a TemplateVersionManager"""
 
     permission_classes = (IsAuthenticated,)
 
     def get_object(self, pk):
-        """ Get TemplateVersionManager from db
+        """Get TemplateVersionManager from db
 
         Args:
 
@@ -82,7 +79,7 @@ class TemplateVersionManagerDetail(APIView):
             raise Http404
 
     def get(self, request, pk):
-        """ Retrieve a TemplateVersionManager
+        """Retrieve a TemplateVersionManager
 
         Args:
 
@@ -118,12 +115,11 @@ class TemplateVersionManagerDetail(APIView):
 
 
 class TemplateVersion(AbstractTemplateVersionManagerDetail):
-    """ Create a TemplateVersion
-    """
+    """Create a TemplateVersion"""
 
     @method_decorator(api_staff_member_required())
     def post(self, request, pk):
-        """ Create a TemplateVersion
+        """Create a TemplateVersion
 
         Parameters:
 
@@ -132,8 +128,8 @@ class TemplateVersion(AbstractTemplateVersionManagerDetail):
                 "content": "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element name='root'/></xs:schema>"
             }
 
-        Note: 
-        
+        Note:
+
             "dependencies_dict": json.dumps({"schemaLocation1": "id1" ,"schemaLocation2":"id2"})
 
         Args:
@@ -179,13 +175,12 @@ class TemplateVersion(AbstractTemplateVersionManagerDetail):
 
 
 class UserTemplateList(AbstractTemplateList):
-    """ Create a Template (linked to the user)
-    """
+    """Create a Template (linked to the user)"""
 
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
-        """ Create a Template (linked to the user)
+        """Create a Template (linked to the user)
 
         Parameters:
 
@@ -215,7 +210,7 @@ class UserTemplateList(AbstractTemplateList):
         return super(UserTemplateList, self).post(request)
 
     def get_user(self):
-        """ Retrieve the user from the request
+        """Retrieve the user from the request
 
         Returns:
 
@@ -225,12 +220,11 @@ class UserTemplateList(AbstractTemplateList):
 
 
 class GlobalTemplateList(AbstractTemplateList):
-    """ Create a Template (global schema)
-    """
+    """Create a Template (global schema)"""
 
     @method_decorator(api_staff_member_required())
     def post(self, request):
-        """ Create a Template (global schema)
+        """Create a Template (global schema)
 
         Parameters:
 
@@ -260,7 +254,7 @@ class GlobalTemplateList(AbstractTemplateList):
         return super(GlobalTemplateList, self).post(request)
 
     def get_user(self):
-        """ The user is None for a global template
+        """The user is None for a global template
 
         Returns:
 
@@ -270,13 +264,12 @@ class GlobalTemplateList(AbstractTemplateList):
 
 
 class CurrentTemplateVersion(AbstractStatusTemplateVersion):
-    """ Update status to current
-    """
+    """Update status to current"""
 
     permission_classes = (IsAuthenticated,)
 
     def status_update(self, template_object):
-        """ Update status to current
+        """Update status to current
 
         Args:
 
@@ -290,13 +283,12 @@ class CurrentTemplateVersion(AbstractStatusTemplateVersion):
 
 
 class DisableTemplateVersion(AbstractStatusTemplateVersion):
-    """ Update status to disabled
-    """
+    """Update status to disabled"""
 
     permission_classes = (IsAuthenticated,)
 
     def status_update(self, template_object):
-        """ Update status to disabled
+        """Update status to disabled
 
         Args:
 
@@ -310,13 +302,12 @@ class DisableTemplateVersion(AbstractStatusTemplateVersion):
 
 
 class RestoreTemplateVersion(AbstractStatusTemplateVersion):
-    """ Update status to restored
-    """
+    """Update status to restored"""
 
     permission_classes = (IsAuthenticated,)
 
     def status_update(self, template_object):
-        """ Update status to restored
+        """Update status to restored
 
         Args:
 
@@ -330,13 +321,12 @@ class RestoreTemplateVersion(AbstractStatusTemplateVersion):
 
 
 class DisableTemplateVersionManager(AbstractStatusTemplateVersionManager):
-    """ Update status to disabled
-    """
+    """Update status to disabled"""
 
     permission_classes = (IsAuthenticated,)
 
     def status_update(self, template_version_manager_object):
-        """ Update status to disabled
+        """Update status to disabled
 
         Args:
 
@@ -351,13 +341,12 @@ class DisableTemplateVersionManager(AbstractStatusTemplateVersionManager):
 
 
 class RestoreTemplateVersionManager(AbstractStatusTemplateVersionManager):
-    """ Update status to restored
-    """
+    """Update status to restored"""
 
     permission_classes = (IsAuthenticated,)
 
     def status_update(self, template_version_manager_object):
-        """ Update status to restored
+        """Update status to restored
 
         Args:
 

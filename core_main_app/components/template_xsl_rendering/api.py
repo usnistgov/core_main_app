@@ -17,7 +17,7 @@ def add_or_delete(
     list_detail_xslt,
     template_xsl_rendering_id=None,
 ):
-    """ Manage the saving of a TemplateXslRendering. If no XSLTs have been given,
+    """Manage the saving of a TemplateXslRendering. If no XSLTs have been given,
     deletes the instance.
 
     Args:
@@ -58,7 +58,7 @@ def add_or_delete(
 
 
 def set_list_detail_xslt(template_xsl_rendering, list_detail_xslt):
-    """ Set list of detail_xslt to a TemplateXslRendering
+    """Set list of detail_xslt to a TemplateXslRendering
 
     Args:
         template_xsl_rendering
@@ -73,7 +73,7 @@ def set_list_detail_xslt(template_xsl_rendering, list_detail_xslt):
 
 
 def add_detail_xslt(template_xsl_rendering, detail_xslt):
-    """ Add new detail xslt to a TemplateXslRendering
+    """Add new detail xslt to a TemplateXslRendering
 
     Args:
         template_xsl_rendering
@@ -95,7 +95,7 @@ def add_detail_xslt(template_xsl_rendering, detail_xslt):
 
 
 def delete_detail_xslt(template_xsl_rendering, detail_xslt):
-    """ Remove a detail_xslt from the details list. If this is a default detail xslt,
+    """Remove a detail_xslt from the details list. If this is a default detail xslt,
     set another default xslt.
 
     Args:
@@ -119,7 +119,7 @@ def delete_detail_xslt(template_xsl_rendering, detail_xslt):
 
 
 def set_default_detail_xslt(template_xsl_rendering, detail_xslt):
-    """ Set default detail_xslt
+    """Set default detail_xslt
 
     Args:
         template_xsl_rendering
@@ -143,7 +143,7 @@ def upsert(
     list_detail_xslt,
     template_xsl_rendering_id=None,
 ):
-    """ Update or create a XSL Template rendering object
+    """Update or create a XSL Template rendering object
 
     Args:
         template_id:
@@ -175,7 +175,7 @@ def upsert(
 
 
 def _upsert(template_xsl_rendering):
-    """ Upsert an TemplateXslRendering.
+    """Upsert an TemplateXslRendering.
 
     Args:
         template_xsl_rendering: TemplateXslRendering instance.
@@ -188,7 +188,7 @@ def _upsert(template_xsl_rendering):
 
 
 def delete(template_xsl_rendering):
-    """ Delete an TemplateXslRendering.
+    """Delete an TemplateXslRendering.
 
     Args:
         template_xsl_rendering: TemplateXslRendering to delete.
@@ -198,7 +198,7 @@ def delete(template_xsl_rendering):
 
 
 def get_by_id(template_xsl_rendering_id):
-    """ Get an TemplateXslRendering document by its id.
+    """Get an TemplateXslRendering document by its id.
 
     Args:
         template_xsl_rendering_id: Id.
@@ -270,8 +270,8 @@ def get_all():
 def _set_default_detail(template_xsl_rendering):
 
     if template_xsl_rendering.list_detail_xslt:
-        template_xsl_rendering.default_detail_xslt = template_xsl_rendering.list_detail_xslt[
-            0
-        ]
+        template_xsl_rendering.default_detail_xslt = (
+            template_xsl_rendering.list_detail_xslt[0]
+        )
     else:
         template_xsl_rendering.default_detail_xslt = None

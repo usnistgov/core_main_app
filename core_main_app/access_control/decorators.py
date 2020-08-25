@@ -3,7 +3,7 @@
 
 
 def access_control(check_func):
-    """ Access control decorator.
+    """Access control decorator.
 
     Args:
         check_func: function that checks access
@@ -13,7 +13,7 @@ def access_control(check_func):
     """
 
     def _access_control(func):
-        """ Decorator.
+        """Decorator.
 
         Args:
             func: function on which the decorator is attached.
@@ -23,7 +23,7 @@ def access_control(check_func):
         """
 
         def wrapper(*args, **kwargs):
-            """ Function wrapper.
+            """Function wrapper.
 
             Args:
                 *args:

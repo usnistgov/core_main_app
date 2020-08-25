@@ -12,16 +12,14 @@ from core_main_app.utils.requests_utils.ssl import check_ssl_certificates_dir_se
 
 
 class InitApp(AppConfig):
-    """ Core application settings.
-    """
+    """Core application settings."""
 
     name = "core_main_app"
     """ :py:class:`str`: Package name
     """
 
     def ready(self):
-        """ When the app is ready, run the discovery and init the indexes.
-        """
+        """When the app is ready, run the discovery and init the indexes."""
         if "migrate" not in sys.argv:
             check_ssl_certificates_dir_setting(SSL_CERTIFICATES_DIR)
             discover.init_rules(self.apps)

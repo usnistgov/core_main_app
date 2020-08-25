@@ -1,8 +1,12 @@
 {% load xsl_transform_tag %}
 {% load blob_tags %}
 
-{% xsl_transform_detail xml_content=data.data.xml_content template_id=data.data.template.id template_hash=data.data.template.hash as xml_representation %}
-{% if 'core_file_preview_app' in INSTALLED_APPS %}
-    {% render_blob_links_in_span xml_string=xml_representation as xml_representation %}
-{% endif %}
-{{ xml_representation|safe}}
+<div id="xslt-representation">
+    {% xsl_transform_detail xml_content=data.data.xml_content template_id=data.data.template.id xslt_id=data.xsl_transformation_id template_hash=data.data.template.hash as xml_representation %}
+    {% if 'core_file_preview_app' in INSTALLED_APPS %}
+        {% render_blob_links_in_span xml_string=xml_representation as xml_representation %}
+    {% endif %}
+
+    {{ xml_representation|safe}}
+</div>
+

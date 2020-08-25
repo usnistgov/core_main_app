@@ -3,7 +3,7 @@
 
 
 def to_bool(value):
-    """ Converts value to python/django bool
+    """Converts value to python/django bool
 
     Args:
         value:

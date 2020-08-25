@@ -196,7 +196,7 @@ class VersionManager(Document):
 
     @staticmethod
     def get_active_global_version_manager():
-        """ Return all active Version Managers with user set to None.
+        """Return all active Version Managers with user set to None.
 
         Returns:
 
@@ -205,7 +205,7 @@ class VersionManager(Document):
 
     @staticmethod
     def get_disable_global_version_manager():
-        """ Return all disabled Version Managers with user set to None.
+        """Return all disabled Version Managers with user set to None.
 
         Returns:
 
@@ -214,7 +214,7 @@ class VersionManager(Document):
 
     @staticmethod
     def get_active_version_manager_by_user_id(user_id):
-        """ Return all active Version Managers with given user id.
+        """Return all active Version Managers with given user id.
 
         Returns:
 
@@ -223,7 +223,7 @@ class VersionManager(Document):
 
     @staticmethod
     def get_disable_version_manager_by_user_id(user_id):
-        """ Return all disabled Version Managers with given user id.
+        """Return all disabled Version Managers with given user id.
 
         Returns:
 
@@ -232,7 +232,7 @@ class VersionManager(Document):
 
     @staticmethod
     def get_all_version_manager_except_user_id(user_id):
-        """ Return all Version Managers of all users except user with given user id.
+        """Return all Version Managers of all users except user with given user id.
 
         Args:
             user_id: user_id.
@@ -244,7 +244,7 @@ class VersionManager(Document):
 
     @staticmethod
     def get_all_version_manager_by_user_id(user_id):
-        """ Return all Version Managers with given user id.
+        """Return all Version Managers with given user id.
 
         Args:
             user_id: user_id.
@@ -255,7 +255,7 @@ class VersionManager(Document):
         return VersionManager.objects(user=str(user_id)).all()
 
     def save_version_manager(self):
-        """ Custom save.
+        """Custom save.
 
         Returns:
             Saved Instance.
@@ -269,7 +269,7 @@ class VersionManager(Document):
             raise exceptions.ModelError(str(ex))
 
     def clean(self):
-        """ Clean is called before saving
+        """Clean is called before saving
 
         Returns:
 

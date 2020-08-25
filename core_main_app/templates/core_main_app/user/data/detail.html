@@ -3,7 +3,7 @@
         <div class="col-xs-6" id="data-title">
             <h2>{{ data.data.title }} <small> {{ data.data.template.display_name }}</small></h2>
         </div>
-        {% include 'core_main_app/common/data/tools_data.html' %}
+        {% include 'core_main_app/common/data/tools_data.html' with template_xsl_rendering=data.template_xsl_rendering xslt_id=data.xsl_transformation_id%}
     </div>
 </div>
-{% include 'core_main_app/common/data/detail_data.html' %}
+{% include 'core_main_app/common/data/detail_data.html'%}

@@ -15,7 +15,7 @@ register = template.Library()
 @register.filter(name="json_date")
 @stringfilter
 def json_date(value, directive):
-    """ get JSON date string input and return a formatted date string according to the parsing directive
+    """get JSON date string input and return a formatted date string according to the parsing directive
 
     Args:
         value: input JSON date string

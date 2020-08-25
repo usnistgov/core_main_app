@@ -7,7 +7,7 @@ from xml_utils.html_tree.parser import safe_html
 
 
 def parse(text):
-    """ Parse Markdown to convert it into HTML
+    """Parse Markdown to convert it into HTML
 
     Args:
         text:

@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 def check_ssl_certificates_dir_setting(ssl_certificates_dir):
-    """ Check that SSL_CERTIFICATES_DIR is correctly set. Log errors otherwise.
+    """Check that SSL_CERTIFICATES_DIR is correctly set. Log errors otherwise.
 
     Args:
         ssl_certificates_dir:

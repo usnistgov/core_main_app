@@ -7,12 +7,10 @@ from core_main_app.components.workspace.models import Workspace
 
 
 class WorkspaceSerializer(DocumentSerializer):
-    """ Workspace serializer
-    """
+    """Workspace serializer"""
 
     class Meta(object):
-        """ Meta
-        """
+        """Meta"""
 
         model = Workspace
         fields = ["id", "title", "owner", "is_public"]

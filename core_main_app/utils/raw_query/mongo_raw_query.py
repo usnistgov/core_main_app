@@ -3,7 +3,7 @@
 
 
 def add_access_criteria(query, accessible_workspaces, user):
-    """ Add access criteria to the query.
+    """Add access criteria to the query.
 
     Args:
         query:
@@ -21,7 +21,7 @@ def add_access_criteria(query, accessible_workspaces, user):
 
 
 def add_aggregate_access_criteria(query, accessible_workspaces, user):
-    """ Add access criteria to an aggregation query.
+    """Add access criteria to an aggregation query.
 
     Args:
         query:
@@ -47,7 +47,7 @@ def add_aggregate_access_criteria(query, accessible_workspaces, user):
 
 
 def _get_accessible_criteria(accessible_workspaces, user):
-    """ Get accessible criteria.
+    """Get accessible criteria.
 
     Args:
         accessible_workspaces:

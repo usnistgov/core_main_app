@@ -9,7 +9,7 @@ register = template.Library()
 
 @register.filter
 def print_datetime_utc_unaware(datetime):
-    """ Print datetime utc.
+    """Print datetime utc.
 
     Args:
         datetime: datetime timezone unaware
@@ -22,7 +22,7 @@ def print_datetime_utc_unaware(datetime):
 
 @register.filter
 def print_datetime_from_object_id(object_id):
-    """ Print timestamp.
+    """Print timestamp.
 
     Args:
         object_id:
@@ -34,7 +34,7 @@ def print_datetime_from_object_id(object_id):
 
 
 def _get_datetime(object_id):
-    """ Return datetime from object id
+    """Return datetime from object id
 
     Args:
         object_id:

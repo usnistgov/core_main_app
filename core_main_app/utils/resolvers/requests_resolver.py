@@ -9,11 +9,10 @@ logger = logging.getLogger(__name__)
 
 
 class RequestsResolver(DefaultURIResolver):
-    """ Requests URI Resolver for lxml
-    """
+    """Requests URI Resolver for lxml"""
 
     def resolve(self, url, id, context):
-        """ Resolve the URI using the requests api
+        """Resolve the URI using the requests api
 
         Args:
             url:

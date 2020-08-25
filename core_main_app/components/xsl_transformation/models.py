@@ -8,8 +8,7 @@ from django_mongoengine import fields, Document
 
 
 class XslTransformation(Document):
-    """ XslTransformation object
-    """
+    """XslTransformation object"""
 
     name = fields.StringField(
         blank=False, unique=True, validation=not_empty_or_whitespaces
@@ -20,7 +19,7 @@ class XslTransformation(Document):
     meta = {"allow_inheritance": True}
 
     def __str__(self):
-        """ String representation of an object.
+        """String representation of an object.
 
         Returns:
             String representation
@@ -30,7 +29,7 @@ class XslTransformation(Document):
 
     @staticmethod
     def get_all():
-        """ Get all XSL Transformations.
+        """Get all XSL Transformations.
 
         Returns:
 
@@ -39,7 +38,7 @@ class XslTransformation(Document):
 
     @staticmethod
     def get_by_id_list(list_id):
-        """ Return the object with the given list id.
+        """Return the object with the given list id.
 
         Args:
             list_id:
@@ -51,7 +50,7 @@ class XslTransformation(Document):
 
     @staticmethod
     def get_by_name(xslt_name):
-        """ Get XSL Transformation by name.
+        """Get XSL Transformation by name.
 
         Args:
             xslt_name:
@@ -68,7 +67,7 @@ class XslTransformation(Document):
 
     @staticmethod
     def get_by_id(xslt_id):
-        """ Get an XSLT document by its id.
+        """Get an XSLT document by its id.
 
         Args:
             xslt_id: Id.
@@ -85,7 +84,7 @@ class XslTransformation(Document):
             raise exceptions.ModelError(str(ex))
 
     def save_object(self):
-        """ Custom save.
+        """Custom save.
 
         Returns:
             Saved Instance.
@@ -99,7 +98,7 @@ class XslTransformation(Document):
             raise exceptions.ModelError(str(ex))
 
     def clean(self):
-        """ Clean is called before saving
+        """Clean is called before saving
 
         Returns:
 

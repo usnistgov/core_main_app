@@ -8,8 +8,7 @@ from core_main_app.utils.integration_tests.fixture_interface import FixtureInter
 
 
 class DataFixtures(FixtureInterface):
-    """ Data fixtures
-    """
+    """Data fixtures"""
 
     data_1 = None
     data_2 = None
@@ -18,7 +17,7 @@ class DataFixtures(FixtureInterface):
     data_collection = None
 
     def insert_data(self):
-        """ Insert a set of Data.
+        """Insert a set of Data.
 
         Returns:
 
@@ -28,7 +27,7 @@ class DataFixtures(FixtureInterface):
         self.generate_data_collection()
 
     def generate_data_collection(self):
-        """ Generate a Data collection.
+        """Generate a Data collection.
 
         Returns:
 
@@ -46,7 +45,7 @@ class DataFixtures(FixtureInterface):
         self.data_collection = [self.data_1, self.data_2, self.data_3]
 
     def generate_template(self):
-        """ Generate an unique Template.
+        """Generate an unique Template.
 
         Returns:
 
@@ -63,11 +62,10 @@ class DataFixtures(FixtureInterface):
 
 
 class QueryDataFixtures(DataFixtures):
-    """ Data fixtures
-    """
+    """Data fixtures"""
 
     def generate_data_collection(self):
-        """ Generate a Data collection.
+        """Generate a Data collection.
 
         Returns:
 
@@ -91,8 +89,7 @@ class QueryDataFixtures(DataFixtures):
 
 
 class AccessControlDataFixture(FixtureInterface):
-    """ Access Control Data fixture
-    """
+    """Access Control Data fixture"""
 
     USER_1_NO_WORKSPACE = 0
     USER_2_NO_WORKSPACE = 1
@@ -110,7 +107,7 @@ class AccessControlDataFixture(FixtureInterface):
     data_5 = None
 
     def insert_data(self):
-        """ Insert a set of Data.
+        """Insert a set of Data.
 
         Returns:
 
@@ -121,7 +118,7 @@ class AccessControlDataFixture(FixtureInterface):
         self.generate_data_collection()
 
     def generate_data_collection(self):
-        """ Generate a Data collection.
+        """Generate a Data collection.
 
         Returns:
 
@@ -159,7 +156,7 @@ class AccessControlDataFixture(FixtureInterface):
         ]
 
     def generate_template(self):
-        """ Generate an unique Template.
+        """Generate an unique Template.
 
         Returns:
 
@@ -175,7 +172,7 @@ class AccessControlDataFixture(FixtureInterface):
         self.template = template.save()
 
     def generate_workspace(self):
-        """ Generate the workspaces.
+        """Generate the workspaces.
 
         Returns:
 
@@ -188,7 +185,7 @@ class AccessControlDataFixture(FixtureInterface):
         ).save()
 
     def generate_workspace_with_perm(self):
-        """ Generate the workspaces and the perm object.
+        """Generate the workspaces and the perm object.
 
         Returns:
 
@@ -204,8 +201,7 @@ class AccessControlDataFixture(FixtureInterface):
 
 
 class DataMigrationFixture(FixtureInterface):
-    """ Data Template Fixture
-    """
+    """Data Template Fixture"""
 
     template_1 = None
     template_2 = None
@@ -218,7 +214,7 @@ class DataMigrationFixture(FixtureInterface):
     data_5 = None
 
     def insert_data(self):
-        """ Insert a set of Data.
+        """Insert a set of Data.
 
         Returns:
 
@@ -228,7 +224,7 @@ class DataMigrationFixture(FixtureInterface):
         self.generate_data_collection()
 
     def generate_data_collection(self):
-        """ Generate a Data collection.
+        """Generate a Data collection.
 
         Returns:
 
@@ -273,7 +269,7 @@ class DataMigrationFixture(FixtureInterface):
         ]
 
     def generate_template(self):
-        """ Generate an unique Template.
+        """Generate an unique Template.
 
         Returns:
 

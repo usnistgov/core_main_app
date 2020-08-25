@@ -11,7 +11,7 @@ register = template.Library()
 
 @register.simple_tag(name="render_blob_links_in_span")
 def render_blob_links_in_span(*args, **kwargs):
-    """ Find all blobs link then frame then with <span>
+    """Find all blobs link then frame then with <span>
 
     Args:
         *args:

@@ -8,8 +8,7 @@ from core_main_app.utils.integration_tests.fixture_interface import FixtureInter
 
 
 class TemplateVersionManagerFixtures(FixtureInterface):
-    """ Template Version Manager fixtures
-    """
+    """Template Version Manager fixtures"""
 
     template_1_1 = None
     template_1_2 = None
@@ -20,7 +19,7 @@ class TemplateVersionManagerFixtures(FixtureInterface):
     template_vm_collection = None
 
     def insert_data(self):
-        """ Insert a set of Templates and Template Version Managers.
+        """Insert a set of Templates and Template Version Managers.
 
         Returns:
 

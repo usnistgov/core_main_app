@@ -6,8 +6,7 @@ from core_main_app.utils.integration_tests.fixture_interface import FixtureInter
 
 
 class BlobFixtures(FixtureInterface):
-    """ Blob fixtures
-    """
+    """Blob fixtures"""
 
     blob_1 = None
     blob_2 = None
@@ -15,7 +14,7 @@ class BlobFixtures(FixtureInterface):
     blob_collection = None
 
     def insert_data(self):
-        """ Insert a set of Blobs.
+        """Insert a set of Blobs.
 
         Returns:
 
@@ -24,7 +23,7 @@ class BlobFixtures(FixtureInterface):
         self.generate_blob_collection()
 
     def generate_blob_collection(self):
-        """ Generate a Blob collection.
+        """Generate a Blob collection.
 
         Returns:
 
@@ -41,8 +40,7 @@ class BlobFixtures(FixtureInterface):
 
 
 class AccessControlBlobFixture(FixtureInterface):
-    """ Access Control Blob fixture
-    """
+    """Access Control Blob fixture"""
 
     USER_1_NO_WORKSPACE = 0
     USER_2_NO_WORKSPACE = 1
@@ -55,7 +53,7 @@ class AccessControlBlobFixture(FixtureInterface):
     blob_collection = None
 
     def insert_data(self):
-        """ Insert a set of Blob.
+        """Insert a set of Blob.
 
         Returns:
 
@@ -65,7 +63,7 @@ class AccessControlBlobFixture(FixtureInterface):
         self.generate_blob_collection()
 
     def generate_blob_collection(self):
-        """ Generate a Blob collection.
+        """Generate a Blob collection.
 
         Returns:
 
@@ -87,7 +85,7 @@ class AccessControlBlobFixture(FixtureInterface):
         self.blob_collection = [blob_1, blob_2, blob_3, blob_4]
 
     def generate_workspace(self):
-        """ Generate workspaces.
+        """Generate workspaces.
 
         Returns:
 

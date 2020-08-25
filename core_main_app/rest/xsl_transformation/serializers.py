@@ -10,7 +10,7 @@ from core_main_app.components.xsl_transformation.models import XslTransformation
 
 class XslTransformationSerializer(DocumentSerializer):
     """
-        XslTransformation serializer
+    XslTransformation serializer
     """
 
     class Meta(object):

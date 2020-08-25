@@ -9,8 +9,7 @@ from core_main_app.utils.labels import get_data_label
 
 
 class LoginForm(forms.Form):
-    """ Custom login form for the user
-    """
+    """Custom login form for the user"""
 
     username = forms.CharField(label="Username", required=True)
     password = forms.CharField(

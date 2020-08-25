@@ -80,7 +80,7 @@ class EditProfileForm(forms.Form):
 
 class UploadXSLTForm(UploadForm):
     """
-    Form to upload a new XSLT 
+    Form to upload a new XSLT
     """
 
     def __init__(self, *args, **kwargs):
@@ -146,8 +146,7 @@ class TemplateXsltRenderingForm(forms.Form):
 
 
 class TextAreaForm(forms.Form):
-    """ TextArea Form
-    """
+    """TextArea Form"""
 
     content = forms.CharField(
         label="", widget=forms.Textarea(attrs={"class": "form-control"}), required=False
@@ -155,7 +154,7 @@ class TextAreaForm(forms.Form):
 
 
 def _get_xsl_transformation():
-    """ Get XSLT.
+    """Get XSLT.
 
     Returns:
         List of XSLT.
@@ -171,7 +170,7 @@ def _get_xsl_transformation():
 def _get_list_xsl_transformation_by_id(
     template_xsl_rendering_id, default_detail_id=None
 ):
-    """ Get an TemplateXslRendering document by its id.
+    """Get an TemplateXslRendering document by its id.
 
     Args:
         template_xsl_rendering_id: Id.

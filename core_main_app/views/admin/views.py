@@ -365,8 +365,7 @@ def _upload_template_response(request, assets, context):
 
 
 class XSLTView(View):
-    """XSLT view.
-    """
+    """XSLT view."""
 
     @staticmethod
     @staff_member_required
@@ -399,8 +398,7 @@ class XSLTView(View):
 
 
 class UploadXSLTView(View):
-    """Upload XSLT view.
-    """
+    """Upload XSLT view."""
 
     form_class = UploadXSLTForm
     template_name = "core_main_app/admin/xslt/upload.html"
@@ -535,7 +533,7 @@ class WebPageView(View):
 
     @method_decorator(staff_member_required)
     def get(self, request, **kwargs):
-        """ GET request. Create/Show the form for the configuration.
+        """GET request. Create/Show the form for the configuration.
 
         Args:
             request:
@@ -564,7 +562,7 @@ class WebPageView(View):
 
     @method_decorator(staff_member_required)
     def post(self, request):
-        """ POST request. Try to save the configuration.
+        """POST request. Try to save the configuration.
 
         Args:
             request:

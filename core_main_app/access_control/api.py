@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 def has_perm_publish(user, codename):
-    """ Does the user have the permission to publish.
+    """Does the user have the permission to publish.
 
     Args:
         user
@@ -32,16 +32,16 @@ def has_perm_publish(user, codename):
 
 
 def has_perm_administration(func, *args, **kwargs):
-    """ Does the given user have administration rights.
+    """Does the given user have administration rights.
 
-        Args:
-            func:
-            *args:
-            **kwargs:
+    Args:
+        func:
+        *args:
+        **kwargs:
 
-        Returns:
+    Returns:
 
-        """
+    """
     try:
         user = next((arg for arg in args if isinstance(arg, User)), None)
         if user and user.is_superuser:
@@ -53,7 +53,7 @@ def has_perm_administration(func, *args, **kwargs):
 
 
 def check_can_write(document, user):
-    """ Check that the user can write.
+    """Check that the user can write.
 
     Args:
         document:
@@ -77,7 +77,7 @@ def check_can_write(document, user):
 
 
 def check_can_read_list(document_list, user):
-    """ Check that the user can read each document of the list.
+    """Check that the user can read each document of the list.
 
     Args:
         document_list:
@@ -88,8 +88,8 @@ def check_can_read_list(document_list, user):
     """
     if len(document_list) > 0:
         # get list of accessible workspaces
-        accessible_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(
-            user
+        accessible_workspaces = (
+            workspace_api.get_all_workspaces_with_read_access_by_user(user)
         )
         # check access is correct
         for document in document_list:
@@ -105,7 +105,7 @@ def check_can_read_list(document_list, user):
 
 
 def can_write_document_in_workspace(func, document, workspace, user):
-    """ Can user write data in workspace.
+    """Can user write data in workspace.
 
     Args:
         func:
@@ -120,7 +120,7 @@ def can_write_document_in_workspace(func, document, workspace, user):
 
 
 def can_read_or_write_in_workspace(func, workspace, user):
-    """ Can user read or write in workspace.
+    """Can user read or write in workspace.
 
     Args:
         func:
@@ -138,7 +138,7 @@ def can_read_or_write_in_workspace(func, workspace, user):
 
 
 def can_write_in_workspace(func, document, workspace, user, codename):
-    """ Can user write in workspace.
+    """Can user write in workspace.
 
     Args:
         func:
@@ -177,7 +177,7 @@ def can_write_in_workspace(func, document, workspace, user, codename):
 
 
 def can_read(func, user):
-    """ Can a user read
+    """Can a user read
 
     Args:
         func:
@@ -198,7 +198,7 @@ def can_read(func, user):
 
 
 def can_read_id(func, document_id, user):
-    """ Can read from object id.
+    """Can read from object id.
 
     Args:
         func:
@@ -217,7 +217,7 @@ def can_read_id(func, document_id, user):
 
 
 def can_write(func, document, user):
-    """ Can user write
+    """Can user write
 
     Args:
         func:
@@ -235,7 +235,7 @@ def can_write(func, document, user):
 
 
 def _check_can_write_in_workspace(workspace, user):
-    """ Check that user can write in the workspace.
+    """Check that user can write in the workspace.
 
     Args:
         workspace:
@@ -254,7 +254,7 @@ def _check_can_write_in_workspace(workspace, user):
 
 
 def _check_can_read_or_write_in_workspace(workspace, user):
-    """ Check that user can read or write in the workspace.
+    """Check that user can read or write in the workspace.
 
     Args:
         workspace:
@@ -263,11 +263,11 @@ def _check_can_read_or_write_in_workspace(workspace, user):
     Returns:
 
     """
-    accessible_write_workspaces = workspace_api.get_all_workspaces_with_write_access_by_user(
-        user
+    accessible_write_workspaces = (
+        workspace_api.get_all_workspaces_with_write_access_by_user(user)
     )
-    accessible_read_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(
-        user
+    accessible_read_workspaces = (
+        workspace_api.get_all_workspaces_with_read_access_by_user(user)
     )
     if workspace not in list(accessible_write_workspaces) + list(
         accessible_read_workspaces
@@ -278,7 +278,7 @@ def _check_can_read_or_write_in_workspace(workspace, user):
 
 
 def _check_can_read(document, user):
-    """ Check that the user can read.
+    """Check that the user can read.
 
     Args:
         document:
@@ -298,8 +298,8 @@ def _check_can_read(document, user):
         # workspace is set
         if hasattr(document, "workspace") and document.workspace is not None:
             # get list of accessible workspaces
-            accessible_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(
-                user
+            accessible_workspaces = (
+                workspace_api.get_all_workspaces_with_read_access_by_user(user)
             )
             # check that accessed document belongs to an accessible workspace
             if document.workspace not in accessible_workspaces:
@@ -314,7 +314,7 @@ def _check_can_read(document, user):
 
 
 def can_change_owner(func, document, new_user, user):
-    """ Can user change document's owner.
+    """Can user change document's owner.
 
     Args:
         func:

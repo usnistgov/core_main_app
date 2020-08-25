@@ -25,7 +25,7 @@ from core_main_app.components.user import api as user_api
 class AbstractBlobList(APIView, metaclass=ABCMeta):
     @abstractmethod
     def _get_blobs(self, request):
-        """ Retrieve blobs
+        """Retrieve blobs
 
         Args:
             request:
@@ -36,7 +36,7 @@ class AbstractBlobList(APIView, metaclass=ABCMeta):
         raise NotImplementedError("_get_blobs method is not implemented.")
 
     def get(self, request):
-        """ Get all Blob
+        """Get all Blob
 
         Url Parameters:
 
@@ -84,13 +84,12 @@ class AbstractBlobList(APIView, metaclass=ABCMeta):
 
 
 class BlobListAdmin(AbstractBlobList):
-    """ List all Blob
-    """
+    """List all Blob"""
 
     permission_classes = (IsAdminUser,)
 
     def _get_blobs(self, request):
-        """ Retrieve blobs
+        """Retrieve blobs
 
         Args:
             request:
@@ -101,7 +100,7 @@ class BlobListAdmin(AbstractBlobList):
         return blob_api.get_all(request.user)
 
     def get(self, request):
-        """ Get all accessible Blob for admin user
+        """Get all accessible Blob for admin user
 
         Url Parameters:
 
@@ -129,13 +128,12 @@ class BlobListAdmin(AbstractBlobList):
 
 
 class BlobList(AbstractBlobList):
-    """ List all user Blob, or create a new one
-    """
+    """List all user Blob, or create a new one"""
 
     permission_classes = (IsAuthenticated,)
 
     def _get_blobs(self, request):
-        """ Retrieve blobs
+        """Retrieve blobs
 
         Args:
             request:
@@ -146,7 +144,7 @@ class BlobList(AbstractBlobList):
         return blob_api.get_all_by_user(user=request.user)
 
     def get(self, request):
-        """ Get all blob by user
+        """Get all blob by user
 
         Url Parameters:
 
@@ -173,7 +171,7 @@ class BlobList(AbstractBlobList):
         return super(BlobList, self).get(request)
 
     def post(self, request):
-        """ Create Blob
+        """Create Blob
 
         Parameters:
 
@@ -219,13 +217,12 @@ class BlobList(AbstractBlobList):
 
 
 class BlobDetail(APIView):
-    """ Retrieve, update or delete a Blob
-    """
+    """Retrieve, update or delete a Blob"""
 
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_object(self, request, pk):
-        """ Get Blob from db
+        """Get Blob from db
 
         Args:
 
@@ -242,7 +239,7 @@ class BlobDetail(APIView):
             raise Http404
 
     def get(self, request, pk):
-        """ Retrieve Blob
+        """Retrieve Blob
 
         Args:
 
@@ -280,7 +277,7 @@ class BlobDetail(APIView):
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request, pk):
-        """ Delete Blob
+        """Delete Blob
 
         Args:
 
@@ -318,11 +315,10 @@ class BlobDetail(APIView):
 
 
 class BlobDownload(APIView):
-    """ Download Blob
-    """
+    """Download Blob"""
 
     def get_object(self, request, pk):
-        """ Get Blob from db
+        """Get Blob from db
 
         Args:
 
@@ -339,7 +335,7 @@ class BlobDownload(APIView):
             raise Http404
 
     def get(self, request, pk):
-        """ Download the Blob file
+        """Download the Blob file
 
         Args:
 
@@ -374,13 +370,12 @@ class BlobDownload(APIView):
 
 
 class BlobDeleteList(APIView):
-    """ Delete a list of Blob
-    """
+    """Delete a list of Blob"""
 
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def patch(self, request):
-        """ Delete a list of Blob
+        """Delete a list of Blob
 
         Parameters:
 
@@ -440,13 +435,12 @@ class BlobDeleteList(APIView):
 
 
 class BlobAssign(APIView):
-    """ Assign a Blob to a Workspace.
-    """
+    """Assign a Blob to a Workspace."""
 
     permission_classes = (IsAuthenticated,)
 
     def get_object(self, request, pk):
-        """ Get Blob from db
+        """Get Blob from db
 
         Args:
 
@@ -463,7 +457,7 @@ class BlobAssign(APIView):
             raise Http404
 
     def get_workspace(self, workspace_id):
-        """ Retrieve a Workspace
+        """Retrieve a Workspace
 
         Args:
 
@@ -480,7 +474,7 @@ class BlobAssign(APIView):
             raise Http404
 
     def patch(self, request, pk, workspace_id):
-        """ Assign Blob to a Workspace
+        """Assign Blob to a Workspace
 
         Args:
 
@@ -519,13 +513,12 @@ class BlobAssign(APIView):
 
 
 class BlobChangeOwner(APIView):
-    """ Change the Owner of a blob
-    """
+    """Change the Owner of a blob"""
 
     permission_classes = (IsAdminUser,)
 
     def get_object(self, request, pk):
-        """ Get blob from db
+        """Get blob from db
 
         Args:
 
@@ -542,7 +535,7 @@ class BlobChangeOwner(APIView):
             raise Http404
 
     def get_user(self, user_id):
-        """ Retrieve a User
+        """Retrieve a User
 
         Args:
 
@@ -559,7 +552,7 @@ class BlobChangeOwner(APIView):
             raise Http404
 
     def patch(self, request, pk, user_id):
-        """ Change the Owner of a blob
+        """Change the Owner of a blob
 
         Args:
 
