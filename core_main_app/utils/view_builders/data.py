@@ -1,7 +1,7 @@
 """ View builder for view data page.
 """
 from core_main_app.components.data import api as data_api
-from core_main_app.settings import INSTALLED_APPS
+from core_main_app import settings
 from core_main_app.commons import exceptions
 
 
@@ -36,7 +36,7 @@ def build_page(data_id, user, display_admin_version=False):
             "css": ["core_main_app/common/css/XMLTree.css"],
         }
 
-        if "core_file_preview_app" in INSTALLED_APPS:
+        if "core_file_preview_app" in settings.INSTALLED_APPS:
             page_info["assets"]["js"].extend(
                 [
                     {
@@ -52,7 +52,11 @@ def build_page(data_id, user, display_admin_version=False):
                 "core_file_preview_app/user/file_preview_modal.html"
             )
 
-        if "core_linked_records_app" in INSTALLED_APPS and not display_admin_version:
+        if (
+            "core_linked_records_app" in settings.INSTALLED_APPS
+            and not display_admin_version
+            and settings.AUTO_SET_PID
+        ):
             page_info["context"]["share_pid_button"] = True
             page_info["assets"]["js"].extend(
                 [

@@ -227,6 +227,11 @@ VERIFY_DATA_ACCESS = getattr(settings, "VERIFY_DATA_ACCESS", False)
 """
 
 DATA_SORTING_FIELDS = getattr(settings, "DATA_SORTING_FIELDS", [])
-""" ::py:class:`str` Set the default sort fields for the data query. all the field must be prefixed by "+" or "-" (asc or desc sort)
-    the sort can be multi field and each field must be delimited by "," (ex. ["-title","+name","+date"]) 
+""" ::py:class:`str` Set the default sort fields for the data query. all the field must 
+    be prefixed by "+" or "-" (asc or desc sort) the sort can be multi field and each 
+    field must be delimited by "," (ex. ["-title","+name","+date"]) 
+"""
+
+AUTO_SET_PID = getattr(settings, "AUTO_SET_PID", False)
+""" :py:class:`bool`: Enable PID auto-setting from core_linked_records_app.
 """
