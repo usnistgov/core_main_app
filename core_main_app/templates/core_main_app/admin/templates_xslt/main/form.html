@@ -18,8 +18,72 @@
 
 <form id="form_start" method="post">
     {% csrf_token %}
-    {{ data.form_template_xsl_rendering }}
-
+    {{ data.form_template_xsl_rendering.id }}
+    {{ data.form_template_xsl_rendering.template }}
+    <div class="w-100 d-flex">
+        <div class="card list-card">
+            <div class="card-header">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <td>
+                               {{ data.form_template_xsl_rendering.list_xslt.label }}
+                                <i class="fas fa-info-circle"
+                                   data-toggle="tooltip"
+                                   data-placement="right"
+                                   title="Set the XSLT rendering of the data list, displayed after a research."></i>
+                            </td>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="card-body">
+                <table id="template-table" class="table table-bordered table-striped">
+                    <tbody>
+                        <tr>
+                            <td>
+                                {{ data.form_template_xsl_rendering.list_xslt }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card list-card">
+            <div class="card-header">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <td>
+                                {{ data.form_template_xsl_rendering.list_detail_xslt.label }}
+                                <i class="fas fa-info-circle"
+                                   data-toggle="tooltip"
+                                   data-placement="right"
+                                   title="Set the XSLT rendering of a data detail, how the data fields will be display"></i>
+                                </td>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="card-body">
+                <table id="data-table" class="table table-bordered table-striped">
+                    <tbody>
+                        <tr id="empty-data-text" class="bg-transparent text-center">
+                            <td>
+                                {{ data.form_template_xsl_rendering.list_detail_xslt }}
+                                <div class="card">
+                                  <div class="default-detail-header card-body bg-light text-justify">
+                                    {{ data.form_template_xsl_rendering.default_detail_xslt.label }}
+                                  </div>
+                                </div>
+                                {{ data.form_template_xsl_rendering.default_detail_xslt }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
     <br/>
     <button type="submit" class="btn btn-primary float-right">
       <i class="fa fa-save"></i> Save

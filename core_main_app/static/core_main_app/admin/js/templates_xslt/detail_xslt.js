@@ -2,6 +2,9 @@
 
 $( document ).ready(function() {
 
+	// activate all the tooltips of the page
+    $('[data-toggle="tooltip"]').tooltip()
+
    $(':checkbox').change(function() {
 
         var list_default_detail = $("#id_default_detail_xslt")

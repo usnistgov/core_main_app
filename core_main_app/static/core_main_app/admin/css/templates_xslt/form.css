@@ -1,3 +1,35 @@
+#id_list_detail_xslt {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    font-size: 17px;
+}
+
+#id_list_detail_xslt li {
+    padding: .75em;
+    border-bottom: solid 1px #cacaca;
+    padding-left: 20px;
+}
+
+#id_list_detail_xslt li>label {
+  display: block;
+  padding-left: 15px;
+  text-indent: -15px;
+}
+
+#id_list_detail_xslt li>label>input {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  margin:0;
+  vertical-align: bottom;
+  position: relative;
+  top: -2px;
+  *overflow: hidden;
+  margin-right: 5px;
+}
+
 .btn-cancel {
     margin-right: 10px;
 }
@@ -5,4 +37,63 @@
 ul
 {
    list-style-type: none !important;
+}
+
+#template-table {
+    cursor: pointer;
+}
+
+.table {
+    margin: 0 !important;
+}
+
+.table tbody>tr>td {
+    padding: 0;
+}
+
+.table-bordered td, .table-bordered th {
+    border: none !important;
+}
+
+.table td div {
+    width: 100%;
+    min-width: 350px;
+    overflow: auto;
+}
+
+.list-card {
+    width: 50%;
+    border-radius: 5px;
+}
+
+.form-control {
+    border-radius: 5px;
+}
+
+.card-header {
+    padding: 0;
+    margin: 0;
+}
+
+.card:first-child {
+    border-right: none;
+}
+
+.card-header td {
+    padding-left: 20px;
+}
+
+.card-body {
+    padding: 0;
+    max-height: 300px;
+    overflow: auto;
+}
+
+.card-body td {
+    padding-left: 20px;
+}
+
+.default-detail-header {
+    padding: 0.3em;
+    padding-left: 20px;
 }
