@@ -103,7 +103,7 @@ class TemplateXsltRenderingForm(forms.Form):
     )
 
     list_xslt = forms.ModelChoiceField(
-        label="Result list XSLT",
+        label="Set XSLT to render a list of data",
         empty_label="(No XSLT)",
         required=False,
         widget=forms.Select(attrs={"class": "form-control"}),
@@ -111,7 +111,7 @@ class TemplateXsltRenderingForm(forms.Form):
     )
 
     list_detail_xslt = forms.MultipleChoiceField(
-        label="Detail rendering XSLT",
+        label="Set XSLT to render a single data",
         required=False,
         widget=forms.widgets.CheckboxSelectMultiple,
     )
