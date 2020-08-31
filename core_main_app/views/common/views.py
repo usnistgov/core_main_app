@@ -201,17 +201,22 @@ class ViewData(CommonView):
 
         try:
             data = data_api.get_by_id(data_id, request.user)
-            template_xsl_rendering = template_xsl_rendering_api.get_by_template_id(
-                data.template.id
-            )
-            xsl_transformation_id = (
-                template_xsl_rendering.default_detail_xslt.id
-                if template_xsl_rendering.default_detail_xslt
-                else "None"
-            )
 
-            if xsl_transformation_id != "None":
-                xsl_transformation_id = ObjectId(xsl_transformation_id)
+            try:
+                template_xsl_rendering = template_xsl_rendering_api.get_by_template_id(
+                    data.template.id
+                )
+                xsl_transformation_id = (
+                    template_xsl_rendering.default_detail_xslt.id
+                    if template_xsl_rendering.default_detail_xslt
+                    else None
+                )
+
+                if xsl_transformation_id is not None:
+                    xsl_transformation_id = ObjectId(xsl_transformation_id)
+            except:
+                template_xsl_rendering = None
+                xsl_transformation_id = None
 
             context = {
                 "data": data,

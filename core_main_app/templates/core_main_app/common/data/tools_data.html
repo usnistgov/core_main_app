@@ -11,7 +11,7 @@
             view on t-sne map
         </a>
     {% endif %}
-    {% if template_xsl_rendering.list_detail_xslt %}
+    {% if template_xsl_rendering is not None and template_xsl_rendering.list_detail_xslt %}
         <div class="row float-right mr-1" >
             <div class="form-group ">
                 <select class="selectpicker form-control" id="xslt-selector" >
