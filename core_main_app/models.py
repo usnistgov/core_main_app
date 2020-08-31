@@ -17,4 +17,7 @@ class Main(models.Model):
     class Meta(object):
         verbose_name = "core_main_app"
         default_permissions = ()
-        permissions = ((rights.publish_data, get_formatted_name(rights.publish_data)),)
+        permissions = (
+            (rights.publish_data, get_formatted_name(rights.publish_data)),
+            (rights.publish_blob, get_formatted_name(rights.publish_blob)),
+        )
