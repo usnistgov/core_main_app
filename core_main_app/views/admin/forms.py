@@ -121,28 +121,12 @@ class TemplateXsltRenderingForm(forms.Form):
         empty_label="(No XSLT)",
         required=False,
         widget=forms.Select(attrs={"class": "form-control"}),
-        queryset=XslTransformation.objects.none(),
+        queryset=xsl_transformation_api.get_all(),
     )
 
     def __init__(self, *args, **kwargs):
         super(TemplateXsltRenderingForm, self).__init__(*args, **kwargs)
         self.fields["list_detail_xslt"].choices = _get_xsl_transformation()
-        try:
-            if len(args) > 1:
-                self.fields[
-                    "default_detail_xslt"
-                ].queryset = _get_list_xsl_transformation_by_id(
-                    self.data["id"], self.data["default_detail_xslt"]
-                )
-            else:
-                self.fields[
-                    "default_detail_xslt"
-                ].queryset = _get_list_xsl_transformation_by_id(self.data["id"])
-
-        except:
-            self.fields[
-                "default_detail_xslt"
-            ].queryset = XslTransformation.objects.none()
 
 
 class TextAreaForm(forms.Form):
@@ -165,29 +149,3 @@ def _get_xsl_transformation():
     for elt in list_:
         xsl_transformation.append((elt.id, elt.name))
     return xsl_transformation
-
-
-def _get_list_xsl_transformation_by_id(
-    template_xsl_rendering_id, default_detail_id=None
-):
-    """Get an TemplateXslRendering document by its id.
-
-    Args:
-        template_xsl_rendering_id: Id.
-        default_detail_id: xslt_id
-
-    Returns:
-        TemplateXslRendering object.
-
-    Raises:
-        DoesNotExist: The TemplateXslRendering doesn't exist.
-        ModelError: Internal error during the process.
-
-    """
-    template_xsl_rendering = template_xsl_rendering_api.get_by_id(
-        template_xsl_rendering_id
-    )
-    list_data_ids = [xslt.id for xslt in template_xsl_rendering.list_detail_xslt]
-    if default_detail_id is not None:
-        list_data_ids.append(ObjectId(default_detail_id))
-    return xsl_transformation_api.get_by_id_list(list_data_ids)
