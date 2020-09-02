@@ -28,6 +28,7 @@ from core_main_app.utils.rendering import admin_render
 from core_main_app.utils.rendering import render
 from core_main_app.views.admin.forms import UploadXSLTForm, TemplateXsltRenderingForm
 from bson import ObjectId
+from core_main_app.utils.view_builders import data as data_view_builder
 
 
 class CommonView(View, metaclass=ABCMeta):
@@ -200,80 +201,11 @@ class ViewData(CommonView):
         data_id = request.GET["id"]
 
         try:
-            data = data_api.get_by_id(data_id, request.user)
+            data_object = data_api.get_by_id(data_id, request.user)
+            page_context = data_view_builder.build_page(data_object)
 
-            try:
-                template_xsl_rendering = template_xsl_rendering_api.get_by_template_id(
-                    data.template.id
-                )
-                xsl_transformation_id = (
-                    template_xsl_rendering.default_detail_xslt.id
-                    if template_xsl_rendering.default_detail_xslt
-                    else None
-                )
-
-                if xsl_transformation_id is not None:
-                    xsl_transformation_id = ObjectId(xsl_transformation_id)
-            except:
-                template_xsl_rendering = None
-                xsl_transformation_id = None
-
-            context = {
-                "data": data,
-                "share_pid_button": False,
-                "template_xsl_rendering": template_xsl_rendering,
-                "xsl_transformation_id": xsl_transformation_id,
-            }
-
-            assets = {
-                "js": [
-                    {"path": "core_main_app/common/js/XMLTree.js", "is_raw": False},
-                    {"path": "core_main_app/user/js/data/detail.js", "is_raw": False},
-                    {
-                        "path": "core_main_app/user/js/data/change_display.js",
-                        "is_raw": False,
-                    },
-                ],
-                "css": ["core_main_app/common/css/XMLTree.css"],
-            }
-
-            modals = []
-
-            if "core_file_preview_app" in INSTALLED_APPS:
-                assets["js"].extend(
-                    [
-                        {
-                            "path": "core_file_preview_app/user/js/file_preview.js",
-                            "is_raw": False,
-                        }
-                    ]
-                )
-                assets["css"].append("core_file_preview_app/user/css/file_preview.css")
-                modals.append("core_file_preview_app/user/file_preview_modal.html")
-
-            if (
-                "core_linked_records_app" in INSTALLED_APPS
-                and not self.is_administration()
-            ):
-                context["share_pid_button"] = True
-                assets["js"].extend(
-                    [
-                        {
-                            "path": "core_main_app/user/js/sharing_modal.js",
-                            "is_raw": False,
-                        },
-                        {
-                            "path": "core_linked_records_app/user/js/sharing/data_detail.js",
-                            "is_raw": False,
-                        },
-                    ]
-                )
-                modals.append(
-                    "core_linked_records_app/user/sharing/data_detail/modal.html"
-                )
-
-            return self.common_render(
-                request, self.template, context=context, assets=assets, modals=modals
+            return data_view_builder.render_page(
+                request, self.common_render, page_context
             )
         except exceptions.DoesNotExist:
             error_message = "Data not found"

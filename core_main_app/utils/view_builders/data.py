@@ -1,6 +1,7 @@
 """ View builder for view data page.
 """
-from core_main_app.components.data import api as data_api
+import logging
+
 from core_main_app import settings
 from core_main_app.commons import exceptions
 from core_main_app.components.template_xsl_rendering import (
@@ -9,12 +10,14 @@ from core_main_app.components.template_xsl_rendering import (
 from bson import ObjectId
 
 
-def build_page(data_id, user, display_admin_version=False):
+logger = logging.getLogger(__name__)
+
+
+def build_page(data_object, display_admin_version=False):
     """Generic page building data
 
     Args:
-        data_id:
-        user:
+        data_object:
         display_admin_version:
 
     Returns:
@@ -27,10 +30,9 @@ def build_page(data_id, user, display_admin_version=False):
     }
 
     try:
-        data = data_api.get_by_id(data_id, user)
         try:
             template_xsl_rendering = template_xsl_rendering_api.get_by_template_id(
-                data.template.id
+                data_object.template.id
             )
             xsl_transformation_id = (
                 template_xsl_rendering.default_detail_xslt.id
@@ -40,12 +42,16 @@ def build_page(data_id, user, display_admin_version=False):
 
             if xsl_transformation_id is not None:
                 xsl_transformation_id = ObjectId(xsl_transformation_id)
-        except:
+        except Exception as exception:
+            logger.warning(
+                "An exception occured when retrieving XSLT: %s" % str(exception)
+            )
+
             template_xsl_rendering = None
             xsl_transformation_id = None
 
         page_info["context"] = {
-            "data": data,
+            "data": data_object,
             "share_pid_button": False,
             "template_xsl_rendering": template_xsl_rendering,
             "xsl_transformation_id": xsl_transformation_id,
@@ -112,3 +118,20 @@ def build_page(data_id, user, display_admin_version=False):
         page_info["error"] = str(e)
     finally:
         return page_info
+
+
+def render_page(request, render_function, context):
+    if context["error"] is None:
+        return render_function(
+            request,
+            "core_main_app/user/data/detail.html",
+            context=context["context"],
+            assets=context["assets"],
+            modals=context["modals"],
+        )
+    else:
+        return render_function(
+            request,
+            "core_main_app/common/commons/error.html",
+            context={"error": context["error"]},
+        )
