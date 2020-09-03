@@ -82,25 +82,31 @@ def _render_xml_as_html(
     """
     try:
         try:
-            if template_id:
-                template_xsl_rendering = template_xsl_rendering_api.get_by_template_id(
-                    template_id
-                )
-            elif template_hash:
-                template_xsl_rendering = (
-                    template_xsl_rendering_api.get_by_template_hash(template_hash)
-                )
+            if xslt_type not in (XSLType.type_list, XSLType.type_detail):
+                raise Exception("XSLT Type unknown. Default xslt will be used.")
+            if xsl_transform_id:
+                xsl_transformation = xsl_transformation_api.get_by_id(xsl_transform_id)
+            elif template_id or template_hash:
+                if template_id:
+                    template_xsl_rendering = (
+                        template_xsl_rendering_api.get_by_template_id(template_id)
+                    )
+                else:
+                    template_xsl_rendering = (
+                        template_xsl_rendering_api.get_by_template_hash(template_hash)
+                    )
+
+                if xslt_type == XSLType.type_list:
+                    xsl_transformation = template_xsl_rendering.list_xslt
+                else:
+                    xsl_transformation = template_xsl_rendering.default_detail_xslt
             else:
                 raise Exception(
                     "No template information provided. Default xslt will be used."
                 )
 
-            if xslt_type == XSLType.type_list:
-                xslt_string = template_xsl_rendering.list_xslt.content
-            elif xslt_type == XSLType.type_detail:
-                xslt_string = xsl_transformation_api.get_by_id(xsl_transform_id).content
-            else:
-                raise Exception("XSLT Type unknown. Default xslt will be used.")
+            xslt_string = xsl_transformation.content
+
         except (Exception, exceptions.DoesNotExist):
             default_xslt_path = finders.find(DEFAULT_DATA_RENDERING_XSLT)
             xslt_string = read_file_content(default_xslt_path)
