@@ -3,6 +3,10 @@
 from core_main_app.components.data import api as data_api
 from core_main_app import settings
 from core_main_app.commons import exceptions
+from core_main_app.components.template_xsl_rendering import (
+    api as template_xsl_rendering_api,
+)
+from bson import ObjectId
 
 
 def build_page(data_id, user, display_admin_version=False):
@@ -23,15 +27,38 @@ def build_page(data_id, user, display_admin_version=False):
     }
 
     try:
+        data = data_api.get_by_id(data_id, user)
+        try:
+            template_xsl_rendering = template_xsl_rendering_api.get_by_template_id(
+                data.template.id
+            )
+            xsl_transformation_id = (
+                template_xsl_rendering.default_detail_xslt.id
+                if template_xsl_rendering.default_detail_xslt
+                else None
+            )
+
+            if xsl_transformation_id is not None:
+                xsl_transformation_id = ObjectId(xsl_transformation_id)
+        except:
+            template_xsl_rendering = None
+            xsl_transformation_id = None
+
         page_info["context"] = {
-            "data": data_api.get_by_id(data_id, user),
+            "data": data,
             "share_pid_button": False,
+            "template_xsl_rendering": template_xsl_rendering,
+            "xsl_transformation_id": xsl_transformation_id,
         }
 
         page_info["assets"] = {
             "js": [
                 {"path": "core_main_app/common/js/XMLTree.js", "is_raw": False},
                 {"path": "core_main_app/user/js/data/detail.js", "is_raw": False},
+                {
+                    "path": "core_main_app/user/js/data/change_display.js",
+                    "is_raw": False,
+                },
             ],
             "css": ["core_main_app/common/css/XMLTree.css"],
         }
@@ -66,6 +93,10 @@ def build_page(data_id, user, display_admin_version=False):
                     },
                     {
                         "path": "core_linked_records_app/user/js/sharing/data_detail.js",
+                        "is_raw": False,
+                    },
+                    {
+                        "path": "core_main_app/user/js/data/change_display.js",
                         "is_raw": False,
                     },
                 ]
