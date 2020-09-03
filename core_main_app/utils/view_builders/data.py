@@ -30,6 +30,7 @@ def build_page(data_object, display_admin_version=False):
     }
 
     try:
+        display_xslt_selector = True
         try:
             template_xsl_rendering = template_xsl_rendering_api.get_by_template_id(
                 data_object.template.id
@@ -38,6 +39,14 @@ def build_page(data_object, display_admin_version=False):
                 template_xsl_rendering.default_detail_xslt.id
                 if template_xsl_rendering.default_detail_xslt
                 else None
+            )
+            display_xslt_selector = (
+                not template_xsl_rendering
+                or not template_xsl_rendering.list_detail_xslt
+                or not (
+                    template_xsl_rendering.default_detail_xslt is not None
+                    and len(template_xsl_rendering.list_detail_xslt) == 1
+                )
             )
 
             if xsl_transformation_id is not None:
@@ -55,6 +64,7 @@ def build_page(data_object, display_admin_version=False):
             "share_pid_button": False,
             "template_xsl_rendering": template_xsl_rendering,
             "xsl_transformation_id": xsl_transformation_id,
+            "can_display_selector": display_xslt_selector,
         }
 
         page_info["assets"] = {
