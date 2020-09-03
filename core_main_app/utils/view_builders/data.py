@@ -40,14 +40,11 @@ def build_page(data_object, display_admin_version=False):
                 if template_xsl_rendering.default_detail_xslt
                 else None
             )
-            display_xslt_selector = (
-                not template_xsl_rendering
-                or not template_xsl_rendering.list_detail_xslt
-                or not (
-                    template_xsl_rendering.default_detail_xslt is not None
-                    and len(template_xsl_rendering.list_detail_xslt) == 1
-                )
-            )
+            if not template_xsl_rendering.list_detail_xslt or (
+                template_xsl_rendering.default_detail_xslt is not None
+                and len(template_xsl_rendering.list_detail_xslt) == 1
+            ):
+                display_xslt_selector = False
 
             if xsl_transformation_id is not None:
                 xsl_transformation_id = ObjectId(xsl_transformation_id)
@@ -55,7 +52,7 @@ def build_page(data_object, display_admin_version=False):
             logger.warning(
                 "An exception occured when retrieving XSLT: %s" % str(exception)
             )
-
+            display_xslt_selector = False
             template_xsl_rendering = None
             xsl_transformation_id = None
 

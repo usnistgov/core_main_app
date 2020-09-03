@@ -11,9 +11,8 @@
             view on t-sne map
         </a>
     {% endif %}
-    {% if can_display_selector %}
 
-        <div class="row float-right mr-1" >
+        <div class="row float-right mr-1"  {% if not can_display_selector %} style="display:none" {% endif %}>
             <div class="form-group ">
                 <select class="selectpicker form-control" id="xslt-selector" >
                    {% if not template_xsl_rendering.default_detail_xslt %}  <option value={{None}}>Default</option>{% endif %}
@@ -27,5 +26,5 @@
                 </select>
             </div>
         </div>
-    {% endif %}
+
 </div>
