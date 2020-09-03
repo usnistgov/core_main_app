@@ -85,7 +85,6 @@ ul
 
 .card-body {
     padding: 0;
-    max-height: 300px;
     overflow: auto;
 }
 
@@ -96,4 +95,8 @@ ul
 .default-detail-header {
     padding: 0.3em;
     padding-left: 20px;
+}
+.list-detail-xslt-container {
+    max-height: 350px;
+    overflow: auto;
 }
