@@ -111,10 +111,6 @@ def build_page(data_object, display_admin_version=False):
                         "path": "core_linked_records_app/user/js/sharing/data_detail.js",
                         "is_raw": False,
                     },
-                    {
-                        "path": "core_main_app/user/js/data/change_display.js",
-                        "is_raw": False,
-                    },
                 ]
             )
             page_info["modals"].append(
