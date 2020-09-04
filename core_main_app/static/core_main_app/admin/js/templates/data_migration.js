@@ -567,7 +567,7 @@ let displaySummary = function(taskData, migrate) {
                             'View error' +
                         '</button>' +
                         '<div id="error-list" class="hidden"><h4>Failed data files:</h4>' +
-                        '<ul class="list-group list-group-flush">';
+                        '<ul class="error-container list-group list-group-flush">';
 
                     taskData.details.wrong.forEach((dataId) => {
                         failedButtonHtml += '<li class="list-group-item"><a href="/admin/data?id=' + dataId + '">' +
