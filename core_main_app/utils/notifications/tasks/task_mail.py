@@ -9,6 +9,7 @@ from django.core.mail import send_mail as django_send_mail, mail_admins, mail_ma
 from django.template import loader
 
 from core_main_app.settings import SERVER_EMAIL, EMAIL_SUBJECT_PREFIX
+from core_main_app.templatetags.stripjs import stripjs
 
 logger = getLogger(__name__)
 
@@ -17,10 +18,11 @@ logger = getLogger(__name__)
 def send_mail(
     recipient_list,
     subject,
-    path_to_template,
+    path_to_template=None,
     context={},
     fail_silently=True,
     sender=SERVER_EMAIL,
+    inline_template=None,
 ):
     """Send email.
 
@@ -31,14 +33,20 @@ def send_mail(
         context:
         fail_silently:
         sender:
+        inline_template:
 
     Returns:
 
     """
     try:
-        # Render the given template with context information
-        template = loader.get_template(path_to_template)
-        message = template.render(context)
+
+        if path_to_template:
+            # Render the given template with context information
+            template = loader.get_template(path_to_template)
+            message = template.render(context)
+        elif inline_template:
+            message = stripjs(inline_template)
+
         # Send mail
         django_send_mail(
             subject=EMAIL_SUBJECT_PREFIX + subject,

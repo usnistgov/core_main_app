@@ -7,10 +7,11 @@ from core_main_app.settings import SERVER_EMAIL, USE_BACKGROUND_TASK
 def send_mail(
     recipient_list,
     subject,
-    path_to_template,
+    path_to_template=None,
     context={},
     fail_silently=True,
     sender=SERVER_EMAIL,
+    inline_template=None,
 ):
     """Send email.
 
@@ -21,6 +22,7 @@ def send_mail(
         context:
         fail_silently:
         sender:
+        inline_template:
 
     Returns:
 
@@ -28,13 +30,27 @@ def send_mail(
     if USE_BACKGROUND_TASK:
         # Async call. Use celery
         task.send_mail.apply_async(
-            (recipient_list, subject, path_to_template, context, fail_silently, sender),
+            (
+                recipient_list,
+                subject,
+                path_to_template,
+                context,
+                fail_silently,
+                sender,
+                inline_template,
+            ),
             countdown=1,
         )
     else:
         # Sync call
         task.send_mail(
-            recipient_list, subject, path_to_template, context, fail_silently, sender
+            recipient_list=recipient_list,
+            subject=subject,
+            path_to_template=path_to_template,
+            context=context,
+            fail_silently=fail_silently,
+            sender=sender,
+            inline_template=inline_template,
         )
 
 
