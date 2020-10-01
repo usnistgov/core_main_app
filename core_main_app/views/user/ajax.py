@@ -40,14 +40,13 @@ def set_public_workspace(request):
 
     Returns:
     """
-    workspace_id_list = request.POST.getlist("workspace_id[]", [])
     try:
+        workspace_id_list = request.POST.getlist("workspace_id[]", [])
         list_workspace = workspace_api.get_by_id_list(workspace_id_list)
-    except DoesNotExist as dne:
-        return HttpResponseBadRequest(escape(str(dne)))
-    try:
         for workspace in list_workspace:
             workspace_api.set_workspace_public(workspace, request.user)
+    except DoesNotExist as dne:
+        return HttpResponseBadRequest(escape(str(dne)))
     except AccessControlError as ace:
         return HttpResponseBadRequest(escape(str(ace)))
     except:
@@ -65,14 +64,13 @@ def set_private_workspace(request):
 
     Returns:
     """
-    workspace_id_list = request.POST.getlist("workspace_id[]", [])
     try:
+        workspace_id_list = request.POST.getlist("workspace_id[]", [])
         list_workspace = workspace_api.get_by_id_list(workspace_id_list)
-    except DoesNotExist as dne:
-        return HttpResponseBadRequest(escape(str(dne)))
-    try:
         for workspace in list_workspace:
             workspace_api.set_workspace_private(workspace, request.user)
+    except DoesNotExist as dne:
+        return HttpResponseBadRequest(escape(str(dne)))
     except:
         return HttpResponseBadRequest("Something wrong happened.")
 
