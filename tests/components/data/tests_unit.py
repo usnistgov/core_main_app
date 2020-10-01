@@ -1,17 +1,17 @@
 """ Unit Test Data
 """
+import datetime
 from collections import OrderedDict
 from unittest.case import TestCase
 
-import datetime
+from bson import ObjectId
 from mock import patch
 
 import core_main_app.components.data.api as data_api
+from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
-from core_main_app.access_control.exceptions import AccessControlError
-from core_main_app.utils.datetime_tools.utils import datetime_now
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 
 
@@ -20,7 +20,7 @@ class TestDataGetById(TestCase):
     def test_data_get_by_id_raises_api_error_if_not_found(self, mock_get):
         # Arrange
         mock_get.side_effect = exceptions.DoesNotExist("")
-        mock_user = _create_user("1")
+        mock_user = create_mock_user("1")
         # Act # Assert
         with self.assertRaises(exceptions.DoesNotExist):
             data_api.get_by_id(1, mock_user)
@@ -35,7 +35,7 @@ class TestDataGetById(TestCase):
             title="title",
         )
         mock_get.return_value = mock_data
-        mock_user = _create_user("1")
+        mock_user = create_mock_user("1")
         # Act
         result = data_api.get_by_id(1, mock_user)
         # Assert
@@ -59,7 +59,7 @@ class TestDataGetAllExceptUser(TestCase):
             _get_template(), user_id="1", title="title_2", content=""
         )
         mock_list_except_user_id.return_value = [mock_data_1, mock_data_2]
-        mock_user = _create_user("2")
+        mock_user = create_mock_user("2")
         get_all_workspaces_with_read_access_by_user.return_value = []
         # Act
         with self.assertRaises(AccessControlError):
@@ -80,7 +80,7 @@ class TestDataUpsert(TestCase):
         mock_save.return_value = data
         mock_check.return_value = None
         mock_convert_file.return_value = None
-        mock_user = _create_user("2")
+        mock_user = create_mock_user("2")
         # Act
         result = data_api.upsert(data, mock_user)
         # Assert
@@ -99,7 +99,7 @@ class TestDataUpsert(TestCase):
         mock_save.return_value = data
         mock_check.return_value = None
         mock_convert_file.return_value = None
-        mock_user = _create_user("3")
+        mock_user = create_mock_user("3")
         # Act
         result = data_api.upsert(data, mock_user)
         # Assert
@@ -117,7 +117,7 @@ class TestDataUpsert(TestCase):
         mock_save.return_value = data
         mock_check.return_value = None
         mock_convert_file.return_value = None
-        mock_user = _create_user("3")
+        mock_user = create_mock_user("3")
         # Act
         result = data_api.upsert(data, mock_user)
         # Assert
@@ -136,7 +136,7 @@ class TestDataUpsert(TestCase):
         mock_save.return_value = data
         mock_check.return_value = None
         mock_convert_file.return_value = None
-        mock_user = _create_user("3")
+        mock_user = create_mock_user("3")
         # Act
         result = data_api.upsert(data, mock_user)
         # Assert
@@ -155,7 +155,7 @@ class TestDataUpsert(TestCase):
         mock_save.return_value = data
         mock_check.return_value = None
         mock_convert_file.return_value = None
-        mock_user = _create_user("3")
+        mock_user = create_mock_user("3")
         # Act
         result = data_api.upsert(data, mock_user)
         creation_date = result.last_modification_date
@@ -166,7 +166,7 @@ class TestDataUpsert(TestCase):
     def test_data_upsert_raises_xml_error_if_failed_during_xml_validation(self):
         # Arrange
         data = _create_data(None, user_id="3", title="title", content="")
-        mock_user = _create_user("3")
+        mock_user = create_mock_user("3")
         # Act # Assert
         with self.assertRaises(exceptions.XMLError):
             data_api.upsert(data, mock_user)
@@ -178,7 +178,7 @@ class TestDataUpsert(TestCase):
         data = _create_data(
             template, user_id="3", title="title", content="<new_tag></new_tag>"
         )
-        mock_user = _create_user("3")
+        mock_user = create_mock_user("3")
         # Act # Assert
         with self.assertRaises(exceptions.XSDError):
             data_api.upsert(data, mock_user)
@@ -189,7 +189,7 @@ class TestDataUpsert(TestCase):
         data = _create_data(
             template, user_id="3", title="title", content="<new_tag></new_tag>"
         )
-        mock_user = _create_user("3")
+        mock_user = create_mock_user("3")
         # Act # Assert
         with self.assertRaises(exceptions.XMLError):
             data_api.upsert(data, mock_user)
@@ -209,13 +209,13 @@ class TestAdminDataInsert(TestCase):
         mock_save.return_value = data
         mock_check.return_value = None
         mock_convert_file.return_value = None
-        mock_user = _create_user("3")
+        mock_user = create_mock_user("3", is_superuser=True)
         # Act
         yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
         data.last_modification_date = yesterday
-        result = data_api.upsert(data, mock_user)
+        result = data_api.admin_insert(data, mock_user)
         # Assert
-        self.assertNotEqual(result.last_modification_date, yesterday)
+        self.assertEqual(result.last_modification_date, yesterday)
 
     @patch.object(Data, "convert_to_file")
     @patch.object(data_api, "check_xml_file_is_valid")
@@ -230,11 +230,91 @@ class TestAdminDataInsert(TestCase):
         mock_save.return_value = data
         mock_check.return_value = None
         mock_convert_file.return_value = None
-        mock_user = _create_user("3")
+        mock_user = create_mock_user("3", is_superuser=True)
         # Act
-        result = data_api.upsert(data, mock_user)
+        result = data_api.admin_insert(data, mock_user)
         # Assert
         self.assertIsNotNone(result.last_modification_date)
+
+    @patch.object(Data, "convert_to_file")
+    @patch.object(data_api, "check_xml_file_is_valid")
+    @patch.object(Data, "save")
+    def test_data_admin_insert_sets_custom_creation_date_if_provided(
+        self, mock_save, mock_check, mock_convert_file
+    ):
+        # Arrange
+        data = _create_data(
+            _get_template(), user_id="3", title="title", content="<tag></tag>"
+        )
+        mock_save.return_value = data
+        mock_check.return_value = None
+        mock_convert_file.return_value = None
+        mock_user = create_mock_user("3", is_superuser=True)
+        # Act
+        yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
+        data.creation_date = yesterday
+        result = data_api.admin_insert(data, mock_user)
+        # Assert
+        self.assertEqual(result.creation_date, yesterday)
+
+    @patch.object(Data, "convert_to_file")
+    @patch.object(data_api, "check_xml_file_is_valid")
+    @patch.object(Data, "save")
+    def test_data_admin_insert_sets_creation_date_if_not_provided(
+        self, mock_save, mock_check, mock_convert_file
+    ):
+        # Arrange
+        data = _create_data(
+            _get_template(), user_id="3", title="title", content="<tag></tag>"
+        )
+        mock_save.return_value = data
+        mock_check.return_value = None
+        mock_convert_file.return_value = None
+        mock_user = create_mock_user("3", is_superuser=True)
+        # Act
+        result = data_api.admin_insert(data, mock_user)
+        # Assert
+        self.assertIsNotNone(result.creation_date)
+
+    @patch.object(Data, "convert_to_file")
+    @patch.object(data_api, "check_xml_file_is_valid")
+    @patch.object(Data, "save")
+    def test_data_admin_insert_sets_custom_last_change_date_if_provided(
+        self, mock_save, mock_check, mock_convert_file
+    ):
+        # Arrange
+        data = _create_data(
+            _get_template(), user_id="3", title="title", content="<tag></tag>"
+        )
+        mock_save.return_value = data
+        mock_check.return_value = None
+        mock_convert_file.return_value = None
+        mock_user = create_mock_user("3", is_superuser=True)
+        # Act
+        yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
+        data.last_change_date = yesterday
+        result = data_api.admin_insert(data, mock_user)
+        # Assert
+        self.assertEqual(result.last_change_date, yesterday)
+
+    @patch.object(Data, "convert_to_file")
+    @patch.object(data_api, "check_xml_file_is_valid")
+    @patch.object(Data, "save")
+    def test_data_admin_insert_sets_last_chnage_date_if_not_provided(
+        self, mock_save, mock_check, mock_convert_file
+    ):
+        # Arrange
+        data = _create_data(
+            _get_template(), user_id="3", title="title", content="<tag></tag>"
+        )
+        mock_save.return_value = data
+        mock_check.return_value = None
+        mock_convert_file.return_value = None
+        mock_user = create_mock_user("3", is_superuser=True)
+        # Act
+        result = data_api.admin_insert(data, mock_user)
+        # Assert
+        self.assertIsNotNone(result.last_change_date)
 
 
 class TestDataCheckXmlFileIsValid(TestCase):
@@ -284,6 +364,161 @@ class TestDataCheckXmlFileIsValid(TestCase):
         self.assertEqual(result, True)
 
 
+class TestTimes(TestCase):
+    @patch.object(Data, "convert_to_file")
+    @patch.object(data_api, "check_xml_file_is_valid")
+    @patch.object(Data, "save")
+    def test_data_upsert_init_last_modification_date(
+        self, mock_save, mock_check, mock_convert_file
+    ):
+        # Arrange
+        data = _create_data(
+            _get_template(), user_id="3", title="title", content="<tag></tag>"
+        )
+        mock_save.return_value = data
+        mock_check.return_value = None
+        mock_convert_file.return_value = None
+        mock_user = create_mock_user("3")
+        # Act
+        data_api.upsert(data, mock_user)
+        # Assert
+        self.assertIsNotNone(data.last_modification_date)
+
+    @patch.object(Data, "convert_to_file")
+    @patch.object(data_api, "check_xml_file_is_valid")
+    @patch.object(Data, "save")
+    def test_data_upsert_init_last_change_date(
+        self, mock_save, mock_check, mock_convert_file
+    ):
+        # Arrange
+        data = _create_data(
+            _get_template(), user_id="3", title="title", content="<tag></tag>"
+        )
+        mock_save.return_value = data
+        mock_check.return_value = None
+        mock_convert_file.return_value = None
+        mock_user = create_mock_user("3")
+        # Act
+        data_api.upsert(data, mock_user)
+        # Assert
+        self.assertIsNotNone(data.last_change_date)
+
+    @patch.object(Data, "convert_to_file")
+    @patch.object(data_api, "check_xml_file_is_valid")
+    @patch.object(Data, "save")
+    def test_data_upsert_init_creation_date(
+        self, mock_save, mock_check, mock_convert_file
+    ):
+        # Arrange
+        data = _create_data(
+            _get_template(), user_id="3", title="title", content="<tag></tag>"
+        )
+        mock_save.return_value = data
+        mock_check.return_value = None
+        mock_convert_file.return_value = None
+        mock_user = create_mock_user("3")
+        # Act
+        data_api.upsert(data, mock_user)
+        # Assert
+        self.assertIsNotNone(data.creation_date)
+
+    @patch.object(Data, "convert_to_file")
+    @patch.object(data_api, "check_xml_file_is_valid")
+    @patch.object(Data, "save")
+    def test_data_edit_content_updates_last_modification_date(
+        self, mock_save, mock_check, mock_convert_file
+    ):
+        # Arrange
+        data = _create_data(
+            _get_template(), user_id="3", title="title", content="<tag></tag>"
+        )
+        mock_save.return_value = data
+        mock_check.return_value = None
+        mock_convert_file.return_value = None
+        mock_user = create_mock_user("3")
+        # Act
+        data_api.upsert(data, mock_user)
+        data.id = ObjectId()
+        original_date = data.last_modification_date
+        data.xml_content = "<root></root>"
+        data_api.upsert(data, mock_user)
+        # Assert
+        self.assertIsNotNone(data.last_modification_date)
+        self.assertTrue(data.last_modification_date > original_date)
+
+    @patch.object(Data, "convert_to_file")
+    @patch.object(data_api, "check_xml_file_is_valid")
+    @patch.object(Data, "save")
+    def test_data_edit_metadata_does_not_update_last_modification_date(
+        self, mock_save, mock_check, mock_convert_file
+    ):
+        # Arrange
+        data = _create_data(
+            _get_template(), user_id="3", title="title", content="<tag></tag>"
+        )
+        mock_save.return_value = data
+        mock_check.return_value = None
+        mock_convert_file.return_value = None
+        mock_user = create_mock_user("3")
+        # Act
+        data_api.upsert(data, mock_user)
+        data.id = ObjectId()
+        original_date = data.last_modification_date
+        data.title = "test"
+        data_api.upsert(data, mock_user)
+        # Assert
+        self.assertIsNotNone(data.last_modification_date)
+        self.assertEqual(data.last_modification_date, original_date)
+
+    @patch.object(Data, "convert_to_file")
+    @patch.object(data_api, "check_xml_file_is_valid")
+    @patch.object(Data, "save")
+    def test_data_edit_metadata_updates_last_change_date(
+        self, mock_save, mock_check, mock_convert_file
+    ):
+        # Arrange
+        data = _create_data(
+            _get_template(), user_id="3", title="title", content="<tag></tag>"
+        )
+        mock_save.return_value = data
+        mock_check.return_value = None
+        mock_convert_file.return_value = None
+        mock_user = create_mock_user("3")
+        # Act
+        data_api.upsert(data, mock_user)
+        data.id = ObjectId()
+        original_date = data.last_change_date
+        data.title = "test"
+        data_api.upsert(data, mock_user)
+        # Assert
+        self.assertIsNotNone(data.last_change_date)
+        self.assertTrue(data.last_change_date > original_date)
+
+    @patch.object(Data, "convert_to_file")
+    @patch.object(data_api, "check_xml_file_is_valid")
+    @patch.object(Data, "save")
+    def test_data_edit_does_not_updates_creation_date(
+        self, mock_save, mock_check, mock_convert_file
+    ):
+        # Arrange
+        data = _create_data(
+            _get_template(), user_id="3", title="title", content="<tag></tag>"
+        )
+        mock_save.return_value = data
+        mock_check.return_value = None
+        mock_convert_file.return_value = None
+        mock_user = create_mock_user("3")
+        # Act
+        data_api.upsert(data, mock_user)
+        data.id = ObjectId()
+        original_date = data.creation_date
+        data.title = "test"
+        data_api.upsert(data, mock_user)
+        # Assert
+        self.assertIsNotNone(data.creation_date)
+        self.assertEqual(data.creation_date, original_date)
+
+
 def _get_template():
     template = Template()
     template.id_field = 1
@@ -295,11 +530,7 @@ def _get_template():
     return template
 
 
-def _create_data(template, user_id, title, content):
-    data = Data(template=template, user_id=user_id, title=title)
+def _create_data(template, user_id, title, content, data_id=None):
+    data = Data(template=template, user_id=user_id, title=title, id=data_id)
     data.xml_content = content
     return data
-
-
-def _create_user(user_id):
-    return create_mock_user(user_id)

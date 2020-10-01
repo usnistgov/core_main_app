@@ -22,7 +22,9 @@ class AdminDataSerializer(DataSerializer):
             "user_id",
             "title",
             "xml_content",
+            "creation_date",
             "last_modification_date",
+            "last_change_date",
         ]
         read_only_fields = ("id",)
 
@@ -41,13 +43,18 @@ class AdminDataSerializer(DataSerializer):
             if "user_id" in validated_data
             else str(validated_data["user"].id),
         )
-        if "last_modification_date" in validated_data:
-            instance.last_modification_date = validated_data["last_modification_date"]
-        # Set xml content
+        # Set XML content
         instance.xml_content = validated_data["xml_content"]
+        # Set times
+        instance.creation_date = validated_data.get("creation_date", None)
+        instance.last_modification_date = validated_data.get(
+            "last_modification_date", None
+        )
+        instance.last_change_date = validated_data.get("last_change_date", None)
         # Save the data
         data_api.admin_insert(instance, validated_data["user"])
         # Encode the response body
-        instance.xml_content = validated_data["xml_content"].encode("utf-8")
+        # NOTE: using xml_content property would update the last_modification_date
+        instance._xml_content = validated_data["xml_content"].encode("utf-8")
 
         return instance

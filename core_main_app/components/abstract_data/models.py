@@ -2,13 +2,17 @@
 """
 from io import BytesIO
 
+from django_mongoengine import fields, Document
+
 from core_main_app.settings import (
     GRIDFS_DATA_COLLECTION,
     SEARCHABLE_DATA_OCCURRENCES_LIMIT,
 )
 from core_main_app.utils import xml as xml_utils
+from core_main_app.utils.datetime_tools.utils import datetime_now
 from core_main_app.utils.validation.regex_validation import not_empty_or_whitespaces
-from django_mongoengine import fields, Document
+from mongoengine import errors as mongoengine_errors
+from core_main_app.commons import exceptions
 
 
 class AbstractData(Document):
@@ -16,8 +20,10 @@ class AbstractData(Document):
 
     dict_content = fields.DictField(blank=True)
     title = fields.StringField(blank=False, validation=not_empty_or_whitespaces)
-    last_modification_date = fields.DateTimeField(blank=True, default=None)
     xml_file = fields.FileField(blank=False, collection_name=GRIDFS_DATA_COLLECTION)
+    creation_date = fields.DateTimeField(blank=True, default=None)
+    last_modification_date = fields.DateTimeField(blank=True, default=None)
+    last_change_date = fields.DateTimeField(blank=True, default=None)
 
     _xml_content = None
 
@@ -55,6 +61,9 @@ class AbstractData(Document):
         Returns:
 
         """
+        # update modification times
+        self.last_modification_date = datetime_now()
+        # update content
         self._xml_content = value
 
     def convert_and_save(self):
@@ -66,7 +75,7 @@ class AbstractData(Document):
         self.convert_to_dict()
         self.convert_to_file()
 
-        return self.save()
+        return self.save_object()
 
     def convert_to_dict(self):
         """Convert the xml contained in xml_content into a dictionary.
@@ -104,3 +113,25 @@ class AbstractData(Document):
         else:
             # editing (self.xml_file gets a new id)
             self.xml_file.replace(xml_file, content_type="application/xml")
+
+    def save_object(self):
+        """Custom save. Set the datetime fields and save.
+
+        Returns:
+
+        """
+        try:
+            # initialize times
+            now = datetime_now()
+            # update change date every time the data is updated
+            self.last_change_date = now
+            if not self.id:
+                # initialize when first created
+                self.creation_date = now
+                # initialize when first saved, then only updates when content is updated
+                self.last_modification_date = now
+            return self.save()
+        except mongoengine_errors.NotUniqueError as e:
+            raise exceptions.NotUniqueError(e)
+        except Exception as ex:
+            raise exceptions.ModelError(ex)

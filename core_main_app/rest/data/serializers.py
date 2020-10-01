@@ -39,12 +39,16 @@ class DataSerializer(DocumentSerializer):
             "user_id",
             "title",
             "xml_content",
+            "creation_date",
             "last_modification_date",
+            "last_change_date",
         ]
         read_only_fields = (
             "id",
             "user_id",
+            "creation_date",
             "last_modification_date",
+            "last_change_date",
         )
 
     def create(self, validated_data):
@@ -95,5 +99,7 @@ class DataWithTemplateInfoSerializer(DocumentSerializer):
             "user_id",
             "title",
             "xml_content",
+            "creation_date",
             "last_modification_date",
+            "last_change_date",
         ]

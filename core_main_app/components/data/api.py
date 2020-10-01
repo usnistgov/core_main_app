@@ -132,8 +132,6 @@ def upsert(data, user):
     if data.xml_content is None:
         raise exceptions.ApiError("Unable to save data: xml_content field is not set.")
 
-    data.last_modification_date = datetime_now()
-
     check_xml_file_is_valid(data)
     return data.convert_and_save()
 
@@ -152,11 +150,20 @@ def admin_insert(data, user):
     if data.xml_content is None:
         raise exceptions.ApiError("Unable to save data: xml_content field is not set.")
 
+    # initialize times - use values if provided, set now otherwise
+    now = datetime_now()
+    if not data.creation_date:
+        data.creation_date = now
     if not data.last_modification_date:
-        data.last_modification_date = datetime_now()
+        data.last_modification_date = now
+    if not data.last_change_date:
+        data.last_change_date = now
 
+    # convert and save the data (do not call convert_and_save that will set the date fields)
     check_xml_file_is_valid(data)
-    return data.convert_and_save()
+    data.convert_to_file()
+    data.convert_to_dict()
+    return data.save()
 
 
 def check_xml_file_is_valid(data):
@@ -229,7 +236,7 @@ def change_owner(data, new_user, user):
     """
     # FIXME: user can transfer data to anybody, too permissive
     data.user_id = str(new_user.id)
-    data.save()
+    data.save_object()
 
 
 def get_none():
@@ -283,7 +290,7 @@ def assign(data, workspace, user):
 
     """
     data.workspace = workspace
-    return data.save()
+    return data.save_object()
 
 
 @access_control(has_perm_administration)
