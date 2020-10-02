@@ -1,17 +1,18 @@
 """Mailing util
 """
+from django.template import loader
 import core_main_app.utils.notifications.tasks.task_mail as task
 from core_main_app.settings import SERVER_EMAIL, USE_BACKGROUND_TASK
+from core_main_app.templatetags.stripjs import stripjs
 
 
-def send_mail(
+def send_mail_from_template(
     recipient_list,
     subject,
-    path_to_template=None,
+    path_to_template,
     context={},
     fail_silently=True,
     sender=SERVER_EMAIL,
-    inline_template=None,
 ):
     """Send email.
 
@@ -22,7 +23,61 @@ def send_mail(
         context:
         fail_silently:
         sender:
-        inline_template:
+
+    Returns:
+
+    """
+    # Render the given template with context information
+    template = loader.get_template(path_to_template)
+    body = template.render(context)
+    _send_email(
+        recipient_list=recipient_list,
+        subject=subject,
+        body=body,
+        fail_silently=fail_silently,
+        sender=sender,
+    )
+
+
+def send_mail(
+    recipient_list,
+    subject,
+    body,
+    fail_silently=True,
+    sender=SERVER_EMAIL,
+):
+    """Send email.
+
+    Args:
+        recipient_list:
+        subject:
+        body:
+        fail_silently:
+        sender:
+
+    Returns:
+
+    """
+
+    stripped_body = stripjs(body)
+    _send_email(
+        recipient_list=recipient_list,
+        subject=subject,
+        body=stripped_body,
+        fail_silently=fail_silently,
+        sender=sender,
+    )
+
+
+def _send_email(recipient_list, subject, body, fail_silently, sender):
+    """Send email async or sync from the rendered template
+
+    Args:
+        recipient_list:
+        subject:
+        body:
+        fail_silently:
+        sender:
 
     Returns:
 
@@ -33,11 +88,9 @@ def send_mail(
             (
                 recipient_list,
                 subject,
-                path_to_template,
-                context,
+                body,
                 fail_silently,
                 sender,
-                inline_template,
             ),
             countdown=1,
         )
@@ -46,11 +99,9 @@ def send_mail(
         task.send_mail(
             recipient_list=recipient_list,
             subject=subject,
-            path_to_template=path_to_template,
-            context=context,
+            body=body,
             fail_silently=fail_silently,
             sender=sender,
-            inline_template=inline_template,
         )
 
 
