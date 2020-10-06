@@ -234,6 +234,23 @@ def can_write(func, document, user):
     return func(document, user)
 
 
+def can_anonymous_access_public_data(func, *args, **kwargs):
+    """Can anonymous access a public data
+
+    Args:
+        func:
+        *args:
+        **kwargs:
+
+    Returns:
+
+    """
+    user = next((arg for arg in args if isinstance(arg, User)), None)
+
+    _check_anonymous_access(user)
+    return func(*args, **kwargs)
+
+
 def _check_can_write_in_workspace(workspace, user):
     """Check that user can write in the workspace.
 
@@ -277,6 +294,20 @@ def _check_can_read_or_write_in_workspace(workspace, user):
         )
 
 
+def _check_anonymous_access(user):
+    """Check anonymous access
+
+    Args:
+        user:
+
+    Returns:
+    """
+    if (user is None or user.is_anonymous) and not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
+        raise AccessControlError(
+            "The user doesn't have enough rights to access this document."
+        )
+
+
 def _check_can_read(document, user):
     """Check that the user can read.
 
@@ -287,11 +318,7 @@ def _check_can_read(document, user):
     Returns:
 
     """
-    # anonymous user case
-    if user.is_anonymous and not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
-        raise AccessControlError(
-            "The user doesn't have enough rights to access this document."
-        )
+    _check_anonymous_access(user)
 
     # workspace case
     if document.user_id != str(user.id):
