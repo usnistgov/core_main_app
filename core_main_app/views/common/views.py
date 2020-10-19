@@ -9,6 +9,7 @@ from django.http.response import HttpResponseRedirect
 from django.utils.html import escape as html_escape
 from django.views.generic import View
 
+from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
 from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.data import api as data_api
@@ -209,10 +210,16 @@ class ViewData(CommonView):
             )
         except exceptions.DoesNotExist:
             error_message = "Data not found"
+            status_code = 404
         except exceptions.ModelError:
             error_message = "Model error"
+            status_code = 400
+        except AccessControlError:
+            error_message = "Access Forbidden"
+            status_code = 403
         except Exception as e:
             error_message = str(e)
+            status_code = 400
 
         return self.common_render(
             request,
@@ -220,7 +227,8 @@ class ViewData(CommonView):
             context={
                 "error": "Unable to access the requested "
                 + get_data_label()
-                + ": {}.".format(error_message)
+                + ": {}.".format(error_message),
+                "status_code": status_code,
             },
         )
 
