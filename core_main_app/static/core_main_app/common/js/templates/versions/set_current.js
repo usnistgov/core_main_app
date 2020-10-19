@@ -12,11 +12,8 @@ setCurrentVersion = function(){
  */
 set_current_version = function(objectID){
     $.ajax({
-        url : setCurrentVersionPostUrl,
-        type : "GET",
-        data: {
-            id: objectID
-        },
+        url : setCurrentVersionPostUrl.replace('template_version_id', objectID),
+        type : "PATCH",
         success: function(data){
             location.reload();
         },

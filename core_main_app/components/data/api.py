@@ -74,25 +74,6 @@ def get_all(user, order_by_field=DATA_SORTING_FIELDS):
     return Data.get_all(order_by_field)
 
 
-def get_all_accessible_by_user(user, order_by_field=DATA_SORTING_FIELDS):
-    """Return all data accessible by a user.
-
-    Parameters:
-        user:
-        order_by_field:
-
-    Returns: data collection
-    """
-
-    read_workspaces = workspace_api.get_all_workspaces_with_read_access_by_user(user)
-    write_workspaces = workspace_api.get_all_workspaces_with_write_access_by_user(user)
-    user_accessible_workspaces = list(set().union(read_workspaces, write_workspaces))
-
-    return Data.get_all_by_user_and_workspace(
-        user.id, user_accessible_workspaces, order_by_field
-    )
-
-
 def get_all_by_user(user, order_by_field=DATA_SORTING_FIELDS):
     """Return all data owned by a user.
 

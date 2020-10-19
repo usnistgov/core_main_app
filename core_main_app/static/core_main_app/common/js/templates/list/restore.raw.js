@@ -1,1 +1,1 @@
-var restoreTemplatePostUrl = "{% url 'core_main_app_restore_template' %}";
+var restoreTemplatePostUrl = "{% url 'core_main_app_rest_template_version_manager_restore' 'template_version_manager_id'%}";

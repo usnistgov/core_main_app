@@ -20,13 +20,10 @@ disableVersion = function(event)
  */
 disable_version = function(event){
     event.preventDefault();
-
+    templateVersionId = $("#disable-version-modal").find("#disable-version-id").val()
     $.ajax({
-        url : disableVersionPostUrl,
-        type : "GET",
-        data: {
-            id: $("#disable-version-modal").find("#disable-version-id").val()
-        },
+        url : disableVersionPostUrl.replace("template_version_id", templateVersionId),
+        type : "PATCH",
         success: function(data){
             location.reload();
         }

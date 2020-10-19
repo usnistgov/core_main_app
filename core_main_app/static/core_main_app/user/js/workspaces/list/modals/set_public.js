@@ -13,12 +13,8 @@ setPublicWorkspace = function() {
  */
 set_public_workspace = function(){
     $.ajax({
-        url : publicWorkspaceUrl,
-        type : "POST",
-        dataType: "json",
-        data : {
-            workspace_id: getSelectedDocument()
-        },
+        url : publicWorkspaceUrl.replace("workspace_id", getSelectedDocument()),
+        type : "PATCH",
 		success: function(data){
 			location.reload();
 	    },

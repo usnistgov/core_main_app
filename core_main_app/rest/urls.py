@@ -7,7 +7,6 @@ import core_main_app.rest.web_page.views as web_page_views
 import core_main_app.rest.xsl_transformation.views as xsl_transformation_views
 from core_main_app.rest.blob import views as blob_views
 from core_main_app.rest.data import views as data_views
-from core_main_app.rest.user import views as user_views
 from core_main_app.rest.template import views as template_views
 from core_main_app.rest.template_version_manager import (
     views as template_version_manager_views,
@@ -15,6 +14,7 @@ from core_main_app.rest.template_version_manager import (
 from core_main_app.rest.template_xsl_rendering import (
     views as template_xsl_rendering_views,
 )
+from core_main_app.rest.user import views as user_views
 from core_main_app.rest.workspace import views as workspace_views
 
 urlpatterns = [

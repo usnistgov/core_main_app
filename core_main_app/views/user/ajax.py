@@ -3,14 +3,16 @@
 import json
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.template import loader
+from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.views.generic import View
 
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
-from core_main_app.commons.exceptions import DoesNotExist, NotUniqueError, ModelError
+from core_main_app.commons.exceptions import DoesNotExist, ModelError
+from core_main_app.components.data import api as data_api
 from core_main_app.components.group import api as group_api
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
@@ -21,8 +23,6 @@ from core_main_app.views.user.forms import (
     UserRightForm,
     GroupRightForm,
 )
-from core_main_app.components.data import api as data_api
-
 
 GROUP = "group"
 USER = "user"
@@ -31,52 +31,7 @@ ACTION_READ = "action_read"
 ACTION_WRITE = "action_write"
 
 
-@login_required
-def set_public_workspace(request):
-    """Set a workspace public.
-
-    Args:
-        request:
-
-    Returns:
-    """
-    try:
-        workspace_id_list = request.POST.getlist("workspace_id[]", [])
-        list_workspace = workspace_api.get_by_id_list(workspace_id_list)
-        for workspace in list_workspace:
-            workspace_api.set_workspace_public(workspace, request.user)
-    except DoesNotExist as dne:
-        return HttpResponseBadRequest(escape(str(dne)))
-    except AccessControlError as ace:
-        return HttpResponseBadRequest(escape(str(ace)))
-    except:
-        return HttpResponseBadRequest("Something wrong happened.")
-
-    return HttpResponse(json.dumps({}), content_type="application/javascript")
-
-
-@login_required
-def set_private_workspace(request):
-    """Set a workspace private.
-
-    Args:
-        request:
-
-    Returns:
-    """
-    try:
-        workspace_id_list = request.POST.getlist("workspace_id[]", [])
-        list_workspace = workspace_api.get_by_id_list(workspace_id_list)
-        for workspace in list_workspace:
-            workspace_api.set_workspace_private(workspace, request.user)
-    except DoesNotExist as dne:
-        return HttpResponseBadRequest(escape(str(dne)))
-    except:
-        return HttpResponseBadRequest("Something wrong happened.")
-
-    return HttpResponse(json.dumps({}), content_type="application/javascript")
-
-
+@method_decorator(login_required, name="dispatch")
 class LoadFormChangeWorkspace(View):
     """ Load the form to list the workspaces. """
 
@@ -108,36 +63,6 @@ class LoadFormChangeWorkspace(View):
             ),
             "application/javascript",
         )
-
-
-@login_required
-def create_workspace(request):
-    """Create a workspace.
-
-    Args:
-        request
-
-    Returns:
-    """
-    name_workspace = request.POST.get("name_workspace", None)
-    try:
-        workspace_api.create_and_save(name_workspace, request.user.id)
-    except NotUniqueError:
-        return HttpResponseBadRequest(
-            "You already have a workspace called "
-            + name_workspace
-            + ". Please change the name and try again."
-        )
-    except exceptions.ModelError:
-        return HttpResponseBadRequest(
-            "The given title does not meet the requirements for a title. "
-            "Please provide another title."
-        )
-    except Exception as e:
-        return HttpResponseBadRequest(
-            "A problem occurred while creating the workspace."
-        )
-    return HttpResponse(json.dumps({}), content_type="application/javascript")
 
 
 @login_required
@@ -501,6 +426,7 @@ def add_group_right_to_workspace(request):
     return HttpResponse(json.dumps({}), content_type="application/javascript")
 
 
+@method_decorator(login_required, name="dispatch")
 class AssignView(View):
     """Assign Ajax view"""
 
@@ -535,7 +461,7 @@ class AssignView(View):
                     self.api.get_by_id(data_id, request.user), workspace, request.user
                 )
             except AccessControlError as ace:
-                return HttpResponseBadRequest(escape(str(ace)))
+                return HttpResponseForbidden(escape(str(ace)))
             except Exception as exc:
                 return HttpResponseBadRequest("Something wrong happened.")
 
@@ -550,20 +476,25 @@ def change_data_display(request):
 
     Returns:
     """
-    xsl_transformation_id = request.POST.get("xslt_id", None)
-    data_id = request.POST.get("data_id", None)
-    data = data_api.get_by_id(data_id, request.user)
+    try:
+        xsl_transformation_id = request.POST.get("xslt_id", None)
+        data_id = request.POST.get("data_id", None)
+        data = data_api.get_by_id(data_id, request.user)
 
-    return HttpResponse(
-        json.dumps(
-            {
-                "template": render_xml_as_html(
-                    xml_content=data.xml_content,
-                    template_id=data.template.id,
-                    template_hash=data.template.hash,
-                    xslt_id=xsl_transformation_id,
-                ),
-            }
-        ),
-        "application/javascript",
-    )
+        return HttpResponse(
+            json.dumps(
+                {
+                    "template": render_xml_as_html(
+                        xml_content=data.xml_content,
+                        template_id=data.template.id,
+                        template_hash=data.template.hash,
+                        xslt_id=xsl_transformation_id,
+                    ),
+                }
+            ),
+            "application/javascript",
+        )
+    except AccessControlError:
+        return HttpResponseForbidden("Access Forbidden")
+    except:
+        return HttpResponseBadRequest("Unexpected error")

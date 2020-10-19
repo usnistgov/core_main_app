@@ -716,23 +716,6 @@ class TestGetAllByTemplatesAndWorkspaces(MongoIntegrationBaseTestCase):
         self.assertEqual(len(result), 0)
 
 
-class TestGetAllAccessibleByUser(MongoIntegrationTransactionTestCase):
-
-    fixture = access_control_data_fixture
-
-    def test_data_get_all_accessible_by_user_api_without_sorting_param_use_default_data_sorting_setting(
-        self,
-    ):
-        # Arrange
-        mock_user = _create_user("1", is_superuser=True)
-        # Act
-        data = data_api.get_all_accessible_by_user(mock_user)
-        # Assert
-        self.assertListEqual(
-            list(data), [self.fixture.data_1, self.fixture.data_3, self.fixture.data_5]
-        )
-
-
 class TestGetAllByUserAndWorkspace(MongoIntegrationBaseTestCase):
 
     fixture = access_control_data_fixture

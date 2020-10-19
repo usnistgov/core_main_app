@@ -162,17 +162,3 @@ def _register_local_dependencies(template):
                     local_dependency, str(e)
                 )
             )
-
-
-def get_all_templates_by_dependencies(dependency_id_list):
-    """List all templates having the given dependencies.
-
-    Args:
-        dependency_id_list: List of dependency ids.
-
-    Returns:
-        List of templates.
-
-    """
-
-    return Template.get_all_templates_by_dependencies(dependency_id_list)

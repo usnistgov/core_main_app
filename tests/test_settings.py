@@ -10,8 +10,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.sites",
+    "django.contrib.staticfiles",
     # Extra apps
     "defender",
+    "tz_detect",
+    "menu",
     # Local apps
     "core_main_app",
     "tests",
@@ -36,6 +39,7 @@ MIDDLEWARE = (
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "tz_detect.middleware.TimezoneMiddleware",
 )
 
 TEMPLATES = [
@@ -55,6 +59,10 @@ TEMPLATES = [
         },
     },
 ]
+
+LOGIN_URL = "/login"
+STATIC_URL = "/static/"
+ROOT_URLCONF = "tests.urls"
 
 PASSWORD_HASHERS = ("django.contrib.auth.hashers.UnsaltedMD5PasswordHasher",)
 
@@ -78,6 +86,8 @@ PASSWORD_MIN_NUMBERS = 1
 PASSWORD_MIN_SYMBOLS = 1
 # Specifies the maximum amount of consecutive characters allowed in passwords.
 PASSWORD_MAX_OCCURRENCE = 5
+
+CUSTOM_NAME = "Curator"
 
 database = Database(MOCK_DATABASE_HOST, MOCK_DATABASE_NAME)
 database.connect()

@@ -1,1 +1,1 @@
-var createWorkspaceUrl = "{% url 'core_main_create_workspace' %}";
+var createWorkspaceUrl = "{% url 'core_main_app_rest_workspace_list' %}";

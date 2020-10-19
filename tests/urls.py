@@ -1,10 +1,11 @@
 """ Url router for the main application
 """
-from django.conf.urls import include
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
-from django.urls import re_path
-from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from django.conf.urls import include
+from django.urls import re_path
 
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.data import api as data_api
@@ -22,9 +23,9 @@ schema_view = get_schema_view(
 urlpatterns = [
     re_path(r"^$", user_views.homepage, name="core_main_app_homepage"),
     re_path(r"^login", user_views.custom_login, name="core_main_app_login"),
-    re_path(r"^logout", user_views.custom_logout, name="core_main_app_logout"),
-    re_path(r"^locked", common_views.defender_error_page, name="core_main_app_locked"),
-    re_path(r"^rest/", include("core_main_app.rest.urls")),
+    # re_path(r"^logout", user_views.custom_logout, name="core_main_app_logout"),
+    # re_path(r"^locked", common_views.defender_error_page, name="core_main_app_locked"),
+    # re_path(r"^rest/", include("core_main_app.rest.urls")),
     re_path(
         r"^data", common_views.ViewData.as_view(), name="core_main_app_data_detail"
     ),
@@ -40,12 +41,10 @@ urlpatterns = [
     ),
     re_path(
         r"^template/xslt/(?P<template_id>\w+)",
-        login_required(
-            common_views.TemplateXSLRenderingView.as_view(
-                rendering=render,
-                template_name="core_main_app/common/templates_xslt/main.html",
-                save_redirect="core_main_app_manage_template_versions",
-            )
+        common_views.TemplateXSLRenderingView.as_view(
+            rendering=render,
+            template_name="core_main_app/common/templates_xslt/main.html",
+            save_redirect="core_main_app_manage_template_versions",
         ),
         name="core_main_app_template_xslt",
     ),
@@ -95,30 +94,30 @@ urlpatterns = [
         user_ajax.add_group_right_to_workspace,
         name="core_main_add_group_right_to_workspace",
     ),
-    re_path(
-        r"^docs/api$",
-        schema_view.with_ui("swagger", cache_timeout=0),
-        name="swagger_view",
-    ),
+    # re_path(
+    #     r"^docs/api$",
+    #     schema_view.with_ui("swagger", cache_timeout=0),
+    #     name="swagger_view",
+    # ),
     re_path(r"^tz_detect/", include("tz_detect.urls")),
-    re_path(
-        r"^password_reset/$", user_views.custom_reset_password, name="password_reset"
-    ),
-    re_path(
-        r"^password_reset/done/$",
-        user_views.custom_password_reset_done,
-        name="password_reset_done",
-    ),
-    re_path(
-        r"^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$",
-        user_views.custom_password_reset_confirm,
-        name="password_reset_confirm",
-    ),
-    re_path(
-        r"^reset/done/$",
-        user_views.custom_password_reset_complete,
-        name="password_reset_complete",
-    ),
+    # re_path(
+    #     r"^password_reset/$", user_views.custom_reset_password, name="password_reset"
+    # ),
+    # re_path(
+    #     r"^password_reset/done/$",
+    #     user_views.custom_password_reset_done,
+    #     name="password_reset_done",
+    # ),
+    # re_path(
+    #     r"^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$",
+    #     user_views.custom_password_reset_confirm,
+    #     name="password_reset_confirm",
+    # ),
+    # re_path(
+    #     r"^reset/done/$",
+    #     user_views.custom_password_reset_complete,
+    #     name="password_reset_complete",
+    # ),
     re_path(
         r"^change-data-display",
         user_ajax.change_data_display,

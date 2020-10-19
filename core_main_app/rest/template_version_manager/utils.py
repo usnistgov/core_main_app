@@ -35,7 +35,7 @@ def can_user_modify_template_version_manager(template_version_manager, user):
 
     """
     if user.is_superuser is False and user.is_staff is False:
-        if template_version_manager.user != user.id:
+        if template_version_manager.user != str(user.id):
             raise AccessControlError(
                 "You don't have the permission to update this object."
             )

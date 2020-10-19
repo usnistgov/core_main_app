@@ -1,0 +1,378 @@
+""" Test access to views
+"""
+from django.contrib.auth.models import AnonymousUser
+from django.test import RequestFactory
+
+from core_main_app.components.data import api as data_api
+from core_main_app.components.blob import api as blob_api
+from core_main_app.utils.integration_tests.integration_base_test_case import (
+    MongoIntegrationBaseTestCase,
+)
+from core_main_app.utils.tests_tools.MockUser import create_mock_user
+from core_main_app.views.common.views import (
+    ViewData,
+    EditWorkspaceRights,
+    TemplateXSLRenderingView,
+)
+from core_main_app.views.user.ajax import (
+    AssignView,
+    change_data_display,
+    LoadFormChangeWorkspace,
+    load_add_user_form,
+    add_user_right_to_workspace,
+    switch_right,
+    remove_user_or_group_rights,
+    load_add_group_form,
+    add_group_right_to_workspace,
+)
+from core_main_app.views.user.views import manage_template_versions
+from tests.test_settings import LOGIN_URL
+from tests.views.fixtures import AccessControlDataFixture
+
+
+class TestViewData(MongoIntegrationBaseTestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user1 = create_mock_user(user_id="1")
+        self.anonymous = AnonymousUser()
+        self.fixture = AccessControlDataFixture()
+        self.fixture.insert_data()
+
+    def test_a_user_can_access_a_data_if_owner(self):
+        request = self.factory.get("core_main_app_data_detail")
+        request.user = self.user1
+        request.GET = {"id": str(self.fixture.data_1.id)}
+        response = ViewData.as_view()(request)
+        self.assertTrue(self.fixture.data_1.title in response.content.decode())
+
+    def test_an_anonymous_user_can_not_access_a_data_that_is_not_in_a_workspace(self):
+        request = self.factory.get("core_main_app_data_detail")
+        request.user = self.anonymous
+        request.GET = {"id": str(self.fixture.data_1.id)}
+        response = ViewData.as_view()(request)
+        self.assertTrue(self.fixture.data_1.title not in response.content.decode())
+        self.assertTrue("Error 403" in response.content.decode())
+
+    def test_an_anonymous_user_can_not_access_a_data_that_is_in_a_private_workspace(
+        self,
+    ):
+        request = self.factory.get("core_main_app_data_detail")
+        request.user = self.anonymous
+        request.GET = {"id": str(self.fixture.data_1.id)}
+        response = ViewData.as_view()(request)
+        self.assertTrue(self.fixture.data_1.title not in response.content.decode())
+        self.assertTrue("Error" in response.content.decode())
+
+    def test_an_anonymous_user_can_not_access_a_data_that_is_in_a_public_workspace_and_access_setting_is_false(
+        self,
+    ):
+        request = self.factory.get("core_main_app_data_detail")
+        request.user = self.anonymous
+        request.GET = {"id": str(self.fixture.data_public_workspace.id)}
+        response = ViewData.as_view()(request)
+        self.assertTrue(
+            self.fixture.data_public_workspace.title not in response.content.decode()
+        )
+        self.assertTrue("Error" in response.content.decode())
+
+
+class TestManageTemplateVersions(MongoIntegrationBaseTestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user1 = create_mock_user(user_id="1")
+        self.anonymous = AnonymousUser()
+        self.fixture = AccessControlDataFixture()
+        self.fixture.insert_data()
+
+    def test_an_anonymous_user_can_not_manage_template_versions(self):
+        request = self.factory.get("core_main_app_manage_template_versions")
+        request.user = self.anonymous
+        response = manage_template_versions(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(LOGIN_URL))
+
+
+class TestTemplateXSLRenderingView(MongoIntegrationBaseTestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user1 = create_mock_user(user_id="1")
+        self.anonymous = AnonymousUser()
+        self.fixture = AccessControlDataFixture()
+        self.fixture.insert_data()
+
+    def test_an_anonymous_user_can_not_manage_template_versions(self):
+        request = self.factory.get("core_main_app_template_xslt")
+        request.user = self.anonymous
+        response = TemplateXSLRenderingView.as_view()(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(LOGIN_URL))
+
+
+class TestAssignDataView(MongoIntegrationBaseTestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user1 = create_mock_user(user_id="1")
+        self.anonymous = AnonymousUser()
+        self.fixture = AccessControlDataFixture()
+        self.fixture.insert_data()
+
+    def test_a_user_can_assign_a_data_if_owner(self):
+        data = {
+            "document_id[]": [str(self.fixture.data_1.id)],
+            "workspace_id[]": [str(self.fixture.workspace_2.id)],
+        }
+        request = self.factory.post("core_main_assign_data_workspace", data)
+        request.user = self.user1
+        response = AssignView.as_view(api=data_api)(request)
+        self.assertEqual(response.status_code, 200)
+
+    def test_an_anonymous_user_can_not_assign_a_user_data(self):
+        data = {
+            "document_id[]": [str(self.fixture.data_1.id)],
+            "workspace_id[]": [str(self.fixture.workspace_2.id)],
+        }
+        request = self.factory.post("core_main_assign_data_workspace", data)
+        request.user = self.anonymous
+        response = AssignView.as_view(api=data_api)(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(LOGIN_URL))
+
+    def test_an_anonymous_user_can_not_assign_a_workspace_data(self):
+        data = {
+            "document_id[]": [str(self.fixture.data_workspace_1.id)],
+            "workspace_id[]": [str(self.fixture.workspace_2.id)],
+        }
+        request = self.factory.post("core_main_assign_data_workspace", data)
+        request.user = self.anonymous
+        response = AssignView.as_view(api=data_api)(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(LOGIN_URL))
+
+    def test_an_anonymous_user_can_not_assign_a_public_workspace_data(self):
+        data = {
+            "document_id[]": [str(self.fixture.data_public_workspace.id)],
+            "workspace_id[]": [str(self.fixture.workspace_2.id)],
+        }
+        request = self.factory.post("core_main_assign_data_workspace", data)
+        request.user = self.anonymous
+        response = AssignView.as_view(api=data_api)(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(LOGIN_URL))
+
+
+class TestAssignBlobView(MongoIntegrationBaseTestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user1 = create_mock_user(user_id="1")
+        self.anonymous = AnonymousUser()
+        self.fixture = AccessControlDataFixture()
+        self.fixture.insert_data()
+
+    def test_a_user_can_assign_a_blob_if_owner(self):
+        data = {
+            "document_id[]": [str(self.fixture.blob_1.id)],
+            "workspace_id[]": [str(self.fixture.workspace_2.id)],
+        }
+        request = self.factory.post("core_main_assign_blob_workspace", data)
+        request.user = self.user1
+        response = AssignView.as_view(api=blob_api)(request)
+        self.assertEqual(response.status_code, 200)
+
+    def test_an_anonymous_user_can_not_assign_a_user_blob(self):
+        data = {
+            "document_id[]": [str(self.fixture.blob_1.id)],
+            "workspace_id[]": [str(self.fixture.workspace_2.id)],
+        }
+        request = self.factory.post("core_main_assign_blob_workspace", data)
+        request.user = self.anonymous
+        response = AssignView.as_view(api=blob_api)(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(LOGIN_URL))
+
+    def test_an_anonymous_user_can_not_assign_a_workspace_blob(self):
+        data = {
+            "document_id[]": [str(self.fixture.blob_workspace_1.id)],
+            "workspace_id[]": [str(self.fixture.workspace_2.id)],
+        }
+        request = self.factory.post("core_main_assign_blob_workspace", data)
+        request.user = self.anonymous
+        response = AssignView.as_view(api=blob_api)(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(LOGIN_URL))
+
+    def test_an_anonymous_user_can_not_assign_a_public_workspace_blob(self):
+        data = {
+            "document_id[]": [str(self.fixture.blob_public_workspace.id)],
+            "workspace_id[]": [str(self.fixture.workspace_2.id)],
+        }
+        request = self.factory.post("core_main_assign_blob_workspace", data)
+        request.user = self.anonymous
+        response = AssignView.as_view(api=blob_api)(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(LOGIN_URL))
+
+
+class TestChangeDataDisplayView(MongoIntegrationBaseTestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user1 = create_mock_user(user_id="1")
+        self.anonymous = AnonymousUser()
+        self.fixture = AccessControlDataFixture()
+        self.fixture.insert_data()
+
+    def test_a_user_can_change_data_display_if_owner(self):
+        data = {"xslt_id": "id", "data_id": str(self.fixture.data_1.id)}
+        request = self.factory.post("core_main_add_change_data_display", data)
+        request.user = self.user1
+        response = change_data_display(request)
+        self.assertEqual(response.status_code, 200)
+
+    def test_an_anonymous_user_can_not_assign_a_user_data(self):
+        data = {"xslt_id": "id", "data_id": str(self.fixture.data_1.id)}
+        request = self.factory.post("core_main_add_change_data_display", data)
+        request.user = self.anonymous
+        response = change_data_display(request)
+        self.assertEqual(response.status_code, 403)
+
+    def test_an_anonymous_user_can_not_assign_a_workspace_data(self):
+        data = {"xslt_id": "id", "data_id": str(self.fixture.data_workspace_1.id)}
+        request = self.factory.post("core_main_add_change_data_display", data)
+        request.user = self.anonymous
+        response = change_data_display(request)
+        self.assertEqual(response.status_code, 403)
+
+    def test_an_anonymous_user_can_not_assign_a_public_workspace_data(self):
+        data = {"xslt_id": "id", "data_id": str(self.fixture.data_public_workspace.id)}
+        request = self.factory.post("core_main_add_change_data_display", data)
+        request.user = self.anonymous
+        response = change_data_display(request)
+        self.assertEqual(response.status_code, 403)
+
+
+class TestEditRights(MongoIntegrationBaseTestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user1 = create_mock_user(user_id="1")
+        self.anonymous = AnonymousUser()
+        self.fixture = AccessControlDataFixture()
+        self.fixture.insert_data()
+
+    def test_an_anonymous_user_can_not_edit_rights_workspace(self):
+        request = self.factory.post("core_main_edit_rights_workspace")
+        request.user = self.anonymous
+        response = EditWorkspaceRights.as_view()(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(LOGIN_URL))
+
+
+class TestLoadFormChangeWorkspace(MongoIntegrationBaseTestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user1 = create_mock_user(user_id="1")
+        self.anonymous = AnonymousUser()
+        self.fixture = AccessControlDataFixture()
+        self.fixture.insert_data()
+
+    def test_an_anonymous_user_can_not_load_form_change_workspace(self):
+        data = {"administration": "True"}
+        request = self.factory.post("core_main_change_workspace", data)
+        request.user = self.anonymous
+        response = LoadFormChangeWorkspace.as_view()(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(LOGIN_URL))
+
+
+class TestLoadAddUserForm(MongoIntegrationBaseTestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user1 = create_mock_user(user_id="1")
+        self.anonymous = AnonymousUser()
+        self.fixture = AccessControlDataFixture()
+        self.fixture.insert_data()
+
+    def test_an_anonymous_user_can_not_load_add_user_form(self):
+        request = self.factory.post("core_main_edit_rights_users_form")
+        request.user = self.anonymous
+        response = load_add_user_form(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(LOGIN_URL))
+
+
+class TestAddUserToWorkspace(MongoIntegrationBaseTestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user1 = create_mock_user(user_id="1")
+        self.anonymous = AnonymousUser()
+        self.fixture = AccessControlDataFixture()
+        self.fixture.insert_data()
+
+    def test_an_anonymous_user_can_not_add_user_to_workspace(self):
+        request = self.factory.post("core_main_add_user_right_to_workspace")
+        request.user = self.anonymous
+        response = add_user_right_to_workspace(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(LOGIN_URL))
+
+
+class TestSwitchRight(MongoIntegrationBaseTestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user1 = create_mock_user(user_id="1")
+        self.anonymous = AnonymousUser()
+        self.fixture = AccessControlDataFixture()
+        self.fixture.insert_data()
+
+    def test_an_anonymous_user_can_not_switch_right(self):
+        request = self.factory.post("core_main_switch_right")
+        request.user = self.anonymous
+        response = switch_right(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(LOGIN_URL))
+
+
+class TestRemoveRights(MongoIntegrationBaseTestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user1 = create_mock_user(user_id="1")
+        self.anonymous = AnonymousUser()
+        self.fixture = AccessControlDataFixture()
+        self.fixture.insert_data()
+
+    def test_an_anonymous_user_can_not_remove_rights(self):
+        request = self.factory.post("core_main_remove_rights")
+        request.user = self.anonymous
+        response = remove_user_or_group_rights(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(LOGIN_URL))
+
+
+class TestAddGroupForm(MongoIntegrationBaseTestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user1 = create_mock_user(user_id="1")
+        self.anonymous = AnonymousUser()
+        self.fixture = AccessControlDataFixture()
+        self.fixture.insert_data()
+
+    def test_an_anonymous_user_can_not_add_group_form(self):
+        request = self.factory.post("core_main_edit_rights_groups_form")
+        request.user = self.anonymous
+        response = load_add_group_form(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(LOGIN_URL))
+
+
+class TestAddGroupRightToWorkspace(MongoIntegrationBaseTestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user1 = create_mock_user(user_id="1")
+        self.anonymous = AnonymousUser()
+        self.fixture = AccessControlDataFixture()
+        self.fixture.insert_data()
+
+    def test_an_anonymous_user_can_not_add_group_right_to_workspace(self):
+        request = self.factory.post("core_main_add_group_right_to_workspace")
+        request.user = self.anonymous
+        response = add_group_right_to_workspace(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(LOGIN_URL))

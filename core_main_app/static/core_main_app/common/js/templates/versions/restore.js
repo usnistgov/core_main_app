@@ -14,11 +14,8 @@ restoreVersion = function()
  */
 restore_version = function(objectID){
     $.ajax({
-        url : restoreVersionPostUrl,
-        type : "GET",
-        data: {
-            id: objectID
-        },
+        url : restoreVersionPostUrl.replace("template_version_id", objectID),
+        type : "PATCH",
         success: function(data){
             location.reload();
         }

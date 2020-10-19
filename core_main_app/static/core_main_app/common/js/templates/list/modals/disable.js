@@ -21,12 +21,10 @@ disableTemplate = function(event)
 disable_template = function(event){
     event.preventDefault();
 
+    templateVersionManagerId = $("#disable-template-id").val()
     $.ajax({
-        url : disableTemplatePostUrl,
-        type : "GET",
-        data: {
-            "id": $("#disable-template-id").val()
-        },
+        url : disableTemplatePostUrl.replace("template_version_manager_id", templateVersionManagerId),
+        type : "PATCH",
         success: function(data){
             location.reload();
         }

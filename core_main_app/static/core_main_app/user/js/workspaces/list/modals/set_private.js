@@ -13,12 +13,8 @@ setPrivateWorkspace = function() {
  */
 set_private_workspace = function(){
     $.ajax({
-        url : privateWorkspaceUrl,
-        type : "POST",
-        dataType: "json",
-        data : {
-            workspace_id: getSelectedDocument()
-        },
+        url : privateWorkspaceUrl.replace("workspace_id", getSelectedDocument()),
+        type : "PATCH",
 		success: function(data){
 			location.reload();
 	    },

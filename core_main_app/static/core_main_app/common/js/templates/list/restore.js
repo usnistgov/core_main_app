@@ -13,11 +13,8 @@ restoreTemplate = function()
  */
 restore_template = function(objectID){
     $.ajax({
-        url : restoreTemplatePostUrl,
-        type : "GET",
-        data: {
-            id: objectID
-        },
+        url : restoreTemplatePostUrl.replace("template_version_manager_id", objectID),
+        type : "PATCH",
         success: function(data){
             location.reload();
         }

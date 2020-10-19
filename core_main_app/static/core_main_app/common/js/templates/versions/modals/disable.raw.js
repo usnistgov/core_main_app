@@ -1,1 +1,1 @@
-var disableVersionPostUrl = "{% url 'core_main_app_disable_template_version' %}";
+var disableVersionPostUrl = "{% url 'core_main_app_rest_template_version_disable' 'template_version_id' %}";

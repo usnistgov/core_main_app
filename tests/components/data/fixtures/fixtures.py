@@ -197,7 +197,7 @@ class AccessControlDataFixture(FixtureInterface):
             self.data_4.workspace = self.workspace_2
             self.data_5.workspace = self.workspace_1
         except Exception as e:
-            print(e.message)
+            print(str(e))
 
 
 class DataMigrationFixture(FixtureInterface):

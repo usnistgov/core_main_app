@@ -10,19 +10,19 @@ createWorkspace = function() {
  * AJAX call, change record owner
  */
 create_workspace = function(){
-    var name_workspace = $("#id_workspace_name").val().trim();
+    var workspaceTitle = $("#id_workspace_name").val().trim();
     $.ajax({
         url : createWorkspaceUrl,
         type : "POST",
         dataType: "json",
         data : {
-            name_workspace: name_workspace
+            title: workspaceTitle
         },
 		success: function(data){
 			location.reload();
 	    },
         error:function(data){
-            $("#create_workspace_errors").html(data.responseText);
+            $("#create_workspace_errors").html(data.responseJSON["message"]);
             $("#banner_errors").show(500)
         }
     });

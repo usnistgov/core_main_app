@@ -3,9 +3,11 @@
 """
 from abc import ABCMeta
 
-from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseBadRequest, HttpResponseForbidden
 from django.http.response import HttpResponseRedirect
+from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.utils.html import escape as html_escape
 from django.views.generic import View
 
@@ -21,15 +23,12 @@ from core_main_app.components.template_xsl_rendering import (
 from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.components.xsl_transformation import api as xslt_transformation_api
-from core_main_app.components.xsl_transformation.models import XslTransformation
-from core_main_app.settings import INSTALLED_APPS
 from core_main_app.utils import group as group_utils
 from core_main_app.utils.labels import get_data_label
 from core_main_app.utils.rendering import admin_render
 from core_main_app.utils.rendering import render
-from core_main_app.views.admin.forms import UploadXSLTForm, TemplateXsltRenderingForm
-from bson import ObjectId
 from core_main_app.utils.view_builders import data as data_view_builder
+from core_main_app.views.admin.forms import TemplateXsltRenderingForm
 
 
 class CommonView(View, metaclass=ABCMeta):
@@ -52,6 +51,7 @@ class CommonView(View, metaclass=ABCMeta):
         return self.administration
 
 
+@method_decorator(login_required, name="dispatch")
 class EditWorkspaceRights(CommonView):
     """
     Edit workspace rights
@@ -233,44 +233,6 @@ class ViewData(CommonView):
         )
 
 
-class XSLTView(View):
-    """XSLT view."""
-
-    @staticmethod
-    def get(request, *args, **kwargs):
-        modals = [
-            "core_main_app/common/xslt/list/modals/edit.html",
-            "core_main_app/common/xslt/list/modals/delete.html",
-        ]
-
-        assets = {
-            "js": [
-                {
-                    "path": "core_main_app/common/js/xslt/list/modals/edit.js",
-                    "is_raw": False,
-                },
-                {
-                    "path": "core_main_app/common/js/xslt/list/modals/delete.js",
-                    "is_raw": False,
-                },
-            ],
-        }
-
-        context = {
-            "object_name": "XSLT",
-            "xslt": xslt_transformation_api.get_all(),
-            "update_url": reverse("core_main_app_upload_xslt"),
-        }
-
-        return render(
-            request,
-            "core_main_app/common/xslt/list.html",
-            modals=modals,
-            assets=assets,
-            context=context,
-        )
-
-
 def read_xsd_file(xsd_file):
     """Return the content of the file uploaded using Django FileField.
 
@@ -283,59 +245,7 @@ def read_xsd_file(xsd_file):
     return xsd_file.read().decode("utf-8")
 
 
-class UploadXSLTView(View):
-    """Upload XSLT view."""
-
-    form_class = UploadXSLTForm
-    template_name = "core_main_app/common/xslt/upload.html"
-    object_name = "XSLT"
-
-    def __init__(self, **kwargs):
-        super(UploadXSLTView, self).__init__(**kwargs)
-        self.context = {}
-        self.context.update({"object_name": self.object_name})
-
-    def get(self, request, *args, **kwargs):
-        self.context.update({"upload_form": self.form_class()})
-        return render(request, self.template_name, context=self.context)
-
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST, request.FILES)
-        self.context.update({"upload_form": form})
-
-        if form.is_valid():
-            return self._save_xslt(request)
-        else:
-            # Display error from the form
-            return render(request, self.template_name, context=self.context)
-
-    def _save_xslt(self, request):
-        """Save an XSLT.
-
-        Args:
-            request: Request.
-
-        """
-        try:
-            # get the XSLT name
-            name = request.POST["name"]
-            # get the file from the form
-            xsd_file = request.FILES["upload_file"]
-            # read the content of the file
-            xsd_data = read_xsd_file(xsd_file)
-            xslt = XslTransformation(
-                name=name, filename=xsd_file.name, content=xsd_data
-            )
-            xslt_transformation_api.upsert(xslt)
-
-            return HttpResponseRedirect(reverse("core_main_app_xslt"))
-        except Exception as e:
-            self.context.update({"errors": html_escape(str(e))})
-            return render(
-                request, "core_main_app/common/xslt/upload.html", context=self.context
-            )
-
-
+@method_decorator(login_required, name="dispatch")
 class TemplateXSLRenderingView(View):
     """Template XSL rendering view."""
 

@@ -1,1 +1,0 @@
-var restoreTemplatePostUrl = "{% url 'admin:core_main_app_restore_template' %}";
