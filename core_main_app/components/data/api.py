@@ -2,7 +2,7 @@
 """
 import core_main_app.access_control.api
 import core_main_app.components.workspace.access_control
-from core_main_app.access_control.api import has_perm_administration
+from core_main_app.access_control.api import has_perm_administration, is_superuser
 from core_main_app.access_control import api as access_control_api
 from core_main_app.access_control.decorators import access_control
 from core_main_app.commons import exceptions as exceptions
@@ -99,13 +99,13 @@ def get_all_except_user(user, order_by_field=DATA_SORTING_FIELDS):
     return Data.get_all_except_user_id(str(user.id), order_by_field)
 
 
-@access_control(core_main_app.access_control.api.can_write)
-def upsert(data, user):
+@access_control(core_main_app.access_control.api.can_request_write)
+def upsert(data, request):
     """Save or update the data.
 
     Args:
         data:
-        user:
+        request:
 
     Returns:
 
@@ -113,17 +113,17 @@ def upsert(data, user):
     if data.xml_content is None:
         raise exceptions.ApiError("Unable to save data: xml_content field is not set.")
 
-    check_xml_file_is_valid(data)
+    check_xml_file_is_valid(data, request=request)
     return data.convert_and_save()
 
 
-@access_control(has_perm_administration)
-def admin_insert(data, user):
+@access_control(is_superuser)
+def admin_insert(data, request):
     """Save the data.
 
     Args:
         data:
-        user:
+        request:
 
     Returns:
 
@@ -141,17 +141,18 @@ def admin_insert(data, user):
         data.last_change_date = now
 
     # convert and save the data (do not call convert_and_save that will set the date fields)
-    check_xml_file_is_valid(data)
+    check_xml_file_is_valid(data, request=request)
     data.convert_to_file()
     data.convert_to_dict()
     return data.save()
 
 
-def check_xml_file_is_valid(data):
+def check_xml_file_is_valid(data, request):
     """Check if xml data is valid against a given schema.
 
     Args:
         data:
+        request:
 
     Returns:
 
@@ -167,8 +168,7 @@ def check_xml_file_is_valid(data):
         xsd_tree = XSDTree.build_tree(template.content)
     except Exception as e:
         raise exceptions.XSDError(str(e))
-
-    error = validate_xml_data(xsd_tree, xml_tree)
+    error = validate_xml_data(xsd_tree, xml_tree, request=request)
     if error is not None:
         raise exceptions.XMLError(error)
     else:

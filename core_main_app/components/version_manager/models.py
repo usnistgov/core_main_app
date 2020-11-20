@@ -74,23 +74,6 @@ class VersionManager(Document):
         """
         self.current = str(version.id)
 
-    def get_version_number(self, version_id):
-        """Return version number from version id.
-
-        Args:
-            version_id:
-
-        Returns:
-
-        Raises:
-            DoesNotExist: Version does not exist.
-
-        """
-        try:
-            return self.versions.index(str(version_id)) + 1
-        except Exception as e:
-            raise exceptions.DoesNotExist(str(e))
-
     def insert(self, version):
         """Insert a version in the Version Manager.
 
@@ -109,23 +92,6 @@ class VersionManager(Document):
 
         """
         return self.disabled_versions
-
-    def get_version_by_number(self, version_number):
-        """Return the version by its version number.
-
-        Args:
-            version_number: Number of the version.
-
-        Returns:
-
-        Raises:
-            DoesNotExist: Version does not exist.
-
-        """
-        try:
-            return self.versions[version_number - 1]
-        except Exception as e:
-            raise exceptions.DoesNotExist(str(e))
 
     @staticmethod
     def get_all():
@@ -204,15 +170,6 @@ class VersionManager(Document):
         return VersionManager.objects(is_disabled=False, user=None).all()
 
     @staticmethod
-    def get_disable_global_version_manager():
-        """Return all disabled Version Managers with user set to None.
-
-        Returns:
-
-        """
-        return VersionManager.objects(is_disabled=True, user=None).all()
-
-    @staticmethod
     def get_active_version_manager_by_user_id(user_id):
         """Return all active Version Managers with given user id.
 
@@ -220,15 +177,6 @@ class VersionManager(Document):
 
         """
         return VersionManager.objects(is_disabled=False, user=str(user_id)).all()
-
-    @staticmethod
-    def get_disable_version_manager_by_user_id(user_id):
-        """Return all disabled Version Managers with given user id.
-
-        Returns:
-
-        """
-        return VersionManager.objects(is_disabled=True, user=str(user_id)).all()
 
     @staticmethod
     def get_all_version_manager_except_user_id(user_id):

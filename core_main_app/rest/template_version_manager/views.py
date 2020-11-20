@@ -37,7 +37,9 @@ class GlobalTemplateVersionManagerList(AbstractTemplateVersionManagerList):
 
             List of GlobalTemplateVersionManager
         """
-        return template_version_manager_api.get_global_version_managers()
+        return template_version_manager_api.get_global_version_managers(
+            request=self.request
+        )
 
 
 class UserTemplateVersionManagerList(AbstractTemplateVersionManagerList):
@@ -52,9 +54,7 @@ class UserTemplateVersionManagerList(AbstractTemplateVersionManagerList):
 
             List of UserTemplateVersionManager
         """
-        return template_version_manager_api.get_all_by_user_id(
-            user_id=str(self.request.user.id)
-        )
+        return template_version_manager_api.get_all_by_user_id(request=self.request)
 
 
 class TemplateVersionManagerDetail(APIView):
@@ -62,19 +62,20 @@ class TemplateVersionManagerDetail(APIView):
 
     permission_classes = (IsAuthenticated,)
 
-    def get_object(self, pk):
+    def get_object(self, pk, request):
         """Get TemplateVersionManager from db
 
         Args:
 
             pk: ObjectId
+            request:
 
         Returns:
 
             TemplateVersionManager
         """
         try:
-            return version_manager_api.get(pk)
+            return version_manager_api.get(pk, request=request)
         except exceptions.DoesNotExist:
             raise Http404
 
@@ -97,7 +98,7 @@ class TemplateVersionManagerDetail(APIView):
         """
         try:
             # Get object
-            template_version_manager_object = self.get_object(pk)
+            template_version_manager_object = self.get_object(pk, request=request)
 
             # Serialize object
             serializer = TemplateVersionManagerSerializer(
@@ -152,7 +153,9 @@ class TemplateVersion(AbstractTemplateVersionManagerDetail):
             template_version_manager_object = self.get_object(pk)
 
             # Build serializers
-            template_serializer = CreateTemplateSerializer(data=request.data)
+            template_serializer = CreateTemplateSerializer(
+                data=request.data, context={"request": request}
+            )
 
             # Validate data
             template_serializer.is_valid(True)
@@ -279,7 +282,7 @@ class CurrentTemplateVersion(AbstractStatusTemplateVersion):
 
             TemplateVersion
         """
-        return version_manager_api.set_current(template_object)
+        return version_manager_api.set_current(template_object, request=self.request)
 
 
 class DisableTemplateVersion(AbstractStatusTemplateVersion):
@@ -298,7 +301,9 @@ class DisableTemplateVersion(AbstractStatusTemplateVersion):
 
             TemplateVersion
         """
-        return version_manager_api.disable_version(template_object)
+        return version_manager_api.disable_version(
+            template_object, request=self.request
+        )
 
 
 class RestoreTemplateVersion(AbstractStatusTemplateVersion):
@@ -317,7 +322,9 @@ class RestoreTemplateVersion(AbstractStatusTemplateVersion):
 
             TemplateVersion
         """
-        return version_manager_api.restore_version(template_object)
+        return version_manager_api.restore_version(
+            template_object, request=self.request
+        )
 
 
 class DisableTemplateVersionManager(AbstractStatusTemplateVersionManager):
@@ -337,7 +344,9 @@ class DisableTemplateVersionManager(AbstractStatusTemplateVersionManager):
             TemplateVersionManager
         """
         # FIXME: add return?
-        version_manager_api.disable(template_version_manager_object)
+        version_manager_api.disable(
+            template_version_manager_object, request=self.request
+        )
 
 
 class RestoreTemplateVersionManager(AbstractStatusTemplateVersionManager):
@@ -354,4 +363,6 @@ class RestoreTemplateVersionManager(AbstractStatusTemplateVersionManager):
 
         """
         # FIXME: add return?
-        version_manager_api.restore(template_version_manager_object)
+        version_manager_api.restore(
+            template_version_manager_object, request=self.request
+        )

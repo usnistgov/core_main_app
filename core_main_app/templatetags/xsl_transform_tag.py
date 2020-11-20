@@ -36,8 +36,14 @@ def render_xml_as_html(*args, **kwargs):
     template_id = kwargs.get("template_id", None)
     template_hash = kwargs.get("template_hash", None)
     xsl_transform_id = kwargs.get("xslt_id", None)
+    request = kwargs.get("request", None)
     return _render_xml_as_html(
-        xml_content, template_id, template_hash, XSLType.type_list, xsl_transform_id
+        xml_content,
+        template_id,
+        template_hash,
+        XSLType.type_list,
+        xsl_transform_id,
+        request=request,
     )
 
 
@@ -56,8 +62,14 @@ def render_xml_as_html(*args, **kwargs):
     template_id = kwargs.get("template_id", None)
     template_hash = kwargs.get("template_hash", None)
     xsl_transform_id = kwargs.get("xslt_id", None)
+    request = kwargs.get("request", None)
     return _render_xml_as_html(
-        xml_content, template_id, template_hash, XSLType.type_detail, xsl_transform_id
+        xml_content,
+        template_id,
+        template_hash,
+        XSLType.type_detail,
+        xsl_transform_id,
+        request=request,
     )
 
 
@@ -67,6 +79,7 @@ def _render_xml_as_html(
     template_hash=None,
     xslt_type=XSLType.type_list,
     xsl_transform_id=None,
+    request=None,
 ):
     """Render an XML to HTML according to an xslt type (list or detail).
     Args:
@@ -93,7 +106,9 @@ def _render_xml_as_html(
                     )
                 else:
                     template_xsl_rendering = (
-                        template_xsl_rendering_api.get_by_template_hash(template_hash)
+                        template_xsl_rendering_api.get_by_template_hash(
+                            template_hash, request=request
+                        )
                     )
 
                 if xslt_type == XSLType.type_list:

@@ -1,6 +1,7 @@
 """ System API allowing to perform call on Data without access control. Use this API carefully.
 """
 from core_main_app.components.data.models import Data
+from core_main_app.components.template.models import Template
 from core_main_app.settings import DATA_SORTING_FIELDS
 
 
@@ -96,3 +97,12 @@ def get_all_data_in_workspaces_for_templates(workspace_list, template_list):
     return Data.get_all_by_templates_and_workspaces(
         template_list, workspace_list, DATA_SORTING_FIELDS
     )
+
+
+def get_all_templates():
+    """Return all templates
+
+    Returns:
+
+    """
+    return Template.get_all(is_cls=True)

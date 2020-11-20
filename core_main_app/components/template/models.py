@@ -13,6 +13,7 @@ class Template(Document):
 
     filename = fields.StringField(validation=not_empty_or_whitespaces)
     content = fields.StringField()
+    user = fields.StringField(blank=True)
     hash = fields.StringField()
     _display_name = fields.StringField(blank=True)
     dependencies = fields.ListField(
@@ -53,42 +54,51 @@ class Template(Document):
             raise exceptions.ModelError(str(e))
 
     @staticmethod
-    def get_all_by_hash(template_hash):
+    def get_all_by_hash(template_hash, users):
         """Return all template having the given hash.
 
         Args:
             template_hash: Template hash.
+            users:
 
         Returns:
             List of Template instance.
 
         """
+        if users is not None:
+            return Template.objects(hash=template_hash, user__in=users).all()
         return Template.objects(hash=template_hash).all()
 
     @staticmethod
-    def get_all_by_hash_list(template_hash_list):
+    def get_all_by_hash_list(template_hash_list, users):
         """Return all template having the given hash list.
 
         Args:
             template_hash_list: Template hash list.
+            users:
 
         Returns:
             List of Template instance.
 
         """
+        if users is not None:
+            return Template.objects(hash__in=template_hash_list, user__in=users).all()
         return Template.objects(hash__in=template_hash_list).all()
 
     @staticmethod
-    def get_all_by_id_list(template_id_list):
+    def get_all_by_id_list(template_id_list, users=None):
         """Return all template with id in list.
 
         Args:
             template_id_list:
+            users:
 
         Returns:
 
         """
-        return Template.objects(pk__in=template_id_list)
+        if users is not None:
+            return Template.objects(pk__in=template_id_list, user__in=users).all()
+        return Template.objects(pk__in=template_id_list).all()
 
     @property
     def display_name(self):

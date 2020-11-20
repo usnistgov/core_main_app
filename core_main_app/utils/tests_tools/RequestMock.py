@@ -1,9 +1,11 @@
 """ Mock a Request object.
 """
 import json
+from unittest.mock import Mock
 
+from django.contrib.sessions.models import Session
 from django.core.wsgi import get_wsgi_application
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpRequest
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
 
@@ -138,3 +140,18 @@ class RequestMock(object):
             view_ = view(request)
 
         return view_
+
+
+def create_mock_request(user=None):
+    """Create a Mock HTTP Request
+
+    Args:
+        user:
+
+    Returns:
+
+    """
+    mock_request = Mock(spec=HttpRequest)
+    mock_request.user = user
+    mock_request.session = Session(session_key="KEY")
+    return mock_request

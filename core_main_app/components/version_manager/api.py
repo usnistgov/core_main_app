@@ -1,17 +1,26 @@
 """
 Version Manager API
 """
-
+from core_main_app.access_control.decorators import access_control
 from core_main_app.commons import exceptions
 from core_main_app.commons.exceptions import ApiError
+from core_main_app.components.version_manager.access_control import (
+    can_read,
+    can_write,
+    can_read_global,
+    can_read_list,
+    can_read_version_manager,
+)
 from core_main_app.components.version_manager.models import VersionManager
 
 
-def get(version_manager_id):
+@access_control(can_read)
+def get(version_manager_id, request):
     """Get a version manager by its id.
 
     Args:
         version_manager_id:
+        request:
 
     Returns:
 
@@ -19,11 +28,13 @@ def get(version_manager_id):
     return VersionManager.get_by_id(version_manager_id)
 
 
-def get_by_id_list(list_id):
+@access_control(can_read_list)
+def get_by_id_list(list_id, request):
     """Get a version managers with the given id list.
 
     Args:
         list_id:
+        request
 
     Returns:
 
@@ -31,11 +42,13 @@ def get_by_id_list(list_id):
     return VersionManager.get_by_id_list(list_id)
 
 
-def get_from_version(version):
+@access_control(can_read)
+def get_from_version(version, request):
     """Return a version manager from a version.
 
     Args:
         version:
+        request:
 
     Returns:
 
@@ -47,60 +60,68 @@ def get_from_version(version):
     raise exceptions.ApiError("No version manager could be found for this version.")
 
 
-def disable(version_manager):
+# NOTE: access control by upsert
+def disable(version_manager, request):
     """Disable an object, then saves it.
 
     Args:
         version_manager:
+        request:
 
     Returns:
 
     """
     version_manager.disable()
-    return upsert(version_manager)
+    return upsert(version_manager, request=request)
 
 
-def restore(version_manager):
+# NOTE: access control by upsert
+def restore(version_manager, request):
     """Restore an object, then saves it.
 
     Args:
         version_manager:
+        request:
 
     Returns:
 
     """
     version_manager.restore()
-    return upsert(version_manager)
+    return upsert(version_manager, request=request)
 
 
-def restore_version(version):
+# NOTE: access control by upsert
+def restore_version(version, request):
     """Disable a version of the object, then saves it.
 
     Args:
         version:
+        request:
 
     Returns:
 
     """
-    version_manager = get_from_version(version)
+    version_manager = get_from_version(version, request=request)
     try:
         version_manager.restore_version(version)
-    except ValueError as value_error:
+    except ValueError:
         raise ApiError("Unable to restore this version: status is not disabled.")
-    return upsert(version_manager)
+    return upsert(version_manager, request=request)
 
 
-def disable_version(version, new_current=None):
+# NOTE: access control by upsert
+def disable_version(version, request, new_current=None):
     """Disable a version of the object, then saves it.
 
     Args:
         version:
         new_current:
+        request:
 
     Returns:
 
     """
-    version_manager = get_from_version(version)
+    version_manager = get_from_version(version, request=request)
 
     # try to delete the current version
     if version_manager.current == str(version.id):
@@ -119,19 +140,21 @@ def disable_version(version, new_current=None):
 
     # disable the version
     version_manager.disable_version(version)
-    return upsert(version_manager)
+    return upsert(version_manager, request=request)
 
 
-def set_current(version):
+# NOTE: access control by upsert
+def set_current(version, request):
     """Set the current version of the object, then saves it.
 
     Args:
         version:
+        request:
 
     Returns:
 
     """
-    version_manager = get_from_version(version)
+    version_manager = get_from_version(version, request=request)
 
     # a disabled version cannot be current
     if str(version.id) in version_manager.get_disabled_versions():
@@ -140,26 +163,16 @@ def set_current(version):
         )
 
     version_manager.set_current_version(version)
-    return upsert(version_manager)
+    return upsert(version_manager, request=request)
 
 
-def get_current(version_manager):
-    """Get the current version of the version manager.
-
-    Args:
-        version_manager:
-
-    Returns:
-
-    """
-    return version_manager.current
-
-
-def upsert(version_manager):
+@access_control(can_write)
+def upsert(version_manager, request):
     """Save or update version manager.
 
     Args:
         version_manager:
+        request:
 
     Returns:
 
@@ -167,12 +180,14 @@ def upsert(version_manager):
     return version_manager.save_version_manager()
 
 
-def insert_version(version_manager, version):
+# NOTE: access control by upsert
+def insert_version(version_manager, version, request):
     """Insert a version in the version manager, then saves it.
 
     Args:
         version_manager:
         version:
+        request:
 
     Returns:
 
@@ -183,23 +198,16 @@ def insert_version(version_manager, version):
     if len(version_manager.versions) == 1:
         version_manager.set_current_version(version)
 
-    return upsert(version_manager)
+    return upsert(version_manager, request=request)
 
 
-def get_global_version_managers():
-    """Return all Version Managers with user set to None.
-
-    Returns:
-
-    """
-    return VersionManager.get_global_version_managers()
-
-
-def get_active_global_version_manager_by_title(version_manager_title):
+@access_control(can_read_global)
+def get_active_global_version_manager_by_title(version_manager_title, request):
     """Return active Version Manager by its title with user set to None.
 
     Args:
         version_manager_title: Version Manager title
+        request:
 
     Returns:
         Version Manager instance
@@ -210,27 +218,31 @@ def get_active_global_version_manager_by_title(version_manager_title):
     )
 
 
-def get_version_number(version_manager, version):
+@access_control(can_read_version_manager)
+def get_version_number(version_manager, version, request):
     """Return version number from version id.
 
     Args:
         version_manager:
         version:
+        request:
 
     Returns:
 
     """
-    return version_manager.get_version_number(version)
+    return version_manager.versions.index(str(version)) + 1
 
 
-def get_version_by_number(version_manager, version_number):
+@access_control(can_read_version_manager)
+def get_version_by_number(version_manager, version_number, request):
     """Return the version by its version number.
 
     Args:
         version_manager:
-        version_number: Number of the version.
+        version_number: Number of the version
+        request:
 
     Returns:
 
     """
-    return version_manager.get_version_by_number(version_number)
+    return version_manager.versions[version_number - 1]

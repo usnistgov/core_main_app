@@ -62,13 +62,13 @@ class DataSerializer(DocumentSerializer):
             if "workspace" in validated_data
             else None,
             title=validated_data["title"],
-            user_id=str(validated_data["user"].id),
+            user_id=str(self.context["request"].user.id),
         )
         # Set xml content
         instance.xml_content = validated_data["xml_content"]
 
         # Save the data and retrieve the inserted object
-        inserted_data = data_api.upsert(instance, validated_data["user"])
+        inserted_data = data_api.upsert(instance, self.context["request"])
 
         # Encode the response body
         inserted_data.xml_content = inserted_data.xml_content.encode("utf-8")
@@ -81,7 +81,7 @@ class DataSerializer(DocumentSerializer):
         """
         instance.title = validated_data.get("title", instance.title)
         instance.xml_content = validated_data.get("xml_content", instance.xml_content)
-        return data_api.upsert(instance, validated_data["user"])
+        return data_api.upsert(instance, self.context["request"])
 
 
 # FIXME: Should use in the future an serializer with dynamic fields (init depth with parameter for example)

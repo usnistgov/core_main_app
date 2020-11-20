@@ -14,6 +14,8 @@ from core_main_app.components.template_version_manager import api as version_man
 from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
 )
+from core_main_app.utils.tests_tools.MockUser import create_mock_user
+from core_main_app.utils.tests_tools.RequestMock import create_mock_request
 
 
 class TestTemplateVersionManagerInsert(TestCase):
@@ -26,6 +28,8 @@ class TestTemplateVersionManagerInsert(TestCase):
         self, mock_save_template, mock_save_template_version_manager
     ):
         # Arrange
+        mock_user = create_mock_user("1", is_superuser=True)
+        mock_request = create_mock_request(mock_user)
         template_filename = "schema.xsd"
         template_content = "<schema xmlns='http://www.w3.org/2001/XMLSchema'></schema>"
         template = _create_template(template_filename, template_content)
@@ -36,7 +40,9 @@ class TestTemplateVersionManagerInsert(TestCase):
         mock_save_template_version_manager.return_value = version_manager
 
         # Act
-        result = version_manager_api.insert(version_manager, template)
+        result = version_manager_api.insert(
+            version_manager, template, request=mock_request
+        )
 
         # Assert
         self.assertIsInstance(result, TemplateVersionManager)
@@ -51,6 +57,8 @@ class TestTemplateVersionManagerInsert(TestCase):
         self, mock_version_manager_save, mock_template_save, mock_template_delete
     ):
         # Arrange
+        mock_user = create_mock_user("1", is_superuser=True)
+        mock_request = create_mock_request(mock_user)
         template_filename = "schema.xsd"
         template_content = "<schema xmlns='http://www.w3.org/2001/XMLSchema'></schema>"
         template = _create_template(template_filename, template_content)
@@ -62,7 +70,9 @@ class TestTemplateVersionManagerInsert(TestCase):
 
         # Act + Assert
         with self.assertRaises(NotUniqueError):
-            version_manager_api.insert(mock_version_manager, template)
+            version_manager_api.insert(
+                mock_version_manager, template, request=mock_request
+            )
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     @patch("core_main_app.components.template.models.Template.save")
@@ -70,6 +80,8 @@ class TestTemplateVersionManagerInsert(TestCase):
         self, mock_save
     ):
         # Arrange
+        mock_user = create_mock_user("1", is_superuser=True)
+        mock_request = create_mock_request(mock_user)
         template_filename = "schema.xsd"
         template_content = "<schema xmlns='http://www.w3.org/2001/XMLSchema'></schema>"
         template = _create_template(template_filename, template_content)
@@ -79,7 +91,9 @@ class TestTemplateVersionManagerInsert(TestCase):
 
         # Act + Assert
         with self.assertRaises(django_exceptions.ValidationError):
-            version_manager_api.insert(mock_version_manager, template)
+            version_manager_api.insert(
+                mock_version_manager, template, request=mock_request
+            )
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     @patch("core_main_app.components.template.models.Template.delete")
@@ -91,6 +105,8 @@ class TestTemplateVersionManagerInsert(TestCase):
         self, mock_save_template, mock_save_version_manager, mock_delete_template
     ):
         # Arrange
+        mock_user = create_mock_user("1", is_superuser=True)
+        mock_request = create_mock_request(mock_user)
         template_filename = "Schema"
         template_content = "<schema xmlns='http://www.w3.org/2001/XMLSchema'></schema>"
         template = _create_template(template_filename, template_content)
@@ -102,7 +118,7 @@ class TestTemplateVersionManagerInsert(TestCase):
 
         # Act + Assert
         with self.assertRaises(ModelError):
-            version_manager_api.insert(version_manager, template)
+            version_manager_api.insert(version_manager, template, request=mock_request)
 
 
 class TestTemplateVersionManagerAddVersion(TestCase):
@@ -118,6 +134,8 @@ class TestTemplateVersionManagerAddVersion(TestCase):
         self, mock_save_template_version_manager, mock_save_template, mock_insert
     ):
         # Arrange
+        mock_user = create_mock_user("1", is_superuser=True)
+        mock_request = create_mock_request(mock_user)
         template_filename = "Schema"
         template_content = "<schema xmlns='http://www.w3.org/2001/XMLSchema'></schema>"
 
@@ -127,7 +145,9 @@ class TestTemplateVersionManagerAddVersion(TestCase):
         mock_save_template_version_manager.return_value = version_manager
         mock_insert.return_value = version_manager
         # Act
-        result = version_manager_api.insert(version_manager, template)
+        result = version_manager_api.insert(
+            version_manager, template, request=mock_request
+        )
 
         # Assert
         self.assertIsInstance(result, TemplateVersionManager)
@@ -138,6 +158,8 @@ class TestTemplateVersionManagerAddVersion(TestCase):
         self, mock_save_template
     ):
         # Arrange
+        mock_user = create_mock_user("1", is_superuser=True)
+        mock_request = create_mock_request(mock_user)
         template_filename = "schema.xsd"
         template_content = "<schema xmlns='http://www.w3.org/2001/XMLSchema'></schema>"
         template = _create_template(template_filename, template_content)
@@ -148,7 +170,9 @@ class TestTemplateVersionManagerAddVersion(TestCase):
 
         # Act + Assert
         with self.assertRaises(django_exceptions.ValidationError):
-            version_manager_api.insert(mock_version_manager, template)
+            version_manager_api.insert(
+                mock_version_manager, template, request=mock_request
+            )
 
 
 class TestTemplateVersionManagerGetGlobalVersions(TestCase):
@@ -160,12 +184,14 @@ class TestTemplateVersionManagerGetGlobalVersions(TestCase):
         self, mock_get_global_version_managers
     ):
         # Arrange
+        mock_user = create_mock_user("1", is_superuser=True)
+        mock_request = create_mock_request(mock_user)
         mock_template1 = _create_mock_template()
         mock_template2 = _create_mock_template()
 
         mock_get_global_version_managers.return_value = [mock_template1, mock_template2]
 
-        result = version_manager_api.get_global_version_managers()
+        result = version_manager_api.get_global_version_managers(request=mock_request)
 
         # Assert
         self.assertTrue(all(isinstance(item, Template) for item in result))
@@ -179,6 +205,8 @@ class TestTemplateVersionManagerGetActiveGlobalVersions(TestCase):
         self, mock_get_active_global_version_managers
     ):
         # Arrange
+        mock_user = create_mock_user("1", is_superuser=True)
+        mock_request = create_mock_request(mock_user)
         mock_template1 = _create_template_version_manager("test1")
         mock_template2 = _create_template_version_manager("test2")
 
@@ -187,7 +215,9 @@ class TestTemplateVersionManagerGetActiveGlobalVersions(TestCase):
         queryset.all.return_value = [mock_template1, mock_template2]
         mock_get_active_global_version_managers.return_value = queryset
 
-        result = version_manager_api.get_active_global_version_manager()
+        result = version_manager_api.get_active_global_version_manager(
+            request=mock_request
+        )
 
         # Assert
         self.assertTrue(all(item.is_disabled is False for item in result))
@@ -202,6 +232,8 @@ class TestTemplateVersionManagerGetActiveGlobalVersionsByUserId(TestCase):
     ):
         # Arrange
         user_id = "10"
+        mock_user = create_mock_user(user_id, is_superuser=True)
+        mock_request = create_mock_request(mock_user)
         mock_template1 = _create_template_version_manager(user_id=user_id)
         mock_template2 = _create_template_version_manager(user_id=user_id)
 
@@ -210,7 +242,9 @@ class TestTemplateVersionManagerGetActiveGlobalVersionsByUserId(TestCase):
         queryset.all.return_value = [mock_template1, mock_template2]
         mock_get_active_global_version_managers.return_value = queryset
 
-        result = version_manager_api.get_active_version_manager_by_user_id(user_id)
+        result = version_manager_api.get_active_version_manager_by_user_id(
+            request=mock_request
+        )
 
         # Assert
         self.assertTrue(
@@ -221,64 +255,12 @@ class TestTemplateVersionManagerGetActiveGlobalVersionsByUserId(TestCase):
         )
 
 
-class TestTemplateVersionManagerGetDisableGlobalVersions(TestCase):
-    @patch(
-        "core_main_app.components.version_manager.models.VersionManager.get_disable_global_version_manager"
-    )
-    def test_get_disable_global_version_managers_returns_templates_disabled(
-        self, mock_get_disable_global_version_managers
-    ):
-        # Arrange
-        mock_template1 = _create_template_version_manager(is_disabled=True)
-        mock_template2 = _create_template_version_manager(is_disabled=True)
-
-        queryset = MagicMock()
-        queryset.filter.return_value = queryset
-        queryset.all.return_value = [mock_template1, mock_template2]
-        mock_get_disable_global_version_managers.return_value = queryset
-
-        result = version_manager_api.get_disable_global_version_manager()
-
-        # Assert
-        self.assertTrue(all(item.is_disabled is True for item in result))
-
-
-class TestTemplateVersionManagerGetDisableGlobalVersionsByUserId(TestCase):
-    @patch(
-        "core_main_app.components.version_manager.models.VersionManager.get_disable_version_manager_by_user_id"
-    )
-    def test_get_disable_global_version_managers_by_user_id_returns_templates_disabled_with_giver_user_id(
-        self, mock_get_disable_global_version_managers
-    ):
-        # Arrange
-        user_id = "10"
-        mock_template1 = _create_template_version_manager(
-            is_disabled=True, user_id=user_id
-        )
-        mock_template2 = _create_template_version_manager(
-            is_disabled=True, user_id=user_id
-        )
-
-        queryset = MagicMock()
-        queryset.filter.return_value = queryset
-        queryset.all.return_value = [mock_template1, mock_template2]
-        mock_get_disable_global_version_managers.return_value = queryset
-
-        result = version_manager_api.get_disable_version_manager_by_user_id(user_id)
-
-        # Assert
-        self.assertTrue(
-            all(
-                item.is_disabled is True and item.user == str(user_id)
-                for item in result
-            )
-        )
-
-
 class TestTemplateVersionManagerGetAllByVersionIds(TestCase):
     @patch.object(TemplateVersionManager, "get_all_by_version_ids")
     def test_get_all_by_version_ids(self, mock_get_all_by_version_ids):
         # Arrange
+        mock_user = create_mock_user("1", is_superuser=True)
+        mock_request = create_mock_request(user=mock_user)
         version_x = ObjectId()
         version_y = ObjectId()
         mock_template1 = _create_mock_template_version_manager("mock1", [version_x])
@@ -286,7 +268,9 @@ class TestTemplateVersionManagerGetAllByVersionIds(TestCase):
 
         mock_get_all_by_version_ids.return_value = [mock_template1, mock_template2]
 
-        result = version_manager_api.get_all_by_version_ids([version_x, version_y])
+        result = version_manager_api.get_all_by_version_ids(
+            [version_x, version_y], request=mock_request
+        )
 
         # Assert
         self.assertTrue(

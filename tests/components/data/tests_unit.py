@@ -13,6 +13,7 @@ from core_main_app.commons import exceptions
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
+from core_main_app.utils.tests_tools.RequestMock import create_mock_request
 
 
 class TestDataGetById(TestCase):
@@ -81,8 +82,9 @@ class TestDataUpsert(TestCase):
         mock_check.return_value = None
         mock_convert_file.return_value = None
         mock_user = create_mock_user("2")
+        mock_request = create_mock_request(user=mock_user)
         # Act
-        result = data_api.upsert(data, mock_user)
+        result = data_api.upsert(data, mock_request)
         # Assert
         self.assertEqual("new_title", result.title)
 
@@ -100,8 +102,9 @@ class TestDataUpsert(TestCase):
         mock_check.return_value = None
         mock_convert_file.return_value = None
         mock_user = create_mock_user("3")
+        mock_request = create_mock_request(user=mock_user)
         # Act
-        result = data_api.upsert(data, mock_user)
+        result = data_api.upsert(data, mock_request)
         # Assert
         self.assertEqual("3", result.user_id)
 
@@ -118,8 +121,9 @@ class TestDataUpsert(TestCase):
         mock_check.return_value = None
         mock_convert_file.return_value = None
         mock_user = create_mock_user("3")
+        mock_request = create_mock_request(user=mock_user)
         # Act
-        result = data_api.upsert(data, mock_user)
+        result = data_api.upsert(data, mock_request)
         # Assert
         self.assertEqual(xml, result.xml_content)
 
@@ -137,8 +141,9 @@ class TestDataUpsert(TestCase):
         mock_check.return_value = None
         mock_convert_file.return_value = None
         mock_user = create_mock_user("3")
+        mock_request = create_mock_request(user=mock_user)
         # Act
-        result = data_api.upsert(data, mock_user)
+        result = data_api.upsert(data, mock_request)
         # Assert
         self.assertIsNotNone(result.last_modification_date)
 
@@ -156,20 +161,22 @@ class TestDataUpsert(TestCase):
         mock_check.return_value = None
         mock_convert_file.return_value = None
         mock_user = create_mock_user("3")
+        mock_request = create_mock_request(user=mock_user)
         # Act
-        result = data_api.upsert(data, mock_user)
+        result = data_api.upsert(data, mock_request)
         creation_date = result.last_modification_date
         # Assert
-        data_api.upsert(data, mock_user)
+        data_api.upsert(data, mock_request)
         self.assertNotEqual(creation_date, data.last_modification_date)
 
     def test_data_upsert_raises_xml_error_if_failed_during_xml_validation(self):
         # Arrange
         data = _create_data(None, user_id="3", title="title", content="")
         mock_user = create_mock_user("3")
+        mock_request = create_mock_request(user=mock_user)
         # Act # Assert
         with self.assertRaises(exceptions.XMLError):
-            data_api.upsert(data, mock_user)
+            data_api.upsert(data, mock_request)
 
     def test_data_upsert_raises_xsd_error_if_failed_during_xsd_validation(self):
         # Arrange
@@ -179,9 +186,10 @@ class TestDataUpsert(TestCase):
             template, user_id="3", title="title", content="<new_tag></new_tag>"
         )
         mock_user = create_mock_user("3")
+        mock_request = create_mock_request(user=mock_user)
         # Act # Assert
         with self.assertRaises(exceptions.XSDError):
-            data_api.upsert(data, mock_user)
+            data_api.upsert(data, mock_request)
 
     def test_data_upsert_raises_xml_error_if_failed_during_validation(self):
         # Arrange
@@ -189,10 +197,11 @@ class TestDataUpsert(TestCase):
         data = _create_data(
             template, user_id="3", title="title", content="<new_tag></new_tag>"
         )
-        mock_user = create_mock_user("3")
+        mock_user = create_mock_user("3", is_superuser=True)
+        mock_request = create_mock_request(user=mock_user)
         # Act # Assert
         with self.assertRaises(exceptions.XMLError):
-            data_api.upsert(data, mock_user)
+            data_api.upsert(data, mock_request)
 
 
 class TestAdminDataInsert(TestCase):
@@ -210,10 +219,11 @@ class TestAdminDataInsert(TestCase):
         mock_check.return_value = None
         mock_convert_file.return_value = None
         mock_user = create_mock_user("3", is_superuser=True)
+        mock_request = create_mock_request(user=mock_user)
         # Act
         yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
         data.last_modification_date = yesterday
-        result = data_api.admin_insert(data, mock_user)
+        result = data_api.admin_insert(data, request=mock_request)
         # Assert
         self.assertEqual(result.last_modification_date, yesterday)
 
@@ -231,8 +241,9 @@ class TestAdminDataInsert(TestCase):
         mock_check.return_value = None
         mock_convert_file.return_value = None
         mock_user = create_mock_user("3", is_superuser=True)
+        mock_request = create_mock_request(user=mock_user)
         # Act
-        result = data_api.admin_insert(data, mock_user)
+        result = data_api.admin_insert(data, request=mock_request)
         # Assert
         self.assertIsNotNone(result.last_modification_date)
 
@@ -250,10 +261,11 @@ class TestAdminDataInsert(TestCase):
         mock_check.return_value = None
         mock_convert_file.return_value = None
         mock_user = create_mock_user("3", is_superuser=True)
+        mock_request = create_mock_request(user=mock_user)
         # Act
         yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
         data.creation_date = yesterday
-        result = data_api.admin_insert(data, mock_user)
+        result = data_api.admin_insert(data, request=mock_request)
         # Assert
         self.assertEqual(result.creation_date, yesterday)
 
@@ -271,8 +283,9 @@ class TestAdminDataInsert(TestCase):
         mock_check.return_value = None
         mock_convert_file.return_value = None
         mock_user = create_mock_user("3", is_superuser=True)
+        mock_request = create_mock_request(user=mock_user)
         # Act
-        result = data_api.admin_insert(data, mock_user)
+        result = data_api.admin_insert(data, request=mock_request)
         # Assert
         self.assertIsNotNone(result.creation_date)
 
@@ -290,10 +303,11 @@ class TestAdminDataInsert(TestCase):
         mock_check.return_value = None
         mock_convert_file.return_value = None
         mock_user = create_mock_user("3", is_superuser=True)
+        mock_request = create_mock_request(user=mock_user)
         # Act
         yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
         data.last_change_date = yesterday
-        result = data_api.admin_insert(data, mock_user)
+        result = data_api.admin_insert(data, request=mock_request)
         # Assert
         self.assertEqual(result.last_change_date, yesterday)
 
@@ -311,8 +325,9 @@ class TestAdminDataInsert(TestCase):
         mock_check.return_value = None
         mock_convert_file.return_value = None
         mock_user = create_mock_user("3", is_superuser=True)
+        mock_request = create_mock_request(user=mock_user)
         # Act
-        result = data_api.admin_insert(data, mock_user)
+        result = data_api.admin_insert(data, request=mock_request)
         # Assert
         self.assertIsNotNone(result.last_change_date)
 
@@ -322,15 +337,19 @@ class TestDataCheckXmlFileIsValid(TestCase):
         self,
     ):
         # Arrange
+        user = create_mock_user("3")
+        mock_request = create_mock_request(user=user)
         data = _create_data(None, user_id="3", title="title", content="")
         # Act # Assert
         with self.assertRaises(exceptions.XMLError):
-            data_api.check_xml_file_is_valid(data)
+            data_api.check_xml_file_is_valid(data, request=mock_request)
 
     def test_data_check_xml_file_is_valid_raises_xsd_error_if_failed_during_xsd_validation(
         self,
     ):
         # Arrange
+        user = create_mock_user("3")
+        mock_request = create_mock_request(user=user)
         template = _get_template()
         template.content += "<"
         data = _create_data(
@@ -338,28 +357,32 @@ class TestDataCheckXmlFileIsValid(TestCase):
         )
         # Act # Assert
         with self.assertRaises(exceptions.XSDError):
-            data_api.check_xml_file_is_valid(data)
+            data_api.check_xml_file_is_valid(data, request=mock_request)
 
     def test_data_check_xml_file_is_valid_raises_xml_error_if_failed_during_validation(
         self,
     ):
         # Arrange
+        user = create_mock_user("3")
+        mock_request = create_mock_request(user=user)
         template = _get_template()
         data = _create_data(
             template, user_id="3", title="title", content="<new_tag></new_tag>"
         )
         # Act # Assert
         with self.assertRaises(exceptions.XMLError):
-            data_api.check_xml_file_is_valid(data)
+            data_api.check_xml_file_is_valid(data, request=mock_request)
 
     def test_data_check_xml_data_valid_return_true_if_validation_success(self):
         # Arrange
+        mock_user = create_mock_user("3")
+        mock_request = create_mock_request(user=mock_user)
         template = _get_template()
         data = _create_data(
             template, user_id="3", title="title", content="<tag>toto</tag>"
         )
         # Act
-        result = data_api.check_xml_file_is_valid(data)
+        result = data_api.check_xml_file_is_valid(data, mock_request)
         # Assert
         self.assertEqual(result, True)
 
@@ -379,8 +402,9 @@ class TestTimes(TestCase):
         mock_check.return_value = None
         mock_convert_file.return_value = None
         mock_user = create_mock_user("3")
+        mock_request = create_mock_request(user=mock_user)
         # Act
-        data_api.upsert(data, mock_user)
+        data_api.upsert(data, mock_request)
         # Assert
         self.assertIsNotNone(data.last_modification_date)
 
@@ -398,8 +422,9 @@ class TestTimes(TestCase):
         mock_check.return_value = None
         mock_convert_file.return_value = None
         mock_user = create_mock_user("3")
+        mock_request = create_mock_request(user=mock_user)
         # Act
-        data_api.upsert(data, mock_user)
+        data_api.upsert(data, mock_request)
         # Assert
         self.assertIsNotNone(data.last_change_date)
 
@@ -417,8 +442,9 @@ class TestTimes(TestCase):
         mock_check.return_value = None
         mock_convert_file.return_value = None
         mock_user = create_mock_user("3")
+        mock_request = create_mock_request(user=mock_user)
         # Act
-        data_api.upsert(data, mock_user)
+        data_api.upsert(data, mock_request)
         # Assert
         self.assertIsNotNone(data.creation_date)
 
@@ -436,12 +462,13 @@ class TestTimes(TestCase):
         mock_check.return_value = None
         mock_convert_file.return_value = None
         mock_user = create_mock_user("3")
+        mock_request = create_mock_request(user=mock_user)
         # Act
-        data_api.upsert(data, mock_user)
+        data_api.upsert(data, mock_request)
         data.id = ObjectId()
         original_date = data.last_modification_date
         data.xml_content = "<root></root>"
-        data_api.upsert(data, mock_user)
+        data_api.upsert(data, mock_request)
         # Assert
         self.assertIsNotNone(data.last_modification_date)
         self.assertTrue(data.last_modification_date > original_date)
@@ -460,12 +487,13 @@ class TestTimes(TestCase):
         mock_check.return_value = None
         mock_convert_file.return_value = None
         mock_user = create_mock_user("3")
+        mock_request = create_mock_request(user=mock_user)
         # Act
-        data_api.upsert(data, mock_user)
+        data_api.upsert(data, mock_request)
         data.id = ObjectId()
         original_date = data.last_modification_date
         data.title = "test"
-        data_api.upsert(data, mock_user)
+        data_api.upsert(data, mock_request)
         # Assert
         self.assertIsNotNone(data.last_modification_date)
         self.assertEqual(data.last_modification_date, original_date)
@@ -484,12 +512,13 @@ class TestTimes(TestCase):
         mock_check.return_value = None
         mock_convert_file.return_value = None
         mock_user = create_mock_user("3")
+        mock_request = create_mock_request(user=mock_user)
         # Act
-        data_api.upsert(data, mock_user)
+        data_api.upsert(data, mock_request)
         data.id = ObjectId()
         original_date = data.last_change_date
         data.title = "test"
-        data_api.upsert(data, mock_user)
+        data_api.upsert(data, mock_request)
         # Assert
         self.assertIsNotNone(data.last_change_date)
         self.assertTrue(data.last_change_date > original_date)
@@ -508,12 +537,13 @@ class TestTimes(TestCase):
         mock_check.return_value = None
         mock_convert_file.return_value = None
         mock_user = create_mock_user("3")
+        mock_request = create_mock_request(user=mock_user)
         # Act
-        data_api.upsert(data, mock_user)
+        data_api.upsert(data, mock_request)
         data.id = ObjectId()
         original_date = data.creation_date
         data.title = "test"
-        data_api.upsert(data, mock_user)
+        data_api.upsert(data, mock_request)
         # Assert
         self.assertIsNotNone(data.creation_date)
         self.assertEqual(data.creation_date, original_date)

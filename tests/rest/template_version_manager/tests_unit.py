@@ -59,7 +59,7 @@ class TestTemplateVersionManagerDetail(SimpleTestCase):
     @patch.object(VersionManager, "get_by_id")
     def test_get_returns_http_200_when_data_exists(self, mock_get_by_id):
         # Arrange
-        mock_user = create_mock_user("1")
+        mock_user = create_mock_user("1", is_superuser=True)
         mock_get_by_id.return_value = TemplateVersionManager()
         # Mock
         response = RequestMock.do_request_get(

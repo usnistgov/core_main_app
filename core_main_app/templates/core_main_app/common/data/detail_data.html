@@ -2,7 +2,7 @@
 {% load blob_tags %}
 
 <div id="xslt-representation">
-    {% xsl_transform_detail xml_content=data.data.xml_content template_id=data.data.template.id xslt_id=data.xsl_transformation_id template_hash=data.data.template.hash as xml_representation %}
+    {% xsl_transform_detail xml_content=data.data.xml_content template_id=data.data.template.id xslt_id=data.xsl_transformation_id template_hash=data.data.template.hash request=request as xml_representation %}
     {% if 'core_file_preview_app' in INSTALLED_APPS %}
         {% render_blob_links_in_span xml_string=xml_representation as xml_representation %}
     {% endif %}

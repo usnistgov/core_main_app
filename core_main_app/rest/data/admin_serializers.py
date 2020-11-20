@@ -41,7 +41,7 @@ class AdminDataSerializer(DataSerializer):
             title=validated_data["title"],
             user_id=validated_data["user_id"]
             if "user_id" in validated_data
-            else str(validated_data["user"].id),
+            else str(self.context["request"].user.id),
         )
         # Set XML content
         instance.xml_content = validated_data["xml_content"]
@@ -52,7 +52,7 @@ class AdminDataSerializer(DataSerializer):
         )
         instance.last_change_date = validated_data.get("last_change_date", None)
         # Save the data
-        data_api.admin_insert(instance, validated_data["user"])
+        data_api.admin_insert(instance, request=self.context["request"])
         # Encode the response body
         # NOTE: using xml_content property would update the last_modification_date
         instance._xml_content = validated_data["xml_content"].encode("utf-8")

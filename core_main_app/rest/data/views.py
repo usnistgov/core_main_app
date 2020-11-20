@@ -131,12 +131,14 @@ class DataList(APIView):
         """
         try:
             # Build serializer
-            data_serializer = self.serializer(data=request.data)
+            data_serializer = self.serializer(
+                data=request.data, context={"request": request}
+            )
 
             # Validate data
             data_serializer.is_valid(True)
             # Save data
-            data_serializer.save(user=request.user)
+            data_serializer.save()
 
             # Return the serialized data
             return Response(data_serializer.data, status=status.HTTP_201_CREATED)
@@ -346,13 +348,16 @@ class DataDetail(APIView):
 
             # Build serializer
             data_serializer = self.serializer(
-                instance=data_object, data=request.data, partial=True
+                instance=data_object,
+                data=request.data,
+                partial=True,
+                context={"request": request},
             )
 
             # Validate data
             data_serializer.is_valid(True)
             # Save data
-            data_serializer.save(user=request.user)
+            data_serializer.save()
 
             return Response(data_serializer.data, status=status.HTTP_200_OK)
         except ValidationError as validation_exception:

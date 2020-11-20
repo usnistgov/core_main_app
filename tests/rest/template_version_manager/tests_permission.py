@@ -22,17 +22,19 @@ from core_main_app.utils.tests_tools.RequestMock import RequestMock
 
 class TestGlobalTemplateVersionManagerListGetPermission(SimpleTestCase):
     @patch.object(TemplateVersionManager, "get_global_version_managers")
-    def test_anonymous_returns_http_200(
+    def test_anonymous_returns_http_403(
         self, template_version_manager_get_all_global_version_managers
     ):
-        template_version_manager_get_all_global_version_managers.return_value = {}
+        template_version_manager_get_all_global_version_managers.return_value = (
+            TemplateVersionManager(user=None)
+        )
 
         response = RequestMock.do_request_get(
             template_version_manager_views.GlobalTemplateVersionManagerList.as_view(),
             None,
         )
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @patch.object(TemplateVersionManager, "get_global_version_managers")
     def test_authenticated_returns_http_200(
@@ -124,7 +126,7 @@ class TestTemplateVersionManagerDetailGetPermission(SimpleTestCase):
         self, template_version_manager_data, version_manager_get_by_id
     ):
         template_version_manager_data.return_value = True
-        version_manager_get_by_id.return_value = {}
+        version_manager_get_by_id.return_value = VersionManager(user="1")
 
         mock_user = create_mock_user("1")
 
@@ -142,7 +144,7 @@ class TestTemplateVersionManagerDetailGetPermission(SimpleTestCase):
         self, template_version_manager_data, version_manager_get_by_id
     ):
         template_version_manager_data.return_value = True
-        version_manager_get_by_id.return_value = {}
+        version_manager_get_by_id.return_value = VersionManager(user="1")
 
         mock_user = create_mock_user("1", is_staff=True)
 
@@ -186,7 +188,7 @@ class TestTemplateVersionPostPermission(SimpleTestCase):
         template_version_manager_serializer_valid,
         version_manager_get_by_id,
     ):
-        version_manager_get_by_id.return_value = {}
+        version_manager_get_by_id.return_value = VersionManager(user=None)
         template_version_manager_serializer_data.return_value = True
         template_version_manager_serializer_save.return_value = None
         template_version_manager_serializer_valid.return_value = {}
@@ -360,8 +362,8 @@ class TestCurrentTemplateVersionPatchPermission(SimpleTestCase):
         version_manager_set_current,
     ):
         version_manager_set_current.return_value = {}
-        version_manager_get_from_version.return_value = {}
-        template_get_by_id.return_value = {}
+        version_manager_get_from_version.return_value = VersionManager(user="1")
+        template_get_by_id.return_value = Template(user="1")
 
         mock_user = create_mock_user("1", is_staff=True)
 
@@ -407,9 +409,9 @@ class TestDisableTemplateVersionPatchPermission(SimpleTestCase):
         version_manager_get_from_version,
         version_manager_disable_version,
     ):
-        version_manager_disable_version.return_value = {}
+        version_manager_disable_version.return_value = VersionManager(user="1")
         version_manager_get_from_version.return_value = {}
-        template_get_by_id.return_value = {}
+        template_get_by_id.return_value = Template(user="1")
 
         mock_user = create_mock_user("1", is_staff=True)
 
@@ -456,8 +458,8 @@ class TestRestoreTemplateVersionPatchPermission(SimpleTestCase):
         version_manager_restore_version,
     ):
         version_manager_restore_version.return_value = {}
-        version_manager_get_from_version.return_value = {}
-        template_get_by_id.return_value = {}
+        version_manager_get_from_version.return_value = VersionManager(user="1")
+        template_get_by_id.return_value = Template(user="1")
 
         mock_user = create_mock_user("1", is_staff=True)
 
@@ -505,7 +507,7 @@ class TestDisableTemplateVersionManagerPatchPermission(SimpleTestCase):
     def test_staff_returns_http_200(
         self, version_manager_disable, version_manager_get_by_id
     ):
-        version_manager_get_by_id.return_value = TemplateVersionManager(user="2")
+        version_manager_get_by_id.return_value = TemplateVersionManager(user="1")
         version_manager_disable.return_value = {}
 
         mock_user = create_mock_user("1", is_staff=True)
@@ -555,7 +557,7 @@ class TestRestoreTemplateVersionManagerPatchPermission(SimpleTestCase):
         self, version_manager_get_by_id, version_manager_restore
     ):
         version_manager_restore.return_value = {}
-        version_manager_get_by_id.return_value = TemplateVersionManager(user="2")
+        version_manager_get_by_id.return_value = TemplateVersionManager(user="1")
 
         mock_user = create_mock_user("1", is_staff=True)
 

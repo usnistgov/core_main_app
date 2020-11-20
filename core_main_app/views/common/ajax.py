@@ -192,7 +192,7 @@ class EditTemplateVersionManagerView(EditObjectModalView):
         # Save treatment.
         try:
             template_version_manager_api.edit_title(
-                self.object, form.cleaned_data.get("title")
+                self.object, form.cleaned_data.get("title"), request=self.request
             )
         except exceptions.NotUniqueError:
             form.add_error(

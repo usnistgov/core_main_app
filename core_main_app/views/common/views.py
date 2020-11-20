@@ -270,11 +270,13 @@ class TemplateXSLRenderingView(View):
         """
         template_id = kwargs.pop("template_id")
         # Get the template
-        template = template_api.get(template_id)
+        template = template_api.get(template_id, request=request)
         # Get template information (version)
-        version_manager = version_manager_api.get_from_version(template)
+        version_manager = version_manager_api.get_from_version(
+            template, request=request
+        )
         version_number = version_manager_api.get_version_number(
-            version_manager, template_id
+            version_manager, template_id, request=request
         )
         try:
             # Get the existing configuration to build the form
@@ -283,7 +285,7 @@ class TemplateXSLRenderingView(View):
             )
             data = {
                 "id": template_xsl_rendering.id,
-                "template": template.id,
+                "template": str(template.id),
                 "list_xslt": template_xsl_rendering.list_xslt.id
                 if template_xsl_rendering.list_xslt
                 else None,
@@ -299,7 +301,7 @@ class TemplateXSLRenderingView(View):
         except (Exception, exceptions.DoesNotExist):
             # If no configuration, new form with pre-selected fields.
             data = {
-                "template": template.id,
+                "template": str(template.id),
                 "list_xslt": None,
                 "default_detail_xslt": None,
                 "list_detail_xslt": None,
@@ -388,9 +390,11 @@ class TemplateXSLRenderingView(View):
                 list_detail_xslt=list_detail_xslt,
             )
 
-            template = template_api.get(request.POST.get("template"))
+            template = template_api.get(request.POST.get("template"), request=request)
             # Get template information (version)
-            version_manager = version_manager_api.get_from_version(template)
+            version_manager = version_manager_api.get_from_version(
+                template, request=request
+            )
             return HttpResponseRedirect(
                 reverse(self.save_redirect, args=[version_manager.id])
             )

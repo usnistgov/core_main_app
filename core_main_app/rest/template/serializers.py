@@ -17,6 +17,7 @@ class TemplateSerializer(DocumentSerializer):
         model = Template
         fields = [
             "id",
+            "user",
             "filename",
             "content",
             "hash",
@@ -26,6 +27,7 @@ class TemplateSerializer(DocumentSerializer):
 
         read_only_fields = [
             "id",
+            "user",
             "hash",
             "_display_name",
         ]

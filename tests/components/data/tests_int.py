@@ -10,6 +10,7 @@ from mock.mock import patch
 from core_main_app.commons import exceptions
 from core_main_app.components.data.models import Data
 from core_main_app.components.data import api as data_api
+from core_main_app.utils.requests_utils.access_control import SYSTEM_REQUEST
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.integration_tests.integration_base_test_case import (
     MongoIntegrationBaseTestCase,
@@ -1320,7 +1321,7 @@ def mock_upsert(data, user):
         raise exceptions.ApiError("Unable to save data: xml_content field is not set.")
 
     data.last_modification_date = datetime.datetime.now(pytz.utc)
-    data_api.check_xml_file_is_valid(data)
+    data_api.check_xml_file_is_valid(data, request=SYSTEM_REQUEST)
     return data.save()
 
 

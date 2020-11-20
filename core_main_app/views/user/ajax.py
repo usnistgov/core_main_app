@@ -489,6 +489,7 @@ def change_data_display(request):
                         template_id=data.template.id,
                         template_hash=data.template.hash,
                         xslt_id=xsl_transformation_id,
+                        request=request,
                     ),
                 }
             ),

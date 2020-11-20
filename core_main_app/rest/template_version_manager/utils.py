@@ -3,7 +3,6 @@
 import json
 
 from core_main_app.commons.exceptions import RestApiError
-from core_main_app.access_control.exceptions import AccessControlError
 
 
 def load_dependencies(validated_data):
@@ -22,20 +21,3 @@ def load_dependencies(validated_data):
         except:
             raise RestApiError("Incorrect format of the dependencies parameter.")
     return None
-
-
-def can_user_modify_template_version_manager(template_version_manager, user):
-    """Check that user can modify the template version manager.
-
-    Args:
-        template_version_manager:
-        user:
-
-    Returns:
-
-    """
-    if user.is_superuser is False and user.is_staff is False:
-        if template_version_manager.user != str(user.id):
-            raise AccessControlError(
-                "You don't have the permission to update this object."
-            )

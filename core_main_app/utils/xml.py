@@ -26,7 +26,7 @@ from xml_utils import xpath as xml_utils_xpath
 logger = logging.getLogger(__name__)
 
 
-def validate_xml_schema(xsd_tree):
+def validate_xml_schema(xsd_tree, *args, **kwargs):
     """Check if XSD schema is valid, send XSD Schema to server to be validated if
     XERCES_VALIDATION is true.
 
@@ -40,14 +40,18 @@ def validate_xml_schema(xsd_tree):
         try:
             error = xml_validation.xerces_validate_xsd(xsd_tree)
         except Exception:
-            error = xml_validation.lxml_validate_xsd(xsd_tree, lmxl_uri_resolver())
+            error = xml_validation.lxml_validate_xsd(
+                xsd_tree, lmxl_uri_resolver(*args, **kwargs)
+            )
     else:
-        error = xml_validation.lxml_validate_xsd(xsd_tree, lmxl_uri_resolver())
+        error = xml_validation.lxml_validate_xsd(
+            xsd_tree, lmxl_uri_resolver(*args, **kwargs)
+        )
 
     return error
 
 
-def validate_xml_data(xsd_tree, xml_tree):
+def validate_xml_data(xsd_tree, xml_tree, *args, **kwargs):
     """Check if XML data is valid, send XML data to server to be validated if XERCES_VALIDATION is true
 
     Args:
@@ -62,17 +66,17 @@ def validate_xml_data(xsd_tree, xml_tree):
             error = xml_validation.xerces_validate_xml(xsd_tree, xml_tree)
         except Exception:
             error = xml_validation.lxml_validate_xml(
-                xsd_tree, xml_tree, lmxl_uri_resolver()
+                xsd_tree, xml_tree, lmxl_uri_resolver(*args, **kwargs)
             )
     else:
         error = xml_validation.lxml_validate_xml(
-            xsd_tree, xml_tree, lmxl_uri_resolver()
+            xsd_tree, xml_tree, lmxl_uri_resolver(*args, **kwargs)
         )
 
     return error
 
 
-def is_schema_valid(xsd_string):
+def is_schema_valid(xsd_string, *args, **kwargs):
     """Test if the schema is valid to be uploaded.
 
     Args:
@@ -90,7 +94,7 @@ def is_schema_valid(xsd_string):
         errors_str = ", ".join(errors)
         raise exceptions.CoreError(errors_str)
 
-    error = validate_xml_schema(XSDTree.build_tree(xsd_string))
+    error = validate_xml_schema(XSDTree.build_tree(xsd_string), *args, **kwargs)
     if error is not None:
         raise exceptions.XSDError(error)
 
@@ -199,12 +203,13 @@ def remove_lists_from_xml_dict(xml_dict, max_list_size=0):
         del xml_dict[key_to_delete]
 
 
-def get_template_with_server_dependencies(xsd_string, dependencies):
+def get_template_with_server_dependencies(xsd_string, dependencies, request=None):
     """Return the template with schema locations pointing to the server.
 
     Args:
         xsd_string:
         dependencies:
+        request:
 
     Returns:
 
@@ -217,7 +222,7 @@ def get_template_with_server_dependencies(xsd_string, dependencies):
 
     # validate the schema
     try:
-        error = validate_xml_schema(xsd_tree)
+        error = validate_xml_schema(xsd_tree, request=request)
     except Exception:
         raise exceptions.XSDError("Something went wrong during XSD validation.")
 

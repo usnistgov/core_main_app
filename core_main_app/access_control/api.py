@@ -3,6 +3,7 @@
 import logging
 
 from django.contrib.auth.models import User
+from django.http import HttpRequest
 
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.workspace import api as workspace_api
@@ -45,6 +46,27 @@ def has_perm_administration(func, *args, **kwargs):
     try:
         user = next((arg for arg in args if isinstance(arg, User)), None)
         if user and user.is_superuser:
+            return func(*args, **kwargs)
+    except Exception as e:
+        logger.warning("has_perm_administration threw an exception: ".format(str(e)))
+
+    raise AccessControlError("The user doesn't have enough rights.")
+
+
+def is_superuser(func, *args, **kwargs):
+    """Is the user a superuser.
+
+    Args:
+        func:
+        *args:
+        **kwargs:
+
+    Returns:
+
+    """
+    try:
+        request = kwargs["request"]
+        if request and request.user.is_superuser:
             return func(*args, **kwargs)
     except Exception as e:
         logger.warning("has_perm_administration threw an exception: ".format(str(e)))
@@ -232,6 +254,24 @@ def can_write(func, document, user):
 
     check_can_write(document, user)
     return func(document, user)
+
+
+def can_request_write(func, document, request):
+    """Can user request write
+
+    Args:
+        func:
+        document:
+        request:
+
+    Returns:
+
+    """
+    if request.user.is_superuser:
+        return func(document, request)
+
+    check_can_write(document, request.user)
+    return func(document, request)
 
 
 def can_anonymous_access_public_data(func, *args, **kwargs):

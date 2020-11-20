@@ -1,19 +1,16 @@
 """Forms for admin views
 """
 from django import forms
-from bson import ObjectId
+from django_mongoengine.forms import DocumentForm
+
 from core_main_app.commons.validators import ExtensionValidator
 from core_main_app.components.template import api as template_api
 from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
 )
 from core_main_app.components.xsl_transformation import api as xsl_transformation_api
-from core_main_app.components.template_xsl_rendering import (
-    api as template_xsl_rendering_api,
-)
 from core_main_app.components.xsl_transformation.models import XslTransformation
 from core_main_app.views.admin.commons.upload.forms import UploadForm
-from django_mongoengine.forms import DocumentForm
 
 
 class EditTemplateForm(DocumentForm):
@@ -98,9 +95,7 @@ class TemplateXsltRenderingForm(forms.Form):
     """
 
     id = forms.CharField(widget=forms.HiddenInput(), required=False)
-    template = forms.ModelChoiceField(
-        widget=forms.HiddenInput(), required=False, queryset=template_api.get_all()
-    )
+    template = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     list_xslt = forms.ModelChoiceField(
         label="Set XSLT to render a list of data",

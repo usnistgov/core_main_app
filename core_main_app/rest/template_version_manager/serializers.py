@@ -53,7 +53,9 @@ class CreateTemplateSerializer(TemplateSerializer):
         Create and return a new `Template` instance, given the validated data.
         """
         template_object = Template(
-            filename=validated_data["filename"], content=validated_data["content"]
+            filename=validated_data["filename"],
+            content=validated_data["content"],
+            user=validated_data["user"],
         )
         template_version_manager_object = validated_data["template_version_manager"]
 
@@ -61,11 +63,15 @@ class CreateTemplateSerializer(TemplateSerializer):
         dependencies_dict = load_dependencies(validated_data)
 
         # Update the content of the template with dependencies
-        init_template_with_dependencies(template_object, dependencies_dict)
+        init_template_with_dependencies(
+            template_object, dependencies_dict, request=self.context["request"]
+        )
 
         # Create the template and its template version manager
         template_version_manager_api.insert(
-            template_version_manager_object, template_object
+            template_version_manager_object,
+            template_object,
+            request=self.context["request"],
         )
 
         return template_object

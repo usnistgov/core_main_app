@@ -17,9 +17,6 @@ from core_main_app.rest.template_version_manager.serializers import (
     TemplateVersionManagerSerializer,
     CreateTemplateSerializer,
 )
-from core_main_app.rest.template_version_manager.utils import (
-    can_user_modify_template_version_manager,
-)
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.utils.boolean import to_bool
 from core_main_app.utils.decorators import api_staff_member_required
@@ -72,6 +69,9 @@ class AbstractTemplateVersionManagerList(APIView, metaclass=ABCMeta):
             # Serialize object
             serializer = self.serializer(object_list, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        except AccessControlError:
+            content = {"message": "Access Forbidden"}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -80,25 +80,20 @@ class AbstractTemplateVersionManagerList(APIView, metaclass=ABCMeta):
 class AbstractStatusTemplateVersion(APIView, metaclass=ABCMeta):
     """Set template version status"""
 
-    def get_object(self, pk):
+    def get_object(self, pk, request):
         """Get template from db
 
         Args:
 
             pk: ObjectId
+            request:
 
         Returns:
 
             Template
         """
         try:
-            template_object = template_api.get(pk)
-            template_version_manager_object = version_manager_api.get_from_version(
-                template_object
-            )
-            can_user_modify_template_version_manager(
-                template_version_manager_object, self.request.user
-            )
+            template_object = template_api.get(pk, request=request)
             return template_object
         except exceptions.DoesNotExist:
             raise Http404
@@ -132,7 +127,7 @@ class AbstractStatusTemplateVersion(APIView, metaclass=ABCMeta):
         """
         try:
             # Get object
-            template_object = self.get_object(pk)
+            template_object = self.get_object(pk, request=request)
 
             # Set current template
             self.status_update(template_object)
@@ -170,9 +165,8 @@ class AbstractTemplateVersionManagerDetail(APIView, metaclass=ABCMeta):
             TemplateVersionManager
         """
         try:
-            template_version_manager_object = version_manager_api.get(pk)
-            can_user_modify_template_version_manager(
-                template_version_manager_object, self.request.user
+            template_version_manager_object = version_manager_api.get(
+                pk, request=self.request
             )
             return template_version_manager_object
         except exceptions.DoesNotExist:
@@ -268,7 +262,9 @@ class AbstractTemplateList(APIView, metaclass=ABCMeta):
         """
         try:
             # Build serializers
-            template_serializer = self.create_serializer(data=request.data)
+            template_serializer = self.create_serializer(
+                data=request.data, context={"request": request}
+            )
             template_version_manager_serializer = self.serializer(data=request.data)
 
             # Validate data
@@ -280,7 +276,8 @@ class AbstractTemplateList(APIView, metaclass=ABCMeta):
                 user=self.get_user()
             )
             template_serializer.save(
-                template_version_manager=template_version_manager_object
+                template_version_manager=template_version_manager_object,
+                user=self.get_user(),
             )
 
             return Response(template_serializer.data, status=status.HTTP_201_CREATED)

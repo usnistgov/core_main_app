@@ -14,13 +14,15 @@ from xml_utils.xsd_flattener.xsd_flattener_url import XSDFlattenerURL
 class XSDFlattenerDatabaseOrURL(XSDFlattenerRequestsURL):
     """Get the content of the dependency from the database or from the URL."""
 
-    def __init__(self, xml_string, download_enabled=True):
+    def __init__(self, xml_string, request, download_enabled=True):
         """Initializes the flattener
 
         Args:
             xml_string:
             download_enabled:
+            request:
         """
+        self.request = request
         XSDFlattenerURL.__init__(
             self, xml_string=xml_string, download_enabled=download_enabled
         )
@@ -48,7 +50,7 @@ class XSDFlattenerDatabaseOrURL(XSDFlattenerRequestsURL):
                 # get pk from match
                 object_id = match.group("pk")
                 # get template object using pk
-                template = template_api.get(object_id)
+                template = template_api.get(object_id, request=self.request)
                 # get template content
                 content = template.content
             except (exceptions.DoesNotExist, exceptions.ModelError, Exception):

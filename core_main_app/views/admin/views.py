@@ -71,7 +71,9 @@ def manage_templates(request):
 
     """
     # get all current templates
-    templates = template_version_manager_api.get_global_version_managers()
+    templates = template_version_manager_api.get_global_version_managers(
+        request=request
+    )
 
     context = {
         "object_name": "Template",
@@ -120,7 +122,7 @@ def manage_template_versions(request, version_manager_id):
     """
     try:
         # get the version manager
-        version_manager = version_manager_api.get(version_manager_id)
+        version_manager = version_manager_api.get(version_manager_id, request=request)
         context = get_context_manage_template_versions(version_manager)
         if "core_parser_app" in settings.INSTALLED_APPS:
             context.update({"module_url": "admin:core_parser_app_template_modules"})
@@ -230,7 +232,9 @@ def upload_template_version(request, version_manager_id):
         ]
     }
 
-    template_version_manager = version_manager_api.get(version_manager_id)
+    template_version_manager = version_manager_api.get(
+        version_manager_id, request=request
+    )
     context = {
         "object_name": "Template",
         "version_manager": template_version_manager,
@@ -284,7 +288,9 @@ def _save_template(request, assets, context):
     try:
         template = Template(filename=xsd_file.name, content=xsd_data)
         template_version_manager = TemplateVersionManager(title=name)
-        template_version_manager_api.insert(template_version_manager, template)
+        template_version_manager_api.insert(
+            template_version_manager, template, request=request
+        )
         return HttpResponseRedirect(reverse("admin:core_main_app_templates"))
     except exceptions.XSDError as xsd_error:
         return handle_xsd_errors(
@@ -319,7 +325,9 @@ def _save_template_version(request, assets, context, template_version_manager):
 
     try:
         template = Template(filename=xsd_file.name, content=xsd_data)
-        template_version_manager_api.insert(template_version_manager, template)
+        template_version_manager_api.insert(
+            template_version_manager, template, request=request
+        )
 
         # create the fragment url with all the version of the template (minus the new template)
         version_manager_string = ""
@@ -476,7 +484,7 @@ def handle_xsd_errors(request, assets, context, xsd_error, xsd_content, filename
     if len(includes) > 0 or len(imports) > 0:
         # build dependency resolver
         context["dependency_resolver"] = get_dependency_resolver_html(
-            imports, includes, xsd_content, filename
+            imports, includes, xsd_content, filename, request=request
         )
         return _upload_template_response(request, assets, context)
     else:
@@ -484,7 +492,7 @@ def handle_xsd_errors(request, assets, context, xsd_error, xsd_content, filename
         return _upload_template_response(request, assets, context)
 
 
-def get_dependency_resolver_html(imports, includes, xsd_data, filename):
+def get_dependency_resolver_html(imports, includes, xsd_data, filename, request):
     """Return HTML for dependency resolver form.
 
     Args:
@@ -492,13 +500,14 @@ def get_dependency_resolver_html(imports, includes, xsd_data, filename):
         includes:
         xsd_data:
         filename:
+        request:
 
     Returns:
 
     """
     # build the list of dependencies
     current_templates = template_version_manager_api.get_global_version_managers(
-        _cls=False
+        request=request, _cls=False
     )
     list_dependencies_template = loader.get_template(
         "core_main_app/admin/list_dependencies.html"
@@ -632,7 +641,9 @@ def data_migration(request):
     templates = []
     template_managers = [
         template
-        for template in template_version_manager_api.get_global_version_managers()
+        for template in template_version_manager_api.get_global_version_managers(
+            request=request
+        )
         if not template.is_disabled
     ]
 

@@ -8,9 +8,7 @@ from celery.result import AsyncResult
 from core_main_app.components.data import api as data_api
 from core_main_app.components.template import api as template_api
 from core_main_app.components.user import api as user_api
-from core_main_app.utils.pagination.mongoengine_paginator.paginator import (
-    MongoenginePaginator,
-)
+from core_main_app.utils.requests_utils.access_control import SYSTEM_REQUEST
 
 
 @shared_task
@@ -32,8 +30,8 @@ def async_migration_task(data_list, template_id, user_id, migrate):
     total_data = len(data_list)
 
     try:
-        target_template = template_api.get(template_id)
         user = user_api.get_user_by_id(user_id)
+        target_template = template_api.get(template_id, request=SYSTEM_REQUEST)
 
         for data_id in data_list:
             data = data_api.get_by_id(data_id, user=user)
@@ -43,10 +41,10 @@ def async_migration_task(data_list, template_id, user_id, migrate):
             try:
                 # save the new template for the data if the migration is True
                 if migrate:
-                    data_api.upsert(data, user)
+                    data_api.upsert(data, request=SYSTEM_REQUEST)
                 else:
                     # check if the data is valid
-                    data_api.check_xml_file_is_valid(data)
+                    data_api.check_xml_file_is_valid(data, request=SYSTEM_REQUEST)
 
                 success.append(str(data.id))
             except Exception as e:
@@ -92,7 +90,9 @@ def async_template_migration_task(templates, target_template_id, user_id, migrat
             # get the user
             user = user_api.get_user_by_id(user_id)
             # get the target template
-            target_template = template_api.get(target_template_id)
+            target_template = template_api.get(
+                target_template_id, request=SYSTEM_REQUEST
+            )
 
             for template_id in templates:
 
@@ -122,9 +122,11 @@ def async_template_migration_task(templates, target_template_id, user_id, migrat
                     try:
                         # save the new template for the data if the migration is True
                         if migrate:
-                            data_api.upsert(data, user)
+                            data_api.upsert(data, request=SYSTEM_REQUEST)
                         else:
-                            data_api.check_xml_file_is_valid(data)
+                            data_api.check_xml_file_is_valid(
+                                data, request=SYSTEM_REQUEST
+                            )
 
                         success.append(str(data.id))
                     except Exception as e:

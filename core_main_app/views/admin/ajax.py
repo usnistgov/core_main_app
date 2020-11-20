@@ -49,15 +49,21 @@ def resolve_dependencies(request):
             filename=filename, content=_get_xsd_content_from_html(xsd_content)
         )
         init_template_with_dependencies(
-            template, _get_dependencies_dict(schema_locations, dependencies)
+            template,
+            _get_dependencies_dict(schema_locations, dependencies),
+            request=request,
         )
 
         # get the version manager or create a new one
         if version_manager_id != "":
-            template_version_manager = version_manager_api.get(version_manager_id)
+            template_version_manager = version_manager_api.get(
+                version_manager_id, request=request
+            )
         else:
             template_version_manager = TemplateVersionManager(title=name)
-        template_version_manager_api.insert(template_version_manager, template)
+        template_version_manager_api.insert(
+            template_version_manager, template, request=request
+        )
     except Exception as e:
         return HttpResponseBadRequest(escape(str(e)))
 

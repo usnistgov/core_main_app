@@ -68,7 +68,8 @@ class BlobSerializer(DocumentSerializer):
         """
         # Create blob
         blob_object = Blob(
-            filename=validated_data["blob"].name, user_id=str(validated_data["user"].id)
+            filename=validated_data["blob"].name,
+            user_id=str(self.context["request"].user.id),
         )
         # Set file content
         blob_object.blob = validated_data["blob"].file

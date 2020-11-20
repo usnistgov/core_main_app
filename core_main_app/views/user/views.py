@@ -198,7 +198,7 @@ def manage_template_versions(request, version_manager_id):
     """
     try:
         # get the version manager
-        version_manager = version_manager_api.get(version_manager_id)
+        version_manager = version_manager_api.get(version_manager_id, request=request)
 
         if not request.user.is_staff and version_manager.user != str(request.user.id):
             raise Exception("You do not have the rights to perform this action.")

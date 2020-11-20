@@ -7,6 +7,8 @@ from mock.mock import patch
 from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.template import api as template_api
 from core_main_app.components.template.models import Template
+from core_main_app.utils.tests_tools.MockUser import create_mock_user
+from core_main_app.utils.tests_tools.RequestMock import create_mock_request
 from core_main_app.utils.xsd_flattener.xsd_flattener_database_url import (
     XSDFlattenerDatabaseOrURL,
     XSDFlattenerRequestsURL,
@@ -20,6 +22,8 @@ class TestXSDFlattenerDatabaseUrl(TestCase):
         self, mock_get_dependency_content
     ):
         # Arrange
+        mock_user = create_mock_user("1", is_superuser=True)
+        mock_request = create_mock_request(user=mock_user)
         xml_string = (
             '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">'
             '<xs:include schemaLocation="http://dummy.com/download?id=1234"/></xs:schema>'
@@ -31,7 +35,7 @@ class TestXSDFlattenerDatabaseUrl(TestCase):
         mock_get_dependency_content.return_value = dependency
 
         # Act
-        flattener = XSDFlattenerDatabaseOrURL(xml_string)
+        flattener = XSDFlattenerDatabaseOrURL(xml_string, request=mock_request)
         flat_string = flattener.get_flat()
 
         # Assert
@@ -41,6 +45,8 @@ class TestXSDFlattenerDatabaseUrl(TestCase):
     @patch.object(template_api, "get")
     def test_url_recognized_use_database(self, mock_get):
         # Arrange
+        mock_user = create_mock_user("1", is_superuser=True)
+        mock_request = create_mock_request(user=mock_user)
         url_template_download = reverse(
             "core_main_app_rest_template_download", kwargs={"pk": "pk"}
         )
@@ -56,7 +62,7 @@ class TestXSDFlattenerDatabaseUrl(TestCase):
         mock_get.return_value = Template(content=dependency)
 
         # Act
-        flattener = XSDFlattenerDatabaseOrURL(xml_string)
+        flattener = XSDFlattenerDatabaseOrURL(xml_string, request=mock_request)
         flat_string = flattener.get_flat()
 
         # Assert
@@ -69,6 +75,8 @@ class TestXSDFlattenerDatabaseUrl(TestCase):
         self, mock_get_dependency_content, mock_get
     ):
         # Arrange
+        mock_user = create_mock_user("1", is_superuser=True)
+        mock_request = create_mock_request(user=mock_user)
         url_template_download = reverse(
             "core_main_app_rest_template_download", kwargs={"pk": "pk"}
         )
@@ -85,7 +93,7 @@ class TestXSDFlattenerDatabaseUrl(TestCase):
         mock_get.side_effect = DoesNotExist("Error")
 
         # Act
-        flattener = XSDFlattenerDatabaseOrURL(xml_string)
+        flattener = XSDFlattenerDatabaseOrURL(xml_string, request=mock_request)
         flat_string = flattener.get_flat()
 
         # Assert
