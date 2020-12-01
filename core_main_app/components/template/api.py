@@ -131,7 +131,7 @@ def get_all_accessible_by_hash_list(template_hash_list, request):
     )
 
 
-# NOTE: acl done via get_accessible_owners
+@access_control(can_read_list)
 def get_all_accessible_by_id_list(template_id_list, request):
     """Returns all template with id in list
 

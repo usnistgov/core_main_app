@@ -162,7 +162,8 @@ class TemplateVersion(AbstractTemplateVersionManagerDetail):
 
             # Save data
             template_serializer.save(
-                template_version_manager=template_version_manager_object
+                template_version_manager=template_version_manager_object,
+                user=template_version_manager_object.user,
             )
 
             return Response(template_serializer.data, status=status.HTTP_201_CREATED)
