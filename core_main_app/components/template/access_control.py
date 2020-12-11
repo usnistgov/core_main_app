@@ -115,6 +115,9 @@ def get_accessible_owners(request):
     Returns:
 
     """
+    if request == SYSTEM_REQUEST:
+        # no restrictions
+        return None
     if request.user.is_anonymous:
         if CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
             # global templates only
