@@ -22,7 +22,10 @@ create_workspace = function(){
 			location.reload();
 	    },
         error:function(data){
-            $("#create_workspace_errors").html(data.responseJSON["message"]);
+            var message;
+
+            if (!(message = data.responseJSON["message"].title)) message=data.responseJSON["message"]
+            $("#create_workspace_errors").html(message);
             $("#banner_errors").show(500)
         }
     });
