@@ -3,7 +3,6 @@
 import logging
 
 from django.contrib.auth.models import User
-from django.http import HttpRequest
 
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.workspace import api as workspace_api
@@ -12,6 +11,7 @@ from core_main_app.settings import (
     CAN_SET_PUBLIC_DATA_TO_PRIVATE,
     CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT,
 )
+from core_main_app.utils.requests_utils.access_control import SYSTEM_REQUEST
 
 logger = logging.getLogger(__name__)
 
@@ -267,6 +267,9 @@ def can_request_write(func, document, request):
     Returns:
 
     """
+    if request == SYSTEM_REQUEST:
+        return func(document, request)
+
     if request.user.is_superuser:
         return func(document, request)
 
