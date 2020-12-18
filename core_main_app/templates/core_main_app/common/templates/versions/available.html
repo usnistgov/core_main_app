@@ -2,7 +2,9 @@
 {% extends 'core_main_app/_render/admin/theme/tools/box.html' %}
 {% load timestamptags %}
 
-{% block box_title %}Available versions{% endblock %}
+{% block box_title %}
+    Version manager for {{ data.object_name }} {{data.version_manager.title }}
+{% endblock %}
 
 {% block box_tools %}
 
