@@ -1,0 +1,13 @@
+{% extends 'core_main_app/_render/admin/theme/tools/box.html' %}
+
+{% block box_title %}
+    {{ data.data.title }} <small> {{ data.data.template.display_name }} </small>
+{% endblock %}
+
+{% block box_tools %}
+    {% include 'core_main_app/common/data/tools_data.html' %}
+{% endblock %}
+
+{% block box_body %}
+    {% include 'core_main_app/common/data/detail_data.html' %}
+{% endblock %}

@@ -34,7 +34,7 @@ admin_urls = [
         r"^data$",
         staff_member_required(
             common_views.ViewData.as_view(
-                administration=True, template="core_main_app/admin/data/view_data.html"
+                administration=True, template="core_main_app/admin/data/detail.html"
             )
         ),
         name="core_main_app_data_detail",

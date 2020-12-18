@@ -123,11 +123,11 @@ def build_page(data_object, display_admin_version=False):
         return page_info
 
 
-def render_page(request, render_function, context):
+def render_page(request, render_function, template, context):
     if context["error"] is None:
         return render_function(
             request,
-            "core_main_app/user/data/detail.html",
+            template,
             context=context["context"],
             assets=context["assets"],
             modals=context["modals"],
