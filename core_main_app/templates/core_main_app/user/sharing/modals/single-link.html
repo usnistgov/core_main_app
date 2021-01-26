@@ -3,8 +3,27 @@
 {% block modal_title %}Shareable link{% endblock %}
 
 {% block modal_body %}
-<input type="text" id="{% block modal_input_id %}{% endblock %}" class="shared-data"
+<div class="alert alert-danger" id="banner_set_name_query_errors" style="display: none;">
+        <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
+     	<h4><i class="fa fa-exclamation-circle"></i> Error</h4>
+        <div id="set_name_query_errors"></div>
+</div>
+<div>
+    <input type="text" id="{% block modal_input_id %}{% endblock %}" class="shared-data"
        disabled="disabled"/>
+</div>
+
+
+<div class="form-inline" id="rename_tools">
+  <div class="form-group mb-2">
+    Do you want to name this query?
+  </div>
+  <div class="form-group mx-sm-3 mb-2">
+    <input type="text" id="{% block modal_input_name_id %}{% endblock %}" placeholder="Query name">
+  </div>
+  <button id="{% block modal_rename_button_id %}{% endblock %}" class="btn btn-secondary" disabled="disabled">Rename</button>
+</div>
+
 {% endblock %}
 
 {% block modal_footer %}
