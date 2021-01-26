@@ -221,3 +221,9 @@ DATA_SORTING_FIELDS = getattr(settings, "DATA_SORTING_FIELDS", [])
 AUTO_SET_PID = getattr(settings, "AUTO_SET_PID", False)
 """ :py:class:`bool`: Enable PID auto-setting from core_linked_records_app.
 """
+
+PASSWORD_RESET_DOMAIN_OVERRIDE = getattr(
+    settings, "PASSWORD_RESET_DOMAIN_OVERRIDE", None
+)
+""" :py:class:`str`: Override domain of reset password email (e.g. localhost:8000)
+"""

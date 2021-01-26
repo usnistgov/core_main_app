@@ -16,7 +16,7 @@ from rest_framework.status import HTTP_405_METHOD_NOT_ALLOWED
 
 import core_main_app.components.web_page_login.api as web_page_login_api
 from core_main_app.components.version_manager import api as version_manager_api
-from core_main_app.settings import INSTALLED_APPS
+from core_main_app.settings import INSTALLED_APPS, PASSWORD_RESET_DOMAIN_OVERRIDE
 from core_main_app.utils.markdown_parser import parse
 from core_main_app.utils.rendering import render
 from core_main_app.views.user.forms import LoginForm
@@ -317,6 +317,7 @@ def custom_reset_password(
                 "request": request,
                 "html_email_template_name": html_email_template_name,
                 "extra_email_context": extra_email_context,
+                "domain_override": PASSWORD_RESET_DOMAIN_OVERRIDE,
             }
             form.save(**opts)
             return HttpResponseRedirect(post_reset_redirect)
