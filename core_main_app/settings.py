@@ -15,21 +15,12 @@ CUSTOM_NAME = getattr(settings, "CUSTOM_NAME", "Local")
 """ :py:class:`str`: Name of the local instance
 """
 
-SECRET_KEY = getattr(settings, "SECRET_KEY", "<secret_key>")
-""" :py:class:`str`: Django application secret key.
-"""
-
 SERVER_URI = getattr(settings, "SERVER_URI", "http://127.0.0.1:8000")
 """ :py:class:`str`: Server URI for import reference.
 """
 
 INSTALLED_APPS = getattr(settings, "INSTALLED_APPS", [])
 """ :py:class:`list`: List of apps installed.
-"""
-
-# Website configuration
-WEBSITE_COMPACT_TITLE = getattr(settings, "WEBSITE_COMPACT_TITLE", "Project")
-""" :py:class:`str`: Website title.
 """
 
 # Choose from:  black, black-light, blue, blue-light, green, green-light, purple, purple-light, red, red-light, yellow,
@@ -53,41 +44,20 @@ USE_BACKGROUND_TASK = getattr(settings, "USE_BACKGROUND_TASK", False)
 """ :py:class:`bool`: Define use of celery for background tasks.
 """
 
-BROKER_URL = getattr(settings, "BROKER_URL", "redis://localhost:6379/0")
-""" :py:class:`str`: Celery broker address.
-"""
-
-broker_transport_default = {
-    "visibility_timeout": 3600,
-    "fanout_prefix": True,
-    "fanout_patterns": True,
-}
-BROKER_TRANSPORT_OPTIONS = getattr(
-    settings, "BROKER_TRANSPORT_OPTIONS", broker_transport_default
-)
-""" :py:class:`dict`: Celery broker options.
-"""
-
-CELERY_RESULT_BACKEND = getattr(
-    settings, "CELERY_RESULT_BACKEND", "redis://localhost:6379/0"
-)
-""" :py:class:`str`: Celery backend for results.
-"""
-
 # SMTP Configuration
 USE_EMAIL = getattr(settings, "USE_EMAIL", False)
 """ :py:class:`bool`: Activate email sending on the platform.
 """
 
-SERVER_EMAIL = getattr(settings, "SERVER_EMAIL", "noreply@example.com")
+SERVER_EMAIL = getattr(settings, "SERVER_EMAIL", "root@localhost")
 """ :py:class:`str`: Email address sending the message.
 """
 
-ADMINS = getattr(settings, "ADMINS", [("admin", "admin@example.com")])
+ADMINS = getattr(settings, "ADMINS", [])
 """ :py:class:`list`: Email addresses of admins.
 """
 
-MANAGERS = getattr(settings, "MANAGERS", [("manager", "moderator@example.com")])
+MANAGERS = getattr(settings, "MANAGERS", [])
 """ :py:class:`list`: Email addresses of moderators (managers). 
 """
 
@@ -95,21 +65,30 @@ EMAIL_SUBJECT_PREFIX = getattr(settings, "EMAIL_SUBJECT_PREFIX", "[CURATOR] ")
 """ :py:class:`str`: Prefix for easy classification of emails.
 """
 
-MONGO_USER = getattr(settings, "MONGO_USER", "mgi_user")
+MONGO_HOST = getattr(settings, "MONGO_HOST", "localhost")
+""" :py:class:`str`: MongoDB host.
+"""
+
+MONGO_PORT = getattr(settings, "MONGO_PORT", "27017")
+""" :py:class:`str`: MongoDB port.
+"""
+
+MONGO_USER = getattr(settings, "MONGO_USER", "")
 """ :py:class:`str`: MongoDB user.
 """
 
-MONGO_PASSWORD = getattr(settings, "MONGO_PASSWORD", "mgi_password")
+MONGO_PASSWORD = getattr(settings, "MONGO_PASSWORD", "")
 """ :py:class:`str`: MongoDB password.
 """
 
-DB_NAME = getattr(settings, "DB_NAME", "mgi")
-""" :py:class:`str`: MongoDB password.
+MONGO_DB = getattr(settings, "MONGO_DB", "cdcs")
+""" :py:class:`str`: MongoDB database.
 """
 
 mongodb_uri_default = (
-    "mongodb://" + MONGO_USER + ":" + MONGO_PASSWORD + "@localhost/" + DB_NAME
+    f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@{MONGO_HOST}:{MONGO_PORT}/{MONGO_DB}"
 )
+
 MONGODB_URI = getattr(settings, "MONGODB_URI", mongodb_uri_default)
 """ :py:class:`str`: MongoDB connection URI. Automatically generated from other parameters.
 """
@@ -205,11 +184,15 @@ DISPLAY_NIST_HEADERS = getattr(settings, "DISPLAY_NIST_HEADERS", False)
 """
 
 # Locale folder
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = getattr(
+    settings, "BASE_DIR", os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+)
 """ :py:class:`str`: Project installation directory.
 """
 
-LOCALE_PATHS = (os.path.join(BASE_DIR, "core_main_app/locale"),)
+LOCALE_PATHS = getattr(
+    settings, "LOCALE_PATHS", (os.path.join(BASE_DIR, "core_main_app/locale"),)
+)
 """ :py:class:`list`: Path for translation messages.
 """
 
