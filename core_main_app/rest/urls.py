@@ -71,7 +71,7 @@ urlpatterns = [
     re_path(
         r"^template/xsl_rendering/(?P<pk>\w+)/$",
         template_xsl_rendering_views.TemplateXslRenderingDetail.as_view(),
-        name="core_main_app_rest_template_download",
+        name="core_main_app_rest_template_xsl_rendering",
     ),
     re_path(
         r"^template/global/$",
