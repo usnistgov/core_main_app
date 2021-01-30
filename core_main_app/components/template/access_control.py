@@ -6,7 +6,6 @@ from core_main_app.components.template.models import Template
 from core_main_app.settings import CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT
 from core_main_app.utils.requests_utils.access_control import (
     get_request_from_args,
-    SYSTEM_REQUEST,
 )
 
 
@@ -22,8 +21,6 @@ def can_read(func, document_id, request):
 
     """
     request = get_request_from_args(document_id, request=request)
-    if request == SYSTEM_REQUEST:
-        return func(document_id, request=request)
 
     # super user
     if request.user.is_superuser:
@@ -61,8 +58,6 @@ def can_read_global(func, *args, **kwargs):
 
     """
     request = get_request_from_args(*args, **kwargs)
-    if request == SYSTEM_REQUEST:
-        return func(*args, **kwargs)
     if request.user.is_anonymous:
         if not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
             raise AccessControlError("Template: The user doesn't have enough rights.")
@@ -81,8 +76,6 @@ def can_write(func, *args, **kwargs):
 
     """
     request = get_request_from_args(*args, **kwargs)
-    if request == SYSTEM_REQUEST:
-        return func(*args, **kwargs)
 
     template = next((arg for arg in args if isinstance(arg, Template)), None)
 
@@ -115,10 +108,7 @@ def get_accessible_owners(request):
     Returns:
 
     """
-    if request == SYSTEM_REQUEST:
-        # no restrictions
-        return None
-    if request.user.is_anonymous:
+    if not request or request.user.is_anonymous:
         if CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
             # global templates only
             return [None]
@@ -143,17 +133,15 @@ def can_read_list(func, *args, **kwargs):
 
     """
     request = get_request_from_args(*args, **kwargs)
-    if request == SYSTEM_REQUEST:
-        return func(*args, **kwargs)
     # super user
-    if request.user.is_superuser:
+    if request and request.user.is_superuser:
         return func(*args, **kwargs)
 
     document_list = func(*args, **kwargs)
-    for version_manager in document_list:
+    for template in document_list:
         # anonymous user
-        if request.user.is_anonymous:
-            if version_manager.user:
+        if not request or request.user.is_anonymous:
+            if template.user:
                 raise AccessControlError(
                     "Template: The user doesn't have enough rights."
                 )
@@ -164,7 +152,7 @@ def can_read_list(func, *args, **kwargs):
                     )
 
         # user is set
-        if version_manager.user and version_manager.user != str(request.user.id):
+        if template.user and template.user != str(request.user.id):
             raise AccessControlError("Template: The user doesn't have enough rights.")
 
     return document_list

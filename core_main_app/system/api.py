@@ -1,7 +1,9 @@
 """ System API allowing to perform call on Data without access control. Use this API carefully.
 """
+from core_main_app.commons import exceptions
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
+from core_main_app.components.version_manager.models import VersionManager
 from core_main_app.settings import DATA_SORTING_FIELDS
 
 
@@ -106,3 +108,47 @@ def get_all_templates():
 
     """
     return Template.get_all(is_cls=True)
+
+
+def get_template_by_id(template_id):
+    """Get template by id
+
+    Args:
+        template_id:
+
+    Returns:
+
+    """
+    return Template.get_by_id(template_id)
+
+
+def upsert_data(data):
+    """Upsert data
+
+    Args:
+        data:
+
+    Returns:
+
+    """
+    from core_main_app.components.data.api import check_xml_file_is_valid
+
+    if data.xml_content is None:
+        raise exceptions.ApiError("Unable to save data: xml_content field is not set.")
+
+    check_xml_file_is_valid(data.xml_content, data.template.content)
+    return data.convert_and_save()
+
+
+def get_active_global_version_manager_by_title(version_manager_title):
+    """Get active global version manager by title
+
+    Args:
+        version_manager_title:
+
+    Returns:
+
+    """
+    return VersionManager.get_active_global_version_manager_by_title(
+        version_manager_title
+    )

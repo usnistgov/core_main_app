@@ -8,9 +8,10 @@ import pytz
 from mock.mock import patch
 
 from core_main_app.commons import exceptions
+from core_main_app.components.data.api import check_xml_file_is_valid
 from core_main_app.components.data.models import Data
 from core_main_app.components.data import api as data_api
-from core_main_app.utils.requests_utils.access_control import SYSTEM_REQUEST
+from core_main_app.system import api as system_api
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.integration_tests.integration_base_test_case import (
     MongoIntegrationBaseTestCase,
@@ -846,7 +847,7 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         self.assertEqual(response, expected_result)
 
     @patch.object(data_api, "get_by_id")
-    @patch.object(template_api, "get")
+    @patch.object(system_api, "get_template_by_id")
     def test_data_template_validation_success_for_multi_data(
         self, template_get, data_get_by_id
     ):
@@ -1125,7 +1126,7 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
 
     @patch.object(data_api, "execute_query")
     @patch.object(data_api, "get_by_id")
-    @patch.object(template_api, "get")
+    @patch.object(system_api, "get_template_by_id")
     def test_data_template_group_migration_error(
         self, template_get, data_get_by_id, data_execute_query
     ):
@@ -1321,7 +1322,7 @@ def mock_upsert(data, user):
         raise exceptions.ApiError("Unable to save data: xml_content field is not set.")
 
     data.last_modification_date = datetime.datetime.now(pytz.utc)
-    data_api.check_xml_file_is_valid(data, request=SYSTEM_REQUEST)
+    check_xml_file_is_valid(data)
     return data.save()
 
 

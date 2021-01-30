@@ -382,7 +382,7 @@ class TestDataCheckXmlFileIsValid(TestCase):
             template, user_id="3", title="title", content="<tag>toto</tag>"
         )
         # Act
-        result = data_api.check_xml_file_is_valid(data, mock_request)
+        result = data_api.check_xml_file_is_valid(data, request=mock_request)
         # Assert
         self.assertEqual(result, True)
 

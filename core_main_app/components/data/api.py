@@ -2,21 +2,20 @@
 """
 import core_main_app.access_control.api
 import core_main_app.components.workspace.access_control
-from core_main_app.access_control.api import has_perm_administration, is_superuser
 from core_main_app.access_control import api as access_control_api
+from core_main_app.access_control.api import has_perm_administration, is_superuser
 from core_main_app.access_control.decorators import access_control
 from core_main_app.commons import exceptions as exceptions
 from core_main_app.components.data import access_control as data_api_access_control
 from core_main_app.components.data.models import Data
-from core_main_app.components.workspace import api as workspace_api
-from core_main_app.settings import DATA_SORTING_FIELDS
-from core_main_app.utils.datetime_tools.utils import datetime_now
-from core_main_app.utils.xml import validate_xml_data
 from core_main_app.components.data.tasks import (
     async_migration_task,
     async_template_migration_task,
 )
-
+from core_main_app.components.workspace import api as workspace_api
+from core_main_app.settings import DATA_SORTING_FIELDS
+from core_main_app.utils.datetime_tools.utils import datetime_now
+from core_main_app.utils.xml import validate_xml_data
 from xml_utils.xsd_tree.xsd_tree import XSDTree
 
 
@@ -147,7 +146,7 @@ def admin_insert(data, request):
     return data.save()
 
 
-def check_xml_file_is_valid(data, request):
+def check_xml_file_is_valid(data, request=None):
     """Check if xml data is valid against a given schema.
 
     Args:
@@ -163,7 +162,6 @@ def check_xml_file_is_valid(data, request):
         xml_tree = XSDTree.build_tree(data.xml_content)
     except Exception as e:
         raise exceptions.XMLError(str(e))
-
     try:
         xsd_tree = XSDTree.build_tree(template.content)
     except Exception as e:

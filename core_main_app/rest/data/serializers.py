@@ -5,6 +5,7 @@ from rest_framework import serializers
 from rest_framework_mongoengine.serializers import DocumentSerializer
 
 import core_main_app.components.data.api as data_api
+from core_main_app.components.template import api as template_api
 from core_main_app.components.data.models import Data
 
 
@@ -64,6 +65,9 @@ class DataSerializer(DocumentSerializer):
             title=validated_data["title"],
             user_id=str(self.context["request"].user.id),
         )
+        # Get template
+        template_api.get(instance.template.id, request=self.context["request"])
+
         # Set xml content
         instance.xml_content = validated_data["xml_content"]
 

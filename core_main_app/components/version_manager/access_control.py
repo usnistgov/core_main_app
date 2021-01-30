@@ -6,7 +6,6 @@ from core_main_app.components.version_manager.models import VersionManager
 from core_main_app.settings import CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT
 from core_main_app.utils.requests_utils.access_control import (
     get_request_from_args,
-    SYSTEM_REQUEST,
 )
 
 
@@ -22,8 +21,6 @@ def can_read(func, document_id, request):
 
     """
     request = get_request_from_args(document_id, request=request)
-    if request == SYSTEM_REQUEST:
-        return func(document_id, request=request)
 
     # super user
     if request.user.is_superuser:
@@ -65,8 +62,6 @@ def can_write(func, *args, **kwargs):
 
     """
     request = get_request_from_args(*args, **kwargs)
-    if request == SYSTEM_REQUEST:
-        return func(*args, **kwargs)
 
     # super user
     if request.user.is_superuser:
@@ -105,8 +100,6 @@ def can_read_list(func, list_id, request):
     Returns:
 
     """
-    if request == SYSTEM_REQUEST:
-        return func(list_id, request)
     # super user
     if request.user.is_superuser:
         return func(list_id, request=request)
@@ -146,8 +139,6 @@ def can_read_global(func, *args, **kwargs):
 
     """
     request = get_request_from_args(*args, **kwargs)
-    if request == SYSTEM_REQUEST:
-        return func(*args, **kwargs)
     if request.user.is_anonymous:
         if not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
             raise AccessControlError(
@@ -169,8 +160,6 @@ def can_read_version_manager(func, version_manager, version, request):
 
     """
     request = get_request_from_args(version_manager, version, request=request)
-    if request == SYSTEM_REQUEST:
-        return func(version_manager, version, request=request)
 
     if request.user.is_superuser:
         return func(version_manager, version, request=request)

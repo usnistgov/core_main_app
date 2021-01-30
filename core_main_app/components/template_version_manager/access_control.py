@@ -7,7 +7,6 @@ from core_main_app.components.template_version_manager.models import (
 )
 from core_main_app.utils.requests_utils.access_control import (
     get_request_from_args,
-    SYSTEM_REQUEST,
 )
 
 
@@ -23,8 +22,6 @@ def can_write(func, *args, **kwargs):
 
     """
     request = get_request_from_args(*args, **kwargs)
-    if request == SYSTEM_REQUEST:
-        return func(*args, **kwargs)
 
     # super user
     if request.user.is_superuser:

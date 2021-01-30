@@ -16,11 +16,11 @@ def lmxl_uri_resolver(*args, **kwargs):
 
     """
     uri_resolver = None
-    request = kwargs.pop("request")
     try:
+        request = kwargs.pop("request")
         session_id = request.session.session_key
     except:
-        logger.warning("session id is None")
+        logger.info("No request or session id is None")
         session_id = None
 
     if XSD_URI_RESOLVER:
