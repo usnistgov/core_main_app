@@ -28,7 +28,7 @@ class XslTransformationFixtures(FixtureInterface):
         content = (
             '<?xml version="1.0" encoding="UTF-8"?>'
             '<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">'
-            "<xsl:template></xsl:template></xsl:stylesheet>"
+            '<xsl:template match="/"></xsl:template></xsl:stylesheet>'
         )
         self.data_1 = XslTransformation(
             name="name_1", filename="filename_1.xsd", content=content
