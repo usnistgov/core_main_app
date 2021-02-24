@@ -179,6 +179,12 @@ XSD_URI_RESOLVER = getattr(settings, "XSD_URI_RESOLVER", None)
 """ :py:class:`str`: XSD URI Resolver for lxml validation. Choose from:  None, 'REQUESTS_RESOLVER'.
 """
 
+XML_POST_PROCESSOR = getattr(settings, "XML_POST_PROCESSOR", "NUMERIC")
+""" :py:class:`str`: post processor for xml to dict, choose between 'NUMERIC' and 'NUMERIC_AND_STRING' .
+    'NUMERIC' convert numeric values from the xml document to integer or float.
+    'NUMERIC_AND_STRING' convert numeric values and also store string representation .
+"""
+
 VERIFY_DATA_ACCESS = getattr(settings, "VERIFY_DATA_ACCESS", False)
 """ :py:class:`bool`: Verify that data returned by a query can be accessed.
 """

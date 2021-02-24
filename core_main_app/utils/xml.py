@@ -14,7 +14,7 @@ import xml_utils.commons.constants as xml_utils_constants
 import xml_utils.commons.exceptions as xml_utils_exceptions
 import xml_utils.xml_validation.validation as xml_validation
 from core_main_app.commons.exceptions import XMLError
-from core_main_app.settings import XERCES_VALIDATION, SERVER_URI
+from core_main_app.settings import XERCES_VALIDATION, SERVER_URI, XML_POST_PROCESSOR
 from core_main_app.utils.resolvers.resolver_utils import lmxl_uri_resolver
 from core_main_app.utils.urls import get_template_download_pattern
 from xml_utils.commons.constants import XSL_NAMESPACE
@@ -250,21 +250,12 @@ def get_hash(xml_string):
         raise exceptions.XSDError("Something wrong happened during the hashing.")
 
 
-def post_processor(path, key, value):
-    """Called after XML to JSON transformation.
-
-    Parameters:
-        path:
-        key:
-        value:
-
-    Returns:
-    """
-    return key, convert_value(value)
-
-
-def convert_value(value):
+def get_numeric_value(value):
     """Convert the value to the true type
+
+    abc -> "abc"
+    1 -> 1
+    1.0 -> 1.0
 
     Args:
         value:
@@ -279,6 +270,47 @@ def convert_value(value):
             return float(value)
         except (ValueError, TypeError):
             return value
+
+
+def get_string_and_numeric_values(value):
+    """Get string and numeric values
+
+    abc -> "abc"
+    1 -> ("1", 1)
+    1.0 -> ("1.0", 1.0)
+
+    Args:
+        value:
+
+    Returns:
+
+    """
+    try:
+        return value, int(value)
+    except (ValueError, TypeError):
+        try:
+            return value, float(value)
+        except (ValueError, TypeError):
+            return value
+
+
+XML_POST_PROCESSORS = {
+    "NUMERIC": get_numeric_value,
+    "NUMERIC_AND_STRING": get_string_and_numeric_values,
+}
+
+
+def post_processor(path, key, value):
+    """Called after XML to JSON transformation.
+
+    Parameters:
+        path:
+        key:
+        value:
+
+    Returns:
+    """
+    return key, XML_POST_PROCESSORS[XML_POST_PROCESSOR](value)
 
 
 def get_imports_and_includes(xsd_string):
