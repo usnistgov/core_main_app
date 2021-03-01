@@ -136,7 +136,7 @@ def upsert_data(data):
     if data.xml_content is None:
         raise exceptions.ApiError("Unable to save data: xml_content field is not set.")
 
-    check_xml_file_is_valid(data.xml_content, data.template.content)
+    check_xml_file_is_valid(data)
     return data.convert_and_save()
 
 
