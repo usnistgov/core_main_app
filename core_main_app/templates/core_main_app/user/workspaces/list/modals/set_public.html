@@ -7,15 +7,18 @@
 {% block modal_body %}
 <div class="alert alert-danger" id="banner_set_public_errors" style="display: none;">
         <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
-     	<h4><i class="fa fa-exclamation-circle"></i> Error</h4>
+     	<h4><i class="fas fa-exclamation-circle"></i> Error</h4>
         <div id="set_public_workspace_errors"></div>
 </div>
 <input type="hidden" class="{{data.document}}-id"/>
-<p>Are you sure you want to set the workspace public ?
-</p>
+<p>Are you sure you want to set the workspace public?</p>
 {% endblock %}
 
 {% block modal_footer %}
-<a class="btn btn-secondary pull-left" data-dismiss="modal" href="#"><i class="fa fa-times"></i> Cancel</a>
-<a id="public-workspace-yes" class="btn btn-secondary" href="#"><i class="fa fa-check"></i> Set public</a>
+<a class="btn btn-secondary pull-left" data-dismiss="modal" href="#">
+    <i class="fas fa-times"></i> Cancel
+</a>
+<a id="public-workspace-yes" class="btn btn-primary" href="#">
+    <i class="fas fa-check"></i> Set public
+</a>
 {% endblock %}
