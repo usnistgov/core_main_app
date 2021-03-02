@@ -21,6 +21,7 @@ removeRightsGroup = function() {
  * AJAX call, remove rights
  */
 remove_rights = function(type) {
+    event.preventDefault()
     $.ajax({
         url : removeRightsUrl,
         type : "POST",

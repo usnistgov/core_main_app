@@ -11,13 +11,13 @@
                 <td>{{ object.object_name }}</td>
                 <td>
                     <label class="switch">
-                        <input {%if data.is_public%} disabled {% endif %} id="btn-read-{{group}}-{{object.object_id}}" type="checkbox" {% if object.can_read %} checked{% endif %}>
+                        <input {%if data.is_public%} disabled {% endif %} id="btn-read-{{group}}-{{object.object_id}}" autocomplete="off" type="checkbox" {% if object.can_read %} checked{% endif %}>
                         <span class="slider"></span>
                     </label>
                 </td>
                 <td>
                     <label class="switch">
-                        <input {%if data.is_global%} disabled {% endif %} id="btn-write-{{group}}-{{object.object_id}}" type="checkbox" {% if object.can_write %} checked{% endif %}>
+                        <input {%if data.is_global%} disabled {% endif %} id="btn-write-{{group}}-{{object.object_id}}" autocomplete="off" type="checkbox" {% if object.can_write %} checked{% endif %}>
                         <span class="slider"></span>
                     </label>
                 </td>

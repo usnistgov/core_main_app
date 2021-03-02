@@ -41,6 +41,7 @@ call_ajax_add_user(selected, read, write)
 };
 
 call_ajax_add_user = function(selected, read, write) {
+    event.preventDefault()
     $("#banner_rights_errors").hide();
     $("#form_edit_rights_errors").html("");
     $.ajax({
