@@ -9,7 +9,7 @@ django-rest-framework-mongoengine==3.4.0
 django-rest-swagger==2.1.2
 django-tz-detect==0.2.9
 django-simple-menu==1.2.1
-djangorestframework==3.9.1
+djangorestframework==3.11.2
 markdown==2.6.9
 mock==2.0.0
 mongoengine==0.18.2
