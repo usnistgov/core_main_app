@@ -5,7 +5,7 @@ removeRightsUser = function() {
     $("#remove_rights_banner_errors").hide();
     var $recordRow = $(this).parent().parent();
     $('.remove-rights-id').val($recordRow.attr("objectid"));
-    $('.remove-rights-group-or-user').val(user);
+    $('.remove-rights-group-or-user').val("user");
     $("#remove-rights-modal").modal("show");
 };
 
@@ -13,7 +13,7 @@ removeRightsGroup = function() {
     $("#remove_rights_banner_errors").hide();
     var $recordRow = $(this).parent().parent();
     $('.remove-rights-id').val($recordRow.attr("objectid"));
-    $('.remove-rights-group-or-user').val(group);
+    $('.remove-rights-group-or-user').val("group");
     $("#remove-rights-modal").modal("show");
 };
 

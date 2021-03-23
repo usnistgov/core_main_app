@@ -23,7 +23,7 @@
     <!--FIXME: put back the tab -->
     {% if data.user_data %}
         Users
-        {% include data.template with objects=data.user_data group=data.user %}
+        {% include data.template with objects=data.user_data group="user" %}
     {% else %}
     <div class="empty-table">
         No users have access to '{{ data.workspace.title }}'.
@@ -32,7 +32,7 @@
 <br/>
     {% if data.group_data %}
         Groups
-        {% include data.template with objects=data.group_data group=data.group %}
+        {% include data.template with objects=data.group_data group="group" %}
     {%else%}
       <div class="empty-table">
         No groups have access to '{{ data.workspace.title }}'.

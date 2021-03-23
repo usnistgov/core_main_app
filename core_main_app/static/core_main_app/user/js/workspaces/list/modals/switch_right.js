@@ -4,22 +4,22 @@
 
 switch_read_user = function() {
     var $recordRow = $(this).parent().parent().parent();
-    call_ajax_switch_right($recordRow.attr("objectid"), action_read,  $(this), user)
+    call_ajax_switch_right($recordRow.attr("objectid"), action_read,  $(this), "user")
 };
 
 switch_write_user = function() {
     var $recordRow = $(this).parent().parent().parent();
-    call_ajax_switch_right($recordRow.attr("objectid"), action_write, $(this), user)
+    call_ajax_switch_right($recordRow.attr("objectid"), action_write, $(this), "user")
 };
 
 switch_read_group = function() {
     var $recordRow = $(this).parent().parent().parent();
-    call_ajax_switch_right($recordRow.attr("objectid"), action_read,  $(this), group)
+    call_ajax_switch_right($recordRow.attr("objectid"), action_read,  $(this), "group")
 };
 
 switch_write_group = function() {
     var $recordRow = $(this).parent().parent().parent();
-    call_ajax_switch_right($recordRow.attr("objectid"), action_write, $(this), group)
+    call_ajax_switch_right($recordRow.attr("objectid"), action_write, $(this), "group")
 };
 
 call_ajax_switch_right = function(selected, action, obj, group_or_user) {

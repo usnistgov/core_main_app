@@ -136,8 +136,6 @@ class EditWorkspaceRights(CommonView):
             "template": "core_main_app/user/workspaces/list/edit_rights_table.html",
             "action_read": "action_read",
             "action_write": "action_write",
-            "user": "user",
-            "group": "group",
         }
 
         if workspace_api.is_workspace_public(workspace):
