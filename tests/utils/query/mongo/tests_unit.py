@@ -17,7 +17,7 @@ class TestCompileRegex(TestCase):
         # compile regex
         _compile_regex(query)
         # assert
-        self.assertTrue(isinstance(query["dot.notation"], re._pattern_type))
+        self.assertTrue(isinstance(query["dot.notation"], re.Pattern))
 
     def test_query_with_regex_on_multiple_levels_returns_query_with_compiled_regex(
         self,
@@ -43,18 +43,16 @@ class TestCompileRegex(TestCase):
         _compile_regex(query)
         # assert
         self.assertTrue(
-            isinstance(query["$and"][0]["$or"][0]["dot.notation.1"], re._pattern_type)
+            isinstance(query["$and"][0]["$or"][0]["dot.notation.1"], re.Pattern)
         )
         self.assertTrue(
-            isinstance(
-                query["$and"][0]["$or"][1]["dot.notation.1.#text"], re._pattern_type
-            )
+            isinstance(query["$and"][0]["$or"][1]["dot.notation.1.#text"], re.Pattern)
         )
         self.assertFalse(
-            isinstance(query["$and"][1]["$or"][0]["dot.notation.2"], re._pattern_type)
+            isinstance(query["$and"][1]["$or"][0]["dot.notation.2"], re.Pattern)
         )
         self.assertFalse(
-            isinstance(query["$and"][1]["$or"][1]["dot.notation.2"], re._pattern_type)
+            isinstance(query["$and"][1]["$or"][1]["dot.notation.2"], re.Pattern)
         )
 
     def test_query_without_regex_returns_same_query(self):

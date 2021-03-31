@@ -153,7 +153,9 @@ class TestXslTransformationDetailDeletePermission(SimpleTestCase):
     def test_is_staff_returns_http_204(
         self, xslt_serializer_data, xslt_get_by_id, xslt_delete
     ):
-        xslt_get_by_id.return_value = XslTransformation("mock", "mock", "mock")
+        xslt_get_by_id.return_value = XslTransformation(
+            name="mock", filename="mock", content="mock"
+        )
         xslt_serializer_data.return_value = True
 
         response = RequestMock.do_request_delete(
