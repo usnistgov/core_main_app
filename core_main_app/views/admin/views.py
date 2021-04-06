@@ -602,7 +602,7 @@ class WebPageView(View):
                 )
 
             if page is None:
-                page = WebPage(self.web_page_type, content)
+                page = WebPage(type=self.web_page_type, content=content)
             else:
                 page.content = content
 
