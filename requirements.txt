@@ -1,7 +1,7 @@
 celery==4.1.1
 # FIXME: upgrade celery and remove kombu
 kombu==4.3.0
-Django==2.2.13
+Django==2.2.20
 django-mongoengine==0.3.3
 django-password-policies==0.4.2
 drf-yasg==1.17.0
