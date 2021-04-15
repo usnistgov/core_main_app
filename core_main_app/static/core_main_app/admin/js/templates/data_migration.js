@@ -262,7 +262,7 @@ let createDataListHtml = function(data, append, tbodySelector) {
                 '<td class="bt-more" colspan=2>' +
                 '<span id="infinite-scroll-bt" class="circle-icon">' +
                 'More' +
-                '<i class="fa fa-sort-down fa-5x"/>' +
+                '<i class="fas fa-sort-down fa-5x"/>' +
                 '</span>' +
                 '</td>' +
                 '</tr>'

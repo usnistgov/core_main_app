@@ -7,7 +7,7 @@
 {% block modal_body %}
 <div class="alert alert-danger" id="banner_errors" style="display: none;">
         <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
-     	<h4><i class="fa fa-exclamation-circle"></i> Error</h4>
+     	<h4><i class="fas fa-exclamation-circle"></i> Error</h4>
         <div id="create_workspace_errors"></div>
 </div>
 <input type="hidden" class="{{data.document}}-id"/>
@@ -16,6 +16,6 @@
 {% endblock %}
 
 {% block modal_footer %}
-    <a class="btn btn-secondary pull-left" data-dismiss="modal" href="#"><i class="fa fa-times"></i> Cancel</a>
-    <a id="create-workspace-yes" class="btn btn-primary" href="#"><i class="fa fa-check"></i> Create</a>
+    <a class="btn btn-secondary pull-left" data-dismiss="modal" href="#"><i class="fas fa-times"></i> Cancel</a>
+    <a id="create-workspace-yes" class="btn btn-primary" href="#"><i class="fas fa-check"></i> Create</a>
 {% endblock %}

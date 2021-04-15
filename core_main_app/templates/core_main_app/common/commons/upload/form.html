@@ -2,7 +2,7 @@
 
 {% block box_body %}
 <div id="upload_errors" class="alert alert-danger" style="display: {{ data.errors|yesno:',none' }};">
-    <h4><i class='fa fa-warning'></i>&nbsp;&nbsp;{{ data.errors | safe}} </h4>
+    <h4><i class='fas fa-warning'></i>&nbsp;&nbsp;{{ data.errors | safe}} </h4>
 </div>
 <form id="form_start" action='{{data.url}}' method="post" enctype=multipart/form-data>
     {% csrf_token %}

@@ -279,7 +279,7 @@ a:focus {
 .main-header .sidebar-toggle .icon-bar {
   display: none;
 }
-.main-header .navbar .nav > li.user > a > .fa,
+.main-header .navbar .nav > li.user > a > .fas,
 .main-header .navbar .nav > li.user > a > .glyphicon,
 .main-header .navbar .nav > li.user > a > .ion {
   margin-right: 5px;
@@ -349,7 +349,7 @@ a:focus {
   text-decoration: none;
   display: inline-block;
 }
-.content-header > .breadcrumb > li > a > .fa,
+.content-header > .breadcrumb > li > a > .fas,
 .content-header > .breadcrumb > li > a > .glyphicon,
 .content-header > .breadcrumb > li > a > .ion {
   margin-right: 5px;
@@ -510,7 +510,7 @@ a:focus {
   margin-top: 3px;
   font-size: 11px;
 }
-.user-panel > .info > a > .fa,
+.user-panel > .info > a > .fas,
 .user-panel > .info > a > .ion,
 .user-panel > .info > a > .glyphicon {
   margin-right: 3px;
@@ -529,7 +529,7 @@ a:focus {
   padding: 17px 10px 17px 15px;
   display: block;
 }
-.sidebar-menu > li > a > .fa,
+.sidebar-menu > li > a > .fas,
 .sidebar-menu > li > a > .glyphicon,
 .sidebar-menu > li > a > .ion {
   width: 25px;
@@ -577,7 +577,7 @@ a:focus {
   display: block;
   font-size: 14px;
 }
-.sidebar-menu .treeview-menu > li > a > .fa,
+.sidebar-menu .treeview-menu > li > a > .fas,
 .sidebar-menu .treeview-menu > li > a > .glyphicon,
 .sidebar-menu .treeview-menu > li > a > .ion {
   width: 20px;
@@ -933,7 +933,7 @@ a:focus {
   color: #777;
 }
 .dropdown-menu > li > a > .glyphicon,
-.dropdown-menu > li > a > .fa,
+.dropdown-menu > li > a > .fas,
 .dropdown-menu > li > a > .ion {
   margin-right: 10px;
 }
@@ -1028,7 +1028,7 @@ a:focus {
   padding: 10px;
 }
 .navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a > .glyphicon,
-.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a > .fa,
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a > .fas,
 .navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a > .ion {
   width: 20px;
 }
@@ -1327,17 +1327,17 @@ a:focus {
   padding-left: 0;
 }
 /* support Font Awesome icons in form-control */
-.form-control-feedback.fa {
+.form-control-feedback.fas {
   line-height: 34px;
 }
-.input-lg + .form-control-feedback.fa,
-.input-group-lg + .form-control-feedback.fa,
-.form-group-lg .form-control + .form-control-feedback.fa {
+.input-lg + .form-control-feedback.fas,
+.input-group-lg + .form-control-feedback.fas,
+.form-group-lg .form-control + .form-control-feedback.fas {
   line-height: 46px;
 }
-.input-sm + .form-control-feedback.fa,
-.input-group-sm + .form-control-feedback.fa,
-.form-group-sm .form-control + .form-control-feedback.fa {
+.input-sm + .form-control-feedback.fas,
+.input-group-sm + .form-control-feedback.fas,
+.form-group-sm .form-control + .form-control-feedback.fas {
   line-height: 30px;
 }
 /*
@@ -1716,8 +1716,8 @@ a:focus {
   background: rgba(255, 255, 255, 0.7);
   border-radius: 3px;
 }
-.box .overlay > .fa,
-.overlay-wrapper .overlay > .fa {
+.box .overlay > .fas,
+.overlay-wrapper .overlay > .fas {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -1756,7 +1756,7 @@ a:focus {
 .collapsed-box .box-header.with-border {
   border-bottom: none;
 }
-.box-header > .fa,
+.box-header > .fas,
 .box-header > .glyphicon,
 .box-header > .ion,
 .box-header .box-title {
@@ -1765,7 +1765,7 @@ a:focus {
   margin: 0;
   line-height: 1;
 }
-.box-header > .fa,
+.box-header > .fas,
 .box-header > .glyphicon,
 .box-header > .ion {
   margin-right: 5px;
@@ -1920,7 +1920,7 @@ a:focus {
   float: right;
   color: #dd4b39;
 }
-.todo-list > li .tools > .fa,
+.todo-list > li .tools > .fas,
 .todo-list > li .tools > .glyphicon,
 .todo-list > li .tools > .ion {
   margin-right: 5px;
@@ -2168,7 +2168,7 @@ a:focus {
 .timeline > li > .timeline-item > .timeline-footer {
   padding: 10px;
 }
-.timeline > li > .fa,
+.timeline > li > .fas,
 .timeline > li > .glyphicon,
 .timeline > li > .ion {
   width: 30px;
@@ -2346,7 +2346,7 @@ a:focus {
   background-color: #f4f4f4;
   font-size: 12px;
 }
-.btn-app > .fa,
+.btn-app > .fas,
 .btn-app > .glyphicon,
 .btn-app > .ion {
   font-size: 20px;
@@ -2465,7 +2465,7 @@ a:focus {
   border-top: 3px solid transparent;
   color: #444;
 }
-.nav-pills > li > a > .fa,
+.nav-pills > li > a > .fas,
 .nav-pills > li > a > .glyphicon,
 .nav-pills > li > a > .ion {
   margin-right: 5px;
@@ -2578,7 +2578,7 @@ a:focus {
   font-size: 20px;
   color: #444;
 }
-.nav-tabs-custom > .nav-tabs > li.header > .fa,
+.nav-tabs-custom > .nav-tabs > li.header > .fas,
 .nav-tabs-custom > .nav-tabs > li.header > .glyphicon,
 .nav-tabs-custom > .nav-tabs > li.header > .ion {
   margin-right: 5px;
@@ -2992,7 +2992,7 @@ table.text-center th {
 .carousel-control.right {
   background-image: none;
 }
-.carousel-control > .fa {
+.carousel-control > .fas {
   font-size: 40px;
   position: absolute;
   top: 50%;
@@ -4201,13 +4201,13 @@ table.text-center th {
   margin-right: 5px;
   line-height: 30px;
 }
-.fc-color-picker > li .fa {
+.fc-color-picker > li .fas {
   -webkit-transition: -webkit-transform linear 0.3s;
   -moz-transition: -moz-transform linear 0.3s;
   -o-transition: -o-transform linear 0.3s;
   transition: transform linear 0.3s;
 }
-.fc-color-picker > li .fa:hover {
+.fc-color-picker > li .fas:hover {
   -webkit-transform: rotate(30deg);
   -ms-transform: rotate(30deg);
   -o-transform: rotate(30deg);

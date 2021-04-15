@@ -4,13 +4,13 @@
 
         {% if data.login_error %}
         <div class="alert alert-danger">
-            <i class="fa fa-exclamation-circle"></i> Invalid username and/or password. Please try again or
+            <i class="fas fa-exclamation-circle"></i> Invalid username and/or password. Please try again or
             contact an administrator for any assistance.
         </div>
         {% endif %}
         {% if data.login_locked %}
         <div class="alert alert-info">
-            <i class="fa fa-info-circle"></i> Your username is not activated yet. Please check back soon or
+            <i class="fas fa-info-circle"></i> Your username is not activated yet. Please check back soon or
             contact an administrator for any assistance.
         </div>
         {% endif %}
@@ -37,16 +37,16 @@
                     <div class="col-9">
                         <a class="btn btn-secondary btn-lg request account"
                            href="{% url 'core_website_app_account_request' %}">
-                            <i class="fa fa-user-plus"></i> Request an Account
+                            <i class="fas fa-user-plus"></i> Request an Account
                         </a>
                         <a class="btn btn-secondary btn-lg" href="{% url 'password_reset' %}">
-                            <i class="fa fa-lock" aria-hidden="true"></i> Forgot password
+                            <i class="fas fa-lock" aria-hidden="true"></i> Forgot password
                         </a>
                     </div>
                     {% endif %}
                     <div class="col-3">
                         <button type="submit" class="btn btn-lg btn-primary float-right">
-                            <i class="fa fa-sign-in-alt"></i> Login
+                            <i class="fas fa-sign-in-alt"></i> Login
                         </button>
                     </div>
                 </div>

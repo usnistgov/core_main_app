@@ -4,7 +4,7 @@
 
 {% block box_tools %}
     <a href="{% url 'admin:core_main_app_upload_template'%}" class="float-right btn btn-secondary">
-        <i class="fa fa-upload"></i> Upload {{ data.object_name }}
+        <i class="fas fa-upload"></i> Upload {{ data.object_name }}
     </a>
 {% endblock %}
 
@@ -22,13 +22,13 @@
                 {% block box_actions %}
                 <a class="btn btn-secondary"
                    href="{% url 'admin:core_main_app_manage_template_versions' object.id %}">
-                    <i class="fa fa-list"></i> Versions
+                    <i class="fas fa-list"></i> Versions
                 </a>
                 <span class="icon legend edit" objectid="{{ object.id }}">
-                    <a class="btn btn-secondary" href="#"><i class="fa fa-edit"></i> Edit</a>
+                    <a class="btn btn-secondary" href="#"><i class="fas fa-edit"></i> Edit</a>
                 </span>
                 <span class="icon legend delete" objectid="{{ object.id }}">
-                    <button class="btn btn-danger"><i class="fa fa-trash"></i> Disable </button>
+                    <button class="btn btn-danger"><i class="fas fa-trash"></i> Disable </button>
                 </span>
                 {% endblock %}
             </td>

@@ -2,8 +2,8 @@
 {# FIXME remove templateID as it is not correct HTML attribute #}
 <tr>
     <td templateID='{{ template.current }}' class="template-name">
-        {% if template.user %} <i class="fa fa-user" title="User Defined Item"></i>
-        {% else %}<i class="fa fa-users" title="Global Item"></i>
+        {% if template.user %} <i class="fas fa-user" title="User Defined Item"></i>
+        {% else %}<i class="fas fa-users" title="Global Item"></i>
         {% endif%} {{ template.title }}
     </td>
     <td>

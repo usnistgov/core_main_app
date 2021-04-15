@@ -36,12 +36,12 @@
                    {% block box_actions %}
                     <a class="btn btn-secondary results-xslt"
                         href="{% url 'core_main_app_template_xslt' version.object %}">
-                        <i class="fa fa-file-code"></i> XSLT
+                        <i class="fas fa-file-code"></i> XSLT
                     </a>
                    {% if 'core_parser_app' in INSTALLED_APPS %}
                     <a class="btn btn-secondary modules"
                         href="{% url 'core_parser_app_template_modules' version.object %}">
-                        <i class="fa fa-cubes"></i> Modules
+                        <i class="fas fa-cubes"></i> Modules
                     </a>
                    {% endif %}
                    {% endblock %}

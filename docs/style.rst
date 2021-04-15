@@ -42,6 +42,6 @@ https://fontawesome.com/how-to-use/on-the-web/setup/upgrading-from-version-4
 * You can find a mapping table on the icon name changes between Version 4 and 5
 * On the version 5 the wellknown "fa" is replaced by fas, fab, far, fal, fad
   to categorize the different icons (ex. fab mean Font Awesome Brands)
-* **For the retro compatibility the fa prefix in an alias for fas** (Font Awesome Solid icons)
+* **For the retro compatibility the fas prefix in an alias for fas** (Font Awesome Solid icons)
 * The pull-right and pull-left utils classes are not available anymore, use the Bootstrap
   float-right and float-left classes instead

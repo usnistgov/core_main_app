@@ -10,7 +10,7 @@
     {% url 'admin:core_main_app_templates' as template_list_url %}
     <a href="{% url 'admin:core_main_app_upload_template_version' data.version_manager.id %}"
        class="float-right btn btn-secondary">
-        <i class="fa fa-upload"></i> Upload New Version
+        <i class="fas fa-upload"></i> Upload New Version
     </a>
 {% else %}
     <!-- If a user is linked to the version manager, it means that we come from the dashboard template list -->
@@ -46,20 +46,20 @@
                    {% block box_actions %}
                         <a class="btn btn-secondary results-xslt"
                             href="{% url 'admin:core_main_app_template_xslt' version.object %}">
-                            <i class="fa fa-file-code"></i> XSLT
+                            <i class="fas fa-file-code"></i> XSLT
                         </a>
                         {% if 'core_parser_app' in INSTALLED_APPS %}
                             <a class="btn btn-secondary modules"
                                 href="{% url data.module_url version.object %}">
-                                <i class="fa fa-cubes"></i> Modules
+                                <i class="fas fa-cubes"></i> Modules
                             </a>
                        {% endif %}
                        {% if version.object != data.version_manager.current %}
                             <span class='icon legend long current' objectid='{{ version.object }}'>
-                               <a class="btn btn-secondary" href="#"><i class="fa fa-bookmark"></i> Set Current</a>
+                               <a class="btn btn-secondary" href="#"><i class="fas fa-bookmark"></i> Set Current</a>
                             </span>
                             <span class='icon legend delete' objectid='{{ version.object }}'>
-                               <button class="btn btn-danger"><i class="fa fa-trash"></i> Disable</button>
+                               <button class="btn btn-danger"><i class="fas fa-trash"></i> Disable</button>
                             </span>
                         {% endif %}
                    {% endblock %}
