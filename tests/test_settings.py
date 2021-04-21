@@ -72,6 +72,7 @@ MOCK_DATABASE_HOST = "mongomock://localhost"
 DATA_SORTING_FIELDS = ["+title"]
 
 CUSTOM_NAME = "Curator"
+ENABLE_SAML2_SSO_AUTH = False
 
 database = Database(MOCK_DATABASE_HOST, MOCK_DATABASE_NAME)
 database.connect()

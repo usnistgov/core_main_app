@@ -204,3 +204,7 @@ PASSWORD_RESET_DOMAIN_OVERRIDE = getattr(
 )
 """ :py:class:`str`: Override domain of reset password email (e.g. localhost:8000)
 """
+
+ENABLE_SAML2_SSO_AUTH = getattr(settings, "ENABLE_SAML2_SSO_AUTH", False)
+""" :py:class:`bool`: Enable SAML2 SSO Authentication
+"""

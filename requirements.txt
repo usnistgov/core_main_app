@@ -7,6 +7,7 @@ django-rest-framework-mongoengine==3.4.1
 django-tz-detect==0.3.0
 django-simple-menu==1.2.1
 djangorestframework==3.12.2
+djangosaml2==1.2.2
 drf-yasg==1.20.0
 markdown==3.3.3
 mock==2.0.0
