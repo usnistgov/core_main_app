@@ -17,11 +17,11 @@ from core_main_app.commons.exceptions import XMLError
 from core_main_app.settings import XERCES_VALIDATION, SERVER_URI, XML_POST_PROCESSOR
 from core_main_app.utils.resolvers.resolver_utils import lmxl_uri_resolver
 from core_main_app.utils.urls import get_template_download_pattern
+from xml_utils import xpath as xml_utils_xpath
 from xml_utils.commons.constants import XSL_NAMESPACE
 from xml_utils.xsd_hash import xsd_hash
 from xml_utils.xsd_tree.operations.namespaces import get_namespaces
 from xml_utils.xsd_tree.xsd_tree import XSDTree
-from xml_utils import xpath as xml_utils_xpath
 
 logger = logging.getLogger(__name__)
 
@@ -538,3 +538,32 @@ def validate_xpath(xpath):
         xml_utils_xpath.validate_xpath(xpath)
     except xml_utils_exceptions.XPathError as e:
         raise exceptions.XMLError(str(e))
+
+
+def get_content_by_xpath(xml_string, xpath, namespaces=None):
+    """Get list of xml content by xpath
+
+    Args:
+        xml_string:
+        xpath:
+        namespaces:
+
+    Returns:
+
+    """
+    # Build lxml tree from xml string
+    xsd_tree = XSDTree.build_tree(xml_string)
+    # Get values at xpath
+    values_list = xsd_tree.xpath(xpath, namespaces=namespaces)
+
+    # Build list of string values
+    str_values_list = list()
+    # Iterate through all xml elements found
+    for value in values_list:
+        # Get string value for element
+        str_value = value if isinstance(value, str) else XSDTree.tostring(value)
+        # Add value to list
+        str_values_list.append(str_value)
+
+    # Return list of string values found at xpath
+    return str_values_list

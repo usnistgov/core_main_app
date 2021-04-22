@@ -2,12 +2,6 @@
 """
 import json
 
-from bson import ObjectId
-
-from core_main_app.settings import RESULTS_PER_PAGE
-from core_main_app.utils.pagination.mongoengine_paginator.paginator import (
-    MongoenginePaginator,
-)
 from django.http import Http404
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -24,22 +18,23 @@ from core_main_app.access_control.api import check_can_write
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
 from core_main_app.components.data import api as data_api
+from core_main_app.components.data.tasks import get_task_progress, get_task_result
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.rest.data.abstract_views import AbstractExecuteLocalQueryView
+from core_main_app.rest.data.abstract_views import AbstractMigrationView
 from core_main_app.rest.data.admin_serializers import AdminDataSerializer
 from core_main_app.rest.data.serializers import (
     DataSerializer,
     DataWithTemplateInfoSerializer,
 )
-from core_main_app.rest.data.abstract_views import AbstractMigrationView
 from core_main_app.utils.boolean import to_bool
 from core_main_app.utils.databases.pymongo_database import get_full_text_query
 from core_main_app.utils.file import get_file_http_response
-from core_main_app.components.data.tasks import get_task_progress, get_task_result
 from core_main_app.utils.pagination.rest_framework_paginator.pagination import (
     StandardResultsSetPagination,
 )
+from core_main_app.utils.xml import get_content_by_xpath
 
 
 class DataList(APIView):
@@ -567,28 +562,26 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
         Parameters:
 
             # get all results (paginated)
-            {"query": "{}"}
+            {"query": {}}
             # get all results
-            {"query": "{}", "all": "true"}
+            {"query": {}, "all": "true"}
             # get all results filtered by title
-            {"query": "{}", "title": "title_string"}
+            {"query": {}, "title": "title_string"}
              # get all results filtered by workspaces
-            {"query": "{}", "workspaces": [{"id":"[workspace_id]"}]}
+            {"query": {}, "workspaces": [{"id":"[workspace_id]"}]}
             # get all results filtered by private workspace
-            {"query": "{}", "workspaces": [{"id":"None"}]}
+            {"query": {}, "workspaces": [{"id":"None"}]}
             # get all results filtered by templates
-            {"query": "{}", "templates": [{"id":"[template_id]"}] }
+            {"query": {}, "templates": [{"id":"[template_id]"}] }
             # get all results that verify a given criteria
-            {"query": "{\\"root.element.value\\": 2}"}
+            {"query": {"root.element.value": 2}}
+            # get values at xpath
+            {"query": {}, "xpath": "/ns:root/@element", "namespaces": {"ns": "<namespace_url>"}}
             # get results using multiple options
-            {"query": "{\\"root.element.value\\": 2}", "workspaces": [{"id":"workspace_id"}] , "all": "true"}
-            {"query": "{\\"root.element.value\\": 2}", "templates": [{"id":"template_id"}] , "all": "true"}
-            {"query": "{\\"root.element.value\\": 2}", "templates": [{"id":"template_id"}],
+            {"query": {"root.element.value": 2}, "workspaces": [{"id":"workspace_id"}] , "all": "true"}
+            {"query": {"root.element.value": 2}, "templates": [{"id":"template_id"}] , "all": "true"}
+            {"query": {"root.element.value": 2}, "templates": [{"id":"template_id"}],
             "workspaces": [{"id":"[workspace_id]"}] ,"all": "true"}
-
-        Warning:
-
-            Need to backslash double quotes in JSON payload
 
         Examples:
 
@@ -621,7 +614,15 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
 
             The response paginated
         """
+        xpath = self.request.data.get("xpath", None)
+        namespaces = self.request.data.get("namespaces", None)
         if "all" in self.request.data and to_bool(self.request.data["all"]):
+            # Select values at xpath if provided
+            if xpath:
+                for data_object in data_list:
+                    data_object.xml_content = get_content_by_xpath(
+                        data_object.xml_content, xpath, namespaces=namespaces
+                    )
             # Serialize data list
             data_serializer = self.serializer(data_list, many=True)
             # Return response
@@ -632,6 +633,13 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
 
             # Get requested page from list of results
             page = paginator.paginate_queryset(data_list, self.request)
+
+            # Select values at xpath if provided
+            if xpath:
+                for data_object in page:
+                    data_object.xml_content = get_content_by_xpath(
+                        data_object.xml_content, xpath, namespaces=namespaces
+                    )
 
             # Serialize page
             data_serializer = self.serializer(page, many=True)

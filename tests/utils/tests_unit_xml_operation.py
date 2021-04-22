@@ -5,7 +5,11 @@ from collections import OrderedDict
 from unittest import TestCase
 
 import core_main_app.commons.exceptions as exceptions
-from core_main_app.utils.xml import raw_xml_to_dict, remove_lists_from_xml_dict
+from core_main_app.utils.xml import (
+    raw_xml_to_dict,
+    remove_lists_from_xml_dict,
+    get_content_by_xpath,
+)
 
 
 class TestRawToDict(TestCase):
@@ -89,4 +93,134 @@ class TestRemoveListsFromXmlDict(TestCase):
         # Assert
         self.assertTrue(
             xml_dict == {"root": {"int": 3, "str": "test", "dict": {"value": "test"}}}
+        )
+
+
+class TestGetContentByXpath(TestCase):
+    def test_get_content_and_path_exists(self):
+        # Arrange
+        raw_xml = "<root><element>Hello</element></root>"
+        # Act
+        content = get_content_by_xpath(raw_xml, "/root/element")
+        # Assert
+        self.assertEquals(content, ["<element>Hello</element>"])
+
+    def test_get_content_path_does_not_exist(self):
+        # Arrange
+        raw_xml = "<root><element>Hello</element></root>"
+        # Act
+        content = get_content_by_xpath(raw_xml, "/root/test")
+        # Assert
+        self.assertEquals(content, [])
+
+    def test_get_content_path_found_more_than_once(self):
+        # Arrange
+        raw_xml = "<root><element>Hello</element><element>World</element></root>"
+        # Act
+        content = get_content_by_xpath(raw_xml, "/root/element")
+        # Assert
+        self.assertEquals(
+            content, ["<element>Hello</element>", "<element>World</element>"]
+        )
+
+    def test_get_content_path_is_root(self):
+        # Arrange
+        raw_xml = "<root><element>Hello</element></root>"
+        # Act
+        content = get_content_by_xpath(raw_xml, "/root")
+        # Assert
+        self.assertEquals(content, [raw_xml])
+
+    def test_get_content_path_with_namespace(self):
+        # Arrange
+        raw_xml = """<root xmlns:h="http://www.w3.org/TR/html4/">
+        <h:table>
+          <h:tr>
+            <h:td>Apples</h:td>
+            <h:td>Bananas</h:td>
+          </h:tr>
+        </h:table>
+        </root>"""
+        # Act
+        content = get_content_by_xpath(
+            raw_xml,
+            "/root/h:table/h:tr/h:td",
+            namespaces={"h": "http://www.w3.org/TR/html4/"},
+        )
+        # Assert
+        self.assertEquals(
+            content,
+            [
+                '<h:td xmlns:h="http://www.w3.org/TR/html4/">Apples</h:td>',
+                '<h:td xmlns:h="http://www.w3.org/TR/html4/">Bananas</h:td>',
+            ],
+        )
+
+    def test_get_attribute_path_with_namespace(self):
+        # Arrange
+        raw_xml = """<root xmlns:h="http://www.w3.org/TR/html4/">
+        <h:table>
+          <h:tr class="test">
+            <h:td>Apples</h:td>
+            <h:td>Bananas</h:td>
+          </h:tr>
+        </h:table>
+        </root>"""
+        # Act
+        content = get_content_by_xpath(
+            raw_xml,
+            "/root/h:table/h:tr/@class",
+            namespaces={"h": "http://www.w3.org/TR/html4/"},
+        )
+        # Assert
+        self.assertEquals(
+            content,
+            ["test"],
+        )
+
+    def test_get_list_attribute_path_with_namespace(self):
+        # Arrange
+        raw_xml = """<root xmlns:h="http://www.w3.org/TR/html4/">
+        <h:table>
+          <h:tr>
+            <h:td class="class1">Apples</h:td>
+            <h:td class="class2">Bananas</h:td>
+          </h:tr>
+        </h:table>
+        </root>"""
+        # Act
+        content = get_content_by_xpath(
+            raw_xml,
+            "/root/h:table/h:tr/h:td/@class",
+            namespaces={"h": "http://www.w3.org/TR/html4/"},
+        )
+        # Assert
+        self.assertEquals(
+            content,
+            ["class1", "class2"],
+        )
+
+    def test_get_content_returns_list(self):
+        # Arrange
+        raw_xml = """<root xmlns:h="http://www.w3.org/TR/html4/">
+        <h:table>
+          <h:tr>
+            <h:td>Apples</h:td>
+            <h:td>Bananas</h:td>
+          </h:tr>
+        </h:table>
+        </root>"""
+        # Act
+        content = get_content_by_xpath(
+            raw_xml,
+            "/root/h:table/h:tr/h:td",
+            namespaces={"h": "http://www.w3.org/TR/html4/"},
+        )
+        # Assert
+        self.assertEquals(
+            content,
+            [
+                '<h:td xmlns:h="http://www.w3.org/TR/html4/">Apples</h:td>',
+                '<h:td xmlns:h="http://www.w3.org/TR/html4/">Bananas</h:td>',
+            ],
         )

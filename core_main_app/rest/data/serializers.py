@@ -5,8 +5,8 @@ from rest_framework import serializers
 from rest_framework_mongoengine.serializers import DocumentSerializer
 
 import core_main_app.components.data.api as data_api
-from core_main_app.components.template import api as template_api
 from core_main_app.components.data.models import Data
+from core_main_app.components.template import api as template_api
 
 
 class XMLContentField(serializers.Field):

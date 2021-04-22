@@ -3,7 +3,9 @@
 from io import BytesIO
 
 from django_mongoengine import fields, Document
+from mongoengine import errors as mongoengine_errors
 
+from core_main_app.commons import exceptions
 from core_main_app.settings import (
     GRIDFS_DATA_COLLECTION,
     SEARCHABLE_DATA_OCCURRENCES_LIMIT,
@@ -11,8 +13,6 @@ from core_main_app.settings import (
 from core_main_app.utils import xml as xml_utils
 from core_main_app.utils.datetime_tools.utils import datetime_now
 from core_main_app.utils.validation.regex_validation import not_empty_or_whitespaces
-from mongoengine import errors as mongoengine_errors
-from core_main_app.commons import exceptions
 
 
 class AbstractData(Document):

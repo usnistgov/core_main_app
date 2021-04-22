@@ -2,9 +2,9 @@
 """
 
 from django_mongoengine import fields
-from mongoengine.queryset.visitor import Q
 from mongoengine import errors as mongoengine_errors
 from mongoengine.queryset.base import NULLIFY
+from mongoengine.queryset.visitor import Q
 
 from core_main_app.commons import exceptions
 from core_main_app.components.abstract_data.models import AbstractData

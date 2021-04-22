@@ -22,29 +22,26 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
         Parameters:
 
             # get all results (paginated)
-            {"query": "{}"}
+            {"query": {}}
             # get all results
-            {"query": "{}", "all": "true"}
+            {"query": {}, "all": "true"}
             # get all results filtered by title
-            {"query": "{}", "title": "title_string"}
-            # get all results filtered by workspaces
-            {"query": "{}", "workspaces": [{"id":"[workspace_id]"}]}
+            {"query": {}, "title": "title_string"}
+             # get all results filtered by workspaces
+            {"query": {}, "workspaces": [{"id":"[workspace_id]"}]}
             # get all results filtered by private workspace
-            {"query": "{}", "workspaces": [{"id":"None"}]}
+            {"query": {}, "workspaces": [{"id":"None"}]}
             # get all results filtered by templates
-            {"query": "{}", "templates": [{"id":"[template_id]"}] }
+            {"query": {}, "templates": [{"id":"[template_id]"}] }
             # get all results that verify a given criteria
-            {"query": "{\\"root.element.value\\": 2}"}
+            {"query": {"root.element.value": 2}}
+            # get values at xpath
+            {"query": {}, "xpath": "/ns:root/@element", "namespaces": {"ns": "<namespace_url>"}}
             # get results using multiple options
-            {"query": "{\\"root.element.value\\": 2}", "workspaces": [{"id":"workspace_id"}] , "all": "true"}
-            {"query": "{\\"root.element.value\\": 2}", "templates": [{"id":"template_id"}] , "all": "true"}
-            {"query": "{\\"root.element.value\\": 2}", "templates": [{"id":"template_id"}],
+            {"query": {"root.element.value": 2}, "workspaces": [{"id":"workspace_id"}] , "all": "true"}
+            {"query": {"root.element.value": 2}, "templates": [{"id":"template_id"}] , "all": "true"}
+            {"query": {"root.element.value": 2}, "templates": [{"id":"template_id"}],
             "workspaces": [{"id":"[workspace_id]"}] ,"all": "true"}
-
-
-        Warning:
-
-            Need to backslash double quotes in JSON payload
 
         Args:
 
@@ -66,11 +63,7 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
 
         Parameters:
 
-            {"query": "{\"$or\": [{\"image.owner\": \"Peter\"}, {\"image.owner.#text\":\"Peter\"}]}"}
-
-        Warning:
-
-            Need to backslash double quotes in JSON payload
+            {"query": {"$or": [{"image.owner": "Peter"}, {"image.owner.#text":"Peter"}]}}
 
         Args:
             request:
