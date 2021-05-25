@@ -8,21 +8,24 @@ from core_main_app.utils.pagination.rest_framework_paginator.pagination import (
 )
 
 
-def get_page_number(url):
-    """Get page number from url
+def get_page_number(page):
+    """Get page number from page
 
     Args:
-        url:
+        page: url, page number or None
 
     Returns:
 
     """
-    if url is None:
+    if page is None:
         return None
+
+    if isinstance(page, int):
+        return page
 
     try:
         # parse string url
-        object_url = urlparse(url)
+        object_url = urlparse(page)
         # get query from url
         query_url = object_url.query
         # rest framework returns base (without 'page=') url when page is 1
