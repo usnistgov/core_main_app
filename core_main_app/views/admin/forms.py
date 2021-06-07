@@ -47,6 +47,7 @@ class UploadTemplateForm(UploadForm):
     def __init__(self, *args, **kwargs):
         super(UploadTemplateForm, self).__init__(*args, **kwargs)
         self.fields["name"].label = "Enter Template name"
+        self.fields["upload_file"].validators = [ExtensionValidator(".xsd")]
         self.fields["upload_file"].widget = forms.FileInput(attrs={"accept": ".xsd"})
 
 
@@ -58,6 +59,7 @@ class UploadVersionForm(forms.Form):
     xsd_file = forms.FileField(
         label="Select a file",
         required=True,
+        validators=[ExtensionValidator(".xsd")],
         widget=forms.FileInput(attrs={"accept": ".xsd"}),
     )
 

@@ -278,14 +278,14 @@ def _save_template(request, assets, context):
     Returns:
 
     """
-    # get the schema name
-    name = request.POST["name"]
-    # get the file from the form
-    xsd_file = request.FILES["upload_file"]
-    # read the content of the file
-    xsd_data = read_xsd_file(xsd_file)
-
     try:
+        # get the schema name
+        name = request.POST["name"]
+        # get the file from the form
+        xsd_file = request.FILES["upload_file"]
+        # read the content of the file
+        xsd_data = read_xsd_file(xsd_file)
+
         template = Template(filename=xsd_file.name, content=xsd_data)
         template_version_manager = TemplateVersionManager(title=name)
         template_version_manager_api.insert(
@@ -318,12 +318,13 @@ def _save_template_version(request, assets, context, template_version_manager):
     Returns:
 
     """
-    # get the file from the form
-    xsd_file = request.FILES["xsd_file"]
-    # read the content of the file
-    xsd_data = read_xsd_file(xsd_file)
 
     try:
+        # get the file from the form
+        xsd_file = request.FILES["xsd_file"]
+        # read the content of the file
+        xsd_data = read_xsd_file(xsd_file)
+
         template = Template(filename=xsd_file.name, content=xsd_data)
         template_version_manager_api.insert(
             template_version_manager, template, request=request
