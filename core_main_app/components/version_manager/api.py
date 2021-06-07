@@ -132,7 +132,7 @@ def disable_version(version, request, new_current=None):
         # id doesn't match a version
         if new_current.id not in version_manager.versions:
             raise exceptions.ApiError(
-                "The id provided to be the next current version, could not be found."
+                "The id provided to be the next current version, could not be found.",
             )
 
         # set the new current version

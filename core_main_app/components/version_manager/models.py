@@ -50,7 +50,9 @@ class VersionManager(Document):
         Returns:
 
         """
-        self.disabled_versions.append(str(version.id))
+        # check if the version is not already disabled
+        if str(version.id) not in list(self.disabled_versions):
+            self.disabled_versions.append(str(version.id))
 
     def restore_version(self, version):
         """Restore a version.
