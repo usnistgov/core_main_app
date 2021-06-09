@@ -1,6 +1,6 @@
 celery==4.4.7
 kombu==4.6.11
-Django==2.2.20
+Django==2.2.22
 django-defender==0.8.0
 django-mongoengine==0.4.1
 django-rest-framework-mongoengine==3.4.1
