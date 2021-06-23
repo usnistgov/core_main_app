@@ -95,21 +95,13 @@ def load_saml_config_from_env(server_uri, base_dir):
             ],
         },
         # Signing
-        "key_file": os.path.join(base_dir, os.environ["SAML_KEY_FILE"])
-        if "SAML_KEY_FILE" in os.environ
-        else None,  # private part
-        "cert_file": os.path.join(base_dir, os.environ["SAML_CERT_FILE"])
-        if "SAML_CERT_FILE" in os.environ
-        else None,  # public part
+        "key_file": os.getenv("SAML_KEY_FILE", None),  # private part
+        "cert_file": os.getenv("SAML_CERT_FILE", None),  # public part
         # Encryption
         "encryption_keypairs": [
             {
-                "key_file": os.path.join(base_dir, os.environ["SAML_KEY_FILE"])
-                if "SAML_KEY_FILE" in os.environ
-                else None,  # private part
-                "cert_file": os.path.join(base_dir, os.environ["SAML_CERT_FILE"])
-                if "SAML_CERT_FILE" in os.environ
-                else None,  # public part
+                "key_file": os.getenv("SAML_KEY_FILE", None),  # private part
+                "cert_file": os.getenv("SAML_CERT_FILE", None),  # public part
             }
         ],
         "contact_person": contact_person,
