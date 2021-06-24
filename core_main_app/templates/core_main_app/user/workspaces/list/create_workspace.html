@@ -1,21 +1,38 @@
 {% extends 'core_main_app/_render/admin/theme/tools/modal.html' %}
 
 {% block modal_id %}create-workspace-modal{% endblock %}
-{% block modal_title %}Create workspace{% endblock %}
+{% block modal_title %}Create new workspace{% endblock %}
 
 
 {% block modal_body %}
-<div class="alert alert-danger" id="banner_errors" style="display: none;">
-        <a href="#" class="close" data-hide="alert" aria-label="close">&times;</a>
-     	<h4><i class="fas fa-exclamation-circle"></i> Error</h4>
+    <div class="alert alert-danger" id="banner_errors" style="display: none;">
+        <h4>
+            <i class="fas fa-exclamation-circle"></i>
+            An error occured while creating the workspace!
+        </h4>
         <div id="create_workspace_errors"></div>
-</div>
-<input type="hidden" class="{{data.document}}-id"/>
-<p>Please enter the name of the new workspace:
-       {{data.workspace_form}}</p>
+    </div>
+    <div>
+        <input type="hidden" class="{{ data.document }}-id"/>
+        <p class="m-0">Please enter the name of the new workspace.</p>
+    </div>
+    <div class="mt-2">
+        {% for field in data.workspace_form %}
+            <div class="d-flex flex-row">
+                <div class="w-25 d-flex align-items-center justify-content-end">
+                    {{ field.label_tag }}
+                </div>
+                <div class="w-75 ml-2 d-flex align-items-center">{{ field }}</div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}
 
 {% block modal_footer %}
-    <a class="btn btn-secondary pull-left" data-dismiss="modal" href="#"><i class="fas fa-times"></i> Cancel</a>
-    <a id="create-workspace-yes" class="btn btn-primary" href="#"><i class="fas fa-check"></i> Create</a>
+    <button class="btn btn-secondary pull-left" data-dismiss="modal">
+        <i class="fas fa-times-circle"></i> Cancel
+    </button>
+    <button id="create-workspace-confirm" class="btn btn-primary">
+        <i class="fas fa-plus-circle"></i> Create Workspace
+    </button>
 {% endblock %}
