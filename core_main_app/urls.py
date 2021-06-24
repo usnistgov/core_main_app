@@ -11,7 +11,7 @@ from core_main_app.components.data import api as data_api
 from core_main_app.utils.rendering import render
 from core_main_app.views.common import ajax as common_ajax, views as common_views
 from core_main_app.views.user import views as user_views, ajax as user_ajax
-from django.conf import settings
+from core_main_app import settings
 
 schema_view = get_schema_view(
     openapi.Info(
