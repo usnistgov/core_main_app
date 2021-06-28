@@ -26,7 +26,7 @@ def get_template_download_pattern():
     return pattern
 
 
-def get_blob_download_regex():
+def get_blob_download_regex(xml_string):
     """Return regex pattern to match an url to download a blob.
 
     Returns:
@@ -39,4 +39,4 @@ def get_blob_download_regex():
     download_blob_url = download_blob_url.replace("blob_id/", "")
     # make the regex
     regex = ">(http[s]?:[^<>]+" + download_blob_url + "[0-9a-f]{24}/?)<"
-    return regex
+    return re.findall(regex, xml_string)
