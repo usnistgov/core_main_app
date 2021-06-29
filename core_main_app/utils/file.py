@@ -31,7 +31,12 @@ def get_file_http_response(file_content, file_name, content_type=None, extension
 
         # guess file content type if not set
         if content_type is None:
-            content_type = guess_type(file_name)
+            # The function 'guess_type' returns a tuple (type, encoding). The
+            # HttpResponse only needs the type of the file sent, otherwise it
+            # cannot detect the proper content type of the file.
+            #
+            # See https://docs.python.org/3/library/mimetypes.html#mimetypes.guess_type
+            content_type = guess_type(file_name)[0]
         # set file in http response
         response = HttpResponse(_file, content_type=content_type)
         # set filename extension
