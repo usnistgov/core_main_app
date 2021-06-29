@@ -95,24 +95,28 @@ def build_page(data_object, display_admin_version=False):
         if (
             "core_linked_records_app" in settings.INSTALLED_APPS
             and not display_admin_version
-            and settings.AUTO_SET_PID
         ):
-            page_info["context"]["share_pid_button"] = True
-            page_info["assets"]["js"].extend(
-                [
-                    {
-                        "path": "core_main_app/user/js/sharing_modal.js",
-                        "is_raw": False,
-                    },
-                    {
-                        "path": "core_linked_records_app/user/js/sharing/data_detail.js",
-                        "is_raw": False,
-                    },
-                ]
+            from core_linked_records_app.components.pid_settings import (
+                api as pid_settings_api,
             )
-            page_info["modals"].append(
-                "core_linked_records_app/user/sharing/data_detail/modal.html"
-            )
+
+            if pid_settings_api.get().auto_set_pid:
+                page_info["context"]["share_pid_button"] = True
+                page_info["assets"]["js"].extend(
+                    [
+                        {
+                            "path": "core_main_app/user/js/sharing_modal.js",
+                            "is_raw": False,
+                        },
+                        {
+                            "path": "core_linked_records_app/user/js/sharing/data_detail.js",
+                            "is_raw": False,
+                        },
+                    ]
+                )
+                page_info["modals"].append(
+                    "core_linked_records_app/user/sharing/data_detail/modal.html"
+                )
     except exceptions.DoesNotExist:
         page_info["error"] = "Data not found"
     except exceptions.ModelError:
