@@ -33,7 +33,7 @@ ACTION_WRITE = "action_write"
 
 @method_decorator(login_required, name="dispatch")
 class LoadFormChangeWorkspace(View):
-    """ Load the form to list the workspaces. """
+    """Load the form to list the workspaces."""
 
     show_global_workspace = True
 

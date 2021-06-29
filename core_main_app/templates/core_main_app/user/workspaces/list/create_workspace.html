@@ -18,11 +18,12 @@
     </div>
     <div class="mt-2">
         {% for field in data.workspace_form %}
-            <div class="d-flex flex-row">
-                <div class="w-25 d-flex align-items-center justify-content-end">
+            <div class="d-flex flex-row ml-4 mr-4">
+                <div class="d-flex align-items-center justify-content-center"
+                     style="width:30%">
                     {{ field.label_tag }}
                 </div>
-                <div class="w-75 ml-2 d-flex align-items-center">{{ field }}</div>
+                <div class="ml-2 d-flex align-items-center" style="width:90%">{{ field }}</div>
             </div>
         {% endfor %}
     </div>
