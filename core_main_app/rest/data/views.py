@@ -274,6 +274,9 @@ class DataDetail(APIView):
         except Http404:
             content = {"message": "Data not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
+        except AccessControlError as e:
+            content = {"message": str(e)}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -307,6 +310,9 @@ class DataDetail(APIView):
         except Http404:
             content = {"message": "Data not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
+        except AccessControlError as e:
+            content = {"message": str(e)}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -361,6 +367,9 @@ class DataDetail(APIView):
         except Http404:
             content = {"message": "Data not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
+        except AccessControlError as e:
+            content = {"message": str(e)}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
