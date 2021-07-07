@@ -23,6 +23,7 @@ from tests.components.data.fixtures.fixtures import (
 )
 from core_main_app.components.data import tasks as data_task
 from core_main_app.components.template import api as template_api
+from core_main_app.components.xsl_transformation import api as xsl_transformation_api
 from core_main_app.utils.integration_tests.integration_base_transaction_test_case import (
     MongoIntegrationTransactionTestCase,
 )
@@ -35,7 +36,6 @@ access_control_data_fixture = AccessControlDataFixture()
 
 
 class TestDataGetAll(MongoIntegrationBaseTestCase):
-
     fixture = access_control_data_fixture
 
     def test_data_get_all_return_collection_of_data(self):
@@ -119,7 +119,6 @@ class TestDataGetAll(MongoIntegrationBaseTestCase):
 
 
 class TestDataGetAllExcept(MongoIntegrationBaseTestCase):
-
     fixture = access_control_data_fixture
 
     def test_data_get_all_except_return_collection_of_data(self):
@@ -254,7 +253,6 @@ class TestDataGetAllExcept(MongoIntegrationBaseTestCase):
 
 
 class TestDataGetById(MongoIntegrationBaseTestCase):
-
     fixture = fixture_data
 
     def test_data_get_by_id_raises_api_error_if_not_found(self):
@@ -270,7 +268,6 @@ class TestDataGetById(MongoIntegrationBaseTestCase):
 
 
 class TestDataGetAllByUserId(MongoIntegrationBaseTestCase):
-
     fixture = access_control_data_fixture
 
     def test_data_get_all_by_user_id_return_collection_of_data_from_user(self):
@@ -360,7 +357,6 @@ class TestDataGetAllByUserId(MongoIntegrationBaseTestCase):
 
 
 class TestDataGetAllExceptUserId(MongoIntegrationBaseTestCase):
-
     fixture = access_control_data_fixture
 
     def test_data_get_all_except_user_id_return_collection_of_data_where_user_is_not_owner(
@@ -466,7 +462,6 @@ class TestDataGetAllExceptUserId(MongoIntegrationBaseTestCase):
 
 
 class TestExecuteQuery(MongoIntegrationTransactionTestCase):
-
     fixture = access_control_data_fixture
 
     def test_execute_query_data_ordering(self):
@@ -541,7 +536,6 @@ class TestExecuteQuery(MongoIntegrationTransactionTestCase):
 
 
 class TestGetAllByWorkspace(MongoIntegrationBaseTestCase):
-
     fixture = access_control_data_fixture
 
     def test_get_all_by_workspace_data_ordering(self):
@@ -719,7 +713,6 @@ class TestGetAllByTemplatesAndWorkspaces(MongoIntegrationBaseTestCase):
 
 
 class TestGetAllByUserAndWorkspace(MongoIntegrationBaseTestCase):
-
     fixture = access_control_data_fixture
 
     def test_get_all_data_from_user_and_from_workspace_for_user_within_workspace(self):
@@ -826,6 +819,7 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         """
         super().setUp()
         self.fixture.insert_data()
+        self.fixture.generate_xslt()
 
     @patch.object(data_api, "get_by_id")
     @patch.object(template_api, "get")
@@ -839,7 +833,36 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
 
         # Act
         response = data_task.async_migration_task(
-            [self.fixture.data_1.id], self.fixture.template_2.id, request_user.id, False
+            [self.fixture.data_1.id],
+            None,
+            self.fixture.template_2.id,
+            request_user.id,
+            False,
+        )
+
+        # Assert
+        expected_result = {"valid": [str(self.fixture.data_1.id)], "wrong": []}
+        self.assertEqual(response, expected_result)
+
+    @patch.object(data_api, "get_by_id")
+    @patch.object(template_api, "get")
+    def test_data_template_validation_success_for_one_transformed_data(
+        self,
+        template_get,
+        data_get_by_id,
+    ):
+        # Arrange
+        request_user = UserFixtures().create_super_user("admin_test")
+        template_get.return_value = self.fixture.template_4
+        data_get_by_id.return_value = self.fixture.data_1
+
+        # Act
+        response = data_task.async_migration_task(
+            [self.fixture.data_1.id],
+            self.fixture.xsl_transformation.id,
+            self.fixture.template_4.id,
+            request_user.id,
+            False,
         )
 
         # Assert
@@ -859,7 +882,36 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         # Act
         response = data_task.async_migration_task(
             [self.fixture.data_1.id, self.fixture.data_2.id],
+            None,
             self.fixture.template_2.id,
+            request_user.id,
+            False,
+        )
+
+        # Assert
+        expected_result = {
+            "valid": [str(self.fixture.data_1.id), str(self.fixture.data_2.id)],
+            "wrong": [],
+        }
+        self.assertEqual(response, expected_result)
+
+    @patch.object(data_api, "get_by_id")
+    @patch.object(system_api, "get_template_by_id")
+    def test_data_template_validation_success_for_multi_transformed_data(
+        self,
+        template_get,
+        data_get_by_id,
+    ):
+        # Arrange
+        data_get_by_id.side_effect = [self.fixture.data_1, self.fixture.data_2]
+        template_get.return_value = self.fixture.template_4
+        request_user = UserFixtures().create_super_user("admin_test")
+
+        # Act
+        response = data_task.async_migration_task(
+            [self.fixture.data_1.id, self.fixture.data_2.id],
+            self.fixture.xsl_transformation.id,
+            self.fixture.template_4.id,
             request_user.id,
             False,
         )
@@ -884,7 +936,31 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         # Act
         response = data_task.async_migration_task(
             [self.fixture.data_5.id],
+            None,
             self.fixture.template_2.id,
+            request_user.id,
+            False,
+        )
+
+        # Assert
+        expected_result = {"valid": [], "wrong": [str(self.fixture.data_5.id)]}
+        self.assertEqual(response, expected_result)
+
+    @patch.object(data_api, "get_by_id")
+    @patch.object(template_api, "get")
+    def test_data_template_validation_error_for_one_transformed_data(
+        self, template_get, data_get_by_id
+    ):
+        # Arrange
+        data_get_by_id.return_value = self.fixture.data_5
+        template_get.return_value = self.fixture.template_2
+        request_user = UserFixtures().create_super_user("admin_test")
+
+        # Act
+        response = data_task.async_migration_task(
+            [self.fixture.data_5.id],
+            self.fixture.xsl_transformation.id,
+            self.fixture.template_4.id,
             request_user.id,
             False,
         )
@@ -906,7 +982,34 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         # Act
         response = data_task.async_migration_task(
             [self.fixture.data_1.id, self.fixture.data_5.id],
+            None,
             self.fixture.template_2.id,
+            request_user.id,
+            False,
+        )
+
+        # Assert
+        expected_result = {
+            "valid": [str(self.fixture.data_1.id)],
+            "wrong": [str(self.fixture.data_5.id)],
+        }
+        self.assertEqual(response, expected_result)
+
+    @patch.object(data_api, "get_by_id")
+    @patch.object(template_api, "get")
+    def test_data_template_validation_for_multi_transformed_data(
+        self, template_get, data_get_by_id
+    ):
+        # Arrange
+        data_get_by_id.side_effect = [self.fixture.data_1, self.fixture.data_5]
+        template_get.return_value = self.fixture.template_4
+        request_user = UserFixtures().create_super_user("admin_test")
+
+        # Act
+        response = data_task.async_migration_task(
+            [self.fixture.data_1.id, self.fixture.data_5.id],
+            self.fixture.xsl_transformation.id,
+            self.fixture.template_4.id,
             request_user.id,
             False,
         )
@@ -944,7 +1047,47 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         # Act
         response = data_task.async_template_migration_task(
             [self.fixture.template_1.id],
+            None,
             self.fixture.template_2.id,
+            request_user.id,
+            False,
+        )
+
+        # Assert
+        expected_result = {
+            "valid": [str(self.fixture.data_1.id), str(self.fixture.data_2.id)],
+            "wrong": [],
+        }
+        self.assertEqual(response, expected_result)
+
+    @patch.object(data_api, "execute_query")
+    @patch.object(data_api, "get_by_id")
+    @patch.object(template_api, "get")
+    def test_data_template_group_validation_success_with_transformation(
+        self, template_get, data_get_by_id, data_execute_query
+    ):
+        # Arrange
+        mock_query_set = {
+            "values_list": lambda param: [
+                self.fixture.data_1.id,
+                self.fixture.data_2.id,
+            ],
+            "count": lambda: 2,
+        }
+        data_execute_query.return_value = SimpleNamespace(**mock_query_set)
+        data_get_by_id.side_effect = [
+            self.fixture.data_1,
+            self.fixture.data_2,
+        ]
+
+        template_get.return_value = self.fixture.template_4
+        request_user = UserFixtures().create_super_user("admin_test")
+
+        # Act
+        response = data_task.async_template_migration_task(
+            [self.fixture.template_1.id],
+            self.fixture.xsl_transformation.id,
+            self.fixture.template_4.id,
             request_user.id,
             False,
         )
@@ -982,6 +1125,46 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         # Act
         response = data_task.async_template_migration_task(
             [self.fixture.template_3.id],
+            None,
+            self.fixture.template_1.id,
+            request_user.id,
+            False,
+        )
+
+        # Assert
+        expected_result = {
+            "valid": [],
+            "wrong": [str(self.fixture.data_4.id), str(self.fixture.data_5.id)],
+        }
+        self.assertEqual(response, expected_result)
+
+    @patch.object(data_api, "execute_query")
+    @patch.object(data_api, "get_by_id")
+    @patch.object(template_api, "get")
+    def test_data_template_group_validation_error_with_transformation(
+        self, template_get, data_get_by_id, data_execute_query
+    ):
+        # Arrange
+        mock_query_set = {
+            "values_list": lambda param: [
+                self.fixture.data_4.id,
+                self.fixture.data_5.id,
+            ],
+            "count": lambda: 2,
+        }
+        data_execute_query.return_value = SimpleNamespace(**mock_query_set)
+        data_get_by_id.side_effect = [
+            self.fixture.data_4,
+            self.fixture.data_5,
+        ]
+
+        template_get.return_value = self.fixture.template_4
+        request_user = UserFixtures().create_super_user("admin_test")
+
+        # Act
+        response = data_task.async_template_migration_task(
+            [self.fixture.template_3.id],
+            self.fixture.xsl_transformation.id,
             self.fixture.template_1.id,
             request_user.id,
             False,
@@ -997,23 +1180,27 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
     @patch.object(data_api, "get_by_id")
     @patch.object(data_api, "upsert")
     @patch.object(template_api, "get")
-    def test_data_template_migration_success_for_one_data(
+    def test_data_template_migration_success_for_one_transformed_data(
         self, template_get, data_upsert, data_get_by_id
     ):
         # Arrange
         request_user = UserFixtures().create_super_user("admin_test")
         data_upsert.side_effect = mock_upsert
-        template_get.return_value = self.fixture.template_2
+        template_get.return_value = self.fixture.template_4
         data_get_by_id.return_value = self.fixture.data_1
 
         # Act
         response = data_task.async_migration_task(
-            [self.fixture.data_1.id], self.fixture.template_2.id, request_user.id, True
+            [self.fixture.data_1.id],
+            self.fixture.xsl_transformation.id,
+            self.fixture.template_4.id,
+            request_user.id,
+            True,
         )
 
         # Assert
         migrated_data = data_api.get_by_id(self.fixture.data_1.id, request_user)
-        self.assertEqual(migrated_data.template.id, self.fixture.template_2.id)
+        self.assertEqual(migrated_data.template.id, self.fixture.template_4.id)
 
     @patch.object(data_api, "get_by_id")
     @patch.object(data_api, "upsert")
@@ -1030,6 +1217,7 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         # Act
         response = data_task.async_migration_task(
             [self.fixture.data_1.id, self.fixture.data_2.id],
+            None,
             self.fixture.template_2.id,
             request_user.id,
             False,
@@ -1048,23 +1236,83 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
     @patch.object(data_api, "get_by_id")
     @patch.object(data_api, "upsert")
     @patch.object(template_api, "get")
+    def test_data_template_migration_success_for_multi_transformed_data(
+        self, template_get, data_upsert, data_get_by_id
+    ):
+        # Arrange
+        data_get_by_id.side_effect = [self.fixture.data_1, self.fixture.data_2]
+        template_get.return_value = self.fixture.template_4
+        data_upsert.side_effect = mock_upsert
+        request_user = UserFixtures().create_super_user("admin_test")
+
+        # Act
+        response = data_task.async_migration_task(
+            [self.fixture.data_1.id, self.fixture.data_2.id],
+            self.fixture.xsl_transformation.id,
+            self.fixture.template_4.id,
+            request_user.id,
+            False,
+        )
+
+        # Assert
+        migrated_data_template = [
+            self.fixture.data_1.template.id,
+            self.fixture.data_2.template.id,
+        ]
+        self.assertListEqual(
+            migrated_data_template,
+            [self.fixture.template_4.id, self.fixture.template_4.id],
+        )
+
+    @patch.object(data_api, "get_by_id")
+    @patch.object(data_api, "upsert")
+    @patch.object(template_api, "get")
     def test_data_template_migration_error_for_one_data(
         self, template_get, data_upsert, data_get_by_id
     ):
         # Arrange
         request_user = UserFixtures().create_super_user("admin_test")
         data_upsert.side_effect = mock_upsert
-        template_get.return_value = self.fixture.template_2
+        template_get.return_value = self.fixture.template_4
         data_get_by_id.return_value = self.fixture.data_5
 
         # Act
         response = data_task.async_migration_task(
-            [self.fixture.data_5.id], self.fixture.template_2.id, request_user.id, True
+            [self.fixture.data_5.id],
+            None,
+            self.fixture.template_4.id,
+            request_user.id,
+            True,
         )
 
         # Assert
-        migrated_data = data_api.get_by_id(self.fixture.data_5.id, request_user)
-        self.assertEqual(migrated_data.template.id, self.fixture.template_2.id)
+        expected_result = {"valid": [], "wrong": [str(self.fixture.data_5.id)]}
+        self.assertEqual(response, expected_result)
+
+    @patch.object(data_api, "get_by_id")
+    @patch.object(data_api, "upsert")
+    @patch.object(template_api, "get")
+    def test_data_template_migration_error_for_one_transformed_data(
+        self, template_get, data_upsert, data_get_by_id
+    ):
+        # Arrange
+        request_user = UserFixtures().create_super_user("admin_test")
+        data_upsert.side_effect = mock_upsert
+        template_get.return_value = self.fixture.template_3
+        data_get_by_id.return_value = self.fixture.data_5
+
+        # Act
+        response = data_task.async_migration_task(
+            [self.fixture.data_5.id],
+            self.fixture.xsl_transformation.id,
+            self.fixture.template_4.id,
+            request_user.id,
+            True,
+        )
+
+        # Assert
+        expected_result = {"valid": [], "wrong": [str(self.fixture.data_5.id)]}
+        self.assertEqual(response, expected_result)
 
     @patch.object(data_api, "get_by_id")
     @patch.object(data_api, "upsert")
@@ -1081,6 +1329,7 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         # Act
         response = data_task.async_migration_task(
             [self.fixture.data_1.id, self.fixture.data_5.id],
+            None,
             self.fixture.template_2.id,
             request_user.id,
             False,
@@ -1096,6 +1345,37 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
             [self.fixture.template_2.id, self.fixture.template_2.id],
         )
 
+    @patch.object(data_api, "get_by_id")
+    @patch.object(data_api, "upsert")
+    @patch.object(template_api, "get")
+    def test_data_template_migration_for_multi_transformed_data(
+        self, template_get, data_upsert, data_get_by_id
+    ):
+        # Arrange
+        data_get_by_id.side_effect = [self.fixture.data_1, self.fixture.data_5]
+        template_get.return_value = self.fixture.template_4
+        data_upsert.side_effect = mock_upsert
+        request_user = UserFixtures().create_super_user("admin_test")
+
+        # Act
+        response = data_task.async_migration_task(
+            [self.fixture.data_1.id, self.fixture.data_5.id],
+            self.fixture.xsl_transformation.id,
+            self.fixture.template_4.id,
+            request_user.id,
+            False,
+        )
+
+        # Assert
+        migrated_data_template = [
+            self.fixture.data_1.template.id,
+            self.fixture.data_5.template.id,
+        ]
+        self.assertListEqual(
+            migrated_data_template,
+            [self.fixture.template_4.id, self.fixture.template_4.id],
+        )
+
         @patch.object(data_api, "execute_query")
         @patch.object(template_api, "get")
         def test_data_template_group_migration_success(
@@ -1109,6 +1389,7 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
             # Act
             response = data_task.async_template_migration_task(
                 [self.fixture.template_1.id],
+                None,
                 self.fixture.template_2.id,
                 request_user.id,
                 True,
@@ -1150,20 +1431,57 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         # Act
         response = data_task.async_template_migration_task(
             [self.fixture.template_3.id],
+            None,
             self.fixture.template_1.id,
             request_user.id,
             True,
         )
 
         # Assert
-        migrated_data_template = [
-            self.fixture.data_4.template.id,
-            self.fixture.data_5.template.id,
+        expected_result = {
+            "valid": [],
+            "wrong": [str(self.fixture.data_4.id), str(self.fixture.data_5.id)],
+        }
+        self.assertEqual(response, expected_result)
+
+    @patch.object(data_api, "execute_query")
+    @patch.object(data_api, "get_by_id")
+    @patch.object(system_api, "get_template_by_id")
+    def test_data_template_group_migration_error_with_transformation(
+        self, template_get, data_get_by_id, data_execute_query
+    ):
+        # Arrange
+        mock_query_set = {
+            "values_list": lambda param: [
+                self.fixture.data_4.id,
+                self.fixture.data_5.id,
+            ],
+            "count": lambda: 2,
+        }
+        data_execute_query.return_value = SimpleNamespace(**mock_query_set)
+        data_get_by_id.side_effect = [
+            self.fixture.data_4,
+            self.fixture.data_5,
         ]
-        self.assertListEqual(
-            migrated_data_template,
-            [self.fixture.template_3.id, self.fixture.template_3.id],
+
+        template_get.return_value = self.fixture.template_4
+        request_user = UserFixtures().create_super_user("admin_test")
+
+        # Act
+        response = data_task.async_template_migration_task(
+            [self.fixture.template_3.id],
+            self.fixture.xsl_transformation.id,
+            self.fixture.template_4.id,
+            request_user.id,
+            True,
         )
+
+        # Assert
+        expected_result = {
+            "valid": [],
+            "wrong": [str(self.fixture.data_4.id), str(self.fixture.data_5.id)],
+        }
+        self.assertEqual(response, expected_result)
 
 
 @patch.object(data_api, "get_by_id")
@@ -1180,7 +1498,11 @@ def test_result_data_template_migration_success_for_one_data(
 
     # Act
     response = data_task.async_migration_task(
-        [self.fixture.data_1.id], self.fixture.template_2.id, request_user.id, True
+        [self.fixture.data_1.id],
+        None,
+        self.fixture.template_2.id,
+        request_user.id,
+        True,
     )
 
     # Assert
@@ -1203,6 +1525,7 @@ def test_result_data_template_migration_success_for_multi_data(
     # Act
     response = data_task.async_migration_task(
         [self.fixture.data_1.id, self.fixture.data_2.id],
+        None,
         self.fixture.template_2.id,
         request_user.id,
         False,
@@ -1230,7 +1553,11 @@ def test_result_data_template_migration_error_for_one_data(
 
     # Act
     response = data_task.async_migration_task(
-        [self.fixture.data_5.id], self.fixture.template_2.id, request_user.id, True
+        [self.fixture.data_5.id],
+        None,
+        self.fixture.template_2.id,
+        request_user.id,
+        True,
     )
 
     # Assert
@@ -1278,6 +1605,7 @@ def test_result_data_template_migration_for_multi_data(
         # Act
         response = data_task.async_template_migration_task(
             [self.fixture.template_1.id],
+            None,
             self.fixture.template_2.id,
             request_user.id,
             True,
@@ -1304,6 +1632,7 @@ def test_result_data_template_group_migration_error(
     # Act
     response = data_task.async_template_migration_task(
         [self.fixture.template_3.id],
+        None,
         self.fixture.template_1.id,
         request_user.id,
         True,

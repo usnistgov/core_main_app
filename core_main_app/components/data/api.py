@@ -273,13 +273,14 @@ def assign(data, workspace, user):
 
 
 @access_control(has_perm_administration)
-def migrate_data_list(data_list, target_template_id, migrate, user):
+def migrate_data_list(data_list, xslt_id, target_template_id, migrate, user):
     """Perform a migration / validation of the data list for the given target template id
     NB: This action is executed with an async task, use the progress / result function to retrieve
     information about the task status
 
     Args:
         data_list:
+        xslt_id:
         target_template_id:
         migrate: (boolean) Perform the migration
         user:
@@ -288,19 +289,20 @@ def migrate_data_list(data_list, target_template_id, migrate, user):
         Async task id
     """
     task = async_migration_task.delay(
-        data_list, str(target_template_id), user.id, migrate
+        data_list, xslt_id, str(target_template_id), user.id, migrate
     )
     return task.task_id
 
 
 @access_control(has_perm_administration)
-def migrate_template_list(template_id_list, target_template_id, migrate, user):
+def migrate_template_list(template_id_list, xslt_id, target_template_id, migrate, user):
     """Perform a migration / validation of all the data which belong to the given template id list
     NB: This action is executed with an async task, use the progress / result function to retrieve
     information about the task status
 
     Args:
         template_id_list:
+        xslt_id:
         target_template_id:
         migrate: (boolean) Perform the migration
         user:
@@ -309,6 +311,6 @@ def migrate_template_list(template_id_list, target_template_id, migrate, user):
         Async task id
     """
     task = async_template_migration_task.delay(
-        template_id_list, str(target_template_id), user.id, migrate
+        template_id_list, xslt_id, str(target_template_id), user.id, migrate
     )
     return task.task_id

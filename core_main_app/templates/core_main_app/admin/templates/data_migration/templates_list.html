@@ -79,7 +79,50 @@
                 <thead>
                     <tr>
                         <td width="20px"></td>
-                        <td>3 - Select a Target template</td>
+                        <td>3 - Select XSLT <small>(optional)</small></td>
+                        <td class="xslt-count text-right hidden"><strong id="xslt-number"></strong> xslt selected</td>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div class="card-body">
+            <table id="xslt-table" class="table table-bordered table-striped">
+                <tbody id="xslt-content" class="hidden">
+                    {% if data.xslt %}
+                        {% for xsl_transformation in data.xslt %}
+                            <tr>
+                                <td width="20px"><input class="xslt-radio" name="xslt-radio" type="radio"></td>
+                                <td xslt-id={{xsl_transformation.id}}>
+                                    <div>{{xsl_transformation.name}}</div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr class="bg-transparent text-center">
+                            <td>
+                                <strong class="text-primary">No xslt available.</strong>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+                <tbody id="xslt-text">
+                    <tr class="bg-transparent text-center">
+                        <td>
+                            <strong class="text-primary">Please select data to migrate</strong>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+    <div class="card list-card">
+        <div class="card-header">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <td width="20px"></td>
+                        <td>4 - Select a Target template</td>
                     </tr>
                 </thead>
             </table>

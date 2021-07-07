@@ -193,7 +193,9 @@ class AbstractMigrationView(APIView, metaclass=ABCMeta):
                     "data_id1",
                     "data_id2",
                     "data_id3"
-                ]
+                ],
+                "xslt": "xslt_id"
+
             }
 
         Args:
@@ -213,18 +215,19 @@ class AbstractMigrationView(APIView, metaclass=ABCMeta):
               content: Internal server error
         """
         try:
+            xslt_id = request.data["xslt"] if "xslt" in request.data else None
             if template_id and "data" in request.data:
                 data_list = request.data["data"]
                 # launch the migration task
                 task_id = data_api.migrate_data_list(
-                    data_list, template_id, migrate, request.user
+                    data_list, xslt_id, template_id, migrate, request.user
                 )
                 return Response(task_id, status=status.HTTP_200_OK)
             elif template_id and "template" in request.data:
                 data_list = request.data["template"]
                 # launch the migration task
                 task_id = data_api.migrate_template_list(
-                    data_list, template_id, migrate, request.user
+                    data_list, xslt_id, template_id, migrate, request.user
                 )
                 return Response(task_id, status=status.HTTP_200_OK)
             else:

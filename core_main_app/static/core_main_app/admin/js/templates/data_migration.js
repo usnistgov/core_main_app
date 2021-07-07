@@ -30,7 +30,6 @@ $(document).ready(function() {
             // if the click is fired by a custom event force the checkbox state
             isAllDataSelected = true;
             $("#select-all-data").prop('checked', isAllDataSelected);
-
             let parentRowElement = $("td[data-target-template-id=" + setStatesTargetTemplateId + "]").parentsUntil('tbody')[0];
             let targetInputElement = $(parentRowElement).find('input[type=radio]')[0];
             $(targetInputElement).prop("checked", true);
@@ -40,10 +39,11 @@ $(document).ready(function() {
 
         }
 
-        // update the data count
+        // update the data count and show xsl transformation list
         if (isAllDataSelected) {
             $(".data-count").show();
             $("#data-number").html(totalDataCount);
+            viewXsltList(true)
         }
 
     });
@@ -133,7 +133,7 @@ let fillTheData = function(templateIdList) {
 
     jqWarning.hide();
 
-    // reset the data count 
+    // reset the data count
     $("#data-number").html("0");
     $(".data-count").hide();
 
@@ -146,7 +146,7 @@ let fillTheData = function(templateIdList) {
             data: JSON.stringify({ query: {}, templates: templateIdList }),
             success: (data) => {
                 totalDataCount = data.count;
-                
+
                 createDataListHtml(data, false, "#data-table tbody");
 
 
@@ -176,6 +176,8 @@ let fillTheData = function(templateIdList) {
             '</tr>';
         $($("#data-table tbody")[0]).html(dataHtml);
         createDataListHtml([], false, "#data-table tbody");
+        viewXsltList(false)
+
     }
 }
 
@@ -297,7 +299,7 @@ let createDataListHtml = function(data, append, tbodySelector) {
             // display this number on the DOM
             $(".data-count").show();
             $("#data-number").html(jqCheckedDataCheckbox.length);
-
+            viewXsltList(true);
             createTargetTemplateListHtml(true);
         } else {
             createTargetTemplateListHtml(false);
@@ -309,6 +311,24 @@ let createDataListHtml = function(data, append, tbodySelector) {
 
     // load the target template list if a pending state flag is up and if data are displayed
     createTargetTemplateListHtml(setStatesPending > 0 && results.length > 0);
+}
+
+
+/**
+ * Handle the click actions on a data
+ * @param {boolean} isDataSelected
+ */
+let viewXsltList = function(isDataSelected) {
+
+    if(isDataSelected){
+        $("#xslt-text").hide();
+        $('#xslt-content').show();
+    }
+    else{
+        $("#xslt-content").hide();
+        $('#xslt-text').show();
+        $('input[name="xslt-radio"]').prop('checked',false);
+    }
 }
 
 /**
@@ -412,6 +432,13 @@ let actionButtonClicked = function(migrate) {
             "data-id");
     }
 
+    if($(".xslt-radio[type=radio]").is(':checked')){
+        // get the xsl transformation
+        let ancestors_xslt = $(".xslt-radio[type=radio]:checked").parentsUntil("tbody")
+        let jqParent_xslt = $(ancestors_xslt[ancestors_xslt.length - 1]);
+        queryData.xslt = $(jqParent_xslt.find("td[xslt-id]")[0]).attr('xslt-id');
+    }
+
     // launch the async task
     $.ajax({
         url: migrationUrlBase
@@ -472,7 +499,7 @@ let extractIdFromTable = function(mainSelector, findSelector, attrToRead) {
 
 /**
  * Get the task status
- * @param {string} taskId 
+ * @param {string} taskId
  * @param {function} success callback
  * @param {function} error callback
  */
@@ -614,6 +641,9 @@ let resetState = function() {
     let jqCheckedTemplateCheckbox = $(".template-checkbox:checked");
     jqCheckedTemplateCheckbox.prop("checked", false);
     eventFire(jqCheckedTemplateCheckbox[0], "click");
+    $('input[name="xslt-radio"]').prop('checked',false);
+    $("#xslt-content").hide();
+    $('#xslt-text').show();
 }
 
 /**

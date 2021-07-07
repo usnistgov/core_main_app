@@ -659,9 +659,7 @@ def data_migration(request):
             )
             version_index += 1
 
-    context = {
-        "templates": templates,
-    }
+    context = {"templates": templates, "xslt": xslt_transformation_api.get_all()}
 
     return admin_render(
         request,

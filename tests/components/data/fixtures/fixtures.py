@@ -3,6 +3,7 @@
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
 from core_main_app.components.workspace.models import Workspace
+from core_main_app.components.xsl_transformation.models import XslTransformation
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.utils.integration_tests.fixture_interface import FixtureInterface
 
@@ -206,12 +207,15 @@ class DataMigrationFixture(FixtureInterface):
     template_1 = None
     template_2 = None
     template_3 = None
+    template_4 = None
     data_collection = None
     data_1 = None
     data_2 = None
     data_3 = None
     data_4 = None
     data_5 = None
+    xsl_transformation = None
+    xsl_transformation_2 = None
 
     def insert_data(self):
         """Insert a set of Data.
@@ -277,6 +281,7 @@ class DataMigrationFixture(FixtureInterface):
         template1 = Template()
         template2 = Template()
         template3 = Template()
+        template4 = Template()
         xsd1 = '<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"> \
                 <xsd:element name="root" type="simpleString"/> \
                 <xsd:complexType name="simpleString"> \
@@ -291,6 +296,7 @@ class DataMigrationFixture(FixtureInterface):
                     <xsd:element name="test" type="xsd:string"/></xsd:sequence> \
                 </xsd:complexType> \
             </xsd:schema>'
+
         xsd3 = '<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"> \
                 <xsd:element name="root" type="simpleString"/> \
                 <xsd:complexType name="simpleString"> \
@@ -298,6 +304,15 @@ class DataMigrationFixture(FixtureInterface):
                     <xsd:element name="other" type="xsd:string"/></xsd:sequence> \
                 </xsd:complexType> \
             </xsd:schema>'
+        xsd4 = '<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"> \
+                        <xsd:element name="root" type="simpleString" /> \
+                        <xsd:complexType name="simpleString"> \
+                            <xsd:sequence> \
+                                <xsd:element name="test" type="xsd:string"/> \
+                                <xsd:element name="element" type="xsd:string"/> \
+                            </xsd:sequence> \
+                        </xsd:complexType> \
+                </xsd:schema>'
         template1.content = xsd1
         template1.hash = ""
         template1.filename = "filename"
@@ -307,6 +322,37 @@ class DataMigrationFixture(FixtureInterface):
         template3.content = xsd3
         template3.hash = ""
         template3.filename = "filename"
+        template4.content = xsd4
+        template4.hash = ""
+        template4.filename = "filename"
         self.template_1 = template1.save()
         self.template_2 = template2.save()
-        self.template_3 = template2.save()
+        self.template_3 = template3.save()
+        self.template_4 = template4.save()
+
+    def generate_xslt(self):
+        """Generate xsl transformation .
+
+        Returns:
+
+        """
+
+        content = '<?xml version="1.0" encoding="UTF-8"?> \
+                <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"> \
+                    <xsl:template match="@* | node()">   \
+                        <xsl:copy> \
+                            <xsl:apply-templates select="@* | node()"/> \
+                        </xsl:copy> \
+                    </xsl:template> \
+                    <xsl:template match="test"> \
+                        <xsl:copy-of select="."/> \
+                        <element>new_element</element> \
+                    </xsl:template> \
+                </xsl:stylesheet>'
+        xsl_transformation = XslTransformation(
+            name="xsl_transformation",
+            filename="xsl_transformation.xsl",
+            content=content,
+        )
+
+        self.xsl_transformation = xsl_transformation.save()

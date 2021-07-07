@@ -6,16 +6,18 @@ from celery import shared_task
 from celery.result import AsyncResult
 
 from core_main_app.components.data import api as data_api
+from core_main_app.components.xsl_transformation import api as xsl_transformation_api
 from core_main_app.components.user import api as user_api
 from core_main_app.system import api as system_api
 
 
 @shared_task
-def async_migration_task(data_list, template_id, user_id, migrate):
+def async_migration_task(data_list, xslt_id, template_id, user_id, migrate):
     """Async task which perform a migration / validation of the data list for the given target template id
 
     Args:
         data_list:
+        xslt_id:
         template_id:
         user_id:
         migrate: (boolean) Perform the migration
@@ -32,10 +34,20 @@ def async_migration_task(data_list, template_id, user_id, migrate):
         user = user_api.get_user_by_id(user_id)
         target_template = system_api.get_template_by_id(template_id)
 
+        # get xsl transformation if selected
+        if xslt_id is not None:
+            xslt = xsl_transformation_api.get_by_id(str(xslt_id))
+
         for data_id in data_list:
             data = data_api.get_by_id(data_id, user=user)
             # modify the data temporarily with the new targeted template
             data.template = target_template
+
+            if xslt_id is not None:
+                # modify the xml content temporarily with the transformed data content
+                data.xml_content = xsl_transformation_api.xsl_transform(
+                    data.xml_content, xslt.name
+                )
 
             try:
                 # save the new template for the data if the migration is True
@@ -65,11 +77,14 @@ def async_migration_task(data_list, template_id, user_id, migrate):
 
 
 @shared_task
-def async_template_migration_task(templates, target_template_id, user_id, migrate):
+def async_template_migration_task(
+    templates, xslt_id, target_template_id, user_id, migrate
+):
     """Async task which perform a migration / validation of all the data which belong to the given template id list
 
     Args:
         templates:
+        xslt_id:
         target_template_id:
         user_id
         migrate: (boolean) Perform the migration
@@ -90,6 +105,9 @@ def async_template_migration_task(templates, target_template_id, user_id, migrat
             user = user_api.get_user_by_id(user_id)
             # get the target template
             target_template = system_api.get_template_by_id(target_template_id)
+            # get xsl transformation if selected
+            if xslt_id is not None:
+                xslt = xsl_transformation_api.get_by_id(str(xslt_id))
 
             for template_id in templates:
 
@@ -115,6 +133,13 @@ def async_template_migration_task(templates, target_template_id, user_id, migrat
 
                     # modify the data temporarily with the new targeted template
                     data.template = target_template
+
+                    if xslt_id is not None:
+                        # modify the xml content temporarily with the transformed data content
+                        data.xml_content = xsl_transformation_api.xsl_transform(
+                            data.xml_content, xslt.name
+                        )
+
                     # check if the data is valid
                     try:
                         # save the new template for the data if the migration is True
