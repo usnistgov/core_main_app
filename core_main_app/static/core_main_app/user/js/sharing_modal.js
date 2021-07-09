@@ -22,7 +22,7 @@ initSharingModal = function(sharingConfigurationFunction, sharingButtonId, shari
         $(sharingButtonId+" i").removeClass();
         $(sharingButtonId+" i").addClass("fas fa-spinner fa-pulse");
 
-        if (sharingConfigurationFunction()) {
+        if (sharingConfigurationFunction(this)) {
             $(sharingModalId).modal("show");
         }
 
