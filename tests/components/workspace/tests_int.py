@@ -59,7 +59,7 @@ class TestCreateWorkspace(MongoIntegrationTransactionTestCase):
 
 
 class TestIsWorkspaceGlobal(MongoIntegrationTransactionTestCase):
-    """ Test Is Workspace Global """
+    """Test Is Workspace Global"""
 
     def test_is_workspace_global_true(self):
         # Context
@@ -79,7 +79,7 @@ class TestIsWorkspaceGlobal(MongoIntegrationTransactionTestCase):
 
 
 class TestGetGlobalWorkspace(MongoIntegrationTransactionTestCase):
-    """ Test Get Global Workspace """
+    """Test Get Global Workspace"""
 
     def test_get_global_workspace(self):
         # Context
@@ -107,7 +107,7 @@ class TestGetGlobalWorkspace(MongoIntegrationTransactionTestCase):
 
 
 class TestCheckIfWorkspaceCanBeChanged(MongoIntegrationTransactionTestCase):
-    """ Test Check If Workspace Can Be Changed """
+    """Test Check If Workspace Can Be Changed"""
 
     def test_check_if_workspace_can_be_changed_return_true_if_workspace_is_none_and_allow_public_is_false(
         self,

@@ -10,17 +10,27 @@ def req_link(external_url):
     return "==".join(egg_link.rsplit("-", 1))
 
 
+def read_requirements_file(requirements_filepath):
+    requirements = list()
+
+    if not exists(requirements_filepath):
+        return requirements
+
+    with open(requirements_filepath) as requirements_fp:
+        requirements += requirements_fp.read().splitlines()
+
+    return requirements
+
+
+reqs_dev = join(dirname(__file__), "requirements.dev.txt")
 reqs_default = join(dirname(__file__), "requirements.txt")
 reqs_core = join(dirname(__file__), "requirements.core.txt")
 required = []
 
-if exists(reqs_default):
-    with open(reqs_default) as f:
-        required += f.read().splitlines()
+required += read_requirements_file(reqs_default)
+required += read_requirements_file(reqs_core)
 
-if exists(reqs_core):
-    with open(reqs_core) as f:
-        required += f.read().splitlines()
+extra = read_requirements_file(reqs_dev)
 
 dep_links = [r for r in required if r.startswith("https://")]
 required = [req_link(r) if r.startswith("https://") else r for r in required]
@@ -43,4 +53,5 @@ setup(
     include_package_data=True,
     install_requires=required,
     dependency_links=dep_links,
+    extra_requires={"develop": extra},
 )

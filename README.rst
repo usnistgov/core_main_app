@@ -75,7 +75,7 @@ Add the ``core_main_app`` urls to the Django project as such.
 
 
 Internationalization (i18n)
-===========================
+---------------------------
 
 Before running the project, don't forget to compile the translation file at
 project level. i18n uses the ``gettext`` package, so please make sure it is
@@ -85,36 +85,8 @@ installed prior to using this command.
 
     $ python manage.py compilemessages
 
-Tests
-=====
-
-To play the test suite created for this package, download the git repository
-and run:
-
-.. code:: bash
-
-  $ python runtests.py
-
-Documentation
-=============
-
-Documentation has been generated using Sphinx. To generate a local version of
-the docs, please clone the repository and run:
-
-.. code:: bash
-
-  $ cd docs/
-  $ make html
-
-Or, directly using Sphinx:
-
-.. code:: bash
-
-  $ cd docs/
-  $ sphinx-build -b html . ../dist/_docs
-
 Enable SSL connection
-=====================
+---------------------
 
 Please follow these steps to configure the connection to any system running over HTTPS (including the local instance).
 
@@ -130,7 +102,7 @@ Please follow these steps to configure the connection to any system running over
   $ c_rehash certs/
 
 Enable Redis Server authentication
-==================================
+----------------------------------
 
 Please follow these steps to enable authentication on the redis server.
 Depending on the way Redis is started on the machine, the method may differ.
@@ -150,7 +122,7 @@ You should then update the CDCS settings using a Redis connection URL with the p
 
 
 Enable SMTP server
-==================
+------------------
 
 Please follow these steps to configure the SMTP server:
 
@@ -170,3 +142,59 @@ Please follow these steps to configure the SMTP server:
   EMAIL_USE_TLS = True
   EMAIL_HOST_USER = 'testsite_app'
   EMAIL_HOST_PASSWORD = 'mys3cr3tp4ssw0rd'
+
+Documentation
+=============
+
+Documentation has been generated using Sphinx. To generate a local version of
+the docs, please clone the repository and run:
+
+.. code:: bash
+
+  $ cd docs/
+  $ make html
+
+Or, directly using Sphinx:
+
+.. code:: bash
+
+  $ cd docs/
+  $ sphinx-build -b html . ../dist/_docs
+
+Development
+===========
+
+Development version
+-------------------
+
+A development version of this package is available, containing tests and formatting
+dependencies. To automatically install the development version, run:
+
+.. code:: bash
+
+  $ pip install .[develop]
+
+The development dependencies are located in ``requirements.dev.txt`` and can be installed
+manually using:
+
+.. code:: bash
+
+  $ pip install -r requirements.dev.txt
+
+Code formatting
+---------------
+
+To ensure consistent formatting across the codebase, the development team is using
+`black <https://github.com/psf/black>`_. When contributing to this package, install black
+as part of the development packages and run ``black /path/to/core_main_app`` before
+submitting the contribution.
+
+Tests
+-----
+
+To play the test suite created for this package, download the git repository, install the
+development dependencies and run:
+
+.. code:: bash
+
+  $ python runtests.py
