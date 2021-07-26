@@ -53,5 +53,5 @@ setup(
     include_package_data=True,
     install_requires=required,
     dependency_links=dep_links,
-    extra_requires={"develop": extra},
+    extras_require={"develop": extra},
 )
