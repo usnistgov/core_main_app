@@ -13,13 +13,49 @@ def load_attribute_map_from_env():
 
     """
     return {
-        "identifier": "urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
-        "to": {
-            "uid": os.environ["SAML_ATTRIBUTES_MAP_UID"],
-            "mail": os.environ["SAML_ATTRIBUTES_MAP_EMAIL"],
-            "sn": os.environ["SAML_ATTRIBUTES_MAP_SN"],
-            "cn": os.environ["SAML_ATTRIBUTES_MAP_CN"],
+        "identifier": os.environ["SAML_ATTRIBUTES_MAP_IDENTIFIER"],
+        "fro": {
+            os.environ["SAML_ATTRIBUTES_MAP_UID"]: os.environ[
+                "SAML_ATTRIBUTES_MAP_UID_FIELD"
+            ],
+            os.environ["SAML_ATTRIBUTES_MAP_EMAIL"]: os.environ[
+                "SAML_ATTRIBUTES_MAP_EMAIL_FIELD"
+            ],
+            os.environ["SAML_ATTRIBUTES_MAP_SN"]: os.environ[
+                "SAML_ATTRIBUTES_MAP_SN_FIELD"
+            ],
+            os.environ["SAML_ATTRIBUTES_MAP_CN"]: os.environ[
+                "SAML_ATTRIBUTES_MAP_CN_FIELD"
+            ],
         },
+        "to": {
+            os.environ["SAML_ATTRIBUTES_MAP_UID_FIELD"]: os.environ[
+                "SAML_ATTRIBUTES_MAP_UID"
+            ],
+            os.environ["SAML_ATTRIBUTES_MAP_EMAIL_FIELD"]: os.environ[
+                "SAML_ATTRIBUTES_MAP_EMAIL"
+            ],
+            os.environ["SAML_ATTRIBUTES_MAP_SN_FIELD"]: os.environ[
+                "SAML_ATTRIBUTES_MAP_SN"
+            ],
+            os.environ["SAML_ATTRIBUTES_MAP_CN_FIELD"]: os.environ[
+                "SAML_ATTRIBUTES_MAP_CN"
+            ],
+        },
+    }
+
+
+def load_django_attribute_map_from_env():
+    """Load attribute mapping for Django from environment (https://djangosaml2.readthedocs.io/contents/setup.html#users-attributes-and-account-linking)
+
+    Returns:
+
+    """
+    return {
+        os.environ["SAML_ATTRIBUTES_MAP_UID_FIELD"]: ("username",),
+        os.environ["SAML_ATTRIBUTES_MAP_EMAIL_FIELD"]: ("email",),
+        os.environ["SAML_ATTRIBUTES_MAP_CN_FIELD"]: ("first_name",),
+        os.environ["SAML_ATTRIBUTES_MAP_SN_FIELD"]: ("last_name",),
     }
 
 
@@ -64,6 +100,17 @@ def load_saml_config_from_env(server_uri, base_dir):
                     "SAML_LOGOUT_REQUESTS_SIGNED", "True"
                 ).lower()
                 == "true",
+                "logout_responses_signed": os.getenv(
+                    "SAML_LOGOUT_RESPONSES_SIGNED", "False"
+                ).lower()
+                == "true",
+                "signing_algorithm": os.getenv(
+                    "SAML_SIGNING_ALGORITHM",
+                    "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512",
+                ),
+                "digest_algorithm": os.getenv(
+                    "SAML_DIGEST_ALGORITHM", "http://www.w3.org/2001/04/xmlenc#sha512"
+                ),
                 "endpoints": {
                     # url and binding to the assertion consumer service view
                     # do not change the binding or service name
@@ -91,8 +138,16 @@ def load_saml_config_from_env(server_uri, base_dir):
         # One metadata store or many ...
         "metadata": {
             "remote": [
-                {"url": os.getenv("SAML_METADATA_REMOTE")},
-            ],
+                {
+                    "url": os.environ["SAML_METADATA_REMOTE"],
+                    "cert": os.getenv("SAML_METADATA_REMOTE_CERT"),
+                },
+            ]
+            if "SAML_METADATA_REMOTE" in os.environ
+            else [],
+            "local": [os.environ["SAML_METADATA_LOCAL"]]
+            if "SAML_METADATA_LOCAL" in os.environ
+            else [],
         },
         # Signing
         "key_file": os.getenv("SAML_KEY_FILE", None),  # private part
