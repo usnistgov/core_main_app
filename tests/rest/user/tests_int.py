@@ -2,17 +2,13 @@
 """
 from rest_framework.status import HTTP_404_NOT_FOUND
 
+from core_main_app.rest.user import views as user_rest_views
 from core_main_app.utils.integration_tests.integration_base_transaction_test_case import (
     MongoIntegrationTransactionTestCase,
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
-from tests.components.user.fixtures.fixtures import UserFixtures
-from core_main_app.rest.user import views as user_rest_views
-from core_main_app.utils.integration_tests.integration_base_test_case import (
-    MongoIntegrationBaseTestCase,
-)
-
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
+from tests.components.user.fixtures.fixtures import UserFixtures
 
 user_fixture = UserFixtures()
 
@@ -28,7 +24,9 @@ class TestUserDetail(MongoIntegrationTransactionTestCase):
 
         # Act
         response = RequestMock.do_request_get(
-            user_rest_views.UserDetail.as_view(), mock_user, param={"pk": user.id}
+            user_rest_views.UserRetrieveUpdateView.as_view(),
+            mock_user,
+            param={"pk": user.id},
         )
 
         # Assert
@@ -41,7 +39,9 @@ class TestUserDetail(MongoIntegrationTransactionTestCase):
 
         # Act
         response = RequestMock.do_request_get(
-            user_rest_views.UserDetail.as_view(), mock_user, param={"pk": user.id}
+            user_rest_views.UserRetrieveUpdateView.as_view(),
+            mock_user,
+            param={"pk": user.id},
         )
 
         # Assert

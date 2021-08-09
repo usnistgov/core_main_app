@@ -1007,7 +1007,6 @@ class TestDataChangeOwner(MongoIntegrationBaseTestCase):
 
 class TestDataPermissions(MongoIntegrationTransactionTestCase):
     fixture = fixture_data_workspace
-    admin_user = UserFixtures().create_super_user("admin")
 
     def setUp(self):
         """Insert needed data.
@@ -1018,6 +1017,7 @@ class TestDataPermissions(MongoIntegrationTransactionTestCase):
         super().setUp()
         self.fixture.insert_data()
         self.fixture.generate_workspace_with_perm()
+        self.admin_user = UserFixtures().create_super_user("admin")
 
     def test_get_returns_correct_permissions_if_user_is_superuser(self):
         # Arrange

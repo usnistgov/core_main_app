@@ -305,22 +305,24 @@ urlpatterns = [
         name="core_main_app_rest_workspace_remove_group_write",
     ),
     re_path(
-        r"^user/(?P<pk>[\w-]+)/$",
-        user_views.UserDetail.as_view(),
-        name="core_main_app_user_detail",
-    ),
-    re_path(
         r"^workspace/(?P<workspace_id>\w+)/data/$",
         data_views.DataListByWorkspace.as_view(),
         name="core_main_app_rest_data_workspace_list",
     ),
     re_path(
+        r"^user/$",
+        user_views.UserListCreateView.as_view(),
+        name="core_main_app_user_list_create",
+    ),
+    re_path(
+        r"^user/(?P<pk>[\w-]+)/$",
+        user_views.UserRetrieveUpdateView.as_view(),
+        name="core_main_app_user_retrieve_update",
+    ),
+    re_path(
         r"^blob/(?P<pk>\w+)/change-owner/(?P<user_id>\w+)$",
         blob_views.BlobChangeOwner.as_view(),
         name="core_main_app_rest_blob_change_owner",
-    ),
-    re_path(
-        r"^user/$", user_views.UserList.as_view(), name="core_main_app_user_detail"
     ),
     re_path(
         r"^template/xsl_rendering/(?P<pk>\w+)/set_default_xslt/(?P<xslt_id>\w+)/$",
