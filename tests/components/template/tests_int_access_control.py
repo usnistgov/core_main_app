@@ -510,9 +510,9 @@ class TestTemplateGetAll(MongoIntegrationBaseTestCase):
 
     def setUp(self):
         self.anonymous_user = create_mock_user(user_id=None, is_anonymous=True)
-        self.user1 = create_mock_user(user_id="1")
-        self.staff_user1 = create_mock_user(user_id="1", is_staff=True)
-        self.superuser1 = create_mock_user(user_id="1", is_superuser=True)
+        self.user = create_mock_user(user_id="1")
+        self.staff_user = create_mock_user(user_id="2", is_staff=True)
+        self.superuser = create_mock_user(user_id="3", is_superuser=True)
         self.fixture.insert_data()
         self.template_id_list = [
             str(self.fixture.user1_template.id),
@@ -520,24 +520,29 @@ class TestTemplateGetAll(MongoIntegrationBaseTestCase):
             str(self.fixture.global_template.id),
         ]
 
-    def test_get_all_as_anonymous_raises_acces_control_error(self):
+    def test_get_all_as_anonymous_returns_empty_list(self):
         mock_request = create_mock_request(user=self.anonymous_user)
-        with self.assertRaises(AccessControlError):
-            template_api.get_all(request=mock_request)
+        templates = template_api.get_all(request=mock_request)
+        self.assertEquals(templates.count(), 0)
 
-    def test_get_all_as_user_raises_acces_control_error(self):
-        mock_request = create_mock_request(user=self.user1)
-        with self.assertRaises(AccessControlError):
-            template_api.get_all(request=mock_request)
+    def test_get_all_as_user_returns_accessible_templates(self):
+        mock_request = create_mock_request(user=self.user)
+        templates = template_api.get_all(request=mock_request)
+        self.assertEquals(templates.count(), 2)
+        self.assertTrue(self.fixture.user1_template in list(templates))
+        self.assertTrue(self.fixture.global_template in list(templates))
 
-    def test_get_all_as_staff_raises_acces_control_error(self):
-        mock_request = create_mock_request(user=self.staff_user1)
-        with self.assertRaises(AccessControlError):
-            template_api.get_all(request=mock_request)
+    def test_get_all_as_staff_returns_accessible_templates(self):
+        mock_request = create_mock_request(user=self.staff_user)
+        templates = template_api.get_all(request=mock_request)
+        self.assertEquals(templates.count(), 2)
+        self.assertTrue(self.fixture.user2_template in list(templates))
+        self.assertTrue(self.fixture.global_template in list(templates))
 
     def test_get_all_as_superuser_returns_all_templates(self):
-        mock_request = create_mock_request(user=self.superuser1)
+        mock_request = create_mock_request(user=self.superuser)
         templates = template_api.get_all(request=mock_request)
+        self.assertEquals(templates.count(), 3)
         self.assertTrue(self.fixture.user1_template in list(templates))
         self.assertTrue(self.fixture.user2_template in list(templates))
         self.assertTrue(self.fixture.global_template in list(templates))

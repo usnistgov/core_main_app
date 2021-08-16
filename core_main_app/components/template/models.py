@@ -23,18 +23,25 @@ class Template(Document):
     meta = {"allow_inheritance": True}
 
     @staticmethod
-    def get_all(is_cls):
+    def get_all(is_cls, users=None):
         """Return all templates.
 
-        Returns:
+        Args:
+            is_cls (bool): True if filtering by templates only.
+            users (list|None): List of users having access to the template.
 
+        Returns:
+            list<Template> - List of template following the query parameters.
         """
-        if is_cls:
-            # will return all Template object only
-            return Template.objects(_cls=Template.__name__).all()
-        else:
-            # will return all inherited object
-            return Template.object().all()
+        template_query_kwargs = dict()
+
+        if is_cls:  # will return all Template object only
+            template_query_kwargs["_cls"] = Template.__name__
+
+        if users is not None:  # select specific user if it is defined
+            template_query_kwargs["user__in"] = users
+
+        return Template.objects(**template_query_kwargs).all()
 
     @staticmethod
     def get_by_id(template_id):

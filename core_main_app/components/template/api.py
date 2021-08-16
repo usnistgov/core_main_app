@@ -147,14 +147,14 @@ def get_all_accessible_by_id_list(template_id_list, request):
     )
 
 
-@access_control(is_superuser)
+@access_control(can_read_list)
 def get_all(request, is_cls=True):
     """List all templates.
 
     Returns:
 
     """
-    return Template.get_all(is_cls)
+    return Template.get_all(is_cls, users=get_accessible_owners(request=request))
 
 
 @access_control(can_write)
