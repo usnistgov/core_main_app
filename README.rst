@@ -198,3 +198,15 @@ development dependencies and run:
 .. code:: bash
 
   $ python runtests.py
+
+Sending email
+-------------
+
+To test the email being sent, console backend will print the email instead of sending the real email.
+By default, the console backend writes to stdout
+
+To specify this backend, add the following in your settings:
+
+.. code:: python
+
+  EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
