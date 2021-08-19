@@ -455,3 +455,15 @@ def custom_password_reset_complete(
         context.update(extra_context)
 
     return render(request, template_name, context=context, assets=assets)
+
+
+def saml2_failure(request, exception=None, status=403, **kwargs):
+    """Renders a simple template with an error message."""
+
+    return render(
+        request,
+        "core_main_app/user/login/saml2_error.html",
+        context={
+            "with_website_features": "core_website_app" in INSTALLED_APPS,
+        },
+    )

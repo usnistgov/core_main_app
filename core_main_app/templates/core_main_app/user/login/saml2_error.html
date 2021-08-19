@@ -1,0 +1,8 @@
+<h1>Permission Denied</h1>
+
+Sorry, you are not allowed to access this app.
+<hr/>
+{% if data.with_website_features %}
+To report a problem with your access, please <a href="{% url 'core_website_app_contact' %}">contact</a> your
+system administrator or <a href="{% url 'core_website_app_account_request' %}">request an account</a>.
+{% endif %}
