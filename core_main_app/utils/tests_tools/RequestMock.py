@@ -140,7 +140,8 @@ class RequestMock(object):
             return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
         # Set the user
         request.user = user
-
+        # Set the session
+        request.session = Session(session_key="KEY")
         # i18n. Get django validation messages.
         get_wsgi_application()
         # Do not use CSRF checks.
