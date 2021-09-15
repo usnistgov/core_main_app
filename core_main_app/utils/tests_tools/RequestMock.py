@@ -31,7 +31,9 @@ class RequestMock(object):
         return RequestMock._do_request("GET", view, user, data, param)
 
     @staticmethod
-    def do_request_post(view, user, data=None, param=None):
+    def do_request_post(
+        view, user, data=None, param=None, content_type="application/json"
+    ):
         """Execute a POST HTTP request.
         Args:
             view: View method called by the request.
@@ -42,55 +44,66 @@ class RequestMock(object):
         Returns:
             Response: Request response.
         """
-        return RequestMock._do_request("POST", view, user, data, param)
+        return RequestMock._do_request("POST", view, user, data, param, content_type)
 
     @staticmethod
-    def do_request_put(view, user, data=None, param=None):
+    def do_request_put(
+        view, user, data=None, param=None, content_type="application/json"
+    ):
         """Execute a PUT HTTP request.
         Args:
             view: View method called by the request.
             user: User for the request.
             data: Data.
             param: View method params.
+            content_type: Content-Type of the data passed.
 
         Returns:
             Response: Request response.
 
         """
-        return RequestMock._do_request("PUT", view, user, data, param)
+        return RequestMock._do_request("PUT", view, user, data, param, content_type)
 
     @staticmethod
-    def do_request_delete(view, user, data=None, param=None):
+    def do_request_delete(
+        view, user, data=None, param=None, content_type="application/json"
+    ):
         """Execute a DELETE HTTP request.
         Args:
             view: View method called by the request.
             user: User for the request.
             data: Data.
             param: View method params.
+            content_type: Content-Type of the data passed.
 
         Returns:
             Response: Request response.
 
         """
-        return RequestMock._do_request("DELETE", view, user, data, param)
+        return RequestMock._do_request("DELETE", view, user, data, param, content_type)
 
     @staticmethod
-    def do_request_patch(view, user, data=None, param=None):
+    def do_request_patch(
+        view, user, data=None, param=None, content_type="application/json"
+    ):
         """Execute a PATCH HTTP request.
         Args:
             view: View method called by the request.
             user: User for the request.
             data: Data.
             param: View method params.
+            content_type: Content-Type of the data passed.
 
         Returns:
             Response: Request response.
 
         """
-        return RequestMock._do_request("PATCH", view, user, data, param)
+        return RequestMock._do_request("PATCH", view, user, data, param, content_type)
 
     @staticmethod
-    def _do_request(http_method, view, user, data=None, param=None):
+    def _do_request(
+        http_method, view, user, data=None, param=None, content_type="application/json"
+    ):
         """Execute the http_method request.
         Args:
             http_method: HTTP method.
@@ -98,32 +111,31 @@ class RequestMock(object):
             user: User for the request.
             data: Data.
             param: View method params.
+            content_type: Content-Type of the data passed.
 
         Returns:
             Response: Request response.
 
         """
+        # Pre-process data depending on its content-type. GET request don't have
+        # a content-type and the processing is bypassed in this case.
+        if http_method != "GET":
+            if content_type == "application/json":
+                data = json.dumps(data)
+
         url = "/dummy_url"
         factory = APIRequestFactory()
         # Request by http_method.
         if http_method == "GET":
             request = factory.get(url, data=data)
         elif http_method == "POST":
-            request = factory.post(
-                url, data=json.dumps(data), content_type="application/json"
-            )
+            request = factory.post(url, data=data, content_type=content_type)
         elif http_method == "PUT":
-            request = factory.put(
-                url, data=json.dumps(data), content_type="application/json"
-            )
+            request = factory.put(url, data=data, content_type=content_type)
         elif http_method == "DELETE":
-            request = factory.delete(
-                url, data=json.dumps(data), content_type="application/json"
-            )
+            request = factory.delete(url, data=data, content_type=content_type)
         elif http_method == "PATCH":
-            request = factory.patch(
-                url, data=json.dumps(data), content_type="application/json"
-            )
+            request = factory.patch(url, data=data, content_type=content_type)
         else:
             return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
         # Set the user
