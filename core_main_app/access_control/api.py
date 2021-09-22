@@ -375,7 +375,7 @@ def _check_can_read(document, user):
         # workspace is not set
         else:
             raise AccessControlError(
-                "The user doesn't have enough rights to access this."
+                "The user doesn't have enough rights to access this document."
             )
 
 
