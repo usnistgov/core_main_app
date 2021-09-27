@@ -73,6 +73,30 @@ class TemplateXslRendering(Document):
             raise exceptions.ModelError(str(e))
 
     @staticmethod
+    def get_by_template_hash(template_hash):
+        """Get TemplateXslRendering by its template hash.
+
+        Args:
+            template_hash: Template hash.
+
+        Returns:
+            The TemplateXslRendering instance.
+
+        Raises:
+            DoesNotExist: The TemplateXslRendering doesn't exist.
+            ModelError: Internal error during the process.
+
+        """
+        try:
+            return TemplateXslRendering.objects.get(
+                template__in=Template.objects.filter(hash=template_hash)
+            )  # TODO: use template__hash with Django
+        except mongoengine_errors.DoesNotExist as e:
+            raise exceptions.DoesNotExist(str(e))
+        except Exception as e:
+            raise exceptions.ModelError(str(e))
+
+    @staticmethod
     def get_all():
         """Get all TemplateXslRendering.
 

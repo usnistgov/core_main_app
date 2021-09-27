@@ -227,35 +227,18 @@ def get_by_template_id(template_id):
     return TemplateXslRendering.get_by_template_id(template_id)
 
 
-def get_by_template_hash(template_hash, request=None):
+def get_by_template_hash(template_hash):
     """Get TemplateXslRendering by its template hash.
 
     Args:
         template_hash: Template hash.
-        request:
 
     Returns:
         The TemplateXslRendering instance.
 
     """
-    instance = None
-    # Get list of templates with the given hash
-    templates = template_api.get_all_accessible_by_hash(template_hash, request=request)
-    # Check if one of the templates has a xslt. Stop when found.
     # FIXME: Check if this process is okay (no solutions to distinguish templates from same hash)
-    for template in templates:
-        try:
-            instance = TemplateXslRendering.get_by_template_id(template.id)
-            break
-        except exceptions.DoesNotExist as e:
-            logger.warning("get_by_template_hash threw an exception: ".format(str(e)))
-
-    if instance is None:
-        raise exceptions.DoesNotExist(
-            "No TemplateXslRendering found with the given template hash"
-        )
-
-    return instance
+    return TemplateXslRendering.get_by_template_hash(template_hash)
 
 
 def get_all():

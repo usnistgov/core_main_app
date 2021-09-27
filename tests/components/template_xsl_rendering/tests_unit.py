@@ -6,15 +6,12 @@ from bson.objectid import ObjectId
 from mock.mock import Mock, patch
 
 from core_main_app.commons import exceptions
-from core_main_app.components.template import api as template_api
 from core_main_app.components.template.models import Template
 from core_main_app.components.template_xsl_rendering import (
     api as template_xsl_rendering_api,
 )
 from core_main_app.components.template_xsl_rendering.models import TemplateXslRendering
 from core_main_app.components.xsl_transformation.models import XslTransformation
-from core_main_app.utils.tests_tools.MockUser import create_mock_user
-from core_main_app.utils.tests_tools.RequestMock import create_mock_request
 
 
 class TestTemplateXslRenderingUpsert(TestCase):
@@ -135,80 +132,55 @@ class TestTemplateXslRenderingGetByTemplateId(TestCase):
 
 
 class TestTemplateXslRenderingGetByTemplateHash(TestCase):
-    @patch.object(template_api, "get_all_accessible_by_hash")
-    @patch.object(TemplateXslRendering, "get_by_template_id")
-    def test_get_by_template_hash_returns_object(
-        self, mock_get_by_template_id, mock_get_all_accessible_by_hash
-    ):
+    @patch.object(TemplateXslRendering, "get_by_template_hash")
+    def test_get_by_template_hash_returns_object(self, mock_get_by_template_hash):
         # Arrange
-        mock_user = create_mock_user(user_id="1", is_superuser=True)
-        mock_request = create_mock_request(user=mock_user)
         mock_template_xsl_rendering = _create_mock_template_xsl_rendering()
-        mock_get_by_template_id.return_value = mock_template_xsl_rendering
-        mock_get_all_accessible_by_hash.return_value = [Template()]
+        mock_get_by_template_hash.return_value = mock_template_xsl_rendering
         template_hash = "fhf7595ddha0d"
 
         # Act
-        result = template_xsl_rendering_api.get_by_template_hash(
-            template_hash, request=mock_request
-        )
+        result = template_xsl_rendering_api.get_by_template_hash(template_hash)
 
         # Assert
         self.assertIsInstance(result, TemplateXslRendering)
 
-    @patch.object(template_api, "get_all_accessible_by_hash")
-    @patch.object(TemplateXslRendering, "get_by_template_id")
+    @patch.object(TemplateXslRendering, "get_by_template_hash")
     def test_get_by_template_hash_raises_exception_if_object_does_not_exist(
-        self, mock_get_by_template_id, mock_get_all_accessible_by_hash
+        self, mock_get_by_template_hash
     ):
         # Arrange
-        mock_user = create_mock_user(user_id="1", is_superuser=True)
-        mock_request = create_mock_request(user=mock_user)
         mock_absent_hash = "dummy_hash"
-        mock_get_all_accessible_by_hash.return_value = [Template()]
-
-        mock_get_by_template_id.side_effect = exceptions.DoesNotExist("Error.")
+        mock_get_by_template_hash.side_effect = exceptions.DoesNotExist("Error.")
 
         # Act + Assert
         with self.assertRaises(exceptions.DoesNotExist):
-            template_xsl_rendering_api.get_by_template_hash(
-                mock_absent_hash, request=mock_request
-            )
+            template_xsl_rendering_api.get_by_template_hash(mock_absent_hash)
 
-    @patch.object(template_api, "get_all_accessible_by_hash")
-    def test_get_by_template_hash_raises_exception_if_not_templates(
-        self, mock_get_all_accessible_by_hash
+    @patch.object(TemplateXslRendering, "get_by_template_hash")
+    def test_get_by_template_hash_returns_nothing_if_not_templates(
+        self, mock_get_by_template_hash
     ):
         # Arrange
-        mock_user = create_mock_user(user_id="1", is_superuser=True)
-        mock_request = create_mock_request(user=mock_user)
         mock_absent_hash = "dummy_hash"
-        mock_get_all_accessible_by_hash.return_value = []
+        mock_get_by_template_hash.return_value = []
 
-        # Act + Assert
-        with self.assertRaises(exceptions.DoesNotExist):
-            template_xsl_rendering_api.get_by_template_hash(
-                mock_absent_hash, request=mock_request
-            )
+        # Act
+        result = template_xsl_rendering_api.get_by_template_hash(mock_absent_hash)
+        # Assert
+        self.assertEqual(len(result), 0)
 
-    @patch.object(template_api, "get_all_accessible_by_hash")
-    @patch.object(TemplateXslRendering, "get_by_template_id")
+    @patch.object(TemplateXslRendering, "get_by_template_hash")
     def test_get_by_template_hash_raises_exception_if_internal_error(
-        self, mock_get_by_template_id, mock_get_all_accessible_by_hash
+        self, mock_get_by_template_hash
     ):
         # Arrange
-        mock_user = create_mock_user(user_id="1", is_superuser=True)
-        mock_request = create_mock_request(user=mock_user)
         mock_absent_hash = "dummy_hash"
-        mock_get_all_accessible_by_hash.return_value = [Template()]
-
-        mock_get_by_template_id.side_effect = exceptions.ModelError("Error.")
+        mock_get_by_template_hash.side_effect = exceptions.ModelError("Error.")
 
         # Act + Assert
         with self.assertRaises(exceptions.ModelError):
-            template_xsl_rendering_api.get_by_template_hash(
-                mock_absent_hash, request=mock_request
-            )
+            template_xsl_rendering_api.get_by_template_hash(mock_absent_hash)
 
 
 class TestTemplateXslRenderingGetAll(TestCase):
