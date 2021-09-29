@@ -1,6 +1,6 @@
 /** Admin migration data CSS **/
 
-#template-table {
+#template-table, .xslt-clear {
     cursor: pointer;
 }
 

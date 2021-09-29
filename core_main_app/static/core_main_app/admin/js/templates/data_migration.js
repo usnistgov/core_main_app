@@ -329,6 +329,16 @@ let viewXsltList = function(isDataSelected) {
         $('#xslt-text').show();
         $('input[name="xslt-radio"]').prop('checked',false);
     }
+    // create the radio button listener
+    $(".xslt-radio").on("click", (event) => {
+        // enable the clear button
+        $('.xslt-clear').show();
+    });
+    // create the clear button listener
+    $(".xslt-clear").on("click", (event) => {
+        $('input[name="xslt-radio"]').prop('checked',false);
+        $('.xslt-clear').hide ();
+    });
 }
 
 /**
@@ -644,6 +654,7 @@ let resetState = function() {
     $('input[name="xslt-radio"]').prop('checked',false);
     $("#xslt-content").hide();
     $('#xslt-text').show();
+    $('.xslt-clear').hide ();
 }
 
 /**
