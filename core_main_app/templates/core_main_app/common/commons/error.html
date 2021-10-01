@@ -1,5 +1,6 @@
 {%load get_attribute%}
 <h1>Error {{ data|get_attribute:'status_code' }}</h1>
+{% include 'core_main_app/common/buttons/back_to_previous.html' %}
 <p>
     {{ data|get_attribute:'error' }}
 </p>

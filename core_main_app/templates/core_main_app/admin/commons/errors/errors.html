@@ -4,8 +4,10 @@
 {% block box_title %}Error{% endblock %}
 
 {% block box_body %}
-    <div class="alert alert-danger">
+    {% include 'core_main_app/common/buttons/back_to_previous.html' %}
+    <div class="alert alert-danger" style="width: 75%;">
         <i class="fas fa-warning"></i>
         {{ data | get_attribute:"error" }}
     </div>
+
 {% endblock %}
