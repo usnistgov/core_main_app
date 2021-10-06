@@ -1,5 +1,6 @@
 """ Template access control
 """
+from django.db.models import Q
 
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.template.models import Template
@@ -111,16 +112,19 @@ def get_accessible_owners(request):
     if not request or request.user.is_anonymous:
         if CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
             # global templates only
-            return [None]
+            return Q(user__isnull=True)
         else:
             # nothing
-            return []
+            return Q(user__in=[])
     if request.user.is_superuser:
         # no restrictions
         return None
     else:
         # global and owned templates
-        return [None, str(request.user.id)]
+        in_q_list = Q()
+        in_q_list |= Q(user__isnull=True)
+        in_q_list |= Q(user=str(request.user.id))
+        return in_q_list
 
 
 def can_read_list(func, *args, **kwargs):

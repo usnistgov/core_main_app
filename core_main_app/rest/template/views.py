@@ -28,7 +28,7 @@ class TemplateDetail(APIView):
             Template
         """
         try:
-            return template_api.get(pk, request=request)
+            return template_api.get_by_id(pk, request=request)
         except exceptions.DoesNotExist:
             raise Http404
 
@@ -85,7 +85,7 @@ class TemplateDownload(APIView):
             Template
         """
         try:
-            return template_api.get(pk, request=request)
+            return template_api.get_by_id(pk, request=request)
         except exceptions.DoesNotExist:
             raise Http404
 

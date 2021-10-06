@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.http.response import JsonResponse
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django_mongoengine.views import UpdateView, DeleteView, CreateView
+from django.views.generic import CreateView, UpdateView, DeleteView
 
 from core_main_app.commons import exceptions
 from core_main_app.components.template_version_manager import (
@@ -26,7 +26,7 @@ class AddObjectModalView(CreateView):
 
     template_name = "core_main_app/common/commons/form.html"
     form_class = None
-    document = None
+    model = None
     success_url = None
     success_message = None
 
@@ -75,7 +75,7 @@ class EditObjectModalView(UpdateView):
 
     template_name = "core_main_app/common/commons/form.html"
     form_class = None
-    document = None
+    model = None
     success_url = None
     success_message = None
 
@@ -121,7 +121,7 @@ class DeleteObjectModalView(DeleteView):
     """
 
     template_name = "core_main_app/common/commons/form_delete.html"
-    document = None
+    model = None
     field_for_name = None
     success_url = None
     success_message = None
@@ -184,8 +184,8 @@ class DeleteObjectModalView(DeleteView):
 @method_decorator(login_required, name="dispatch")
 class EditTemplateVersionManagerView(EditObjectModalView):
     form_class = EditTemplateForm
-    document = TemplateVersionManager
-    success_url = reverse_lazy("admin:core_main_app_templates")
+    model = TemplateVersionManager
+    success_url = reverse_lazy("core-admin:core_main_app_templates")
     success_message = "Name edited with success."
 
     def _save(self, form):

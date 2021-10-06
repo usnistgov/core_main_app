@@ -3,10 +3,11 @@
 from logging import getLogger
 from urllib.parse import urlparse
 
+from django.conf import settings
+
 from core_main_app.commons import exceptions
 from core_main_app.settings import SERVER_URI
 from core_main_app.utils.requests_utils import requests_utils
-from django.conf import settings
 
 logger = getLogger(__name__)
 

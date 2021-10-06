@@ -2,24 +2,6 @@
 """
 
 
-def add_access_criteria(query, accessible_workspaces, user):
-    """Add access criteria to the query.
-
-    Args:
-        query:
-        accessible_workspaces:
-        user:
-
-    Returns:
-
-    """
-    access_criteria = _get_accessible_criteria(accessible_workspaces, user)
-    # add access criteria to original query
-    query = {"$and": [query, access_criteria]}
-    # return query
-    return query
-
-
 def add_aggregate_access_criteria(query, accessible_workspaces, user):
     """Add access criteria to an aggregation query.
 

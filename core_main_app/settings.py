@@ -65,34 +65,6 @@ EMAIL_SUBJECT_PREFIX = getattr(settings, "EMAIL_SUBJECT_PREFIX", "[CURATOR] ")
 """ :py:class:`str`: Prefix for easy classification of emails.
 """
 
-MONGO_HOST = getattr(settings, "MONGO_HOST", "localhost")
-""" :py:class:`str`: MongoDB host.
-"""
-
-MONGO_PORT = getattr(settings, "MONGO_PORT", "27017")
-""" :py:class:`str`: MongoDB port.
-"""
-
-MONGO_USER = getattr(settings, "MONGO_USER", "")
-""" :py:class:`str`: MongoDB user.
-"""
-
-MONGO_PASSWORD = getattr(settings, "MONGO_PASSWORD", "")
-""" :py:class:`str`: MongoDB password.
-"""
-
-MONGO_DB = getattr(settings, "MONGO_DB", "cdcs")
-""" :py:class:`str`: MongoDB database.
-"""
-
-mongodb_uri_default = (
-    f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@{MONGO_HOST}:{MONGO_PORT}/{MONGO_DB}"
-)
-
-MONGODB_URI = getattr(settings, "MONGODB_URI", mongodb_uri_default)
-""" :py:class:`str`: MongoDB connection URI. Automatically generated from other parameters.
-"""
-
 USE_TZ = getattr(settings, "USE_TZ", True)
 """ :py:class:`bool`: Activate use of timezones.
 """
@@ -101,22 +73,6 @@ SEARCHABLE_DATA_OCCURRENCES_LIMIT = getattr(
     settings, "SEARCHABLE_DATA_OCCURRENCES_LIMIT", None
 )
 """ :py:class:`int` | :py:attr:`None`: Limit for number of occurent to be returned by a search.
-"""
-
-BLOB_HOST = getattr(settings, "BLOB_HOST", "GRIDFS")
-""" :py:class:`str`: Type of file storage.
-"""
-
-BLOB_HOST_URI = getattr(settings, "BLOB_HOST_URI", MONGODB_URI)
-""" :py:class:`str`: File storage system URI.
-"""
-
-BLOB_HOST_USER = getattr(settings, "BLOB_HOST_USER", None)
-""" :py:class:`str`: User for file storage.
-"""
-
-BLOB_HOST_PASSWORD = getattr(settings, "BLOB_HOST_PASSWORD", None)
-""" :py:class:`str`: Password for file storage.
 """
 
 # Lock

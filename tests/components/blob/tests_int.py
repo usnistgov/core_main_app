@@ -1,6 +1,5 @@
 """ Int test Blob
 """
-from bson.objectid import ObjectId
 
 from core_main_app.commons import exceptions
 from core_main_app.components.blob.models import Blob
@@ -40,7 +39,7 @@ class TestBlobGetById(MongoIntegrationBaseTestCase):
     def test_blob_get_by_id_raises_does_not_exist_error_if_not_found(self):
         # Act # Assert
         with self.assertRaises(exceptions.DoesNotExist):
-            Blob.get_by_id(ObjectId())
+            Blob.get_by_id(-1)
 
     def test_blob_get_by_id_return_blob_if_found(self):
         # Act

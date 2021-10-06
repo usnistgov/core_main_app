@@ -1,6 +1,6 @@
 """Integration tests for xsl transformation rest api
 """
-from bson import ObjectId
+
 from rest_framework import status
 
 import core_main_app.rest.xsl_transformation.views as xsl_views
@@ -107,7 +107,7 @@ class TestGetXslTransformationDetail(MongoIntegrationBaseTestCase):
     def test_get_raise_404_when_not_found(self):
         # Arrange
         user = create_mock_user("0", True)
-        self.param = {"pk": str(ObjectId())}
+        self.param = {"pk": -1}
 
         # Act
         response = RequestMock.do_request_get(
@@ -117,10 +117,10 @@ class TestGetXslTransformationDetail(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_get_raise_500_sever_error_when_general_error_occured(self):
+    def test_get_raise_500_sever_error_when_general_error_occurred(self):
         # Arrange
         user = create_mock_user("0", True)
-        self.param = {"pk": "0"}
+        self.param = {"pk": "test"}
 
         # Act
         response = RequestMock.do_request_get(
@@ -141,7 +141,7 @@ class TestDeleteXslTransformationDetail(MongoIntegrationBaseTestCase):
     def test_delete_raise_403_if_user_is_unauthorized(self):
         # Arrange
         user = create_mock_user("0")
-        self.param = {"pk": str(ObjectId())}
+        self.param = {"pk": 1}
 
         # Act
         response = RequestMock.do_request_delete(
@@ -154,7 +154,7 @@ class TestDeleteXslTransformationDetail(MongoIntegrationBaseTestCase):
     def test_delete_raise_404_when_not_found(self):
         # Arrange
         user = create_mock_user("0", True, True)
-        self.param = {"pk": str(ObjectId())}
+        self.param = {"pk": -1}
 
         # Act
         response = RequestMock.do_request_delete(
@@ -164,10 +164,10 @@ class TestDeleteXslTransformationDetail(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_post_raise_500_sever_error_when_general_error_occured(self):
+    def test_post_raise_500_sever_error_when_general_error_occurred(self):
         # Arrange
         user = create_mock_user("0", True, True)
-        self.param = {"pk": "0"}
+        self.param = {"pk": "test"}
 
         # Act
         response = RequestMock.do_request_delete(
@@ -201,7 +201,7 @@ class TestPatchXslTransformationDetail(MongoIntegrationBaseTestCase):
     def test_patch_raise_403_if_user_is_authorized(self):
         # Arrange
         user = create_mock_user("0")
-        self.param = {"pk": str(ObjectId())}
+        self.param = {"pk": 1}
 
         # Act
         response = RequestMock.do_request_patch(
@@ -214,7 +214,7 @@ class TestPatchXslTransformationDetail(MongoIntegrationBaseTestCase):
     def test_patch_raise_404_when_not_found(self):
         # Arrange
         user = create_mock_user("0", True, True)
-        self.param = {"pk": str(ObjectId())}
+        self.param = {"pk": -1}
 
         # Act
         response = RequestMock.do_request_patch(
@@ -224,18 +224,18 @@ class TestPatchXslTransformationDetail(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_patch_raise_500_sever_error_when_general_error_occured(self):
+    def test_patch_raise_400_sever_error_when_general_error_occurred(self):
         # Arrange
         user = create_mock_user("0", True, True)
-        self.param = {"pk": "0"}
+        self.param = {"pk": 1}
 
         # Act
         response = RequestMock.do_request_patch(
-            xsl_views.XslTransformationDetail.as_view(), user, self.data, self.param
+            xsl_views.XslTransformationDetail.as_view(), user, param=self.param
         )
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_patch_returns_200_when_data_are_valid_with_authorized_user(self):
         # Arrange

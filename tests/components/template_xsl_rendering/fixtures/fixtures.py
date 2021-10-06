@@ -36,28 +36,29 @@ class TemplateXslRenderingFixtures(FixtureInterface):
         Returns:
 
         """
-        # NOTE: no real file to avoid using unsupported GridFS mock
-
         self.template_1 = Template(
             filename="template_1.xsd", content="content1", hash="hash1"
-        ).save()
+        )
+        self.template_1.save()
         self.template_2 = Template(
             filename="template_2.xsd", content="content2", hash="hash2"
-        ).save()
-        self.template_xsl_rendering_1 = TemplateXslRendering(
-            template=str(self.template_1.id)
-        ).save()
+        )
+        self.template_2.save()
+        self.template_xsl_rendering_1 = TemplateXslRendering(template=self.template_1)
+        self.template_xsl_rendering_1.save()
         self.xsl_transformation_3 = XslTransformation(
             name="xsl_transformation_3",
             filename="xsl_transformation_3",
             content="content_3",
-        ).save()
+        )
+        self.xsl_transformation_3.save()
 
         self.template_xsl_rendering_2 = TemplateXslRendering(
-            template=str(self.template_2.id),
-            default_detail_xslt=str(self.xsl_transformation_3.id),
-            list_detail_xslt=[str(self.xsl_transformation_3.id)],
-        ).save()
+            template=self.template_2,
+            default_detail_xslt=self.xsl_transformation_3,
+        )
+        self.template_xsl_rendering_2.save()
+        self.template_xsl_rendering_2.list_detail_xslt.set([self.xsl_transformation_3])
 
         self.template_xsl_rendering_collection = [
             self.template_xsl_rendering_1,
@@ -70,18 +71,18 @@ class TemplateXslRenderingFixtures(FixtureInterface):
         Returns:
 
         """
-        # NOTE: no real file to avoid using unsupported GridFS mock
-
         self.xsl_transformation_1 = XslTransformation(
             name="xsl_transformation_1",
             filename="xsl_transformation_1",
             content="content1",
-        ).save()
+        )
+        self.xsl_transformation_1.save()
         self.xsl_transformation_2 = XslTransformation(
             name="xsl_transformation_2",
             filename="xsl_transformation_2",
             content="content_2",
-        ).save()
+        )
+        self.xsl_transformation_2.save()
 
         self.xsl_transformation_collection = [
             self.xsl_transformation_1,

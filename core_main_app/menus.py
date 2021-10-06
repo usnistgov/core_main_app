@@ -24,7 +24,7 @@ Menu.add_item(
     "admin",
     MenuItem(
         "Dashboard",
-        reverse("admin:core_main_app_admin_home"),
+        reverse("core-admin:core_main_app_admin_home"),
         icon="tachometer-alt",
         weight=-90000,
     ),
@@ -39,22 +39,24 @@ Menu.add_item(
     "admin",
     MenuItem(
         "Login message",
-        reverse("admin:core_main_app_login_page"),
+        reverse("core-admin:core_main_app_login_page"),
         icon="file-alt",
         weight=-70000,
     ),
 )
 
 templates_children = (
-    MenuItem("Template List", reverse("admin:core_main_app_templates"), icon="list"),
+    MenuItem(
+        "Template List", reverse("core-admin:core_main_app_templates"), icon="list"
+    ),
     MenuItem(
         "Upload New Template",
-        reverse("admin:core_main_app_upload_template"),
+        reverse("core-admin:core_main_app_upload_template"),
         icon="upload",
     ),
     MenuItem(
         "Data Migration",
-        reverse("admin:core_main_app_data_migration"),
+        reverse("core-admin:core_main_app_data_migration"),
         icon="exchange-alt",
     ),
 )
@@ -62,9 +64,11 @@ templates_children = (
 Menu.add_item("admin", MenuItem("TEMPLATES", None, children=templates_children))
 
 xslt_children = (
-    MenuItem("XSLT List", reverse("admin:core_main_app_xslt"), icon="list"),
+    MenuItem("XSLT List", reverse("core-admin:core_main_app_xslt"), icon="list"),
     MenuItem(
-        "Upload New XSLT", reverse("admin:core_main_app_upload_xslt"), icon="upload"
+        "Upload New XSLT",
+        reverse("core-admin:core_main_app_upload_xslt"),
+        icon="upload",
     ),
 )
 

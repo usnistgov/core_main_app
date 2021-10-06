@@ -4,10 +4,10 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
-from django.urls import reverse
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.template import loader
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.html import escape as html_escape
 from django.views.generic import View
@@ -22,7 +22,6 @@ from core_main_app.components.template_version_manager import (
 from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
 )
-from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.components.web_page.models import WebPage
 from core_main_app.components.xsl_transformation import api as xslt_transformation_api
 from core_main_app.components.xsl_transformation.models import XslTransformation
@@ -122,10 +121,14 @@ def manage_template_versions(request, version_manager_id):
     """
     try:
         # get the version manager
-        version_manager = version_manager_api.get(version_manager_id, request=request)
+        version_manager = template_version_manager_api.get_by_id(
+            version_manager_id, request=request
+        )
         context = get_context_manage_template_versions(version_manager)
         if "core_parser_app" in settings.INSTALLED_APPS:
-            context.update({"module_url": "admin:core_parser_app_template_modules"})
+            context.update(
+                {"module_url": "core-admin:core_parser_app_template_modules"}
+            )
 
         assets = {
             "js": [
@@ -187,8 +190,8 @@ def upload_template(request):
 
     context = {
         "object_name": "Template",
-        "url": reverse("admin:core_main_app_upload_template"),
-        "redirect_url": reverse("admin:core_main_app_templates"),
+        "url": reverse("core-admin:core_main_app_upload_template"),
+        "redirect_url": reverse("core-admin:core_main_app_templates"),
     }
 
     # method is POST
@@ -232,18 +235,18 @@ def upload_template_version(request, version_manager_id):
         ]
     }
 
-    template_version_manager = version_manager_api.get(
+    template_version_manager = template_version_manager_api.get_by_id(
         version_manager_id, request=request
     )
     context = {
         "object_name": "Template",
         "version_manager": template_version_manager,
         "url": reverse(
-            "admin:core_main_app_upload_template_version",
+            "core-admin:core_main_app_upload_template_version",
             kwargs={"version_manager_id": template_version_manager.id},
         ),
         "redirect_url": reverse(
-            "admin:core_main_app_manage_template_versions",
+            "core-admin:core_main_app_manage_template_versions",
             kwargs={"version_manager_id": template_version_manager.id},
         ),
     }
@@ -291,7 +294,7 @@ def _save_template(request, assets, context):
         template_version_manager_api.insert(
             template_version_manager, template, request=request
         )
-        return HttpResponseRedirect(reverse("admin:core_main_app_templates"))
+        return HttpResponseRedirect(reverse("core-admin:core_main_app_templates"))
     except exceptions.XSDError as xsd_error:
         return handle_xsd_errors(
             request, assets, context, xsd_error, xsd_data, xsd_file.name
@@ -344,7 +347,7 @@ def _save_template_version(request, assets, context, template_version_manager):
         fragment = f"#from={version_manager_string}&to={template.id}"
 
         return HttpResponseRedirect(
-            reverse("admin:core_main_app_data_migration") + fragment
+            reverse("core-admin:core_main_app_data_migration") + fragment
         )
     except exceptions.XSDError as xsd_error:
         return handle_xsd_errors(
@@ -394,7 +397,7 @@ class XSLTView(View):
         context = {
             "object_name": "XSLT",
             "xslt": xslt_transformation_api.get_all(),
-            "update_url": reverse("admin:core_main_app_upload_xslt"),
+            "update_url": reverse("core-admin:core_main_app_upload_xslt"),
         }
 
         return admin_render(
@@ -453,7 +456,7 @@ class UploadXSLTView(View):
             )
             xslt_transformation_api.upsert(xslt)
 
-            return HttpResponseRedirect(reverse("admin:core_main_app_xslt"))
+            return HttpResponseRedirect(reverse("core-admin:core_main_app_xslt"))
         except exceptions.NotUniqueError:
             self.context.update({"errors": html_escape("This name already exists.")})
             return admin_render(

@@ -1,10 +1,9 @@
 """Forms for admin views
 """
 from django import forms
-from django_mongoengine.forms import DocumentForm
+from django.forms import ModelForm
 
 from core_main_app.commons.validators import ExtensionValidator
-from core_main_app.components.template import api as template_api
 from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
 )
@@ -13,7 +12,7 @@ from core_main_app.components.xsl_transformation.models import XslTransformation
 from core_main_app.views.admin.commons.upload.forms import UploadForm
 
 
-class EditTemplateForm(DocumentForm):
+class EditTemplateForm(ModelForm):
     title = forms.CharField(
         label="Name",
         widget=forms.TextInput(
@@ -22,11 +21,11 @@ class EditTemplateForm(DocumentForm):
     )
 
     class Meta(object):
-        document = TemplateVersionManager
+        model = TemplateVersionManager
         fields = ["title"]
 
 
-class EditXSLTForm(DocumentForm):
+class EditXSLTForm(ModelForm):
     name = forms.CharField(
         label="Name",
         widget=forms.TextInput(
@@ -35,7 +34,7 @@ class EditXSLTForm(DocumentForm):
     )
 
     class Meta(object):
-        document = XslTransformation
+        model = XslTransformation
         fields = ["name"]
 
 

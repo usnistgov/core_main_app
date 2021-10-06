@@ -3,14 +3,12 @@
 
 from rest_framework import status
 
-
 from core_main_app.rest.template_xsl_rendering import views
 from core_main_app.utils.integration_tests.integration_base_test_case import (
     MongoIntegrationBaseTestCase,
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
-
 from tests.components.template_xsl_rendering.fixtures.fixtures import (
     TemplateXslRenderingFixtures,
 )
@@ -42,10 +40,10 @@ class TestTemplateXslRenderingAddDetailXslt(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
             response.data["default_detail_xslt"],
-            str(self.fixture.xsl_transformation_1.id),
+            self.fixture.xsl_transformation_1.id,
         )
         self.assertIn(
-            str(self.fixture.xsl_transformation_1.id), response.data["list_detail_xslt"]
+            self.fixture.xsl_transformation_1.id, response.data["list_detail_xslt"]
         )
 
     def test_add_detail_xslt(self):
@@ -71,7 +69,7 @@ class TestTemplateXslRenderingAddDetailXslt(MongoIntegrationBaseTestCase):
         )
         self.assertEqual(len(response.data["list_detail_xslt"]), 2)
         self.assertIn(
-            str(self.fixture.xsl_transformation_1.id), response.data["list_detail_xslt"]
+            self.fixture.xsl_transformation_1.id, response.data["list_detail_xslt"]
         )
 
     def test_add_detail_xslt_if_object_does_not_exist(self):
@@ -124,7 +122,7 @@ class TestTemplateXslRenderingSetDefaultDetailXslt(MongoIntegrationBaseTestCase)
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
-            response.data["default_detail_xslt"],
+            str(response.data["default_detail_xslt"]),
             str(self.fixture.xsl_transformation_1.id),
         )
 
@@ -227,7 +225,7 @@ class TestTemplateXslRenderingRemoveDetailXslt(MongoIntegrationBaseTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
-            response.data["default_detail_xslt"],
+            str(response.data["default_detail_xslt"]),
             str(self.fixture.xsl_transformation_1.id),
         )
         self.assertNotIn(
@@ -302,13 +300,15 @@ class TestTemplateXslRenderingSetListDetailXslt(MongoIntegrationBaseTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
-            response.data["default_detail_xslt"],
+            str(response.data["default_detail_xslt"]),
             str(self.fixture.xsl_transformation_1.id),
         )
         self.assertEqual(len(response.data["list_detail_xslt"]), 2)
         self.assertIn(
-            str(self.fixture.xsl_transformation_1.id), response.data["list_detail_xslt"]
+            str(self.fixture.xsl_transformation_1.id),
+            str(response.data["list_detail_xslt"]),
         )
         self.assertIn(
-            str(self.fixture.xsl_transformation_2.id), response.data["list_detail_xslt"]
+            str(self.fixture.xsl_transformation_2.id),
+            str(response.data["list_detail_xslt"]),
         )

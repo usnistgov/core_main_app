@@ -1,6 +1,6 @@
 """Serializers used throughout the Rest API
 """
-from rest_framework_mongoengine.serializers import DocumentSerializer
+from rest_framework.serializers import ModelSerializer
 
 from core_main_app.components.template.api import init_template_with_dependencies
 from core_main_app.components.template.models import Template
@@ -14,7 +14,7 @@ from core_main_app.rest.template.serializers import TemplateSerializer
 from core_main_app.rest.template_version_manager.utils import load_dependencies
 
 
-class TemplateVersionManagerSerializer(DocumentSerializer):
+class TemplateVersionManagerSerializer(ModelSerializer):
     """
     Template Version Manager serializer
     """
@@ -29,6 +29,7 @@ class TemplateVersionManagerSerializer(DocumentSerializer):
             "current",
             "is_disabled",
             "disabled_versions",
+            "dependencies",
         ]
 
     def create(self, validated_data):

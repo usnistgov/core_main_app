@@ -1,6 +1,7 @@
 """Mailing util
 """
 from django.template import loader
+
 import core_main_app.utils.notifications.tasks.task_mail as task
 from core_main_app.settings import SERVER_EMAIL, USE_BACKGROUND_TASK
 from core_main_app.templatetags.stripjs import stripjs

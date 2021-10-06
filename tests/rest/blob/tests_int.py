@@ -1,13 +1,12 @@
 """ Integration Test for Blob Rest API
 """
-import unittest
 from os.path import join, dirname, abspath
 
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import override_settings
 from mock import patch
 from rest_framework import status
 
-from core_main_app.components.blob import api as blob_api
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.workspace.models import Workspace
 from core_main_app.rest.blob import views
@@ -59,7 +58,7 @@ class TestBlobList(MongoIntegrationBaseTestCase):
         super(TestBlobList, self).setUp()
         self.data = {
             "filename": "file.txt",
-            "blob": open(join(RESOURCES_PATH, "test.txt"), "r"),
+            "blob": SimpleUploadedFile("blob.txt", b"blob"),
         }
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
@@ -151,7 +150,6 @@ class TestBlobList(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(len(response.data), 0)
 
-    @unittest.skip("need to mock GridFS Blob Host")
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_post_returns_http_201(self):
         # Arrange
@@ -159,25 +157,24 @@ class TestBlobList(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_post(
-            views.BlobList.as_view(), user, data=self.data
+            views.BlobList.as_view(), user, data=self.data, content_type=None
         )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    @unittest.skip("need to mock GridFS Blob Host")
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_post_adds_an_entry_in_database(self):
         # Arrange
         user = create_mock_user("1")
 
         # Act
-        response = RequestMock.do_request_post(
-            views.BlobList.as_view(), user, data=self.data
+        RequestMock.do_request_post(
+            views.BlobList.as_view(), user, data=self.data, content_type=None
         )
 
         # Assert
-        self.assertEqual(len(blob_api.get_all()), 4)
+        self.assertEqual(len(Blob.get_all()), 4)
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_post_incorrect_file_parameter_returns_http_400(self):
@@ -233,7 +230,7 @@ class TestBlobDetail(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_get(
-            views.BlobDetail.as_view(), user, param={"pk": "507f1f77bcf86cd799439011"}
+            views.BlobDetail.as_view(), user, param={"pk": -1}
         )
 
         # Assert
@@ -252,7 +249,6 @@ class TestBlobDetail(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @unittest.skip("need to mock GridFS Blob Host")
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_delete_returns_http_204(self):
         # Arrange
@@ -266,19 +262,18 @@ class TestBlobDetail(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-    @unittest.skip("need to mock GridFS Blob Host")
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_delete_deletes_one_blob_from_database(self):
         # Arrange
         user = create_mock_user("1")
 
         # Act
-        response = RequestMock.do_request_delete(
+        RequestMock.do_request_delete(
             views.BlobDetail.as_view(), user, param={"pk": str(self.fixture.blob_1.id)}
         )
 
         # Assert
-        self.assertEqual(len(blob_api.get_all()), 2)
+        self.assertEqual(len(Blob.get_all()), 2)
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_delete_wrong_id_returns_http_404(self):
@@ -287,7 +282,7 @@ class TestBlobDetail(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_delete(
-            views.BlobDetail.as_view(), user, param={"pk": "507f1f77bcf86cd799439011"}
+            views.BlobDetail.as_view(), user, param={"pk": -1}
         )
 
         # Assert
@@ -306,7 +301,6 @@ class TestBlobDetail(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @unittest.skip("need to mock GridFS Blob Host")
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_delete_other_user_as_superuser_returns_http_204(self):
         # Arrange
@@ -328,7 +322,6 @@ class TestBlobDownload(MongoIntegrationBaseTestCase):
         super(TestBlobDownload, self).setUp()
         self.blob = open(join(RESOURCES_PATH, "test.txt"), "r").read()
 
-    @unittest.skip("need to mock GridFS Blob Host")
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_get_returns_http_200(self):
         # Arrange
@@ -351,15 +344,14 @@ class TestBlobDownload(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_get(
-            views.BlobDownload.as_view(), user, param={"pk": "507f1f77bcf86cd799439011"}
+            views.BlobDownload.as_view(), user, param={"pk": -1}
         )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    @unittest.skip("need to mock GridFS Blob Host")
     @override_settings(ROOT_URLCONF="core_main_app.urls")
-    def test_get_other_user_blob_returns_http_200(self):
+    def test_get_other_user_blob_returns_http_403(self):
         # Arrange
         user = create_mock_user("2")
 
@@ -371,7 +363,7 @@ class TestBlobDownload(MongoIntegrationBaseTestCase):
         )
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class TestBlobDeleteList(MongoIntegrationBaseTestCase):
@@ -396,7 +388,6 @@ class TestBlobDeleteList(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @unittest.skip("need to mock GridFS Blob Host")
     def test_post_a_list_containing_other_user_blob_as_superuser_returns_http_204(self):
         # Arrange
         user = create_mock_user("1")
@@ -677,7 +668,7 @@ class TestBlobAssign(MongoIntegrationBaseTestCase):
     @patch.object(Workspace, "get_by_id")
     def test_assign_bad_blob_id_returns_http_404(self, workspace_get_by_id):
         # Arrange
-        fake_blob_id = "507f1f77bcf86cd799439011"
+        fake_blob_id = -1
         user = create_mock_user("1", is_superuser=True)
         workspace_get_by_id.return_value = self.fixture.workspace_2
 
@@ -694,7 +685,7 @@ class TestBlobAssign(MongoIntegrationBaseTestCase):
     @patch.object(Blob, "get_by_id")
     def test_assign_bad_workspace_id_returns_http_404(self, blob_get_by_id):
         # Arrange
-        fake_workspace_id = "507f1f77bcf86cd799439011"
+        fake_workspace_id = -1
         blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
         user = create_mock_user(blob.user_id, is_superuser=True)
         blob_get_by_id.return_value = blob

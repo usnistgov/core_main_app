@@ -75,7 +75,7 @@ class TemplateVersionManagerDetail(APIView):
             TemplateVersionManager
         """
         try:
-            return version_manager_api.get(pk, request=request)
+            return template_version_manager_api.get_by_id(pk, request=request)
         except exceptions.DoesNotExist:
             raise Http404
 

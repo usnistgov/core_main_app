@@ -121,14 +121,14 @@ class TestGetWorkspace(SimpleTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @patch.object(workspace_api, "get_by_id")
+    @patch.object(workspace_api, "get_all_by_owner")
     @patch.object(WorkspaceSerializer, "data")
     def test_get_staff_returns_http_200(
-        self, mock_workspace_api_get_by_id, mock_data_serializer_data
+        self, mock_workspace_api_get_all_by_owner, mock_data_serializer_data
     ):
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_workspace_api_get_by_id.return_value = None
+        mock_workspace_api_get_all_by_owner.return_value = None
         mock_data_serializer_data.return_value = []
 
         # Act
@@ -139,14 +139,14 @@ class TestGetWorkspace(SimpleTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    @patch.object(workspace_api, "get_by_id")
+    @patch.object(workspace_api, "get_all_by_owner")
     @patch.object(WorkspaceSerializer, "data")
     def test_get_authenticated_returns_http_200(
-        self, mock_workspace_api_get_by_id, mock_data_serializer_data
+        self, mock_workspace_api_get_all_by_owner, mock_data_serializer_data
     ):
         # Context
         user = create_mock_user("1")
-        mock_workspace_api_get_by_id.return_value = None
+        mock_workspace_api_get_all_by_owner.return_value = None
         mock_data_serializer_data.return_value = []
 
         # Act

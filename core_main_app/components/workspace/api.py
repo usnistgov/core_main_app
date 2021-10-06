@@ -27,7 +27,8 @@ def create_and_save(title, owner_id=None, is_public=False):
     workspace = _create_workspace(title, owner_id, is_public)
 
     try:
-        return workspace.save()
+        workspace.save()
+        return workspace
     except Exception as ex:
         # Rollback permissions
         permission_api.delete_permission(workspace.read_perm_id)

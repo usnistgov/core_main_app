@@ -53,7 +53,8 @@ def upsert(xsl_transformation):
     elif not has_xsl_namespace(xsl_transformation.content):
         raise exceptions.ApiError("XSLT namespace not found in the uploaded file.")
     else:
-        return xsl_transformation.save_object()
+        xsl_transformation.save_object()
+        return xsl_transformation
 
 
 def delete(xsl_transformation):

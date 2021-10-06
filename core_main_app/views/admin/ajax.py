@@ -18,7 +18,6 @@ from core_main_app.components.template_version_manager import (
 from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
 )
-from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.components.xsl_transformation import api as xsl_transformation_api
 from core_main_app.components.xsl_transformation.models import XslTransformation
 from core_main_app.views.admin.forms import EditXSLTForm
@@ -56,7 +55,7 @@ def resolve_dependencies(request):
 
         # get the version manager or create a new one
         if version_manager_id != "":
-            template_version_manager = version_manager_api.get(
+            template_version_manager = template_version_manager_api.get_by_id(
                 version_manager_id, request=request
             )
         else:
@@ -107,8 +106,8 @@ def _get_xsd_content_from_html(xsd_content):
 
 class EditXSLTView(EditObjectModalView):
     form_class = EditXSLTForm
-    document = XslTransformation
-    success_url = reverse_lazy("admin:core_main_app_xslt")
+    model = XslTransformation
+    success_url = reverse_lazy("core-admin:core_main_app_xslt")
     success_message = "XSLT edited with success."
 
     def _save(self, form):
@@ -126,8 +125,8 @@ class EditXSLTView(EditObjectModalView):
 
 
 class DeleteXSLTView(DeleteObjectModalView):
-    document = XslTransformation
-    success_url = reverse_lazy("admin:core_main_app_xslt")
+    model = XslTransformation
+    success_url = reverse_lazy("core-admin:core_main_app_xslt")
     success_message = "XSLT deleted with success."
     field_for_name = "name"
 

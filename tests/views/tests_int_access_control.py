@@ -3,8 +3,8 @@
 from django.contrib.auth.models import AnonymousUser
 from django.test import RequestFactory
 
-from core_main_app.components.data import api as data_api
 from core_main_app.components.blob import api as blob_api
+from core_main_app.components.data import api as data_api
 from core_main_app.utils.integration_tests.integration_base_test_case import (
     MongoIntegrationBaseTestCase,
 )

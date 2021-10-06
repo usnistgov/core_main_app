@@ -1,19 +1,26 @@
 """ Url router for the administration site
 """
 from django.contrib import admin
+from django.contrib.admin import AdminSite
 from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.sites.models import Site
 from django.urls import re_path
 from django.urls import reverse_lazy
 from django.views.generic.base import RedirectView
 
 import core_main_app.components.web_page_login.api as login_page_api
 from core_main_app.commons.enums import WEB_PAGE_TYPES
+from core_main_app.components.blob.models import Blob
+from core_main_app.components.data.models import Data
+from core_main_app.components.template.models import Template
+from core_main_app.components.template_version_manager.models import (
+    TemplateVersionManager,
+)
+from core_main_app.components.workspace.models import Workspace
+from core_main_app.components.xsl_transformation.models import XslTransformation
 from core_main_app.utils.rendering import admin_render
 from core_main_app.views.admin import views as admin_views, ajax as admin_ajax
 from core_main_app.views.admin.views import WebPageView
 from core_main_app.views.common import views as common_views
-
 
 admin_urls = [
     re_path(
@@ -22,7 +29,7 @@ admin_urls = [
             WebPageView.as_view(
                 api=login_page_api,
                 get_redirect="core_main_app/admin/web_page/login_page.html",
-                post_redirect="admin:core_main_app_login_page",
+                post_redirect="core-admin:core_main_app_login_page",
                 web_page_type=WEB_PAGE_TYPES["login"],
             )
         ),
@@ -68,8 +75,8 @@ admin_urls = [
             common_views.TemplateXSLRenderingView.as_view(
                 rendering=admin_render,
                 template_name="core_main_app/admin/templates_xslt/main.html",
-                save_redirect="admin:core_main_app_manage_template_versions",
-                back_to_url="admin:core_main_app_manage_template_versions",
+                save_redirect="core-admin:core_main_app_manage_template_versions",
+                back_to_url="core-admin:core_main_app_manage_template_versions",
             )
         ),
         name="core_main_app_template_xslt",
@@ -112,8 +119,20 @@ admin_urls = [
     ),
 ]
 
-urls = admin.site.get_urls()
-admin.site.get_urls = lambda: admin_urls + urls
 
-# Admin part for the Site model is not useful in this application
-admin.site.unregister(Site)
+admin.site.register(Data)
+admin.site.register(Blob)
+admin.site.register(Workspace)
+admin.site.register(TemplateVersionManager)
+admin.site.register(Template)
+admin.site.register(XslTransformation)
+
+
+class CoreAdminSite(AdminSite):
+    """Admin site for Core apps"""
+
+    def get_urls(self):
+        return admin_urls
+
+
+core_admin_site = CoreAdminSite(name="core-admin")

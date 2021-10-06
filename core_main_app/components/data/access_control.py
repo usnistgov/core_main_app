@@ -8,18 +8,16 @@ from core_main_app.access_control.api import (
     check_can_read_list,
     can_write_in_workspace,
 )
-from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.settings import (
     CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT,
     VERIFY_DATA_ACCESS,
 )
-from core_main_app.utils.labels import get_data_label
+from core_main_app.settings import DATA_SORTING_FIELDS
+from core_main_app.utils.raw_query.django_raw_query import add_access_criteria
 from core_main_app.utils.raw_query.mongo_raw_query import (
-    add_access_criteria,
     add_aggregate_access_criteria,
 )
-from core_main_app.settings import DATA_SORTING_FIELDS
 
 logger = logging.getLogger(__name__)
 
@@ -55,25 +53,34 @@ def can_read_list_data_id(func, list_data_id, user):
     return list_data
 
 
-def can_read_data_query(func, query, user, order_by_field=DATA_SORTING_FIELDS):
+def can_read_data_query(
+    func,
+    query,
+    user,
+    workspace_filter=None,
+    user_filter=None,
+    order_by_field=DATA_SORTING_FIELDS,
+):
     """Can read a data, given a query.
 
     Args:
         func:
         query:
         user:
+        workspace_filter:
+        user_filter:
         order_by_field:
 
     Returns:
 
     """
-    if user.is_superuser:
-        return func(query, user, order_by_field)
-
     # update the query
-    query = _update_can_read_query(query, user)
+    query = _update_can_read_query(query, user, workspace_filter, user_filter)
     # get list of data
     data_list = func(query, user, order_by_field)
+    # if superuser, return list of data
+    if user.is_superuser:
+        return data_list
     # TODO: check if necessary because it is time consuming (checking that user has access to list of returned data)
     # check that user can access the list of data
     if VERIFY_DATA_ACCESS:
@@ -103,7 +110,7 @@ def can_read_aggregate_query(func, query, user):
     return data
 
 
-def _update_can_read_query(query, user):
+def _update_can_read_query(query, user, workspace_filter=None, user_filter=None):
     """Update query with access control parameters.
 
     Args:
@@ -116,7 +123,9 @@ def _update_can_read_query(query, user):
 
     accessible_workspaces = _get_read_accessible_workspaces_by_user(user)
     # update query with workspace criteria
-    query = add_access_criteria(query, accessible_workspaces, user)
+    query = add_access_criteria(
+        query, accessible_workspaces, user, workspace_filter, user_filter
+    )
     return query
 
 

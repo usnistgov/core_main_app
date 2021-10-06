@@ -4,11 +4,11 @@
 import datetime
 import threading
 
-from bson.dbref import DBRef
-from django_mongoengine import Document, fields
-from mongoengine import errors as mongoengine_errors
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import models
 
 from core_main_app.commons import exceptions
+from core_main_app.components.data.models import Data
 
 sem = threading.Semaphore()
 
@@ -45,7 +45,7 @@ class Lock(object):
         Returns:
         """
         database_lock_object = DatabaseLockObject()
-        database_lock_object.object = DBRef(object._class_name, object.id)
+        database_lock_object.object = object
         database_lock_object.user_id = str(user.id)
         database_lock_object.lock_date = datetime.datetime.now()
         database_lock_object.save()
@@ -69,20 +69,20 @@ class Lock(object):
         """
         try:
             return DatabaseLockObject.get_lock_by_object(object)
-        except mongoengine_errors.DoesNotExist as e:
+        except ObjectDoesNotExist as e:
             raise exceptions.DoesNotExist(str(e))
         except Exception as ex:
             raise exceptions.ModelError(str(ex))
 
 
-class DatabaseLockObject(Document):
+class DatabaseLockObject(models.Model):
     """
     Class DatabaseLockObject.
     """
 
-    object = fields.ReferenceField(Document, blank=False)
-    user_id = fields.StringField(blank=False)
-    lock_date = fields.DateTimeField(blank=False)
+    object = models.ForeignKey(Data, blank=False, on_delete=models.CASCADE)
+    user = models.CharField(blank=False, max_length=200)
+    lock_date = models.DateTimeField(blank=False)
 
     @staticmethod
     def get_lock_by_object(object):

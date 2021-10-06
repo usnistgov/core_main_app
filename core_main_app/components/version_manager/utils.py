@@ -11,7 +11,9 @@ def get_latest_version_name(version_manager):
     Returns:
 
     """
-    return get_version_name(version_manager.title, str(len(version_manager.versions)))
+    return get_version_name(
+        version_manager.title, str(len(version_manager.versions) + 1)
+    )
 
 
 def get_version_name(title, version_number):

@@ -1,13 +1,15 @@
 """ Authentication tests for Blob REST API
 """
+from io import BytesIO
+
 from django.test import SimpleTestCase
 from mock import Mock
 from mock.mock import patch
 from rest_framework import status
 
 import core_main_app.components.blob.api as blob_api
-from core_main_app.components.workspace import api as workspace_api
 from core_main_app.components.blob.models import Blob
+from core_main_app.components.workspace import api as workspace_api
 from core_main_app.rest.blob import views as blob_rest_views
 from core_main_app.rest.blob.serializers import BlobSerializer, DeleteBlobsSerializer
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
@@ -47,7 +49,8 @@ class TestBlobListGetPermissions(SimpleTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_authenticated_returns_http_200(self):
+    @patch("core_main_app.components.blob.api.get_all_by_user")
+    def test_authenticated_returns_http_200(self, mock_get_all):
         mock_user = create_mock_user("1")
 
         response = RequestMock.do_request_get(
@@ -56,7 +59,8 @@ class TestBlobListGetPermissions(SimpleTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_staff_returns_http_200(self):
+    @patch("core_main_app.components.blob.api.get_all_by_user")
+    def test_staff_returns_http_200(self, mock_get_all):
         mock_user = create_mock_user("1", is_staff=True)
 
         response = RequestMock.do_request_get(
@@ -208,7 +212,7 @@ class TestBlobDownloadGetPermissions(SimpleTestCase):
     @patch.object(blob_api, "get_by_id")
     def test_anonymous_returns_http_200(self, mock_blob_api_get_by_id):
         mock_blob = Mock()
-        mock_blob.blob = "blob_text"
+        mock_blob.blob = BytesIO("blob_text".encode("utf-8"))
         mock_blob.filename = "blob.txt"
 
         mock_blob_api_get_by_id.return_value = mock_blob
@@ -222,7 +226,7 @@ class TestBlobDownloadGetPermissions(SimpleTestCase):
     @patch.object(blob_api, "get_by_id")
     def test_authenticated_returns_http_200(self, mock_blob_api_get_by_id):
         mock_blob = Mock()
-        mock_blob.blob = "blob_text"
+        mock_blob.blob = BytesIO("blob_text".encode("utf-8"))
         mock_blob.filename = "blob.txt"
 
         mock_blob_api_get_by_id.return_value = mock_blob
@@ -238,7 +242,7 @@ class TestBlobDownloadGetPermissions(SimpleTestCase):
     @patch.object(blob_api, "get_by_id")
     def test_staff_returns_http_200(self, mock_blob_api_get_by_id):
         mock_blob = Mock()
-        mock_blob.blob = "blob_text"
+        mock_blob.blob = BytesIO("blob_text".encode("utf-8"))
         mock_blob.filename = "blob.txt"
 
         mock_blob_api_get_by_id.return_value = mock_blob

@@ -3,7 +3,6 @@ Template API
 """
 import logging
 
-from core_main_app.access_control.api import is_superuser
 from core_main_app.access_control.decorators import access_control
 from core_main_app.commons import exceptions
 from core_main_app.components.template.access_control import (
@@ -38,10 +37,11 @@ def upsert(template, request):
     is_schema_valid(template.content, request=request)
     # Get hash for the template
     template.hash = get_hash(template.content)
+    template.save_template()
     # Register local dependencies
     _register_local_dependencies(template, request=request)
     # Save template
-    return template.save()
+    return template
 
 
 @access_control(can_write)
@@ -84,7 +84,7 @@ def set_display_name(template, display_name, request):
 
 
 @access_control(can_read)
-def get(template_id, request):
+def get_by_id(template_id, request):
     """Get a template.
 
     Args:
@@ -177,18 +177,22 @@ def _register_local_dependencies(template, request):
 
     """
     # Clean all dependencies. Template content could have been changed.
-    del template.dependencies
+    template.dependencies.clear()
     # Get local dependencies
     local_dependencies = get_local_dependencies(template.content)
+    if not local_dependencies:
+        return
+
     for local_dependency in local_dependencies:
         try:
             # get the dependency
-            dependency_object = get(local_dependency, request=request)
+            dependency_object = get_by_id(local_dependency, request=request)
             # add the dependency
-            template.dependencies.append(dependency_object)
+            template.dependencies.add(dependency_object)
         except exceptions.DoesNotExist as e:
             logger.warning(
                 "Dependency {0} throw an exception: {1}".format(
                     local_dependency, str(e)
                 )
             )
+    template.save()

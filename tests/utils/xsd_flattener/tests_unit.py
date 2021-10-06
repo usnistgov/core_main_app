@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from django.urls import reverse
 from django.test.utils import override_settings
+from django.urls import reverse
 from mock.mock import patch
 
 from core_main_app.commons.exceptions import DoesNotExist
@@ -42,7 +42,7 @@ class TestXSDFlattenerDatabaseUrl(TestCase):
         self.assertTrue('<xs:element name="test"/>' in flat_string)
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
-    @patch.object(template_api, "get")
+    @patch.object(template_api, "get_by_id")
     def test_url_recognized_use_database(self, mock_get):
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
@@ -69,7 +69,7 @@ class TestXSDFlattenerDatabaseUrl(TestCase):
         self.assertTrue('<xs:element name="test"/>' in flat_string)
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
-    @patch.object(template_api, "get")
+    @patch.object(template_api, "get_by_id")
     @patch.object(XSDFlattenerRequestsURL, "get_dependency_content")
     def test_url_recognized_template_does_not_exist(
         self, mock_get_dependency_content, mock_get

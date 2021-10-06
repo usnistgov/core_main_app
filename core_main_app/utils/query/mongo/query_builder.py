@@ -3,8 +3,6 @@
 import json
 import logging
 
-from bson.objectid import ObjectId
-
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.utils.query.constants import (
     VISIBILITY_PUBLIC,
@@ -55,7 +53,7 @@ class QueryBuilder(object):
             if object_id == "None":
                 criteria_ids.append(None)
             else:
-                criteria_ids.append(ObjectId(object_id))
+                criteria_ids.append(object_id)
 
         self.criteria.append({object_name: {"$in": criteria_ids}})
 
@@ -73,9 +71,9 @@ class QueryBuilder(object):
                 {
                     "workspace": {
                         "$in": [
-                            ObjectId(workspace_id)
+                            workspace_id
                             for workspace_id in workspace_api.get_all_public_workspaces().values_list(
-                                "id"
+                                "id", flat=True
                             )
                         ]
                     }

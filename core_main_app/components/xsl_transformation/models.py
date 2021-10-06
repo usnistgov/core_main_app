@@ -1,22 +1,39 @@
 """ XslTransformation model
 """
-from mongoengine import errors as mongoengine_errors
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.validators import RegexValidator
+from django.db import models, IntegrityError
 
 from core_main_app.commons import exceptions
-from core_main_app.utils.validation.regex_validation import not_empty_or_whitespaces
-from django_mongoengine import fields, Document
+from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
 
 
-class XslTransformation(Document):
+class XslTransformation(models.Model):
     """XslTransformation object"""
 
-    name = fields.StringField(
-        blank=False, unique=True, validation=not_empty_or_whitespaces
+    name = models.CharField(
+        blank=False,
+        validators=[
+            RegexValidator(
+                regex=NOT_EMPTY_OR_WHITESPACES,
+                message="Title must not be empty or only whitespaces",
+                code="invalid_title",
+            ),
+        ],
+        max_length=200,
     )
-    filename = fields.StringField(blank=False, validation=not_empty_or_whitespaces)
-    content = fields.StringField(blank=False)
-
-    meta = {"allow_inheritance": True}
+    filename = models.CharField(
+        blank=False,
+        validators=[
+            RegexValidator(
+                regex=NOT_EMPTY_OR_WHITESPACES,
+                message="Title must not be empty or only whitespaces",
+                code="invalid_title",
+            ),
+        ],
+        max_length=200,
+    )
+    content = models.TextField(blank=False)
 
     def __str__(self):
         """String representation of an object.
@@ -46,7 +63,7 @@ class XslTransformation(Document):
         Returns:
             Object collection
         """
-        return XslTransformation.objects(pk__in=list_id)
+        return XslTransformation.objects.filter(pk__in=list_id)
 
     @staticmethod
     def get_by_name(xslt_name):
@@ -60,7 +77,7 @@ class XslTransformation(Document):
         """
         try:
             return XslTransformation.objects.get(name=xslt_name)
-        except mongoengine_errors.DoesNotExist as e:
+        except ObjectDoesNotExist as e:
             raise exceptions.DoesNotExist(str(e))
         except Exception as e:
             raise exceptions.ModelError(str(e))
@@ -77,8 +94,8 @@ class XslTransformation(Document):
 
         """
         try:
-            return XslTransformation.objects.get(pk=str(xslt_id))
-        except mongoengine_errors.DoesNotExist as e:
+            return XslTransformation.objects.get(pk=xslt_id)
+        except ObjectDoesNotExist as e:
             raise exceptions.DoesNotExist(str(e))
         except Exception as ex:
             raise exceptions.ModelError(str(ex))
@@ -92,7 +109,7 @@ class XslTransformation(Document):
         """
         try:
             return self.save()
-        except mongoengine_errors.NotUniqueError as e:
+        except IntegrityError as e:
             raise exceptions.NotUniqueError(str(e))
         except Exception as ex:
             raise exceptions.ModelError(str(ex))

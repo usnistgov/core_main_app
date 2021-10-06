@@ -36,19 +36,25 @@ class AccessControlTemplateFixture(FixtureInterface):
             hash="user1_template_hash",
             filename="user1_template.xsd",
             user="1",
-        ).save()
+            _cls="Template",
+        )
+        self.user1_template.save()
         self.user2_template = Template(
             content=xsd,
             hash="user2_template_hash",
             filename="user2_template.xsd",
             user="2",
-        ).save()
+            _cls="Template",
+        )
+        self.user2_template.save()
         self.global_template = Template(
             content=xsd,
             hash="global_template_hash",
             filename="global_template.xsd",
             user=None,
-        ).save()
+            _cls="Template",
+        )
+        self.global_template.save()
         self.template_collection = [
             self.user1_template,
             self.user2_template,

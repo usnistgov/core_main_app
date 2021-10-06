@@ -3,7 +3,6 @@
 from collections import OrderedDict
 from unittest.case import TestCase
 
-from bson import ObjectId
 from mock import patch
 
 import core_main_app.system.api as system_api
@@ -28,7 +27,7 @@ def _get_workspace():
     workspace.title = "title"
     workspace.owner = 1
     workspace.is_public = True
-    workspace.pk = ObjectId()
+    workspace.pk = 1
     return workspace
 
 
@@ -188,7 +187,7 @@ class TestGetAllDataInWorkspaces(TestCase):
     def test_invalid_workspace_returns_no_data(self, mock_get_all_by_list_workspace):
         mock_get_all_by_list_workspace.return_value = []
 
-        result = system_api.get_all_data_in_workspaces([ObjectId()])
+        result = system_api.get_all_data_in_workspaces([-1])
         self.assertEqual(len(result), 0)
 
 
@@ -290,7 +289,7 @@ class TestGetAllDataInWorkspacesForTemplates(TestCase):
         mock_get_all_by_templates_and_workspaces.return_value = []
 
         result = system_api.get_all_data_in_workspaces_for_templates(
-            [ObjectId()], [_get_template().pk]
+            [-1], [_get_template().pk]
         )
         self.assertEqual(len(result), 0)
 
@@ -301,6 +300,6 @@ class TestGetAllDataInWorkspacesForTemplates(TestCase):
         mock_get_all_by_templates_and_workspaces.return_value = []
 
         result = system_api.get_all_data_in_workspaces_for_templates(
-            [_get_workspace().pk], [ObjectId()]
+            [_get_workspace().pk], [-1]
         )
         self.assertEqual(len(result), 0)

@@ -4,8 +4,26 @@ import logging
 
 import core_main_app.permissions.rights as rights
 from core_main_app.access_control.api import has_perm_publish, can_write_in_workspace
+from core_main_app.access_control.exceptions import AccessControlError
 
 logger = logging.getLogger(__name__)
+
+
+def can_write_blob(func, blob, user):
+    """Does the user has permission to write blob.
+
+    Args:
+        func:
+        blob:
+        user:
+
+    Returns:
+
+    """
+    if user.is_anonymous:
+        raise AccessControlError("Unable to insert blob if not authenticated.")
+
+    return func(blob, user)
 
 
 def has_perm_publish_blob(user):

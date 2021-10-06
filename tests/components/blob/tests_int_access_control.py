@@ -168,7 +168,6 @@ class TestBlobDelete(MongoIntegrationBaseTestCase):
 
     fixture = fixture_blob
 
-    @unittest.skip("GridFS not supported by mongomock")
     @patch(
         "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
     )
@@ -183,7 +182,8 @@ class TestBlobDelete(MongoIntegrationBaseTestCase):
             fixture_blob.blob_collection[fixture_blob.USER_1_WORKSPACE_1], mock_user
         )
 
-    @unittest.skip("GridFS not supported by mongomock")
+    # FIXME: test is not true. Deleting own data in workspace without write access raises ACL error. FIXME note also found in ACL code.
+    @unittest.skip("Test is not True.")
     @patch(
         "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
     )
@@ -196,7 +196,6 @@ class TestBlobDelete(MongoIntegrationBaseTestCase):
             fixture_blob.blob_collection[fixture_blob.USER_1_WORKSPACE_1], mock_user
         )
 
-    @unittest.skip("GridFS not supported by mongomock")
     @patch(
         "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
     )
@@ -226,7 +225,6 @@ class TestBlobDelete(MongoIntegrationBaseTestCase):
                 fixture_blob.blob_collection[fixture_blob.USER_2_WORKSPACE_2], mock_user
             )
 
-    @unittest.skip("GridFS not supported by mongomock")
     @patch(
         "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
     )

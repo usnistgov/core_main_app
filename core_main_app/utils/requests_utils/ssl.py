@@ -1,8 +1,8 @@
 """ SSL utils
 """
 import logging
-from os.path import isdir, exists
 from os import listdir
+from os.path import isdir, exists
 
 from core_main_app.commons.exceptions import SSLError
 

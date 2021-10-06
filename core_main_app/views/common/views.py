@@ -268,11 +268,9 @@ class TemplateXSLRenderingView(View):
         """
         template_id = kwargs.pop("template_id")
         # Get the template
-        template = template_api.get(template_id, request=request)
+        template = template_api.get_by_id(template_id, request=request)
         # Get template information (version)
-        version_manager = version_manager_api.get_from_version(
-            template, request=request
-        )
+        version_manager = template.version_manager
         version_number = version_manager_api.get_version_number(
             version_manager, template_id, request=request
         )
@@ -282,7 +280,7 @@ class TemplateXSLRenderingView(View):
                 template_id
             )
             data = {
-                "id": template_xsl_rendering.id,
+                "id": str(template_xsl_rendering.id),
                 "template": str(template.id),
                 "list_xslt": template_xsl_rendering.list_xslt.id
                 if template_xsl_rendering.list_xslt
@@ -291,9 +289,9 @@ class TemplateXSLRenderingView(View):
                 if template_xsl_rendering.default_detail_xslt
                 else None,
                 "list_detail_xslt": [
-                    xslt.id for xslt in template_xsl_rendering.list_detail_xslt
+                    xslt.id for xslt in template_xsl_rendering.list_detail_xslt.all()
                 ]
-                if template_xsl_rendering.list_detail_xslt
+                if template_xsl_rendering.list_detail_xslt.count()
                 else None,
             }
         except (Exception, exceptions.DoesNotExist):
@@ -316,11 +314,12 @@ class TemplateXSLRenderingView(View):
         }
 
         self.context = {
-            "template_title": version_manager.title,
+            "template_title": template.version_manager.title,
             "template_version": version_number,
             "form_template_xsl_rendering": self.form_class(data),
             "url_back_to": reverse(
-                self.back_to_url, kwargs={"version_manager_id": version_manager.id}
+                self.back_to_url,
+                kwargs={"version_manager_id": template.version_manager.id},
             ),
         }
 
@@ -380,21 +379,21 @@ class TemplateXSLRenderingView(View):
             except (Exception, exceptions.DoesNotExist):
                 default_detail_xslt = None
 
+            # Get template by id
+            template = template_api.get_by_id(
+                request.POST.get("template"), request=request
+            )
+
             template_xsl_rendering_api.add_or_delete(
                 template_xsl_rendering_id=request.POST.get("id"),
-                template_id=request.POST.get("template"),
+                template=template,
                 list_xslt=list_xslt,
                 default_detail_xslt=default_detail_xslt,
                 list_detail_xslt=list_detail_xslt,
             )
 
-            template = template_api.get(request.POST.get("template"), request=request)
-            # Get template information (version)
-            version_manager = version_manager_api.get_from_version(
-                template, request=request
-            )
             return HttpResponseRedirect(
-                reverse(self.save_redirect, args=[version_manager.id])
+                reverse(self.save_redirect, args=[template.version_manager.id])
             )
         except Exception as e:
             self.context.update({"errors": html_escape(str(e))})

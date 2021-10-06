@@ -2,7 +2,6 @@
 """
 from unittest.case import TestCase
 
-from bson.objectid import ObjectId
 from mock.mock import Mock, patch
 
 from core_main_app.commons import exceptions
@@ -12,31 +11,6 @@ from core_main_app.components.template_xsl_rendering import (
 )
 from core_main_app.components.template_xsl_rendering.models import TemplateXslRendering
 from core_main_app.components.xsl_transformation.models import XslTransformation
-
-
-class TestTemplateXslRenderingUpsert(TestCase):
-    def setUp(self):
-        self.mock_template_xsl_rendering = _create_template_xsl_rendering()
-
-    @patch.object(TemplateXslRendering, "save")
-    def test_template_xsl_rendering_upsert_returns_object(self, mock_save):
-        # Arrange
-        mock_save.return_value = self.mock_template_xsl_rendering
-
-        # Act
-        result = template_xsl_rendering_api._upsert(self.mock_template_xsl_rendering)
-
-        # Assert
-        self.assertIsInstance(result, TemplateXslRendering)
-
-    @patch.object(TemplateXslRendering, "save")
-    def test_template_xsl_rendering_upsert_raises_error_if_save_failed(self, mock_save):
-        # Arrange
-        mock_save.side_effect = Exception()
-
-        # Act # Assert
-        with self.assertRaises(Exception):
-            template_xsl_rendering_api._upsert(self.mock_template_xsl_rendering)
 
 
 class TestTemplateXslRenderingDelete(TestCase):
@@ -56,7 +30,7 @@ class TestTemplateXslRenderingGetById(TestCase):
     def test_get_by_id_returns_object(self, mock_get_by_id):
         # Arrange
         mock_template_xsl_rendering = _create_mock_template_xsl_rendering()
-        mock_template_xsl_rendering.id = ObjectId()
+        mock_template_xsl_rendering.id = 1
 
         mock_get_by_id.return_value = mock_template_xsl_rendering
 
@@ -69,7 +43,7 @@ class TestTemplateXslRenderingGetById(TestCase):
     @patch.object(TemplateXslRendering, "get_by_id")
     def test_get_by_id_raises_exception_if_object_does_not_exist(self, mock_get_by_id):
         # Arrange
-        mock_absent_id = ObjectId()
+        mock_absent_id = -1
 
         mock_get_by_id.side_effect = exceptions.DoesNotExist("Error.")
 
@@ -80,7 +54,7 @@ class TestTemplateXslRenderingGetById(TestCase):
     @patch.object(TemplateXslRendering, "get_by_id")
     def test_get_by_id_raises_exception_if_internal_error(self, mock_get_by_id):
         # Arrange
-        mock_absent_id = ObjectId()
+        mock_absent_id = -1
 
         mock_get_by_id.side_effect = exceptions.ModelError("Error.")
 
@@ -94,7 +68,7 @@ class TestTemplateXslRenderingGetByTemplateId(TestCase):
     def test_get_by_template_id_returns_object(self, mock_get_by_template_id):
         # Arrange
         mock_template_xsl_rendering = _create_mock_template_xsl_rendering()
-        template_id = ObjectId()
+        template_id = 1
 
         mock_get_by_template_id.return_value = mock_template_xsl_rendering
 
@@ -109,7 +83,7 @@ class TestTemplateXslRenderingGetByTemplateId(TestCase):
         self, mock_get_by_template_id
     ):
         # Arrange
-        mock_absent_id = ObjectId()
+        mock_absent_id = -1
 
         mock_get_by_template_id.side_effect = exceptions.DoesNotExist("Error.")
 
@@ -122,7 +96,7 @@ class TestTemplateXslRenderingGetByTemplateId(TestCase):
         self, mock_get_by_template_id
     ):
         # Arrange
-        mock_absent_id = ObjectId()
+        mock_absent_id = -1
 
         mock_get_by_template_id.side_effect = exceptions.ModelError("Error.")
 
@@ -238,7 +212,7 @@ def _set_template_xsl_rendering_fields(template_xsl_rendering):
 
     """
     template_xsl_rendering.template = Template()
-    template_xsl_rendering.template.id = ObjectId()
+    template_xsl_rendering.template.id = 1
     template_xsl_rendering.list_xslt = XslTransformation()
     template_xsl_rendering.detail_xslt = XslTransformation()
 

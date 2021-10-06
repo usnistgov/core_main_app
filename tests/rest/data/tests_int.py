@@ -5,7 +5,9 @@ from copy import copy
 from mock import patch
 from rest_framework import status
 
+from core_main_app.components.data import api as data_api
 from core_main_app.components.data.models import Data
+from core_main_app.components.workspace import api as workspace_api
 from core_main_app.components.workspace.models import Workspace
 from core_main_app.rest.data import views as data_rest_views
 from core_main_app.utils.integration_tests.integration_base_test_case import (
@@ -22,8 +24,6 @@ from tests.components.data.fixtures.fixtures import (
     AccessControlDataFixture,
 )
 from tests.components.user.fixtures.fixtures import UserFixtures
-from core_main_app.components.workspace import api as workspace_api
-from core_main_app.components.data import api as data_api
 
 fixture_data = DataFixtures()
 fixture_data_query = QueryDataFixtures()
@@ -58,7 +58,7 @@ class TestDataListbyWorkspace(MongoIntegrationBaseTestCase):
         response = RequestMock.do_request_get(
             data_rest_views.DataList.as_view(),
             user,
-            data={"workspace": "5da8ac0622301d1240f2551b"},
+            data={"workspace": -1},
         )
 
         # Assert
@@ -155,7 +155,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
         response = RequestMock.do_request_get(
             data_rest_views.DataList.as_view(),
             user,
-            data={"template": "507f1f77bcf86cd799439011"},
+            data={"template": -1},
         )
 
         # Assert
@@ -259,7 +259,7 @@ class TestDataDetail(MongoIntegrationBaseTestCase):
         response = RequestMock.do_request_get(
             data_rest_views.DataDetail.as_view(),
             user,
-            param={"pk": "507f1f77bcf86cd799439011"},
+            param={"pk": -1},
         )
 
         # Assert
@@ -273,7 +273,7 @@ class TestDataDetail(MongoIntegrationBaseTestCase):
         response = RequestMock.do_request_delete(
             data_rest_views.DataDetail.as_view(),
             user,
-            param={"pk": "507f1f77bcf86cd799439011"},
+            param={"pk": -1},
         )
 
         # Assert
@@ -287,7 +287,7 @@ class TestDataDetail(MongoIntegrationBaseTestCase):
         response = RequestMock.do_request_patch(
             data_rest_views.DataDetail.as_view(),
             user,
-            param={"pk": "507f1f77bcf86cd799439011"},
+            param={"pk": -1},
         )
 
         # Assert
@@ -337,7 +337,7 @@ class TestDataDownload(MongoIntegrationBaseTestCase):
         response = RequestMock.do_request_get(
             data_rest_views.DataDownload.as_view(),
             user,
-            param={"pk": "507f1f77bcf86cd799439011"},
+            param={"pk": -1},
         )
 
         # Assert
@@ -430,7 +430,7 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
         self.data.update(
             {
                 "query": '{"root.element": "value"}',
-                "templates": [{"id": "507f1f77bcf86cd799439011"}],
+                "templates": [{"id": -1}],
             }
         )
 
@@ -585,7 +585,7 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
         self.assertEqual(len(response.data), 2)
 
         for data in response.data:
-            self.assertEqual(data["user_id"], str(self.user2.id))
+            self.assertEqual(str(data["user_id"]), str(self.user2.id))
 
     def test_post_empty_query_string_filter_by_one_workspace_returns_all_data_of_the_workspace(
         self,
@@ -605,7 +605,7 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
         self.assertEqual(len(response.data), 2)
 
         for data in response.data:
-            self.assertEqual(data["workspace"], str(self.fixture.workspace_1.id))
+            self.assertEqual(str(data["workspace"]), str(self.fixture.workspace_1.id))
 
     def test_post_empty_query_string_filter_by_workspaces_returns_all_data_of_those_workspaces(
         self,
@@ -632,7 +632,7 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
 
         list_ids = [str(self.fixture.workspace_1.id), str(self.fixture.workspace_2.id)]
         for data in response.data:
-            self.assertIn(data["workspace"], list_ids)
+            self.assertIn(str(data["workspace"]), list_ids)
 
     def test_post_query_filter_by_correct_and_wrong_workspaces_returns_data_from_correct_workspace_only_as_superuser(
         self,
@@ -643,7 +643,7 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
             {
                 "query": "{}",
                 "workspaces": [
-                    {"id": "507f1f77bcf86cd799439011"},
+                    {"id": -1},
                     {"id": str(self.fixture.workspace_2.id)},
                 ],
             }
@@ -658,9 +658,9 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
         self.assertEqual(len(response.data), 1)
 
         for data in response.data:
-            self.assertEqual(data["workspace"], str(self.fixture.workspace_2.id))
+            self.assertEqual(str(data["workspace"]), str(self.fixture.workspace_2.id))
 
-    def test_post_query_filter_by_correct_and_wrong_workspaces_returns_data_from_correct_workspace_only_as_user(
+    def test_post_query_filter_by_correct_and_wrong_workspaces_raises_acl_error(
         self,
     ):
 
@@ -681,11 +681,7 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
         )
 
         # Assert
-        self.assertEqual(len(response.data), 1)
-
-        list_ids = [str(self.fixture.workspace_2.id)]
-        for data in response.data:
-            self.assertIn(data["workspace"], list_ids)
+        self.assertEqual(response.status_code, 403)
 
     def test_post_query_string_filter_by_workspace_returns_data_3(self):
 
@@ -706,8 +702,8 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
         self.assertEqual(len(response.data), 1)
 
         for data in response.data:
-            self.assertEqual(data["id"], str(self.fixture.data_3.id))
-            self.assertEqual(data["workspace"], str(self.fixture.workspace_1.id))
+            self.assertEqual(str(data["id"]), str(self.fixture.data_3.id))
+            self.assertEqual(str(data["workspace"]), str(self.fixture.workspace_1.id))
 
     def test_post_query_string_filter_by_workspace_returns_no_data(self):
 
@@ -744,12 +740,12 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
         for data in response.data:
             self.assertEqual(data["workspace"], None)
 
-    def test_post_query_string_filter_by_private_workspace_returns_all_data_with_no_workspace_as_user(
+    def test_post_query_string_filter_by_private_workspace_raises_acl_error(
         self,
     ):
 
         # Arrange
-        self.data.update({"query": "{}", "workspaces": [{"id": "None"}]})
+        self.data.update({"query": "{}", "workspaces": [{"id": None}]})
 
         # Act
         response = RequestMock.do_request_post(
@@ -757,10 +753,7 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
         )
 
         # Assert
-        self.assertEqual(len(response.data), 1)
-        for data in response.data:
-            self.assertEqual(data["workspace"], None)
-            self.assertEqual(data["user_id"], self.user2.id)
+        self.assertEqual(response.status_code, 403)
 
     def test_post_query_filter_by_private_and_normal_workspaces_returns_all_data_of_those_workspaces_as_superuser(
         self,
@@ -785,11 +778,11 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
         # Assert
         self.assertEqual(len(response.data), 3)
 
-        list_ids = [None, str(self.fixture.workspace_2.id)]
+        list_ids = ["None", str(self.fixture.workspace_2.id)]
         for data in response.data:
-            self.assertIn(data["workspace"], list_ids)
+            self.assertIn(str(data["workspace"]), list_ids)
 
-    def test_post_query_filter_by_private_and_normal_workspaces_returns_all_data_of_those_workspaces_as_user(
+    def test_post_query_filter_by_private_and_normal_workspaces_raises_acl_error(
         self,
     ):
 
@@ -810,17 +803,11 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
         )
 
         # Assert
-        self.assertEqual(len(response.data), 2)
-
-        list_ids = [None, str(self.fixture.workspace_2.id)]
-        for data in response.data:
-            self.assertIn(data["workspace"], list_ids)
+        self.assertEqual(response.status_code, 403)
 
     def test_post_filtered_by_wrong_workspace_id_returns_no_data(self):
         # Arrange
-        self.data.update(
-            {"query": "{}", "workspaces": [{"id": "507f1f77bcf86cd799439011"}]}
-        )
+        self.data.update({"query": "{}", "workspaces": [{"id": -1}]})
 
         # Act
         response = RequestMock.do_request_post(
@@ -898,7 +885,7 @@ class TestDataAssign(MongoIntegrationBaseTestCase):
     @patch.object(Workspace, "get_by_id")
     def test_assign_bad_data_id_returns_http_404(self, workspace_get_by_id):
         # Arrange
-        fake_data_id = "507f1f77bcf86cd799439011"
+        fake_data_id = -1
         user = create_mock_user("1", is_superuser=True)
         workspace_get_by_id.return_value = self.fixture.workspace_2
 
@@ -915,7 +902,7 @@ class TestDataAssign(MongoIntegrationBaseTestCase):
     @patch.object(Data, "get_by_id")
     def test_assign_bad_workspace_id_returns_http_404(self, data_get_by_id):
         # Arrange
-        fake_workspace_id = "507f1f77bcf86cd799439011"
+        fake_workspace_id = -1
         data = self.fixture.data_collection[self.fixture.USER_1_WORKSPACE_1]
         user = create_mock_user(data.user_id, is_superuser=True)
         data_get_by_id.return_value = data

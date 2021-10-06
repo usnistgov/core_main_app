@@ -18,6 +18,238 @@ fixture_template_vm = TemplateVersionManagerAccessControlFixtures()
 # FIXME: missing tests where CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT is True
 
 
+class TestTemplateVersionManagerGet(MongoIntegrationBaseTestCase):
+
+    fixture = fixture_template_vm
+
+    def setUp(self):
+        self.anonymous_user = create_mock_user(user_id=None, is_anonymous=True)
+        self.user1 = create_mock_user(user_id="1")
+        self.staff_user1 = create_mock_user(user_id="1", is_staff=True)
+        self.superuser1 = create_mock_user(user_id="1", is_superuser=True)
+        self.fixture.insert_data()
+
+    def test_get_user_version_manager_as_anonymous_raises_access_control_error(self):
+        mock_request = create_mock_request(user=self.anonymous_user)
+        with self.assertRaises(AccessControlError):
+            template_vm_api.get_by_id(self.fixture.user1_tvm.id, request=mock_request)
+
+    def test_get_global_version_manager_as_anonymous_raises_access_control_error(self):
+        mock_request = create_mock_request(user=self.anonymous_user)
+        with self.assertRaises(AccessControlError):
+            template_vm_api.get_by_id(self.fixture.global_tvm.id, request=mock_request)
+
+    def test_get_own_version_manager_as_user_returns_version_manager(self):
+        mock_request = create_mock_request(user=self.user1)
+        version_manager = template_vm_api.get_by_id(
+            self.fixture.user1_tvm.id, request=mock_request
+        )
+        self.assertEqual(version_manager, self.fixture.user1_tvm)
+
+    def test_global_version_manager_as_user_returns_version_manager(self):
+        mock_request = create_mock_request(user=self.user1)
+        version_manager = template_vm_api.get_by_id(
+            self.fixture.global_tvm.id, request=mock_request
+        )
+        self.assertEqual(version_manager, self.fixture.global_tvm)
+
+    def test_get_other_users_version_manager_raises_access_control_error(self):
+        mock_request = create_mock_request(user=self.user1)
+        with self.assertRaises(AccessControlError):
+            template_vm_api.get_by_id(self.fixture.user2_tvm.id, request=mock_request)
+
+    def test_get_any_version_manager_as_superuser_returns_version_manager(self):
+        mock_request = create_mock_request(user=self.superuser1)
+        version_manager = template_vm_api.get_by_id(
+            self.fixture.user1_tvm.id, request=mock_request
+        )
+        self.assertEqual(version_manager, self.fixture.user1_tvm)
+        version_manager = template_vm_api.get_by_id(
+            self.fixture.user2_tvm.id, request=mock_request
+        )
+        self.assertEqual(version_manager, self.fixture.user2_tvm)
+        version_manager = template_vm_api.get_by_id(
+            self.fixture.global_tvm.id, request=mock_request
+        )
+        self.assertEqual(version_manager, self.fixture.global_tvm)
+
+    def test_get_other_users_version_manager_as_staff_raises_access_control_error(self):
+        mock_request = create_mock_request(user=self.staff_user1)
+        with self.assertRaises(AccessControlError):
+            template_vm_api.get_by_id(self.fixture.user2_tvm.id, request=mock_request)
+
+
+class TesTemplateVersionManagerGetByIdList(MongoIntegrationBaseTestCase):
+
+    fixture = fixture_template_vm
+
+    def setUp(self):
+        self.anonymous_user = create_mock_user(user_id=None, is_anonymous=True)
+        self.user1 = create_mock_user(user_id="1")
+        self.staff_user1 = create_mock_user(user_id="1", is_staff=True)
+        self.superuser1 = create_mock_user(user_id="1", is_superuser=True)
+        self.fixture.insert_data()
+
+    def test_get_by_id_list_user_version_manager_as_anonymous_raises_access_control_error(
+        self,
+    ):
+        mock_request = create_mock_request(user=self.anonymous_user)
+        with self.assertRaises(AccessControlError):
+            template_vm_api.get_by_id_list(
+                [str(self.fixture.user1_tvm.id)], request=mock_request
+            )
+
+    def test_get_by_id_list_global_version_manager_as_anonymous_raises_access_control_error(
+        self,
+    ):
+        mock_request = create_mock_request(user=self.anonymous_user)
+        with self.assertRaises(AccessControlError):
+            template_vm_api.get_by_id_list(
+                [str(self.fixture.global_tvm.id)], request=mock_request
+            )
+
+    def test_get_by_id_list_user_version_manager_as_user_returns_version_version_manager(
+        self,
+    ):
+        mock_request = create_mock_request(user=self.user1)
+        version_managers = template_vm_api.get_by_id_list(
+            [str(self.fixture.user1_tvm.id)], request=mock_request
+        )
+        self.assertTrue(self.fixture.user1_tvm in list(version_managers))
+        self.assertTrue(self.fixture.user2_tvm not in list(version_managers))
+        self.assertTrue(self.fixture.global_tvm not in list(version_managers))
+
+    def test_get_by_id_list_global_version_manager_as_user_returns_version_manager(
+        self,
+    ):
+        mock_request = create_mock_request(user=self.user1)
+        version_managers = template_vm_api.get_by_id_list(
+            [str(self.fixture.global_tvm.id)], request=mock_request
+        )
+        self.assertTrue(self.fixture.user1_tvm not in list(version_managers))
+        self.assertTrue(self.fixture.user2_tvm not in list(version_managers))
+        self.assertTrue(self.fixture.global_tvm in list(version_managers))
+
+    def test_get_by_id_list_other_user_version_manager_as_user_raises_access_control_error(
+        self,
+    ):
+        mock_request = create_mock_request(user=self.user1)
+        with self.assertRaises(AccessControlError):
+            template_vm_api.get_by_id_list(
+                [str(self.fixture.user2_tvm.id)], request=mock_request
+            )
+
+    def test_get_by_id_list_user_version_manager_as_staff_returns_version_manager(self):
+        mock_request = create_mock_request(user=self.staff_user1)
+        version_managers = template_vm_api.get_by_id_list(
+            [str(self.fixture.user1_tvm.id)], request=mock_request
+        )
+        self.assertTrue(self.fixture.user1_tvm in list(version_managers))
+        self.assertTrue(self.fixture.user2_tvm not in list(version_managers))
+        self.assertTrue(self.fixture.global_tvm not in list(version_managers))
+
+    def test_get_by_id_list_global_version_manager_as_staff_returns_version_manager(
+        self,
+    ):
+        mock_request = create_mock_request(user=self.staff_user1)
+        version_managers = template_vm_api.get_by_id_list(
+            [str(self.fixture.global_tvm.id)], request=mock_request
+        )
+        self.assertTrue(self.fixture.user1_tvm not in list(version_managers))
+        self.assertTrue(self.fixture.user2_tvm not in list(version_managers))
+        self.assertTrue(self.fixture.global_tvm in list(version_managers))
+
+    def test_get_by_id_list_other_user_version_manager_as_staff_raises_access_control_error(
+        self,
+    ):
+        mock_request = create_mock_request(user=self.staff_user1)
+        with self.assertRaises(AccessControlError):
+            template_vm_api.get_by_id_list(
+                [str(self.fixture.user2_tvm.id)], request=mock_request
+            )
+
+    def test_get_by_id_list_user_version_manager_as_superuser_returns_version_manager(
+        self,
+    ):
+        mock_request = create_mock_request(user=self.superuser1)
+        version_managers = template_vm_api.get_by_id_list(
+            [str(self.fixture.user1_tvm.id)], request=mock_request
+        )
+        self.assertTrue(self.fixture.user1_tvm in list(version_managers))
+        self.assertTrue(self.fixture.user2_tvm not in list(version_managers))
+        self.assertTrue(self.fixture.global_tvm not in list(version_managers))
+
+    def test_get_by_id_list_global_version_manager_as_superuser_returns_version_manager(
+        self,
+    ):
+        mock_request = create_mock_request(user=self.superuser1)
+        version_managers = template_vm_api.get_by_id_list(
+            [str(self.fixture.global_tvm.id)], request=mock_request
+        )
+        self.assertTrue(self.fixture.user1_tvm not in list(version_managers))
+        self.assertTrue(self.fixture.user2_tvm not in list(version_managers))
+        self.assertTrue(self.fixture.global_tvm in list(version_managers))
+
+    def test_get_by_id_list_other_user_version_manager_as_superuser_returns_version_manager(
+        self,
+    ):
+        mock_request = create_mock_request(user=self.superuser1)
+        version_managers = template_vm_api.get_by_id_list(
+            [str(self.fixture.user2_tvm.id)], request=mock_request
+        )
+        self.assertTrue(self.fixture.user1_tvm not in list(version_managers))
+        self.assertTrue(self.fixture.user2_tvm in list(version_managers))
+        self.assertTrue(self.fixture.global_tvm not in list(version_managers))
+
+
+class TestTemplateVersionManagerGetActiveGlobalVersionManagerByTitle(
+    MongoIntegrationBaseTestCase
+):
+
+    fixture = fixture_template_vm
+
+    def setUp(self):
+        self.anonymous_user = create_mock_user(user_id=None, is_anonymous=True)
+        self.user1 = create_mock_user(user_id="1")
+        self.staff_user1 = create_mock_user(user_id="1", is_staff=True)
+        self.superuser1 = create_mock_user(user_id="1", is_superuser=True)
+        self.fixture.insert_data()
+
+    def test_get_active_global_version_manager_by_title_as_anonymous_raises_access_control_error(
+        self,
+    ):
+        mock_request = create_mock_request(user=self.anonymous_user)
+        with self.assertRaises(AccessControlError):
+            template_vm_api.get_active_global_version_manager_by_title(
+                self.fixture.global_tvm.title, request=mock_request
+            )
+
+    def test_get_active_global_version_manager_as_user_returns_version_manager(self):
+        mock_request = create_mock_request(user=self.user1)
+        version_manager = template_vm_api.get_active_global_version_manager_by_title(
+            self.fixture.global_tvm.title, request=mock_request
+        )
+        self.assertEqual(version_manager, self.fixture.global_tvm)
+
+    def test_get_active_global_version_manager_by_title_as_superuser_returns_version_manager(
+        self,
+    ):
+        mock_request = create_mock_request(user=self.superuser1)
+        version_manager = template_vm_api.get_active_global_version_manager_by_title(
+            self.fixture.global_tvm.title, request=mock_request
+        )
+        self.assertEqual(version_manager, self.fixture.global_tvm)
+
+    def test_get_active_global_version_manager_by_title_as_staff_raises_access_control_error(
+        self,
+    ):
+        mock_request = create_mock_request(user=self.staff_user1)
+        version_manager = template_vm_api.get_active_global_version_manager_by_title(
+            self.fixture.global_tvm.title, request=mock_request
+        )
+        self.assertEqual(version_manager, self.fixture.global_tvm)
+
+
 class TestTemplateVersionManagerInsert(MongoIntegrationBaseTestCase):
 
     fixture = fixture_template_vm
@@ -325,188 +557,6 @@ class TestTemplateGetActiveVersionManagerByUserId(MongoIntegrationBaseTestCase):
         )
         for tvm in list_tvm:
             self.assertEqual(tvm.user, str(self.superuser1.id))
-
-
-class TestTemplateVersionManagerGetByVersionId(MongoIntegrationBaseTestCase):
-
-    fixture = fixture_template_vm
-
-    def setUp(self):
-        self.anonymous_user = create_mock_user(user_id=None, is_anonymous=True)
-        self.user1 = create_mock_user(user_id="1")
-        self.staff_user1 = create_mock_user(user_id="1", is_staff=True)
-        self.superuser1 = create_mock_user(user_id="1", is_superuser=True)
-        self.fixture.insert_data()
-
-    def test_get_by_version_id_user_template_as_anonymous_raises_access_control_error(
-        self,
-    ):
-        mock_request = create_mock_request(user=self.anonymous_user)
-        with self.assertRaises(AccessControlError):
-            template_vm_api.get_by_version_id(
-                str(self.fixture.user1_template.id), request=mock_request
-            )
-
-    def test_get_by_version_id_global_template_as_anonymous_raises_access_control_error(
-        self,
-    ):
-        mock_request = create_mock_request(user=self.anonymous_user)
-        with self.assertRaises(AccessControlError):
-            template_vm_api.get_by_version_id(
-                str(self.fixture.global_template.id), request=mock_request
-            )
-
-    def test_get_by_version_id_own_template_as_user_returns_template(self):
-        mock_request = create_mock_request(user=self.user1)
-        template_vm_api.get_by_version_id(
-            str(self.fixture.user1_template.id), request=mock_request
-        )
-
-    def test_get_by_version_id_other_users_template_as_user_raises_access_control_error(
-        self,
-    ):
-        mock_request = create_mock_request(user=self.user1)
-        with self.assertRaises(AccessControlError):
-            template_vm_api.get_by_version_id(
-                str(self.fixture.user2_template.id), request=mock_request
-            )
-
-    def test_get_by_version_id_global_template_as_user_returns_template(self):
-        mock_request = create_mock_request(user=self.user1)
-        template_vm_api.get_by_version_id(
-            str(self.fixture.global_template.id), request=mock_request
-        )
-
-    def test_get_by_version_id_own_template_as_staff_returns_template(self):
-        mock_request = create_mock_request(user=self.staff_user1)
-        template_vm_api.get_by_version_id(
-            str(self.fixture.user1_template.id), request=mock_request
-        )
-
-    def test_get_by_version_id_other_users_template_as_staff_raises_access_control_error(
-        self,
-    ):
-        mock_request = create_mock_request(user=self.staff_user1)
-        with self.assertRaises(AccessControlError):
-            template_vm_api.get_by_version_id(
-                str(self.fixture.user2_template.id), request=mock_request
-            )
-
-    def test_get_by_version_id_global_template_as_staff_returns_template(self):
-        mock_request = create_mock_request(user=self.staff_user1)
-        template_vm_api.get_by_version_id(
-            str(self.fixture.global_template.id), request=mock_request
-        )
-
-    def test_get_by_version_id_own_template_as_superuser_returns_template(self):
-        mock_request = create_mock_request(user=self.superuser1)
-        template_vm_api.get_by_version_id(
-            str(self.fixture.user1_template.id), request=mock_request
-        )
-
-    def test_get_by_version_id_other_users_template_as_superuser_returns_template(self):
-        mock_request = create_mock_request(user=self.superuser1)
-        template_vm_api.get_by_version_id(
-            str(self.fixture.user2_template.id), request=mock_request
-        )
-
-    def test_get_by_version_id_global_template_as_superuser_returns_template(self):
-        mock_request = create_mock_request(user=self.superuser1)
-        template_vm_api.get_by_version_id(
-            str(self.fixture.global_template.id), request=mock_request
-        )
-
-
-class TestTemplateVersionManagerGetAllByVersionIds(MongoIntegrationBaseTestCase):
-
-    fixture = fixture_template_vm
-
-    def setUp(self):
-        self.anonymous_user = create_mock_user(user_id=None, is_anonymous=True)
-        self.user1 = create_mock_user(user_id="1")
-        self.staff_user1 = create_mock_user(user_id="1", is_staff=True)
-        self.superuser1 = create_mock_user(user_id="1", is_superuser=True)
-        self.fixture.insert_data()
-
-    def test_get_all_by_version_ids_user_template_as_anonymous_raises_access_control_error(
-        self,
-    ):
-        mock_request = create_mock_request(user=self.anonymous_user)
-        with self.assertRaises(AccessControlError):
-            template_vm_api.get_all_by_version_ids(
-                [str(self.fixture.user1_template.id)], request=mock_request
-            )
-
-    def test_get_all_by_version_ids_global_template_as_anonymous_raises_access_control_error(
-        self,
-    ):
-        mock_request = create_mock_request(user=self.anonymous_user)
-        with self.assertRaises(AccessControlError):
-            template_vm_api.get_all_by_version_ids(
-                [str(self.fixture.global_template.id)], request=mock_request
-            )
-
-    def test_get_all_by_version_ids_own_template_as_user_returns_template(self):
-        mock_request = create_mock_request(user=self.user1)
-        template_vm_api.get_all_by_version_ids(
-            [str(self.fixture.user1_template.id)], request=mock_request
-        )
-
-    def test_get_all_by_version_ids_other_users_template_as_user_raises_access_control_error(
-        self,
-    ):
-        mock_request = create_mock_request(user=self.user1)
-        with self.assertRaises(AccessControlError):
-            template_vm_api.get_all_by_version_ids(
-                [str(self.fixture.user2_template.id)], request=mock_request
-            )
-
-    def test_get_all_by_version_ids_global_template_as_user_returns_template(self):
-        mock_request = create_mock_request(user=self.user1)
-        template_vm_api.get_all_by_version_ids(
-            [str(self.fixture.global_template.id)], request=mock_request
-        )
-
-    def test_get_all_by_version_ids_own_template_as_staff_returns_template(self):
-        mock_request = create_mock_request(user=self.staff_user1)
-        template_vm_api.get_all_by_version_ids(
-            [str(self.fixture.user1_template.id)], request=mock_request
-        )
-
-    def test_get_all_by_version_ids_other_users_template_as_staff_raises_access_control_error(
-        self,
-    ):
-        mock_request = create_mock_request(user=self.staff_user1)
-        with self.assertRaises(AccessControlError):
-            template_vm_api.get_all_by_version_ids(
-                [str(self.fixture.user2_template.id)], request=mock_request
-            )
-
-    def test_get_all_by_version_ids_global_template_as_staff_returns_template(self):
-        mock_request = create_mock_request(user=self.staff_user1)
-        template_vm_api.get_all_by_version_ids(
-            [str(self.fixture.global_template.id)], request=mock_request
-        )
-
-    def test_get_all_by_version_ids_own_template_as_superuser_returns_template(self):
-        mock_request = create_mock_request(user=self.superuser1)
-        template_vm_api.get_all_by_version_ids(
-            [str(self.fixture.user1_template.id)], request=mock_request
-        )
-
-    def test_get_all_by_version_ids_other_users_template_as_superuser_returns_template(
-        self,
-    ):
-        mock_request = create_mock_request(user=self.superuser1)
-        template_vm_api.get_all_by_version_ids(
-            [str(self.fixture.user2_template.id)], request=mock_request
-        )
-
-    def test_get_all_by_version_ids_global_template_as_superuser_returns_template(self):
-        mock_request = create_mock_request(user=self.superuser1)
-        template_vm_api.get_all_by_version_ids(
-            [str(self.fixture.global_template.id)], request=mock_request
-        )
 
 
 class TestTemplateGetAllByUserId(MongoIntegrationBaseTestCase):

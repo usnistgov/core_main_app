@@ -8,7 +8,6 @@ from core_main_app.components.template.models import Template
 from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
 )
-from core_main_app.components.version_manager.models import VersionManager
 from core_main_app.rest.template_version_manager import (
     views as template_version_manager_views,
 )
@@ -120,13 +119,13 @@ class TestTemplateVersionManagerDetailGetPermission(SimpleTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @patch.object(VersionManager, "get_by_id")
+    @patch.object(TemplateVersionManager, "get_by_id")
     @patch.object(TemplateVersionManagerSerializer, "data")
     def test_authenticated_returns_http_200(
         self, template_version_manager_data, version_manager_get_by_id
     ):
         template_version_manager_data.return_value = True
-        version_manager_get_by_id.return_value = VersionManager(user="1")
+        version_manager_get_by_id.return_value = TemplateVersionManager(user="1")
 
         mock_user = create_mock_user("1")
 
@@ -138,13 +137,13 @@ class TestTemplateVersionManagerDetailGetPermission(SimpleTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    @patch.object(VersionManager, "get_by_id")
+    @patch.object(TemplateVersionManager, "get_by_id")
     @patch.object(TemplateVersionManagerSerializer, "data")
     def test_staff_returns_http_200(
         self, template_version_manager_data, version_manager_get_by_id
     ):
         template_version_manager_data.return_value = True
-        version_manager_get_by_id.return_value = VersionManager(user="1")
+        version_manager_get_by_id.return_value = TemplateVersionManager(user="1")
 
         mock_user = create_mock_user("1", is_staff=True)
 
@@ -177,7 +176,7 @@ class TestTemplateVersionPostPermission(SimpleTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @patch.object(VersionManager, "get_by_id")
+    @patch.object(TemplateVersionManager, "get_by_id")
     @patch.object(CreateTemplateSerializer, "is_valid")
     @patch.object(CreateTemplateSerializer, "save")
     @patch.object(CreateTemplateSerializer, "data")
@@ -188,7 +187,7 @@ class TestTemplateVersionPostPermission(SimpleTestCase):
         template_version_manager_serializer_valid,
         version_manager_get_by_id,
     ):
-        version_manager_get_by_id.return_value = VersionManager(user=None)
+        version_manager_get_by_id.return_value = TemplateVersionManager(user=None)
         template_version_manager_serializer_data.return_value = True
         template_version_manager_serializer_save.return_value = None
         template_version_manager_serializer_valid.return_value = {}
@@ -353,16 +352,14 @@ class TestCurrentTemplateVersionPatchPermission(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @patch("core_main_app.components.version_manager.api.set_current")
-    @patch("core_main_app.components.version_manager.api.get_from_version")
     @patch.object(Template, "get_by_id")
     def test_staff_returns_http_200(
         self,
         template_get_by_id,
-        version_manager_get_from_version,
         version_manager_set_current,
     ):
         version_manager_set_current.return_value = {}
-        version_manager_get_from_version.return_value = VersionManager(user="1")
+        # version_manager_get_from_version.return_value = VersionManager(user="1")
         template_get_by_id.return_value = Template(user="1")
 
         mock_user = create_mock_user("1", is_staff=True)
@@ -401,16 +398,13 @@ class TestDisableTemplateVersionPatchPermission(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @patch("core_main_app.components.version_manager.api.disable_version")
-    @patch("core_main_app.components.version_manager.api.get_from_version")
     @patch.object(Template, "get_by_id")
     def test_staff_returns_http_200(
         self,
         template_get_by_id,
-        version_manager_get_from_version,
         version_manager_disable_version,
     ):
-        version_manager_disable_version.return_value = VersionManager(user="1")
-        version_manager_get_from_version.return_value = {}
+        version_manager_disable_version.return_value = TemplateVersionManager(user="1")
         template_get_by_id.return_value = Template(user="1")
 
         mock_user = create_mock_user("1", is_staff=True)
@@ -449,16 +443,13 @@ class TestRestoreTemplateVersionPatchPermission(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @patch("core_main_app.components.version_manager.api.restore_version")
-    @patch("core_main_app.components.version_manager.api.get_from_version")
     @patch.object(Template, "get_by_id")
     def test_staff_returns_http_200(
         self,
         template_get_by_id,
-        version_manager_get_from_version,
         version_manager_restore_version,
     ):
         version_manager_restore_version.return_value = {}
-        version_manager_get_from_version.return_value = VersionManager(user="1")
         template_get_by_id.return_value = Template(user="1")
 
         mock_user = create_mock_user("1", is_staff=True)
@@ -485,7 +476,7 @@ class TestDisableTemplateVersionManagerPatchPermission(SimpleTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @patch.object(VersionManager, "get_by_id")
+    @patch.object(TemplateVersionManager, "get_by_id")
     @patch("core_main_app.components.version_manager.api.disable")
     def test_authenticated_returns_http_200(
         self, version_manager_disable, version_manager_get_by_id
@@ -502,7 +493,7 @@ class TestDisableTemplateVersionManagerPatchPermission(SimpleTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    @patch.object(VersionManager, "get_by_id")
+    @patch.object(TemplateVersionManager, "get_by_id")
     @patch("core_main_app.components.version_manager.api.disable")
     def test_staff_returns_http_200(
         self, version_manager_disable, version_manager_get_by_id
@@ -535,7 +526,7 @@ class TestRestoreTemplateVersionManagerPatchPermission(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @patch("core_main_app.components.version_manager.api.restore")
-    @patch.object(VersionManager, "get_by_id")
+    @patch.object(TemplateVersionManager, "get_by_id")
     def test_authenticated_returns_http_200(
         self, version_manager_get_by_id, version_manager_restore
     ):
@@ -552,7 +543,7 @@ class TestRestoreTemplateVersionManagerPatchPermission(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @patch("core_main_app.components.version_manager.api.restore")
-    @patch.object(VersionManager, "get_by_id")
+    @patch.object(TemplateVersionManager, "get_by_id")
     def test_staff_returns_http_200(
         self, version_manager_get_by_id, version_manager_restore
     ):

@@ -5,9 +5,9 @@ from django.test.testcases import TransactionTestCase
 
 import core_main_app.permissions.rights as rights
 from core_main_app.components.group import api as group_api
-from tests.test_settings import database as settings_database
 
 
+# FIXME: rename, not Mongo
 class MongoIntegrationTransactionTestCase(TransactionTestCase):
     """Represent the Integration base transaction test case
     The integration tests must inherit of this class
@@ -16,7 +16,6 @@ class MongoIntegrationTransactionTestCase(TransactionTestCase):
     """
         Fields
     """
-    database = settings_database  # database to use
     fixture = None  # data fixture from component's tests
 
     """
@@ -38,4 +37,3 @@ class MongoIntegrationTransactionTestCase(TransactionTestCase):
 
     def clear_database(self):
         execute_from_command_line(["", "flush", "--no-input"])
-        self.database.clean_database()

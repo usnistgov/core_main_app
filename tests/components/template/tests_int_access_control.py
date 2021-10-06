@@ -182,23 +182,25 @@ class TestTemplateGet(MongoIntegrationBaseTestCase):
     def test_get_user_template_as_anonymous_raises_access_control_error(self):
         mock_request = create_mock_request(user=self.anonymous_user)
         with self.assertRaises(AccessControlError):
-            template_api.get(self.fixture.user1_template.id, request=mock_request)
+            template_api.get_by_id(self.fixture.user1_template.id, request=mock_request)
 
     def test_get_global_template_as_anonymous_raises_access_control_error(self):
         mock_request = create_mock_request(user=self.anonymous_user)
         with self.assertRaises(AccessControlError):
-            template_api.get(self.fixture.global_template.id, request=mock_request)
+            template_api.get_by_id(
+                self.fixture.global_template.id, request=mock_request
+            )
 
     def test_get_own_template_as_user_returns_template(self):
         mock_request = create_mock_request(user=self.user1)
-        template = template_api.get(
+        template = template_api.get_by_id(
             self.fixture.user1_template.id, request=mock_request
         )
         self.assertEqual(template, self.fixture.user1_template)
 
     def test_global_template_as_user_returns_template(self):
         mock_request = create_mock_request(user=self.user1)
-        template = template_api.get(
+        template = template_api.get_by_id(
             self.fixture.global_template.id, request=mock_request
         )
         self.assertEqual(template, self.fixture.global_template)
@@ -206,19 +208,19 @@ class TestTemplateGet(MongoIntegrationBaseTestCase):
     def test_get_other_users_template_raises_access_control_error(self):
         mock_request = create_mock_request(user=self.user1)
         with self.assertRaises(AccessControlError):
-            template_api.get(self.fixture.user2_template.id, request=mock_request)
+            template_api.get_by_id(self.fixture.user2_template.id, request=mock_request)
 
     def test_get_any_template_as_superuser_returns_template(self):
         mock_request = create_mock_request(user=self.superuser1)
-        template = template_api.get(
+        template = template_api.get_by_id(
             self.fixture.user1_template.id, request=mock_request
         )
         self.assertEqual(template, self.fixture.user1_template)
-        template = template_api.get(
+        template = template_api.get_by_id(
             self.fixture.user2_template.id, request=mock_request
         )
         self.assertEqual(template, self.fixture.user2_template)
-        template = template_api.get(
+        template = template_api.get_by_id(
             self.fixture.global_template.id, request=mock_request
         )
         self.assertEqual(template, self.fixture.global_template)
@@ -226,7 +228,7 @@ class TestTemplateGet(MongoIntegrationBaseTestCase):
     def test_get_other_users_template_as_staff_raises_access_control_error(self):
         mock_request = create_mock_request(user=self.staff_user1)
         with self.assertRaises(AccessControlError):
-            template_api.get(self.fixture.user2_template.id, request=mock_request)
+            template_api.get_by_id(self.fixture.user2_template.id, request=mock_request)
 
 
 class TestTemplateGetAllAccessibleByIdList(MongoIntegrationBaseTestCase):

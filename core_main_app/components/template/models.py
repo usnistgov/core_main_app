@@ -1,26 +1,44 @@
 """
 Template models
 """
-from mongoengine import errors as mongoengine_errors
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.validators import RegexValidator
+from django.db import models, IntegrityError
+from django.db.models import Q
 
 from core_main_app.commons import exceptions
-from core_main_app.utils.validation.regex_validation import not_empty_or_whitespaces
-from django_mongoengine import fields, Document
+from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
+from core_main_app.components.template_version_manager.models import (
+    TemplateVersionManager,
+)
+from core_main_app.components.version_manager.models import Version
 
 
-class Template(Document):
+class Template(Version):
     """Represents an XML schema template that defines the structure of data"""
 
-    filename = fields.StringField(validation=not_empty_or_whitespaces)
-    content = fields.StringField()
-    user = fields.StringField(blank=True)
-    hash = fields.StringField()
-    _display_name = fields.StringField(blank=True)
-    dependencies = fields.ListField(
-        fields.ReferenceField("self"), default=[], blank=True
-    )
+    class_name = "Template"
 
-    meta = {"allow_inheritance": True}
+    version_manager = models.ForeignKey(
+        TemplateVersionManager, on_delete=models.CASCADE, null=True, default=None
+    )
+    filename = models.CharField(
+        validators=[
+            RegexValidator(
+                regex=NOT_EMPTY_OR_WHITESPACES,
+                message="Title must not be empty or only whitespaces",
+                code="invalid_title",
+            ),
+        ],
+        max_length=200,
+    )
+    content = models.TextField()
+    user = models.CharField(blank=True, max_length=200, null=True, default=None)
+    hash = models.CharField(max_length=200)
+    _display_name = models.CharField(blank=True, max_length=200)
+    dependencies = models.ManyToManyField("self", blank=True, default=[])
+    creation_date = models.DateTimeField(auto_now_add=True)
+    _cls = models.CharField(default="Template", max_length=200)
 
     @staticmethod
     def get_all(is_cls, users=None):
@@ -33,15 +51,15 @@ class Template(Document):
         Returns:
             list<Template> - List of template following the query parameters.
         """
-        template_query_kwargs = dict()
+        template_query = Q()
 
         if is_cls:  # will return all Template object only
-            template_query_kwargs["_cls"] = Template.__name__
+            template_query &= Q(_cls=Template.class_name)
 
         if users is not None:  # select specific user if it is defined
-            template_query_kwargs["user__in"] = users
+            template_query &= users
 
-        return Template.objects(**template_query_kwargs).all()
+        return Template.objects.filter(template_query).all()
 
     @staticmethod
     def get_by_id(template_id):
@@ -54,8 +72,8 @@ class Template(Document):
 
         """
         try:
-            return Template.objects().get(pk=str(template_id))
-        except mongoengine_errors.DoesNotExist as e:
+            return Template.objects.get(pk=template_id)
+        except ObjectDoesNotExist as e:
             raise exceptions.DoesNotExist(str(e))
         except Exception as e:
             raise exceptions.ModelError(str(e))
@@ -73,8 +91,8 @@ class Template(Document):
 
         """
         if users is not None:
-            return Template.objects(hash=template_hash, user__in=users).all()
-        return Template.objects(hash=template_hash).all()
+            return Template.objects.filter(Q(hash=template_hash) & users).all()
+        return Template.objects.filter(hash=template_hash).all()
 
     @staticmethod
     def get_all_by_hash_list(template_hash_list, users):
@@ -89,8 +107,8 @@ class Template(Document):
 
         """
         if users is not None:
-            return Template.objects(hash__in=template_hash_list, user__in=users).all()
-        return Template.objects(hash__in=template_hash_list).all()
+            return Template.objects.filter(Q(hash__in=template_hash_list) & users).all()
+        return Template.objects.filter(hash__in=template_hash_list).all()
 
     @staticmethod
     def get_all_by_id_list(template_id_list, users=None):
@@ -104,8 +122,8 @@ class Template(Document):
 
         """
         if users is not None:
-            return Template.objects(pk__in=template_id_list, user__in=users).all()
-        return Template.objects(pk__in=template_id_list).all()
+            return Template.objects.filter(Q(pk__in=template_id_list) & users).all()
+        return Template.objects.filter(pk__in=template_id_list).all()
 
     @property
     def display_name(self):
@@ -130,3 +148,26 @@ class Template(Document):
 
         """
         self._display_name = value
+
+    def save_template(self):
+        """Custom save.
+
+        Returns:
+            Saved Instance.
+
+        """
+        try:
+            self._cls = self.class_name
+            self.save()
+        except IntegrityError as e:
+            raise exceptions.NotUniqueError(str(e))
+        except Exception as ex:
+            raise exceptions.ModelError(str(ex))
+
+    def __str__(self):
+        """Template object as string
+
+        Returns:
+
+        """
+        return self.display_name

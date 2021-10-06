@@ -3,7 +3,9 @@
 from core_main_app.commons import exceptions
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
-from core_main_app.components.version_manager.models import VersionManager
+from core_main_app.components.template_version_manager.models import (
+    TemplateVersionManager,
+)
 from core_main_app.settings import DATA_SORTING_FIELDS
 
 
@@ -28,7 +30,7 @@ def get_all_by_template(template, order_by_field=DATA_SORTING_FIELDS):
     Returns:
 
     """
-    return Data.objects(template=template).order_by(order_by_field)
+    return Data.objects.filter(template=template).order_by(order_by_field)
 
 
 def get_all_by_list_template(list_template, order_by_field=DATA_SORTING_FIELDS):
@@ -55,22 +57,6 @@ def get_all_except(id_list, order_by_field=DATA_SORTING_FIELDS):
 
     """
     return Data.get_all_except(order_by_field, id_list)
-
-
-def execute_query_with_projection(
-    query, projection, order_by_field=DATA_SORTING_FIELDS
-):
-    """Execute a given query with a projection.
-
-    Args:
-        query:
-        projection:
-        order_by_field:
-
-    Returns:
-
-    """
-    return Data.execute_query(query, order_by_field).only(projection)
 
 
 def get_all_data_in_workspaces(workspace_list):
@@ -137,7 +123,7 @@ def upsert_data(data):
         raise exceptions.ApiError("Unable to save data: xml_content field is not set.")
 
     check_xml_file_is_valid(data)
-    return data.convert_and_save()
+    data.convert_and_save()
 
 
 def get_active_global_version_manager_by_title(version_manager_title):
@@ -149,6 +135,6 @@ def get_active_global_version_manager_by_title(version_manager_title):
     Returns:
 
     """
-    return VersionManager.get_active_global_version_manager_by_title(
+    return TemplateVersionManager.get_active_global_version_manager_by_title(
         version_manager_title
     )

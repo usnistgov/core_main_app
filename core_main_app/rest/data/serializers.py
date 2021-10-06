@@ -1,8 +1,7 @@
 """Serializers used throughout the data Rest API
 """
-
 from rest_framework import serializers
-from rest_framework_mongoengine.serializers import DocumentSerializer
+from rest_framework.serializers import ModelSerializer
 
 import core_main_app.components.data.api as data_api
 from core_main_app.components.data.models import Data
@@ -24,7 +23,7 @@ class XMLContentField(serializers.Field):
         return data
 
 
-class DataSerializer(DocumentSerializer):
+class DataSerializer(ModelSerializer):
     """Data serializer"""
 
     xml_content = XMLContentField()
@@ -66,7 +65,7 @@ class DataSerializer(DocumentSerializer):
             user_id=str(self.context["request"].user.id),
         )
         # Get template
-        template_api.get(instance.template.id, request=self.context["request"])
+        template_api.get_by_id(instance.template.id, request=self.context["request"])
 
         # Set xml content
         instance.xml_content = validated_data["xml_content"]
@@ -89,7 +88,7 @@ class DataSerializer(DocumentSerializer):
 
 
 # FIXME: Should use in the future an serializer with dynamic fields (init depth with parameter for example)
-class DataWithTemplateInfoSerializer(DocumentSerializer):
+class DataWithTemplateInfoSerializer(ModelSerializer):
     """Data Full serializer"""
 
     class Meta(object):

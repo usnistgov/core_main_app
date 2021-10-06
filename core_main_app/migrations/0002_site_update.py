@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
-from django.db import migrations
+
 from django.contrib.sites.models import Site
+from django.db import migrations
 
 from core_main_app.settings import SERVER_URI
 
@@ -21,7 +22,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("sites", "0001_initial"),
-        ("core_main_app", "0001_main"),
+        ("core_main_app", "0001_initial"),
     ]
 
     operations = [migrations.RunPython(update_site)]

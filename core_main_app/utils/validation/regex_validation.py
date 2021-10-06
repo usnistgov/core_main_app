@@ -2,7 +2,7 @@
 """
 import re
 
-from mongoengine import ValidationError
+from django.core.exceptions import ValidationError
 
 from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
 

@@ -1,13 +1,12 @@
 """ Data tasks
 """
 
-from bson.objectid import ObjectId
 from celery import shared_task
 from celery.result import AsyncResult
 
 from core_main_app.components.data import api as data_api
-from core_main_app.components.xsl_transformation import api as xsl_transformation_api
 from core_main_app.components.user import api as user_api
+from core_main_app.components.xsl_transformation import api as xsl_transformation_api
 from core_main_app.system import api as system_api
 
 
@@ -117,20 +116,13 @@ def async_template_migration_task(
                 current_data_progress = 0
 
                 # get a QuerySet of all the data with the given template
-                data_list = data_api.execute_query(
-                    {"template": ObjectId(template_id)}, user=user
+                data_list = data_api.execute_json_query(
+                    {"template": template_id}, user=user
                 )
 
                 total_data = data_list.count()
 
-                # extract the data id from the list
-                data_list_id = data_list.values_list("id")
-
-                for data_id in data_list_id:
-
-                    # get the data
-                    data = data_api.get_by_id(data_id, user)
-
+                for data in data_list.all():
                     # modify the data temporarily with the new targeted template
                     data.template = target_template
 

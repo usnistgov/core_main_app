@@ -21,9 +21,9 @@
         <tr objectid="{{ elt.id }}">
             <td>{{ elt.name }}</td>
             <td>
-                {% url 'admin:core_main_app_edit_xslt' elt.id as edit_url %}
+                {% url 'core-admin:core_main_app_edit_xslt' elt.id as edit_url %}
                 {% include 'core_main_app/common/buttons/edit.html' %}
-                {% url 'admin:core_main_app_delete_xslt' elt.id as delete_url %}
+                {% url 'core-admin:core_main_app_delete_xslt' elt.id as delete_url %}
                 {% include 'core_main_app/common/buttons/delete.html' %}
             </td>
         </tr>

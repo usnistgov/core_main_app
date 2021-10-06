@@ -7,7 +7,6 @@ from django.urls import reverse
 from rest_framework import status
 
 from core_main_app.components.template import api as template_api
-from core_main_app.components.version_manager import api as vm_api
 from core_main_app.rest.template_version_manager import views
 from core_main_app.utils.integration_tests.integration_base_test_case import (
     MongoIntegrationBaseTestCase,
@@ -261,7 +260,7 @@ class TestTemplateVersionManagerDetail(MongoIntegrationBaseTestCase):
         response = RequestMock.do_request_get(
             views.TemplateVersionManagerDetail.as_view(),
             user,
-            param={"pk": "507f1f77bcf86cd799439011"},
+            param={"pk": -1},
         )
 
         # Assert
@@ -408,13 +407,10 @@ class TestUserTemplateList(MongoIntegrationBaseTestCase):
 
         # get template version manager from posted template
         template_id = response.data["id"]
-        template_object = template_api.get(template_id, request=mock_request)
-        template_version_manager = vm_api.get_from_version(
-            template_object, request=mock_request
-        )
+        template_object = template_api.get_by_id(template_id, request=mock_request)
 
         # Assert
-        self.assertEqual(template_version_manager.user, user.id)
+        self.assertEqual(template_object.version_manager.user, user.id)
 
     def test_post_template_name_already_exists_returns_http_400(self):
         # Arrange
@@ -567,13 +563,10 @@ class TestGlobalTemplateList(MongoIntegrationBaseTestCase):
 
         # get template version manager from posted template
         template_id = response.data["id"]
-        template_object = template_api.get(template_id, request=mock_request)
-        template_version_manager = vm_api.get_from_version(
-            template_object, request=mock_request
-        )
+        template_object = template_api.get_by_id(template_id, request=mock_request)
 
         # Assert
-        self.assertEqual(template_version_manager.user, None)
+        self.assertEqual(template_object.version_manager.user, None)
 
 
 class TestCurrentTemplateVersion(MongoIntegrationBaseTestCase):
@@ -601,7 +594,7 @@ class TestCurrentTemplateVersion(MongoIntegrationBaseTestCase):
         response = RequestMock.do_request_patch(
             views.CurrentTemplateVersion.as_view(),
             user,
-            param={"pk": "507f1f77bcf86cd799439011"},
+            param={"pk": -1},
         )
 
         # Assert
@@ -675,7 +668,7 @@ class TestDisableTemplateVersion(MongoIntegrationBaseTestCase):
         response = RequestMock.do_request_patch(
             views.DisableTemplateVersion.as_view(),
             user,
-            param={"pk": "507f1f77bcf86cd799439011"},
+            param={"pk": -1},
         )
 
         # Assert
@@ -763,7 +756,7 @@ class TestRestoreTemplateVersion(MongoIntegrationBaseTestCase):
         response = RequestMock.do_request_patch(
             views.RestoreTemplateVersion.as_view(),
             user,
-            param={"pk": "507f1f77bcf86cd799439011"},
+            param={"pk": -1},
         )
 
         # Assert
@@ -837,7 +830,7 @@ class TestDisableTemplateVersionManager(MongoIntegrationBaseTestCase):
         response = RequestMock.do_request_patch(
             views.DisableTemplateVersionManager.as_view(),
             user,
-            param={"pk": "507f1f77bcf86cd799439011"},
+            param={"pk": -1},
         )
 
         # Assert
@@ -913,7 +906,7 @@ class TestRestoreTemplateVersionManager(MongoIntegrationBaseTestCase):
         response = RequestMock.do_request_patch(
             views.RestoreTemplateVersionManager.as_view(),
             user,
-            param={"pk": "507f1f77bcf86cd799439011"},
+            param={"pk": -1},
         )
 
         # Assert

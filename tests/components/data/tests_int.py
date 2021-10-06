@@ -1,34 +1,33 @@
 """ Unit Test Data
 """
+import datetime
 from types import SimpleNamespace
 
-from bson.objectid import ObjectId
-import datetime
 import pytz
+from django.db.models import Q
 from mock.mock import patch
 
 from core_main_app.commons import exceptions
+from core_main_app.components.data import api as data_api
+from core_main_app.components.data import tasks as data_task
 from core_main_app.components.data.api import check_xml_file_is_valid
 from core_main_app.components.data.models import Data
-from core_main_app.components.data import api as data_api
+from core_main_app.components.template import api as template_api
+from core_main_app.settings import DATA_SORTING_FIELDS
 from core_main_app.system import api as system_api
-from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.integration_tests.integration_base_test_case import (
     MongoIntegrationBaseTestCase,
 )
-from core_main_app.settings import DATA_SORTING_FIELDS
+from core_main_app.utils.integration_tests.integration_base_transaction_test_case import (
+    MongoIntegrationTransactionTestCase,
+)
+from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from tests.components.data.fixtures.fixtures import (
     DataFixtures,
     AccessControlDataFixture,
 )
-from core_main_app.components.data import tasks as data_task
-from core_main_app.components.template import api as template_api
-from core_main_app.components.xsl_transformation import api as xsl_transformation_api
-from core_main_app.utils.integration_tests.integration_base_transaction_test_case import (
-    MongoIntegrationTransactionTestCase,
-)
-from tests.components.user.fixtures.fixtures import UserFixtures
 from tests.components.data.fixtures.fixtures import DataMigrationFixture
+from tests.components.user.fixtures.fixtures import UserFixtures
 
 fixture_data_template = DataMigrationFixture()
 fixture_data = DataFixtures()
@@ -113,9 +112,12 @@ class TestDataGetAll(MongoIntegrationBaseTestCase):
         # Arrange
         mock_user = _create_user("1", is_superuser=True)
         # Act
-        data = data_api.get_all(mock_user)
+        queryset = data_api.get_all(mock_user)
         # Assert
-        self.assertListEqual(list(data), self.fixture.data_collection)
+        self.assertListEqual(
+            [data.title for data in list(queryset)],
+            [data.title for data in self.fixture.data_collection],
+        )
 
 
 class TestDataGetAllExcept(MongoIntegrationBaseTestCase):
@@ -153,31 +155,21 @@ class TestDataGetAllExcept(MongoIntegrationBaseTestCase):
         # Assert
         self.assertTrue(result.count() == len(self.fixture.data_collection))
 
-    def test_data_get_all_except_inexistant_id_return_collection_of_data(self):
+    def test_data_get_all_except_nonexistent_id_return_collection_of_data(self):
         # Act
-        object_id_list = [str(data.pk) for data in Data.get_all(DATA_SORTING_FIELDS)]
-        inexistant_object_id = str(ObjectId())
+        nonexistent_object_id = -1
 
-        # If the generated object id correspond to one in DB we generate another one
-        while inexistant_object_id in object_id_list:
-            inexistant_object_id = str(ObjectId)
-
-        excluded_id_list = [inexistant_object_id]
+        excluded_id_list = [nonexistent_object_id]
 
         result = Data.get_all_except([], excluded_id_list)
         # Assert
         self.assertTrue(all(isinstance(item, Data) for item in result))
 
-    def test_data_get_all_except_inexistant_id_return_objects_data_in_collection(self):
+    def test_data_get_all_except_nonexistent_id_return_objects_data_in_collection(self):
         # Act
-        object_id_list = [str(data.pk) for data in Data.get_all(DATA_SORTING_FIELDS)]
-        inexistant_object_id = str(ObjectId())
+        nonexistent_object_id = -1
 
-        # If the generated object id correspond to one in DB we generate another one
-        while inexistant_object_id in object_id_list:
-            inexistant_object_id = str(ObjectId)
-
-        excluded_id_list = [inexistant_object_id]
+        excluded_id_list = [nonexistent_object_id]
 
         result = Data.get_all_except([], excluded_id_list)
         # Assert
@@ -258,7 +250,7 @@ class TestDataGetById(MongoIntegrationBaseTestCase):
     def test_data_get_by_id_raises_api_error_if_not_found(self):
         # Act # Assert
         with self.assertRaises(exceptions.DoesNotExist):
-            Data.get_by_id(ObjectId())
+            Data.get_by_id(-1)
 
     def test_data_get_by_id_return_data_if_found(self):
         # Act
@@ -466,7 +458,7 @@ class TestExecuteQuery(MongoIntegrationTransactionTestCase):
 
     def test_execute_query_data_ordering(self):
         # Arrange
-        query = {}
+        query = Q()
         ascending_order_by_field = ["+title"]
         descending_order_by_field = ["-title"]
         # Act
@@ -482,7 +474,7 @@ class TestExecuteQuery(MongoIntegrationTransactionTestCase):
     def test_execute_query_data_ascending_sorting(self):
         # Arrange
         ascending_order_by_field = ["+title"]
-        query = {}
+        query = Q()
         # Act
         ascending_result = Data.execute_query(query, ascending_order_by_field)
         # Assert
@@ -492,7 +484,7 @@ class TestExecuteQuery(MongoIntegrationTransactionTestCase):
     def test_execute_query_data_descending_sorting(self):
         # Arrange
         descending_order_by_field = ["-title"]
-        query = {}
+        query = Q()
         # Act
         descending_result = Data.execute_query(query, descending_order_by_field)
         # Assert
@@ -509,7 +501,7 @@ class TestExecuteQuery(MongoIntegrationTransactionTestCase):
         # Arrange
         ascending_order_by_multi_field = ["+title", "+user_id"]
         descending_order_by_multi_field = ["+title", "-user_id"]
-        query = {}
+        query = Q()
         # Act
         ascending_result = Data.execute_query(query, ascending_order_by_multi_field)
         descending_result = Data.execute_query(query, descending_order_by_multi_field)
@@ -530,9 +522,12 @@ class TestExecuteQuery(MongoIntegrationTransactionTestCase):
         # Arrange
         mock_user = _create_user("1", is_superuser=True)
         # Act
-        data = data_api.execute_query({}, mock_user)
+        queryset = data_api.execute_query(Q(), mock_user)
         # Assert
-        self.assertListEqual(list(data), self.fixture.data_collection)
+        self.assertListEqual(
+            [data.title for data in list(queryset)],
+            [data.title for data in self.fixture.data_collection],
+        )
 
 
 class TestGetAllByWorkspace(MongoIntegrationBaseTestCase):
@@ -652,7 +647,7 @@ class TestGetAllByListTemplate(MongoIntegrationBaseTestCase):
         self.assertEqual(len(result), 0)
 
     def test_invalid_workspace_returns_no_data(self):
-        result = Data.get_all_by_list_workspace([ObjectId()], DATA_SORTING_FIELDS)
+        result = Data.get_all_by_list_workspace([-1], DATA_SORTING_FIELDS)
         self.assertEqual(len(result), 0)
 
 
@@ -701,13 +696,13 @@ class TestGetAllByTemplatesAndWorkspaces(MongoIntegrationBaseTestCase):
 
     def test_invalid_workspace_returns_no_data(self):
         result = Data.get_all_by_templates_and_workspaces(
-            [self.fixture.template.id], [ObjectId()], DATA_SORTING_FIELDS
+            [self.fixture.template.id], [-1], DATA_SORTING_FIELDS
         )
         self.assertEqual(len(result), 0)
 
     def test_invalid_template_returns_no_data(self):
         result = Data.get_all_by_templates_and_workspaces(
-            [ObjectId()], [None], DATA_SORTING_FIELDS
+            [-1], [None], DATA_SORTING_FIELDS
         )
         self.assertEqual(len(result), 0)
 
@@ -719,21 +714,19 @@ class TestGetAllByUserAndWorkspace(MongoIntegrationBaseTestCase):
         # Arrange
         mock_user = create_mock_user("1", is_superuser=False)
         # Act
-        data = Data.get_all_by_user_and_workspace(
+        data_list = Data.get_all_by_user_and_workspace(
             mock_user.id,
             [self.fixture.workspace_1, self.fixture.workspace_2],
             ["+title"],
         )
         # Assert
-        self.assertListEqual(
-            list(data),
-            [
-                self.fixture.data_1,
-                self.fixture.data_3,
-                self.fixture.data_4,
-                self.fixture.data_5,
-            ],
-        )
+        for data in [
+            self.fixture.data_1,
+            self.fixture.data_3,
+            self.fixture.data_4,
+            self.fixture.data_5,
+        ]:
+            self.assertIn(data, data_list)
 
     def test_get_all_data_from_user_and_from_workspace_data_ordering(self):
         # Arrange
@@ -822,7 +815,7 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         self.fixture.generate_xslt()
 
     @patch.object(data_api, "get_by_id")
-    @patch.object(template_api, "get")
+    @patch.object(template_api, "get_by_id")
     def test_data_template_validation_success_for_one_data(
         self, template_get, data_get_by_id
     ):
@@ -845,7 +838,7 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         self.assertEqual(response, expected_result)
 
     @patch.object(data_api, "get_by_id")
-    @patch.object(template_api, "get")
+    @patch.object(template_api, "get_by_id")
     def test_data_template_validation_success_for_one_transformed_data(
         self,
         template_get,
@@ -924,7 +917,7 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         self.assertEqual(response, expected_result)
 
     @patch.object(data_api, "get_by_id")
-    @patch.object(template_api, "get")
+    @patch.object(template_api, "get_by_id")
     def test_data_template_validation_error_for_one_data(
         self, template_get, data_get_by_id
     ):
@@ -947,7 +940,7 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         self.assertEqual(response, expected_result)
 
     @patch.object(data_api, "get_by_id")
-    @patch.object(template_api, "get")
+    @patch.object(template_api, "get_by_id")
     def test_data_template_validation_error_for_one_transformed_data(
         self, template_get, data_get_by_id
     ):
@@ -970,7 +963,7 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         self.assertEqual(response, expected_result)
 
     @patch.object(data_api, "get_by_id")
-    @patch.object(template_api, "get")
+    @patch.object(template_api, "get_by_id")
     def test_data_template_validation_for_multi_data(
         self, template_get, data_get_by_id
     ):
@@ -996,7 +989,7 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         self.assertEqual(response, expected_result)
 
     @patch.object(data_api, "get_by_id")
-    @patch.object(template_api, "get")
+    @patch.object(template_api, "get_by_id")
     def test_data_template_validation_for_multi_transformed_data(
         self, template_get, data_get_by_id
     ):
@@ -1023,15 +1016,15 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
 
     @patch.object(data_api, "execute_query")
     @patch.object(data_api, "get_by_id")
-    @patch.object(template_api, "get")
+    @patch.object(template_api, "get_by_id")
     def test_data_template_group_validation_success(
         self, template_get, data_get_by_id, data_execute_query
     ):
         # Arrange
         mock_query_set = {
-            "values_list": lambda param: [
-                self.fixture.data_1.id,
-                self.fixture.data_2.id,
+            "all": lambda: [
+                self.fixture.data_1,
+                self.fixture.data_2,
             ],
             "count": lambda: 2,
         }
@@ -1062,15 +1055,15 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
 
     @patch.object(data_api, "execute_query")
     @patch.object(data_api, "get_by_id")
-    @patch.object(template_api, "get")
+    @patch.object(template_api, "get_by_id")
     def test_data_template_group_validation_success_with_transformation(
         self, template_get, data_get_by_id, data_execute_query
     ):
         # Arrange
         mock_query_set = {
-            "values_list": lambda param: [
-                self.fixture.data_1.id,
-                self.fixture.data_2.id,
+            "all": lambda: [
+                self.fixture.data_1,
+                self.fixture.data_2,
             ],
             "count": lambda: 2,
         }
@@ -1101,15 +1094,15 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
 
     @patch.object(data_api, "execute_query")
     @patch.object(data_api, "get_by_id")
-    @patch.object(template_api, "get")
+    @patch.object(template_api, "get_by_id")
     def test_data_template_group_validation_error(
         self, template_get, data_get_by_id, data_execute_query
     ):
         # Arrange
         mock_query_set = {
-            "values_list": lambda param: [
-                self.fixture.data_4.id,
-                self.fixture.data_5.id,
+            "all": lambda: [
+                self.fixture.data_4,
+                self.fixture.data_5,
             ],
             "count": lambda: 2,
         }
@@ -1140,15 +1133,15 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
 
     @patch.object(data_api, "execute_query")
     @patch.object(data_api, "get_by_id")
-    @patch.object(template_api, "get")
+    @patch.object(template_api, "get_by_id")
     def test_data_template_group_validation_error_with_transformation(
         self, template_get, data_get_by_id, data_execute_query
     ):
         # Arrange
         mock_query_set = {
-            "values_list": lambda param: [
-                self.fixture.data_4.id,
-                self.fixture.data_5.id,
+            "all": lambda: [
+                self.fixture.data_4,
+                self.fixture.data_5,
             ],
             "count": lambda: 2,
         }
@@ -1179,7 +1172,7 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
 
     @patch.object(data_api, "get_by_id")
     @patch.object(data_api, "upsert")
-    @patch.object(template_api, "get")
+    @patch.object(template_api, "get_by_id")
     def test_data_template_migration_success_for_one_transformed_data(
         self, template_get, data_upsert, data_get_by_id
     ):
@@ -1204,7 +1197,7 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
 
     @patch.object(data_api, "get_by_id")
     @patch.object(data_api, "upsert")
-    @patch.object(template_api, "get")
+    @patch.object(template_api, "get_by_id")
     def test_data_template_migration_success_for_multi_data(
         self, template_get, data_upsert, data_get_by_id
     ):
@@ -1235,7 +1228,7 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
 
     @patch.object(data_api, "get_by_id")
     @patch.object(data_api, "upsert")
-    @patch.object(template_api, "get")
+    @patch.object(template_api, "get_by_id")
     def test_data_template_migration_success_for_multi_transformed_data(
         self, template_get, data_upsert, data_get_by_id
     ):
@@ -1266,7 +1259,7 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
 
     @patch.object(data_api, "get_by_id")
     @patch.object(data_api, "upsert")
-    @patch.object(template_api, "get")
+    @patch.object(template_api, "get_by_id")
     def test_data_template_migration_error_for_one_data(
         self, template_get, data_upsert, data_get_by_id
     ):
@@ -1291,7 +1284,7 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
 
     @patch.object(data_api, "get_by_id")
     @patch.object(data_api, "upsert")
-    @patch.object(template_api, "get")
+    @patch.object(template_api, "get_by_id")
     def test_data_template_migration_error_for_one_transformed_data(
         self, template_get, data_upsert, data_get_by_id
     ):
@@ -1316,7 +1309,7 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
 
     @patch.object(data_api, "get_by_id")
     @patch.object(data_api, "upsert")
-    @patch.object(template_api, "get")
+    @patch.object(template_api, "get_by_id")
     def test_data_template_migration_for_multi_data(
         self, template_get, data_upsert, data_get_by_id
     ):
@@ -1347,7 +1340,7 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
 
     @patch.object(data_api, "get_by_id")
     @patch.object(data_api, "upsert")
-    @patch.object(template_api, "get")
+    @patch.object(template_api, "get_by_id")
     def test_data_template_migration_for_multi_transformed_data(
         self, template_get, data_upsert, data_get_by_id
     ):
@@ -1377,7 +1370,7 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         )
 
         @patch.object(data_api, "execute_query")
-        @patch.object(template_api, "get")
+        @patch.object(template_api, "get_by_id")
         def test_data_template_group_migration_success(
             self, template_get, data_execute_query
         ):
@@ -1413,9 +1406,9 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
     ):
         # Arrange
         mock_query_set = {
-            "values_list": lambda param: [
-                self.fixture.data_4.id,
-                self.fixture.data_5.id,
+            "all": lambda: [
+                self.fixture.data_4,
+                self.fixture.data_5,
             ],
             "count": lambda: 2,
         }
@@ -1452,9 +1445,9 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
     ):
         # Arrange
         mock_query_set = {
-            "values_list": lambda param: [
-                self.fixture.data_4.id,
-                self.fixture.data_5.id,
+            "all": lambda: [
+                self.fixture.data_4,
+                self.fixture.data_5,
             ],
             "count": lambda: 2,
         }
@@ -1482,11 +1475,16 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
             "wrong": [str(self.fixture.data_4.id), str(self.fixture.data_5.id)],
         }
         self.assertEqual(response, expected_result)
+        expected_result = {
+            "valid": [],
+            "wrong": [str(self.fixture.data_4.id), str(self.fixture.data_5.id)],
+        }
+        self.assertEqual(response, expected_result)
 
 
 @patch.object(data_api, "get_by_id")
 @patch.object(data_api, "upsert")
-@patch.object(template_api, "get")
+@patch.object(template_api, "get_by_id")
 def test_result_data_template_migration_success_for_one_data(
     self, template_get, data_upsert, data_get_by_id
 ):
@@ -1512,7 +1510,7 @@ def test_result_data_template_migration_success_for_one_data(
 
 @patch.object(data_api, "get_by_id")
 @patch.object(data_api, "upsert")
-@patch.object(template_api, "get")
+@patch.object(template_api, "get_by_id")
 def test_result_data_template_migration_success_for_multi_data(
     self, template_get, data_upsert, data_get_by_id
 ):
@@ -1541,7 +1539,7 @@ def test_result_data_template_migration_success_for_multi_data(
 
 @patch.object(data_api, "get_by_id")
 @patch.object(data_api, "upsert")
-@patch.object(template_api, "get")
+@patch.object(template_api, "get_by_id")
 def test_result_data_template_migration_error_for_one_data(
     self, template_get, data_upsert, data_get_by_id
 ):
@@ -1567,7 +1565,7 @@ def test_result_data_template_migration_error_for_one_data(
 
 @patch.object(data_api, "get_by_id")
 @patch.object(data_api, "upsert")
-@patch.object(template_api, "get")
+@patch.object(template_api, "get_by_id")
 def test_result_data_template_migration_for_multi_data(
     self, template_get, data_upsert, data_get_by_id
 ):
@@ -1593,7 +1591,7 @@ def test_result_data_template_migration_for_multi_data(
     self.assertEqual(response, expected_result)
 
     @patch.object(data_api, "execute_query")
-    @patch.object(template_api, "get")
+    @patch.object(template_api, "get_by_id")
     def test_result_data_template_group_migration_success(
         self, template_get, data_execute_query
     ):
@@ -1620,7 +1618,7 @@ def test_result_data_template_migration_for_multi_data(
 
 
 @patch.object(data_api, "execute_query")
-@patch.object(template_api, "get")
+@patch.object(template_api, "get_by_id")
 def test_result_data_template_group_migration_error(
     self, template_get, data_execute_query
 ):

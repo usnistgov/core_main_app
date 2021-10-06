@@ -15,6 +15,10 @@ from core_main_app.components.data.tasks import (
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.settings import DATA_SORTING_FIELDS
 from core_main_app.utils.datetime_tools.utils import datetime_now
+from core_main_app.utils.query.mongo.prepare import (
+    convert_to_django,
+    get_access_filters_from_query,
+)
 from core_main_app.utils.xml import validate_xml_data
 from xml_utils.xsd_tree.xsd_tree import XSDTree
 
@@ -113,7 +117,8 @@ def upsert(data, request):
         raise exceptions.ApiError("Unable to save data: xml_content field is not set.")
 
     check_xml_file_is_valid(data, request=request)
-    return data.convert_and_save()
+    data.convert_and_save()
+    return data
 
 
 @access_control(is_superuser)
@@ -173,13 +178,40 @@ def check_xml_file_is_valid(data, request=None):
         return True
 
 
+def execute_json_query(json_query, user, order_by_field=DATA_SORTING_FIELDS):
+    """Converts JSON query to ORM syntax and call execute query.
+
+    Args:
+        json_query:
+        user:
+        order_by_field:
+
+    Returns:
+
+    """
+    # get workspace and user filters from JSON query
+    workspace_filter, user_filter = get_access_filters_from_query(query_dict=json_query)
+    # convert JSON query to Django syntax
+    query = convert_to_django(query_dict=json_query)
+    # execute query and return results
+    return execute_query(query, user, workspace_filter, user_filter, order_by_field)
+
+
 @access_control(data_api_access_control.can_read_data_query)
-def execute_query(query, user, order_by_field=DATA_SORTING_FIELDS):
+def execute_query(
+    query,
+    user,
+    workspace_filter=None,
+    user_filter=None,
+    order_by_field=DATA_SORTING_FIELDS,
+):
     """Execute a query on the Data collection.
 
     Args:
         query:
         user:
+        workspace_filter:
+        user_filter:
         order_by_field:
 
     Returns:

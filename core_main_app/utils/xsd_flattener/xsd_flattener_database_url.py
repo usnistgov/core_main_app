@@ -50,7 +50,7 @@ class XSDFlattenerDatabaseOrURL(XSDFlattenerRequestsURL):
                 # get pk from match
                 object_id = match.group("pk")
                 # get template object using pk
-                template = template_api.get(object_id, request=self.request)
+                template = template_api.get_by_id(object_id, request=self.request)
                 # get template content
                 content = template.content
             except (exceptions.DoesNotExist, exceptions.ModelError, Exception):

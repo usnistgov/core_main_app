@@ -2,16 +2,14 @@
 """
 import logging
 
-from core_main_app.commons import exceptions
 from core_main_app.commons.exceptions import ApiError
-from core_main_app.components.template import api as template_api
 from core_main_app.components.template_xsl_rendering.models import TemplateXslRendering
 
 logger = logging.getLogger(__name__)
 
 
 def add_or_delete(
-    template_id,
+    template,
     list_xslt,
     default_detail_xslt,
     list_detail_xslt,
@@ -22,7 +20,7 @@ def add_or_delete(
 
     Args:
 
-        template_id: TemplateXslRendering.
+        template: Template.
         list_xslt: XSLT.
         default_detail_xslt: XSLT.
         list_detail_xslt:
@@ -40,7 +38,7 @@ def add_or_delete(
 
     if need_to_be_kept:
         return upsert(
-            template_id,
+            template,
             list_xslt,
             default_detail_xslt,
             list_detail_xslt,
@@ -67,7 +65,7 @@ def set_list_detail_xslt(template_xsl_rendering, list_detail_xslt):
     Returns:
 
     """
-    template_xsl_rendering.list_detail_xslt = list_detail_xslt
+    template_xsl_rendering.list_detail_xslt.set(list_detail_xslt)
     _set_default_detail(template_xsl_rendering)
     template_xsl_rendering.save()
 
@@ -83,12 +81,12 @@ def add_detail_xslt(template_xsl_rendering, detail_xslt):
 
     """
     # Check if xslt exists in the list
-    if detail_xslt not in template_xsl_rendering.list_detail_xslt:
+    if detail_xslt not in template_xsl_rendering.list_detail_xslt.all():
 
         # Set the new xslt as default detail if the list is empty
-        if not template_xsl_rendering.list_detail_xslt:
+        if template_xsl_rendering.list_detail_xslt.count() == 0:
             template_xsl_rendering.default_detail_xslt = detail_xslt
-        template_xsl_rendering.list_detail_xslt.append(detail_xslt)
+        template_xsl_rendering.list_detail_xslt.add(detail_xslt)
         template_xsl_rendering.save()
     else:
         raise Exception("The xslt already exists in the list")
@@ -106,7 +104,7 @@ def delete_detail_xslt(template_xsl_rendering, detail_xslt):
 
     """
 
-    if detail_xslt in template_xsl_rendering.list_detail_xslt:
+    if detail_xslt in template_xsl_rendering.list_detail_xslt.all():
         template_xsl_rendering.list_detail_xslt.remove(detail_xslt)
 
         # Check that removed detail xslt is not defined by default
@@ -129,7 +127,7 @@ def set_default_detail_xslt(template_xsl_rendering, detail_xslt):
 
     """
     # Check if xslt exists in the list
-    if detail_xslt in template_xsl_rendering.list_detail_xslt:
+    if detail_xslt in template_xsl_rendering.list_detail_xslt.all():
         template_xsl_rendering.default_detail_xslt = detail_xslt
         template_xsl_rendering.save()
     else:
@@ -137,7 +135,7 @@ def set_default_detail_xslt(template_xsl_rendering, detail_xslt):
 
 
 def upsert(
-    template_id,
+    template,
     list_xslt,
     default_detail_xslt,
     list_detail_xslt,
@@ -146,7 +144,7 @@ def upsert(
     """Update or create a XSL Template rendering object
 
     Args:
-        template_id:
+        template:
         list_xslt:
         default_detail_xslt:
         list_detail_xslt:
@@ -159,32 +157,22 @@ def upsert(
         template_xsl_rendering = get_by_id(template_xsl_rendering_id)
         template_xsl_rendering.list_xslt = list_xslt
         template_xsl_rendering.default_detail_xslt = default_detail_xslt
-        template_xsl_rendering.list_detail_xslt = list_detail_xslt
+        template_xsl_rendering.list_detail_xslt.set(list_detail_xslt)
+        template_xsl_rendering.save()
     except Exception as exception:
         logger.warning(
             "Exception when saving TemplateXSLRendering object: %s" % str(exception)
         )
         template_xsl_rendering = TemplateXslRendering(
-            template=template_id,
+            template=template,
             list_xslt=list_xslt,
             default_detail_xslt=default_detail_xslt,
-            list_detail_xslt=list_detail_xslt,
         )
+        template_xsl_rendering.save()
 
-    return _upsert(template_xsl_rendering)
+        template_xsl_rendering.list_detail_xslt.set(list_detail_xslt)
 
-
-def _upsert(template_xsl_rendering):
-    """Upsert an TemplateXslRendering.
-
-    Args:
-        template_xsl_rendering: TemplateXslRendering instance.
-
-    Returns:
-        TemplateXslRendering instance
-
-    """
-    return template_xsl_rendering.save()
+    return template_xsl_rendering
 
 
 def delete(template_xsl_rendering):
@@ -253,9 +241,9 @@ def get_all():
 
 def _set_default_detail(template_xsl_rendering):
 
-    if template_xsl_rendering.list_detail_xslt:
+    if template_xsl_rendering.list_detail_xslt.count() > 0:
         template_xsl_rendering.default_detail_xslt = (
-            template_xsl_rendering.list_detail_xslt[0]
+            template_xsl_rendering.list_detail_xslt.all()[0]
         )
     else:
         template_xsl_rendering.default_detail_xslt = None

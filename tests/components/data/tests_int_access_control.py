@@ -11,9 +11,13 @@ from core_main_app.utils.integration_tests.integration_base_test_case import (
     MongoIntegrationBaseTestCase,
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
-from tests.components.data.fixtures.fixtures import AccessControlDataFixture
+from tests.components.data.fixtures.fixtures import (
+    AccessControlDataFixture,
+    AccessControlDataFixture2,
+)
 
 fixture_data = AccessControlDataFixture()
+fixture_data2 = AccessControlDataFixture2()
 
 
 class TestDataGetById(MongoIntegrationBaseTestCase):
@@ -196,7 +200,7 @@ class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
         get_all_workspaces_with_read_access_by_user.return_value = [
             fixture_data.workspace_1
         ]
-        data_list = data_api.execute_query({}, mock_user)
+        data_list = data_api.execute_json_query({}, mock_user)
         self.assertTrue(len(data_list) > 0)
         self.assertTrue(all(isinstance(data, Data) for data in data_list))
 
@@ -210,7 +214,7 @@ class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
         get_all_workspaces_with_read_access_by_user.return_value = [
             fixture_data.workspace_1
         ]
-        data_list = data_api.execute_query({}, mock_user)
+        data_list = data_api.execute_json_query({}, mock_user)
         self.assertTrue(len(data_list) == 2)
         self.assertTrue(data.workspace == "1" for data in data_list)
 
@@ -224,7 +228,7 @@ class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
         get_all_workspaces_with_read_access_by_user.return_value = [
             fixture_data.workspace_1
         ]
-        data_list = data_api.execute_query({}, mock_user)
+        data_list = data_api.execute_json_query({}, mock_user)
         self.assertTrue(len(data_list) == 2)
         self.assertTrue(data.workspace == "2" for data in data_list)
 
@@ -239,7 +243,7 @@ class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
             fixture_data.workspace_1,
             fixture_data.workspace_2,
         ]
-        data_list = data_api.execute_query({}, mock_user)
+        data_list = data_api.execute_json_query({}, mock_user)
         self.assertTrue(len(data_list) == 3)
         self.assertTrue(
             data.workspace == "1" or data.workspace == "2" for data in data_list
@@ -255,7 +259,7 @@ class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
         get_all_workspaces_with_read_access_by_user.return_value = [
             fixture_data.workspace_1
         ]
-        data_list = data_api.execute_query(
+        data_list = data_api.execute_json_query(
             {"workspace": fixture_data.workspace_1.id}, mock_user
         )
         self.assertTrue(len(data_list) == 2)
@@ -264,38 +268,340 @@ class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
     @patch(
         "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
     )
-    def test_execute_query_force_workspace_1_does_not_return_data_if_no_access(
+    def test_execute_query_force_workspace_1_raises_acl_error_if_no_access(
         self, get_all_workspaces_with_read_access_by_user
     ):
         mock_user = _create_user("3")
         get_all_workspaces_with_read_access_by_user.return_value = []
-        data_list = data_api.execute_query(
-            {"workspace": fixture_data.workspace_1.id}, mock_user
-        )
-        self.assertTrue(len(data_list) == 0)
+        with self.assertRaises(AccessControlError):
+            data_api.execute_json_query(
+                {"workspace": fixture_data.workspace_1.id}, mock_user
+            )
 
     @patch(
         "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
     )
-    def test_execute_query_force_workspace_none_does_not_return_data_if_no_access(
+    def test_execute_query_force_workspace_none_raises_acl_error(
         self, get_all_workspaces_with_read_access_by_user
     ):
         mock_user = _create_user("3")
         get_all_workspaces_with_read_access_by_user.return_value = []
-        data_list = data_api.execute_query({"workspace": None}, mock_user)
-        self.assertTrue(len(data_list) == 0)
+        with self.assertRaises(AccessControlError):
+            data_api.execute_json_query({"workspace": None}, mock_user)
 
     def test_execute_query_as_superuser_returns_all_data(self):
         mock_user = _create_user("1", is_superuser=True)
-        data_list = data_api.execute_query({}, mock_user)
+        data_list = data_api.execute_json_query({}, mock_user)
         self.assertTrue(len(data_list) == 5)
+
+
+class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
+
+    fixture = fixture_data2
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_all_data_returns_private_data_of_user_1(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertTrue(data_list.count() > 0)
+        self.assertTrue(data.user_id == "1" for data in data_list)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_all_data_returns_private_data_of_user_2(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("2")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertTrue(data_list.count() > 0)
+        self.assertTrue(data.user_id == "2" for data in data_list)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_all_data_returns_private_data_of_user_3(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertTrue(data_list.count() > 0)
+        self.assertTrue(data.user_id == "3" for data in data_list)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_all_data_returns_accessible_data_of_user_1(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            fixture_data.workspace_1
+        ]
+        query = {}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertTrue(data_list.count() > 0)
+        self.assertTrue(
+            data.user_id == "1" or data.workspace == "1" for data in data_list
+        )
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_all_data_returns_accessible_data_of_user_2(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("2")
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            fixture_data.workspace_1
+        ]
+        query = {}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertTrue(data_list.count() > 0)
+        self.assertTrue(
+            data.user_id == "2" or data.workspace == "1" for data in data_list
+        )
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_all_data_returns_accessible_data_of_user_3(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            fixture_data.workspace_1
+        ]
+        query = {}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertTrue(data_list.count() > 0)
+        self.assertTrue(
+            data.user_id == "3" or data.workspace == "1" for data in data_list
+        )
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_get_private_data_from_other_user_raises_acl_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"user_id": "1"}
+        with self.assertRaises(AccessControlError):
+            data_api.execute_json_query(query, mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_get_data_from_workspace_without_access_raises_acl_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("4")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"workspace": "1"}
+        with self.assertRaises(AccessControlError):
+            data_api.execute_json_query(query, mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_on_workspace_without_access_raises_acl_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("4")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"$or": [{"workspace": "1"}]}
+        with self.assertRaises(AccessControlError):
+            data_api.execute_json_query(query, mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_in_workspace_without_access_raises_acl_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("4")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"workspace": {"$in": ["1", "2"]}}
+        with self.assertRaises(AccessControlError):
+            data_api.execute_json_query(query, mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_workspace_none_raises_acl_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"workspace": None}
+        with self.assertRaises(AccessControlError):
+            data_api.execute_json_query(query, mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_workspace_none_raises_acl_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            fixture_data.workspace_1
+        ]
+        query = {"workspace": None}
+        with self.assertRaises(AccessControlError):
+            data_api.execute_json_query(query, mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_workspace_none_raises_acl_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            fixture_data.workspace_1
+        ]
+        query = {"workspace": {"$in": [None, "1"]}}
+        with self.assertRaises(AccessControlError):
+            data_api.execute_json_query(query, mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_workspace_none_raises_acl_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            fixture_data.workspace_1
+        ]
+        query = {"workspace": {"$in": [None, "1"]}}
+        with self.assertRaises(AccessControlError):
+            data_api.execute_json_query(query, mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_others_data_raises_acl_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            fixture_data.workspace_1
+        ]
+        query = {"user_id": "3"}
+        with self.assertRaises(AccessControlError):
+            data_api.execute_json_query(query, mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_others_data_in_no_workspace_raises_acl_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"user_id": "3", "workspace": None}
+        with self.assertRaises(AccessControlError):
+            data_api.execute_json_query(query, mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_others_data_in_workspace_raises_acl_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            fixture_data.workspace_1
+        ]
+        query = {"user_id": "3", "workspace": "1"}
+        with self.assertRaises(AccessControlError):
+            data_api.execute_json_query(query, mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_others_data_in_workspace_as_superuser_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("1", is_superuser=True)
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            fixture_data.workspace_1
+        ]
+        query = {"user_id": "3", "workspace": "1"}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertTrue(data_list.count() > 0)
+        self.assertTrue(
+            data.user_id == "3" and data.workspace == "1" for data in data_list
+        )
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_regex_with_matches_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.root.element": {"$regex": ".*"}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertTrue(data_list.count() > 0)
+        self.assertTrue(data.user_id == "3" for data in data_list)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_regex_without_matches_returns_nothing(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.root.element": {"$regex": "aaa"}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertTrue(data_list.count() == 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_exists_with_matches_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.root.element": {"$exists": True}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertTrue(data_list.count() != 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_exists_without_matches_returns_nothing(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.root.absent": {"$exists": True}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertTrue(data_list.count() == 0)
 
 
 class TestDataDelete(MongoIntegrationBaseTestCase):
 
     fixture = fixture_data
 
-    @unittest.skip("GridFS not supported by mongomock")
     @patch(
         "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
     )
@@ -310,7 +616,8 @@ class TestDataDelete(MongoIntegrationBaseTestCase):
             fixture_data.data_collection[fixture_data.USER_1_WORKSPACE_1], mock_user
         )
 
-    @unittest.skip("GridFS not supported by mongomock")
+    # FIXME: test is not true. Deleting own data in workspace without write access raises ACL error. FIXME note also found in ACL code.
+    @unittest.skip("Test is not True.")
     @patch(
         "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
     )
@@ -323,7 +630,6 @@ class TestDataDelete(MongoIntegrationBaseTestCase):
             fixture_data.data_collection[fixture_data.USER_1_WORKSPACE_1], mock_user
         )
 
-    @unittest.skip("GridFS not supported by mongomock")
     @patch(
         "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
     )
@@ -353,7 +659,6 @@ class TestDataDelete(MongoIntegrationBaseTestCase):
                 fixture_data.data_collection[fixture_data.USER_2_WORKSPACE_2], mock_user
             )
 
-    @unittest.skip("GridFS not supported by mongomock")
     @patch(
         "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
     )

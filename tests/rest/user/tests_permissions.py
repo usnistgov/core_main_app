@@ -4,9 +4,6 @@ from django.test import TestCase
 from rest_framework import status
 
 from core_main_app.rest.user import views as user_rest_views
-from core_main_app.utils.integration_tests.integration_base_test_case import (
-    MongoIntegrationBaseTestCase,
-)
 from core_main_app.utils.integration_tests.integration_base_transaction_test_case import (
     MongoIntegrationTransactionTestCase,
 )

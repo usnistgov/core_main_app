@@ -3,7 +3,7 @@
 {% block box_title %}Available{% endblock %}
 
 {% block box_tools %}
-    <a href="{% url 'admin:core_main_app_upload_template'%}" class="float-right btn btn-secondary">
+    <a href="{% url 'core-admin:core_main_app_upload_template'%}" class="float-right btn btn-secondary">
         <i class="fas fa-upload"></i> Upload {{ data.object_name }}
     </a>
 {% endblock %}
@@ -21,7 +21,7 @@
             <td>
                 {% block box_actions %}
                 <a class="btn btn-secondary"
-                   href="{% url 'admin:core_main_app_manage_template_versions' object.id %}">
+                   href="{% url 'core-admin:core_main_app_manage_template_versions' object.id %}">
                     <i class="fas fa-list"></i> Versions
                 </a>
                 {% url 'core_main_app_edit_template' object.id as edit_url %}

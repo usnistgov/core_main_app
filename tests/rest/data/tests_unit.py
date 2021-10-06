@@ -15,13 +15,13 @@ class TestDataList(SimpleTestCase):
     def setUp(self):
         super(TestDataList, self).setUp()
         self.data = {
-            "template": "1",
+            "template": None,
             "user_id": "1",
             "xml_content": "test",
             "title": "test",
         }
 
-    @patch.object(Data, "get_all")
+    @patch.object(Data, "get_all_by_user_id")
     def test_get_all_returns_http_200(self, mock_get_all):
         # Arrange
         mock_user = create_mock_user("1")

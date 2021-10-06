@@ -99,14 +99,18 @@ class TestWebPageListDeletePermission(SimpleTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @patch("core_main_app.components.web_page.api.get")
+    @patch("core_main_app.components.web_page.api.delete_by_type")
     @patch.object(WebPageSerializer, "is_valid")
     @patch.object(WebPageSerializer, "save")
     @patch.object(WebPageSerializer, "data")
     def test_staff_returns_http_204(
-        self, serializer_data, serializer_save, serializer_is_valid, web_page_api_get
+        self,
+        serializer_data,
+        serializer_save,
+        serializer_is_valid,
+        web_page_api_delete_by_type,
     ):
-        web_page_api_get.return_value = _get_mock_web_page()
+        web_page_api_delete_by_type.return_value = None
         serializer_data.return_value = True
         serializer_is_valid.return_value = {}
         serializer_save.return_value = None

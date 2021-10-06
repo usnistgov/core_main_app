@@ -107,22 +107,36 @@ def check_can_read_list(document_list, user):
     Returns:
 
     """
-    if len(document_list) > 0:
-        # get list of accessible workspaces
-        accessible_workspaces = (
-            workspace_api.get_all_workspaces_with_read_access_by_user(user)
+    if document_list.count() > 0:
+        # exclude own data
+        other_users_documents = document_list.exclude(user_id=str(user.id))
+
+        # check that other users private data is not accessed
+        other_users_private_document = other_users_documents.filter(
+            workspace__isnull=True
         )
-        # check access is correct
-        for document in document_list:
-            # user is document owner
-            if document.user_id == str(user.id):
-                continue
-            # user is not owner or document not in accessible workspace
-            if (
-                document.workspace is None
-                or document.workspace not in accessible_workspaces
-            ):
-                raise AccessControlError("The user doesn't have enough rights.")
+        if other_users_private_document.count() > 0:
+            raise AccessControlError(
+                "The user doesn't have enough rights to access this data"
+            )
+
+        # get list of accessible workspaces
+        accessible_workspaces = [
+            workspace.id
+            for workspace in workspace_api.get_all_workspaces_with_read_access_by_user(
+                user
+            )
+        ]
+        # get list of all workspaces of returned data
+        document_workspaces = set(
+            other_users_documents.values_list("workspace", flat=True)
+        )
+        # check that accessed workspaces are in the list of accessible workspaces
+        for workspace in document_workspaces:
+            if workspace not in accessible_workspaces:
+                raise AccessControlError(
+                    "The user doesn't have enough rights to access this data"
+                )
 
 
 def can_write_document_in_workspace(func, document, workspace, user):

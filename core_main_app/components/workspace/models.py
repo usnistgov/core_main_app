@@ -1,24 +1,35 @@
 """
 Workspace model
 """
-from mongoengine import errors as mongoengine_errors
-from mongoengine.queryset.visitor import Q
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.validators import RegexValidator
+from django.db import models
+from django.db.models import Q
 
 from core_main_app.commons import exceptions
-from core_main_app.utils.validation.regex_validation import not_empty_or_whitespaces
-from django_mongoengine import fields, Document
+from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
 
 
-class Workspace(Document):
+class Workspace(models.Model):
     """
     Workspace class.
     """
 
-    title = fields.StringField(blank=False, validation=not_empty_or_whitespaces)
-    owner = fields.StringField(blank=True)
-    read_perm_id = fields.StringField(blank=False)
-    write_perm_id = fields.StringField(blank=False)
-    is_public = fields.BooleanField(default=False)
+    title = models.CharField(
+        blank=False,
+        validators=[
+            RegexValidator(
+                regex=NOT_EMPTY_OR_WHITESPACES,
+                message="Title must not be empty or only whitespaces",
+                code="invalid_title",
+            ),
+        ],
+        max_length=200,
+    )
+    owner = models.CharField(blank=True, max_length=200, null=True)
+    read_perm_id = models.CharField(blank=False, max_length=200)
+    write_perm_id = models.CharField(blank=False, max_length=200)
+    is_public = models.BooleanField(default=False)
 
     def clean(self):
         """
@@ -50,7 +61,7 @@ class Workspace(Document):
         Returns:
 
         """
-        return Workspace.objects(owner=str(user_id)).all()
+        return Workspace.objects.filter(owner=str(user_id)).all()
 
     @staticmethod
     def get_by_id(workspace_id):
@@ -64,8 +75,8 @@ class Workspace(Document):
 
         """
         try:
-            return Workspace.objects.get(pk=str(workspace_id))
-        except mongoengine_errors.DoesNotExist as e:
+            return Workspace.objects.get(pk=workspace_id)
+        except ObjectDoesNotExist as e:
             raise exceptions.DoesNotExist(str(e))
         except Exception as ex:
             raise exceptions.ModelError(str(ex))
@@ -81,7 +92,7 @@ class Workspace(Document):
         Returns:
 
         """
-        return Workspace.objects(
+        return Workspace.objects.filter(
             Q(owner=str(user_id))
             | Q(read_perm_id__in=read_permissions)
             | Q(is_public=True)
@@ -98,7 +109,7 @@ class Workspace(Document):
         Returns:
 
         """
-        return Workspace.objects(
+        return Workspace.objects.filter(
             Q(owner=str(user_id)) | Q(write_perm_id__in=write_permissions)
         ).all()
 
@@ -116,7 +127,7 @@ class Workspace(Document):
 
         """
 
-        return Workspace.objects(
+        return Workspace.objects.filter(
             Q(read_perm_id__in=read_permissions) | Q(is_public=True),
             owner__ne=str(user_id),
         ).all()
@@ -134,7 +145,7 @@ class Workspace(Document):
         Returns:
 
         """
-        return Workspace.objects(
+        return Workspace.objects.filter(
             owner__ne=str(user_id), write_perm_id__in=write_permissions
         ).all()
 
@@ -147,7 +158,7 @@ class Workspace(Document):
         Returns:
 
         """
-        return Workspace.objects(is_public=True).all()
+        return Workspace.objects.filter(is_public=True).all()
 
     @staticmethod
     def get_all_other_public_workspaces(user_id):
@@ -159,7 +170,7 @@ class Workspace(Document):
         Returns:
 
         """
-        return Workspace.objects(owner__ne=str(user_id), is_public=True).all()
+        return Workspace.objects.filter(owner__ne=str(user_id), is_public=True).all()
 
     @staticmethod
     def get_non_public_workspace_owned_by_user_id(user_id):
@@ -171,7 +182,7 @@ class Workspace(Document):
         Returns:
 
         """
-        return Workspace.objects(owner=str(user_id), is_public=False).all()
+        return Workspace.objects.filter(owner=str(user_id), is_public=False).all()
 
     @staticmethod
     def get_public_workspaces_owned_by_user_id(user_id):
@@ -183,7 +194,7 @@ class Workspace(Document):
         Returns:
 
         """
-        return Workspace.objects(owner=str(user_id), is_public=True).all()
+        return Workspace.objects.filter(owner=str(user_id), is_public=True).all()
 
     @staticmethod
     def get_global_workspace():
@@ -193,7 +204,7 @@ class Workspace(Document):
         """
         try:
             return Workspace.objects.get(owner=None, is_public=True)
-        except mongoengine_errors.DoesNotExist as e:
+        except ObjectDoesNotExist as e:
             raise exceptions.DoesNotExist(str(e))
         except Exception as ex:
             raise exceptions.ModelError(str(ex))
@@ -205,3 +216,11 @@ class Workspace(Document):
         Returns:
         """
         return self.is_public and self.owner is None
+
+    def __str__(self):
+        """Workspace object as string
+
+        Returns:
+
+        """
+        return self.title

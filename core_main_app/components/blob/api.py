@@ -1,20 +1,23 @@
 """ BLOB API
 """
 import core_main_app.commons.exceptions as exceptions
+from core_main_app.access_control.api import can_change_owner
 from core_main_app.access_control.api import (
     has_perm_administration,
     can_read_or_write_in_workspace,
-    can_read,
     can_read_id,
     can_write,
 )
 from core_main_app.access_control.decorators import access_control
-from core_main_app.components.blob.access_control import can_write_blob_workspace
+from core_main_app.components.blob.access_control import (
+    can_write_blob_workspace,
+    can_write_blob,
+)
 from core_main_app.components.blob.models import Blob
-from core_main_app.access_control.api import can_change_owner
 
 
-def insert(blob):
+@access_control(can_write_blob)
+def insert(blob, user):
     """Insert the blob in the blob repository.
 
     Args:
@@ -26,10 +29,9 @@ def insert(blob):
     # if blob is not set
     if blob.blob is None:
         raise exceptions.ApiError("Unable to save the blob: blob field is not set.")
-    # save blob on blob host
-    blob.save_blob()
     # save blob in database
-    return blob.save()
+    blob.save()
+    return blob
 
 
 @access_control(can_write_blob_workspace)
@@ -58,8 +60,6 @@ def delete(blob, user):
     Returns:
 
     """
-    # delete blob on blob host
-    blob.delete_blob()
     # delete blob in database
     return blob.delete()
 

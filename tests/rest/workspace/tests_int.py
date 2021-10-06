@@ -17,7 +17,7 @@ TITLE_1 = "title 1"
 TITLE_2 = "title 2"
 TITLE_3 = "title 3"
 
-FAKE_WORKSPACE_ID = "507f1f77bcf86cd799439011"
+FAKE_WORKSPACE_ID = -1
 
 
 class TestWorkspaceDetail(MongoIntegrationTransactionTestCase):

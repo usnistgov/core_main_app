@@ -7,8 +7,6 @@ from core_main_app.commons import exceptions
 from core_main_app.components.template_xsl_rendering import (
     api as template_xsl_rendering_api,
 )
-from bson import ObjectId
-
 
 logger = logging.getLogger(__name__)
 
@@ -46,11 +44,9 @@ def build_page(data_object, display_admin_version=False):
             ):
                 display_xslt_selector = False
 
-            if xsl_transformation_id is not None:
-                xsl_transformation_id = ObjectId(xsl_transformation_id)
         except Exception as exception:
             logger.warning(
-                "An exception occured when retrieving XSLT: %s" % str(exception)
+                "An exception occurred when retrieving XSLT: %s" % str(exception)
             )
             display_xslt_selector = False
             template_xsl_rendering = None

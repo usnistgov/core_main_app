@@ -1,6 +1,5 @@
 """ Authentication tests for TemplateXSLRendering REST API
 """
-from bson import ObjectId
 from django.test import SimpleTestCase
 from mock import patch, Mock
 from rest_framework import status
@@ -59,9 +58,9 @@ class TestTemplateXslRenderingListPostPermission(SimpleTestCase):
             template_xsl_rendering_views.TemplateXslRenderingList.as_view(),
             None,
             data={
-                "template": str(ObjectId()),
-                "list_xslt": str(ObjectId()),
-                "default_detail_xslt": str(ObjectId()),
+                "template": 1,
+                "list_xslt": 1,
+                "default_detail_xslt": 1,
             },
         )
 
@@ -85,9 +84,9 @@ class TestTemplateXslRenderingListPostPermission(SimpleTestCase):
             template_xsl_rendering_views.TemplateXslRenderingList.as_view(),
             mock_user,
             data={
-                "template": str(ObjectId()),
-                "list_xslt": str(ObjectId()),
-                "default_detail_xslt": str(ObjectId()),
+                "template": 1,
+                "list_xslt": 1,
+                "default_detail_xslt": 1,
             },
         )
 
@@ -111,9 +110,9 @@ class TestTemplateXslRenderingListPostPermission(SimpleTestCase):
             template_xsl_rendering_views.TemplateXslRenderingList.as_view(),
             mock_user,
             data={
-                "template": str(ObjectId()),
-                "list_xslt": str(ObjectId()),
-                "default_detail_xslt": str(ObjectId()),
+                "template": 1,
+                "list_xslt": 1,
+                "default_detail_xslt": 1,
             },
         )
 
@@ -125,7 +124,7 @@ class TestTemplateXslRenderingDetailGetPermission(SimpleTestCase):
         response = RequestMock.do_request_get(
             template_xsl_rendering_views.TemplateXslRenderingDetail.as_view(),
             None,
-            param={"pk": str(ObjectId())},
+            param={"pk": 1},
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -144,7 +143,7 @@ class TestTemplateXslRenderingDetailGetPermission(SimpleTestCase):
         response = RequestMock.do_request_get(
             template_xsl_rendering_views.TemplateXslRenderingDetail.as_view(),
             mock_user,
-            param={"pk": str(ObjectId())},
+            param={"pk": 1},
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -163,7 +162,7 @@ class TestTemplateXslRenderingDetailGetPermission(SimpleTestCase):
         response = RequestMock.do_request_get(
             template_xsl_rendering_views.TemplateXslRenderingDetail.as_view(),
             mock_user,
-            param={"pk": str(ObjectId())},
+            param={"pk": 1},
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -174,8 +173,8 @@ class TestTemplateXslRenderingDetailPatchPermission(SimpleTestCase):
         response = RequestMock.do_request_patch(
             template_xsl_rendering_views.TemplateXslRenderingDetail.as_view(),
             None,
-            param={"pk": str(ObjectId())},
-            data={"list_xslt": str(ObjectId()), "default_detail_xslt": str(ObjectId())},
+            param={"pk": 1},
+            data={"list_xslt": 1, "default_detail_xslt": 1},
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -200,8 +199,8 @@ class TestTemplateXslRenderingDetailPatchPermission(SimpleTestCase):
         response = RequestMock.do_request_patch(
             template_xsl_rendering_views.TemplateXslRenderingDetail.as_view(),
             mock_user,
-            param={"pk": str(ObjectId())},
-            data={"list_xslt": str(ObjectId()), "default_detail_xslt": str(ObjectId())},
+            param={"pk": 1},
+            data={"list_xslt": 1, "default_detail_xslt": 1},
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -226,10 +225,10 @@ class TestTemplateXslRenderingDetailPatchPermission(SimpleTestCase):
         response = RequestMock.do_request_patch(
             template_xsl_rendering_views.TemplateXslRenderingDetail.as_view(),
             mock_user,
-            param={"pk": str(ObjectId())},
+            param={"pk": 1},
             data={
-                "list_xslt": str(ObjectId()),
-                "default_detail_xslt" "": str(ObjectId()),
+                "list_xslt": 1,
+                "default_detail_xslt": 1,
             },
         )
 
@@ -241,7 +240,7 @@ class TestTemplateXslRenderingDetailDeletePermission(SimpleTestCase):
         response = RequestMock.do_request_delete(
             template_xsl_rendering_views.TemplateXslRenderingDetail.as_view(),
             None,
-            param={"pk": str(ObjectId())},
+            param={"pk": 1},
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -260,7 +259,7 @@ class TestTemplateXslRenderingDetailDeletePermission(SimpleTestCase):
         response = RequestMock.do_request_delete(
             template_xsl_rendering_views.TemplateXslRenderingDetail.as_view(),
             mock_user,
-            param={"pk": str(ObjectId())},
+            param={"pk": 1},
         )
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -279,7 +278,7 @@ class TestTemplateXslRenderingDetailDeletePermission(SimpleTestCase):
         response = RequestMock.do_request_delete(
             template_xsl_rendering_views.TemplateXslRenderingDetail.as_view(),
             mock_user,
-            param={"pk": str(ObjectId())},
+            param={"pk": 1},
         )
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

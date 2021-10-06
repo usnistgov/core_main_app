@@ -32,5 +32,6 @@ class XslTransformationFixtures(FixtureInterface):
         )
         self.data_1 = XslTransformation(
             name="name_1", filename="filename_1.xsd", content=content
-        ).save()
+        )
+        self.data_1.save()
         self.data_collection = [self.data_1]

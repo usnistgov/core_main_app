@@ -1,12 +1,12 @@
 """Serializers used throughout the Rest API
 """
 from rest_framework.fields import CharField
-from rest_framework_mongoengine.serializers import DocumentSerializer
+from rest_framework.serializers import ModelSerializer
 
 from core_main_app.components.template.models import Template
 
 
-class TemplateSerializer(DocumentSerializer):
+class TemplateSerializer(ModelSerializer):
     """
     Template serializer
     """

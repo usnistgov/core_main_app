@@ -16,10 +16,10 @@ from rest_framework.views import APIView
 import core_main_app.components.blob.api as blob_api
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
+from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.rest.blob.serializers import BlobSerializer, DeleteBlobsSerializer
 from core_main_app.utils.file import get_file_http_response
-from core_main_app.components.user import api as user_api
 
 
 class AbstractBlobList(APIView, metaclass=ABCMeta):
@@ -357,7 +357,7 @@ class BlobDownload(APIView):
             # Get object
             blob_object = self.get_object(request, pk)
 
-            return get_file_http_response(blob_object.blob, blob_object.filename)
+            return get_file_http_response(blob_object.blob.read(), blob_object.filename)
         except AccessControlError as e:
             content = {"message": str(e)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)

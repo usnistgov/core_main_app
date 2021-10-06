@@ -94,7 +94,9 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
             if type(options) is str:
                 options = json.loads(options)
             title = self.request.data.get("title", None)
-            order_by_field = self.request.data.get("order_by_field", "").split(",")
+            order_by_field = self.request.data.get("order_by_field", "")
+            if order_by_field:
+                order_by_field = order_by_field.split(",")
             if query is not None:
                 # prepare query
                 raw_query = self.build_query(
@@ -111,6 +113,9 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
             else:
                 content = {"message": "Expected parameters not provided."}
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        except AccessControlError as acl_error:
+            content = {"message": str(acl_error)}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -165,7 +170,7 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
 
             Results of the query
         """
-        return data_api.execute_query(raw_query, self.request.user, order_by_field)
+        return data_api.execute_json_query(raw_query, self.request.user, order_by_field)
 
     @abstractmethod
     def build_response(self, data_list):

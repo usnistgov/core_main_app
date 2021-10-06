@@ -3,20 +3,18 @@
 """
 from django.http import Http404
 from rest_framework.fields import CharField
-from rest_framework.fields import FileField, SerializerMethodField
-from rest_framework_mongoengine.serializers import DocumentSerializer
+from rest_framework.fields import SerializerMethodField
+from rest_framework.serializers import ModelSerializer
 
 import core_main_app.components.blob.api as blob_api
 from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.blob.utils import get_blob_download_uri
-from core_main_app.access_control.exceptions import AccessControlError
 
 
-class BlobSerializer(DocumentSerializer):
+class BlobSerializer(ModelSerializer):
     """Blob serializer"""
 
-    blob = FileField(write_only=True)
     handle = SerializerMethodField()
     upload_date = SerializerMethodField()
 
@@ -55,7 +53,7 @@ class BlobSerializer(DocumentSerializer):
 
         """
         # Return instance generation time
-        return str(instance.id.generation_time)
+        return str(instance.creation_date)
 
     def create(self, validated_data):
         """Create and return a new `Blob` instance, given the validated data.
@@ -70,15 +68,16 @@ class BlobSerializer(DocumentSerializer):
         blob_object = Blob(
             filename=validated_data["blob"].name,
             user_id=str(self.context["request"].user.id),
+            blob=validated_data["blob"],
         )
-        # Set file content
-        blob_object.blob = validated_data["blob"].file
 
         # Save the blob
-        return blob_api.insert(blob_object)
+        blob_api.insert(blob_object, self.context["request"].user)
+
+        return blob_object
 
 
-class DeleteBlobsSerializer(DocumentSerializer):
+class DeleteBlobsSerializer(ModelSerializer):
     """Delete Blob serializer."""
 
     id = CharField()

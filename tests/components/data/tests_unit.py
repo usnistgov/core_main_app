@@ -4,11 +4,9 @@ import datetime
 from collections import OrderedDict
 from unittest.case import TestCase
 
-from bson import ObjectId
 from mock import patch
 
 import core_main_app.components.data.api as data_api
-from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
@@ -41,30 +39,6 @@ class TestDataGetById(TestCase):
         result = data_api.get_by_id(1, mock_user)
         # Assert
         self.assertIsInstance(result, Data)
-
-
-class TestDataGetAllExceptUser(TestCase):
-    @patch(
-        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
-    )
-    @patch.object(Data, "get_all_except_user_id")
-    def test_data_get_all_except_user_return_collection_of_data_where_user_is_not_owner(
-        self, mock_list_except_user_id, get_all_workspaces_with_read_access_by_user
-    ):
-        # Arrange
-        user_id = "2"
-        mock_data_1 = _create_data(
-            _get_template(), user_id="3", title="title_1", content=""
-        )
-        mock_data_2 = _create_data(
-            _get_template(), user_id="1", title="title_2", content=""
-        )
-        mock_list_except_user_id.return_value = [mock_data_1, mock_data_2]
-        mock_user = create_mock_user("2")
-        get_all_workspaces_with_read_access_by_user.return_value = []
-        # Act
-        with self.assertRaises(AccessControlError):
-            data_api.get_all_except_user(mock_user)
 
 
 class TestDataUpsert(TestCase):
@@ -171,7 +145,7 @@ class TestDataUpsert(TestCase):
 
     def test_data_upsert_raises_xml_error_if_failed_during_xml_validation(self):
         # Arrange
-        data = _create_data(None, user_id="3", title="title", content="")
+        data = _create_data(_get_template(), user_id="3", title="title", content="")
         mock_user = create_mock_user("3")
         mock_request = create_mock_request(user=mock_user)
         # Act # Assert
@@ -339,7 +313,7 @@ class TestDataCheckXmlFileIsValid(TestCase):
         # Arrange
         user = create_mock_user("3")
         mock_request = create_mock_request(user=user)
-        data = _create_data(None, user_id="3", title="title", content="")
+        data = _create_data(_get_template(), user_id="3", title="title", content="")
         # Act # Assert
         with self.assertRaises(exceptions.XMLError):
             data_api.check_xml_file_is_valid(data, request=mock_request)
@@ -465,7 +439,7 @@ class TestTimes(TestCase):
         mock_request = create_mock_request(user=mock_user)
         # Act
         data_api.upsert(data, mock_request)
-        data.id = ObjectId()
+        data.id = 1
         original_date = data.last_modification_date
         data.xml_content = "<root></root>"
         data_api.upsert(data, mock_request)
@@ -490,7 +464,7 @@ class TestTimes(TestCase):
         mock_request = create_mock_request(user=mock_user)
         # Act
         data_api.upsert(data, mock_request)
-        data.id = ObjectId()
+        data.id = 1
         original_date = data.last_modification_date
         data.title = "test"
         data_api.upsert(data, mock_request)
@@ -515,7 +489,7 @@ class TestTimes(TestCase):
         mock_request = create_mock_request(user=mock_user)
         # Act
         data_api.upsert(data, mock_request)
-        data.id = ObjectId()
+        data.id = 1
         original_date = data.last_change_date
         data.title = "test"
         data_api.upsert(data, mock_request)
@@ -540,7 +514,7 @@ class TestTimes(TestCase):
         mock_request = create_mock_request(user=mock_user)
         # Act
         data_api.upsert(data, mock_request)
-        data.id = ObjectId()
+        data.id = 1
         original_date = data.creation_date
         data.title = "test"
         data_api.upsert(data, mock_request)

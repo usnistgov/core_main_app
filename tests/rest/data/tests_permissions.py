@@ -17,8 +17,8 @@ from core_main_app.rest.data.serializers import (
     DataSerializer,
     DataWithTemplateInfoSerializer,
 )
-from core_main_app.rest.data.views import Validation as data_validation
 from core_main_app.rest.data.views import Migration as data_migration
+from core_main_app.rest.data.views import Validation as data_validation
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
 
@@ -164,7 +164,7 @@ class TestAdminDataListGetPermissions(SimpleTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @patch.object(Data, "get_all_by_user_id")
+    @patch.object(Data, "get_all")
     def test_superuser_returns_http_200(self, data_get_all_by_user):
         data_get_all_by_user.return_value = {}
 
