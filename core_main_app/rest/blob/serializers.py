@@ -75,7 +75,7 @@ class BlobSerializer(DocumentSerializer):
         blob_object.blob = validated_data["blob"].file
 
         # Save the blob
-        return blob_api.insert(blob_object)
+        return blob_api.insert(blob_object, self.context["request"].user)
 
 
 class DeleteBlobsSerializer(DocumentSerializer):
