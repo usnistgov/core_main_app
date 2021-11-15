@@ -341,9 +341,7 @@ def _create_template_version_manager(title="", is_disabled=False, user_id=""):
     return TemplateVersionManager(
         id=1,
         title=title,
-        # versions=[],
         user=user_id,
         is_disabled=is_disabled,
-        # disabled_versions=[],
         _cls=TemplateVersionManager.class_name,
     )
