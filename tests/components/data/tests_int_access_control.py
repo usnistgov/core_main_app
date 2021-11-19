@@ -551,6 +551,31 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
     @patch(
         "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
     )
+    def test_query_in_with_matches_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.root.element": {"$in": ["value2", "value3"]}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertTrue(data_list.count() > 0)
+        self.assertTrue(data.user_id == "3" for data in data_list)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_in_without_matches_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.root.element": {"$in": ["value3"]}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertTrue(data_list.count() == 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
     def test_query_regex_with_matches_returns_data(
         self, get_all_workspaces_with_read_access_by_user
     ):

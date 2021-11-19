@@ -206,6 +206,12 @@ def convert_to_django(query_dict):
                         key = f"{key}__gte"
                         # set value
                         value = value["$gte"]
+                    # check if in operator (included in list)
+                    elif "$in" in value:
+                        # add in to key
+                        key = f"{key}__in"
+                        # set value
+                        value = value["$in"]
                     # check if regex operator
                     elif "$regex" in value:
                         # add the regex operator
