@@ -622,6 +622,78 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         data_list = data_api.execute_json_query(query, mock_user)
         self.assertTrue(data_list.count() == 0)
 
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_ne_without_matches_returns_nothing(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.root.element": {"$ne": "value2"}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_ne_with_matches_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.root.element": {"$ne": "aaa"}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 1)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_ne_with_inaccessible_matches_returns_nothing(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("4")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.root.element": {"$ne": "aaa"}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_not_without_matches_returns_nothing(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.root.element": {"$not": {"$regex": "value2"}}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_not_with_matches_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.root.element": {"$not": {"$regex": "aaa"}}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 1)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_not_with_inaccessible_matches_returns_nothing(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("4")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.root.element": {"$not": {"$regex": "aaa"}}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 0)
+
 
 class TestDataDelete(MongoIntegrationBaseTestCase):
 

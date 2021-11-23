@@ -164,6 +164,8 @@ def convert_to_django(query_dict):
                     # add filter by value (template id)
                     q_list &= Q(template=query_dict["template"])
             else:
+                # init not equal
+                not_equal = False
                 # if key contains a dot: a path in dot notation
                 if "." in key:
                     # replace dots by double underscores (django notation)
@@ -182,8 +184,25 @@ def convert_to_django(query_dict):
                     value = True
                 # if the value is a dict
                 elif isinstance(value, dict):
+                    # check if not operator
+                    if "$not" in value:
+                        # set not equal to create query not
+                        not_equal = True
+                        # check if value of $not is not a document, raise exception, not supported
+                        if not isinstance(value["$not"], dict):
+                            raise CoreError(
+                                f"Unsupported value found for $not operator: {value}"
+                            )
+                        # move value to document in $not
+                        value = value["$not"]  #
+                    # check if ne operator (not equal)
+                    if "$ne" in value:
+                        # set not equal to create query not
+                        not_equal = True
+                        # set value
+                        value = value["$ne"]
                     # check if lt operator (less than)
-                    if "$lt" in value:
+                    elif "$lt" in value:
                         # add lt to key
                         key = f"{key}__lt"
                         # set value
@@ -235,8 +254,11 @@ def convert_to_django(query_dict):
                         # If an operator not listed above is found, an exception is raised
                         raise CoreError(f"Unsupported operator found: {value}")
 
+                query = Q(**{key: value})
+                query = ~query if not_equal else query
+
                 # add AND query filter from string key and value
-                q_list &= Q(**{key: value})
+                q_list &= query
         else:
             # if operator and
             if key == "$and":

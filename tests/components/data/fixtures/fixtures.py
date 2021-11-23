@@ -248,7 +248,9 @@ class AccessControlDataFixture2(FixtureInterface):
 
         content = {"root": {"element": "value2"}}
 
-        self.data_1 = Data(template=self.template, title="Data 1", user_id="1")
+        self.data_1 = Data(
+            template=self.template, title="Data 1", user_id="1", dict_content=content
+        )
         self.data_1.save()
         self.data_2 = Data(
             template=self.template,
