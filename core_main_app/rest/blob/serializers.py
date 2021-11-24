@@ -1,6 +1,8 @@
 """
     Serializers used throughout the Rest API
 """
+from os.path import join
+
 from django.http import Http404
 from rest_framework.fields import CharField
 from rest_framework.fields import SerializerMethodField
@@ -11,23 +13,55 @@ from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.blob.utils import get_blob_download_uri
 
+from django.urls import reverse
+from core_main_app import settings
+from urllib.parse import urljoin
+
 
 class BlobSerializer(ModelSerializer):
     """Blob serializer"""
 
     handle = SerializerMethodField()
     upload_date = SerializerMethodField()
+    if "core_linked_records_app" in settings.INSTALLED_APPS:
+        pid = SerializerMethodField()
 
     class Meta(object):
         model = Blob
         fields = ["id", "user_id", "filename", "handle", "blob", "upload_date"]
-        read_only_fields = (
-            "id",
-            "user_id",
-            "filename",
-            "handle",
-            "upload_date",
-        )
+        read_only_fields = ("id", "user_id", "filename", "handle", "upload_date")
+        if "core_linked_records_app" in settings.INSTALLED_APPS:
+            fields.append("pid")
+            read_only_fields = read_only_fields + ("pid",)
+
+    def get_pid(self, instance):
+        """Return pid
+
+        Args:
+            instance:
+
+        Returns:
+
+        """
+        # return pid  if assigned
+        if "core_linked_records_app" not in settings.INSTALLED_APPS:
+            return None
+        else:
+            from core_linked_records_app.components.blob import (
+                api as linked_blob_api,
+            )
+            from core_linked_records_app.settings import DEFAULT_ID_PROVIDER_SYSTEM
+
+            try:
+                sub_url = reverse(
+                    "core_linked_records_provider_record",
+                    kwargs={"provider": DEFAULT_ID_PROVIDER_SYSTEM, "record": ""},
+                )
+                blob_pid = linked_blob_api.get_pid_for_blob(str(instance.id))
+
+                return urljoin(settings.SERVER_URI, join(sub_url, blob_pid.record_name))
+            except:
+                return None
 
     def get_handle(self, instance):
         """Return handle

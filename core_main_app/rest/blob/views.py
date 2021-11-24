@@ -18,7 +18,10 @@ from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
-from core_main_app.rest.blob.serializers import BlobSerializer, DeleteBlobsSerializer
+from core_main_app.rest.blob.serializers import (
+    BlobSerializer,
+    DeleteBlobsSerializer,
+)
 from core_main_app.utils.file import get_file_http_response
 
 
@@ -70,7 +73,9 @@ class AbstractBlobList(APIView, metaclass=ABCMeta):
 
             # Serialize object
             serializer = BlobSerializer(
-                blob_list, many=True, context={"request": request}
+                blob_list,
+                many=True,
+                context={"request": request},
             )
 
             # Return response
