@@ -11,6 +11,7 @@ import core_main_app.components.web_page_login.api as login_page_api
 from core_main_app.commons.enums import WEB_PAGE_TYPES
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.data.models import Data
+from core_main_app.components.lock.models import DatabaseLockObject
 from core_main_app.components.template.models import Template
 from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
@@ -126,6 +127,7 @@ admin.site.register(Workspace)
 admin.site.register(TemplateVersionManager)
 admin.site.register(Template)
 admin.site.register(XslTransformation)
+admin.site.register(DatabaseLockObject)
 
 
 class CoreAdminSite(AdminSite):
