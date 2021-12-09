@@ -19,7 +19,7 @@
             <th style="width: 20%">Upload date</th>
             <th>Actions</th>
         </tr>
-	    {% for version in data.version_manager.versions.available reversed %}
+	    {% for version in data.categorized_versions.available reversed %}
            <tr>
                <td>{{ version.index }}</td>
                {% if version.object == data.version_manager.current %}

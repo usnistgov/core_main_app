@@ -266,7 +266,7 @@ def get_context_manage_template_versions(version_manager, object_name="Template"
             "creation_date": version.creation_date,
         }
 
-        if version not in version_manager.disabled_versions:
+        if str(version.id) not in version_manager.disabled_versions:
             categorized_versions["available"].append(indexed_version)
         else:
             categorized_versions["disabled"].append(indexed_version)
