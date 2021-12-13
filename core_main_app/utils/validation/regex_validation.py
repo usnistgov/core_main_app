@@ -19,3 +19,16 @@ def not_empty_or_whitespaces(value):
     pattern = re.compile(NOT_EMPTY_OR_WHITESPACES)
     if not pattern.match(value):
         raise ValidationError("Value can not be empty")
+
+
+def validate_alphanum(name):
+    """Validate alpha-numerical characters
+
+    Args:
+        name:
+
+    Returns:
+
+    """
+    if re.match(r"^[a-zA-Z][a-zA-Z0-9]+$", name) is None:
+        raise ValidationError("Name should only contains alpha-numerical characters.")
