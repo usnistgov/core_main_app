@@ -16,7 +16,7 @@
             <div class="form-group ">
                 <select class="selectpicker form-control" id="xslt-selector" >
                    {% if not template_xsl_rendering.default_detail_xslt %}  <option value={{None}}>Default</option>{% endif %}
-                   {% for xslt in template_xsl_rendering.list_detail_xslt %}
+                   {% for xslt in template_xsl_rendering.list_detail_xslt.all %}
                         {% if xslt.id == xslt_id %}
                             <option value="{{xslt.id}}" selected >{{xslt.name}} {% if xslt == template_xsl_rendering.default_detail_xslt %} (default) {% endif %}</option>
                         {% else %}

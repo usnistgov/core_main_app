@@ -40,7 +40,7 @@ def build_page(data_object, display_admin_version=False):
             )
             if not template_xsl_rendering.list_detail_xslt or (
                 template_xsl_rendering.default_detail_xslt is not None
-                and len(template_xsl_rendering.list_detail_xslt) == 1
+                and template_xsl_rendering.list_detail_xslt.count() == 1
             ):
                 display_xslt_selector = False
 
