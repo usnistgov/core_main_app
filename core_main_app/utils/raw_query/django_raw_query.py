@@ -63,13 +63,14 @@ def _get_accessible_criteria(
         # raise access control error
         raise AccessControlError("The user does not have enough filter by user.")
     # iterate list of workspace filter provided
-    for workspace in workspace_filter:
-        # if workspace is not accessible
-        if workspace not in accessible_workspaces:
-            # raise access control error
-            raise AccessControlError(
-                "The user does not have enough right to filter by workspace."
-            )
+    if workspace_filter:
+        for workspace in workspace_filter:
+            # if workspace is not accessible
+            if workspace not in accessible_workspaces:
+                # raise access control error
+                raise AccessControlError(
+                    "The user does not have enough right to filter by workspace."
+                )
 
     # build workspace query: all accessible workspaces or only selected workspaces among accessible ones
     workspace_query = (
