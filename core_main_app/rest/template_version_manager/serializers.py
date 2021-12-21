@@ -1,6 +1,6 @@
 """Serializers used throughout the Rest API
 """
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, ReadOnlyField
 
 from core_main_app.components.template.api import init_template_with_dependencies
 from core_main_app.components.template.models import Template
@@ -19,6 +19,10 @@ class TemplateVersionManagerSerializer(ModelSerializer):
     Template Version Manager serializer
     """
 
+    versions = ReadOnlyField()
+    current = ReadOnlyField()
+    disabled_versions = ReadOnlyField()
+
     class Meta(object):
         model = TemplateVersionManager
         fields = "__all__"
@@ -29,7 +33,6 @@ class TemplateVersionManagerSerializer(ModelSerializer):
             "current",
             "is_disabled",
             "disabled_versions",
-            "dependencies",
         ]
 
     def create(self, validated_data):
