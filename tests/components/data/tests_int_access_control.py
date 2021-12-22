@@ -14,10 +14,12 @@ from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from tests.components.data.fixtures.fixtures import (
     AccessControlDataFixture,
     AccessControlDataFixture2,
+    AccessControlDataFullTextSearchFixture,
 )
 
 fixture_data = AccessControlDataFixture()
 fixture_data2 = AccessControlDataFixture2()
+fixture_data_full_text = AccessControlDataFullTextSearchFixture()
 
 
 class TestDataGetById(MongoIntegrationBaseTestCase):
@@ -541,7 +543,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         get_all_workspaces_with_read_access_by_user.return_value = [
             fixture_data.workspace_1
         ]
-        query = {"user_id": "3", "workspace": "1"}
+        query = {"user_id": "3", "workspace": self.fixture.workspace_1.id}
         data_list = data_api.execute_json_query(query, mock_user)
         self.assertTrue(data_list.count() > 0)
         self.assertTrue(
@@ -741,6 +743,102 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         mock_user = _create_user("4")
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"dict_content.root.element": {"$not": {"$regex": "aaa"}}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 0)
+
+
+class TestDataExecuteFullTextQuery(MongoIntegrationBaseTestCase):
+    fixture = fixture_data_full_text
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_full_text_with_matches_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"$text": {"$search": "user1"}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 1)
+        self.assertEqual(data_list[0], self.fixture.data_1)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_full_text_with_multiple_matches_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            self.fixture.workspace_1
+        ]
+        query = {"$text": {"$search": "value1"}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 2)
+        self.assertIn(self.fixture.data_1, data_list)
+        self.assertIn(self.fixture.data_2, data_list)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_full_text_with_multiple_words_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"$text": {"$search": "value1 user1"}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 1)
+        self.assertIn(self.fixture.data_1, data_list)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_full_text_with_multiple_words_but_one_incorrect_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            self.fixture.workspace_1
+        ]
+        query = {"$text": {"$search": "value1 user2"}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_full_text_without_matches_returns_nothing(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"$text": {"$search": "wrong"}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_full_text_with_private_matches_returns_nothing(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("2")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"$text": {"$search": "user1"}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_full_text_with_inaccessible_matches_returns_nothing(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"$text": {"$search": "value1"}}
         data_list = data_api.execute_json_query(query, mock_user)
         self.assertEqual(data_list.count(), 0)
 

@@ -6,6 +6,7 @@ import re
 from django.db.models import Q
 
 from core_main_app.commons.exceptions import CoreError
+from core_main_app.utils.databases.backend import uses_postgresql_backend
 
 
 def _compile_regex(query):
@@ -269,10 +270,13 @@ def convert_to_django(query_dict):
                     q_list |= convert_to_django(sub_value)
             # if operators text and search found
             elif key == "$text" and "$search" in value:
-                # extract keywords from dict
-                for keyword in query_dict["$text"]["$search"].strip().split(" "):
-                    # add text filter
-                    q_list &= Q(xml_file__icontains=keyword.replace('"', ""))
+                if uses_postgresql_backend():
+                    q_list &= Q(vector_column=query_dict["$text"]["$search"].strip())
+                else:
+                    # extract keywords from dict
+                    for keyword in query_dict["$text"]["$search"].strip().split(" "):
+                        # add text filter
+                        q_list &= Q(xml_file__icontains=keyword.replace('"', ""))
             else:
                 # raise an error if another operator was found
                 raise CoreError(f"Unsupported operator found: {key}")

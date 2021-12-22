@@ -1,5 +1,7 @@
 """ Data model
 """
+from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import SearchVectorField
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.models import Q
@@ -8,10 +10,11 @@ from core_main_app.commons import exceptions
 from core_main_app.components.abstract_data.models import AbstractData
 from core_main_app.components.template.models import Template
 from core_main_app.components.workspace.models import Workspace
+from core_main_app.utils.raw_query.django_raw_query import get_workspace_query
+
 
 # TODO: Create publication workflow manager
 # TODO: execute_query / execute_query_full_result -> use find method (RETURN FULL OBJECT)
-from core_main_app.utils.raw_query.django_raw_query import get_workspace_query
 
 
 class Data(AbstractData):
@@ -22,6 +25,7 @@ class Data(AbstractData):
     workspace = models.ForeignKey(
         Workspace, blank=True, on_delete=models.SET_NULL, null=True
     )
+    vector_column = SearchVectorField(null=True)
 
     class Meta:
         verbose_name = "Data"
@@ -30,6 +34,7 @@ class Data(AbstractData):
             models.Index(
                 fields=["title", "last_modification_date", "template", "user_id"]
             ),
+            GinIndex(fields=["vector_column"]),
         ]
 
     @staticmethod

@@ -215,6 +215,7 @@ conf/my-mongodb.conf
 curate/tests/data/parser/schema/namespace/results*
 curate/tests/data/parser/extension/explicit-implicit/results*
 tests_media
+tests/.env
 
 # redis server
 *.rdb

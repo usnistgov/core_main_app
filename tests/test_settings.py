@@ -1,3 +1,13 @@
+""" Tests Settings
+"""
+
+import os
+
+from dotenv import load_dotenv
+
+# load environment variables from .env
+load_dotenv()
+
 SECRET_KEY = "fake-key"
 
 INSTALLED_APPS = [
@@ -21,16 +31,20 @@ INSTALLED_APPS = [
 # SERVER URI
 SERVER_URI = "http://example.com"
 
-# IN-MEMORY TEST DATABASE
+# TEST DATABASE
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": ":memory:",
-        "USER": "",
-        "PASSWORD": "",
-        "HOST": "",
-        "PORT": "",
-    },
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "HOST": os.environ["POSTGRES_HOST"] if "POSTGRES_HOST" in os.environ else None,
+        "PORT": int(os.environ["POSTGRES_PORT"])
+        if "POSTGRES_PORT" in os.environ
+        else 5432,
+        "NAME": os.environ["POSTGRES_DB"] if "POSTGRES_DB" in os.environ else None,
+        "USER": os.environ["POSTGRES_USER"] if "POSTGRES_USER" in os.environ else None,
+        "PASSWORD": os.environ["POSTGRES_PASS"]
+        if "POSTGRES_PASS" in os.environ
+        else None,
+    }
 }
 
 MIDDLEWARE = (

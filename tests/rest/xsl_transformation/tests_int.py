@@ -227,7 +227,7 @@ class TestPatchXslTransformationDetail(MongoIntegrationBaseTestCase):
     def test_patch_raise_400_sever_error_when_general_error_occurred(self):
         # Arrange
         user = create_mock_user("0", True, True)
-        self.param = {"pk": 1}
+        self.param = {"pk": self.fixture.data_1.id}
 
         # Act
         response = RequestMock.do_request_patch(
