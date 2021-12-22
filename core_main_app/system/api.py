@@ -20,17 +20,16 @@ def get_data_by_id(data_id):
     return Data.get_by_id(data_id)
 
 
-def get_all_by_template(template, order_by_field=DATA_SORTING_FIELDS):
+def get_all_by_template(template):
     """Get all data belonging to the specified template.
 
     Args:
         template:
-        order_by_field:
 
     Returns:
 
     """
-    return Data.objects.filter(template=template).order_by(order_by_field)
+    return Data.objects.filter(template=template)
 
 
 def get_all_by_list_template(list_template, order_by_field=DATA_SORTING_FIELDS):
