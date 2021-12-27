@@ -77,7 +77,7 @@ def can_read_data_query(
     # update the query
     query = _update_can_read_query(query, user, workspace_filter, user_filter)
     # get list of data
-    data_list = func(query, user, order_by_field)
+    data_list = func(query, user, order_by_field=order_by_field)
     # if superuser, return list of data
     if user.is_superuser:
         return data_list
