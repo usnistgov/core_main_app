@@ -81,7 +81,7 @@ class DatabaseLockObject(models.Model):
     """
 
     object = models.ForeignKey(Data, blank=False, on_delete=models.CASCADE)
-    user = models.CharField(blank=False, max_length=200)
+    user_id = models.CharField(blank=False, max_length=200)
     lock_date = models.DateTimeField(blank=False)
 
     @staticmethod

@@ -84,7 +84,9 @@ def _check_object_locked(object, user, lock):
 
     # Check if lock has expired
     date = database_lock_object.lock_date
-    if (datetime.datetime.now() - date).total_seconds() > LOCK_OBJECT_TTL:
+    if (
+        datetime.datetime.now() - date.replace(tzinfo=None)
+    ).total_seconds() > LOCK_OBJECT_TTL:
         lock.remove_lock(database_lock_object)
         return False
 

@@ -330,7 +330,7 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("user", models.CharField(max_length=200)),
+                ("user_id", models.CharField(max_length=200)),
                 ("lock_date", models.DateTimeField()),
                 (
                     "object",
