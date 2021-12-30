@@ -170,6 +170,12 @@ def convert_to_django(query_dict):
                 if "." in key:
                     # replace dots by double underscores (django notation)
                     key = key.replace(".", "__")
+                # check if not operator
+                if isinstance(value, dict) and "$not" in value:
+                    # set not equal to create query not
+                    not_equal = True
+                    # move value to document in $not
+                    value = value["$not"]
                 # if value is a regex
                 if isinstance(value, re.Pattern):
                     # add regex operator to key
@@ -184,17 +190,6 @@ def convert_to_django(query_dict):
                     value = True
                 # if the value is a dict
                 elif isinstance(value, dict):
-                    # check if not operator
-                    if "$not" in value:
-                        # set not equal to create query not
-                        not_equal = True
-                        # check if value of $not is not a document, raise exception, not supported
-                        if not isinstance(value["$not"], dict):
-                            raise CoreError(
-                                f"Unsupported value found for $not operator: {value}"
-                            )
-                        # move value to document in $not
-                        value = value["$not"]  #
                     # check if ne operator (not equal)
                     if "$ne" in value:
                         # set not equal to create query not

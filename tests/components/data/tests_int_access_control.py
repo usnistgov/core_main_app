@@ -1,7 +1,7 @@
 """ Access control testing
 """
 import unittest
-
+import re
 from mock.mock import patch
 
 from core_main_app.access_control.exceptions import AccessControlError
@@ -595,6 +595,56 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         mock_user = _create_user("3")
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"dict_content.root.element": {"$regex": "aaa"}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertTrue(data_list.count() == 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_pattern_with_matches_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.root.element": re.compile(".*")}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertTrue(data_list.count() > 0)
+        self.assertTrue(data.user_id == "3" for data in data_list)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_pattern_without_matches_returns_nothing(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.root.element": re.compile("aaa")}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertTrue(data_list.count() == 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_not_pattern_with_matches_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.root.element": {"$not": re.compile("aaa")}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertTrue(data_list.count() > 0)
+        self.assertTrue(data.user_id == "3" for data in data_list)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_not_pattern_without_matches_returns_nothing(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        mock_user = _create_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.root.element": {"$not": re.compile(".*")}}
         data_list = data_api.execute_json_query(query, mock_user)
         self.assertTrue(data_list.count() == 0)
 
