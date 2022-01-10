@@ -1,5 +1,5 @@
-celery==4.4.7
-kombu==4.6.11
+celery==5.2.3
+django-celery-beat==2.2.1
 Django==3.2.*
 django-defender==0.9.1
 django-mongoengine==0.4.6
