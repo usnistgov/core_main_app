@@ -1,2 +1,2 @@
-blob-utils==1.13.*
-xml-utils==1.17.*
+blob-utils==1.14.*
+xml-utils==1.18.*
