@@ -235,6 +235,7 @@ class Migration(migrations.Migration):
                 (
                     "name",
                     models.CharField(
+                        unique=True,
                         max_length=200,
                         validators=[
                             django.core.validators.RegexValidator(

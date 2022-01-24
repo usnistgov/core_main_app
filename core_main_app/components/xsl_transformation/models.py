@@ -12,6 +12,7 @@ class XslTransformation(models.Model):
     """XslTransformation object"""
 
     name = models.CharField(
+        unique=True,
         blank=False,
         validators=[
             RegexValidator(
