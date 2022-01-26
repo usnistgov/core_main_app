@@ -4,6 +4,7 @@ import django.contrib.postgres.indexes
 import django.contrib.postgres.search
 from django.db import migrations
 
+from core_main_app.settings import MONGODB_INDEXING
 from core_main_app.utils.databases.backend import uses_postgresql_backend
 
 
@@ -26,7 +27,7 @@ class Migration(migrations.Migration):
             ),
         ),
     ]
-    if uses_postgresql_backend():
+    if uses_postgresql_backend() and not MONGODB_INDEXING:
         operations.append(
             migrations.RunSQL(
                 sql="""

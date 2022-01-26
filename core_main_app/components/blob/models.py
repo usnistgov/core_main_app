@@ -7,20 +7,7 @@ from django.db import models
 from core_main_app.commons import exceptions
 from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
 from core_main_app.components.workspace.models import Workspace
-
-
-def user_directory_path(instance, filename):
-    """Get path to user directory
-
-    Args:
-        instance:
-        filename:
-
-    Returns:
-
-    """
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
-    return "user_{0}/{1}".format(instance.user_id, filename)
+from core_main_app.utils.storage.storage import user_directory_path, core_file_storage
 
 
 class Blob(models.Model):
@@ -37,16 +24,17 @@ class Blob(models.Model):
         ],
         max_length=200,
     )
-    handle = models.CharField(blank=False, max_length=200)
     user_id = models.CharField(blank=False, max_length=200)
     workspace = models.ForeignKey(
         Workspace, on_delete=models.SET_NULL, blank=True, null=True
     )
-    blob = models.FileField(null=True, upload_to=user_directory_path)
+    blob = models.FileField(
+        null=True,
+        upload_to=user_directory_path,
+        storage=core_file_storage(model="blob"),
+    )
 
     creation_date = models.DateTimeField(auto_now_add=True)
-
-    _blob_host = None
 
     @staticmethod
     def get_by_id(blob_id):

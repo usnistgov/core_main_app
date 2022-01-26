@@ -29,7 +29,7 @@ INSTALLED_APPS = [
 ]
 
 # SERVER URI
-SERVER_URI = "http://example.com"
+SERVER_URI = "http://127.0.0.1:8000"
 
 # TEST DATABASE
 DATABASES = {

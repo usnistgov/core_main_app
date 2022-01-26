@@ -14,10 +14,8 @@ from core_main_app.settings import (
     VERIFY_DATA_ACCESS,
 )
 from core_main_app.settings import DATA_SORTING_FIELDS
-from core_main_app.utils.raw_query.django_raw_query import add_access_criteria
-from core_main_app.utils.raw_query.mongo_raw_query import (
-    add_aggregate_access_criteria,
-)
+from core_main_app.utils.raw_query import django_raw_query
+from core_main_app.utils.raw_query import mongo_raw_query
 
 logger = logging.getLogger(__name__)
 
@@ -88,6 +86,62 @@ def can_read_data_query(
     return data_list
 
 
+def can_read_data_mongo_query(
+    func,
+    query,
+    user,
+    workspace_filter=None,
+    user_filter=None,
+    order_by_field=DATA_SORTING_FIELDS,
+):
+    """Can read a data, given a mongo query.
+
+    Args:
+        func:
+        query:
+        user:
+        workspace_filter:
+        user_filter:
+        order_by_field:
+
+    Returns:
+
+    """
+    if user.is_superuser:
+        return func(query, user, workspace_filter, user_filter, order_by_field)
+
+    # update the query
+    query = _update_can_read_mongo_query(query, user, workspace_filter, user_filter)
+    # get list of data
+    data_list = func(query, user, workspace_filter, user_filter, order_by_field)
+    # TODO: check if necessary because it is time consuming (checking that user has access to list of returned data)
+    # check that user can access the list of data
+    if VERIFY_DATA_ACCESS:
+        check_can_read_list(data_list, user)
+    return data_list
+
+
+def _update_can_read_mongo_query(query, user, workspace_filter, user_filter):
+    """Update query with access control parameters.
+
+    Args:
+        query:
+        user:
+        workspace_filter:
+        user_filter:
+
+    Returns:
+
+    """
+
+    accessible_workspaces = _get_read_accessible_workspaces_by_user(user)
+    # update query with workspace criteria
+    query = mongo_raw_query.add_access_criteria(
+        query, accessible_workspaces, user, workspace_filter, user_filter
+    )
+    return query
+
+
 def can_read_aggregate_query(func, query, user):
     """Can read a data, given an aggregate query.
 
@@ -123,7 +177,7 @@ def _update_can_read_query(query, user, workspace_filter=None, user_filter=None)
 
     accessible_workspaces = _get_read_accessible_workspaces_by_user(user)
     # update query with workspace criteria
-    query = add_access_criteria(
+    query = django_raw_query.add_access_criteria(
         query, accessible_workspaces, user, workspace_filter, user_filter
     )
     return query
@@ -142,7 +196,9 @@ def _update_can_read_aggregate_query(query, user):
 
     accessible_workspaces = _get_read_accessible_workspaces_by_user(user)
     # update query with workspace criteria
-    query = add_aggregate_access_criteria(query, accessible_workspaces, user)
+    query = mongo_raw_query.add_aggregate_access_criteria(
+        query, accessible_workspaces, user
+    )
     return query
 
 

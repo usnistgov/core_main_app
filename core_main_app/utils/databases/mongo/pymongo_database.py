@@ -24,3 +24,11 @@ def get_full_text_query(text):
         full_text_query = {"$text": {"$search": word_list}}
 
     return full_text_query
+
+
+def init_text_index(document_object):
+    """Create index for full text search."""
+    collection = document_object._get_collection()
+    collection.create_index(
+        [("$**", "text")], default_language="en", language_override="en"
+    )

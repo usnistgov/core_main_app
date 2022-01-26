@@ -384,7 +384,6 @@ class Migration(migrations.Migration):
                         ],
                     ),
                 ),
-                ("handle", models.CharField(max_length=200)),
                 ("user_id", models.CharField(max_length=200)),
                 (
                     "blob",

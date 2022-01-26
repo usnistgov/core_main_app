@@ -39,7 +39,7 @@ class TestDataListPostPermissions(SimpleTestCase):
         data_serializer_save.return_value = None
         data_serializer_data.return_value = {}
 
-        mock_user = create_mock_user("1")
+        mock_user = create_mock_user(1)
 
         response = RequestMock.do_request_post(
             data_rest_views.DataList.as_view(), mock_user
@@ -57,7 +57,7 @@ class TestDataListPostPermissions(SimpleTestCase):
         data_serializer_save.return_value = None
         data_serializer_data.return_value = {}
 
-        mock_user = create_mock_user("1", is_staff=True)
+        mock_user = create_mock_user(1, is_staff=True)
 
         response = RequestMock.do_request_post(
             data_rest_views.DataList.as_view(), mock_user
@@ -76,7 +76,7 @@ class TestDataListGetPermissions(SimpleTestCase):
     def test_authenticated_returns_http_200(self, data_get_all_by_user):
         data_get_all_by_user.return_value = {}
 
-        mock_user = create_mock_user("1")
+        mock_user = create_mock_user(1)
 
         response = RequestMock.do_request_get(
             data_rest_views.DataList.as_view(), mock_user
@@ -88,7 +88,7 @@ class TestDataListGetPermissions(SimpleTestCase):
     def test_staff_returns_http_200(self, data_get_all_by_user):
         data_get_all_by_user.return_value = {}
 
-        mock_user = create_mock_user("1", is_staff=True)
+        mock_user = create_mock_user(1, is_staff=True)
 
         response = RequestMock.do_request_get(
             data_rest_views.DataList.as_view(), mock_user
@@ -106,7 +106,7 @@ class TestAdminDataListPostPermissions(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_authenticated_returns_http_403(self):
-        mock_user = create_mock_user("1")
+        mock_user = create_mock_user(1)
         response = RequestMock.do_request_post(
             data_rest_views.AdminDataList.as_view(), mock_user
         )
@@ -114,7 +114,7 @@ class TestAdminDataListPostPermissions(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_staff_returns_http_403(self):
-        mock_user = create_mock_user("1", is_staff=True)
+        mock_user = create_mock_user(1, is_staff=True)
         response = RequestMock.do_request_post(
             data_rest_views.AdminDataList.as_view(), mock_user
         )
@@ -131,7 +131,7 @@ class TestAdminDataListPostPermissions(SimpleTestCase):
         data_serializer_save.return_value = None
         data_serializer_data.return_value = {}
 
-        mock_user = create_mock_user("1", is_staff=True, is_superuser=True)
+        mock_user = create_mock_user(1, is_staff=True, is_superuser=True)
 
         response = RequestMock.do_request_post(
             data_rest_views.AdminDataList.as_view(), mock_user
@@ -149,7 +149,7 @@ class TestAdminDataListGetPermissions(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_authenticated_returns_http_403(self):
-        mock_user = create_mock_user("1")
+        mock_user = create_mock_user(1)
         response = RequestMock.do_request_get(
             data_rest_views.AdminDataList.as_view(), mock_user
         )
@@ -157,7 +157,7 @@ class TestAdminDataListGetPermissions(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_staff_returns_http_403(self):
-        mock_user = create_mock_user("1", is_staff=True)
+        mock_user = create_mock_user(1, is_staff=True)
         response = RequestMock.do_request_get(
             data_rest_views.AdminDataList.as_view(), mock_user
         )
@@ -168,7 +168,7 @@ class TestAdminDataListGetPermissions(SimpleTestCase):
     def test_superuser_returns_http_200(self, data_get_all_by_user):
         data_get_all_by_user.return_value = {}
 
-        mock_user = create_mock_user("1", is_staff=True, is_superuser=True)
+        mock_user = create_mock_user(1, is_staff=True, is_superuser=True)
 
         response = RequestMock.do_request_get(
             data_rest_views.AdminDataList.as_view(), mock_user
@@ -191,7 +191,7 @@ class TestDataListByWorkspaceGetPermissions(SimpleTestCase):
     def test_authenticated_returns_http_200(self, data_get_all_by_workspace):
         data_get_all_by_workspace.return_value = {}
 
-        mock_user = create_mock_user("1")
+        mock_user = create_mock_user(1)
 
         response = RequestMock.do_request_get(
             data_rest_views.DataListByWorkspace.as_view(),
@@ -205,7 +205,7 @@ class TestDataListByWorkspaceGetPermissions(SimpleTestCase):
     def test_staff_returns_http_200(self, data_get_all_by_workspace):
         data_get_all_by_workspace.return_value = {}
 
-        mock_user = create_mock_user("1", is_staff=True)
+        mock_user = create_mock_user(1, is_staff=True)
 
         response = RequestMock.do_request_get(
             data_rest_views.DataListByWorkspace.as_view(),
@@ -239,7 +239,7 @@ class TestDataDetailGetPermissions(SimpleTestCase):
         mock_data_api_get_by_id.return_value = None
         mock_data_serializer_data.return_value = []
 
-        mock_user = create_mock_user("1")
+        mock_user = create_mock_user(1)
         response = RequestMock.do_request_get(
             data_rest_views.DataDetail.as_view(), mock_user, param={"pk": 0}
         )
@@ -254,7 +254,7 @@ class TestDataDetailGetPermissions(SimpleTestCase):
         mock_data_api_get_by_id.return_value = None
         mock_data_serializer_data.return_value = []
 
-        mock_user = create_mock_user("1", is_staff=True)
+        mock_user = create_mock_user(1, is_staff=True)
 
         response = RequestMock.do_request_get(
             data_rest_views.DataDetail.as_view(), mock_user, param={"pk": 0}
@@ -279,7 +279,7 @@ class TestDataDetailDeletePermissions(SimpleTestCase):
         mock_data_api_get_by_id.return_value = None
         mock_data_api_delete.return_value = None
 
-        mock_user = create_mock_user("1")
+        mock_user = create_mock_user(1)
 
         response = RequestMock.do_request_delete(
             data_rest_views.DataDetail.as_view(), mock_user, param={"pk": 0}
@@ -295,7 +295,7 @@ class TestDataDetailDeletePermissions(SimpleTestCase):
         mock_data_api_get_by_id.return_value = None
         mock_data_api_delete.return_value = None
 
-        mock_user = create_mock_user("1", is_staff=True)
+        mock_user = create_mock_user(1, is_staff=True)
 
         response = RequestMock.do_request_delete(
             data_rest_views.DataDetail.as_view(), mock_user, param={"pk": 0}
@@ -328,7 +328,7 @@ class TestDataDetailPatchPermissions(SimpleTestCase):
         mock_data_serializer_save.return_valie = None
         mock_data_serializer_data.return_value = []
 
-        mock_user = create_mock_user("1")
+        mock_user = create_mock_user(1)
 
         response = RequestMock.do_request_patch(
             data_rest_views.DataDetail.as_view(), mock_user, param={"pk": 0}
@@ -352,7 +352,7 @@ class TestDataDetailPatchPermissions(SimpleTestCase):
         mock_data_serializer_save.return_valie = None
         mock_data_serializer_data.return_value = []
 
-        mock_user = create_mock_user("1", is_staff=True)
+        mock_user = create_mock_user(1, is_staff=True)
 
         response = RequestMock.do_request_patch(
             data_rest_views.DataDetail.as_view(), mock_user, param={"pk": 0}
@@ -384,7 +384,7 @@ class TestDataDownloadGetPermissions(SimpleTestCase):
 
         mock_data_api_get_by_id.return_value = data_object
 
-        mock_user = create_mock_user("1")
+        mock_user = create_mock_user(1)
 
         response = RequestMock.do_request_get(
             data_rest_views.DataDownload.as_view(), mock_user, param={"pk": 0}
@@ -400,7 +400,7 @@ class TestDataDownloadGetPermissions(SimpleTestCase):
 
         mock_data_api_get_by_id.return_value = data_object
 
-        mock_user = create_mock_user("1", is_staff=True)
+        mock_user = create_mock_user(1, is_staff=True)
 
         response = RequestMock.do_request_get(
             data_rest_views.DataDownload.as_view(), mock_user, param={"pk": 0}
@@ -432,7 +432,7 @@ class TestDataGetFullGetPermissions(SimpleTestCase):
         mock_data_api_get_by_id.return_value = None
         mock_data_with_template_serializer_data.return_value = []
 
-        mock_user = create_mock_user("1")
+        mock_user = create_mock_user(1)
 
         response = RequestMock.do_request_get(
             data_rest_views.get_by_id_with_template_info, mock_user, data={"id": 0}
@@ -448,7 +448,7 @@ class TestDataGetFullGetPermissions(SimpleTestCase):
         mock_data_api_get_by_id.return_value = None
         mock_data_with_template_serializer_data.return_value = []
 
-        mock_user = create_mock_user("1", is_staff=True)
+        mock_user = create_mock_user(1, is_staff=True)
 
         response = RequestMock.do_request_get(
             data_rest_views.get_by_id_with_template_info, mock_user, data={"id": 0}
@@ -478,7 +478,7 @@ class TestDataLocalQueryGetPermissions(SimpleTestCase):
             status=HTTP_200_OK
         )
 
-        mock_user = create_mock_user("1")
+        mock_user = create_mock_user(1)
 
         response = RequestMock.do_request_get(
             data_rest_views.ExecuteLocalQueryView.as_view(),
@@ -494,7 +494,7 @@ class TestDataLocalQueryGetPermissions(SimpleTestCase):
             status=HTTP_200_OK
         )
 
-        mock_user = create_mock_user("1", is_staff=True)
+        mock_user = create_mock_user(1, is_staff=True)
 
         response = RequestMock.do_request_get(
             data_rest_views.ExecuteLocalQueryView.as_view(),
@@ -507,8 +507,12 @@ class TestDataLocalQueryGetPermissions(SimpleTestCase):
 
 class TestDataLocalQueryPostPermissions(SimpleTestCase):
     @patch.object(data_api, "execute_query")
-    def test_anonymous_returns_http_200(self, mock_data_api_execute_query):
+    @patch.object(data_api, "_execute_mongo_query")
+    def test_anonymous_returns_http_200(
+        self, mock_data_api_execute_mongo_query, mock_data_api_execute_query
+    ):
         mock_data_api_execute_query.return_value = []
+        mock_data_api_execute_mongo_query.return_value = []
 
         response = RequestMock.do_request_post(
             data_rest_views.ExecuteLocalQueryView.as_view(), None, data={"query": "{}"}
@@ -517,10 +521,14 @@ class TestDataLocalQueryPostPermissions(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @patch.object(data_api, "execute_query")
-    def test_authenticated_returns_http_200(self, mock_data_api_execute_query):
+    @patch.object(data_api, "_execute_mongo_query")
+    def test_authenticated_returns_http_200(
+        self, mock_data_api_execute_mongo_query, mock_data_api_execute_query
+    ):
         mock_data_api_execute_query.return_value = []
+        mock_data_api_execute_mongo_query.return_value = []
 
-        mock_user = create_mock_user("1")
+        mock_user = create_mock_user(1)
 
         response = RequestMock.do_request_post(
             data_rest_views.ExecuteLocalQueryView.as_view(),
@@ -531,10 +539,14 @@ class TestDataLocalQueryPostPermissions(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @patch.object(data_api, "execute_query")
-    def test_staff_returns_http_200(self, mock_data_api_execute_query):
+    @patch.object(data_api, "_execute_mongo_query")
+    def test_staff_returns_http_200(
+        self, mock_data_api_execute_mongo_query, mock_data_api_execute_query
+    ):
         mock_data_api_execute_query.return_value = []
+        mock_data_api_execute_mongo_query.return_value = []
 
-        mock_user = create_mock_user("1", is_staff=True)
+        mock_user = create_mock_user(1, is_staff=True)
 
         response = RequestMock.do_request_post(
             data_rest_views.ExecuteLocalQueryView.as_view(),
@@ -566,7 +578,7 @@ class TestDataKeywordQueryGetPermissions(SimpleTestCase):
             status=HTTP_200_OK
         )
 
-        mock_user = create_mock_user("1")
+        mock_user = create_mock_user(1)
 
         response = RequestMock.do_request_get(
             data_rest_views.ExecuteLocalQueryView.as_view(),
@@ -582,7 +594,7 @@ class TestDataKeywordQueryGetPermissions(SimpleTestCase):
             status=HTTP_200_OK
         )
 
-        mock_user = create_mock_user("1", is_staff=True)
+        mock_user = create_mock_user(1, is_staff=True)
 
         response = RequestMock.do_request_get(
             data_rest_views.ExecuteLocalQueryView.as_view(),
@@ -595,8 +607,12 @@ class TestDataKeywordQueryGetPermissions(SimpleTestCase):
 
 class TestDataKeywordQueryPostPermissions(SimpleTestCase):
     @patch.object(data_api, "execute_query")
-    def test_anonymous_returns_http_200(self, mock_data_api_execute_query):
+    @patch.object(data_api, "_execute_mongo_query")
+    def test_anonymous_returns_http_200(
+        self, mock_data_api_execute_mongo_query, mock_data_api_execute_query
+    ):
         mock_data_api_execute_query.return_value = []
+        mock_data_api_execute_mongo_query.return_value = []
 
         response = RequestMock.do_request_post(
             data_rest_views.ExecuteLocalKeywordQueryView.as_view(),
@@ -607,10 +623,14 @@ class TestDataKeywordQueryPostPermissions(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @patch.object(data_api, "execute_query")
-    def test_authenticated_returns_http_200(self, mock_data_api_execute_query):
+    @patch.object(data_api, "_execute_mongo_query")
+    def test_authenticated_returns_http_200(
+        self, mock_data_api_execute_mongo_query, mock_data_api_execute_query
+    ):
         mock_data_api_execute_query.return_value = []
+        mock_data_api_execute_mongo_query.return_value = []
 
-        mock_user = create_mock_user("1")
+        mock_user = create_mock_user(1)
 
         response = RequestMock.do_request_post(
             data_rest_views.ExecuteLocalKeywordQueryView.as_view(),
@@ -621,10 +641,14 @@ class TestDataKeywordQueryPostPermissions(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @patch.object(data_api, "execute_query")
-    def test_staff_returns_http_200(self, mock_data_api_execute_query):
+    @patch.object(data_api, "_execute_mongo_query")
+    def test_staff_returns_http_200(
+        self, mock_data_api_execute_mongo_query, mock_data_api_execute_query
+    ):
         mock_data_api_execute_query.return_value = []
+        mock_data_api_execute_mongo_query.return_value = []
 
-        mock_user = create_mock_user("1", is_staff=True)
+        mock_user = create_mock_user(1, is_staff=True)
 
         response = RequestMock.do_request_post(
             data_rest_views.ExecuteLocalKeywordQueryView.as_view(),
@@ -670,7 +694,7 @@ class TestDataAssignPatchPermissions(SimpleTestCase):
         mock_workspace_api_get_by_id.return_value = None
         mock_data_api_assign.return_value = None
 
-        mock_user = create_mock_user("1")
+        mock_user = create_mock_user(1)
 
         response = RequestMock.do_request_patch(
             data_rest_views.DataAssign.as_view(),
@@ -693,7 +717,7 @@ class TestDataAssignPatchPermissions(SimpleTestCase):
         mock_workspace_api_get_by_id.return_value = None
         mock_data_api_assign.return_value = None
 
-        mock_user = create_mock_user("1", is_staff=True)
+        mock_user = create_mock_user(1, is_staff=True)
 
         response = RequestMock.do_request_patch(
             data_rest_views.DataAssign.as_view(),
@@ -739,7 +763,7 @@ class TestDataChangeOwnerPatchPermissions(SimpleTestCase):
         mock_user_api_get_by_id.return_value = None
         mock_data_api_change_owner.return_value = None
 
-        mock_user = create_mock_user("1")
+        mock_user = create_mock_user(1)
 
         response = RequestMock.do_request_patch(
             data_rest_views.DataChangeOwner.as_view(),
@@ -761,7 +785,7 @@ class TestDataChangeOwnerPatchPermissions(SimpleTestCase):
         # Arrange
         # is_staff to access the view
         # is_superuser to be able to change the owner
-        user_request = create_mock_user("1", is_staff=True, is_superuser=True)
+        user_request = create_mock_user(1, is_staff=True, is_superuser=True)
         mock_data_api_get_by_id.return_value = None
         mock_user_api_get_by_id.return_value = None
         mock_data_api_change_owner.return_value = None
@@ -780,7 +804,7 @@ class TestDataChangeOwnerPatchPermissions(SimpleTestCase):
 class TestDataPermissions(SimpleTestCase):
     @patch.object(Data, "get_by_id")
     def test_superuser_returns_http_200(self, get_by_id):
-        mock_user = create_mock_user("1", is_superuser=True)
+        mock_user = create_mock_user(1, is_superuser=True)
         mock_data = Data(user_id="1")
         get_by_id.return_value = mock_data
 
@@ -794,7 +818,7 @@ class TestDataPermissions(SimpleTestCase):
 
     @patch.object(Data, "get_by_id")
     def test_authenticated_returns_http_200(self, get_by_id):
-        mock_user = create_mock_user("1")
+        mock_user = create_mock_user(1)
         mock_data = Data(user_id="1")
         get_by_id.return_value = mock_data
 
@@ -808,7 +832,7 @@ class TestDataPermissions(SimpleTestCase):
 
     @patch.object(Data, "get_by_id")
     def test_staff_returns_http_200(self, get_by_id):
-        mock_user = create_mock_user("1", is_staff=True)
+        mock_user = create_mock_user(1, is_staff=True)
         mock_data = Data(user_id="1")
         get_by_id.return_value = mock_data
 
@@ -842,7 +866,7 @@ class TestDataMigrationPermission(SimpleTestCase):
 
     def test_anonymous_validation_returns_http_403(self):
         # Arrange
-        mock_user = create_mock_user("1", is_anonymous=True)
+        mock_user = create_mock_user(1, is_anonymous=True)
 
         # Act
         response = RequestMock.do_request_post(
@@ -856,7 +880,7 @@ class TestDataMigrationPermission(SimpleTestCase):
 
     def test_staff_validation_returns_http_403(self):
         # Arrange
-        request_user = create_mock_user("1", is_staff=True)
+        request_user = create_mock_user(1, is_staff=True)
 
         # Act
         response = RequestMock.do_request_post(
@@ -872,7 +896,7 @@ class TestDataMigrationPermission(SimpleTestCase):
     def test_admin_validation_returns_http_200(self, migration):
         # Arrange
         migration.return_value = "123"
-        request_user = create_mock_user("1", is_superuser=True)
+        request_user = create_mock_user(1, is_superuser=True)
 
         # Act
         response = RequestMock.do_request_post(
@@ -886,7 +910,7 @@ class TestDataMigrationPermission(SimpleTestCase):
 
     def test_anonymous_migration_returns_http_403(self):
         # Arrange
-        mock_user = create_mock_user("1", is_anonymous=True)
+        mock_user = create_mock_user(1, is_anonymous=True)
 
         # Act
         response = RequestMock.do_request_post(
@@ -900,7 +924,7 @@ class TestDataMigrationPermission(SimpleTestCase):
 
     def test_staff_migration_returns_http_403(self):
         # Arrange
-        request_user = create_mock_user("1", is_staff=True)
+        request_user = create_mock_user(1, is_staff=True)
 
         # Act
         response = RequestMock.do_request_post(
@@ -916,7 +940,7 @@ class TestDataMigrationPermission(SimpleTestCase):
     def test_admin_migration_returns_http_200(self, migration):
         # Arrange
         migration.return_value = "123"
-        request_user = create_mock_user("1", is_superuser=True)
+        request_user = create_mock_user(1, is_superuser=True)
 
         # Act
         response = RequestMock.do_request_post(

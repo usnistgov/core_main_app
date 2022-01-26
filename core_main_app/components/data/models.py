@@ -234,18 +234,6 @@ class Data(AbstractData):
         ).order_by(*[field.replace("+", "") for field in order_by_field])
 
     @staticmethod
-    def aggregate(pipeline):
-        """Execute an aggregate on the Data collection.
-
-        Args:
-            pipeline:
-
-        Returns:
-
-        """
-        return Data.objects.aggregate(*pipeline)
-
-    @staticmethod
     def get_none():
         """Return None object, used by data.
 

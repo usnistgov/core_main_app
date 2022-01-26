@@ -8,6 +8,9 @@ from core_main_app.components.group import api as group_api
 
 
 # FIXME: rename, not Mongo
+from core_main_app.settings import MONGODB_INDEXING
+
+
 class MongoIntegrationTransactionTestCase(TransactionTestCase):
     """Represent the Integration base transaction test case
     The integration tests must inherit of this class
@@ -17,6 +20,10 @@ class MongoIntegrationTransactionTestCase(TransactionTestCase):
         Fields
     """
     fixture = None  # data fixture from component's tests
+    if MONGODB_INDEXING:
+        from tests.test_settings_mongo import database as settings_database
+
+        database = settings_database
 
     """
         Methods
@@ -37,3 +44,5 @@ class MongoIntegrationTransactionTestCase(TransactionTestCase):
 
     def clear_database(self):
         execute_from_command_line(["", "flush", "--no-input"])
+        if MONGODB_INDEXING:
+            self.database.clean_database()

@@ -77,18 +77,13 @@ class AbstractData(models.Model):
         Returns:
 
         """
+        # TODO: avoid duplicating dict_content if mongo indexing?
         # transform xml content into a dictionary
-        dict_content = xml_utils.raw_xml_to_dict(
-            self.xml_content, xml_utils.post_processor
+        self.dict_content = xml_utils.raw_xml_to_dict(
+            self.xml_content,
+            xml_utils.post_processor,
+            list_limit=SEARCHABLE_DATA_OCCURRENCES_LIMIT,
         )
-        # if limit on element occurrences is set
-        if SEARCHABLE_DATA_OCCURRENCES_LIMIT is not None:
-            # Remove lists which size exceed the limit size
-            xml_utils.remove_lists_from_xml_dict(
-                dict_content, SEARCHABLE_DATA_OCCURRENCES_LIMIT
-            )
-        # store dictionary
-        self.dict_content = dict_content
 
     def convert_to_file(self):
         """Convert the xml string into a file.

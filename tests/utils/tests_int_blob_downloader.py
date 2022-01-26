@@ -26,7 +26,7 @@ class TestBlobDownloaderIsUrlFormLocalInstance(TestCase):
     ):
         # Arrange / Act
         return_value = BlobDownloader(
-            "http://example.com/987653456789"
+            f"{settings.SERVER_URI}/987653456789"
         ).is_url_from_local_instance()
         # Assert
         self.assertEqual(return_value, True)
@@ -35,7 +35,9 @@ class TestBlobDownloaderIsUrlFormLocalInstance(TestCase):
 class TestBlobDownloaderGetUrlBase(TestCase):
     def test_get_url_base_returns_url_base(self):
         # Arrange / Act
-        return_value = BlobDownloader("http://example.com/987653456789").get_url_base()
+        return_value = BlobDownloader(
+            f"{settings.SERVER_URI}/987653456789"
+        ).get_url_base()
         # Assert
         self.assertEqual(return_value, SERVER_URI)
 
@@ -60,7 +62,7 @@ class TestBlobDownloaderGetBlobResponse(TestCase):
         # Arrange / Act
         mock_send_get_request.return_value = "local"
         return_value = BlobDownloader(
-            "http://example.com/987653456789"
+            f"{settings.SERVER_URI}/987653456789"
         ).get_blob_response()
         # Assert
         self.assertEqual(return_value, "local")

@@ -38,7 +38,7 @@ class TestDataListbyWorkspace(MongoIntegrationBaseTestCase):
 
     def test_get_filtered_by_correct_workspace_returns_data(self):
         # Arrange
-        user = create_mock_user("1")
+        user = create_mock_user(1)
 
         # Act
         response = RequestMock.do_request_get(
@@ -52,7 +52,7 @@ class TestDataListbyWorkspace(MongoIntegrationBaseTestCase):
 
     def test_get_filtered_by_incorrect_workspace_returns_no_data(self):
         # Arrange
-        user = create_mock_user("1")
+        user = create_mock_user(1)
 
         # Act
         response = RequestMock.do_request_get(
@@ -66,7 +66,7 @@ class TestDataListbyWorkspace(MongoIntegrationBaseTestCase):
 
     def test_get_all_by_correct_workspace_returns_data(self):
         # Arrange
-        user = create_mock_user("1", is_superuser=True)
+        user = create_mock_user(1, is_superuser=True)
 
         # Act
         response = RequestMock.do_request_get(
@@ -88,7 +88,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
     @patch.object(Data, "xml_content")
     def test_get_returns_http_200(self, mock_xml_content):
         # Arrange
-        user = create_mock_user("1")
+        user = create_mock_user(1)
         mock_xml_content.return_value = "content"
 
         # Act
@@ -99,7 +99,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
 
     def test_get_returns_all_user_data(self):
         # Arrange
-        user = create_mock_user("1")
+        user = create_mock_user(1)
 
         # Act
         response = RequestMock.do_request_get(data_rest_views.DataList.as_view(), user)
@@ -109,7 +109,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
 
     def test_get_filtered_by_correct_title_returns_data(self):
         # Arrange
-        user = create_mock_user("1")
+        user = create_mock_user(1)
 
         # Act
         response = RequestMock.do_request_get(
@@ -123,7 +123,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
 
     def test_get_filtered_by_incorrect_title_returns_no_data(self):
         # Arrange
-        user = create_mock_user("1")
+        user = create_mock_user(1)
 
         # Act
         response = RequestMock.do_request_get(
@@ -135,7 +135,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
 
     def test_get_filtered_by_correct_template_returns_data(self):
         # Arrange
-        user = create_mock_user("1")
+        user = create_mock_user(1)
 
         # Act
         response = RequestMock.do_request_get(
@@ -149,7 +149,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
 
     def test_get_filtered_by_incorrect_template_returns_no_data(self):
         # Arrange
-        user = create_mock_user("1")
+        user = create_mock_user(1)
 
         # Act
         response = RequestMock.do_request_get(
@@ -163,7 +163,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
 
     def test_post_data_missing_field_returns_http_400(self):
         # Arrange
-        user = create_mock_user("1")
+        user = create_mock_user(1)
         mock_data = {
             "template": str(self.fixture.template.id),
             "user_id": "1",
@@ -180,7 +180,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
 
     def test_post_data_incorrect_template_returns_http_400(self):
         # Arrange
-        user = create_mock_user("1")
+        user = create_mock_user(1)
         mock_data = {
             "template": "507f1f77bcf86cd799439011",
             "user_id": "1",
@@ -206,7 +206,7 @@ class TestDataDetail(MongoIntegrationBaseTestCase):
     @patch.object(Data, "xml_content")
     def test_get_returns_http_200(self, mock_xml_content):
         # Arrange
-        user = create_mock_user("1")
+        user = create_mock_user(1)
         mock_xml_content.return_value = "content"
 
         # Act
@@ -222,7 +222,7 @@ class TestDataDetail(MongoIntegrationBaseTestCase):
     @patch.object(Data, "xml_content")
     def test_get_returns_data(self, mock_xml_content):
         # Arrange
-        user = create_mock_user("1")
+        user = create_mock_user(1)
         mock_xml_content.return_value = "content"
 
         # Act
@@ -238,7 +238,7 @@ class TestDataDetail(MongoIntegrationBaseTestCase):
     @patch.object(Data, "xml_content")
     def test_get_data_containing_ascii_returns_data(self, mock_xml_content):
         # Arrange
-        user = create_mock_user("1")
+        user = create_mock_user(1)
         mock_xml_content.return_value = "\xc3te\xc3"
 
         # Act
@@ -253,7 +253,7 @@ class TestDataDetail(MongoIntegrationBaseTestCase):
 
     def test_get_wrong_id_returns_http_404(self):
         # Arrange
-        user = create_mock_user("1")
+        user = create_mock_user(1)
 
         # Act
         response = RequestMock.do_request_get(
@@ -267,7 +267,7 @@ class TestDataDetail(MongoIntegrationBaseTestCase):
 
     def test_delete_wrong_id_returns_http_404(self):
         # Arrange
-        user = create_mock_user("1")
+        user = create_mock_user(1)
 
         # Act
         response = RequestMock.do_request_delete(
@@ -281,7 +281,7 @@ class TestDataDetail(MongoIntegrationBaseTestCase):
 
     def test_patch_wrong_id_returns_http_404(self):
         # Arrange
-        user = create_mock_user("1")
+        user = create_mock_user(1)
 
         # Act
         response = RequestMock.do_request_patch(
@@ -295,7 +295,7 @@ class TestDataDetail(MongoIntegrationBaseTestCase):
 
     def test_patch_wrong_template_returns_http_400(self):
         # Arrange
-        user = create_mock_user("1")
+        user = create_mock_user(1)
 
         # Act
         response = RequestMock.do_request_patch(
@@ -317,7 +317,7 @@ class TestDataDownload(MongoIntegrationBaseTestCase):
 
     def test_get_returns_http_200(self):
         # Arrange
-        user = create_mock_user("1")
+        user = create_mock_user(1)
 
         # Act
         response = RequestMock.do_request_get(
@@ -331,7 +331,7 @@ class TestDataDownload(MongoIntegrationBaseTestCase):
 
     def test_get_wrong_id_returns_http_404(self):
         # Arrange
-        user = create_mock_user("1")
+        user = create_mock_user(1)
 
         # Act
         response = RequestMock.do_request_get(
@@ -352,7 +352,7 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
         # FIXME: unable to test paginated results (mocked queryset.count always returns 0)
         self.data = {"all": "true"}
         # create user with superuser access to skip access control
-        self.user = create_mock_user("1", is_superuser=True)
+        self.user = create_mock_user(1, is_superuser=True)
 
     def test_post_query_string_one_data_returns_http_200(self):
         # Arrange
@@ -397,7 +397,7 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
     ):
         # Arrange
         self.data.update(
-            {"query": "{}", "templates": [{"id": str(self.fixture.template.id)}]}
+            {"query": "{}", "templates": [{"id": self.fixture.template.id}]}
         )
 
         # Act
@@ -413,7 +413,7 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
         self.data.update(
             {
                 "query": '{"root.element": "value"}',
-                "templates": [{"id": str(self.fixture.template.id)}],
+                "templates": [{"id": self.fixture.template.id}],
             }
         )
 
@@ -549,11 +549,11 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
         self.data = {"all": "true"}
 
         # create user with superuser access to skip access control
-        self.user = create_mock_user("1", is_superuser=True)
+        self.user = create_mock_user(1, is_superuser=True)
 
         self.user2 = UserFixtures().create_user()
 
-        self.user2.id = self.fixture.data_4.user_id
+        self.user2.id = int(self.fixture.data_4.user_id)
 
     def test_post_empty_query_with_no_specific_workspace_returns_all_accessible_data_as_superuser(
         self,
@@ -593,7 +593,7 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
 
         # Arrange
         self.data.update(
-            {"query": "{}", "workspaces": [{"id": str(self.fixture.workspace_1.id)}]}
+            {"query": "{}", "workspaces": [{"id": self.fixture.workspace_1.id}]}
         )
 
         # Act
@@ -616,8 +616,8 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
             {
                 "query": "{}",
                 "workspaces": [
-                    {"id": str(self.fixture.workspace_1.id)},
-                    {"id": str(self.fixture.workspace_2.id)},
+                    {"id": self.fixture.workspace_1.id},
+                    {"id": self.fixture.workspace_2.id},
                 ],
             }
         )
@@ -644,7 +644,7 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
                 "query": "{}",
                 "workspaces": [
                     {"id": -1},
-                    {"id": str(self.fixture.workspace_2.id)},
+                    {"id": self.fixture.workspace_2.id},
                 ],
             }
         )
@@ -689,7 +689,7 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
         self.data.update(
             {
                 "query": '{"root.element": "value2"}',
-                "workspaces": [{"id": str(self.fixture.workspace_1.id)}],
+                "workspaces": [{"id": self.fixture.workspace_1.id}],
             }
         )
 
@@ -765,7 +765,7 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
                 "query": "{}",
                 "workspaces": [
                     {"id": "None"},
-                    {"id": str(self.fixture.workspace_2.id)},
+                    {"id": self.fixture.workspace_2.id},
                 ],
             }
         )
@@ -792,7 +792,7 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
                 "query": "{}",
                 "workspaces": [
                     {"id": "None"},
-                    {"id": str(self.fixture.workspace_2.id)},
+                    {"id": self.fixture.workspace_2.id},
                 ],
             }
         )
@@ -886,7 +886,7 @@ class TestDataAssign(MongoIntegrationBaseTestCase):
     def test_assign_bad_data_id_returns_http_404(self, workspace_get_by_id):
         # Arrange
         fake_data_id = -1
-        user = create_mock_user("1", is_superuser=True)
+        user = create_mock_user(1, is_superuser=True)
         workspace_get_by_id.return_value = self.fixture.workspace_2
 
         # Act
@@ -950,7 +950,7 @@ class TestDataChangeOwner(MongoIntegrationBaseTestCase):
     ):
         # Arrange
         data = self.fixture.data_collection[self.fixture.USER_1_WORKSPACE_1]
-        user_request = create_mock_user("1", is_staff=True)
+        user_request = create_mock_user(1, is_staff=True)
         user_new_owner = create_mock_user("123")
         data_get_by_id.return_value = data
         user_get_by_id.return_value = user_new_owner
@@ -1008,7 +1008,7 @@ class TestDataPermissions(MongoIntegrationTransactionTestCase):
 
     def test_get_returns_correct_permissions_if_user_is_superuser(self):
         # Arrange
-        user_request = create_mock_user("1", is_superuser=True)
+        user_request = create_mock_user(1, is_superuser=True)
         data = self.fixture.data_4
 
         # Act
@@ -1025,7 +1025,7 @@ class TestDataPermissions(MongoIntegrationTransactionTestCase):
 
     def test_get_returns_correct_permissions_if_user_is_anonymous(self):
         # Arrange
-        user_request = create_mock_user("1", is_anonymous=True)
+        user_request = create_mock_user(1, is_anonymous=True)
         data = self.fixture.data_4
 
         # Act

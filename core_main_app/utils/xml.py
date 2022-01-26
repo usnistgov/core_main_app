@@ -155,18 +155,22 @@ def unparse(json_dict, full_document=True):
     return xmltodict.unparse(preprocessed_dict, full_document=full_document)
 
 
-def raw_xml_to_dict(raw_xml, postprocessor=None):
+def raw_xml_to_dict(raw_xml, postprocessor=None, list_limit=None):
     """Transform a raw xml to dict. Returns an empty dict if the parsing failed.
 
     Args:
         raw_xml:
         postprocessor:
+        list_limit:
 
     Returns:
 
     """
     try:
         dict_raw = xmltodict.parse(raw_xml, postprocessor=postprocessor)
+        if list_limit:
+            # Remove lists which size exceed the limit size
+            remove_lists_from_xml_dict(dict_raw, list_limit)
         return dict_raw
     except xmltodict.expat.ExpatError:
         raise exceptions.XMLError(

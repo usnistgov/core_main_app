@@ -2,12 +2,13 @@
 """
 import sys
 
+from django.apps import AppConfig
+from django.conf import settings
+
 import core_main_app.permissions.discover as discover
 from core_main_app.commons.exceptions import CoreError
 from core_main_app.settings import SSL_CERTIFICATES_DIR
 from core_main_app.utils.requests_utils.ssl import check_ssl_certificates_dir_setting
-from django.apps import AppConfig
-from django.conf import settings
 
 
 class InitApp(AppConfig):

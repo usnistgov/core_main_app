@@ -28,8 +28,10 @@ from core_main_app.rest.data.serializers import (
     DataSerializer,
     DataWithTemplateInfoSerializer,
 )
+from core_main_app.rest.mongo_data.serializers import MongoDataSerializer
+from core_main_app.settings import MONGODB_INDEXING
 from core_main_app.utils.boolean import to_bool
-from core_main_app.utils.databases.pymongo_database import get_full_text_query
+from core_main_app.utils.databases.mongo.pymongo_database import get_full_text_query
 from core_main_app.utils.file import get_file_http_response
 from core_main_app.utils.pagination.rest_framework_paginator.pagination import (
     StandardResultsSetPagination,
@@ -559,7 +561,10 @@ def get_by_id_with_template_info(request):
 
 
 class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
-    serializer = DataSerializer
+    if MONGODB_INDEXING:
+        serializer = MongoDataSerializer
+    else:
+        serializer = DataSerializer
 
     def post(self, request):
         """Execute a query

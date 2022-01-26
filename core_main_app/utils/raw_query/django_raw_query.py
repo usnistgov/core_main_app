@@ -4,6 +4,10 @@
 from django.db.models import Q
 
 from core_main_app.access_control.exceptions import AccessControlError
+from core_main_app.utils.raw_query.common import (
+    check_user_filter,
+    check_workspace_filter,
+)
 
 
 def add_access_criteria(
@@ -39,6 +43,8 @@ def _get_accessible_criteria(
     Args:
         accessible_workspaces:
         user:
+        workspace_filter:
+        user_filter:
 
     Returns:
 
@@ -58,19 +64,10 @@ def _get_accessible_criteria(
         # return the query
         return query_filter
 
-    # if regular user does a query on other user id
-    if user_filter and str(user_filter) != str(user.id):
-        # raise access control error
-        raise AccessControlError("The user does not have enough filter by user.")
-    # iterate list of workspace filter provided
-    if workspace_filter:
-        for workspace in workspace_filter:
-            # if workspace is not accessible
-            if workspace not in accessible_workspaces:
-                # raise access control error
-                raise AccessControlError(
-                    "The user does not have enough right to filter by workspace."
-                )
+    # check if user can filter by user
+    check_user_filter(user_filter, user)
+    # check if user can filter by workspace
+    check_workspace_filter(workspace_filter, accessible_workspaces)
 
     # build workspace query: all accessible workspaces or only selected workspaces among accessible ones
     workspace_query = (

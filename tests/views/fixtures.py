@@ -86,26 +86,22 @@ class AccessControlDataFixture(FixtureInterface):
         """
         self.blob_1 = Blob(
             filename="blob1.txt",
-            handle="http://127.0.0.1:8000/rest/blob/download/id1/",
             user_id="1",
         )
         self.blob_1.save()
         self.blob_2 = Blob(
             filename="blob2.txt",
-            handle="http://127.0.0.1:8000/rest/blob/download/id2/",
             user_id="2",
         )
         self.blob_2.save()
         self.blob_public_workspace = Blob(
             filename="blob3.txt",
-            handle="http://127.0.0.1:8000/rest/blob/download/id3/",
             user_id="1",
             workspace=self.public_workspace,
         )
         self.blob_public_workspace.save()
         self.blob_workspace_1 = Blob(
             filename="blob4.txt",
-            handle="http://127.0.0.1:8000/rest/blob/download/id4/",
             user_id="1",
             workspace=self.workspace_1,
         )

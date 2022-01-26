@@ -1,13 +1,18 @@
 """ Data tasks
 """
 
+import logging
+
 from celery import shared_task
 from celery.result import AsyncResult
+from django.db.models import Q
 
 from core_main_app.components.data import api as data_api
 from core_main_app.components.user import api as user_api
 from core_main_app.components.xsl_transformation import api as xsl_transformation_api
 from core_main_app.system import api as system_api
+
+logger = logging.getLogger(__name__)
 
 
 @shared_task
@@ -116,9 +121,7 @@ def async_template_migration_task(
                 current_data_progress = 0
 
                 # get a QuerySet of all the data with the given template
-                data_list = data_api.execute_json_query(
-                    {"template": template_id}, user=user
-                )
+                data_list = data_api.execute_query(Q(template=template_id), user=user)
 
                 total_data = data_list.count()
 
@@ -219,3 +222,34 @@ def get_task_result(task_id):
     """
     result = AsyncResult(task_id).result
     return result
+
+
+@shared_task
+def index_mongo_data(data_id):
+    """Index a data in MongoDB"""
+    try:
+        data = system_api.get_data_by_id(data_id)
+        try:
+            from core_main_app.components.mongo.models import MongoData
+
+            mongo_data = MongoData.init_mongo_data(data)
+            mongo_data.save()
+        except Exception as e:
+            logger.error(f"ERROR : An error occurred while indexing data : {str(e)}")
+    except Exception as e:
+        logger.error(f"ERROR : An error occurred while indexing data : {str(e)}")
+
+
+@shared_task
+def delete_mongo_data(data_id):
+    """Delete a data in MongoDB"""
+    try:
+        try:
+            from core_main_app.components.mongo.models import MongoData
+
+            mongo_data = MongoData.objects.get(pk=data_id)
+            mongo_data.delete()
+        except Exception as e:
+            logger.error(f"ERROR : An error occurred while deleting data : {str(e)}")
+    except Exception as e:
+        logger.error(f"ERROR : An error occurred while deleting data : {str(e)}")

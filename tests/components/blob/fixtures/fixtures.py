@@ -37,21 +37,18 @@ class BlobFixtures(FixtureInterface):
         self.blob_1 = Blob(
             filename="blob1",
             user_id="1",
-            handle="handle1",
             blob=SimpleUploadedFile("blob.txt", b"blob"),
         )
         self.blob_1.save()
         self.blob_2 = Blob(
             filename="blob2",
             user_id="1",
-            handle="handle2",
             blob=SimpleUploadedFile("blob.txt", b"blob"),
         )
         self.blob_2.save()
         self.blob_3 = Blob(
             filename="blob3",
             user_id="2",
-            handle="handle3",
             blob=SimpleUploadedFile("blob.txt", b"blob"),
         )
         self.blob_3.save()
@@ -88,21 +85,19 @@ class AccessControlBlobFixture(FixtureInterface):
         Returns:
 
         """
-        blob_1 = Blob(filename="blob1", user_id="1", handle="handle1")
+        blob_1 = Blob(filename="blob1", user_id="1")
         blob_1.save()
-        blob_2 = Blob(filename="blob2", user_id="2", handle="handle2")
+        blob_2 = Blob(filename="blob2", user_id="2")
         blob_2.save()
         blob_3 = Blob(
             filename="blob3",
             user_id="1",
-            handle="handle3",
             workspace=self.workspace_1,
         )
         blob_3.save()
         blob_4 = Blob(
             filename="blob4",
             user_id="2",
-            handle="handle4",
             workspace=self.workspace_2,
         )
         blob_4.save()
