@@ -63,6 +63,7 @@ TEMPLATES = [
 LOGIN_URL = "/login"
 STATIC_URL = "/static/"
 ROOT_URLCONF = "tests.urls"
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 CELERYBEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
 PASSWORD_HASHERS = ("django.contrib.auth.hashers.UnsaltedMD5PasswordHasher",)
