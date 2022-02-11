@@ -4,7 +4,7 @@ loadItemCount = function() {
 
         $.ajax({
             url: item_count_url,
-            method: "GET",
+            method: "POST",
             success: function(data) {
                 if (data.count !== 0) {
                     $(element).children("span").text(data.count);

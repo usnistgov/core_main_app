@@ -809,6 +809,14 @@ class DataPermissions(APIView):
     Get the permissions of the data according to the client user
     """
 
+    def get(self, request):
+        """GET requests"""
+        return self.process_request(request)
+
+    def post(self, request):
+        """POST requests"""
+        return self.process_request(request)
+
     def get_object(self, request, pk):
         """Get data from db
 
@@ -826,7 +834,7 @@ class DataPermissions(APIView):
         except exceptions.DoesNotExist:
             raise Http404
 
-    def get(self, request):
+    def process_request(self, request):
         """Give the user permissions for a list of data ids
 
         Parameters:
