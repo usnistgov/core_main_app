@@ -179,10 +179,19 @@ XSD_URI_RESOLVER = getattr(settings, "XSD_URI_RESOLVER", None)
 """ :py:class:`str`: XSD URI Resolver for lxml validation. Choose from:  None, 'REQUESTS_RESOLVER'.
 """
 
+XML_FORCE_LIST = getattr(settings, "XML_FORCE_LIST", False)
+""" :py:class:`str`: force_list parameter for xml to dict, choose between a boolean, 
+    a list of elements to convert to list or a callable.
+    boolean: convert or not xml elements to list,
+    list: list of xml element that need to be converted to list,
+    callable: for other custom force_list behavior.
+"""
+
 XML_POST_PROCESSOR = getattr(settings, "XML_POST_PROCESSOR", "NUMERIC")
-""" :py:class:`str`: post processor for xml to dict, choose between 'NUMERIC' and 'NUMERIC_AND_STRING' .
+""" :py:class:`str`: postprocessor for xml to dict, choose between 'NUMERIC' and 'NUMERIC_AND_STRING' or a callable.
     'NUMERIC' convert numeric values from the xml document to integer or float.
     'NUMERIC_AND_STRING' convert numeric values and also store string representation .
+    callable for other custom xml post processing.
 """
 
 VERIFY_DATA_ACCESS = getattr(settings, "VERIFY_DATA_ACCESS", False)

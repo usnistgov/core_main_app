@@ -9,6 +9,8 @@ from core_main_app.commons import exceptions
 from core_main_app.settings import (
     GRIDFS_DATA_COLLECTION,
     SEARCHABLE_DATA_OCCURRENCES_LIMIT,
+    XML_POST_PROCESSOR,
+    XML_FORCE_LIST,
 )
 from core_main_app.utils import xml as xml_utils
 from core_main_app.utils.datetime_tools.utils import datetime_now
@@ -85,7 +87,9 @@ class AbstractData(Document):
         """
         # transform xml content into a dictionary
         dict_content = xml_utils.raw_xml_to_dict(
-            self.xml_content, xml_utils.post_processor
+            self.xml_content,
+            postprocessor=XML_POST_PROCESSOR,
+            force_list=XML_FORCE_LIST,
         )
         # if limit on element occurrences is set
         if SEARCHABLE_DATA_OCCURRENCES_LIMIT is not None:
