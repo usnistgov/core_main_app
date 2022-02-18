@@ -32,6 +32,71 @@ class TestRawToDict(TestCase):
         with self.assertRaises(exceptions.XMLError):
             raw_xml_to_dict(raw_xml)
 
+    def test_raw_to_dict_without_post_processor(self):
+        # Arrange
+        raw_xml = "<root><test>Hello</test><test>1</test></root>"
+        expected_dict = OrderedDict([("root", OrderedDict([("test", ["Hello", "1"])]))])
+
+        # Act
+        xml_dict = raw_xml_to_dict(raw_xml, postprocessor=None)
+
+        # Assert
+        self.assertEquals(expected_dict, xml_dict)
+
+    def test_raw_to_dict_with_numeric_post_processor(self):
+        # Arrange
+        raw_xml = "<root><test>Hello</test><test>1</test></root>"
+        expected_dict = OrderedDict([("root", OrderedDict([("test", ["Hello", 1])]))])
+
+        # Act
+        xml_dict = raw_xml_to_dict(raw_xml, postprocessor="NUMERIC")
+
+        # Assert
+        self.assertEquals(expected_dict, xml_dict)
+
+    def test_raw_to_dict_with_numeric_and_string_post_processor(self):
+        # Arrange
+        raw_xml = "<root><test>Hello</test><test>1</test></root>"
+        expected_dict = OrderedDict(
+            [("root", OrderedDict([("test", ["Hello", ("1", 1)])]))]
+        )
+
+        # Act
+        xml_dict = raw_xml_to_dict(raw_xml, postprocessor="NUMERIC_AND_STRING")
+
+        # Assert
+        self.assertEquals(expected_dict, xml_dict)
+
+    def test_raw_to_dict_with_callable_post_processor(self):
+        def test_processor(path, key, value):
+            return key, "test"
+
+        # Arrange
+        raw_xml = "<root><test>Hello</test><test>1</test></root>"
+        expected_dict = OrderedDict([("root", "test")])
+
+        # Act
+        xml_dict = raw_xml_to_dict(raw_xml, postprocessor=test_processor)
+
+        # Assert
+        self.assertEquals(expected_dict, xml_dict)
+
+    def test_raw_to_dict_with_unknown_string_raises_error(self):
+        # Arrange
+        raw_xml = "<root><test>Hello</test?</root>"
+
+        # Act # Assert
+        with self.assertRaises(exceptions.CoreError):
+            raw_xml_to_dict(raw_xml, postprocessor="bad_processor")
+
+    def test_raw_to_dict_with_bad_type_raises_error(self):
+        # Arrange
+        raw_xml = "<root><test>Hello</test?</root>"
+
+        # Act # Assert
+        with self.assertRaises(exceptions.CoreError):
+            raw_xml_to_dict(raw_xml, postprocessor=1)
+
 
 class TestRemoveListsFromXmlDict(TestCase):
     def test_remove_lists_from_xml_dict_empty_dict_does_nothing(self):

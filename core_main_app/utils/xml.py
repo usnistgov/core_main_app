@@ -155,19 +155,34 @@ def unparse(json_dict, full_document=True):
     return xmltodict.unparse(preprocessed_dict, full_document=full_document)
 
 
-def raw_xml_to_dict(raw_xml, postprocessor=None, list_limit=None):
+def raw_xml_to_dict(raw_xml, postprocessor=None, force_list=None, list_limit=None):
     """Transform a raw xml to dict. Returns an empty dict if the parsing failed.
 
     Args:
         raw_xml:
         postprocessor:
+        force_list:
         list_limit:
 
     Returns:
 
     """
     try:
-        dict_raw = xmltodict.parse(raw_xml, postprocessor=postprocessor)
+        if postprocessor:
+            # set postprocessor function if found in the list (XML_POST_PROCESSORS)
+            postprocessor = (
+                XML_POST_PROCESSORS[postprocessor]
+                if postprocessor in XML_POST_PROCESSORS
+                else postprocessor
+            )
+            # check if postprocessor is callable
+            if not callable(postprocessor):
+                raise exceptions.CoreError("postprocessor is not callable")
+
+        # convert xml to dict
+        dict_raw = xmltodict.parse(
+            raw_xml, postprocessor=postprocessor, force_list=force_list
+        )
         if list_limit:
             # Remove lists which size exceed the limit size
             remove_lists_from_xml_dict(dict_raw, list_limit)
@@ -298,23 +313,20 @@ def get_string_and_numeric_values(value):
             return value
 
 
+def numeric_post_processor(path, key, value):
+    """Convert to numeric values"""
+    return key, get_numeric_value(value)
+
+
+def numeric_and_string_post_processor(path, key, value):
+    """Convert to string and numeric values"""
+    return key, get_string_and_numeric_values(value)
+
+
 XML_POST_PROCESSORS = {
-    "NUMERIC": get_numeric_value,
-    "NUMERIC_AND_STRING": get_string_and_numeric_values,
+    "NUMERIC": numeric_post_processor,
+    "NUMERIC_AND_STRING": numeric_and_string_post_processor,
 }
-
-
-def post_processor(path, key, value):
-    """Called after XML to JSON transformation.
-
-    Parameters:
-        path:
-        key:
-        value:
-
-    Returns:
-    """
-    return key, XML_POST_PROCESSORS[XML_POST_PROCESSOR](value)
 
 
 def get_imports_and_includes(xsd_string):

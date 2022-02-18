@@ -9,6 +9,8 @@ from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
 from core_main_app.settings import (
     SEARCHABLE_DATA_OCCURRENCES_LIMIT,
     MONGODB_INDEXING,
+    XML_POST_PROCESSOR,
+    XML_FORCE_LIST,
 )
 from core_main_app.utils import xml as xml_utils
 from core_main_app.utils.datetime_tools.utils import datetime_now
@@ -93,7 +95,8 @@ class AbstractData(models.Model):
         # transform xml content into a dictionary
         self.dict_content = xml_utils.raw_xml_to_dict(
             self.xml_content,
-            xml_utils.post_processor,
+            postprocessor=XML_POST_PROCESSOR,
+            force_list=XML_FORCE_LIST,
             list_limit=SEARCHABLE_DATA_OCCURRENCES_LIMIT,
         )
 
