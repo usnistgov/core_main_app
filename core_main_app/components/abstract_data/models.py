@@ -1,6 +1,6 @@
 """ Abstract Data model
 """
-
+from django.contrib.postgres.search import SearchVectorField
 from django.core.validators import RegexValidator
 from django.db import models, IntegrityError
 
@@ -29,6 +29,7 @@ class AbstractData(models.Model):
         max_length=200,
     )
     xml_file = models.TextField(blank=False)
+    vector_column = SearchVectorField(null=True)
     creation_date = models.DateTimeField(blank=True, default=None, null=True)
     last_modification_date = models.DateTimeField(blank=True, default=None, null=True)
     last_change_date = models.DateTimeField(blank=True, default=None, null=True)

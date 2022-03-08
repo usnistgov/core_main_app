@@ -1,7 +1,6 @@
 """ Data model
 """
 from django.contrib.postgres.indexes import GinIndex
-from django.contrib.postgres.search import SearchVectorField
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.models import Q
@@ -25,7 +24,6 @@ class Data(AbstractData):
     workspace = models.ForeignKey(
         Workspace, blank=True, on_delete=models.SET_NULL, null=True
     )
-    vector_column = SearchVectorField(null=True)
 
     class Meta:
         verbose_name = "Data"
