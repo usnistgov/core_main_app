@@ -3,7 +3,6 @@
 from django.core.files.storage import default_storage
 
 from core_main_app.settings import GRIDFS_STORAGE
-from core_main_app.utils.storage.gridfs_storage import GridFSStorage
 
 
 def user_directory_path(instance, filename):
@@ -27,5 +26,7 @@ def core_file_storage(model):
 
     """
     if GRIDFS_STORAGE:
+        from core_main_app.utils.storage.gridfs_storage import GridFSStorage
+
         return GridFSStorage(collection=model)
     return default_storage
