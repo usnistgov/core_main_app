@@ -9,6 +9,7 @@ from core_main_app.commons import exceptions
 from core_main_app.components.abstract_data.models import AbstractData
 from core_main_app.components.template.models import Template
 from core_main_app.components.workspace.models import Workspace
+from core_main_app.settings import MONGODB_INDEXING
 from core_main_app.utils.raw_query.django_raw_query import get_workspace_query
 
 
@@ -34,6 +35,18 @@ class Data(AbstractData):
             ),
             GinIndex(fields=["vector_column"]),
         ]
+
+    def get_dict_content(self):
+        """Get dict_content from object or from MongoDB
+
+        Returns:
+
+        """
+        if MONGODB_INDEXING:
+            from core_main_app.components.mongo.models import MongoData
+
+            return MongoData.objects.get(pk=self.id).dict_content
+        return self.dict_content
 
     @staticmethod
     def get_all(order_by_field):

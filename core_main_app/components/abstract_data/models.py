@@ -8,6 +8,7 @@ from core_main_app.commons import exceptions
 from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
 from core_main_app.settings import (
     SEARCHABLE_DATA_OCCURRENCES_LIMIT,
+    MONGODB_INDEXING,
 )
 from core_main_app.utils import xml as xml_utils
 from core_main_app.utils.datetime_tools.utils import datetime_now
@@ -61,6 +62,14 @@ class AbstractData(models.Model):
         # update content
         self.xml_file = value
 
+    def get_dict_content(self):
+        """Get dict_content from object or from MongoDB
+
+        Returns:
+
+        """
+        raise NotImplementedError("get_dict_content is not implemented")
+
     def convert_and_save(self):
         """Save Data object and convert the xml to dict if needed.
 
@@ -78,7 +87,9 @@ class AbstractData(models.Model):
         Returns:
 
         """
-        # TODO: avoid duplicating dict_content if mongo indexing?
+        # if data stored in mongo, don't store dict_content
+        if MONGODB_INDEXING:
+            return
         # transform xml content into a dictionary
         self.dict_content = xml_utils.raw_xml_to_dict(
             self.xml_content,
