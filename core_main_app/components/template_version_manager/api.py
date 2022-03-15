@@ -60,9 +60,7 @@ def insert(template_version_manager, template, request):
         # return version manager
         return template_version_manager
     except Exception as e:
-        template_api.delete(
-            template, request=request
-        )  # TODO: deletes checks that the tvm is deleted as well
+        template_version_manager.delete()
         raise e
 
 
