@@ -39,6 +39,14 @@ try:
                 "abstract": True,
             }
 
+            def get_dict_content(self):
+                """Return dict_content
+
+                Returns:
+
+                """
+                return self.dict_content
+
             @staticmethod
             def post_save_data(sender, instance, **kwargs):
                 raise NotImplementedError("post_save_data not implemented")
