@@ -26,18 +26,6 @@ class TestBlobGetById(MongoIntegrationBaseTestCase):
         blob = blob_api.get_by_id(blob_id, mock_user)
         self.assertTrue(isinstance(blob, Blob))
 
-    def test_get_by_id_owner_without_read_access_returns_blob(self):
-        blob_id = self.fixture.blob_collection[fixture_blob.USER_1_WORKSPACE_1].id
-        mock_user = _create_user("1")
-        with self.assertRaises(AccessControlError):
-            blob_api.get_by_id(blob_id, mock_user)
-
-    def test_get_by_id_owner_without_read_access_returns_blob(self):
-        blob_id = self.fixture.blob_collection[fixture_blob.USER_1_WORKSPACE_1].id
-        mock_user = _create_user("1")
-        blob = blob_api.get_by_id(blob_id, mock_user)
-        self.assertTrue(isinstance(blob, Blob))
-
     @patch(
         "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
     )
