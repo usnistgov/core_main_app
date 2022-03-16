@@ -137,16 +137,19 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
 
             The raw query
         """
-
         # build query builder
         query_builder = QueryBuilder(query, self.sub_document_root)
         # update the criteria with workspaces information
         if workspaces is not None and len(workspaces) > 0:
-            list_workspace_ids = [workspace["id"] for workspace in workspaces]
+            list_workspace_ids = [
+                self._parser_id(workspace["id"]) for workspace in workspaces
+            ]
             query_builder.add_list_criteria("workspace", list_workspace_ids)
         # update the criteria with templates information
         if templates is not None and len(templates) > 0:
-            list_template_ids = [template["id"] for template in templates]
+            list_template_ids = [
+                self._parser_id(template["id"]) for template in templates
+            ]
             query_builder.add_list_criteria("template", list_template_ids)
         # update the criteria with visibility information
         if options is not None and VISIBILITY_OPTION in options:
@@ -185,6 +188,13 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
             The response
         """
         raise NotImplementedError("build_response method is not implemented.")
+
+    @staticmethod
+    def _parser_id(_id):
+        try:
+            return int(_id)
+        except (ValueError, TypeError):
+            return _id
 
 
 class AbstractMigrationView(APIView, metaclass=ABCMeta):
