@@ -157,6 +157,31 @@ class TestTemplateVersionManagerInsert(TestCase):
         with self.assertRaises(django_exceptions.ValidationError):
             version_manager_api.insert(version_manager, template, request=mock_request)
 
+    @override_settings(ROOT_URLCONF="core_main_app.urls")
+    @patch("core_main_app.components.template.models.Template.delete")
+    @patch(
+        "core_main_app.components.template_version_manager.models.TemplateVersionManager.save_version_manager"
+    )
+    @patch("core_main_app.components.template.models.Template.save_template")
+    def test_create_version_manager_raises_exception_if_title_is_empty(
+        self, mock_save_template, mock_save_version_manager, mock_delete_template
+    ):
+        # Arrange
+        mock_user = create_mock_user("1", is_superuser=True)
+        mock_request = create_mock_request(mock_user)
+        template_filename = "Schema"
+        template_content = "<schema xmlns='http://www.w3.org/2001/XMLSchema'></schema>"
+        template = _create_template(template_filename, template_content)
+
+        mock_save_template.return_value = template
+        version_manager = _create_template_version_manager(title="")
+        mock_save_version_manager.side_effect = django_exceptions.ValidationError("")
+        mock_delete_template.return_value = None
+
+        # Act + Assert
+        with self.assertRaises(django_exceptions.ValidationError):
+            version_manager_api.insert(version_manager, template, request=mock_request)
+
 
 class TestTemplateVersionManagerAddVersion(TestCase):
     @override_settings(ROOT_URLCONF="core_main_app.urls")
@@ -332,7 +357,7 @@ def _create_template(filename="", content=""):
     return Template(id=1, filename=filename, content=content)
 
 
-def _create_template_version_manager(title="", is_disabled=False, user_id=""):
+def _create_template_version_manager(title="Schema", is_disabled=False, user_id=""):
     """
     Returns a templates version manager
     :param title:

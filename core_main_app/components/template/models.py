@@ -12,6 +12,7 @@ from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
 )
 from core_main_app.components.version_manager.models import Version
+from core_main_app.utils.validation.regex_validation import not_empty_or_whitespaces
 
 
 class Template(Version):
@@ -158,6 +159,7 @@ class Template(Version):
         """
         try:
             self._cls = self.class_name
+            not_empty_or_whitespaces(self.filename)
             self.save()
         except IntegrityError as e:
             raise exceptions.NotUniqueError(str(e))

@@ -8,6 +8,7 @@ from django.db import models, IntegrityError
 
 from core_main_app.commons import exceptions
 from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
+from core_main_app.utils.validation.regex_validation import not_empty_or_whitespaces
 
 
 # TODO: could make is_disabled a Status with other possible values taken from an enum
@@ -88,6 +89,7 @@ class VersionManager(models.Model):
         """
         try:
             self._cls = self.class_name
+            not_empty_or_whitespaces(self.title)
             self.save()
         except IntegrityError as e:
             raise exceptions.NotUniqueError(str(e))

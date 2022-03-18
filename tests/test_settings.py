@@ -75,7 +75,7 @@ TEMPLATES = [
 LOGIN_URL = "/login"
 STATIC_URL = "/static/"
 ROOT_URLCONF = "tests.urls"
-DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CELERYBEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 MEDIA_ROOT = "tests_media"
 
@@ -88,5 +88,4 @@ CUSTOM_NAME = "Curator"
 ENABLE_SAML2_SSO_AUTH = False
 VERIFY_DATA_ACCESS = False
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 USE_TZ = True
