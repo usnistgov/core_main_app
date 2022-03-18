@@ -88,7 +88,11 @@ try:
                 Returns:
 
                 """
-                return Workspace.get_by_id(self._workspace_id)
+                return (
+                    Workspace.get_by_id(self._workspace_id)
+                    if self._workspace_id
+                    else None
+                )
 
             @property
             def xml_content(self):
