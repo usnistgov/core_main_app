@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 try:
     if MONGODB_INDEXING:
+        from bson import ObjectId
         from mongoengine import Document, DoesNotExist
         from mongoengine import fields as mongo_fields
         from core_main_app.utils.databases.mongo.pymongo_database import init_text_index
@@ -34,6 +35,7 @@ try:
             creation_date = mongo_fields.DateTimeField()
             last_modification_date = mongo_fields.DateTimeField()
             last_change_date = mongo_fields.DateTimeField()
+            mongo_id = mongo_fields.ObjectIdField()
 
             meta = {
                 "abstract": True,
@@ -158,6 +160,7 @@ try:
                 except DoesNotExist:
                     # create new mongo data otherwise
                     mongo_data = MongoData()
+                    mongo_data.mongo_id = ObjectId()
 
                 # Initialize mongo data fields
                 mongo_data.data_id = data.id
