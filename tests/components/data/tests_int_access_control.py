@@ -3,13 +3,14 @@
 import unittest
 import re
 from mock.mock import patch
-
+from core_main_app.components.template.models import Template
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.data import api as data_api
 from core_main_app.components.data.models import Data
 from core_main_app.utils.integration_tests.integration_base_test_case import (
     MongoIntegrationBaseTestCase,
 )
+from core_main_app.utils.tests_tools.RequestMock import create_mock_request
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from tests.components.data.fixtures.fixtures import (
     AccessControlDataFixture,
@@ -184,8 +185,114 @@ class TestDataGetAllExceptUser(MongoIntegrationBaseTestCase):
 
 
 class TestDataUpsert(MongoIntegrationBaseTestCase):
-    # TODO: can not test without mock for GridFS
-    pass
+    fixture = fixture_data
+
+    def test_upsert_data_as_anonymous_raises_error(self):
+        mock_user = create_mock_user(user_id=None, is_anonymous=True)
+        mock_request = create_mock_request(mock_user)
+        with self.assertRaises(AccessControlError):
+            data_api.upsert(_create_data("1", None), mock_request)
+
+    def test_upsert_data_with_no_workspace_creates_data(self):
+        mock_user = _create_user(1)
+        mock_request = create_mock_request(mock_user)
+
+        data = _create_data(1, None)
+        data_api.upsert(data, mock_request)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_upsert_data_in_accessible_creates_data(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        mock_user = _create_user(1)
+        mock_request = create_mock_request(mock_user)
+        get_all_workspaces_with_write_access_by_user.return_value = [
+            fixture_data.workspace_1
+        ]
+        data = _create_data(1, fixture_data.workspace_1)
+        data_api.upsert(data, mock_request)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_upsert_data_in_inaccessible_workspace_raises_error(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        mock_user = _create_user(1)
+        mock_request = create_mock_request(mock_user)
+        get_all_workspaces_with_write_access_by_user.return_value = []
+        data = _create_data(1, fixture_data.workspace_1)
+        with self.assertRaises(AccessControlError):
+            data_api.upsert(data, mock_request)
+
+    def test_edit_data_as_anonymous_raises_error(self):
+        user = create_mock_user(user_id=None, is_anonymous=True)
+        mock_request = create_mock_request(user)
+        fixture_data.data_1.title = "new name"
+        with self.assertRaises(AccessControlError):
+            data_api.upsert(fixture_data.data_1, mock_request)
+
+    def test_edit_others_data_not_in_workspace_raises_error(self):
+        user = create_mock_user(user_id=1)
+        mock_request = create_mock_request(user)
+        fixture_data.data_2.title = "new name"
+        with self.assertRaises(AccessControlError):
+            data_api.upsert(fixture_data.data_2, mock_request)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_edit_others_data_in_accessible_workspace_updates_data(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        user = create_mock_user(user_id=1)
+        mock_request = create_mock_request(user)
+        get_all_workspaces_with_write_access_by_user.return_value = [
+            fixture_data.workspace_2
+        ]
+        fixture_data.data_4.xml_content = (
+            '<tag  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ></tag>'
+        )
+        data_api.upsert(fixture_data.data_4, mock_request)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_edit_others_data_in_inaccessible_workspace_raises_error(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        user = create_mock_user(user_id=1)
+        mock_request = create_mock_request(user)
+        get_all_workspaces_with_write_access_by_user.return_value = []
+        fixture_data.data_4.title = "new name"
+        with self.assertRaises(AccessControlError):
+            data_api.upsert(fixture_data.data_4, mock_request)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_edit_own_data_updates_data(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        user = create_mock_user(user_id=1)
+        mock_request = create_mock_request(user)
+        get_all_workspaces_with_write_access_by_user.return_value = [
+            fixture_data.workspace_1
+        ]
+        fixture_data.data_3.xml_content = (
+            '<tag  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ></tag>'
+        )
+        data_api.upsert(fixture_data.data_3, mock_request)
+
+    def test_edit_own_data_with_no_workspace_updates_data(self):
+        user = create_mock_user(user_id=1)
+        mock_request = create_mock_request(user)
+        fixture_data.data_1.xml_content = (
+            '<tag  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ></tag>'
+        )
+        data_api.upsert(fixture_data.data_1, mock_request)
 
 
 class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
@@ -976,3 +1083,13 @@ class TestDataChangeOwner(MongoIntegrationBaseTestCase):
 
 def _create_user(user_id, is_superuser=False):
     return create_mock_user(user_id, is_superuser=is_superuser)
+
+
+def _create_data(user_id, workspace):
+    return Data(
+        template=fixture_data.template,
+        title="DataTitle",
+        user_id=str(user_id),
+        xml_content='<tag  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ></tag>',
+        workspace=workspace,
+    )

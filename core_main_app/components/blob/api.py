@@ -26,6 +26,11 @@ def insert(blob, user):
     Returns:
 
     """
+    # if blob is already created
+    if blob.id:
+        raise exceptions.ApiError(
+            "Unable to save the blob: change is not allowed. Insert method only for blob creation."
+        )
     # if blob is not set
     if blob.blob is None:
         raise exceptions.ApiError("Unable to save the blob: blob field is not set.")

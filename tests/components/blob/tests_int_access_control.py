@@ -12,6 +12,8 @@ from core_main_app.utils.integration_tests.integration_base_test_case import (
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from tests.components.blob.fixtures.fixtures import AccessControlBlobFixture
+from django.core.files.uploadedfile import SimpleUploadedFile
+import core_main_app.commons.exceptions as exceptions
 
 fixture_blob = AccessControlBlobFixture()
 
@@ -278,6 +280,141 @@ class TestBlobChangeOwner(MongoIntegrationBaseTestCase):
             document=fixture_blob.blob_collection[fixture_blob.USER_1_NO_WORKSPACE],
             new_user=mock_user,
             user=mock_user,
+        )
+
+
+class TestBlobInsert(MongoIntegrationBaseTestCase):
+    def setUp(self):
+        self.anonymous_user = create_mock_user(user_id=None, is_anonymous=True)
+        self.user = _create_user("1")
+        self.superuser = _create_user("2", True)
+        self.blob = Blob(
+            filename="blob",
+            user_id="1",
+            blob=SimpleUploadedFile("blob.txt", b"blob"),
+        )
+
+    def test_insert_blob_as_anonymous_raises_error(self):
+        with self.assertRaises(AccessControlError):
+            blob_api.insert(self.blob, self.anonymous_user)
+
+    def test_insert_blob_as_user_creates_blob(
+        self,
+    ):
+        blob_api.insert(self.blob, self.user)
+
+    def test_insert_blob_as_superuser_creates_blob(
+        self,
+    ):
+        blob_api.insert(self.blob, self.superuser)
+
+    def test_edit_blob_as_user_raises_error(
+        self,
+    ):
+        with self.assertRaises(exceptions.ApiError):
+            blob_api.insert(
+                fixture_blob.blob_collection[fixture_blob.USER_1_WORKSPACE_1], self.user
+            )
+
+    def test_edit_blob_as_superuser_raises_error(
+        self,
+    ):
+        with self.assertRaises(exceptions.ApiError):
+            blob_api.insert(
+                fixture_blob.blob_collection[fixture_blob.USER_1_NO_WORKSPACE],
+                self.superuser,
+            )
+
+
+class TestBlobAssign(MongoIntegrationBaseTestCase):
+    fixture = fixture_blob
+
+    def test_assign_blob_as_anonymous_raises_error(self):
+        anonymous_user = create_mock_user(user_id=None, is_anonymous=True)
+        with self.assertRaises(AccessControlError):
+            blob_api.assign(
+                self.fixture.blob_collection[fixture_blob.USER_1_NO_WORKSPACE],
+                fixture_blob.workspace_1,
+                anonymous_user,
+            )
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_assign_own_blob_to_accessible_workspace_ok(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        user = _create_user("1")
+        get_all_workspaces_with_write_access_by_user.return_value = [
+            fixture_blob.workspace_1
+        ]
+        blob_api.assign(
+            fixture_blob.blob_collection[fixture_blob.USER_1_NO_WORKSPACE],
+            fixture_blob.workspace_1,
+            user,
+        )
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_assign_own_blob_to_inaccessible_workspace_raises_error(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        user = _create_user("1")
+        get_all_workspaces_with_write_access_by_user.return_value = []
+        with self.assertRaises(AccessControlError):
+            blob_api.assign(
+                fixture_blob.blob_collection[fixture_blob.USER_1_WORKSPACE_1],
+                fixture_blob.workspace_2,
+                user,
+            )
+
+    def test_assign_own_blob_with_no_workspace_to_none_ok(self):
+        user = _create_user("1")
+        blob_api.assign(
+            fixture_blob.blob_collection[fixture_blob.USER_1_NO_WORKSPACE], None, user
+        )
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_assign_others_blob_to_accessible_workspace_raises_error(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        user = _create_user("1")
+        get_all_workspaces_with_write_access_by_user.return_value = [
+            fixture_blob.workspace_1
+        ]
+        with self.assertRaises(AccessControlError):
+            blob_api.assign(
+                fixture_blob.blob_collection[fixture_blob.USER_2_WORKSPACE_2],
+                fixture_blob.workspace_1,
+                user,
+            )
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_assign_others_blob_to_inaccessible_workspace_raises_error(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        user = _create_user("1")
+        get_all_workspaces_with_write_access_by_user.return_value = []
+        with self.assertRaises(AccessControlError):
+            blob_api.assign(
+                fixture_blob.blob_collection[fixture_blob.USER_2_WORKSPACE_2],
+                fixture_blob.workspace_1,
+                user,
+            )
+
+    def test_assign_blob_as_superuser_ok(
+        self,
+    ):
+        user = _create_user("1", True)
+        blob_api.assign(
+            fixture_blob.blob_collection[fixture_blob.USER_2_NO_WORKSPACE],
+            fixture_blob.workspace_1,
+            user,
         )
 
 
