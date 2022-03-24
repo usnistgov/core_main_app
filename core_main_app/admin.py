@@ -16,6 +16,7 @@ from core_main_app.components.template.models import Template
 from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
 )
+from core_main_app.components.template_xsl_rendering.models import TemplateXslRendering
 from core_main_app.components.workspace.models import Workspace
 from core_main_app.components.xsl_transformation.models import XslTransformation
 from core_main_app.utils.rendering import admin_render
@@ -127,6 +128,7 @@ admin.site.register(Workspace)
 admin.site.register(TemplateVersionManager)
 admin.site.register(Template)
 admin.site.register(XslTransformation)
+admin.site.register(TemplateXslRendering)
 admin.site.register(DatabaseLockObject)
 
 
