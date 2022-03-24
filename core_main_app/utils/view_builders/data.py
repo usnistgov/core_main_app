@@ -38,7 +38,7 @@ def build_page(data_object, display_admin_version=False):
                 if template_xsl_rendering.default_detail_xslt
                 else None
             )
-            if not template_xsl_rendering.list_detail_xslt or (
+            if template_xsl_rendering.list_detail_xslt.count() == 0 or (
                 template_xsl_rendering.default_detail_xslt is not None
                 and template_xsl_rendering.list_detail_xslt.count() == 1
             ):
