@@ -4,6 +4,7 @@ let jqWarning = $('.alert-warning');
 let jqError = $('.alert-error');
 let isAllDataSelected = false;
 let isAllTemplateSelected = false;
+let isTargetCreated = false;
 let nextPageUrl = null;
 let setStatesPending = 0;
 let setStatesTargetTemplateId;
@@ -96,6 +97,7 @@ $(document).ready(function() {
     // get the fragment from url to select a predefined state if needed
     // ex. #from=1234567,12345678,1234567&to12345678
     if (location.hash.substr(1) !== "") {
+        isTargetCreated = true
         let sourceTemplates = location.hash.substr(1).split("&to=");
         let targetTemplate = sourceTemplates.pop();
 
@@ -258,7 +260,7 @@ let createDataListHtml = function(data, append, tbodySelector) {
                 '</tr>';
         }
 
-        // add the button to show more result if nest page exist
+        // add the button to show more result if next page exist
         if (data.next) {
             dataHtml += '<tr>' +
                 '<td class="bt-more" colspan=2>' +
@@ -300,7 +302,10 @@ let createDataListHtml = function(data, append, tbodySelector) {
             $(".data-count").show();
             $("#data-number").html(jqCheckedDataCheckbox.length);
             viewXsltList(true);
-            createTargetTemplateListHtml(true);
+            if(!isTargetCreated){
+                isTargetCreated = true
+                createTargetTemplateListHtml(true);
+            }
         } else {
             createTargetTemplateListHtml(false);
             // hide the couter
@@ -360,7 +365,6 @@ let createTargetTemplateListHtml = function(isDataSelected) {
             return { id: templateId, titleHtml: jpTemplateRow.html() };
         })
         .get();
-
     if (targetTemplateId && targetTemplateId.length > 0 && isDataSelected) {
         targetTemplateId.forEach((item, index) => {
             targetTemplateHtml += '<tr>' +
@@ -371,7 +375,7 @@ let createTargetTemplateListHtml = function(isDataSelected) {
                 '</tr>';
         });
     } else if (targetTemplateId.length === 0 || !isDataSelected) {
-
+        isTargetCreated = false
         emptyPanelMessage = isDataSelected ? 'You have selected all the ' +
             'source templates, please uncheck at least one of them to have at least a target template.' :
             'Please select at least one data to migrate.'
