@@ -14,6 +14,8 @@ from core_main_app.settings import (
     MONGODB_INDEXING,
     MONGODB_ASYNC_SAVE,
     SEARCHABLE_DATA_OCCURRENCES_LIMIT,
+    XML_POST_PROCESSOR,
+    XML_FORCE_LIST,
 )
 from core_main_app.utils import xml as xml_utils
 
@@ -168,7 +170,8 @@ try:
                 # transform xml content into a dictionary
                 mongo_data.dict_content = xml_utils.raw_xml_to_dict(
                     data.xml_content,
-                    xml_utils.post_processor,
+                    postprocessor=XML_POST_PROCESSOR,
+                    force_list=XML_FORCE_LIST,
                     list_limit=SEARCHABLE_DATA_OCCURRENCES_LIMIT,
                 )
                 mongo_data._template_id = data.template.id if data.template else None
