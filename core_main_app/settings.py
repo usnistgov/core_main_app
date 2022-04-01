@@ -209,3 +209,14 @@ MONGO_DB = getattr(settings, "MONGO_DB", "cdcs")
 GRIDFS_STORAGE = getattr(settings, "GRIDFS_STORAGE", False)
 """ :py:class:`bool`: Use GridFS for file storage.
 """
+
+CUSTOM_FILE_STORAGE = getattr(settings, "CUSTOM_FILE_STORAGE", dict())
+""" :py:class:`dict`: File Storage by model.
+    Example:
+    {
+        'data': 'django.core.files.storage.FileSystemStorage',
+        'blob': 'core_main_app.utils.storage.gridfs_storage.GridFSStorage',
+        'exported_compressed_files': 'core_main_app.utils.storage.gridfs_storage.GridFSStorage'
+    }
+
+"""
