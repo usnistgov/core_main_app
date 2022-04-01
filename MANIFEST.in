@@ -1,5 +1,7 @@
 include README.rst
 include requirements.txt
 include requirements.core.txt
+include requirements.dev.txt
+include requirements.mongo.txt
 recursive-include core_main_app/static *
 recursive-include core_main_app/templates *
