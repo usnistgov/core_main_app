@@ -1,6 +1,8 @@
 """ Abstract Data model
 """
+
 from django.contrib.postgres.search import SearchVectorField
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.validators import RegexValidator
 from django.db import models, IntegrityError
 
@@ -14,6 +16,7 @@ from core_main_app.settings import (
 )
 from core_main_app.utils import xml as xml_utils
 from core_main_app.utils.datetime_tools.utils import datetime_now
+from core_main_app.utils.storage.storage import core_file_storage, user_directory_path
 
 
 class AbstractData(models.Model):
@@ -31,11 +34,16 @@ class AbstractData(models.Model):
         ],
         max_length=200,
     )
-    xml_file = models.TextField(blank=False)
+    xml_file = models.FileField(
+        blank=False,
+        upload_to=user_directory_path,
+        storage=core_file_storage(model="data"),
+    )
     vector_column = SearchVectorField(null=True)
     creation_date = models.DateTimeField(blank=True, default=None, null=True)
     last_modification_date = models.DateTimeField(blank=True, default=None, null=True)
     last_change_date = models.DateTimeField(blank=True, default=None, null=True)
+    _xml_content = None
 
     class Meta:
         abstract = True
@@ -47,7 +55,18 @@ class AbstractData(models.Model):
         Returns:
 
         """
-        return self.xml_file
+        # private field xml_content not set yet, and reference to xml_file to read is set
+        if self._xml_content is None and self.xml_file.name:
+            # read xml file into xml_content field
+            xml_content = self.xml_file.read()
+            try:
+                self._xml_content = (
+                    xml_content.decode("utf-8") if xml_content else xml_content
+                )
+            except AttributeError:
+                self._xml_content = xml_content
+        # return xml content
+        return self._xml_content
 
     @xml_content.setter
     def xml_content(self, value):
@@ -62,7 +81,7 @@ class AbstractData(models.Model):
         # update modification times
         self.last_modification_date = datetime_now()
         # update content
-        self.xml_file = value
+        self._xml_content = value
 
     def get_dict_content(self):
         """Get dict_content from object or from MongoDB
@@ -106,7 +125,14 @@ class AbstractData(models.Model):
         Returns:
 
         """
-        self.xml_file = self.xml_content
+        try:
+            xml_content = self.xml_content.encode("utf-8")
+        except UnicodeEncodeError:
+            xml_content = self.xml_content
+
+        self.xml_file = SimpleUploadedFile(
+            name=self.title, content=xml_content, content_type="application/xml"
+        )
 
     def save_object(self):
         """Custom save. Set the datetime fields and save.

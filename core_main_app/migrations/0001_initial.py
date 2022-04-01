@@ -39,7 +39,12 @@ class Migration(migrations.Migration):
                         ],
                     ),
                 ),
-                ("xml_file", models.TextField()),
+                (
+                    "xml_file",
+                    models.FileField(
+                        upload_to=core_main_app.utils.storage.storage.user_directory_path,
+                    ),
+                ),
                 (
                     "creation_date",
                     models.DateTimeField(blank=True, default=None, null=True),
@@ -389,7 +394,7 @@ class Migration(migrations.Migration):
                     "blob",
                     models.FileField(
                         null=True,
-                        upload_to=core_main_app.components.blob.models.user_directory_path,
+                        upload_to=core_main_app.utils.storage.storage.user_directory_path,
                     ),
                 ),
                 ("creation_date", models.DateTimeField(auto_now_add=True)),

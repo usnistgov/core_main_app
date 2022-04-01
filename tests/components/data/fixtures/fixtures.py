@@ -365,14 +365,14 @@ class AccessControlDataFullTextSearchFixture(FixtureInterface):
             xml_content=xml_content_2,
             workspace=self.workspace_1,
         )
-        self.data_2.save()
+        self.data_2.convert_and_save()
         self.data_3_1 = Data(
             template=self.template,
             title="Data 3.1",
             user_id="3",
             xml_content=xml_content_3_1,
         )
-        self.data_3_1.save()
+        self.data_3_1.convert_and_save()
         self.data_3_2 = Data(
             template=self.template,
             title="Data 3.2",
@@ -380,7 +380,7 @@ class AccessControlDataFullTextSearchFixture(FixtureInterface):
             workspace=self.workspace_1,
             xml_content=xml_content_3_2,
         )
-        self.data_3_2.save()
+        self.data_3_2.convert_and_save()
         self.data_collection = [
             self.data_1,
             self.data_2,

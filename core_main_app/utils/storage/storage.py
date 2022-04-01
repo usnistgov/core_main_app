@@ -16,8 +16,9 @@ def user_directory_path(instance, filename):
     Returns:
 
     """
+    user_id = getattr(instance, "user_id", "undefined")
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
-    return "user_{0}/{1}".format(instance.user_id, filename)
+    return f"user_{user_id}/{filename}"
 
 
 def core_file_storage(model):

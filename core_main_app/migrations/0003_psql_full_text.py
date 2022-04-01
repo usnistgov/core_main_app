@@ -9,7 +9,6 @@ from core_main_app.utils.databases.backend import uses_postgresql_backend
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("core_main_app", "0002_site_update"),
     ]
@@ -31,14 +30,19 @@ class Migration(migrations.Migration):
         operations.append(
             migrations.RunSQL(
                 sql="""
+                  CREATE OR REPLACE FUNCTION update_dict_content_tsvector() RETURNS trigger AS $$
+                  BEGIN
+                    NEW."vector_column" :=
+                      to_tsvector('english', NEW.dict_content::jsonb);
+                    RETURN NEW;
+                  END;
+                  $$ LANGUAGE plpgsql;
+
                   CREATE TRIGGER vector_column_trigger
-                  BEFORE INSERT OR UPDATE OF xml_file, vector_column
+                  BEFORE INSERT OR UPDATE OF dict_content, vector_column
                   ON core_main_app_data
                   FOR EACH ROW EXECUTE PROCEDURE
-                  tsvector_update_trigger(
-                    vector_column, 'pg_catalog.english', xml_file
-                  );
-
+                  update_dict_content_tsvector();
                   UPDATE core_main_app_data SET vector_column = NULL;
                 """,
                 reverse_sql="""
