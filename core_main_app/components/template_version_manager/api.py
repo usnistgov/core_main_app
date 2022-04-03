@@ -15,6 +15,7 @@ from core_main_app.components.version_manager.utils import (
     get_latest_version_name,
     get_version_name,
 )
+import core_main_app.commons.exceptions as exceptions
 
 
 @access_control(can_read)
@@ -59,6 +60,8 @@ def insert(template_version_manager, template, request):
         template.save_template()
         # return version manager
         return template_version_manager
+    except exceptions.NotUniqueError as e:
+        raise e
     except Exception as e:
         template_version_manager.delete()
         raise e

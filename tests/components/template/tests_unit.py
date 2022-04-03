@@ -10,6 +10,7 @@ from core_main_app.components.template import api as template_api
 from core_main_app.components.template.models import Template
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import create_mock_request
+from django.core.exceptions import ValidationError
 
 
 class TestTemplateGet(TestCase):
@@ -88,7 +89,7 @@ class TestTemplateUpsert(TestCase):
             content="<schema xmlns='http://www.w3.org/2001/XMLSchema'></schema>",
         )
         mock_save.side_effect = django_exceptions.ValidationError("")
-        with self.assertRaises(ModelError):
+        with self.assertRaises(ValidationError):
             template_api.upsert(template, request=mock_request)
 
     @patch("core_main_app.components.template.models.Template.save")

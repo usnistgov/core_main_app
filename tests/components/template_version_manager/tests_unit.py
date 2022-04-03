@@ -3,12 +3,11 @@
 from unittest.case import TestCase
 
 from django.core import exceptions as django_exceptions
-from django.db import IntegrityError
 from django.test import override_settings
 from mock.mock import Mock, patch, MagicMock
 
-from core_main_app.commons.exceptions import DoesNotExist
-from core_main_app.commons.exceptions import ModelError
+from core_main_app.commons.exceptions import DoesNotExist, NotUniqueError
+from django.core.exceptions import ValidationError
 from core_main_app.components.template.models import Template
 from core_main_app.components.template_version_manager import api as version_manager_api
 from core_main_app.components.template_version_manager.models import (
@@ -103,10 +102,10 @@ class TestTemplateVersionManagerInsert(TestCase):
         mock_template_save.return_value = template
         mock_template_delete.return_value = None
         mock_version_manager = _create_template_version_manager(title="Schema")
-        mock_version_manager_save.side_effect = IntegrityError()
+        mock_version_manager_save.side_effect = NotUniqueError("")
 
         # Act + Assert
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(NotUniqueError):
             version_manager_api.insert(
                 mock_version_manager, template, request=mock_request
             )
@@ -227,7 +226,7 @@ class TestTemplateVersionManagerAddVersion(TestCase):
         mock_version_manager = _create_mock_template_version_manager()
 
         # Act + Assert
-        with self.assertRaises(ModelError):
+        with self.assertRaises(ValidationError):
             version_manager_api.insert(
                 mock_version_manager, template, request=mock_request
             )

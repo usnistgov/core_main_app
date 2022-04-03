@@ -1,7 +1,7 @@
 """
 Template models
 """
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.validators import RegexValidator
 from django.db import models, IntegrityError
 from django.db.models import Q
@@ -163,6 +163,8 @@ class Template(Version):
             self.save()
         except IntegrityError as e:
             raise exceptions.NotUniqueError(str(e))
+        except ValidationError as e:
+            raise e
         except Exception as ex:
             raise exceptions.ModelError(str(ex))
 
