@@ -86,6 +86,15 @@ try:
                 return Template.get_by_id(self._template_id)
 
             @property
+            def template_id(self):
+                """Return template id
+
+                Returns:
+
+                """
+                return self._template_id
+
+            @property
             def workspace(self):
                 """Return workspace object
 
