@@ -122,6 +122,11 @@ urlpatterns = [
         name="core_main_app_rest_data_query",
     ),
     re_path(
+        r"^data/bulk-upload/$",
+        data_views.BulkUploadFolder.as_view(),
+        name="core_main_app_rest_data_bulk_upload",
+    ),
+    re_path(
         r"^data/(?P<pk>\w+)/assign/(?P<workspace_id>\w+)$",
         data_views.DataAssign.as_view(),
         name="core_main_app_rest_data_assign",

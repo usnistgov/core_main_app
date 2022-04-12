@@ -1,15 +1,18 @@
 """ REST views for the data API
 """
 import json
+import logging
+import os
 
+from django.conf import settings
 from django.http import Http404
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAdminUser
 from rest_framework.permissions import (
     IsAuthenticated,
     IsAuthenticatedOrReadOnly,
-    IsAdminUser,
 )
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -18,6 +21,8 @@ from core_main_app.access_control.api import check_can_write
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
 from core_main_app.components.data import api as data_api
+from core_main_app.components.data.api import check_xml_file_is_valid
+from core_main_app.components.data.models import Data
 from core_main_app.components.data.tasks import get_task_progress, get_task_result
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
@@ -30,13 +35,18 @@ from core_main_app.rest.data.serializers import (
 )
 from core_main_app.rest.mongo_data.serializers import MongoDataSerializer
 from core_main_app.settings import MONGODB_INDEXING
+from core_main_app.settings import XML_POST_PROCESSOR, XML_FORCE_LIST
+from core_main_app.utils import xml as main_xml_utils
 from core_main_app.utils.boolean import to_bool
 from core_main_app.utils.databases.mongo.pymongo_database import get_full_text_query
+from core_main_app.utils.datetime_tools.utils import datetime_now
 from core_main_app.utils.file import get_file_http_response
 from core_main_app.utils.pagination.rest_framework_paginator.pagination import (
     StandardResultsSetPagination,
 )
 from core_main_app.utils.xml import get_content_by_xpath
+
+logger = logging.getLogger(__name__)
 
 
 class DataList(APIView):
@@ -1023,3 +1033,136 @@ def get_result(request, task_id):
     """
     result = get_task_result(task_id)
     return Response(result, content_type="application/json")
+
+
+class BulkUploadFolder(APIView):
+    """Bulk upload data from folder"""
+
+    permission_classes = (IsAdminUser,)
+
+    @staticmethod
+    def _bulk_create(data_list):
+        """Bulk insert list of data
+
+        Args:
+            data_list:
+
+        Returns:
+
+        """
+        try:
+            # Bulk insert list of data
+            Data.objects.bulk_create(data_list)
+        except Exception as e:
+            # Log errors that occurred during bulk insert
+            logger.error(f"Bulk upload failed.")
+            logger.error(str(e))
+            # try inserting each data of the batch individually
+            for error_data in data_list:
+                try:
+                    error_data.save()
+                except Exception as e:
+                    logger.error(
+                        f"Error during bulk upload. Retry loading failed for: {error_data.title}."
+                    )
+
+    def put(self, request):
+        """Bulk upload a folder.
+
+        Dataset needs to be placed in the MEDIA_ROOT folder.
+        The folder parameter is a relative path from the MEDIA_ROOT.
+
+        Parameters:
+
+            {
+                "folder": "dataset/folder",
+                "template": integer,
+                "workspace": integer,
+                "batch_size": integer,
+                "validate_xml": true|false,
+                "clean_title": true|false
+            }
+
+        Examples:
+            {
+                "folder": "dataset/files",
+                "template": 1,
+                "workspace": 1,
+                "batch_size": 10,
+                "validate_xml": false
+            }
+
+        Args:
+
+            request: HTTP request
+
+        """
+        try:
+            folder = request.data["folder"]
+            template_id = request.data["template"]
+            workspace = request.data["workspace"]
+            batch_size = request.data.get("batch_size", 10)
+            validate_xml = request.data.get("validate_xml", True)
+            clean_title = request.data.get("clean_title", True)
+
+            data_list = list()
+
+            if os.path.exists(os.path.join(settings.MEDIA_ROOT, folder)):
+                for xml_data in os.listdir(os.path.join(settings.MEDIA_ROOT, folder)):
+                    try:
+                        # initialize times
+                        now = datetime_now()
+                        # Create data
+                        instance = Data(
+                            template_id=template_id,
+                            workspace_id=workspace,
+                            user_id=request.user.id,
+                            last_change_date=now,
+                            creation_date=now,
+                            last_modification_date=now,
+                        )
+                        # Set title
+                        instance.title = (
+                            xml_data.replace("_", " ").replace(".xml", "")
+                            if clean_title
+                            else xml_data
+                        )
+                        # Set XML file
+                        instance.xml_file.name = os.path.join(folder, xml_data)
+                        # Validate XML
+                        if validate_xml:
+                            check_xml_file_is_valid(instance, request=request)
+                        # Convert to JSON
+                        with open(
+                            os.path.join(settings.MEDIA_ROOT, folder, xml_data), "rb"
+                        ) as xml_file:
+                            instance.dict_content = main_xml_utils.raw_xml_to_dict(
+                                xml_file,
+                                postprocessor=XML_POST_PROCESSOR,
+                                force_list=XML_FORCE_LIST,
+                            )
+                        # Add data to list
+                        data_list.append(instance)
+                    except Exception as e:
+                        logger.error(
+                            "ERROR: Unable to insert {0}: {1}".format(xml_data, str(e))
+                        )
+                    # If data list reaches batch size
+                    if len(data_list) == batch_size:
+                        # Bulk insert list of data
+                        BulkUploadFolder._bulk_create(data_list)
+                        # Clear list of data
+                        data_list = list()
+                # insert the last batch
+                BulkUploadFolder._bulk_create(data_list)
+
+                content = {
+                    "message": "Bulk upload is complete. Check the logs for errors."
+                }
+                return Response(content, status=status.HTTP_200_OK)
+            else:
+                content = {"message": "Folder not found."}
+                return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as api_exception:
+            content = {"message": str(api_exception)}
+            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
