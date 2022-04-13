@@ -1,5 +1,6 @@
 """ Data model
 """
+from django.contrib.auth.models import User
 from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
@@ -35,6 +36,15 @@ class Data(AbstractData):
             ),
             GinIndex(fields=["vector_column"]),
         ]
+
+    @property
+    def owner_name(self):
+        """Get owner name
+
+        Returns:
+
+        """
+        return User.objects.get(pk=self.user_id).username
 
     def get_dict_content(self):
         """Get dict_content from object or from MongoDB

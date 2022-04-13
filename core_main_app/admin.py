@@ -10,6 +10,7 @@ from django.views.generic.base import RedirectView
 import core_main_app.components.web_page_login.api as login_page_api
 from core_main_app.commons.enums import WEB_PAGE_TYPES
 from core_main_app.components.blob.models import Blob
+from core_main_app.components.data.admin_site import CustomDataAdmin
 from core_main_app.components.data.models import Data
 from core_main_app.components.lock.models import DatabaseLockObject
 from core_main_app.components.template.models import Template
@@ -122,7 +123,7 @@ admin_urls = [
 ]
 
 
-admin.site.register(Data)
+admin.site.register(Data, CustomDataAdmin)
 admin.site.register(Blob)
 admin.site.register(Workspace)
 admin.site.register(TemplateVersionManager)
