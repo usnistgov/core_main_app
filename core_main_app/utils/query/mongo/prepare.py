@@ -276,7 +276,7 @@ def convert_to_django(query_dict):
                     # extract keywords from dict
                     for keyword in query_dict["$text"]["$search"].strip().split(" "):
                         # add text filter
-                        q_list &= Q(xml_file__icontains=keyword.replace('"', ""))
+                        q_list &= Q(dict_content__icontains=keyword.replace('"', ""))
             else:
                 # raise an error if another operator was found
                 raise CoreError(f"Unsupported operator found: {key}")
