@@ -213,8 +213,9 @@ GRIDFS_STORAGE = getattr(settings, "GRIDFS_STORAGE", False)
 CUSTOM_FILE_STORAGE = getattr(settings, "CUSTOM_FILE_STORAGE", dict())
 """ :py:class:`dict`: File Storage by model.
     Example:
+    from django.core.files.storage import default_storage
     {
-        'data': 'django.core.files.storage.FileSystemStorage',
+        'data': default_storage,
         'blob': 'core_main_app.utils.storage.gridfs_storage.GridFSStorage',
         'exported_compressed_files': 'core_main_app.utils.storage.gridfs_storage.GridFSStorage'
     }
