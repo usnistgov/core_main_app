@@ -50,12 +50,12 @@ class BlobSerializer(ModelSerializer):
             from core_linked_records_app.components.blob import (
                 api as linked_blob_api,
             )
-            from core_linked_records_app.settings import DEFAULT_ID_PROVIDER_SYSTEM
+            from core_linked_records_app.settings import ID_PROVIDER_SYSTEM_NAME
 
             try:
                 sub_url = reverse(
                     "core_linked_records_provider_record",
-                    kwargs={"provider": DEFAULT_ID_PROVIDER_SYSTEM, "record": ""},
+                    kwargs={"provider": ID_PROVIDER_SYSTEM_NAME, "record": ""},
                 )
                 blob_pid = linked_blob_api.get_pid_for_blob(str(instance.id))
 
