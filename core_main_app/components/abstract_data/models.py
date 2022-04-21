@@ -36,6 +36,7 @@ class AbstractData(models.Model):
     )
     xml_file = models.FileField(
         blank=False,
+        max_length=250,
         upload_to=user_directory_path,
         storage=core_file_storage(model="data"),
     )

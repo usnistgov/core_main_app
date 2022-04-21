@@ -42,6 +42,7 @@ class Migration(migrations.Migration):
                 (
                     "xml_file",
                     models.FileField(
+                        max_length=250,
                         upload_to=core_main_app.utils.storage.storage.user_directory_path,
                     ),
                 ),
@@ -394,6 +395,7 @@ class Migration(migrations.Migration):
                     "blob",
                     models.FileField(
                         null=True,
+                        max_length=250,
                         upload_to=core_main_app.utils.storage.storage.user_directory_path,
                     ),
                 ),

@@ -30,6 +30,7 @@ class Blob(models.Model):
     )
     blob = models.FileField(
         null=True,
+        max_length=250,
         upload_to=user_directory_path,
         storage=core_file_storage(model="blob"),
     )
