@@ -20,7 +20,9 @@ from core_main_app.components.data import api as data_api
 from core_main_app.components.group import api as group_api
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
-from core_main_app.templatetags.xsl_transform_tag import render_xml_as_html_detail
+from core_main_app.templatetags.xsl_transform_tag import (
+    render_xml_as_html_detail,
+)
 from core_main_app.utils import group as group_utils
 from core_main_app.views.user.forms import (
     ChangeWorkspaceForm,

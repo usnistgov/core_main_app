@@ -3,7 +3,8 @@ Template Version Manager model
 """
 
 from django.core.exceptions import ObjectDoesNotExist
-
+from django.db import models
+from django.db.models import F
 from core_main_app.commons import exceptions
 from core_main_app.components.version_manager.models import VersionManager
 
@@ -12,6 +13,10 @@ class TemplateVersionManager(VersionManager):
     """Manager of templates versions"""
 
     _class_name = "VersionManager.TemplateVersionManager"
+    display_rank = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        ordering = [F("display_rank").asc(nulls_last=True)]
 
     @property
     def class_name(self):
