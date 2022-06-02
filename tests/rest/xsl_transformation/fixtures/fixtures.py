@@ -1,5 +1,7 @@
 """ Fixtures files for XslTransformation
 """
+from django.core.files.uploadedfile import SimpleUploadedFile
+
 from core_main_app.components.xsl_transformation.models import XslTransformation
 from core_main_app.utils.integration_tests.fixture_interface import FixtureInterface
 
@@ -31,7 +33,11 @@ class XslTransformationFixtures(FixtureInterface):
             '<xsl:template match="/"></xsl:template></xsl:stylesheet>'
         )
         self.data_1 = XslTransformation(
-            name="name_1", filename="filename_1.xsd", content=content
+            name="name_1",
+            filename="filename_1.xsd",
+            file=SimpleUploadedFile(
+                "xsl_transformation.xsl", content=content.encode("utf-8")
+            ),
         )
         self.data_1.save()
         self.data_collection = [self.data_1]

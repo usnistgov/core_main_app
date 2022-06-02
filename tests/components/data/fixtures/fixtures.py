@@ -1,5 +1,7 @@
 """ Fixtures files for Data
 """
+from django.core.files.uploadedfile import SimpleUploadedFile
+
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
 from core_main_app.components.workspace import api as workspace_api
@@ -536,16 +538,13 @@ class DataMigrationFixture(FixtureInterface):
         self.template_3.content = xsd3
         self.template_3.hash = ""
         self.template_3.filename = "filename"
-        self.template_1.save()
-        self.template_2.save()
-        self.template_3.save()
         self.template_4.content = xsd4
         self.template_4.hash = ""
         self.template_4.filename = "filename"
-        self.template_1.save()
-        self.template_2.save()
-        self.template_3.save()
-        self.template_4.save()
+        self.template_1.save_template()
+        self.template_2.save_template()
+        self.template_3.save_template()
+        self.template_4.save_template()
 
     def generate_xslt(self):
         """Generate xsl transformation .
@@ -569,7 +568,9 @@ class DataMigrationFixture(FixtureInterface):
         self.xsl_transformation = XslTransformation(
             name="xsl_transformation",
             filename="xsl_transformation.xsl",
-            content=content,
+            file=SimpleUploadedFile(
+                "xsl_transformation.xsl", content=content.encode("utf-8")
+            ),
         )
 
         self.xsl_transformation.save()

@@ -12,9 +12,11 @@ class XslTransformationSerializer(ModelSerializer):
     XslTransformation serializer
     """
 
+    content = CharField(required=True)
+
     class Meta(object):
         model = XslTransformation
-        fields = "__all__"
+        fields = ["name", "filename", "content"]
 
     def create(self, validated_data):
         return xsl_api.upsert(XslTransformation(**validated_data))

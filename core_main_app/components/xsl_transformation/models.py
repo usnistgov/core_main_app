@@ -1,11 +1,14 @@
 """ XslTransformation model
 """
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.validators import RegexValidator
 from django.db import models, IntegrityError
 
 from core_main_app.commons import exceptions
 from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
+from core_main_app.settings import XSLT_UPLOAD_DIR
+from core_main_app.utils.storage.storage import core_file_storage
 
 
 class XslTransformation(models.Model):
@@ -34,7 +37,37 @@ class XslTransformation(models.Model):
         ],
         max_length=200,
     )
-    content = models.TextField(blank=False)
+    file = models.FileField(
+        blank=False,
+        max_length=250,
+        upload_to=XSLT_UPLOAD_DIR,
+        storage=core_file_storage(model="xsl_transformation"),
+    )
+    _content = None
+
+    @property
+    def content(self):
+        """Read XSLT content
+
+        Returns:
+
+        """
+        if not self._content:
+            self._content = self.file.read().decode("utf-8")
+        return self._content
+
+    @content.setter
+    def content(self, xsd_content):
+        """Set xslt content
+
+        Args:
+            xsd_content:
+
+        Returns:
+
+        """
+        # Set template content
+        self._content = xsd_content
 
     def __str__(self):
         """String representation of an object.
@@ -109,6 +142,12 @@ class XslTransformation(models.Model):
 
         """
         try:
+            if self._content and not self.file:
+                self.file = SimpleUploadedFile(
+                    name=self.filename,
+                    content=self._content.encode("utf-8"),
+                    content_type="application/xml",
+                )
             return self.save()
         except IntegrityError as e:
             raise exceptions.NotUniqueError(str(e))

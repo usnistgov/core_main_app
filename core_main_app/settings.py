@@ -19,6 +19,14 @@ SERVER_URI = getattr(settings, "SERVER_URI", "http://127.0.0.1:8000")
 """ :py:class:`str`: Server URI for import reference.
 """
 
+XSD_UPLOAD_DIR = getattr(settings, "XSD_UPLOAD_DIR", "xml_schemas")
+""" :py:class:`str`: Name of the media folder where XML schemas are uploaded to.
+"""
+
+XSLT_UPLOAD_DIR = getattr(settings, "XSLT_UPLOAD_DIR", "xslt")
+""" :py:class:`str`: Name of the media folder where XML schemas are uploaded to.
+"""
+
 INSTALLED_APPS = getattr(settings, "INSTALLED_APPS", [])
 """ :py:class:`list`: List of apps installed.
 """
@@ -216,8 +224,9 @@ CUSTOM_FILE_STORAGE = getattr(settings, "CUSTOM_FILE_STORAGE", dict())
     from django.core.files.storage import default_storage
     {
         'data': default_storage,
+        'template': default_storage,
         'blob': 'core_main_app.utils.storage.gridfs_storage.GridFSStorage',
         'exported_compressed_files': 'core_main_app.utils.storage.gridfs_storage.GridFSStorage'
+        'xsl_transformation': 'core_main_app.utils.storage.gridfs_storage.GridFSStorage'
     }
-
 """

@@ -11,6 +11,7 @@ class TemplateSerializer(ModelSerializer):
     Template serializer
     """
 
+    content = CharField(required=True)
     dependencies_dict = CharField(write_only=True, required=False)
 
     class Meta(object):

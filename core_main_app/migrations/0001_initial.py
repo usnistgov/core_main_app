@@ -5,6 +5,8 @@ import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
 
+from core_main_app.settings import XSD_UPLOAD_DIR, XSLT_UPLOAD_DIR
+
 
 class Migration(migrations.Migration):
 
@@ -114,7 +116,10 @@ class Migration(migrations.Migration):
                         ],
                     ),
                 ),
-                ("content", models.TextField()),
+                (
+                    "file",
+                    models.FileField(max_length=250, upload_to=XSD_UPLOAD_DIR),
+                ),
                 (
                     "user",
                     models.CharField(
@@ -265,7 +270,10 @@ class Migration(migrations.Migration):
                         ],
                     ),
                 ),
-                ("content", models.TextField()),
+                (
+                    "file",
+                    models.FileField(max_length=250, upload_to=XSLT_UPLOAD_DIR),
+                ),
             ],
         ),
         migrations.CreateModel(
