@@ -25,6 +25,7 @@ from core_main_app.rest.template_version_manager.serializers import (
     CreateTemplateSerializer,
 )
 from core_main_app.utils.decorators import api_staff_member_required
+from core_main_app.access_control.exceptions import AccessControlError
 
 
 class GlobalTemplateVersionManagerList(AbstractTemplateVersionManagerList):
@@ -379,3 +380,37 @@ class RestoreTemplateVersionManager(AbstractStatusTemplateVersionManager):
         version_manager_api.restore(
             template_version_manager_object, request=self.request
         )
+
+
+class TemplateVersionManagerOrdering(APIView):
+    """Update templates ordering"""
+
+    permission_classes = (IsAuthenticated,)
+
+    def patch(self, request):
+        """Update templates ordering
+
+        Args:
+            request:
+
+        """
+        try:
+            # get list template ids
+            templates_ordering = template_version_manager_api.get_by_id_list(
+                request.data["template_list"], request
+            )
+
+            # update template ordering
+            template_version_manager_api.update_templates_ordering(
+                templates_ordering, user=self.request.user
+            )
+            # Return response
+            return Response({}, status=status.HTTP_200_OK)
+        except AccessControlError as ace:
+            content = {"message": str(ace)}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
+        except Exception as api_exception:
+            content = {"message": str(api_exception)}
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

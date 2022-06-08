@@ -49,3 +49,40 @@ def can_write(func, *args, **kwargs):
     raise AccessControlError(
         "Template VM: The user doesn't have enough rights."
     )
+
+
+def can_write_list(func, template_version_manager_list, user):
+    """Can write template version manager list.
+
+    Args:
+        func:
+        template_version_manager_list:
+        user:
+
+    Returns:
+
+    """
+    # super user
+    if user.is_superuser:
+        return func(template_version_manager_list, user)
+
+    # anonymous can not write
+    if user.is_anonymous:
+        raise AccessControlError(
+            "Template VM: The user doesn't have enough rights."
+        )
+    for template_version_manager in template_version_manager_list:
+        # user is set
+        if template_version_manager.user:
+            if template_version_manager.user != str(user.id):
+                raise AccessControlError(
+                    "Template VM: The user doesn't have enough rights."
+                )
+        # user is not set
+        else:
+            if not user.is_staff:
+                raise AccessControlError(
+                    "Template VM: The user doesn't have enough rights."
+                )
+
+    return func(template_version_manager_list, user)

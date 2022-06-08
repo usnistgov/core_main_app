@@ -89,9 +89,14 @@ def manage_templates(request):
     }
 
     assets = {
+        "css": ["core_main_app/common/css/template/template_ordering.css"],
         "js": [
             {
                 "path": "core_main_app/common/js/templates/list/restore.js",
+                "is_raw": False,
+            },
+            {
+                "path": "core_main_app/common/js/templates/sort.js",
                 "is_raw": False,
             },
             {
@@ -99,7 +104,7 @@ def manage_templates(request):
                 "is_raw": False,
             },
             EditTemplateVersionManagerView.get_modal_js_path(),
-        ]
+        ],
     }
 
     modals = [

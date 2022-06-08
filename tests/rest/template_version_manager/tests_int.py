@@ -7,6 +7,7 @@ from django.urls import reverse
 from rest_framework import status
 from tests.components.template_version_manager.fixtures.fixtures import (
     TemplateVersionManagerFixtures,
+    TemplateVersionManagerOrderingFixtures,
 )
 
 from core_main_app.components.template import api as template_api
@@ -21,6 +22,7 @@ from core_main_app.utils.tests_tools.RequestMock import (
 )
 
 fixture_template = TemplateVersionManagerFixtures()
+fixture_template_vm_ordering = TemplateVersionManagerOrderingFixtures()
 
 
 class TestGlobalTemplateVersionManagerList(MongoIntegrationBaseTestCase):
@@ -1311,3 +1313,93 @@ class TestRestoreTemplateVersionManager(MongoIntegrationBaseTestCase):
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class TemplateVersionManagerOrdering(MongoIntegrationBaseTestCase):
+    """TemplateVersionManagerOrdering"""
+
+    fixture = fixture_template_vm_ordering
+
+    def test_patch_as_owner_returns_http_200(self):
+        """test_patch_as_owner_returns_http_200
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user("1")
+        # Act
+        response = RequestMock.do_request_patch(
+            views.TemplateVersionManagerOrdering.as_view(),
+            user,
+            data={
+                "template_list": [self.fixture.tvm2.id, self.fixture.tvm1.id]
+            },
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_patch_without_param_returns_http_500(self):
+        """test_patch_without_param_returns_http_500
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user("1")
+        # Act
+        response = RequestMock.do_request_patch(
+            views.TemplateVersionManagerOrdering.as_view(),
+            user,
+            data={},
+        )
+
+        # Assert
+        self.assertEqual(
+            response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+    def test_patch_as_user_returns_http_403(self):
+        """test_patch_as_user_returns_http_403
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user("2")
+        # Act
+        response = RequestMock.do_request_patch(
+            views.TemplateVersionManagerOrdering.as_view(),
+            user,
+            data={
+                "template_list": [self.fixture.tvm2.id, self.fixture.tvm1.id]
+            },
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_patch_global_as_superuser_returns_http_200(self):
+        """test_patch_as_superuser_returns_http_200
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user("1", is_superuser=True)
+
+        # Act
+        response = RequestMock.do_request_patch(
+            views.TemplateVersionManagerOrdering.as_view(),
+            user,
+            data={
+                "template_list": [
+                    self.fixture.global_tvm2.id,
+                    self.fixture.global_tvm1.id,
+                ]
+            },
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

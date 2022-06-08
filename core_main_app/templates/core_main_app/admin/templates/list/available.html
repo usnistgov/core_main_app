@@ -9,14 +9,16 @@
 {% endblock %}
 
 {% block box_body %}
-<table class="table table-bordered table-striped table-hover">
+<table class="table table-bordered table-striped table-hover" data-reorderable-rows="true">
     <tr>
+        <th>Rank</th>
         <th width="35%">{{ data.object_name }}</th>
         <th>Actions</th>
     </tr>
 
     {% for object in data.available %}
-        <tr>
+        <tr object-id={{object.id}} draggable="true" ondragstart="start()"  ondragover="dragover()">
+            <td>{{ object.display_rank }}</td>
             <td>{{ object.title }}</td>
             <td>
                 {% block box_actions %}
@@ -39,5 +41,7 @@
             </td>
         </tr>
     {% endfor %}
+
 </table>
+{% include 'core_main_app/common/buttons/save_ordering.html' %}
 {% endblock %}

@@ -1,0 +1,1 @@
+var saveTemplateOrderingUrl = "{% url 'core_main_app_rest_template_version_manager_ordering' %}";

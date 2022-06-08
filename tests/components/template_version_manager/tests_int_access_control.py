@@ -2,9 +2,6 @@
 """
 
 from django.test import override_settings
-from tests.components.template_version_manager.fixtures.fixtures import (
-    TemplateVersionManagerAccessControlFixtures,
-)
 
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.template_version_manager import (
@@ -15,8 +12,16 @@ from core_main_app.utils.integration_tests.integration_base_test_case import (
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import create_mock_request
+from core_main_app.components.template_version_manager import access_control
+
+from tests.components.template_version_manager.fixtures.fixtures import (
+    TemplateVersionManagerAccessControlFixtures,
+    TemplateVersionManagerOrderingFixtures,
+)
+
 
 fixture_template_vm = TemplateVersionManagerAccessControlFixtures()
+fixture_template_vm_ordering = TemplateVersionManagerOrderingFixtures()
 
 
 class TestTemplateVersionManagerGet(MongoIntegrationBaseTestCase):
@@ -1218,3 +1223,287 @@ class TestTemplateGetAllByUserId(MongoIntegrationBaseTestCase):
         list_tvm = template_vm_api.get_all_by_user_id(request=mock_request)
         for tvm in list_tvm:
             self.assertEqual(tvm.user, str(self.superuser1.id))
+
+
+class TestUpdateTemplatesOrdering(MongoIntegrationBaseTestCase):
+    """Test Update Templates Ordering"""
+
+    fixture = fixture_template_vm_ordering
+
+    def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
+        self.anonymous_user = create_mock_user(user_id=None, is_anonymous=True)
+        self.user1 = create_mock_user(user_id="1")
+        self.user2 = create_mock_user(user_id="2")
+        self.staff_user1 = create_mock_user(user_id="1", is_staff=True)
+        self.superuser1 = create_mock_user(user_id="1", is_superuser=True)
+        self.fixture.insert_data()
+
+    def test_update_user_templates_ordering_as_anonymous_raises_access_control_error(
+        self,
+    ):
+        """test update user templates ordering as anonymous raises acl error
+
+        Returns:x
+
+        """
+
+        # Arrange
+        list_templates_ordering = [self.fixture.tvm2, self.fixture.tvm1]
+
+        # Act # Assert
+        with self.assertRaises(AccessControlError):
+            template_vm_api.update_templates_ordering(
+                list_templates_ordering, user=self.anonymous_user
+            )
+
+    def test_update_global_templates_ordering_as_anonymous_raises_access_control_error(
+        self,
+    ):
+        """test update global templates ordering as anonymous raises access control error
+
+        Returns:
+
+        """
+        # Arrange
+        list_templates_ordering = [
+            self.fixture.global_tvm2,
+            self.fixture.global_tvm1,
+        ]
+        # Act # Assert
+        with self.assertRaises(AccessControlError):
+            template_vm_api.update_templates_ordering(
+                list_templates_ordering, user=self.anonymous_user
+            )
+
+    def test_update_own_templates_ordering_as_user_saves(self):
+        """test update own templates ordering as user saves
+
+        Returns:
+
+        """
+        # Arrange
+        list_templates_ordering = [self.fixture.tvm2, self.fixture.tvm1]
+        # Act
+        template_vm_api.update_templates_ordering(
+            list_templates_ordering, user=self.user1
+        )
+
+    def test_update_other_users_template_ordering_as_user_raises_access_control_error(
+        self,
+    ):
+        """test update other users template ordering as user raises access control error
+
+        Returns:
+
+        """
+        # Arrange
+        list_templates_ordering = [self.fixture.tvm2, self.fixture.tvm1]
+        # Act # Assert
+        with self.assertRaises(AccessControlError):
+            template_vm_api.update_templates_ordering(
+                list_templates_ordering, user=self.user2
+            )
+
+    def test_update_global_templates_ordering_as_user_raises_access_control_error(
+        self,
+    ):
+        """test update global templates ordering as user raises access control error
+
+        Returns:
+
+        """
+        # Arrange
+        list_templates_ordering = [
+            self.fixture.global_tvm2,
+            self.fixture.global_tvm1,
+        ]
+        # Act # Assert
+        with self.assertRaises(AccessControlError):
+            template_vm_api.update_templates_ordering(
+                list_templates_ordering, user=self.user1
+            )
+
+    def test_update_other_users_template_ordering_as_staff_saves(self):
+        """test update other users template ordering as staff saves
+
+        Returns:
+
+        """
+        # Arrange
+        list_templates_ordering = [self.fixture.tvm2, self.fixture.tvm1]
+        # Act
+        template_vm_api.update_templates_ordering(
+            list_templates_ordering, user=self.staff_user1
+        )
+
+    def test_update_global_template_ordering_as_staff_saves(self):
+        """test update other users template ordering as staff saves
+
+        Returns:
+
+        """
+        # Arrange
+        list_templates_ordering = [
+            self.fixture.global_tvm2,
+            self.fixture.global_tvm1,
+        ]
+        # Act
+        template_vm_api.update_templates_ordering(
+            list_templates_ordering, user=self.staff_user1
+        )
+
+    def test_update_other_users_template_ordering_as_superuser_saves(self):
+        """test update other users template ordering as superuser saves
+
+        Returns:
+
+        """
+        # Arrange
+        list_templates_ordering = [self.fixture.tvm2, self.fixture.tvm1]
+        # Act
+        template_vm_api.update_templates_ordering(
+            list_templates_ordering, user=self.superuser1
+        )
+
+    def test_update_global_template_ordering_as_superuser_saves(self):
+        """test update other users template ordering as superuser saves
+
+        Returns:
+
+        """
+        # Arrange
+        list_templates_ordering = [
+            self.fixture.global_tvm2,
+            self.fixture.global_tvm1,
+        ]
+        # Act
+        template_vm_api.update_templates_ordering(
+            list_templates_ordering, user=self.superuser1
+        )
+
+
+class TestAccessControlCanWriteList(MongoIntegrationBaseTestCase):
+    """Test Access Control Can Write List"""
+
+    fixture = fixture_template_vm_ordering
+
+    def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
+        self.anonymous_user = create_mock_user(user_id=None, is_anonymous=True)
+        self.user1 = create_mock_user(user_id="1")
+        self.user2 = create_mock_user(user_id="2")
+        self.staff_user1 = create_mock_user(user_id="3", is_staff=True)
+        self.superuser1 = create_mock_user(user_id="4", is_superuser=True)
+        self.fixture.insert_data()
+
+    def test_access_control_can_write_list_as_anonymous_raises_access_control_error(
+        self,
+    ):
+        """test_access_control_can_write_list_as_anonymous_raises_access_control_error"""
+
+        # Arrange
+        template_vm_list = [self.fixture.tvm2, self.fixture.tvm1]
+
+        # Act # Assert
+        with self.assertRaises(AccessControlError):
+            access_control.can_write_list(
+                template_vm_api.update_templates_ordering,
+                template_vm_list,
+                self.anonymous_user,
+            )
+
+    def test_access_control_can_write_list_as_owner_returns_function(self):
+        """test_access_control_can_write_list_as_owner_returns_function"""
+
+        # Arrange
+        template_vm_list = [self.fixture.tvm2, self.fixture.tvm1]
+
+        # Act
+        access_control.can_write_list(
+            template_vm_api.update_templates_ordering,
+            template_vm_list,
+            self.user1,
+        )
+
+    def test_access_control_can_write_list_user_templates_as_user_raises_access_control_error(
+        self,
+    ):
+        """test_access_control_can_write_list_user_templates_as_user_raises_access_control_error"""
+        # Arrange
+        template_vm_list = [self.fixture.tvm2, self.fixture.tvm1]
+
+        # Act # Assert
+        with self.assertRaises(AccessControlError):
+            access_control.can_write_list(
+                template_vm_api.update_templates_ordering,
+                template_vm_list,
+                self.user2,
+            )
+
+    def test_access_control_can_write_list_global_templates_as_user_raises_access_control_error(
+        self,
+    ):
+        """test_access_control_can_write_list_global_templates_as_user_raises_access_control_error"""
+        # Arrange
+        template_vm_list = [self.fixture.global_tvm2, self.fixture.global_tvm1]
+
+        # Act # Assert
+        with self.assertRaises(AccessControlError):
+            access_control.can_write_list(
+                template_vm_api.update_templates_ordering,
+                template_vm_list,
+                self.user2,
+            )
+
+    def test_access_control_can_write_list_user_templates_as_staff_raises_access_control_error(
+        self,
+    ):
+        """test_access_control_can_write_list_user_templates_as_staff_raises_access_control_error"""
+
+        # Arrange
+        template_vm_list = [self.fixture.tvm2, self.fixture.tvm1]
+
+        # Act
+        with self.assertRaises(AccessControlError):
+            access_control.can_write_list(
+                template_vm_api.update_templates_ordering,
+                template_vm_list,
+                self.staff_user1,
+            )
+
+    def test_access_control_can_write_list_global_templates_as_staff_returns_function(
+        self,
+    ):
+        """test_access_control_can_write_list_global_templates_as_staff_returns_functiong"""
+
+        # Arrange
+        template_vm_list = [self.fixture.global_tvm1, self.fixture.global_tvm2]
+
+        # Act
+        access_control.can_write_list(
+            template_vm_api.update_templates_ordering,
+            template_vm_list,
+            self.staff_user1,
+        )
+
+    def test_access_control_can_write_list_as_superuser_returns_function(self):
+        """test_access_control_can_write_list_as_superuser_returns_function"""
+
+        # Arrange
+        template_vm_list = [self.fixture.global_tvm2, self.fixture.tvm1]
+
+        # Act
+        access_control.can_write_list(
+            template_vm_api.update_templates_ordering,
+            template_vm_list,
+            self.superuser1,
+        )

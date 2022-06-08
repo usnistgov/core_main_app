@@ -10,6 +10,7 @@ from core_main_app.components.template.access_control import (
 )
 from core_main_app.components.template_version_manager.access_control import (
     can_write,
+    can_write_list,
 )
 from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
@@ -206,3 +207,22 @@ def get_active_global_version_manager_by_title(version_manager_title, request):
     return TemplateVersionManager.get_active_global_version_manager_by_title(
         version_manager_title
     )
+
+
+@access_control(can_write_list)
+def update_templates_ordering(template_version_manager_list, user):
+    """Update templates ordering.
+
+    Args:
+        template_version_manager_list:
+        user:
+
+    Returns:
+
+    """
+
+    for counter, template_version_manager in enumerate(
+        template_version_manager_list, 1
+    ):
+        template_version_manager.display_rank = counter
+        template_version_manager.save()

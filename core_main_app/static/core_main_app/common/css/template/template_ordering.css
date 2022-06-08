@@ -1,0 +1,6 @@
+td:hover{
+ 	cursor:grab;
+}
+td:active{
+ 	cursor:grabbing;
+ }

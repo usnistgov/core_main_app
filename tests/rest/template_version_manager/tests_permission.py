@@ -888,3 +888,77 @@ class TestRestoreTemplateVersionManagerPatchPermission(SimpleTestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestTemplateVersionManagerOrderingPatchPermission(SimpleTestCase):
+    """Test Template Version Manager Ordering Patch Permission"""
+
+    def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
+        response = RequestMock.do_request_patch(
+            template_version_manager_views.TemplateVersionManagerOrdering.as_view(),
+            None,
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch(
+        "core_main_app.components.template_version_manager.api.get_by_id_list"
+    )
+    @patch(
+        "core_main_app.components.template_version_manager.api.update_templates_ordering"
+    )
+    def test_authenticated_returns_http_200(
+        self, get_by_id_list, update_templates_ordering
+    ):
+        """test_staff_returns_http_200
+
+        Args:
+            get_by_id_list:
+            update_templates_ordering:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("1")
+        get_by_id_list.return_value = []
+        update_templates_ordering.return_value = []
+        response = RequestMock.do_request_patch(
+            template_version_manager_views.TemplateVersionManagerOrdering.as_view(),
+            mock_user,
+            data={"template_list": "[]"},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch(
+        "core_main_app.components.template_version_manager.api.get_by_id_list"
+    )
+    @patch(
+        "core_main_app.components.template_version_manager.api.update_templates_ordering"
+    )
+    def test_staff_returns_http_200(
+        self, get_by_id_list, update_templates_ordering
+    ):
+        """test_staff_returns_http_200
+
+        Args:
+            get_by_id_list:
+            update_templates_ordering:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("1", is_staff=True)
+        get_by_id_list.return_value = []
+        update_templates_ordering.return_value = []
+        response = RequestMock.do_request_patch(
+            template_version_manager_views.TemplateVersionManagerOrdering.as_view(),
+            mock_user,
+            data={"template_list": "[]"},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

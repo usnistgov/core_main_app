@@ -151,3 +151,82 @@ class TemplateVersionManagerAccessControlFixtures(FixtureInterface):
             self.user2_tvm,
             self.global_tvm,
         ]
+
+
+class TemplateVersionManagerOrderingFixtures(FixtureInterface):
+    """Template Version Manager Ordering fixtures"""
+
+    user1_template = None
+    global_template = None
+    tvm1 = None
+    tvm2 = None
+    global_tvm1 = None
+    global_tvm2 = None
+    template_vm_collection = None
+
+    def insert_data(self):
+        """Insert a set of Templates and Template Version Managers.
+
+        Returns:
+
+        """
+        # Make a connexion with a mock database
+        xsd = (
+            '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">'
+            '<xs:element name="tag"></xs:element></xs:schema>'
+        )
+
+        self.tvm1 = TemplateVersionManager(
+            title="template 1",
+            user="1",
+            is_disabled=False,
+        )
+        self.tvm1.save_version_manager()
+
+        self.tvm2 = TemplateVersionManager(
+            title="template 2",
+            user="1",
+            is_disabled=False,
+        )
+        self.tvm2.save_version_manager()
+
+        self.global_tvm1 = TemplateVersionManager(
+            title="global template1",
+            user=None,
+            is_disabled=False,
+        )
+        self.global_tvm1.save_version_manager()
+
+        self.global_tvm2 = TemplateVersionManager(
+            title="global template2",
+            user=None,
+            is_disabled=False,
+        )
+        self.global_tvm2.save_version_manager()
+
+        self.user1_template = Template(
+            filename="template1.xsd",
+            content=xsd,
+            hash="hash1",
+            user="1",
+            is_current=True,
+            version_manager=self.tvm1,
+        )
+        self.user1_template.save()
+
+        self.global_template = Template(
+            filename="global_template.xsd",
+            content=xsd,
+            hash="global hash",
+            user=None,
+            is_current=True,
+            version_manager=self.global_tvm1,
+        )
+        self.global_template.save()
+
+        self.template_vm_collection = [
+            self.tvm1,
+            self.tvm2,
+            self.global_tvm1,
+            self.global_tvm2,
+        ]
