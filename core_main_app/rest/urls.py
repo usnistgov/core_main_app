@@ -15,6 +15,7 @@ from core_main_app.rest.template_xsl_rendering import (
     views as template_xsl_rendering_views,
 )
 from core_main_app.rest.user import views as user_views
+from core_main_app.rest.views import CoreSettings
 from core_main_app.rest.workspace import views as workspace_views
 
 urlpatterns = [
@@ -358,6 +359,11 @@ urlpatterns = [
         r"^admin/data/$",
         data_views.AdminDataList.as_view(),
         name="core_main_app_rest_admin_data_list",
+    ),
+    re_path(
+        r"^core-settings/$",
+        CoreSettings.as_view(),
+        name="core_main_app_rest_core_settings",
     ),
 ]
 
