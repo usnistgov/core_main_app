@@ -234,3 +234,13 @@ CUSTOM_FILE_STORAGE = getattr(settings, "CUSTOM_FILE_STORAGE", dict())
 MAX_DOCUMENT_LIST = getattr(settings, "MAX_DOCUMENT_LIST", 100)
 """ :py:class:`int`: Maximum number of documents to be returned at once by the api.
 """
+
+CHECKSUM_ALGORITHM = getattr(settings, "CHECKSUM_ALGORITHM", None)
+""" :py:class:`str`: Checksum algorithm used for uploaded files. 
+    Examples:
+    CHECKSUM_ALGORITHM = None
+    CHECKSUM_ALGORITHM = "MD5"
+    CHECKSUM_ALGORITHM = "SHA1"
+    CHECKSUM_ALGORITHM = "SHA256"
+    CHECKSUM_ALGORITHM = "SHA512"
+"""

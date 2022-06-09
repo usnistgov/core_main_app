@@ -7,7 +7,8 @@ from django.db import models, IntegrityError
 
 from core_main_app.commons import exceptions
 from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
-from core_main_app.settings import XSLT_UPLOAD_DIR
+from core_main_app.settings import XSLT_UPLOAD_DIR, CHECKSUM_ALGORITHM
+from core_main_app.utils.checksum import compute_checksum
 from core_main_app.utils.storage.storage import core_file_storage
 
 
@@ -43,6 +44,7 @@ class XslTransformation(models.Model):
         upload_to=XSLT_UPLOAD_DIR,
         storage=core_file_storage(model="xsl_transformation"),
     )
+    checksum = models.CharField(max_length=512, blank=True, default=None, null=True)
     _content = None
 
     @property
@@ -147,6 +149,10 @@ class XslTransformation(models.Model):
                     name=self.filename,
                     content=self._content.encode("utf-8"),
                     content_type="application/xml",
+                )
+            if self.content and CHECKSUM_ALGORITHM:
+                self.checksum = compute_checksum(
+                    self.content.encode(), CHECKSUM_ALGORITHM
                 )
             return self.save()
         except IntegrityError as e:

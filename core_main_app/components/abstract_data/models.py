@@ -13,8 +13,10 @@ from core_main_app.settings import (
     MONGODB_INDEXING,
     XML_POST_PROCESSOR,
     XML_FORCE_LIST,
+    CHECKSUM_ALGORITHM,
 )
 from core_main_app.utils import xml as xml_utils
+from core_main_app.utils.checksum import compute_checksum
 from core_main_app.utils.datetime_tools.utils import datetime_now
 from core_main_app.utils.storage.storage import core_file_storage, user_directory_path
 
@@ -40,6 +42,7 @@ class AbstractData(models.Model):
         upload_to=user_directory_path,
         storage=core_file_storage(model="data"),
     )
+    checksum = models.CharField(max_length=512, blank=True, default=None, null=True)
     vector_column = SearchVectorField(null=True)
     creation_date = models.DateTimeField(blank=True, default=None, null=True)
     last_modification_date = models.DateTimeField(blank=True, default=None, null=True)
@@ -151,6 +154,10 @@ class AbstractData(models.Model):
                 self.creation_date = now
                 # initialize when first saved, then only updates when content is updated
                 self.last_modification_date = now
+            if self.xml_content and CHECKSUM_ALGORITHM:
+                self.checksum = compute_checksum(
+                    self.xml_content.encode(), CHECKSUM_ALGORITHM
+                )
             self.save()
         except IntegrityError as e:
             raise exceptions.NotUniqueError(e)

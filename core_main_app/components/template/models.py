@@ -13,7 +13,8 @@ from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
 )
 from core_main_app.components.version_manager.models import Version
-from core_main_app.settings import XSD_UPLOAD_DIR
+from core_main_app.settings import XSD_UPLOAD_DIR, CHECKSUM_ALGORITHM
+from core_main_app.utils.checksum import compute_checksum
 from core_main_app.utils.storage.storage import core_file_storage
 from core_main_app.utils.validation.regex_validation import not_empty_or_whitespaces
 
@@ -43,6 +44,7 @@ class Template(Version):
         upload_to=XSD_UPLOAD_DIR,
         storage=core_file_storage(model="template"),
     )
+    checksum = models.CharField(max_length=512, blank=True, default=None, null=True)
     user = models.CharField(blank=True, max_length=200, null=True, default=None)
     hash = models.CharField(max_length=200)
     _display_name = models.CharField(blank=True, max_length=200)
@@ -200,6 +202,10 @@ class Template(Version):
                     content_type="application/xml",
                 )
             not_empty_or_whitespaces(self.filename)
+            if self.content and CHECKSUM_ALGORITHM:
+                self.checksum = compute_checksum(
+                    self.content.encode(), CHECKSUM_ALGORITHM
+                )
             self.save()
         except IntegrityError as e:
             raise exceptions.NotUniqueError(str(e))

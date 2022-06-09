@@ -35,7 +35,7 @@ def insert(blob, user):
     if blob.blob is None:
         raise exceptions.ApiError("Unable to save the blob: blob field is not set.")
     # save blob in database
-    blob.save()
+    blob.save_object()
     return blob
 
 

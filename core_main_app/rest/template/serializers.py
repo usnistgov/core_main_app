@@ -20,6 +20,7 @@ class TemplateSerializer(ModelSerializer):
             "id",
             "user",
             "filename",
+            "checksum",
             "content",
             "hash",
             "dependencies",
@@ -29,6 +30,7 @@ class TemplateSerializer(ModelSerializer):
         read_only_fields = [
             "id",
             "user",
+            "checksum",
             "hash",
             "_display_name",
         ]

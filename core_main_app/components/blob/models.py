@@ -7,6 +7,8 @@ from django.db import models
 from core_main_app.commons import exceptions
 from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
 from core_main_app.components.workspace.models import Workspace
+from core_main_app.settings import CHECKSUM_ALGORITHM
+from core_main_app.utils.checksum import compute_checksum
 from core_main_app.utils.storage.storage import user_directory_path, core_file_storage
 
 
@@ -34,6 +36,7 @@ class Blob(models.Model):
         upload_to=user_directory_path,
         storage=core_file_storage(model="blob"),
     )
+    checksum = models.CharField(max_length=512, blank=True, default=None, null=True)
 
     creation_date = models.DateTimeField(auto_now_add=True)
 
@@ -120,3 +123,17 @@ class Blob(models.Model):
 
         """
         return self.filename
+
+    def save_object(self):
+        """Custom save.
+
+        Returns:
+            Saved Instance.
+
+        """
+        try:
+            if self.blob.file and CHECKSUM_ALGORITHM:
+                self.checksum = compute_checksum(self.blob.file, CHECKSUM_ALGORITHM)
+            return self.save()
+        except Exception as ex:
+            raise exceptions.ModelError(str(ex))

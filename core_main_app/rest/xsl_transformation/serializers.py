@@ -16,7 +16,8 @@ class XslTransformationSerializer(ModelSerializer):
 
     class Meta(object):
         model = XslTransformation
-        fields = ["name", "filename", "content"]
+        fields = ["name", "filename", "checksum", "content"]
+        read_only_fields = ["checksum"]
 
     def create(self, validated_data):
         return xsl_api.upsert(XslTransformation(**validated_data))

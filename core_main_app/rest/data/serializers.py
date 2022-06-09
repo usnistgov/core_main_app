@@ -39,6 +39,7 @@ class DataSerializer(ModelSerializer):
             "user_id",
             "title",
             "xml_content",
+            "checksum",
             "creation_date",
             "last_modification_date",
             "last_change_date",
@@ -46,6 +47,7 @@ class DataSerializer(ModelSerializer):
         read_only_fields = (
             "id",
             "user_id",
+            "checksum",
             "creation_date",
             "last_modification_date",
             "last_change_date",

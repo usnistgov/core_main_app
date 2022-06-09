@@ -49,6 +49,12 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
+                    "checksum",
+                    models.CharField(
+                        blank=True, default=None, max_length=512, null=True
+                    ),
+                ),
+                (
                     "creation_date",
                     models.DateTimeField(blank=True, default=None, null=True),
                 ),
@@ -119,6 +125,12 @@ class Migration(migrations.Migration):
                 (
                     "file",
                     models.FileField(max_length=250, upload_to=XSD_UPLOAD_DIR),
+                ),
+                (
+                    "checksum",
+                    models.CharField(
+                        blank=True, default=None, max_length=512, null=True
+                    ),
                 ),
                 (
                     "user",
@@ -274,6 +286,12 @@ class Migration(migrations.Migration):
                     "file",
                     models.FileField(max_length=250, upload_to=XSLT_UPLOAD_DIR),
                 ),
+                (
+                    "checksum",
+                    models.CharField(
+                        blank=True, default=None, max_length=512, null=True
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
@@ -405,6 +423,12 @@ class Migration(migrations.Migration):
                         null=True,
                         max_length=250,
                         upload_to=core_main_app.utils.storage.storage.user_directory_path,
+                    ),
+                ),
+                (
+                    "checksum",
+                    models.CharField(
+                        blank=True, default=None, max_length=512, null=True
                     ),
                 ),
                 ("creation_date", models.DateTimeField(auto_now_add=True)),

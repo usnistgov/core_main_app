@@ -28,8 +28,23 @@ class BlobSerializer(ModelSerializer):
 
     class Meta(object):
         model = Blob
-        fields = ["id", "user_id", "filename", "handle", "blob", "upload_date"]
-        read_only_fields = ("id", "user_id", "filename", "handle", "upload_date")
+        fields = [
+            "id",
+            "user_id",
+            "filename",
+            "handle",
+            "blob",
+            "checksum",
+            "upload_date",
+        ]
+        read_only_fields = (
+            "id",
+            "user_id",
+            "filename",
+            "handle",
+            "checksum",
+            "upload_date",
+        )
         if "core_linked_records_app" in settings.INSTALLED_APPS:
             fields.append("pid")
             read_only_fields = read_only_fields + ("pid",)
