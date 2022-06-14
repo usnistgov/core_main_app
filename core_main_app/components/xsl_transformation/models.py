@@ -142,7 +142,7 @@ class XslTransformation(models.Model):
 
         """
         try:
-            if self._content and not self.file:
+            if self._content:
                 self.file = SimpleUploadedFile(
                     name=self.filename,
                     content=self._content.encode("utf-8"),
