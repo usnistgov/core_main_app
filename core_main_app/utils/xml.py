@@ -117,6 +117,23 @@ def is_well_formed_xml(xml_string):
     return True
 
 
+def format_content_xml(xml_string):
+    """Format XML content.
+
+    Args:
+        xml_string:
+
+    Returns:
+
+    """
+
+    try:
+        xml_tree = XSDTree.build_tree(xml_string)
+        return XSDTree.tostring(xml_tree, pretty=True)
+    except Exception:
+        raise exceptions.XMLError("Content is not well formatted XML.")
+
+
 def has_xsl_namespace(xml_string):
     """True if XML has the XSL namespace.
 

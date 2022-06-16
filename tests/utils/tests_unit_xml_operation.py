@@ -8,6 +8,7 @@ from core_main_app.utils.xml import (
     raw_xml_to_dict,
     remove_lists_from_xml_dict,
     get_content_by_xpath,
+    format_content_xml,
 )
 
 
@@ -405,3 +406,24 @@ class TestGetContentByXpath(TestCase):
                 '<h:td xmlns:h="http://www.w3.org/TR/html4/">Bananas</h:td>',
             ],
         )
+
+
+class TestFormatContentXml(TestCase):
+    def test_format_valid_content_xml_returns_content_formatted(self):
+        # Arrange
+        xml_string = "<root><test>Hello</test><test>1</test></root>"
+        expected_result = "<root>\n  <test>Hello</test>\n  <test>1</test>\n</root>\n"
+
+        # Act
+        content = format_content_xml(xml_string)
+
+        # Assert
+        self.assertEquals(content, expected_result)
+
+    def test_format_invalid_content_xml_raises_error(self):
+        # Arrange
+        xml_string = "<root><test>Hello</test?</root>"
+
+        # Assert
+        with self.assertRaises(exceptions.XMLError):
+            format_content_xml(xml_string)
