@@ -48,7 +48,7 @@ class TestDataListbyWorkspace(MongoIntegrationBaseTestCase):
         )
 
         # Assert
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(len(response.data["results"]), 2)
 
     def test_get_filtered_by_incorrect_workspace_returns_no_data(self):
         # Arrange
@@ -62,7 +62,7 @@ class TestDataListbyWorkspace(MongoIntegrationBaseTestCase):
         )
 
         # Assert
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data["results"]), 0)
 
     def test_get_all_by_correct_workspace_returns_data(self):
         # Arrange
@@ -105,7 +105,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
         response = RequestMock.do_request_get(data_rest_views.DataList.as_view(), user)
 
         # Assert
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(len(response.data["results"]), 2)
 
     def test_get_filtered_by_correct_title_returns_data(self):
         # Arrange
@@ -119,7 +119,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
         )
 
         # Assert
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data["results"]), 1)
 
     def test_get_filtered_by_incorrect_title_returns_no_data(self):
         # Arrange
@@ -131,7 +131,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
         )
 
         # Assert
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data["results"]), 0)
 
     def test_get_filtered_by_correct_template_returns_data(self):
         # Arrange
@@ -159,7 +159,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
         )
 
         # Assert
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data["results"]), 0)
 
     def test_post_data_missing_field_returns_http_400(self):
         # Arrange

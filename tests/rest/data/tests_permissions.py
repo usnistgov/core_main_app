@@ -74,7 +74,7 @@ class TestDataListGetPermissions(SimpleTestCase):
 
     @patch.object(Data, "get_all_by_user_id")
     def test_authenticated_returns_http_200(self, data_get_all_by_user):
-        data_get_all_by_user.return_value = {}
+        data_get_all_by_user.return_value = []
 
         mock_user = create_mock_user(1)
 
@@ -86,7 +86,7 @@ class TestDataListGetPermissions(SimpleTestCase):
 
     @patch.object(Data, "get_all_by_user_id")
     def test_staff_returns_http_200(self, data_get_all_by_user):
-        data_get_all_by_user.return_value = {}
+        data_get_all_by_user.return_value = []
 
         mock_user = create_mock_user(1, is_staff=True)
 

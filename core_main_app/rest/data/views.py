@@ -68,10 +68,11 @@ class DataList(APIView):
         Examples:
 
             ../data/
+            ../data?page=2
             ../data?workspace=[workspace_id]
             ../data?template=[template_id]
             ../data?title=[document_title]
-            ../data?template=[template_id]&title=[document_title]
+            ../data?template=[template_id]&title=[document_title]&page=3
 
         Args:
 
@@ -101,11 +102,18 @@ class DataList(APIView):
             if title is not None:
                 data_object_list = data_object_list.filter(title=title)
 
-            # Serialize object
-            data_serializer = self.serializer(data_object_list, many=True)
+            # Get paginator
+            paginator = StandardResultsSetPagination()
 
-            # Return response
-            return Response(data_serializer.data, status=status.HTTP_200_OK)
+            # Get requested page from list of results
+            page = paginator.paginate_queryset(data_object_list, self.request)
+
+            # Serialize page
+            data_serializer = self.serializer(page, many=True)
+
+            # Return paginated response
+            return paginator.get_paginated_response(data_serializer.data)
+
         except Exception as api_exception:
             content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
