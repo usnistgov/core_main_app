@@ -34,7 +34,7 @@ from core_main_app.rest.data.serializers import (
     DataWithTemplateInfoSerializer,
 )
 from core_main_app.rest.mongo_data.serializers import MongoDataSerializer
-from core_main_app.settings import MONGODB_INDEXING
+from core_main_app.settings import MONGODB_INDEXING, MAX_DOCUMENT_LIST
 from core_main_app.settings import XML_POST_PROCESSOR, XML_FORCE_LIST
 from core_main_app.utils import xml as main_xml_utils
 from core_main_app.utils.boolean import to_bool
@@ -44,6 +44,7 @@ from core_main_app.utils.file import get_file_http_response
 from core_main_app.utils.pagination.rest_framework_paginator.pagination import (
     StandardResultsSetPagination,
 )
+
 from core_main_app.utils.xml import get_content_by_xpath
 
 logger = logging.getLogger(__name__)
@@ -638,9 +639,14 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
 
             The response paginated
         """
+
         xpath = self.request.data.get("xpath", None)
         namespaces = self.request.data.get("namespaces", None)
         if "all" in self.request.data and to_bool(self.request.data["all"]):
+            if data_list.count() > MAX_DOCUMENT_LIST:
+                content = {"message": "Number of documents is over the limit."}
+                return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
             # Select values at xpath if provided
             if xpath:
                 for data_object in data_list:

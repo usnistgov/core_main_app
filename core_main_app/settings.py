@@ -230,3 +230,7 @@ CUSTOM_FILE_STORAGE = getattr(settings, "CUSTOM_FILE_STORAGE", dict())
         'xsl_transformation': 'core_main_app.utils.storage.gridfs_storage.GridFSStorage'
     }
 """
+
+MAX_DOCUMENT_LIST = getattr(settings, "MAX_DOCUMENT_LIST", 100)
+""" :py:class:`int`: Maximum number of documents to be returned at once by the api.
+"""
