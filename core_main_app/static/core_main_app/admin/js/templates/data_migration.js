@@ -10,6 +10,7 @@ let setStatesPending = 0;
 let setStatesTargetTemplateId;
 let totalDataCount = 0;
 let showError = false;
+let versionManagerId = null
 /**
  * Init controllers for the results page
  */
@@ -17,7 +18,7 @@ $(document).ready(function() {
     // create the action button listeners
     $("#validate-button").on("click", () => { actionButtonClicked(false) });
     $("#migrate-button").on("click", () => { actionButtonClicked(true) });
-
+    $(".back-to-version-manager").on("click", () => { backToVersionManager() });
 
     // create the listener for the select all data button
     $("#select-all-data").on("click", (event) => {
@@ -97,9 +98,13 @@ $(document).ready(function() {
     // get the fragment from url to select a predefined state if needed
     // ex. #from=1234567,12345678,1234567&to12345678
     if (location.hash.substr(1) !== "") {
+        // enable back to version manager button
+        $(".back-to-version-manager").attr("hidden",false);
+
         isTargetCreated = true
         let sourceTemplates = location.hash.substr(1).split("&to=");
-        let targetTemplate = sourceTemplates.pop();
+        let targetTemplate = sourceTemplates.pop().split("&tvm=");
+        versionManagerId = targetTemplate.pop();
 
         sourceTemplates = sourceTemplates[0].split("from=")[1].split(",");
 
@@ -414,6 +419,14 @@ let createTargetTemplateListHtml = function(isDataSelected) {
 
     }
 
+}
+/**
+ * Handle the click action for back to version manager button
+ */
+let backToVersionManager = function(){
+    if(versionManagerId){
+        window.location.href = versionManagerUrlBase.replace("version_manager_id",versionManagerId);
+    }
 }
 
 

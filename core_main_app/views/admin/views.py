@@ -344,7 +344,7 @@ def _save_template_version(request, assets, context, template_version_manager):
                 version_manager_string += current_version_string
 
         # add the fragment data to the url
-        fragment = f"#from={version_manager_string}&to={template.id}"
+        fragment = f"#from={version_manager_string}&to={template.id}&tvm={template.version_manager.id}"
 
         return HttpResponseRedirect(
             reverse("core-admin:core_main_app_data_migration") + fragment
