@@ -3,7 +3,7 @@
 from django.template import loader
 
 import core_main_app.utils.notifications.tasks.task_mail as task
-from core_main_app.settings import SERVER_EMAIL, USE_BACKGROUND_TASK
+from core_main_app.settings import SERVER_EMAIL, SEND_EMAIL_ASYNC
 from core_main_app.templatetags.stripjs import stripjs
 
 
@@ -83,7 +83,7 @@ def _send_email(recipient_list, subject, body, fail_silently, sender):
     Returns:
 
     """
-    if USE_BACKGROUND_TASK:
+    if SEND_EMAIL_ASYNC:
         # Async call. Use celery
         task.send_mail.apply_async(
             (
@@ -120,7 +120,7 @@ def send_mail_to_administrators(
     Returns:
 
     """
-    if USE_BACKGROUND_TASK:
+    if SEND_EMAIL_ASYNC:
         # Async call. Use celery
         task.send_mail_to_administrators.apply_async(
             (subject, path_to_template, context, fail_silently), countdown=1
@@ -144,7 +144,7 @@ def send_mail_to_managers(subject, path_to_template, context={}, fail_silently=T
     Returns:
 
     """
-    if USE_BACKGROUND_TASK:
+    if SEND_EMAIL_ASYNC:
         # Async call. Use celery
         task.send_mail_to_managers.apply_async(
             (subject, path_to_template, context, fail_silently), countdown=1

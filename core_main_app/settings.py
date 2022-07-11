@@ -42,19 +42,9 @@ XERCES_VALIDATION = getattr(settings, "XERCES_VALIDATION", False)
 """ :py:class:`bool`: Enables Xerces validation (requires additional packages).
 """
 
-# GridFS
-GRIDFS_DATA_COLLECTION = getattr(settings, "GRIDFS_DATA_COLLECTION", "fs_data")
-""" :py:class:`str`: Collection name for file storage in MongoDB.
-"""
-
-# Celery configuration
-USE_BACKGROUND_TASK = getattr(settings, "USE_BACKGROUND_TASK", False)
-""" :py:class:`bool`: Define use of celery for background tasks.
-"""
-
 # SMTP Configuration
-USE_EMAIL = getattr(settings, "USE_EMAIL", False)
-""" :py:class:`bool`: Activate email sending on the platform.
+SEND_EMAIL_ASYNC = getattr(settings, "SEND_EMAIL_ASYNC", False)
+""" :py:class:`bool`: Send email asynchronously.
 """
 
 SERVER_EMAIL = getattr(settings, "SERVER_EMAIL", "root@localhost")
