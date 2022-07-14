@@ -132,7 +132,7 @@ class TemplateVersionManager(VersionManager):
             Saved Instance.
 
         """
-        super(TemplateVersionManager, self).save_version_manager()
+        super().save_version_manager()
 
     @staticmethod
     def get_active_global_version_manager_by_title(version_manager_title):

@@ -2,25 +2,37 @@
 """
 
 from rest_framework import status
+from tests.rest.xsl_transformation.fixtures.fixtures import XslTransformationFixtures
 
-import core_main_app.rest.xsl_transformation.views as xsl_views
+from core_main_app.rest.xsl_transformation import views as xsl_views
 from core_main_app.utils.integration_tests.integration_base_test_case import (
     MongoIntegrationBaseTestCase,
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
-from tests.rest.xsl_transformation.fixtures.fixtures import XslTransformationFixtures
 
 fixture_data = XslTransformationFixtures()
 
 
 class TestGetAllXslTransformationList(MongoIntegrationBaseTestCase):
+    """TestGetAllXslTransformationList"""
+
     fixture = fixture_data
 
     def setUp(self):
-        super(TestGetAllXslTransformationList, self).setUp()
+        """setUp
+
+        Returns:
+
+        """
+        super().setUp()
 
     def test_get_all_returns_status_403_with_no_permission_needed(self):
+        """test_get_all_returns_status_403_with_no_permission_needed
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 
@@ -34,13 +46,25 @@ class TestGetAllXslTransformationList(MongoIntegrationBaseTestCase):
 
 
 class TestPostXslTransformationList(MongoIntegrationBaseTestCase):
+    """TestPostXslTransformationList"""
+
     fixture = fixture_data
 
     def setUp(self):
-        super(TestPostXslTransformationList, self).setUp()
+        """setUp
+
+        Returns:
+
+        """
+        super().setUp()
         self.data = None
 
     def test_post_returns_status_403_if_user_is_unauthorized(self):
+        """test_post_returns_status_403_if_user_is_unauthorized
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("0")
 
@@ -53,6 +77,11 @@ class TestPostXslTransformationList(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_post_returns_status_400_if_data_are_not_valid_with_admin_user(self):
+        """test_post_returns_status_400_if_data_are_not_valid_with_admin_user
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("0", True, True)
 
@@ -65,6 +94,11 @@ class TestPostXslTransformationList(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_post_returns_status_201_if_data_are_valid_with_admin_user(self):
+        """test_post_returns_status_201_if_data_are_valid_with_admin_user
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("0", True, True)
         self.data = {
@@ -85,13 +119,25 @@ class TestPostXslTransformationList(MongoIntegrationBaseTestCase):
 
 
 class TestGetXslTransformationDetail(MongoIntegrationBaseTestCase):
+    """TestGetXslTransformationDetail"""
+
     fixture = fixture_data
 
     def setUp(self):
-        super(TestGetXslTransformationDetail, self).setUp()
+        """setUp
+
+        Returns:
+
+        """
+        super().setUp()
         self.data = None
 
     def test_get_returns_object_when_found(self):
+        """test_get_returns_object_when_found
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("0", True)
         self.param = {"pk": self.fixture.data_1.id}
@@ -105,6 +151,11 @@ class TestGetXslTransformationDetail(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_raise_404_when_not_found(self):
+        """test_get_raise_404_when_not_found
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("0", True)
         self.param = {"pk": -1}
@@ -118,6 +169,11 @@ class TestGetXslTransformationDetail(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_raise_500_sever_error_when_general_error_occurred(self):
+        """test_get_raise_500_sever_error_when_general_error_occurred
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("0", True)
         self.param = {"pk": "test"}
@@ -132,13 +188,25 @@ class TestGetXslTransformationDetail(MongoIntegrationBaseTestCase):
 
 
 class TestDeleteXslTransformationDetail(MongoIntegrationBaseTestCase):
+    """TestDeleteXslTransformationDetail"""
+
     fixture = fixture_data
 
     def setUp(self):
-        super(TestDeleteXslTransformationDetail, self).setUp()
+        """setUp
+
+        Returns:
+
+        """
+        super().setUp()
         self.data = None
 
     def test_delete_raise_403_if_user_is_unauthorized(self):
+        """test_delete_raise_403_if_user_is_unauthorized
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("0")
         self.param = {"pk": 1}
@@ -152,6 +220,11 @@ class TestDeleteXslTransformationDetail(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_delete_raise_404_when_not_found(self):
+        """test_delete_raise_404_when_not_found
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("0", True, True)
         self.param = {"pk": -1}
@@ -165,6 +238,11 @@ class TestDeleteXslTransformationDetail(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_post_raise_500_sever_error_when_general_error_occurred(self):
+        """test_post_raise_500_sever_error_when_general_error_occurred
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("0", True, True)
         self.param = {"pk": "test"}
@@ -178,6 +256,11 @@ class TestDeleteXslTransformationDetail(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def test_post_return_204_if_document_is_deleted_whit_success(self):
+        """test_post_return_204_if_document_is_deleted_whit_success
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("0", True, True)
         self.param = {"pk": self.fixture.data_1.id}
@@ -192,13 +275,25 @@ class TestDeleteXslTransformationDetail(MongoIntegrationBaseTestCase):
 
 
 class TestPatchXslTransformationDetail(MongoIntegrationBaseTestCase):
+    """TestPatchXslTransformationDetail"""
+
     fixture = fixture_data
 
     def setUp(self):
-        super(TestPatchXslTransformationDetail, self).setUp()
+        """setUp
+
+        Returns:
+
+        """
+        super().setUp()
         self.data = None
 
     def test_patch_raise_403_if_user_is_authorized(self):
+        """test_patch_raise_403_if_user_is_authorized
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("0")
         self.param = {"pk": 1}
@@ -212,6 +307,11 @@ class TestPatchXslTransformationDetail(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_patch_raise_404_when_not_found(self):
+        """test_patch_raise_404_when_not_found
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("0", True, True)
         self.param = {"pk": -1}
@@ -225,6 +325,11 @@ class TestPatchXslTransformationDetail(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_patch_raise_400_sever_error_when_general_error_occurred(self):
+        """test_patch_raise_400_sever_error_when_general_error_occurred
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("0", True, True)
         self.param = {"pk": self.fixture.data_1.id}
@@ -238,6 +343,11 @@ class TestPatchXslTransformationDetail(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_patch_returns_200_when_data_are_valid_with_authorized_user(self):
+        """test_patch_returns_200_when_data_are_valid_with_authorized_user
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("0", True, True)
         self.param = {"pk": self.fixture.data_1.id}
@@ -257,13 +367,25 @@ class TestPatchXslTransformationDetail(MongoIntegrationBaseTestCase):
 
 
 class TestPostXslTransformationTransform(MongoIntegrationBaseTestCase):
+    """TestPostXslTransformationTransform"""
+
     fixture = fixture_data
 
     def setUp(self):
-        super(TestPostXslTransformationTransform, self).setUp()
+        """setUp
+
+        Returns:
+
+        """
+        super().setUp()
         self.data = None
 
     def test_post_raise_error_500_if_xslt_does_not_exist(self):
+        """test_post_raise_error_500_if_xslt_does_not_exist
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("0")
 
@@ -281,6 +403,11 @@ class TestPostXslTransformationTransform(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def test_post_return_status_200_if_xml_and_xslt_name_are_valid_parameters(self):
+        """test_post_return_status_200_if_xml_and_xslt_name_are_valid_parameters
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("0")
 

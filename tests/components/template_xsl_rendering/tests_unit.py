@@ -14,8 +14,18 @@ from core_main_app.components.xsl_transformation.models import XslTransformation
 
 
 class TestTemplateXslRenderingDelete(TestCase):
+    """TestTemplateXslRenderingDelete"""
+
     @patch.object(TemplateXslRendering, "delete")
     def test_delete_template_xsl_rendering_raises_exception_if_error(self, mock_delete):
+        """test delete template xsl rendering raises exception if error
+
+        Args:
+            mock_delete:
+
+        Returns:
+
+        """
         # Arrange
         template_xsl_rendering = _create_template_xsl_rendering()
         mock_delete.side_effect = Exception()
@@ -26,8 +36,18 @@ class TestTemplateXslRenderingDelete(TestCase):
 
 
 class TestTemplateXslRenderingGetById(TestCase):
+    """TestTemplateXslRenderingGetById"""
+
     @patch.object(TemplateXslRendering, "get_by_id")
     def test_get_by_id_returns_object(self, mock_get_by_id):
+        """test get by id returns object
+
+        Args:
+            mock_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_template_xsl_rendering = _create_mock_template_xsl_rendering()
         mock_template_xsl_rendering.id = 1
@@ -42,6 +62,14 @@ class TestTemplateXslRenderingGetById(TestCase):
 
     @patch.object(TemplateXslRendering, "get_by_id")
     def test_get_by_id_raises_exception_if_object_does_not_exist(self, mock_get_by_id):
+        """test get by id raises exception if object does not exist
+
+        Args:
+            mock_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_absent_id = -1
 
@@ -53,6 +81,14 @@ class TestTemplateXslRenderingGetById(TestCase):
 
     @patch.object(TemplateXslRendering, "get_by_id")
     def test_get_by_id_raises_exception_if_internal_error(self, mock_get_by_id):
+        """test get by id raises exception if internal error
+
+        Args:
+            mock_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_absent_id = -1
 
@@ -64,8 +100,18 @@ class TestTemplateXslRenderingGetById(TestCase):
 
 
 class TestTemplateXslRenderingGetByTemplateId(TestCase):
+    """TestTemplateXslRenderingGetByTemplateId"""
+
     @patch.object(TemplateXslRendering, "get_by_template_id")
     def test_get_by_template_id_returns_object(self, mock_get_by_template_id):
+        """test get by template id returns object
+
+        Args:
+            mock_get_by_template_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_template_xsl_rendering = _create_mock_template_xsl_rendering()
         template_id = 1
@@ -82,6 +128,14 @@ class TestTemplateXslRenderingGetByTemplateId(TestCase):
     def test_get_by_template_id_raises_exception_if_object_does_not_exist(
         self, mock_get_by_template_id
     ):
+        """test get by template id raises exception if object does not exist
+
+        Args:
+            mock_get_by_template_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_absent_id = -1
 
@@ -95,6 +149,14 @@ class TestTemplateXslRenderingGetByTemplateId(TestCase):
     def test_get_by_template_id_raises_exception_if_internal_error(
         self, mock_get_by_template_id
     ):
+        """test get by template id raises exception if internal error
+
+        Args:
+            mock_get_by_template_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_absent_id = -1
 
@@ -106,8 +168,18 @@ class TestTemplateXslRenderingGetByTemplateId(TestCase):
 
 
 class TestTemplateXslRenderingGetByTemplateHash(TestCase):
+    """TestTemplateXslRenderingGetByTemplateHash"""
+
     @patch.object(TemplateXslRendering, "get_by_template_hash")
     def test_get_by_template_hash_returns_object(self, mock_get_by_template_hash):
+        """test get by template hash returns object
+
+        Args:
+            mock_get_by_template_hash:
+
+        Returns:
+
+        """
         # Arrange
         mock_template_xsl_rendering = _create_mock_template_xsl_rendering()
         mock_get_by_template_hash.return_value = mock_template_xsl_rendering
@@ -123,6 +195,14 @@ class TestTemplateXslRenderingGetByTemplateHash(TestCase):
     def test_get_by_template_hash_raises_exception_if_object_does_not_exist(
         self, mock_get_by_template_hash
     ):
+        """test get by template hash raises exception if object does not exist
+
+        Args:
+            mock_get_by_template_hash:
+
+        Returns:
+
+        """
         # Arrange
         mock_absent_hash = "dummy_hash"
         mock_get_by_template_hash.side_effect = exceptions.DoesNotExist("Error.")
@@ -135,6 +215,14 @@ class TestTemplateXslRenderingGetByTemplateHash(TestCase):
     def test_get_by_template_hash_returns_nothing_if_not_templates(
         self, mock_get_by_template_hash
     ):
+        """test get by template hash returns nothing if not templates
+
+        Args:
+            mock_get_by_template_hash:
+
+        Returns:
+
+        """
         # Arrange
         mock_absent_hash = "dummy_hash"
         mock_get_by_template_hash.return_value = []
@@ -148,6 +236,14 @@ class TestTemplateXslRenderingGetByTemplateHash(TestCase):
     def test_get_by_template_hash_raises_exception_if_internal_error(
         self, mock_get_by_template_hash
     ):
+        """test get by template hash raises exception if internal error
+
+        Args:
+            mock_get_by_template_hash:
+
+        Returns:
+
+        """
         # Arrange
         mock_absent_hash = "dummy_hash"
         mock_get_by_template_hash.side_effect = exceptions.ModelError("Error.")
@@ -158,8 +254,18 @@ class TestTemplateXslRenderingGetByTemplateHash(TestCase):
 
 
 class TestTemplateXslRenderingGetAll(TestCase):
+    """TestTemplateXslRenderingGetAll"""
+
     @patch.object(TemplateXslRendering, "get_all")
     def test_get_all(self, mock_get_all):
+        """test get all
+
+        Args:
+            mock_get_all:
+
+        Returns:
+
+        """
         # Arrange
         mock_template_xsl_rendering1 = _create_mock_template_xsl_rendering()
         mock_template_xsl_rendering2 = _create_mock_template_xsl_rendering()

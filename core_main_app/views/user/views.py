@@ -14,10 +14,10 @@ from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from rest_framework.status import HTTP_405_METHOD_NOT_ALLOWED
 
-import core_main_app.components.web_page_login.api as web_page_login_api
 from core_main_app.components.template_version_manager import (
     api as template_version_manager_api,
 )
+from core_main_app.components.web_page_login import api as web_page_login_api
 from core_main_app.settings import INSTALLED_APPS, PASSWORD_RESET_DOMAIN_OVERRIDE
 from core_main_app.utils.markdown_parser import parse
 from core_main_app.utils.rendering import render

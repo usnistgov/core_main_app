@@ -12,7 +12,14 @@ from core_main_app.utils.tests_tools.RequestMock import RequestMock
 
 
 class TestTemplateDetailGetPermission(SimpleTestCase):
+    """TestTemplateDetailGetPermission"""
+
     def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
         self.fake_id = "507f1f77bcf86cd799439011"
 
     @patch.object(Template, "get_by_id")
@@ -20,6 +27,15 @@ class TestTemplateDetailGetPermission(SimpleTestCase):
     def test_anonymous_returns_http_403(
         self, template_serializer_data, template_get_by_id
     ):
+        """test_anonymous_returns_http_403
+
+        Args:
+            template_serializer_data:
+            template_get_by_id:
+
+        Returns:
+
+        """
         template_get_by_id.return_value = Template(user=None)
         template_serializer_data.return_value = True
 
@@ -34,6 +50,15 @@ class TestTemplateDetailGetPermission(SimpleTestCase):
     def test_authenticated_returns_http_200(
         self, template_serializer_data, template_get_by_id
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            template_serializer_data:
+            template_get_by_id:
+
+        Returns:
+
+        """
         template_get_by_id.return_value = Template(user=None)
         template_serializer_data.return_value = True
 
@@ -50,6 +75,15 @@ class TestTemplateDetailGetPermission(SimpleTestCase):
     @patch.object(Template, "get_by_id")
     @patch.object(TemplateSerializer, "data")
     def test_staff_returns_http_200(self, template_serializer_data, template_get_by_id):
+        """test_staff_returns_http_200
+
+        Args:
+            template_serializer_data:
+            template_get_by_id:
+
+        Returns:
+
+        """
         template_get_by_id.return_value = Template(user=None)
         template_serializer_data.return_value = True
 
@@ -65,11 +99,27 @@ class TestTemplateDetailGetPermission(SimpleTestCase):
 
 
 class TestTemplateDownloadGetPermission(SimpleTestCase):
+    """TestTemplateDownloadGetPermission"""
+
     def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
         self.fake_id = "507f1f77bcf86cd799439011"
 
     @patch.object(Template, "get_by_id")
     def test_anonymous_returns_http_403(self, template_get_by_id):
+        """est_anonymous_returns_http_403
+
+
+        Args:
+            template_get_by_id:
+
+        Returns:
+
+        """
         template_get_by_id.return_value = Template(content="test", filename="test.txt")
 
         response = RequestMock.do_request_get(
@@ -80,6 +130,14 @@ class TestTemplateDownloadGetPermission(SimpleTestCase):
 
     @patch.object(Template, "get_by_id")
     def test_authenticated_returns_http_200(self, template_get_by_id):
+        """test_authenticated_returns_http_200
+
+        Args:
+            template_get_by_id:
+
+        Returns:
+
+        """
         template_get_by_id.return_value = Template(content="test", filename="test.txt")
 
         mock_user = create_mock_user("1")
@@ -94,6 +152,14 @@ class TestTemplateDownloadGetPermission(SimpleTestCase):
 
     @patch.object(Template, "get_by_id")
     def test_staff_returns_http_200(self, template_get_by_id):
+        """test_staff_returns_http_200
+
+        Args:
+            template_get_by_id:
+
+        Returns:
+
+        """
         template_get_by_id.return_value = Template(content="test", filename="test.txt")
 
         mock_user = create_mock_user("1", is_staff=True)

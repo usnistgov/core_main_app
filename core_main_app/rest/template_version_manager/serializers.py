@@ -23,7 +23,7 @@ class TemplateVersionManagerSerializer(ModelSerializer):
     current = ReadOnlyField()
     disabled_versions = ReadOnlyField()
 
-    class Meta(object):
+    class Meta:
         model = TemplateVersionManager
         fields = "__all__"
         read_only_fields = [

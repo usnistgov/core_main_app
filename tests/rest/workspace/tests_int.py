@@ -2,6 +2,9 @@
 """
 
 from rest_framework import status
+from tests.components.group.fixtures.fixtures import GroupFixtures
+from tests.components.user.fixtures.fixtures import UserFixtures
+from tests.components.workspace.fixtures.fixtures import WorkspaceFixtures
 
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.rest.workspace import views as workspace_rest_views
@@ -9,9 +12,6 @@ from core_main_app.utils.integration_tests.integration_base_transaction_test_cas
     MongoIntegrationTransactionTestCase,
 )
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
-from tests.components.group.fixtures.fixtures import GroupFixtures
-from tests.components.user.fixtures.fixtures import UserFixtures
-from tests.components.workspace.fixtures.fixtures import WorkspaceFixtures
 
 TITLE_1 = "title 1"
 TITLE_2 = "title 2"
@@ -24,6 +24,11 @@ class TestWorkspaceDetail(MongoIntegrationTransactionTestCase):
     """Test Workspace Detail"""
 
     def test_get_returns_http_200(self):
+        """test_get_returns_http_200
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user()
 
@@ -40,6 +45,11 @@ class TestWorkspaceDetail(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_workspace(self):
+        """test_get_workspace
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user()
 
@@ -56,6 +66,11 @@ class TestWorkspaceDetail(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.data["title"], workspace.title)
 
     def test_get_wrong_id_returns_http_404(self):
+        """test_get_wrong_id_returns_http_404
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user()
 
@@ -72,6 +87,11 @@ class TestWorkspaceDetail(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_wrong_id_returns_http_404(self):
+        """test_delete_wrong_id_returns_http_404
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user()
 
@@ -86,6 +106,11 @@ class TestWorkspaceDetail(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_returns_http_204(self):
+        """test_delete_returns_http_204
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user()
 
@@ -102,13 +127,18 @@ class TestWorkspaceDetail(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_delete_workspace(self):
+        """test_delete_workspace
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user()
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
         self.assertEqual(len(workspace_api.get_all_by_owner(user)), 1)
 
         # Act
-        response = RequestMock.do_request_delete(
+        RequestMock.do_request_delete(
             workspace_rest_views.WorkspaceDetail.as_view(),
             user,
             param={"pk": workspace.id},
@@ -118,6 +148,11 @@ class TestWorkspaceDetail(MongoIntegrationTransactionTestCase):
         self.assertEqual(len(workspace_api.get_all_by_owner(user)), 0)
 
     def test_delete_workspace_not_owner(self):
+        """test_delete_workspace_not_owner
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user()
         user2 = UserFixtures().create_user(username="other")
@@ -139,6 +174,11 @@ class TestWorkspaceList(MongoIntegrationTransactionTestCase):
     """Test Workspace List"""
 
     def test_get_returns_http_200(self):
+        """test_get_returns_http_200
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user()
 
@@ -154,6 +194,11 @@ class TestWorkspaceList(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_all_user_workspaces(self):
+        """test_get_all_user_workspaces
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         other_user = UserFixtures().create_user(username="user2")
@@ -171,6 +216,11 @@ class TestWorkspaceList(MongoIntegrationTransactionTestCase):
         self.assertEqual(len(response.data), 2)
 
     def test_get_all_workspaces_as_admin(self):
+        """test_get_all_workspaces_as_admin
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_super_user(username="user1")
         other_user = UserFixtures().create_user(username="user2")
@@ -188,6 +238,11 @@ class TestWorkspaceList(MongoIntegrationTransactionTestCase):
         self.assertEqual(len(response.data), 3)
 
     def test_post_returns_http_201(self):
+        """test_post_returns_http_201
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         mock_data = {"title": "title 1"}
@@ -200,6 +255,11 @@ class TestWorkspaceList(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_post_create_workspace(self):
+        """test_post_create_workspace
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         mock_data = {"title": TITLE_1}
@@ -216,10 +276,15 @@ class TestWorkspaceList(MongoIntegrationTransactionTestCase):
         self.assertEqual(workspace[0].owner, str(user.id))
 
     def test_post_create_workspace_with_owner(self):
+        """test_post_create_workspace_with_owner
+
+        Returns:
+
+        """
         # Context
-        FAKE_USER_ID = 123456
+        fake_user_id = 123456
         user = UserFixtures().create_user(username="user1")
-        mock_data = {"title": TITLE_1, "owner": FAKE_USER_ID}
+        mock_data = {"title": TITLE_1, "owner": fake_user_id}
 
         # Act
         response = RequestMock.do_request_post(
@@ -232,9 +297,14 @@ class TestWorkspaceList(MongoIntegrationTransactionTestCase):
         self.assertEqual(len(workspace), 1)
         self.assertEqual(workspace[0].title, TITLE_1)
         self.assertEqual(workspace[0].owner, str(user.id))
-        self.assertNotEqual(workspace[0].owner, str(FAKE_USER_ID))
+        self.assertNotEqual(workspace[0].owner, str(fake_user_id))
 
     def test_post_create_workspace_without_title(self):
+        """test_post_create_workspace_without_title
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         mock_data = {"owner": user.id}
@@ -252,6 +322,11 @@ class TestWorkspaceReadAccess(MongoIntegrationTransactionTestCase):
     """Test Workspace Read Access"""
 
     def test_get_workspace_with_read_access_return_http_200(self):
+        """test_get_workspace_with_read_access_return_http_200
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
 
@@ -264,6 +339,11 @@ class TestWorkspaceReadAccess(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_workspace_with_read_access_own_workspace(self):
+        """test_get_workspace_with_read_access_own_workspace
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         WorkspaceFixtures().create_workspace(user.id, TITLE_1)
@@ -277,6 +357,11 @@ class TestWorkspaceReadAccess(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.data[0]["title"], TITLE_1)
 
     def test_get_workspace_with_read_access_admin(self):
+        """test_get_workspace_with_read_access_admin
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_super_user(username="user2")
@@ -291,6 +376,11 @@ class TestWorkspaceReadAccess(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.data[0]["title"], TITLE_1)
 
     def test_get_workspace_with_read_access_other_workspace(self):
+        """test_get_workspace_with_read_access_other_workspace
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -306,6 +396,11 @@ class TestWorkspaceReadAccess(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.data[0]["title"], TITLE_1)
 
     def test_get_workspace_with_read_access_public_workspace(self):
+        """test_get_workspace_with_read_access_public_workspace
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         UserFixtures().add_publish_perm(user)
@@ -326,6 +421,11 @@ class TestWorkspaceWriteAccess(MongoIntegrationTransactionTestCase):
     """Test Workspace Write Access"""
 
     def test_get_workspace_with_write_access_return_http_200(self):
+        """test_get_workspace_with_write_access_return_http_200
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
 
@@ -338,6 +438,11 @@ class TestWorkspaceWriteAccess(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_workspace_with_write_access_own_workspace(self):
+        """test_get_workspace_with_write_access_own_workspace
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         WorkspaceFixtures().create_workspace(user.id, TITLE_1)
@@ -351,6 +456,11 @@ class TestWorkspaceWriteAccess(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.data[0]["title"], TITLE_1)
 
     def test_get_workspace_with_write_access_admin(self):
+        """test_get_workspace_with_write_access_admin
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_super_user(username="user2")
@@ -365,6 +475,11 @@ class TestWorkspaceWriteAccess(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.data[0]["title"], TITLE_1)
 
     def test_get_workspace_with_write_access_other_workspace(self):
+        """test_get_workspace_with_write_access_other_workspace
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -380,6 +495,11 @@ class TestWorkspaceWriteAccess(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.data[0]["title"], TITLE_1)
 
     def test_get_workspace_with_write_access_public_workspace(self):
+        """test_get_workspace_with_write_access_public_workspace
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         UserFixtures().add_publish_perm(user)
@@ -400,6 +520,11 @@ class TestWorkspaceIsPublic(MongoIntegrationTransactionTestCase):
     """Test Workspace Is Public"""
 
     def test_is_workspace_public_return_http_200(self):
+        """test_is_workspace_public_return_http_200
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
@@ -413,6 +538,11 @@ class TestWorkspaceIsPublic(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_is_workspace_public_return_false(self):
+        """test_is_workspace_public_return_false
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
@@ -426,6 +556,11 @@ class TestWorkspaceIsPublic(MongoIntegrationTransactionTestCase):
         self.assertFalse(response.data)
 
     def test_is_workspace_public_return_true(self):
+        """test_is_workspace_public_return_true
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         UserFixtures().add_publish_perm(user)
@@ -441,6 +576,11 @@ class TestWorkspaceIsPublic(MongoIntegrationTransactionTestCase):
         self.assertTrue(response.data)
 
     def test_is_workspace_public_return_http_404(self):
+        """test_is_workspace_public_return_http_404
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
 
@@ -459,6 +599,11 @@ class TestWorkspaceSetPublic(MongoIntegrationTransactionTestCase):
     """Test Workspace Set Public"""
 
     def test_set_workspace_public_return_http_200(self):
+        """test_set_workspace_public_return_http_200
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         UserFixtures().add_publish_perm(user)
@@ -473,6 +618,11 @@ class TestWorkspaceSetPublic(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_set_workspace_public_return_http_403(self):
+        """test_set_workspace_public_return_http_403
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
@@ -486,6 +636,11 @@ class TestWorkspaceSetPublic(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_set_workspace_public_return_http_404(self):
+        """test_set_workspace_public_return_http_404
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         UserFixtures().add_publish_perm(user)
@@ -501,6 +656,11 @@ class TestWorkspaceSetPublic(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_set_workspace_public_owner(self):
+        """test_set_workspace_public_owner
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         UserFixtures().add_publish_perm(user)
@@ -508,7 +668,7 @@ class TestWorkspaceSetPublic(MongoIntegrationTransactionTestCase):
         self.assertFalse(workspace_api.is_workspace_public(workspace))
 
         # Act
-        response = RequestMock.do_request_patch(
+        RequestMock.do_request_patch(
             workspace_rest_views.set_workspace_public, user, param={"pk": workspace.id}
         )
 
@@ -517,6 +677,11 @@ class TestWorkspaceSetPublic(MongoIntegrationTransactionTestCase):
         self.assertTrue(workspace_api.is_workspace_public(workspace))
 
     def test_set_workspace_public_admin_not_owner(self):
+        """test_set_workspace_public_admin_not_owner
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_super_user(username="user2")
@@ -524,7 +689,7 @@ class TestWorkspaceSetPublic(MongoIntegrationTransactionTestCase):
         self.assertFalse(workspace_api.is_workspace_public(workspace))
 
         # Act
-        response = RequestMock.do_request_patch(
+        RequestMock.do_request_patch(
             workspace_rest_views.set_workspace_public, user2, param={"pk": workspace.id}
         )
 
@@ -533,6 +698,11 @@ class TestWorkspaceSetPublic(MongoIntegrationTransactionTestCase):
         self.assertTrue(workspace_api.is_workspace_public(workspace))
 
     def test_set_workspace_public_user_not_owner(self):
+        """test_set_workspace_public_user_not_owner
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -540,7 +710,7 @@ class TestWorkspaceSetPublic(MongoIntegrationTransactionTestCase):
         self.assertFalse(workspace_api.is_workspace_public(workspace))
 
         # Act
-        response = RequestMock.do_request_patch(
+        RequestMock.do_request_patch(
             workspace_rest_views.set_workspace_public, user2, param={"pk": workspace.id}
         )
 
@@ -549,6 +719,11 @@ class TestWorkspaceSetPublic(MongoIntegrationTransactionTestCase):
         self.assertFalse(workspace_api.is_workspace_public(workspace))
 
     def test_set_workspace_public_user_not_owner_return_http_403(self):
+        """test_set_workspace_public_user_not_owner_return_http_403
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -568,6 +743,11 @@ class TestWorkspaceSetPrivate(MongoIntegrationTransactionTestCase):
     """Test Workspace Set Private"""
 
     def test_set_workspace_private_return_http_200(self):
+        """test_set_workspace_private_return_http_200
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
@@ -581,6 +761,11 @@ class TestWorkspaceSetPrivate(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_set_workspace_private_return_http_404(self):
+        """test_set_workspace_private_return_http_404
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
 
@@ -595,6 +780,11 @@ class TestWorkspaceSetPrivate(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_set_workspace_private_owner(self):
+        """test_set_workspace_private_owner
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         UserFixtures().add_publish_perm(user)
@@ -603,7 +793,7 @@ class TestWorkspaceSetPrivate(MongoIntegrationTransactionTestCase):
         self.assertTrue(workspace_api.is_workspace_public(workspace))
 
         # Act
-        response = RequestMock.do_request_patch(
+        RequestMock.do_request_patch(
             workspace_rest_views.set_workspace_private, user, param={"pk": workspace.id}
         )
 
@@ -612,6 +802,11 @@ class TestWorkspaceSetPrivate(MongoIntegrationTransactionTestCase):
         self.assertFalse(workspace_api.is_workspace_public(workspace))
 
     def test_set_workspace_private_admin_not_owner(self):
+        """test_set_workspace_private_admin_not_owner
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         UserFixtures().add_publish_perm(user)
@@ -621,7 +816,7 @@ class TestWorkspaceSetPrivate(MongoIntegrationTransactionTestCase):
         self.assertTrue(workspace_api.is_workspace_public(workspace))
 
         # Act
-        response = RequestMock.do_request_patch(
+        RequestMock.do_request_patch(
             workspace_rest_views.set_workspace_private,
             user2,
             param={"pk": workspace.id},
@@ -632,6 +827,11 @@ class TestWorkspaceSetPrivate(MongoIntegrationTransactionTestCase):
         self.assertFalse(workspace_api.is_workspace_public(workspace))
 
     def test_set_workspace_private_user_not_owner(self):
+        """test_set_workspace_private_user_not_owner
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         UserFixtures().add_publish_perm(user)
@@ -641,7 +841,7 @@ class TestWorkspaceSetPrivate(MongoIntegrationTransactionTestCase):
         self.assertTrue(workspace_api.is_workspace_public(workspace))
 
         # Act
-        response = RequestMock.do_request_patch(
+        RequestMock.do_request_patch(
             workspace_rest_views.set_workspace_private,
             user2,
             param={"pk": workspace.id},
@@ -652,6 +852,11 @@ class TestWorkspaceSetPrivate(MongoIntegrationTransactionTestCase):
         self.assertTrue(workspace_api.is_workspace_public(workspace))
 
     def test_set_workspace_private_user_not_owner_return_http_403(self):
+        """test_set_workspace_private_user_not_owner_return_http_403
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -673,6 +878,11 @@ class TestWorkspaceListUserCanRead(MongoIntegrationTransactionTestCase):
     """Test Workspace List User Can read"""
 
     def test_get_list_user_can_read_workspace_return_http_200(self):
+        """test_get_list_user_can_read_workspace_return_http_200
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
@@ -688,6 +898,11 @@ class TestWorkspaceListUserCanRead(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_list_user_can_read_workspace_return_http_404(self):
+        """test_get_list_user_can_read_workspace_return_http_404
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
 
@@ -702,6 +917,11 @@ class TestWorkspaceListUserCanRead(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_list_user_can_read_workspace_return_http_403(self):
+        """test_get_list_user_can_read_workspace_return_http_403
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -718,6 +938,11 @@ class TestWorkspaceListUserCanRead(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_get_list_user_can_read_workspace_owner(self):
+        """test_get_list_user_can_read_workspace_owner
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         UserFixtures().create_user(username="user2")
@@ -731,9 +956,14 @@ class TestWorkspaceListUserCanRead(MongoIntegrationTransactionTestCase):
         )
 
         # Assert
-        self.assertEquals(len(response.data), 0)
+        self.assertEqual(len(response.data), 0)
 
     def test_get_list_user_can_read_workspace_other_user(self):
+        """test_get_list_user_can_read_workspace_other_user
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -748,15 +978,20 @@ class TestWorkspaceListUserCanRead(MongoIntegrationTransactionTestCase):
         )
 
         # Assert
-        self.assertEquals(len(response.data), 1)
-        self.assertEquals(response.data[0]["id"], user2.id)
-        self.assertEquals(response.data[0]["username"], user2.username)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["id"], user2.id)
+        self.assertEqual(response.data[0]["username"], user2.username)
 
     def test_get_list_user_can_read_workspace_public(self):
+        """test_get_list_user_can_read_workspace_public
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         UserFixtures().add_publish_perm(user)
-        user2 = UserFixtures().create_user(username="user2")
+        UserFixtures().create_user(username="user2")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
         workspace_api.set_workspace_public(workspace, user)
 
@@ -768,9 +1003,14 @@ class TestWorkspaceListUserCanRead(MongoIntegrationTransactionTestCase):
         )
 
         # Assert
-        self.assertEquals(len(response.data), 2)
+        self.assertEqual(len(response.data), 2)
 
     def test_get_list_user_can_read_workspace_other_user_admin(self):
+        """test_get_list_user_can_read_workspace_other_user_admin
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -786,15 +1026,20 @@ class TestWorkspaceListUserCanRead(MongoIntegrationTransactionTestCase):
         )
 
         # Assert
-        self.assertEquals(len(response.data), 1)
-        self.assertEquals(response.data[0]["id"], user2.id)
-        self.assertEquals(response.data[0]["username"], user2.username)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["id"], user2.id)
+        self.assertEqual(response.data[0]["username"], user2.username)
 
 
 class TestWorkspaceListUserCanWrite(MongoIntegrationTransactionTestCase):
     """Test Workspace List User Can Write"""
 
     def test_get_list_user_can_write_workspace_return_http_200(self):
+        """test_get_list_user_can_write_workspace_return_http_200
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
@@ -810,6 +1055,11 @@ class TestWorkspaceListUserCanWrite(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_list_user_can_write_workspace_return_http_404(self):
+        """test_get_list_user_can_write_workspace_return_http_404
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
 
@@ -824,6 +1074,11 @@ class TestWorkspaceListUserCanWrite(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_list_user_can_write_workspace_return_http_403(self):
+        """test_get_list_user_can_write_workspace_return_http_403
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -840,6 +1095,11 @@ class TestWorkspaceListUserCanWrite(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_get_list_user_can_write_workspace_owner(self):
+        """test_get_list_user_can_write_workspace_owner
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         UserFixtures().create_user(username="user2")
@@ -853,9 +1113,14 @@ class TestWorkspaceListUserCanWrite(MongoIntegrationTransactionTestCase):
         )
 
         # Assert
-        self.assertEquals(len(response.data), 0)
+        self.assertEqual(len(response.data), 0)
 
     def test_get_list_user_can_write_workspace_other_user(self):
+        """test_get_list_user_can_write_workspace_other_user
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -870,15 +1135,20 @@ class TestWorkspaceListUserCanWrite(MongoIntegrationTransactionTestCase):
         )
 
         # Assert
-        self.assertEquals(len(response.data), 1)
-        self.assertEquals(response.data[0]["id"], user2.id)
-        self.assertEquals(response.data[0]["username"], user2.username)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["id"], user2.id)
+        self.assertEqual(response.data[0]["username"], user2.username)
 
     def test_get_list_user_can_write_workspace_public(self):
+        """test_get_list_user_can_write_workspace_public
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         UserFixtures().add_publish_perm(user)
-        user2 = UserFixtures().create_user(username="user2")
+        UserFixtures().create_user(username="user2")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
         workspace_api.set_workspace_public(workspace, user)
 
@@ -890,9 +1160,14 @@ class TestWorkspaceListUserCanWrite(MongoIntegrationTransactionTestCase):
         )
 
         # Assert
-        self.assertEquals(len(response.data), 0)
+        self.assertEqual(len(response.data), 0)
 
     def test_get_list_user_can_write_workspace_other_user_admin(self):
+        """test_get_list_user_can_write_workspace_other_user_admin
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -908,15 +1183,20 @@ class TestWorkspaceListUserCanWrite(MongoIntegrationTransactionTestCase):
         )
 
         # Assert
-        self.assertEquals(len(response.data), 1)
-        self.assertEquals(response.data[0]["id"], user2.id)
-        self.assertEquals(response.data[0]["username"], user2.username)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["id"], user2.id)
+        self.assertEqual(response.data[0]["username"], user2.username)
 
 
 class TestWorkspaceListGroupCanRead(MongoIntegrationTransactionTestCase):
     """Test Workspace List Group Can read"""
 
     def test_get_list_group_can_read_workspace_return_http_200(self):
+        """test_get_list_group_can_read_workspace_return_http_200
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
@@ -932,6 +1212,11 @@ class TestWorkspaceListGroupCanRead(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_list_group_can_read_workspace_return_http_404(self):
+        """test_get_list_group_can_read_workspace_return_http_404
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
 
@@ -946,6 +1231,11 @@ class TestWorkspaceListGroupCanRead(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_list_group_can_read_workspace_return_http_403(self):
+        """test_get_list_group_can_read_workspace_return_http_403
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -962,6 +1252,11 @@ class TestWorkspaceListGroupCanRead(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_get_list_group_can_read_workspace_other_group(self):
+        """test_get_list_group_can_read_workspace_other_group
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         group = GroupFixtures().create_group(name="group1")
@@ -976,11 +1271,16 @@ class TestWorkspaceListGroupCanRead(MongoIntegrationTransactionTestCase):
         )
 
         # Assert
-        self.assertEquals(len(response.data), 1)
-        self.assertEquals(response.data[0]["id"], group.id)
-        self.assertEquals(response.data[0]["name"], group.name)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["id"], group.id)
+        self.assertEqual(response.data[0]["name"], group.name)
 
     def test_get_list_group_can_read_workspace_public(self):
+        """test_get_list_group_can_read_workspace_public
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         UserFixtures().add_publish_perm(user)
@@ -996,9 +1296,14 @@ class TestWorkspaceListGroupCanRead(MongoIntegrationTransactionTestCase):
         )
 
         # Assert
-        self.assertEquals(len(response.data), 3)
+        self.assertEqual(len(response.data), 3)
 
     def test_get_list_group_can_read_workspace_other_group_admin(self):
+        """test_get_list_group_can_read_workspace_other_group_admin
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user3 = UserFixtures().create_super_user(username="user3")
@@ -1014,15 +1319,20 @@ class TestWorkspaceListGroupCanRead(MongoIntegrationTransactionTestCase):
         )
 
         # Assert
-        self.assertEquals(len(response.data), 1)
-        self.assertEquals(response.data[0]["id"], group.id)
-        self.assertEquals(response.data[0]["name"], group.name)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["id"], group.id)
+        self.assertEqual(response.data[0]["name"], group.name)
 
 
 class TestWorkspaceListGroupCanWrite(MongoIntegrationTransactionTestCase):
     """Test Workspace List Group Can Write"""
 
     def test_get_list_group_can_write_workspace_return_http_200(self):
+        """test_get_list_group_can_write_workspace_return_http_200
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
@@ -1038,6 +1348,11 @@ class TestWorkspaceListGroupCanWrite(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_list_group_can_write_workspace_return_http_404(self):
+        """test_get_list_group_can_write_workspace_return_http_404
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
 
@@ -1052,6 +1367,11 @@ class TestWorkspaceListGroupCanWrite(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_list_group_can_write_workspace_return_http_403(self):
+        """test_get_list_group_can_write_workspace_return_http_403
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -1068,6 +1388,11 @@ class TestWorkspaceListGroupCanWrite(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_get_list_group_can_write_workspace_other_group(self):
+        """test_get_list_group_can_write_workspace_other_group
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         group = GroupFixtures().create_group(name="group1")
@@ -1082,11 +1407,16 @@ class TestWorkspaceListGroupCanWrite(MongoIntegrationTransactionTestCase):
         )
 
         # Assert
-        self.assertEquals(len(response.data), 1)
-        self.assertEquals(response.data[0]["id"], group.id)
-        self.assertEquals(response.data[0]["name"], group.name)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["id"], group.id)
+        self.assertEqual(response.data[0]["name"], group.name)
 
     def test_get_list_group_can_write_workspace_public(self):
+        """test_get_list_group_can_write_workspace_public
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         UserFixtures().add_publish_perm(user)
@@ -1102,9 +1432,14 @@ class TestWorkspaceListGroupCanWrite(MongoIntegrationTransactionTestCase):
         )
 
         # Assert
-        self.assertEquals(len(response.data), 0)
+        self.assertEqual(len(response.data), 0)
 
     def test_get_list_group_can_write_workspace_other_group_admin(self):
+        """test_get_list_group_can_write_workspace_other_group_admin
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         group = GroupFixtures().create_group(name="group1")
@@ -1120,15 +1455,20 @@ class TestWorkspaceListGroupCanWrite(MongoIntegrationTransactionTestCase):
         )
 
         # Assert
-        self.assertEquals(len(response.data), 1)
-        self.assertEquals(response.data[0]["id"], group.id)
-        self.assertEquals(response.data[0]["name"], group.name)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["id"], group.id)
+        self.assertEqual(response.data[0]["name"], group.name)
 
 
 class TestAddUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
     """Test Add User Read Right To Workspace"""
 
     def test_add_user_read_right_to_workspace_return_http_200(self):
+        """test_add_user_read_right_to_workspace_return_http_200
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -1145,6 +1485,11 @@ class TestAddUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_add_user_read_right_to_workspace_return_http_404(self):
+        """test_add_user_read_right_to_workspace_return_http_404
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -1161,6 +1506,11 @@ class TestAddUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_add_user_read_right_to_workspace_return_http_403(self):
+        """test_add_user_read_right_to_workspace_return_http_403
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -1177,6 +1527,11 @@ class TestAddUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_add_user_read_right_to_workspace_(self):
+        """test_add_user_read_right_to_workspace_
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -1186,7 +1541,7 @@ class TestAddUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         )
 
         # Act
-        response = RequestMock.do_request_patch(
+        RequestMock.do_request_patch(
             workspace_rest_views.add_user_read_right_to_workspace,
             user,
             param={"pk": workspace.id, "user_id": user2.id},
@@ -1202,6 +1557,11 @@ class TestAddUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
     """Test Add User Write Right To Workspace"""
 
     def test_add_user_write_right_to_workspace_return_http_200(self):
+        """test_add_user_write_right_to_workspace_return_http_200
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -1218,6 +1578,11 @@ class TestAddUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_add_user_write_right_to_workspace_return_http_404(self):
+        """test_add_user_write_right_to_workspace_return_http_404
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -1234,6 +1599,11 @@ class TestAddUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_add_user_write_right_to_workspace_return_http_403(self):
+        """test_add_user_write_right_to_workspace_return_http_403
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -1250,6 +1620,11 @@ class TestAddUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_add_user_write_right_to_workspace_(self):
+        """test_add_user_write_right_to_workspace_
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -1259,7 +1634,7 @@ class TestAddUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         )
 
         # Act
-        response = RequestMock.do_request_patch(
+        RequestMock.do_request_patch(
             workspace_rest_views.add_user_write_right_to_workspace,
             user,
             param={"pk": workspace.id, "user_id": user2.id},
@@ -1275,6 +1650,11 @@ class TestAddGroupReadRightToWorkspace(MongoIntegrationTransactionTestCase):
     """Test Add Group Read Right To Workspace"""
 
     def test_add_group_read_right_to_workspace_return_http_200(self):
+        """test_add_group_read_right_to_workspace_return_http_200
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         group = GroupFixtures().create_group(name="group1")
@@ -1291,6 +1671,11 @@ class TestAddGroupReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_add_group_read_right_to_workspace_return_http_404(self):
+        """test_add_group_read_right_to_workspace_return_http_404
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         group = GroupFixtures().create_group(name="group1")
@@ -1307,6 +1692,11 @@ class TestAddGroupReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_add_group_read_right_to_workspace_return_http_403(self):
+        """test_add_group_read_right_to_workspace_return_http_403
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -1324,6 +1714,11 @@ class TestAddGroupReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_add_group_read_right_to_workspace_(self):
+        """test_add_group_read_right_to_workspace_
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         group = GroupFixtures().create_group(name="group1")
@@ -1349,6 +1744,11 @@ class TestAddGroupWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
     """Test Add Group Write Right To Workspace"""
 
     def test_add_group_write_right_to_workspace_return_http_200(self):
+        """test_add_group_write_right_to_workspace_return_http_200
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         group = GroupFixtures().create_group(name="group1")
@@ -1365,6 +1765,11 @@ class TestAddGroupWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_add_group_write_right_to_workspace_return_http_404(self):
+        """test_add_group_write_right_to_workspace_return_http_404
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         group = GroupFixtures().create_group(name="group1")
@@ -1381,6 +1786,11 @@ class TestAddGroupWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_add_group_write_right_to_workspace_return_http_403(self):
+        """test_add_group_write_right_to_workspace_return_http_403
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -1397,7 +1807,12 @@ class TestAddGroupWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_add_group_write_right_to_workspace_(self):
+    def test_add_group_write_right_to_workspace(self):
+        """test_add_group_write_right_to_workspace
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         group = GroupFixtures().create_group(name="group1")
@@ -1424,6 +1839,11 @@ class TestRemoveUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
     """Test Remove User Read Right To Workspace"""
 
     def test_remove_user_read_right_to_workspace_return_http_200(self):
+        """test_remove_user_read_right_to_workspace_return_http_200
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -1440,6 +1860,11 @@ class TestRemoveUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_remove_user_read_right_to_workspace_return_http_404(self):
+        """test_remove_user_read_right_to_workspace_return_http_404
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -1456,6 +1881,11 @@ class TestRemoveUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_remove_user_read_right_to_workspace_return_http_403(self):
+        """test_remove_user_read_right_to_workspace_return_http_403
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -1471,7 +1901,12 @@ class TestRemoveUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_remove_user_read_right_to_workspace_(self):
+    def test_remove_user_read_right_to_workspace(self):
+        """
+        test_remove_user_read_right_to_workspace
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -1482,7 +1917,7 @@ class TestRemoveUserReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         )
 
         # Act
-        response = RequestMock.do_request_patch(
+        RequestMock.do_request_patch(
             workspace_rest_views.remove_user_read_right_to_workspace,
             user,
             param={"pk": workspace.id, "user_id": user2.id},
@@ -1498,6 +1933,11 @@ class TestRemoveUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
     """Test Remove User Write Right To Workspace"""
 
     def test_remove_user_write_right_to_workspace_return_http_200(self):
+        """test_remove_user_write_right_to_workspace_return_http_200
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -1514,6 +1954,11 @@ class TestRemoveUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_remove_user_write_right_to_workspace_return_http_404(self):
+        """test_remove_user_write_right_to_workspace_return_http_404
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -1530,6 +1975,11 @@ class TestRemoveUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_remove_user_write_right_to_workspace_return_http_403(self):
+        """test_remove_user_write_right_to_workspace_return_http_403
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -1545,7 +1995,12 @@ class TestRemoveUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_remove_user_write_right_to_workspace_(self):
+    def test_remove_user_write_right_to_workspace(self):
+        """test_remove_user_write_right_to_workspace
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -1556,7 +2011,7 @@ class TestRemoveUserWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         )
 
         # Act
-        response = RequestMock.do_request_patch(
+        RequestMock.do_request_patch(
             workspace_rest_views.remove_user_write_right_to_workspace,
             user,
             param={"pk": workspace.id, "user_id": user2.id},
@@ -1572,6 +2027,11 @@ class TestRemoveGroupReadRightToWorkspace(MongoIntegrationTransactionTestCase):
     """Test Remove Group Read Right To Workspace"""
 
     def test_remove_group_read_right_to_workspace_return_http_200(self):
+        """test_remove_group_read_right_to_workspace_return_http_200
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         group = GroupFixtures().create_group(name="group1")
@@ -1588,6 +2048,11 @@ class TestRemoveGroupReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_remove_group_read_right_to_workspace_return_http_404(self):
+        """test_remove_group_read_right_to_workspace_return_http_404
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         group = GroupFixtures().create_group(name="group1")
@@ -1604,6 +2069,11 @@ class TestRemoveGroupReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_remove_group_read_right_to_workspace_return_http_403(self):
+        """test_remove_group_read_right_to_workspace_return_http_403
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -1620,7 +2090,12 @@ class TestRemoveGroupReadRightToWorkspace(MongoIntegrationTransactionTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_remove_group_read_right_to_workspace_(self):
+    def test_remove_group_read_right_to_workspace(self):
+        """test_remove_group_read_right_to_workspace
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         group = GroupFixtures().create_group(name="group1")
@@ -1647,6 +2122,11 @@ class TestRemoveGroupWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
     """Test Remove Group Write Right To Workspace"""
 
     def test_remove_group_write_right_to_workspace_return_http_200(self):
+        """test_remove_group_write_right_to_workspace_return_http_200
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         group = GroupFixtures().create_group(name="group1")
@@ -1663,6 +2143,11 @@ class TestRemoveGroupWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_remove_group_write_right_to_workspace_return_http_404(self):
+        """test_remove_group_write_right_to_workspace_return_http_404
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         group = GroupFixtures().create_group(name="group1")
@@ -1679,6 +2164,11 @@ class TestRemoveGroupWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_remove_group_write_right_to_workspace_return_http_403(self):
+        """test_remove_group_write_right_to_workspace_return_http_403
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         user2 = UserFixtures().create_user(username="user2")
@@ -1695,7 +2185,12 @@ class TestRemoveGroupWriteRightToWorkspace(MongoIntegrationTransactionTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_remove_group_write_right_to_workspace_(self):
+    def test_remove_group_write_right_to_workspace(self):
+        """test_remove_group_write_right_to_workspace
+
+        Returns:
+
+        """
         # Context
         user = UserFixtures().create_user(username="user1")
         group = GroupFixtures().create_group(name="group1")

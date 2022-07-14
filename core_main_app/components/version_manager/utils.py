@@ -26,4 +26,4 @@ def get_version_name(title, version_number):
     Returns:
 
     """
-    return "{0} (Version {1})".format(title, str(version_number))
+    return f"{title} (Version {str(version_number)})"

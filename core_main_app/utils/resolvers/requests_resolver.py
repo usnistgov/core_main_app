@@ -14,7 +14,7 @@ class RequestsResolver(DefaultURIResolver):
     session_id = None
 
     def __init__(self, session_id=None):
-        super(RequestsResolver, self).__init__()
+        super().__init__()
         self.session_id = session_id
 
     def resolve(self, url, id, context):
@@ -31,7 +31,7 @@ class RequestsResolver(DefaultURIResolver):
         try:
             response = send_get_request(url, cookies={"sessionid": self.session_id})
             return self.resolve_string(response.content, context)
-        except Exception as e:
+        except Exception:
             # if an error occurs return None to use the next registered resolver (or lxml default resolver)
             logger.error(
                 "An error occurred with the RequestsResolver. Please make sure HTTPS is properly configured."

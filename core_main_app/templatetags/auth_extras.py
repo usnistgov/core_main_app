@@ -3,7 +3,7 @@
 
 from django import template
 
-import core_main_app.permissions.rights as RIGHTS
+from core_main_app.permissions import rights as RIGHTS
 from core_main_app.components.group import api as group_api
 
 register = template.Library()

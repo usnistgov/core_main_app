@@ -1,3 +1,5 @@
+""" Test XSD Flattener
+"""
 from unittest import TestCase
 
 from django.test.utils import override_settings
@@ -16,11 +18,21 @@ from core_main_app.utils.xsd_flattener.xsd_flattener_database_url import (
 
 
 class TestXSDFlattenerDatabaseUrl(TestCase):
+    """TestXSDFlattenerDatabaseUrl"""
+
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     @patch.object(XSDFlattenerRequestsURL, "get_dependency_content")
     def test_url_not_recognized_use_xsd_flattener_url(
         self, mock_get_dependency_content
     ):
+        """test url not recognized use xsd flattener url
+
+        Args:
+            mock_get_dependency_content:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(user=mock_user)
@@ -44,6 +56,14 @@ class TestXSDFlattenerDatabaseUrl(TestCase):
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     @patch.object(template_api, "get_by_id")
     def test_url_recognized_use_database(self, mock_get):
+        """test url recognized use database
+
+        Args:
+            mock_get:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(user=mock_user)
@@ -52,8 +72,8 @@ class TestXSDFlattenerDatabaseUrl(TestCase):
         )
         xml_string = (
             '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">'
-            '<xs:include schemaLocation="http://dummy.com{0}?id=1234"/>'
-            "</xs:schema>".format(url_template_download)
+            f'<xs:include schemaLocation="http://dummy.com{url_template_download}?id=1234"/>'
+            "</xs:schema>"
         )
         dependency = (
             '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">'
@@ -74,16 +94,23 @@ class TestXSDFlattenerDatabaseUrl(TestCase):
     def test_url_recognized_template_does_not_exist(
         self, mock_get_dependency_content, mock_get
     ):
+        """test url recognized template does not exist
+
+        Args:
+            mock_get_dependency_content:
+            mock_get:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(user=mock_user)
-        url_template_download = reverse(
-            "core_main_app_rest_template_download", kwargs={"pk": "pk"}
-        )
+
         xml_string = (
             '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">'
             '<xs:include schemaLocation="http://dummy.com{0}?id=1234"/>'
-            "</xs:schema>".format(url_template_download)
+            "</xs:schema>"
         )
         dependency = (
             '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">'

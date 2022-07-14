@@ -20,10 +20,20 @@ from core_main_app.utils.tests_tools.RequestMock import RequestMock
 
 
 class TestGlobalTemplateVersionManagerListGetPermission(SimpleTestCase):
+    """TestGlobalTemplateVersionManagerListGetPermission"""
+
     @patch.object(TemplateVersionManager, "get_global_version_managers")
     def test_anonymous_returns_http_403(
         self, template_version_manager_get_all_global_version_managers
     ):
+        """test_anonymous_returns_http_403
+
+        Args:
+            template_version_manager_get_all_global_version_managers:
+
+        Returns:
+
+        """
         template_version_manager_get_all_global_version_managers.return_value = (
             TemplateVersionManager(user=None)
         )
@@ -39,6 +49,14 @@ class TestGlobalTemplateVersionManagerListGetPermission(SimpleTestCase):
     def test_authenticated_returns_http_200(
         self, template_version_manager_get_all_global_version_managers
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            template_version_manager_get_all_global_version_managers:
+
+        Returns:
+
+        """
         template_version_manager_get_all_global_version_managers.return_value = {}
 
         mock_user = create_mock_user("1")
@@ -54,6 +72,14 @@ class TestGlobalTemplateVersionManagerListGetPermission(SimpleTestCase):
     def test_staff_returns_http_200(
         self, template_version_manager_get_all_global_version_managers
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            template_version_manager_get_all_global_version_managers:
+
+        Returns:
+
+        """
         template_version_manager_get_all_global_version_managers.return_value = {}
 
         mock_user = create_mock_user("1", is_staff=True)
@@ -67,7 +93,14 @@ class TestGlobalTemplateVersionManagerListGetPermission(SimpleTestCase):
 
 
 class TestUserTemplateVersionManagerListGetPermission(SimpleTestCase):
+    """TestUserTemplateVersionManagerListGetPermission"""
+
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         response = RequestMock.do_request_get(
             template_version_manager_views.UserTemplateVersionManagerList.as_view(),
             None,
@@ -79,6 +112,14 @@ class TestUserTemplateVersionManagerListGetPermission(SimpleTestCase):
     def test_authenticated_returns_http_200(
         self, template_version_manager_get_all_version_manager_by_user_id
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            template_version_manager_get_all_version_manager_by_user_id:
+
+        Returns:
+
+        """
         template_version_manager_get_all_version_manager_by_user_id.return_value = {}
 
         mock_user = create_mock_user("1")
@@ -94,6 +135,14 @@ class TestUserTemplateVersionManagerListGetPermission(SimpleTestCase):
     def test_staff_returns_http_200(
         self, template_version_manager_get_all_version_manager_by_user_id
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            template_version_manager_get_all_version_manager_by_user_id:
+
+        Returns:
+
+        """
         template_version_manager_get_all_version_manager_by_user_id.return_value = {}
 
         mock_user = create_mock_user("1", is_staff=True)
@@ -107,10 +156,22 @@ class TestUserTemplateVersionManagerListGetPermission(SimpleTestCase):
 
 
 class TestTemplateVersionManagerDetailGetPermission(SimpleTestCase):
+    """TestTemplateVersionManagerDetailGetPermission"""
+
     def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
         self.fake_id = "507f1f77bcf86cd799439011"
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         response = RequestMock.do_request_get(
             template_version_manager_views.TemplateVersionManagerDetail.as_view(),
             None,
@@ -124,6 +185,15 @@ class TestTemplateVersionManagerDetailGetPermission(SimpleTestCase):
     def test_authenticated_returns_http_200(
         self, template_version_manager_data, version_manager_get_by_id
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            template_version_manager_data:
+            version_manager_get_by_id:
+
+        Returns:
+
+        """
         template_version_manager_data.return_value = True
         version_manager_get_by_id.return_value = TemplateVersionManager(user="1")
 
@@ -142,6 +212,15 @@ class TestTemplateVersionManagerDetailGetPermission(SimpleTestCase):
     def test_staff_returns_http_200(
         self, template_version_manager_data, version_manager_get_by_id
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            template_version_manager_data:
+            version_manager_get_by_id:
+
+        Returns:
+
+        """
         template_version_manager_data.return_value = True
         version_manager_get_by_id.return_value = TemplateVersionManager(user="1")
 
@@ -157,10 +236,22 @@ class TestTemplateVersionManagerDetailGetPermission(SimpleTestCase):
 
 
 class TestTemplateVersionPostPermission(SimpleTestCase):
+    """TestTemplateVersionPostPermission"""
+
     def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
         self.fake_id = "507f1f77bcf86cd799439011"
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         response = RequestMock.do_request_post(
             template_version_manager_views.TemplateVersion.as_view(), None
         )
@@ -168,6 +259,11 @@ class TestTemplateVersionPostPermission(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_authenticated_returns_http_403(self):
+        """test_authenticated_returns_http_403
+
+        Returns:
+
+        """
         mock_user = create_mock_user("1")
 
         response = RequestMock.do_request_post(
@@ -187,6 +283,17 @@ class TestTemplateVersionPostPermission(SimpleTestCase):
         template_version_manager_serializer_valid,
         version_manager_get_by_id,
     ):
+        """test_staff_returns_http_201
+
+        Args:
+            template_version_manager_serializer_data:
+            template_version_manager_serializer_save:
+            template_version_manager_serializer_valid:
+            version_manager_get_by_id:
+
+        Returns:
+
+        """
         version_manager_get_by_id.return_value = TemplateVersionManager(user=None)
         template_version_manager_serializer_data.return_value = True
         template_version_manager_serializer_save.return_value = None
@@ -205,7 +312,14 @@ class TestTemplateVersionPostPermission(SimpleTestCase):
 
 
 class TestUserTemplateListPostPermission(SimpleTestCase):
+    """TestUserTemplateListPostPermission"""
+
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         response = RequestMock.do_request_post(
             template_version_manager_views.UserTemplateList.as_view(), None
         )
@@ -227,6 +341,19 @@ class TestUserTemplateListPostPermission(SimpleTestCase):
         create_template_version_manager_serializer_save,
         create_template_version_manager_serializer_valid,
     ):
+        """test_authenticated_returns_http_201
+
+        Args:
+            template_version_manager_serializer_data:
+            template_version_manager_serializer_save:
+            template_version_manager_serializer_valid:
+            create_template_version_manager_serializer_data:
+            create_template_version_manager_serializer_save:
+            create_template_version_manager_serializer_valid:
+
+        Returns:
+
+        """
         create_template_version_manager_serializer_data.return_value = True
         create_template_version_manager_serializer_save.return_value = None
         create_template_version_manager_serializer_valid.return_value = {}
@@ -259,6 +386,19 @@ class TestUserTemplateListPostPermission(SimpleTestCase):
         create_template_version_manager_serializer_save,
         create_template_version_manager_serializer_valid,
     ):
+        """test_staff_returns_http_201
+
+        Args:
+            template_version_manager_serializer_data:
+            template_version_manager_serializer_save:
+            template_version_manager_serializer_valid:
+            create_template_version_manager_serializer_data:
+            create_template_version_manager_serializer_save:
+            create_template_version_manager_serializer_valid:
+
+        Returns:
+
+        """
         create_template_version_manager_serializer_data.return_value = True
         create_template_version_manager_serializer_save.return_value = None
         create_template_version_manager_serializer_valid.return_value = {}
@@ -278,7 +418,14 @@ class TestUserTemplateListPostPermission(SimpleTestCase):
 
 
 class TestGlobalTemplateListPostPermission(SimpleTestCase):
+    """TestGlobalTemplateListPostPermission"""
+
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         response = RequestMock.do_request_post(
             template_version_manager_views.GlobalTemplateList.as_view(), None
         )
@@ -286,6 +433,11 @@ class TestGlobalTemplateListPostPermission(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_authenticated_returns_http_403(self):
+        """test_authenticated_returns_http_403
+
+        Returns:
+
+        """
         mock_user = create_mock_user("1")
 
         response = RequestMock.do_request_post(
@@ -311,6 +463,19 @@ class TestGlobalTemplateListPostPermission(SimpleTestCase):
         create_template_version_manager_serializer_save,
         create_template_version_manager_serializer_valid,
     ):
+        """test_staff_returns_http_201
+
+        Args:
+            template_version_manager_serializer_data:
+            template_version_manager_serializer_save:
+            template_version_manager_serializer_valid:
+            create_template_version_manager_serializer_data:
+            create_template_version_manager_serializer_save:
+            create_template_version_manager_serializer_valid:
+
+        Returns:
+
+        """
         create_template_version_manager_serializer_data.return_value = True
         create_template_version_manager_serializer_save.return_value = None
         create_template_version_manager_serializer_valid.return_value = {}
@@ -330,10 +495,22 @@ class TestGlobalTemplateListPostPermission(SimpleTestCase):
 
 
 class TestCurrentTemplateVersionPatchPermission(SimpleTestCase):
+    """TestCurrentTemplateVersionPatchPermission"""
+
     def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
         self.fake_id = "507f1f77bcf86cd799439011"
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         response = RequestMock.do_request_patch(
             template_version_manager_views.CurrentTemplateVersion.as_view(), None
         )
@@ -341,6 +518,11 @@ class TestCurrentTemplateVersionPatchPermission(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_authenticated_returns_http_403(self):
+        """test_authenticated_returns_http_403
+
+        Returns:
+
+        """
         mock_user = create_mock_user("1")
 
         response = RequestMock.do_request_patch(
@@ -358,6 +540,15 @@ class TestCurrentTemplateVersionPatchPermission(SimpleTestCase):
         template_get_by_id,
         version_manager_set_current,
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            template_get_by_id:
+            version_manager_set_current:
+
+        Returns:
+
+        """
         version_manager_set_current.return_value = {}
         # version_manager_get_from_version.return_value = VersionManager(user="1")
         template_get_by_id.return_value = Template(user="1")
@@ -374,10 +565,22 @@ class TestCurrentTemplateVersionPatchPermission(SimpleTestCase):
 
 
 class TestDisableTemplateVersionPatchPermission(SimpleTestCase):
+    """TestDisableTemplateVersionPatchPermission"""
+
     def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
         self.fake_id = "507f1f77bcf86cd799439011"
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         response = RequestMock.do_request_patch(
             template_version_manager_views.DisableTemplateVersion.as_view(),
             None,
@@ -387,6 +590,11 @@ class TestDisableTemplateVersionPatchPermission(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_authenticated_returns_http_403(self):
+        """test_authenticated_returns_http_403
+
+        Returns:
+
+        """
         mock_user = create_mock_user("1")
 
         response = RequestMock.do_request_patch(
@@ -404,6 +612,15 @@ class TestDisableTemplateVersionPatchPermission(SimpleTestCase):
         template_get_by_id,
         version_manager_disable_version,
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            template_get_by_id:
+            version_manager_disable_version:
+
+        Returns:
+
+        """
         version_manager_disable_version.return_value = TemplateVersionManager(user="1")
         template_get_by_id.return_value = Template(user="1")
 
@@ -419,10 +636,22 @@ class TestDisableTemplateVersionPatchPermission(SimpleTestCase):
 
 
 class TestRestoreTemplateVersionPatchPermission(SimpleTestCase):
+    """TestRestoreTemplateVersionPatchPermission"""
+
     def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
         self.fake_id = "507f1f77bcf86cd799439011"
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         response = RequestMock.do_request_patch(
             template_version_manager_views.RestoreTemplateVersion.as_view(),
             None,
@@ -432,6 +661,11 @@ class TestRestoreTemplateVersionPatchPermission(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_authenticated_returns_http_403(self):
+        """test_authenticated_returns_http_403
+
+        Returns:
+
+        """
         mock_user = create_mock_user("1")
 
         response = RequestMock.do_request_patch(
@@ -449,6 +683,15 @@ class TestRestoreTemplateVersionPatchPermission(SimpleTestCase):
         template_get_by_id,
         version_manager_restore_version,
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            template_get_by_id:
+            version_manager_restore_version:
+
+        Returns:
+
+        """
         version_manager_restore_version.return_value = {}
         template_get_by_id.return_value = Template(user="1")
 
@@ -464,10 +707,22 @@ class TestRestoreTemplateVersionPatchPermission(SimpleTestCase):
 
 
 class TestDisableTemplateVersionManagerPatchPermission(SimpleTestCase):
+    """TestDisableTemplateVersionManagerPatchPermission"""
+
     def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
         self.fake_id = "507f1f77bcf86cd799439011"
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         response = RequestMock.do_request_patch(
             template_version_manager_views.DisableTemplateVersionManager.as_view(),
             None,
@@ -481,6 +736,15 @@ class TestDisableTemplateVersionManagerPatchPermission(SimpleTestCase):
     def test_authenticated_returns_http_200(
         self, version_manager_disable, version_manager_get_by_id
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            version_manager_disable:
+            version_manager_get_by_id:
+
+        Returns:
+
+        """
         version_manager_get_by_id.return_value = TemplateVersionManager(user="1")
         version_manager_disable.return_value = {}
         mock_user = create_mock_user("1")
@@ -498,6 +762,15 @@ class TestDisableTemplateVersionManagerPatchPermission(SimpleTestCase):
     def test_staff_returns_http_200(
         self, version_manager_disable, version_manager_get_by_id
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            version_manager_disable:
+            version_manager_get_by_id:
+
+        Returns:
+
+        """
         version_manager_get_by_id.return_value = TemplateVersionManager(user="1")
         version_manager_disable.return_value = {}
 
@@ -513,10 +786,22 @@ class TestDisableTemplateVersionManagerPatchPermission(SimpleTestCase):
 
 
 class TestRestoreTemplateVersionManagerPatchPermission(SimpleTestCase):
+    """TestRestoreTemplateVersionManagerPatchPermission"""
+
     def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
         self.fake_id = "507f1f77bcf86cd799439011"
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         response = RequestMock.do_request_patch(
             template_version_manager_views.RestoreTemplateVersionManager.as_view(),
             None,
@@ -530,6 +815,15 @@ class TestRestoreTemplateVersionManagerPatchPermission(SimpleTestCase):
     def test_authenticated_returns_http_200(
         self, version_manager_get_by_id, version_manager_restore
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            version_manager_get_by_id:
+            version_manager_restore:
+
+        Returns:
+
+        """
         version_manager_restore.return_value = {}
         version_manager_get_by_id.return_value = TemplateVersionManager(user="1")
         mock_user = create_mock_user("1")
@@ -547,6 +841,15 @@ class TestRestoreTemplateVersionManagerPatchPermission(SimpleTestCase):
     def test_staff_returns_http_200(
         self, version_manager_get_by_id, version_manager_restore
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            version_manager_get_by_id:
+            version_manager_restore:
+
+        Returns:
+
+        """
         version_manager_restore.return_value = {}
         version_manager_get_by_id.return_value = TemplateVersionManager(user="1")
 

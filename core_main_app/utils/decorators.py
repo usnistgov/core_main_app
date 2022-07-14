@@ -15,7 +15,7 @@ from django.shortcuts import resolve_url
 from rest_framework import status
 from rest_framework.response import Response
 
-import core_main_app.permissions.rights as rights
+from core_main_app.permissions import rights
 
 
 @receiver(post_save, sender=User)

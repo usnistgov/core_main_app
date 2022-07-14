@@ -6,8 +6,8 @@ from unittest.case import TestCase
 
 from mock import patch
 
-import core_main_app.components.data.api as data_api
 from core_main_app.commons import exceptions
+from core_main_app.components.data import api as data_api
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
@@ -15,8 +15,18 @@ from core_main_app.utils.tests_tools.RequestMock import create_mock_request
 
 
 class TestDataGetById(TestCase):
+    """TestDataGetById"""
+
     @patch.object(Data, "get_by_id")
     def test_data_get_by_id_raises_api_error_if_not_found(self, mock_get):
+        """test_data_get_by_id_raises_api_error_if_not_found
+
+        Args:
+            mock_get:
+
+        Returns:
+
+        """
         # Arrange
         mock_get.side_effect = exceptions.DoesNotExist("")
         mock_user = create_mock_user("1")
@@ -26,6 +36,14 @@ class TestDataGetById(TestCase):
 
     @patch.object(Data, "get_by_id")
     def test_data_get_by_id_return_data_if_found(self, mock_get):
+        """test_data_get_by_id_return_data_if_found
+
+        Args:
+            mock_get:
+
+        Returns:
+
+        """
         # Arrange
         mock_data = Data(
             template=_get_template(),
@@ -42,12 +60,24 @@ class TestDataGetById(TestCase):
 
 
 class TestDataUpsert(TestCase):
+    """TestDataUpsert"""
+
     @patch.object(Data, "convert_to_file")
     @patch.object(data_api, "check_xml_file_is_valid")
     @patch.object(Data, "save")
     def test_data_upsert_return_data_with_new_title_if_is_called_with_only_title_modified(
         self, mock_save, mock_check, mock_convert_file
     ):
+        """test_data_upsert_return_data_with_new_title_if_is_called_with_only_title_modified
+
+        Args:
+            mock_save:
+            mock_check:
+            mock_convert_file:
+
+        Returns:
+
+        """
         # Arrange
         data = _create_data(
             _get_template(), user_id="2", title="new_title", content="<tag></tag>"
@@ -68,6 +98,16 @@ class TestDataUpsert(TestCase):
     def test_data_upsert_return_data_with_new_user_id_if_is_called_with_only_user_id_modified(
         self, mock_save, mock_check, mock_convert_file
     ):
+        """test_data_upsert_return_data_with_new_user_id_if_is_called_with_only_user_id_modified
+
+        Args:
+            mock_save:
+            mock_check:
+            mock_convert_file:
+
+        Returns:
+
+        """
         # Arrange
         data = _create_data(
             _get_template(), user_id="3", title="new_title", content="<tag></tag>"
@@ -88,6 +128,16 @@ class TestDataUpsert(TestCase):
     def test_data_upsert_return_data_with_new_xml_if_is_called_with_only_xml_modified(
         self, mock_save, mock_check, mock_convert_file
     ):
+        """test_data_upsert_return_data_with_new_xml_if_is_called_with_only_xml_modified
+
+        Args:
+            mock_save:
+            mock_check:
+            mock_convert_file:
+
+        Returns:
+
+        """
         # Arrange
         xml = "<new_tag></new_tag>"
         data = _create_data(_get_template(), user_id="3", title="title", content=xml)
@@ -107,6 +157,16 @@ class TestDataUpsert(TestCase):
     def test_data_upsert_return_data_with_last_modification_date(
         self, mock_save, mock_check, mock_convert_file
     ):
+        """test_data_upsert_return_data_with_last_modification_date
+
+        Args:
+            mock_save:
+            mock_check:
+            mock_convert_file:
+
+        Returns:
+
+        """
         # Arrange
         data = _create_data(
             _get_template(), user_id="3", title="title", content="<tag></tag>"
@@ -127,6 +187,16 @@ class TestDataUpsert(TestCase):
     def test_data_upsert_updates_last_modification_date(
         self, mock_save, mock_check, mock_convert_file
     ):
+        """test_data_upsert_updates_last_modification_date
+
+        Args:
+            mock_save:
+            mock_check:
+            mock_convert_file:
+
+        Returns:
+
+        """
         # Arrange
         data = _create_data(
             _get_template(), user_id="3", title="title", content="<tag></tag>"
@@ -144,6 +214,11 @@ class TestDataUpsert(TestCase):
         self.assertNotEqual(creation_date, data.last_modification_date)
 
     def test_data_upsert_raises_xml_error_if_failed_during_xml_validation(self):
+        """test_data_upsert_raises_xml_error_if_failed_during_xml_validation
+
+        Returns:
+
+        """
         # Arrange
         data = _create_data(_get_template(), user_id="3", title="title", content="")
         mock_user = create_mock_user("3")
@@ -153,6 +228,11 @@ class TestDataUpsert(TestCase):
             data_api.upsert(data, mock_request)
 
     def test_data_upsert_raises_xsd_error_if_failed_during_xsd_validation(self):
+        """test_data_upsert_raises_xsd_error_if_failed_during_xsd_validation
+
+        Returns:
+
+        """
         # Arrange
         template = _get_template()
         template.content += "<"
@@ -166,6 +246,11 @@ class TestDataUpsert(TestCase):
             data_api.upsert(data, mock_request)
 
     def test_data_upsert_raises_xml_error_if_failed_during_validation(self):
+        """test_data_upsert_raises_xml_error_if_failed_during_validation
+
+        Returns:
+
+        """
         # Arrange
         template = _get_template()
         data = _create_data(
@@ -179,12 +264,24 @@ class TestDataUpsert(TestCase):
 
 
 class TestAdminDataInsert(TestCase):
+    """TestAdminDataInsert"""
+
     @patch.object(Data, "convert_to_file")
     @patch.object(data_api, "check_xml_file_is_valid")
     @patch.object(Data, "save")
     def test_data_admin_insert_sets_custom_last_modification_date_if_provided(
         self, mock_save, mock_check, mock_convert_file
     ):
+        """test_data_admin_insert_sets_custom_last_modification_date_if_provided
+
+        Args:
+            mock_save:
+            mock_check:
+            mock_convert_file:
+
+        Returns:
+
+        """
         # Arrange
         data = _create_data(
             _get_template(), user_id="3", title="title", content="<tag></tag>"
@@ -207,6 +304,16 @@ class TestAdminDataInsert(TestCase):
     def test_data_admin_insert_sets_last_modification_date_if_not_provided(
         self, mock_save, mock_check, mock_convert_file
     ):
+        """test_data_admin_insert_sets_last_modification_date_if_not_provided
+
+        Args:
+            mock_save:
+            mock_check:
+            mock_convert_file:
+
+        Returns:
+
+        """
         # Arrange
         data = _create_data(
             _get_template(), user_id="3", title="title", content="<tag></tag>"
@@ -227,6 +334,16 @@ class TestAdminDataInsert(TestCase):
     def test_data_admin_insert_sets_custom_creation_date_if_provided(
         self, mock_save, mock_check, mock_convert_file
     ):
+        """test_data_admin_insert_sets_custom_creation_date_if_provided
+
+        Args:
+            mock_save:
+            mock_check:
+            mock_convert_file:
+
+        Returns:
+
+        """
         # Arrange
         data = _create_data(
             _get_template(), user_id="3", title="title", content="<tag></tag>"
@@ -249,6 +366,16 @@ class TestAdminDataInsert(TestCase):
     def test_data_admin_insert_sets_creation_date_if_not_provided(
         self, mock_save, mock_check, mock_convert_file
     ):
+        """test_data_admin_insert_sets_creation_date_if_not_provided
+
+        Args:
+            mock_save:
+            mock_check:
+            mock_convert_file:
+
+        Returns:
+
+        """
         # Arrange
         data = _create_data(
             _get_template(), user_id="3", title="title", content="<tag></tag>"
@@ -269,6 +396,16 @@ class TestAdminDataInsert(TestCase):
     def test_data_admin_insert_sets_custom_last_change_date_if_provided(
         self, mock_save, mock_check, mock_convert_file
     ):
+        """test_data_admin_insert_sets_custom_last_change_date_if_provided
+
+        Args:
+            mock_save:
+            mock_check:
+            mock_convert_file:
+
+        Returns:
+
+        """
         # Arrange
         data = _create_data(
             _get_template(), user_id="3", title="title", content="<tag></tag>"
@@ -288,9 +425,19 @@ class TestAdminDataInsert(TestCase):
     @patch.object(Data, "convert_to_file")
     @patch.object(data_api, "check_xml_file_is_valid")
     @patch.object(Data, "save")
-    def test_data_admin_insert_sets_last_chnage_date_if_not_provided(
+    def test_data_admin_insert_sets_last_change_date_if_not_provided(
         self, mock_save, mock_check, mock_convert_file
     ):
+        """test_data_admin_insert_sets_last_change_date_if_not_provided
+
+        Args:
+            mock_save:
+            mock_check:
+            mock_convert_file:
+
+        Returns:
+
+        """
         # Arrange
         data = _create_data(
             _get_template(), user_id="3", title="title", content="<tag></tag>"
@@ -307,9 +454,16 @@ class TestAdminDataInsert(TestCase):
 
 
 class TestDataCheckXmlFileIsValid(TestCase):
+    """TestDataCheckXmlFileIsValid"""
+
     def test_data_check_xml_file_is_valid_raises_xml_error_if_failed_during_xml_validation(
         self,
     ):
+        """test_data_check_xml_file_is_valid_raises_xml_error_if_failed_during_xml_validation
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("3")
         mock_request = create_mock_request(user=user)
@@ -321,6 +475,11 @@ class TestDataCheckXmlFileIsValid(TestCase):
     def test_data_check_xml_file_is_valid_raises_xsd_error_if_failed_during_xsd_validation(
         self,
     ):
+        """test_data_check_xml_file_is_valid_raises_xsd_error_if_failed_during_xsd_validation
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("3")
         mock_request = create_mock_request(user=user)
@@ -336,6 +495,11 @@ class TestDataCheckXmlFileIsValid(TestCase):
     def test_data_check_xml_file_is_valid_raises_xml_error_if_failed_during_validation(
         self,
     ):
+        """test_data_check_xml_file_is_valid_raises_xml_error_if_failed_during_validation
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("3")
         mock_request = create_mock_request(user=user)
@@ -348,6 +512,11 @@ class TestDataCheckXmlFileIsValid(TestCase):
             data_api.check_xml_file_is_valid(data, request=mock_request)
 
     def test_data_check_xml_data_valid_return_true_if_validation_success(self):
+        """test_data_check_xml_data_valid_return_true_if_validation_success
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("3")
         mock_request = create_mock_request(user=mock_user)
@@ -362,12 +531,24 @@ class TestDataCheckXmlFileIsValid(TestCase):
 
 
 class TestTimes(TestCase):
+    """TestTimes"""
+
     @patch.object(Data, "convert_to_file")
     @patch.object(data_api, "check_xml_file_is_valid")
     @patch.object(Data, "save")
     def test_data_upsert_init_last_modification_date(
         self, mock_save, mock_check, mock_convert_file
     ):
+        """test_data_upsert_init_last_modification_date
+
+        Args:
+            mock_save:
+            mock_check:
+            mock_convert_file:
+
+        Returns:
+
+        """
         # Arrange
         data = _create_data(
             _get_template(), user_id="3", title="title", content="<tag></tag>"
@@ -388,6 +569,16 @@ class TestTimes(TestCase):
     def test_data_upsert_init_last_change_date(
         self, mock_save, mock_check, mock_convert_file
     ):
+        """test_data_upsert_init_last_change_date
+
+        Args:
+            mock_save:
+            mock_check:
+            mock_convert_file:
+
+        Returns:
+
+        """
         # Arrange
         data = _create_data(
             _get_template(), user_id="3", title="title", content="<tag></tag>"
@@ -408,6 +599,16 @@ class TestTimes(TestCase):
     def test_data_upsert_init_creation_date(
         self, mock_save, mock_check, mock_convert_file
     ):
+        """test_data_upsert_init_creation_date
+
+        Args:
+            mock_save:
+            mock_check:
+            mock_convert_file:
+
+        Returns:
+
+        """
         # Arrange
         data = _create_data(
             _get_template(), user_id="3", title="title", content="<tag></tag>"
@@ -428,6 +629,16 @@ class TestTimes(TestCase):
     def test_data_edit_content_updates_last_modification_date(
         self, mock_save, mock_check, mock_convert_file
     ):
+        """test_data_edit_content_updates_last_modification_date
+
+        Args:
+            mock_save:
+            mock_check:
+            mock_convert_file:
+
+        Returns:
+
+        """
         # Arrange
         data = _create_data(
             _get_template(), user_id="3", title="title", content="<tag></tag>"
@@ -453,6 +664,16 @@ class TestTimes(TestCase):
     def test_data_edit_metadata_does_not_update_last_modification_date(
         self, mock_save, mock_check, mock_convert_file
     ):
+        """test_data_edit_metadata_does_not_update_last_modification_date
+
+        Args:
+            mock_save:
+            mock_check:
+            mock_convert_file:
+
+        Returns:
+
+        """
         # Arrange
         data = _create_data(
             _get_template(), user_id="3", title="title", content="<tag></tag>"
@@ -478,6 +699,16 @@ class TestTimes(TestCase):
     def test_data_edit_metadata_updates_last_change_date(
         self, mock_save, mock_check, mock_convert_file
     ):
+        """test_data_edit_metadata_updates_last_change_date
+
+        Args:
+            mock_save:
+            mock_check:
+            mock_convert_file:
+
+        Returns:
+
+        """
         # Arrange
         data = _create_data(
             _get_template(), user_id="3", title="title", content="<tag></tag>"
@@ -503,6 +734,16 @@ class TestTimes(TestCase):
     def test_data_edit_does_not_updates_creation_date(
         self, mock_save, mock_check, mock_convert_file
     ):
+        """test_data_edit_does_not_updates_creation_date
+
+        Args:
+            mock_save:
+            mock_check:
+            mock_convert_file:
+
+        Returns:
+
+        """
         # Arrange
         data = _create_data(
             _get_template(), user_id="3", title="title", content="<tag></tag>"
@@ -524,6 +765,11 @@ class TestTimes(TestCase):
 
 
 def _get_template():
+    """_get_template
+
+    Returns:
+
+    """
     template = Template()
     template.id_field = 1
     xsd = (
@@ -535,6 +781,18 @@ def _get_template():
 
 
 def _create_data(template, user_id, title, content, data_id=None):
+    """_create_data
+
+    Args:
+        template:
+        user_id:
+        title:
+        content:
+        data_id:
+
+    Returns:
+
+    """
     data = Data(template=template, user_id=user_id, title=title, id=data_id)
     data.xml_content = content
     return data

@@ -10,7 +10,7 @@ from core_main_app.components.workspace.models import Workspace
 class WorkspaceSerializer(ModelSerializer):
     """Workspace serializer"""
 
-    class Meta(object):
+    class Meta:
         """Meta"""
 
         model = Workspace

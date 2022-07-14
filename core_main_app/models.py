@@ -14,7 +14,9 @@ class Main(models.Model):
         Meta.permissions (:py:class:`list`): Default set of permissions bundled with the app.
     """
 
-    class Meta(object):
+    class Meta:
+        """Meta"""
+
         verbose_name = "core_main_app"
         default_permissions = ()
         permissions = (

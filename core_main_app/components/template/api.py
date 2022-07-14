@@ -191,8 +191,6 @@ def _register_local_dependencies(template, request):
             template.dependencies.add(dependency_object)
         except exceptions.DoesNotExist as e:
             logger.warning(
-                "Dependency {0} throw an exception: {1}".format(
-                    local_dependency, str(e)
-                )
+                f"Dependency {local_dependency} throw an exception: {str(e)}"
             )
     template.save()

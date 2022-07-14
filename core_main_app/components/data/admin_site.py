@@ -46,7 +46,7 @@ class UpdateActionForm(ActionForm):
             self.USERS_OPTIONS.append((user.id, user.username))
 
         # Init action form
-        super(UpdateActionForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         # Set choices
         self.fields["user_id"].choices = list()
         self.fields["user_id"].choices = self.USERS_OPTIONS
@@ -77,7 +77,7 @@ def update_data_list(model_admin, request, queryset):
             # Check if user exists
             try:
                 user_api.get_user_by_id(user_id)
-            except DoesNotExist as ex:
+            except DoesNotExist:
                 model_admin.message_user(
                     request, "No user found with this id.", messages.WARNING
                 )
@@ -104,7 +104,7 @@ def update_data_list(model_admin, request, queryset):
                     if workspace is not None
                     else None
                 )
-            except DoesNotExist as ex:
+            except DoesNotExist:
                 model_admin.message_user(
                     request, "No workspace found with this id.", messages.WARNING
                 )

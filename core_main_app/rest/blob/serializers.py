@@ -2,20 +2,19 @@
     Serializers used throughout the Rest API
 """
 from os.path import join
+from urllib.parse import urljoin
 
 from django.http import Http404
+from django.urls import reverse
 from rest_framework.fields import CharField
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
-import core_main_app.components.blob.api as blob_api
+from core_main_app import settings
 from core_main_app.commons.exceptions import DoesNotExist
+from core_main_app.components.blob import api as blob_api
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.blob.utils import get_blob_download_uri
-
-from django.urls import reverse
-from core_main_app import settings
-from urllib.parse import urljoin
 
 
 class BlobSerializer(ModelSerializer):
@@ -26,7 +25,7 @@ class BlobSerializer(ModelSerializer):
     if "core_linked_records_app" in settings.INSTALLED_APPS:
         pid = SerializerMethodField()
 
-    class Meta(object):
+    class Meta:
         model = Blob
         fields = [
             "id",
@@ -131,7 +130,7 @@ class DeleteBlobsSerializer(ModelSerializer):
 
     id = CharField()
 
-    class Meta(object):
+    class Meta:
         model = Blob
         fields = ("id",)
 

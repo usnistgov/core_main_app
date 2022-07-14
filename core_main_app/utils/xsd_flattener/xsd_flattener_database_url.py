@@ -54,10 +54,8 @@ class XSDFlattenerDatabaseOrURL(XSDFlattenerRequestsURL):
                 # get template content
                 content = template.content
             except (exceptions.DoesNotExist, exceptions.ModelError, Exception):
-                content = super(XSDFlattenerDatabaseOrURL, self).get_dependency_content(
-                    uri
-                )
+                content = super().get_dependency_content(uri)
         else:
-            content = super(XSDFlattenerDatabaseOrURL, self).get_dependency_content(uri)
+            content = super().get_dependency_content(uri)
 
         return content

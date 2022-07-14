@@ -19,7 +19,7 @@ class MongoDataSerializer(Serializer):
     last_modification_date = serializers.DateTimeField(read_only=True)
     last_change_date = serializers.DateTimeField(read_only=True)
 
-    class Meta(object):
+    class Meta:
         """Meta"""
 
         fields = [

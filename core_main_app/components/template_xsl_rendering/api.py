@@ -44,15 +44,15 @@ def add_or_delete(
             list_detail_xslt,
             template_xsl_rendering_id,
         )
-    else:
-        try:
-            if template_xsl_rendering_id:
-                template_xsl_rendering = get_by_id(template_xsl_rendering_id)
-                delete(template_xsl_rendering)
 
-            return None
-        except Exception:
-            raise ApiError("An error occured while deleting the TemplateXSLRendering")
+    try:
+        if template_xsl_rendering_id:
+            template_xsl_rendering = get_by_id(template_xsl_rendering_id)
+            delete(template_xsl_rendering)
+
+        return None
+    except Exception:
+        raise ApiError("An error occurred while deleting the TemplateXSLRendering")
 
 
 def set_list_detail_xslt(template_xsl_rendering, list_detail_xslt):

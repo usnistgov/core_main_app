@@ -2,8 +2,8 @@
 """
 from rest_framework.serializers import CharField, ModelSerializer
 
-import core_main_app.components.xsl_transformation.api as xsl_api
 from core_main_app.commons.serializers import BasicSerializer
+from core_main_app.components.xsl_transformation import api as xsl_api
 from core_main_app.components.xsl_transformation.models import XslTransformation
 
 
@@ -14,7 +14,7 @@ class XslTransformationSerializer(ModelSerializer):
 
     content = CharField(required=True)
 
-    class Meta(object):
+    class Meta:
         model = XslTransformation
         fields = ["name", "filename", "checksum", "content"]
         read_only_fields = ["checksum"]

@@ -20,7 +20,7 @@ class EditTemplateForm(ModelForm):
         ),
     )
 
-    class Meta(object):
+    class Meta:
         model = TemplateVersionManager
         fields = ["title"]
 
@@ -33,7 +33,7 @@ class EditXSLTForm(ModelForm):
         ),
     )
 
-    class Meta(object):
+    class Meta:
         model = XslTransformation
         fields = ["name"]
 
@@ -44,7 +44,7 @@ class UploadTemplateForm(UploadForm):
     """
 
     def __init__(self, *args, **kwargs):
-        super(UploadTemplateForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["name"].label = "Enter Template name"
         self.fields["upload_file"].validators = [ExtensionValidator(".xsd")]
         self.fields["upload_file"].widget = forms.FileInput(attrs={"accept": ".xsd"})
@@ -82,7 +82,7 @@ class UploadXSLTForm(UploadForm):
     """
 
     def __init__(self, *args, **kwargs):
-        super(UploadXSLTForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["name"].label = "Enter XSLT name"
         self.fields["upload_file"].validators = [ExtensionValidator(".xsl")]
         self.fields["upload_file"].widget = forms.FileInput(
@@ -121,7 +121,7 @@ class TemplateXsltRenderingForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        super(TemplateXsltRenderingForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["list_detail_xslt"].choices = _get_xsl_transformation()
 
 

@@ -13,9 +13,9 @@ from rest_framework.permissions import (
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-import core_main_app.components.blob.api as blob_api
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
+from core_main_app.components.blob import api as blob_api
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.rest.blob.serializers import (
@@ -129,7 +129,7 @@ class BlobListAdmin(AbstractBlobList):
             - code: 500
               content: Internal server error
         """
-        return super(BlobListAdmin, self).get(request)
+        return super().get(request)
 
 
 class BlobList(AbstractBlobList):
@@ -173,7 +173,7 @@ class BlobList(AbstractBlobList):
             - code: 500
               content: Internal server error
         """
-        return super(BlobList, self).get(request)
+        return super().get(request)
 
     def post(self, request):
         """Create Blob

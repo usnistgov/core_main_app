@@ -14,11 +14,26 @@ from core_main_app.utils.tests_tools.RequestMock import RequestMock
 
 
 class TestGlobalTemplateVersionManagerList(SimpleTestCase):
+    """TestGlobalTemplateVersionManagerList"""
+
     def setUp(self):
-        super(TestGlobalTemplateVersionManagerList, self).setUp()
+        """setUp
+
+        Returns:
+
+        """
+        super().setUp()
 
     @patch.object(TemplateVersionManager, "get_global_version_managers")
     def test_get_all_returns_http_200(self, mock_get_all):
+        """test_get_all_returns_http_200
+
+        Args:
+            mock_get_all:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1")
         mock_get_all.return_value = []
@@ -33,11 +48,26 @@ class TestGlobalTemplateVersionManagerList(SimpleTestCase):
 
 
 class TestUserTemplateVersionManagerList(SimpleTestCase):
+    """TestUserTemplateVersionManagerList"""
+
     def setUp(self):
-        super(TestUserTemplateVersionManagerList, self).setUp()
+        """setUp
+
+        Returns:
+
+        """
+        super().setUp()
 
     @patch.object(TemplateVersionManager, "get_all_version_manager_by_user_id")
     def test_get_all_returns_http_200(self, mock_get_all):
+        """test_get_all_returns_http_200
+
+        Args:
+            mock_get_all:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1")
         mock_get_all.return_value = []
@@ -52,11 +82,26 @@ class TestUserTemplateVersionManagerList(SimpleTestCase):
 
 
 class TestTemplateVersionManagerDetail(SimpleTestCase):
+    """TestTemplateVersionManagerDetail"""
+
     def setUp(self):
-        super(TestTemplateVersionManagerDetail, self).setUp()
+        """setUp
+
+        Returns:
+
+        """
+        super().setUp()
 
     @patch.object(TemplateVersionManager, "get_by_id")
     def test_get_returns_http_200_when_data_exists(self, mock_get_by_id):
+        """test_get_returns_http_200_when_data_exists
+
+        Args:
+            mock_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_get_by_id.return_value = TemplateVersionManager()
@@ -70,6 +115,14 @@ class TestTemplateVersionManagerDetail(SimpleTestCase):
 
     @patch.object(TemplateVersionManager, "get_by_id")
     def test_get_returns_http_404_when_data_not_found(self, mock_get_by_id):
+        """test_get_returns_http_404_when_data_not_found
+
+        Args:
+            mock_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1")
         mock_get_by_id.side_effect = DoesNotExist("error")

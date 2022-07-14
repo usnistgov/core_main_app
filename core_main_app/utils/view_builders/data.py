@@ -22,9 +22,9 @@ def build_page(data_object, display_admin_version=False):
     """
     page_info = {
         "error": None,
-        "context": dict(),
-        "assets": dict(),
-        "modals": list(),
+        "context": {},
+        "assets": {},
+        "modals": [],
     }
 
     try:
@@ -124,17 +124,28 @@ def build_page(data_object, display_admin_version=False):
 
 
 def render_page(request, render_function, template, context):
-    if context["error"] is None:
-        return render_function(
-            request,
-            template,
-            context=context["context"],
-            assets=context["assets"],
-            modals=context["modals"],
-        )
-    else:
+    """render page
+
+    Args:
+        request:
+        render_function:
+        template:
+        context:
+
+    Returns:
+
+    """
+    if context["error"] is not None:
         return render_function(
             request,
             "core_main_app/common/commons/error.html",
             context={"error": context["error"]},
         )
+
+    return render_function(
+        request,
+        template,
+        context=context["context"],
+        assets=context["assets"],
+        modals=context["modals"],
+    )

@@ -3,7 +3,7 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
-import core_main_app.components.data.api as data_api
+from core_main_app.components.data import api as data_api
 from core_main_app.components.data.models import Data
 from core_main_app.components.template import api as template_api
 
@@ -28,7 +28,7 @@ class DataSerializer(ModelSerializer):
 
     xml_content = XMLContentField()
 
-    class Meta(object):
+    class Meta:
         """Meta"""
 
         model = Data
@@ -93,7 +93,7 @@ class DataSerializer(ModelSerializer):
 class DataWithTemplateInfoSerializer(ModelSerializer):
     """Data Full serializer"""
 
-    class Meta(object):
+    class Meta:
         """Meta"""
 
         model = Data

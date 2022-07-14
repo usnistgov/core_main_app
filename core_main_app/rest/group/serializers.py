@@ -7,7 +7,7 @@ from rest_framework import serializers
 class GroupSerializer(serializers.ModelSerializer):
     """Group serializer"""
 
-    class Meta(object):
+    class Meta:
         """Meta"""
 
         model = Group

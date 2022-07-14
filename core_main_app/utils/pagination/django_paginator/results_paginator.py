@@ -5,7 +5,7 @@ from django.core.paginator import PageNotAnInteger, EmptyPage, Paginator
 from core_main_app.settings import RESULTS_PER_PAGE
 
 
-class ResultsPaginator(object):
+class ResultsPaginator:
     @staticmethod
     def get_results(results_list, page, results_per_page=RESULTS_PER_PAGE):
         # Pagination

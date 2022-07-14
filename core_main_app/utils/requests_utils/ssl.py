@@ -41,22 +41,19 @@ def check_ssl_certificates_dir_setting(ssl_certificates_dir):
         if not exists(ssl_certificates_dir):
             logger.error(
                 "SSL_CERTIFICATES_DIR is set but the file or directory does not exist. "
-                "{0}".format(accepted_values_msg)
+                f"{accepted_values_msg}"
             )
             raise SSLError("SSL_CERTIFICATES_DIR improperly configured.")
-        else:
-            # if the path is a directory
-            if isdir(ssl_certificates_dir):
-                # if the directory is empty
-                if not listdir(ssl_certificates_dir):
-                    logger.error(
-                        "SSL_CERTIFICATES_DIR is set to an empty directory. {0}".format(
-                            accepted_values_msg
-                        )
-                    )
-                    raise SSLError("SSL_CERTIFICATES_DIR improperly configured.")
+        # if the path is a directory
+        if isdir(ssl_certificates_dir):
+            # if the directory is empty
+            if not listdir(ssl_certificates_dir):
+                logger.error(
+                    f"SSL_CERTIFICATES_DIR is set to an empty directory. {accepted_values_msg}"
+                )
+                raise SSLError("SSL_CERTIFICATES_DIR improperly configured.")
 
     # setting is not a boolean or a string
     else:
-        logger.error("SSL_CERTIFICATES_DIR: Bad value. {0}".format(accepted_values_msg))
+        logger.error(f"SSL_CERTIFICATES_DIR: Bad value. {accepted_values_msg}")
         raise SSLError("SSL_CERTIFICATES_DIR improperly configured.")

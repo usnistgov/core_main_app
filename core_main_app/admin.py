@@ -7,7 +7,6 @@ from django.urls import re_path
 from django.urls import reverse_lazy
 from django.views.generic.base import RedirectView
 
-import core_main_app.components.web_page_login.api as login_page_api
 from core_main_app.commons.enums import WEB_PAGE_TYPES
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.data.admin_site import CustomDataAdmin
@@ -18,6 +17,7 @@ from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
 )
 from core_main_app.components.template_xsl_rendering.models import TemplateXslRendering
+from core_main_app.components.web_page_login import api as login_page_api
 from core_main_app.components.workspace.models import Workspace
 from core_main_app.components.xsl_transformation.models import XslTransformation
 from core_main_app.utils.rendering import admin_render

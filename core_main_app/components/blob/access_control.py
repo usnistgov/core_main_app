@@ -2,9 +2,9 @@
 """
 import logging
 
-import core_main_app.permissions.rights as rights
 from core_main_app.access_control.api import has_perm_publish, can_write_in_workspace
 from core_main_app.access_control.exceptions import AccessControlError
+from core_main_app.permissions import rights
 
 logger = logging.getLogger(__name__)
 

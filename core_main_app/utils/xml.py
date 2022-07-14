@@ -9,16 +9,16 @@ from urllib.parse import urlparse
 import xmltodict
 from django.urls import reverse
 
-import core_main_app.commons.exceptions as exceptions
-import xml_utils.commons.constants as xml_utils_constants
-import xml_utils.commons.exceptions as xml_utils_exceptions
-import xml_utils.xml_validation.validation as xml_validation
+from core_main_app.commons import exceptions
 from core_main_app.commons.exceptions import XMLError
-from core_main_app.settings import XERCES_VALIDATION, SERVER_URI, XML_POST_PROCESSOR
+from core_main_app.settings import XERCES_VALIDATION, SERVER_URI
 from core_main_app.utils.resolvers.resolver_utils import lmxl_uri_resolver
 from core_main_app.utils.urls import get_template_download_pattern
 from xml_utils import xpath as xml_utils_xpath
+from xml_utils.commons import constants as xml_utils_constants
+from xml_utils.commons import exceptions as xml_utils_exceptions
 from xml_utils.commons.constants import XSL_NAMESPACE
+from xml_utils.xml_validation import validation as xml_validation
 from xml_utils.xsd_hash import xsd_hash
 from xml_utils.xsd_tree.operations.namespaces import get_namespaces
 from xml_utils.xsd_tree.xsd_tree import XSDTree
@@ -130,7 +130,7 @@ def has_xsl_namespace(xml_string):
     try:
         has_namespace = XSL_NAMESPACE in list(get_namespaces(xml_string).values())
     except Exception as e:
-        logger.warning("has_xsl_namespace threw an exception: ".format(str(e)))
+        logger.warning(f"has_xsl_namespace threw an exception: {str(e)}")
 
     return has_namespace
 
@@ -340,13 +340,9 @@ def get_imports_and_includes(xsd_string):
     """
     xsd_tree = XSDTree.build_tree(xsd_string)
     # get the imports
-    imports = xsd_tree.findall(
-        "{}import".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE)
-    )
+    imports = xsd_tree.findall(f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}import")
     # get the includes
-    includes = xsd_tree.findall(
-        "{}include".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE)
-    )
+    includes = xsd_tree.findall(f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}include")
     return imports, includes
 
 
@@ -363,12 +359,10 @@ def update_dependencies(xsd_string, dependencies):
     # build the tree
     xsd_tree = XSDTree.build_tree(xsd_string)
     # get the imports
-    xsd_imports = xsd_tree.findall(
-        "{}import".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE)
-    )
+    xsd_imports = xsd_tree.findall(f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}import")
     # get the includes
     xsd_includes = xsd_tree.findall(
-        "{}include".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE)
+        f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}include"
     )
 
     for schema_location, dependency_id in dependencies.items():
@@ -438,13 +432,9 @@ def _check_core_support(xsd_string):
     xsd_tree = XSDTree.build_tree(xsd_string)
 
     # get the imports
-    imports = xsd_tree.findall(
-        "{}import".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE)
-    )
+    imports = xsd_tree.findall(f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}import")
     # get the includes
-    includes = xsd_tree.findall(
-        "{}include".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE)
-    )
+    includes = xsd_tree.findall(f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}include")
 
     if len(imports) != 0 or len(includes) != 0:
         for el_import in imports:

@@ -47,7 +47,7 @@ class LoadFormChangeWorkspace(View):
             )
         except DoesNotExist as dne:
             return HttpResponseBadRequest(escape(str(dne)))
-        except Exception as e:
+        except Exception:
             return HttpResponseBadRequest("Something wrong happened.")
 
         context = {"assign_workspace_form": form}
@@ -156,7 +156,7 @@ def add_user_right_to_workspace(request):
         return HttpResponseBadRequest(escape(str(ace)))
     except DoesNotExist as dne:
         return HttpResponseBadRequest(escape(str(dne)))
-    except Exception as exc:
+    except Exception:
         return HttpResponseBadRequest("Something wrong happened.")
 
     return HttpResponse(json.dumps({}), content_type="application/javascript")
@@ -190,7 +190,7 @@ def switch_right(request):
         return HttpResponseBadRequest(escape(str(ace)))
     except DoesNotExist as dne:
         return HttpResponseBadRequest(escape(str(dne)))
-    except Exception as exc:
+    except Exception:
         return HttpResponseBadRequest("Something wrong happened.")
 
     return HttpResponse(json.dumps({}), content_type="application/javascript")
@@ -420,7 +420,7 @@ def add_group_right_to_workspace(request):
         return HttpResponseBadRequest(escape(str(ace)))
     except DoesNotExist as dne:
         return HttpResponseBadRequest(escape(str(dne)))
-    except Exception as exc:
+    except Exception:
         return HttpResponseBadRequest("Something wrong happened.")
 
     return HttpResponse(json.dumps({}), content_type="application/javascript")
@@ -452,7 +452,7 @@ class AssignView(View):
                 return HttpResponseBadRequest(
                     "The selected workspace does not exist anymore."
                 )
-            except Exception as exc:
+            except Exception:
                 return HttpResponseBadRequest("Something wrong happened.")
 
         for data_id in document_ids:
@@ -462,7 +462,7 @@ class AssignView(View):
                 )
             except AccessControlError as ace:
                 return HttpResponseForbidden(escape(str(ace)))
-            except Exception as exc:
+            except Exception:
                 return HttpResponseBadRequest("Something wrong happened.")
 
         return HttpResponse(json.dumps({}), content_type="application/javascript")

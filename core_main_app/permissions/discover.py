@@ -2,7 +2,7 @@
 """
 import logging
 
-import core_main_app.permissions.rights as rights
+from core_main_app.permissions import rights
 
 logger = logging.getLogger(__name__)
 

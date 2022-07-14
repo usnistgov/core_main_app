@@ -8,9 +8,22 @@ class GroupFixtures(FixtureInterface):
     """Group Fixture"""
 
     def insert_data(self):
+        """insert data
+
+        Returns:
+
+        """
         pass
 
     @staticmethod
     def create_group(name="name"):
+        """create group
+
+        Args:
+            name:
+
+        Returns:
+
+        """
         group, created = group_api.get_or_create(name=name)
         return group

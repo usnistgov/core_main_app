@@ -2,16 +2,16 @@
 """
 from django.template import loader
 
-import core_main_app.utils.notifications.tasks.task_mail as task
 from core_main_app.settings import SERVER_EMAIL, SEND_EMAIL_ASYNC
 from core_main_app.templatetags.stripjs import stripjs
+from core_main_app.utils.notifications.tasks import task_mail as task
 
 
 def send_mail_from_template(
     recipient_list,
     subject,
     path_to_template,
-    context={},
+    context=None,
     fail_silently=True,
     sender=SERVER_EMAIL,
 ):
@@ -29,6 +29,8 @@ def send_mail_from_template(
 
     """
     # Render the given template with context information
+    if context is None:
+        context = {}
     template = loader.get_template(path_to_template)
     body = template.render(context)
     _send_email(
@@ -107,7 +109,7 @@ def _send_email(recipient_list, subject, body, fail_silently, sender):
 
 
 def send_mail_to_administrators(
-    subject, path_to_template, context={}, fail_silently=True
+    subject, path_to_template, context=None, fail_silently=True
 ):
     """Send email to administrators.
 
@@ -120,6 +122,8 @@ def send_mail_to_administrators(
     Returns:
 
     """
+    if context is None:
+        context = {}
     if SEND_EMAIL_ASYNC:
         # Async call. Use celery
         task.send_mail_to_administrators.apply_async(
@@ -132,7 +136,7 @@ def send_mail_to_administrators(
         )
 
 
-def send_mail_to_managers(subject, path_to_template, context={}, fail_silently=True):
+def send_mail_to_managers(subject, path_to_template, context=None, fail_silently=True):
     """Send email to managers.
 
     Args:
@@ -144,6 +148,8 @@ def send_mail_to_managers(subject, path_to_template, context={}, fail_silently=T
     Returns:
 
     """
+    if context is None:
+        context = {}
     if SEND_EMAIL_ASYNC:
         # Async call. Use celery
         task.send_mail_to_managers.apply_async(

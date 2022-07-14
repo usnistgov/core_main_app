@@ -22,7 +22,7 @@ def is_object_locked(object, user):
         lock = Lock.acquire()
         _check_object_locked(object, user, lock)
         return False
-    except LockError as ler:
+    except LockError:
         return True
     finally:
         Lock.release()
@@ -59,7 +59,7 @@ def remove_lock_on_object(object, user):
         if database_lock_object.user_id == str(user.id):
             lock.remove_lock(database_lock_object)
     except Exception as e:
-        logger.warning("remove_lock_on_object threw an exception: ".format(str(e)))
+        logger.warning(f"remove_lock_on_object threw an exception: {str(e)}")
     finally:
         Lock.release()
 

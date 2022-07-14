@@ -11,7 +11,14 @@ from core_main_app.utils.query.mongo.prepare import (
 
 
 class TestCompileRegex(TestCase):
+    """TestCompileRegex"""
+
     def test_query_with_regex_returns_query_with_compiled_regex(self):
+        """test query with regex returns query with compiled regex
+
+        Returns:
+
+        """
         # set query
         query = {"dot.notation": "/regex/"}
         # compile regex
@@ -22,6 +29,11 @@ class TestCompileRegex(TestCase):
     def test_query_with_regex_on_multiple_levels_returns_query_with_compiled_regex(
         self,
     ):
+        """test query with regex on multiple levels returns query with compiled regex
+
+        Returns:
+
+        """
         # set query
         query = {
             "$and": [
@@ -56,6 +68,11 @@ class TestCompileRegex(TestCase):
         )
 
     def test_query_without_regex_returns_same_query(self):
+        """test query without regex returns same query
+
+        Returns:
+
+        """
         # set query
         query = {"dot.notation": {"$gt": 0}}
         # save original query
@@ -63,9 +80,14 @@ class TestCompileRegex(TestCase):
         # compile regex
         _compile_regex(query)
         # assert
-        self.assertEquals(query, query_origin)
+        self.assertEqual(query, query_origin)
 
     def test_query_without_regex_on_multiple_levels_returns_same_query(self):
+        """test query without regex on multiple levels returns same query
+
+        Returns:
+
+        """
         # set query
         query = {
             "$or": [{"dot.notation": {"$gt": 0}}, {"dot.notation.#text": {"$gt": 0}}]
@@ -75,11 +97,18 @@ class TestCompileRegex(TestCase):
         # compile regex
         _compile_regex(query)
         # assert
-        self.assertEquals(query, query_origin)
+        self.assertEqual(query, query_origin)
 
 
 class TestAddSubDocumentRoot(TestCase):
+    """TestAddSubDocumentRoot"""
+
     def test_add_sub_document_root_to_query(self):
+        """test add sub document root to query
+
+        Returns:
+
+        """
         # set query
         query = {"dot.notation": "test"}
         # set expected query
@@ -87,9 +116,14 @@ class TestAddSubDocumentRoot(TestCase):
         # compile regex
         _add_sub_document_root(query, "root")
         # assert
-        self.assertEquals(query, expected_query)
+        self.assertEqual(query, expected_query)
 
     def test_add_sub_document_root_to_and_query(self):
+        """test add sub document root to and query
+
+        Returns:
+
+        """
         # set query
         query = {
             "$and": [{"dot.notation": {"$gt": 0}}, {"dot.notation.#text": {"$gt": 0}}]
@@ -104,9 +138,14 @@ class TestAddSubDocumentRoot(TestCase):
         # compile regex
         _add_sub_document_root(query, "root")
         # assert
-        self.assertEquals(query, expected_query)
+        self.assertEqual(query, expected_query)
 
     def test_add_sub_document_root_to_or_query(self):
+        """test add sub document root to or query
+
+        Returns:
+
+        """
         # set query
         query = {
             "$or": [{"dot.notation": {"$gt": 0}}, {"dot.notation.#text": {"$gt": 0}}]
@@ -121,9 +160,14 @@ class TestAddSubDocumentRoot(TestCase):
         # compile regex
         _add_sub_document_root(query, "root")
         # assert
-        self.assertEquals(query, expected_query)
+        self.assertEqual(query, expected_query)
 
     def test_add_sub_document_root_to_and_or_query(self):
+        """test add sub document root to and or query
+
+        Returns:
+
+        """
         # set query
         query = {
             "$and": [
@@ -161,4 +205,4 @@ class TestAddSubDocumentRoot(TestCase):
         # compile regex
         _add_sub_document_root(query, "root")
         # assert
-        self.assertEquals(query, expected_query)
+        self.assertEqual(query, expected_query)

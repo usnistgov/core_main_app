@@ -2,7 +2,7 @@
 """
 import logging
 
-import core_main_app.permissions.rights as rights
+from core_main_app.permissions import rights as rights
 from core_main_app.access_control.api import (
     has_perm_publish,
     check_can_read_list,

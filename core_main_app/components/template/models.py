@@ -171,8 +171,7 @@ class Template(Version):
         """
         if self._display_name is not None:
             return self._display_name
-        else:
-            return self.filename
+        return self.filename
 
     @display_name.setter
     def display_name(self, value):

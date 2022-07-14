@@ -93,7 +93,7 @@ def _create_perm(name, content_type, codename):
         )
     except IntegrityError:
         raise exceptions.NotUniqueError("The permission already exists.")
-    except Exception as ie:
+    except Exception:
         raise exceptions.ModelError("Problem while creating the permission.")
 
     if not created:
@@ -171,18 +171,17 @@ def get_all_workspace_permissions_user_can_write(user):
                 codename__startswith=CAN_WRITE_CODENAME,
             )
         ]
-    elif user.is_anonymous:
+    if user.is_anonymous:
         # No permissions.
         return []
-    else:
-        return [
-            str(perm.id)
-            for perm in Permission.objects.filter(
-                (Q(user=user) | Q(group__in=user.groups.all())),
-                content_type__app_label=CONTENT_TYPE_APP_LABEL,
-                codename__startswith=CAN_WRITE_CODENAME,
-            )
-        ]
+    return [
+        str(perm.id)
+        for perm in Permission.objects.filter(
+            (Q(user=user) | Q(group__in=user.groups.all())),
+            content_type__app_label=CONTENT_TYPE_APP_LABEL,
+            codename__startswith=CAN_WRITE_CODENAME,
+        )
+    ]
 
 
 def get_all_workspace_permissions_user_can_read(user):
@@ -202,7 +201,7 @@ def get_all_workspace_permissions_user_can_read(user):
                 codename__startswith=CAN_READ_CODENAME,
             )
         ]
-    elif user.is_anonymous:
+    if user.is_anonymous:
         return [
             str(perm.id)
             for perm in Permission.objects.filter(
@@ -211,15 +210,14 @@ def get_all_workspace_permissions_user_can_read(user):
                 codename__startswith=CAN_READ_CODENAME,
             )
         ]
-    else:
-        return [
-            str(perm.id)
-            for perm in Permission.objects.filter(
-                (Q(user=user) | Q(group__in=user.groups.all())),
-                content_type__app_label=CONTENT_TYPE_APP_LABEL,
-                codename__startswith=CAN_READ_CODENAME,
-            )
-        ]
+    return [
+        str(perm.id)
+        for perm in Permission.objects.filter(
+            (Q(user=user) | Q(group__in=user.groups.all())),
+            content_type__app_label=CONTENT_TYPE_APP_LABEL,
+            codename__startswith=CAN_READ_CODENAME,
+        )
+    ]
 
 
 def get_by_id(permission_id):
@@ -245,7 +243,7 @@ def delete_permission(permission_id):
         perm = get_by_id(permission_id)
         perm.delete()
     except Exception as e:
-        logger.warning("delete_permission threw an exception: ".format(str(e)))
+        logger.warning(f"delete_permission threw an exception: {str(e)}")
 
 
 def get_permission_label(permission_id):

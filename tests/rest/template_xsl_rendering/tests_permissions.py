@@ -18,7 +18,14 @@ from core_main_app.utils.tests_tools.RequestMock import RequestMock
 
 
 class TestTemplateXslRenderingListGetPermission(SimpleTestCase):
+    """TestTemplateXslRenderingListGetPermission"""
+
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         response = RequestMock.do_request_get(
             template_xsl_rendering_views.TemplateXslRenderingList.as_view(), None
         )
@@ -29,6 +36,14 @@ class TestTemplateXslRenderingListGetPermission(SimpleTestCase):
     def test_authenticated_returns_http_200(
         self, mock_template_xsl_rendering_api_get_all
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            mock_template_xsl_rendering_api_get_all:
+
+        Returns:
+
+        """
         mock_template_xsl_rendering_api_get_all.return_value = {}
 
         mock_user = create_mock_user("1")
@@ -41,6 +56,14 @@ class TestTemplateXslRenderingListGetPermission(SimpleTestCase):
 
     @patch.object(template_xsl_rendering_api, "get_all")
     def test_staff_returns_http_200(self, mock_template_xsl_rendering_api_get_all):
+        """test_staff_returns_http_200
+
+        Args:
+            mock_template_xsl_rendering_api_get_all:
+
+        Returns:
+
+        """
         mock_template_xsl_rendering_api_get_all.return_value = {}
 
         mock_user = create_mock_user("1", is_staff=True)
@@ -53,7 +76,14 @@ class TestTemplateXslRenderingListGetPermission(SimpleTestCase):
 
 
 class TestTemplateXslRenderingListPostPermission(SimpleTestCase):
+    """TestTemplateXslRenderingListPostPermission"""
+
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         response = RequestMock.do_request_post(
             template_xsl_rendering_views.TemplateXslRenderingList.as_view(),
             None,
@@ -75,6 +105,16 @@ class TestTemplateXslRenderingListPostPermission(SimpleTestCase):
         mock_template_xsl_rendering_serializer_is_valid,
         mock_template_xsl_rendering_serializer_save,
     ):
+        """test_authenticated_returns_http_201
+
+        Args:
+            mock_template_xsl_rendering_serializer_data:
+            mock_template_xsl_rendering_serializer_is_valid:
+            mock_template_xsl_rendering_serializer_save:
+
+        Returns:
+
+        """
         mock_template_xsl_rendering_serializer_save.return_value = None
         mock_template_xsl_rendering_serializer_is_valid.return_value = True
         mock_template_xsl_rendering_serializer_data.return_value = {}
@@ -101,6 +141,16 @@ class TestTemplateXslRenderingListPostPermission(SimpleTestCase):
         mock_template_xsl_rendering_serializer_is_valid,
         mock_template_xsl_rendering_serializer_save,
     ):
+        """test_staff_returns_http_201
+
+        Args:
+            mock_template_xsl_rendering_serializer_data:
+            mock_template_xsl_rendering_serializer_is_valid:
+            mock_template_xsl_rendering_serializer_save:
+
+        Returns:
+
+        """
         mock_template_xsl_rendering_serializer_save.return_value = None
         mock_template_xsl_rendering_serializer_is_valid.return_value = True
         mock_template_xsl_rendering_serializer_data.return_value = {}
@@ -120,7 +170,14 @@ class TestTemplateXslRenderingListPostPermission(SimpleTestCase):
 
 
 class TestTemplateXslRenderingDetailGetPermission(SimpleTestCase):
+    """TestTemplateXslRenderingDetailGetPermission"""
+
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         response = RequestMock.do_request_get(
             template_xsl_rendering_views.TemplateXslRenderingDetail.as_view(),
             None,
@@ -136,6 +193,15 @@ class TestTemplateXslRenderingDetailGetPermission(SimpleTestCase):
         mock_template_xsl_rendering_api_get_by_id,
         mock_template_xsl_serializer_data,
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            mock_template_xsl_rendering_api_get_by_id:
+            mock_template_xsl_serializer_data:
+
+        Returns:
+
+        """
         mock_template_xsl_serializer_data.return_value = {}
         mock_template_xsl_rendering_api_get_by_id.return_value = Mock()
         mock_user = create_mock_user("1")
@@ -155,6 +221,15 @@ class TestTemplateXslRenderingDetailGetPermission(SimpleTestCase):
         mock_template_xsl_rendering_api_get_by_id,
         mock_template_xsl_serializer_data,
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            mock_template_xsl_rendering_api_get_by_id:
+            mock_template_xsl_serializer_data:
+
+        Returns:
+
+        """
         mock_template_xsl_serializer_data.return_value = {}
         mock_template_xsl_rendering_api_get_by_id.return_value = Mock()
         mock_user = create_mock_user("1", is_staff=True)
@@ -169,7 +244,14 @@ class TestTemplateXslRenderingDetailGetPermission(SimpleTestCase):
 
 
 class TestTemplateXslRenderingDetailPatchPermission(SimpleTestCase):
+    """TestTemplateXslRenderingDetailPatchPermission"""
+
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         response = RequestMock.do_request_patch(
             template_xsl_rendering_views.TemplateXslRenderingDetail.as_view(),
             None,
@@ -190,6 +272,17 @@ class TestTemplateXslRenderingDetailPatchPermission(SimpleTestCase):
         mock_template_xsl_rendering_serializer_save,
         mock_template_xsl_rendering_api_get_by_id,
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            mock_template_xsl_rendering_serializer_data:
+            mock_template_xsl_rendering_serializer_is_valid:
+            mock_template_xsl_rendering_serializer_save:
+            mock_template_xsl_rendering_api_get_by_id:
+
+        Returns:
+
+        """
         mock_template_xsl_rendering_api_get_by_id.return_value = {}
         mock_template_xsl_rendering_serializer_save.return_value = None
         mock_template_xsl_rendering_serializer_is_valid.return_value = True
@@ -216,6 +309,17 @@ class TestTemplateXslRenderingDetailPatchPermission(SimpleTestCase):
         mock_template_xsl_rendering_serializer_save,
         mock_template_xsl_rendering_api_get_by_id,
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            mock_template_xsl_rendering_serializer_data:
+            mock_template_xsl_rendering_serializer_is_valid:
+            mock_template_xsl_rendering_serializer_save:
+            mock_template_xsl_rendering_api_get_by_id:
+
+        Returns:
+
+        """
         mock_template_xsl_rendering_api_get_by_id.return_value = {}
         mock_template_xsl_rendering_serializer_save.return_value = None
         mock_template_xsl_rendering_serializer_is_valid.return_value = True
@@ -236,7 +340,14 @@ class TestTemplateXslRenderingDetailPatchPermission(SimpleTestCase):
 
 
 class TestTemplateXslRenderingDetailDeletePermission(SimpleTestCase):
+    """TestTemplateXslRenderingDetailDeletePermission"""
+
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         response = RequestMock.do_request_delete(
             template_xsl_rendering_views.TemplateXslRenderingDetail.as_view(),
             None,
@@ -252,6 +363,15 @@ class TestTemplateXslRenderingDetailDeletePermission(SimpleTestCase):
         mock_template_xsl_rendering_api_get_by_id,
         mock_template_xsl_rendering_api_delete,
     ):
+        """test_authenticated_returns_http_204
+
+        Args:
+            mock_template_xsl_rendering_api_get_by_id:
+            mock_template_xsl_rendering_api_delete:
+
+        Returns:
+
+        """
         mock_template_xsl_rendering_api_get_by_id.return_value = Mock()
         mock_template_xsl_rendering_api_delete.return_value = None
         mock_user = create_mock_user("1")
@@ -271,6 +391,15 @@ class TestTemplateXslRenderingDetailDeletePermission(SimpleTestCase):
         mock_template_xsl_rendering_api_get_by_id,
         mock_template_xsl_rendering_api_delete,
     ):
+        """test_staff_returns_http_204
+
+        Args:
+            mock_template_xsl_rendering_api_get_by_id:
+            mock_template_xsl_rendering_api_delete:
+
+        Returns:
+
+        """
         mock_template_xsl_rendering_api_get_by_id.return_value = Mock()
         mock_template_xsl_rendering_api_delete.return_value = None
         mock_user = create_mock_user("1", is_staff=True)

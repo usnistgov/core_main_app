@@ -234,7 +234,7 @@ try:
         post_save.connect(MongoData.post_save_data, sender=Data)
         # connect sync method to Data post delete
         post_delete.connect(MongoData.post_delete_data, sender=Data)
-except ImportError as e:
+except ImportError:
     raise CoreError(
         "Mongoengine needs to be installed when MongoDB indexing is enabled. "
         "Install required python packages (see requirements.mongo.txt) "

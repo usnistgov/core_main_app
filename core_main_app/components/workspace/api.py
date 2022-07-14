@@ -53,16 +53,13 @@ def _create_workspace(title, owner_id=None, is_public=False):
             write_perm_id=str(permission_api.create_write_perm(title, "").id),
             is_public=is_public,
         )
-    else:
-        return Workspace(
-            title=title,
-            owner=str(owner_id),
-            read_perm_id=str(permission_api.create_read_perm(title, str(owner_id)).id),
-            write_perm_id=str(
-                permission_api.create_write_perm(title, str(owner_id)).id
-            ),
-            is_public=is_public,
-        )
+    return Workspace(
+        title=title,
+        owner=str(owner_id),
+        read_perm_id=str(permission_api.create_read_perm(title, str(owner_id)).id),
+        write_perm_id=str(permission_api.create_write_perm(title, str(owner_id)).id),
+        is_public=is_public,
+    )
 
 
 def set_title(workspace, new_title):

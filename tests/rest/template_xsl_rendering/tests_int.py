@@ -2,6 +2,9 @@
 """
 
 from rest_framework import status
+from tests.components.template_xsl_rendering.fixtures.fixtures import (
+    TemplateXslRenderingFixtures,
+)
 
 from core_main_app.rest.template_xsl_rendering import views
 from core_main_app.utils.integration_tests.integration_base_test_case import (
@@ -9,20 +12,29 @@ from core_main_app.utils.integration_tests.integration_base_test_case import (
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
-from tests.components.template_xsl_rendering.fixtures.fixtures import (
-    TemplateXslRenderingFixtures,
-)
 
 fixture_template_xsl_rendering = TemplateXslRenderingFixtures()
 
 
 class TestTemplateXslRenderingAddDetailXslt(MongoIntegrationBaseTestCase):
+    """TestTemplateXslRenderingAddDetailXslt"""
+
     fixture = fixture_template_xsl_rendering
 
     def setUp(self):
-        super(TestTemplateXslRenderingAddDetailXslt, self).setUp()
+        """setUp
+
+        Returns:
+
+        """
+        super().setUp()
 
     def test_add_detail_xslt_empty_list(self):
+        """test_add_detail_xslt_empty_list
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 
@@ -47,6 +59,11 @@ class TestTemplateXslRenderingAddDetailXslt(MongoIntegrationBaseTestCase):
         )
 
     def test_add_detail_xslt(self):
+        """test_add_detail_xslt
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 
@@ -73,6 +90,11 @@ class TestTemplateXslRenderingAddDetailXslt(MongoIntegrationBaseTestCase):
         )
 
     def test_add_detail_xslt_if_object_does_not_exist(self):
+        """test_add_detail_xslt_if_object_does_not_exist
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 
@@ -92,12 +114,24 @@ class TestTemplateXslRenderingAddDetailXslt(MongoIntegrationBaseTestCase):
 
 
 class TestTemplateXslRenderingSetDefaultDetailXslt(MongoIntegrationBaseTestCase):
+    """TestTemplateXslRenderingSetDefaultDetailXslt"""
+
     fixture = fixture_template_xsl_rendering
 
     def setUp(self):
-        super(TestTemplateXslRenderingSetDefaultDetailXslt, self).setUp()
+        """setUp
+
+        Returns:
+
+        """
+        super().setUp()
 
     def test_set_default_detail_xslt_exists_in_list(self):
+        """test_set_default_detail_xslt_exists_in_list
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
         RequestMock.do_request_patch(
@@ -127,6 +161,11 @@ class TestTemplateXslRenderingSetDefaultDetailXslt(MongoIntegrationBaseTestCase)
         )
 
     def test_set_default_detail_xslt_if_object_does_not_exist(self):
+        """test_set_default_detail_xslt_if_object_does_not_exist
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 
@@ -146,12 +185,24 @@ class TestTemplateXslRenderingSetDefaultDetailXslt(MongoIntegrationBaseTestCase)
 
 
 class TestTemplateXslRenderingRemoveDetailXslt(MongoIntegrationBaseTestCase):
+    """TestTemplateXslRenderingRemoveDetailXslt"""
+
     fixture = fixture_template_xsl_rendering
 
     def setUp(self):
-        super(TestTemplateXslRenderingRemoveDetailXslt, self).setUp()
+        """setUp
+
+        Returns:
+
+        """
+        super().setUp()
 
     def test_remove_detail_xslt(self):
+        """test_remove_detail_xslt
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
         RequestMock.do_request_patch(
@@ -181,6 +232,11 @@ class TestTemplateXslRenderingRemoveDetailXslt(MongoIntegrationBaseTestCase):
         self.assertEqual(len(response.data["list_detail_xslt"]), 1)
 
     def test_remove_last_detail_xslt_in_list(self):
+        """test_remove_last_detail_xslt_in_list
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 
@@ -200,6 +256,11 @@ class TestTemplateXslRenderingRemoveDetailXslt(MongoIntegrationBaseTestCase):
         self.assertEqual(response.data["list_detail_xslt"], [])
 
     def test_remove_default_detail_xslt(self):
+        """test_remove_default_detail_xslt
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
         RequestMock.do_request_patch(
@@ -234,6 +295,11 @@ class TestTemplateXslRenderingRemoveDetailXslt(MongoIntegrationBaseTestCase):
         self.assertNotEqual(response.data["list_detail_xslt"], [])
 
     def test_remove_if_object_does_not_exist(self):
+        """test_remove_if_object_does_not_exist
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 
@@ -253,13 +319,25 @@ class TestTemplateXslRenderingRemoveDetailXslt(MongoIntegrationBaseTestCase):
 
 
 class TestTemplateXslRenderingSetListDetailXslt(MongoIntegrationBaseTestCase):
+    """TestTemplateXslRenderingSetListDetailXslt"""
+
     fixture = fixture_template_xsl_rendering
 
     def setUp(self):
-        super(TestTemplateXslRenderingSetListDetailXslt, self).setUp()
+        """setUp
+
+        Returns:
+
+        """
+        super().setUp()
         self.data = {"ids": []}
 
     def test_set_empty_list_detail_xslt(self):
+        """test_set_empty_list_detail_xslt
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 
@@ -277,6 +355,11 @@ class TestTemplateXslRenderingSetListDetailXslt(MongoIntegrationBaseTestCase):
         self.assertEqual(response.data["list_detail_xslt"], [])
 
     def test_set_list_detail_xslt(self):
+        """test_set_list_detail_xslt
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
         self.data.update(

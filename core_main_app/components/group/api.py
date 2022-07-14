@@ -4,7 +4,7 @@
 from django.contrib.auth.models import Group
 from django.db.models import Q
 
-import core_main_app.permissions.rights as rights
+from core_main_app.permissions import rights
 
 
 def get_or_create(name):

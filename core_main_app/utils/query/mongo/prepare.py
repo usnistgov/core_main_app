@@ -40,7 +40,7 @@ def _add_sub_document_root(query, sub_document_root):
             for value in query[key]:
                 _add_sub_document_root(value, sub_document_root)
         elif not key.startswith("$"):
-            query["{}.{}".format(sub_document_root, key)] = query.pop(key)
+            query[f"{sub_document_root}.{key}"] = query.pop(key)
 
 
 def prepare_query(query_dict, regex=True, sub_document_root=None):

@@ -16,7 +16,9 @@ from core_main_app.utils.xml import xsl_transform
 register = template.Library()
 
 
-class XSLType(object):
+class XSLType:
+    """XSLType"""
+
     type_list = "List"
     type_detail = "Detail"
 

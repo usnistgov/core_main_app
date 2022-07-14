@@ -3,11 +3,8 @@
 from django.core.management import execute_from_command_line
 from django.test.testcases import TransactionTestCase
 
-import core_main_app.permissions.rights as rights
 from core_main_app.components.group import api as group_api
-
-
-# FIXME: rename, not Mongo
+from core_main_app.permissions import rights
 from core_main_app.settings import MONGODB_INDEXING
 
 

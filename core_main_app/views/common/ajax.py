@@ -32,7 +32,7 @@ class AddObjectModalView(CreateView):
 
     def form_invalid(self, form):
         # Get initial response
-        response = super(AddObjectModalView, self).form_invalid(form)
+        response = super().form_invalid(form)
         data = {"is_valid": False, "responseText": response.rendered_content}
         return JsonResponse(data)
 
@@ -57,7 +57,7 @@ class AddObjectModalView(CreateView):
 
     def _save(self, form):
         # Save treatment.
-        super(AddObjectModalView, self).form_valid(form)
+        super().form_valid(form)
 
     @staticmethod
     def get_modal_html_path():
@@ -81,7 +81,7 @@ class EditObjectModalView(UpdateView):
 
     def form_invalid(self, form):
         # Get initial response
-        response = super(EditObjectModalView, self).form_invalid(form)
+        response = super().form_invalid(form)
         data = {"is_valid": False, "responseText": response.rendered_content}
         return JsonResponse(data)
 
@@ -104,7 +104,7 @@ class EditObjectModalView(UpdateView):
 
     def _save(self, form):
         # Save treatment.
-        super(EditObjectModalView, self).form_valid(form)
+        super().form_valid(form)
 
     @staticmethod
     def get_modal_html_path():
@@ -147,7 +147,7 @@ class DeleteObjectModalView(DeleteView):
         Delete treatment.
         """
         # Delete treatment.
-        super(DeleteObjectModalView, self).delete(request, *args, **kwargs)
+        super().delete(request, *args, **kwargs)
 
     def _get_object_name(self):
         """
@@ -166,7 +166,7 @@ class DeleteObjectModalView(DeleteView):
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
-        context = super(DeleteObjectModalView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         # Add the object representation
         context["object_name"] = self._get_object_name()
 

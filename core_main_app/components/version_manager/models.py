@@ -15,7 +15,7 @@ from core_main_app.utils.validation.regex_validation import not_empty_or_whitesp
 
 
 class Version(models.Model):
-    """"""
+    """Version"""
 
     is_current = models.BooleanField(default=False)
     is_disabled = models.BooleanField(default=False)
@@ -45,39 +45,53 @@ class VersionManager(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        """Meta"""
+
         abstract = True
 
     @property
     @abstractmethod
     def version_set(self):
+        """version_set
+
+        Returns:
+
+        """
         raise NotImplementedError("Implement in the child class.")
 
     @property
     @abstractmethod
     def class_name(self):
+        """class_name
+
+        Returns:
+
+        """
         raise NotImplementedError("Implement in the child class.")
 
     @property
     def current_version(self):
+        """current_version"""
         return self.version_set.get(is_current=True)
 
     @property
     def disabled_version_set(self):
+        """disabled_version_set"""
         return self.version_set.filter(is_disabled=True)
 
-    # backward compatibility
     @property
     def versions(self):
+        """versions (backward compatibility)"""
         return [str(version.id) for version in self.version_set]
 
-    # backward compatibility
     @property
     def current(self):
+        """current (backward compatibility)"""
         return str(self.current_version.id)
 
-    # backward compatibility
     @property
     def disabled_versions(self):
+        """disabled_versions (backward compatibility)"""
         return [str(version.id) for version in self.disabled_version_set]
 
     def save_version_manager(self):

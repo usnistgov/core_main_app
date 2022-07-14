@@ -13,7 +13,7 @@ from core_main_app.components.data.models import Data
 sem = threading.Semaphore()
 
 
-class Lock(object):
+class Lock:
     """
     Class Lock. Singleton thread safe.
     Only this object should be called to be used for an action regarding locking a Document.
@@ -85,13 +85,13 @@ class DatabaseLockObject(models.Model):
     lock_date = models.DateTimeField(blank=False)
 
     @staticmethod
-    def get_lock_by_object(object):
+    def get_lock_by_object(obj):
         """Get lock relative to the given object.
 
         Args:
-            object:
+            obj:
 
         Returns:
 
         """
-        return DatabaseLockObject.objects.get(object=object)
+        return DatabaseLockObject.objects.get(object=obj)

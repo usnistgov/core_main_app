@@ -11,7 +11,7 @@ from core_main_app.utils.rendering import render
 from core_main_app.views.common import ajax as common_ajax, views as common_views
 from core_main_app.views.user import views as user_views, ajax as user_ajax
 
-schema_view = get_schema_view(
+get_schema_view(
     openapi.Info(
         title="REST API",
         default_version="v1",

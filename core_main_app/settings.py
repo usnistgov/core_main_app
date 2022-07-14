@@ -31,8 +31,8 @@ INSTALLED_APPS = getattr(settings, "INSTALLED_APPS", [])
 """ :py:class:`list`: List of apps installed.
 """
 
-# Choose from:  black, black-light, blue, blue-light, green, green-light, purple, purple-light, red, red-light, yellow,
-#               yellow-light
+# Choose from:  black, black-light, blue, blue-light, green, green-light, purple,
+#               purple-light, red, red-light, yellow, yellow-light
 WEBSITE_ADMIN_COLOR = getattr(settings, "WEBSITE_ADMIN_COLOR", "yellow")
 """ :py:class:`str`: color of the admin dashboard.
 """
@@ -56,7 +56,7 @@ ADMINS = getattr(settings, "ADMINS", [])
 """
 
 MANAGERS = getattr(settings, "MANAGERS", [])
-""" :py:class:`list`: Email addresses of moderators (managers). 
+""" :py:class:`list`: Email addresses of moderators (managers).
 """
 
 EMAIL_SUBJECT_PREFIX = getattr(settings, "EMAIL_SUBJECT_PREFIX", "[CURATOR] ")
@@ -134,7 +134,7 @@ XSD_URI_RESOLVER = getattr(settings, "XSD_URI_RESOLVER", None)
 """
 
 XML_FORCE_LIST = getattr(settings, "XML_FORCE_LIST", False)
-""" :py:class:`str`: force_list parameter for xml to dict, choose between a boolean, 
+""" :py:class:`str`: force_list parameter for xml to dict, choose between a boolean,
     a list of elements to convert to list or a callable.
     boolean: convert or not xml elements to list,
     list: list of xml element that need to be converted to list,
@@ -142,7 +142,8 @@ XML_FORCE_LIST = getattr(settings, "XML_FORCE_LIST", False)
 """
 
 XML_POST_PROCESSOR = getattr(settings, "XML_POST_PROCESSOR", "NUMERIC")
-""" :py:class:`str`: postprocessor for xml to dict, choose between 'NUMERIC' and 'NUMERIC_AND_STRING' or a callable.
+""" :py:class:`str`: postprocessor for xml to dict.
+     Choose between 'NUMERIC' and 'NUMERIC_AND_STRING' or a callable:
     'NUMERIC' convert numeric values from the xml document to integer or float.
     'NUMERIC_AND_STRING' convert numeric values and also store string representation .
     callable for other custom xml post processing.
@@ -153,9 +154,9 @@ VERIFY_DATA_ACCESS = getattr(settings, "VERIFY_DATA_ACCESS", False)
 """
 
 DATA_SORTING_FIELDS = getattr(settings, "DATA_SORTING_FIELDS", [])
-""" ::py:class:`str` Set the default sort fields for the data query. all the field must 
-    be prefixed by "+" or "-" (asc or desc sort) the sort can be multi field and each 
-    field must be delimited by "," (ex. ["-title","+name","+date"]) 
+""" ::py:class:`str` Set the default sort fields for the data query. all the field must
+    be prefixed by "+" or "-" (asc or desc sort) the sort can be multi field and each
+    field must be delimited by "," (ex. ["-title","+name","+date"])
 """
 
 AUTO_SET_PID = getattr(settings, "AUTO_SET_PID", False)
@@ -174,7 +175,7 @@ ENABLE_SAML2_SSO_AUTH = getattr(settings, "ENABLE_SAML2_SSO_AUTH", False)
 
 MONGODB_INDEXING = getattr(settings, "MONGODB_INDEXING", False)
 """ :py:class:`bool`: Use MongoDB for data indexing.
-    If True: 
+    If True:
         - a copy of the data will be stored in MongoDB,
         - queries will be executed against MongoDB.
 """
@@ -208,7 +209,7 @@ GRIDFS_STORAGE = getattr(settings, "GRIDFS_STORAGE", False)
 """ :py:class:`bool`: Use GridFS for file storage.
 """
 
-CUSTOM_FILE_STORAGE = getattr(settings, "CUSTOM_FILE_STORAGE", dict())
+CUSTOM_FILE_STORAGE = getattr(settings, "CUSTOM_FILE_STORAGE", {})
 """ :py:class:`dict`: File Storage by model.
     Example:
     from django.core.files.storage import default_storage
@@ -226,7 +227,7 @@ MAX_DOCUMENT_LIST = getattr(settings, "MAX_DOCUMENT_LIST", 100)
 """
 
 CHECKSUM_ALGORITHM = getattr(settings, "CHECKSUM_ALGORITHM", None)
-""" :py:class:`str`: Checksum algorithm used for uploaded files. 
+""" :py:class:`str`: Checksum algorithm used for uploaded files.
     Examples:
     CHECKSUM_ALGORITHM = None
     CHECKSUM_ALGORITHM = "MD5"

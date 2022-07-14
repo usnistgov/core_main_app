@@ -1,7 +1,7 @@
 """ MongoDB test settings
 """
-from core_main_app.utils.databases.mongo.mongoengine_database import Database
 from tests.test_settings import *
+from core_main_app.utils.databases.mongo.mongoengine_database import Database
 
 MONGODB_INDEXING = True
 MONGODB_ASYNC_SAVE = False

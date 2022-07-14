@@ -47,7 +47,7 @@ def has_perm_administration(func, *args, **kwargs):
         if user and user.is_superuser:
             return func(*args, **kwargs)
     except Exception as e:
-        logger.warning("has_perm_administration threw an exception: ".format(str(e)))
+        logger.warning(f"has_perm_administration threw an exception: {str(e)}")
 
     raise AccessControlError("The user doesn't have enough rights.")
 
@@ -68,7 +68,7 @@ def is_superuser(func, *args, **kwargs):
         if request and request.user.is_superuser:
             return func(*args, **kwargs)
     except Exception as e:
-        logger.warning("has_perm_administration threw an exception: ".format(str(e)))
+        logger.warning(f"has_perm_administration threw an exception: {str(e)}")
 
     raise AccessControlError("The user doesn't have enough rights.")
 

@@ -35,7 +35,7 @@ def get_page_number(page):
             return int(query_url.split("=")[1])
     except Exception as e:
         return PaginationError(
-            "An error occurred when getting page number from url: {}.".format(str(e))
+            f"An error occurred when getting page number from url: {str(e)}."
         )
 
 

@@ -1,4 +1,5 @@
-""" Menu configuration for core_main_app. Upon installation of the app the following menus are displayed:
+""" Menu configuration for core_main_app.
+Upon installation of the app the following menus are displayed:
 
   * User menu
 

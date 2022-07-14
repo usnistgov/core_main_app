@@ -11,7 +11,7 @@ from core_main_app.components.template_xsl_rendering.models import TemplateXslRe
 class TemplateXslRenderingSerializer(ModelSerializer):
     """TemplateXslRendering Serializer"""
 
-    class Meta(object):
+    class Meta:
         """Meta class"""
 
         model = TemplateXslRendering

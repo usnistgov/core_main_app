@@ -62,7 +62,7 @@ def async_migration_task(data_list, xslt_id, template_id, user_id, migrate):
                     data_api.check_xml_file_is_valid(data)
 
                 success.append(str(data.id))
-            except Exception as e:
+            except Exception:
                 errors.append(str(data.id))
             finally:
                 # increase the current progress and update the task state
@@ -144,7 +144,7 @@ def async_template_migration_task(
                             data_api.check_xml_file_is_valid(data)
 
                         success.append(str(data.id))
-                    except Exception as e:
+                    except Exception:
                         error.append(str(data.id))
                     finally:
                         # increase the current progress and update the task state

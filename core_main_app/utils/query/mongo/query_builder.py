@@ -14,7 +14,7 @@ from core_main_app.utils.query.mongo.prepare import prepare_query
 logger = logging.getLogger(__name__)
 
 
-class QueryBuilder(object):
+class QueryBuilder:
     """Query builder class"""
 
     def __init__(self, query, sub_document_root):

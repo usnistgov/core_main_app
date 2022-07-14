@@ -64,7 +64,7 @@ class EditWorkspaceRights(CommonView):
         try:
             workspace_id = kwargs["workspace_id"]
             workspace = workspace_api.get_by_id(workspace_id)
-        except DoesNotExist as e:
+        except DoesNotExist:
             return HttpResponseBadRequest("The workspace does not exist.")
         except:
             return HttpResponseBadRequest("Something wrong happened.")
@@ -225,7 +225,7 @@ class ViewData(CommonView):
             context={
                 "error": "Unable to access the requested "
                 + get_data_label()
-                + ": {}.".format(error_message),
+                + f": {error_message}.",
                 "status_code": status_code,
             },
         )

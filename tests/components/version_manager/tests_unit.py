@@ -1,5 +1,4 @@
-"""
-Version Manager unit tests
+"""Version Manager unit tests
 """
 from unittest.case import TestCase
 
@@ -22,9 +21,16 @@ from core_main_app.utils.tests_tools.RequestMock import create_mock_request
 
 
 class TestVersionManagerDisableVersion(TestCase):
+    """TestVersionManagerDisableVersion"""
+
     def test_version_manager_disable_version_raises_exception_if_object_does_not_exist(
         self,
     ):
+        """test version manager disable version raises exception if object does not exist
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
@@ -35,6 +41,11 @@ class TestVersionManagerDisableVersion(TestCase):
             version_manager_api.disable_version(mock_absent, request=mock_request)
 
     def test_version_manager_disable_current_version_throws_exception(self):
+        """test version manager disable current version throws exception
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
@@ -51,6 +62,14 @@ class TestVersionManagerDisableVersion(TestCase):
     def test_version_manager_disable_version_raises_exception_if_new_current_does_not_exist(
         self, mock_versions
     ):
+        """test version manager disable version raises exception if new current does not exist
+
+        Args:
+            mock_versions:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
@@ -69,7 +88,14 @@ class TestVersionManagerDisableVersion(TestCase):
 
 
 class TestVersionManagerSetCurrent(TestCase):
+    """TestVersionManagerSetCurrent"""
+
     def test_version_manager_set_current_raises_api_error_if_disabled(self):
+        """test version manager set current raises api error if disabled
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
@@ -81,8 +107,18 @@ class TestVersionManagerSetCurrent(TestCase):
 
 
 class TestVersionManagerGetActiveGlobalVersionManagerByTitle(TestCase):
+    """TestVersionManagerGetActiveGlobalVersionManagerByTitle"""
+
     @patch.object(TemplateVersionManager, "get_active_global_version_manager_by_title")
     def test_version_manager_get_returns_version_manager(self, mock_get_active_global):
+        """test version manager get returns version manager
+
+        Args:
+            mock_get_active_global:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
@@ -105,6 +141,14 @@ class TestVersionManagerGetActiveGlobalVersionManagerByTitle(TestCase):
     def test_version_manager_get_raises_exception_if_object_does_not_exist(
         self, mock_get_active_global
     ):
+        """test version manager get raises exception if object does not exist
+
+        Args:
+            mock_get_active_global:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
@@ -119,8 +163,18 @@ class TestVersionManagerGetActiveGlobalVersionManagerByTitle(TestCase):
 
 
 class TestVersionManagerGetVersionByNumber(TestCase):
+    """TestVersionManagerGetVersionByNumber"""
+
     @patch.object(TemplateVersionManager, "version_set", new_callable=mock.PropertyMock)
     def test_version_manager_get_returns_version(self, mock_versions):
+        """test version manager get returns version
+
+        Args:
+            mock_versions:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(user=mock_user)
@@ -134,9 +188,14 @@ class TestVersionManagerGetVersionByNumber(TestCase):
         )
 
         # Assert
-        self.assertEquals(result, str(version.id))
+        self.assertEqual(result, str(version.id))
 
     def test_version_manager_get_raises_exception_if_object_does_not_exist(self):
+        """test version manager get raises exception if object does not exist
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(user=mock_user)
@@ -150,8 +209,18 @@ class TestVersionManagerGetVersionByNumber(TestCase):
 
 
 class TestVersionManagerGetVersionNumber(TestCase):
+    """TestVersionManagerGetVersionNumber"""
+
     @patch.object(TemplateVersionManager, "version_set", new_callable=mock.PropertyMock)
     def test_version_manager_get_returns_number(self, mock_versions):
+        """test version manager get returns number
+
+        Args:
+            mock_versions:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(user=mock_user)
@@ -165,9 +234,14 @@ class TestVersionManagerGetVersionNumber(TestCase):
         )
 
         # Assert
-        self.assertEquals(result, 1)
+        self.assertEqual(result, 1)
 
     def test_version_manager_get_raises_exception_if_object_does_not_exist(self):
+        """test version manager get raises exception if object does not exist
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(user=mock_user)
@@ -183,10 +257,13 @@ class TestVersionManagerGetVersionNumber(TestCase):
 
 
 def _create_mock_version_manager(title=""):
-    """
-    Create a mock version manager
-    :param title:
-    :return:
+    """Create a mock version manager
+
+    Args:
+        title:
+
+    Returns:
+
     """
     mock_vm = Mock(spec=VersionManager)
     mock_vm.title = title
@@ -197,31 +274,43 @@ def _create_mock_version_manager(title=""):
 
 
 def _create_mock_object():
-    """
-    Create a mock object
-    :return:
+    """Create a mock object
+
+    Returns:
+
     """
     mock_object = Mock()
     mock_object.id = 1
     return mock_object
 
 
-def _create_version_manager(title="", versions=[]):
-    """
-    Returns a templates version manager
-    :param title:
-    :return:
+def _create_version_manager(title="", versions=None):
+    """Return a templates version manager
+
+    Args:
+        title:
+        versions:
+
+    Returns:
+
     """
     tvm = TemplateVersionManager(
         id=1,
         title=title,
     )
-    for template in versions:
-        template.version_manager = tvm
+    if versions:
+        for template in versions:
+            template.version_manager = tvm
+
     return tvm
 
 
 def _get_template():
+    """Get template
+
+    Returns:
+
+    """
     template = Template()
     template.id = 1
     xsd = (

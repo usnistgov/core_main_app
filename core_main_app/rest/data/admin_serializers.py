@@ -11,7 +11,7 @@ class AdminDataSerializer(DataSerializer):
 
     xml_content = XMLContentField()
 
-    class Meta(object):
+    class Meta:
         """Meta"""
 
         model = Data

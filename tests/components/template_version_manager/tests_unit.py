@@ -3,11 +3,11 @@
 from unittest.case import TestCase
 
 from django.core import exceptions as django_exceptions
+from django.core.exceptions import ValidationError
 from django.test import override_settings
 from mock.mock import Mock, patch, MagicMock
 
 from core_main_app.commons.exceptions import DoesNotExist, NotUniqueError
-from django.core.exceptions import ValidationError
 from core_main_app.components.template.models import Template
 from core_main_app.components.template_version_manager import api as version_manager_api
 from core_main_app.components.template_version_manager.models import (
@@ -18,10 +18,20 @@ from core_main_app.utils.tests_tools.RequestMock import create_mock_request
 
 
 class TestTemplateVersionManagerGet(TestCase):
+    """TestTemplateVersionManagerGet"""
+
     @patch(
         "core_main_app.components.template_version_manager.models.TemplateVersionManager.get_by_id"
     )
     def test_version_manager_get_returns_version_manager(self, mock_get_by_id):
+        """test version manager get returns version manager
+
+        Args:
+            mock_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
@@ -43,6 +53,14 @@ class TestTemplateVersionManagerGet(TestCase):
     def test_version_manager_get_raises_exception_if_object_does_not_exist(
         self, mock_get_by_id
     ):
+        """test version manager get raises exception if object does not exist
+
+        Args:
+            mock_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
@@ -55,14 +73,23 @@ class TestTemplateVersionManagerGet(TestCase):
 
 
 class TestTemplateVersionManagerInsert(TestCase):
+    """TestTemplateVersionManagerInsert"""
+
     @override_settings(ROOT_URLCONF="core_main_app.urls")
-    @patch(
-        "core_main_app.components.template_version_manager.models.TemplateVersionManager.save_version_manager"
-    )
+    @patch.object(TemplateVersionManager, "save_version_manager")
     @patch("core_main_app.components.template.models.Template.save_template")
     def test_create_version_manager_returns_version_manager(
         self, mock_save_template, mock_save_template_version_manager
     ):
+        """test create version manager returns version manager
+
+        Args:
+            mock_save_template:
+            mock_save_template_version_manager:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
@@ -86,12 +113,20 @@ class TestTemplateVersionManagerInsert(TestCase):
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     @patch("core_main_app.components.template.models.Template.delete")
     @patch("core_main_app.components.template.models.Template.save_template")
-    @patch(
-        "core_main_app.components.template_version_manager.models.TemplateVersionManager.save_version_manager"
-    )
+    @patch.object(TemplateVersionManager, "save_version_manager")
     def test_insert_manager_raises_api_error_if_title_already_exists(
         self, mock_version_manager_save, mock_template_save, mock_template_delete
     ):
+        """test insert manager raises api error if title already exists
+
+        Args:
+            mock_version_manager_save:
+            mock_template_save:
+            mock_template_delete:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
@@ -115,6 +150,14 @@ class TestTemplateVersionManagerInsert(TestCase):
     def test_create_version_manager_raises_exception_if_error_in_create_template(
         self, mock_save
     ):
+        """test create version manager raises exception if error in create template
+
+        Args:
+            mock_save:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
@@ -133,13 +176,21 @@ class TestTemplateVersionManagerInsert(TestCase):
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     @patch("core_main_app.components.template.models.Template.delete")
-    @patch(
-        "core_main_app.components.template_version_manager.models.TemplateVersionManager.save_version_manager"
-    )
+    @patch.object(TemplateVersionManager, "save_version_manager")
     @patch("core_main_app.components.template.models.Template.save_template")
     def test_create_version_manager_raises_exception_if_error_in_create_version_manager(
         self, mock_save_template, mock_save_version_manager, mock_delete_template
     ):
+        """test create version manager raises exception if error in create version manager
+
+        Args:
+            mock_save_template:
+            mock_save_version_manager:
+            mock_delete_template:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
@@ -158,13 +209,21 @@ class TestTemplateVersionManagerInsert(TestCase):
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     @patch("core_main_app.components.template.models.Template.delete")
-    @patch(
-        "core_main_app.components.template_version_manager.models.TemplateVersionManager.save_version_manager"
-    )
+    @patch.object(TemplateVersionManager, "save_version_manager")
     @patch("core_main_app.components.template.models.Template.save_template")
     def test_create_version_manager_raises_exception_if_title_is_empty(
         self, mock_save_template, mock_save_version_manager, mock_delete_template
     ):
+        """test create version manager raises exception if title is empty
+
+        Args:
+            mock_save_template:
+            mock_save_version_manager:
+            mock_delete_template:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
@@ -183,6 +242,8 @@ class TestTemplateVersionManagerInsert(TestCase):
 
 
 class TestTemplateVersionManagerAddVersion(TestCase):
+    """TestTemplateVersionManagerAddVersion"""
+
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     @patch("core_main_app.components.template.models.Template.save")
     @patch(
@@ -191,6 +252,15 @@ class TestTemplateVersionManagerAddVersion(TestCase):
     def test_insert_returns_template_version(
         self, mock_save_template_version_manager, mock_save_template
     ):
+        """test insert returns template version
+
+        Args:
+            mock_save_template_version_manager:
+            mock_save_template:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
@@ -214,6 +284,14 @@ class TestTemplateVersionManagerAddVersion(TestCase):
     def test_insert_raises_exception_if_error_in_create_template(
         self, mock_save_template
     ):
+        """test insert raises exception if error in create template
+
+        Args:
+            mock_save_template:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
@@ -233,6 +311,8 @@ class TestTemplateVersionManagerAddVersion(TestCase):
 
 
 class TestTemplateVersionManagerGetGlobalVersions(TestCase):
+    """TestTemplateVersionManagerGetGlobalVersions"""
+
     @patch(
         "core_main_app.components.template_version_manager.models.TemplateVersionManager."
         "get_global_version_managers"
@@ -240,6 +320,14 @@ class TestTemplateVersionManagerGetGlobalVersions(TestCase):
     def test_get_global_version_managers_returns_templates(
         self, mock_get_global_version_managers
     ):
+        """test get global version managers returns templates
+
+        Args:
+            mock_get_global_version_managers:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
@@ -255,12 +343,20 @@ class TestTemplateVersionManagerGetGlobalVersions(TestCase):
 
 
 class TestTemplateVersionManagerGetActiveGlobalVersions(TestCase):
-    @patch(
-        "core_main_app.components.template_version_manager.models.TemplateVersionManager.get_active_global_version_manager"
-    )
+    """TestTemplateVersionManagerGetActiveGlobalVersions"""
+
+    @patch.object(TemplateVersionManager, "get_active_global_version_manager")
     def test_get_active_global_version_managers_returns_templates_not_disable(
         self, mock_get_active_global_version_managers
     ):
+        """test get active global version managers returns templates not disable
+
+        Args:
+            mock_get_active_global_version_managers:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
@@ -281,12 +377,21 @@ class TestTemplateVersionManagerGetActiveGlobalVersions(TestCase):
 
 
 class TestTemplateVersionManagerGetActiveGlobalVersionsByUserId(TestCase):
-    @patch(
-        "core_main_app.components.template_version_manager.models.TemplateVersionManager.get_active_version_manager_by_user_id"
-    )
+    """TestTemplateVersionManagerGetActiveGlobalVersionsByUserId"""
+
+    @patch.object(TemplateVersionManager, "get_active_version_manager_by_user_id")
     def test_get_active_global_version_managers_by_user_id_returns_templates_not_disable_with_given_user_id(
         self, mock_get_active_global_version_managers
     ):
+        """test get active global version managers by user id
+        returns templates not disable with given user id
+
+        Args:
+            mock_get_active_global_version_managers:
+
+        Returns:
+
+        """
         # Arrange
         user_id = "10"
         mock_user = create_mock_user(user_id, is_superuser=True)
@@ -313,11 +418,14 @@ class TestTemplateVersionManagerGetActiveGlobalVersionsByUserId(TestCase):
 
 
 def _create_mock_template(mock_template_filename="", mock_template_content=""):
-    """
-    Returns a mock template
-    :param mock_template_filename:
-    :param mock_template_content:
-    :return:
+    """create mock template
+
+    Args:
+        mock_template_filename:
+        mock_template_content:
+
+    Returns:
+
     """
     mock_template = Mock(spec=Template)
     mock_template.filename = mock_template_filename
@@ -329,9 +437,16 @@ def _create_mock_template(mock_template_filename="", mock_template_content=""):
 def _create_mock_template_version_manager(
     title="", versions=None, is_disabled=False, user_id=""
 ):
-    """
-    Returns a mock template version manager
-    :return:
+    """create mock template version manager
+
+    Args:
+        title:
+        versions:
+        is_disabled:
+        user_id:
+
+    Returns:
+
     """
     if versions is None:
         versions = []
@@ -347,20 +462,28 @@ def _create_mock_template_version_manager(
 
 
 def _create_template(filename="", content=""):
-    """
-    Returns a template
-    :param filename:
-    :param content:
-    :return:
+    """create template
+
+    Args:
+        filename:
+        content:
+
+    Returns:
+
     """
     return Template(id=1, filename=filename, content=content)
 
 
 def _create_template_version_manager(title="Schema", is_disabled=False, user_id=""):
-    """
-    Returns a templates version manager
-    :param title:
-    :return:
+    """create template version manager
+
+    Args:
+        title:
+        is_disabled:
+        user_id:
+
+    Returns:
+
     """
     return TemplateVersionManager(
         id=1,

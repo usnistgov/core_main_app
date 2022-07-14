@@ -13,7 +13,7 @@ from django.utils.html import escape as html_escape
 from django.views.generic import View
 from markdown import markdown
 
-import core_main_app.commons.constants as constants
+from core_main_app.commons import constants as constants
 from core_main_app.commons import exceptions
 from core_main_app.components.template.models import Template
 from core_main_app.components.template_version_manager import (
@@ -417,7 +417,7 @@ class UploadXSLTView(View):
     object_name = "XSLT"
 
     def __init__(self, **kwargs):
-        super(UploadXSLTView, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.context = {}
         self.context.update({"object_name": self.object_name})
 

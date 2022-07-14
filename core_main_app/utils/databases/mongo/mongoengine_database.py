@@ -4,7 +4,7 @@ from mongoengine import connect
 from mongoengine.connection import disconnect
 
 
-class Database(object):
+class Database:
     """Represent a Database."""
 
     def __init__(self, host, name):

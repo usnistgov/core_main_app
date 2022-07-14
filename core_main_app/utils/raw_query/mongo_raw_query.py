@@ -1,6 +1,5 @@
 """Utils for mongodb raw query
 """
-from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.utils.raw_query.common import (
     check_user_filter,
     check_workspace_filter,
