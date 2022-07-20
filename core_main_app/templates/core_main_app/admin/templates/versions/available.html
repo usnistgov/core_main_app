@@ -62,6 +62,10 @@
                                <button class="btn btn-danger"><i class="fas fa-trash"></i> Disable</button>
                             </span>
                         {% endif %}
+                        <a class="btn btn-secondary download"
+                           href="{% url 'core_main_app_rest_template_download' version.object %}">
+                            <i class="fas fa-download"></i> Download
+                        </a>
                    {% endblock %}
                </td>
            </tr>
