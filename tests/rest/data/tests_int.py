@@ -483,6 +483,36 @@ class TestDataDownload(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_get_with_param_returns_http_200(self):
+        # Arrange
+        user = create_mock_user("1")
+
+        # Act
+        response = RequestMock.do_request_get(
+            data_rest_views.DataDownload.as_view(),
+            user,
+            param={"pk": self.fixture.data_1.id},
+            data={"pretty_print": "false"},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_with_param_returns_http_400_when_content_not_well_formatted(self):
+        # Arrange
+        user = create_mock_user("1")
+
+        # Act
+        response = RequestMock.do_request_get(
+            data_rest_views.DataDownload.as_view(),
+            user,
+            param={"pk": self.fixture.data_1.id},
+            data={"pretty_print": "true"},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
 class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
     """TestExecuteLocalQueryView"""
