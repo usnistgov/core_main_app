@@ -44,6 +44,10 @@
                         <i class="fas fa-cubes"></i> Modules
                     </a>
                    {% endif %}
+                   <a class="btn btn-secondary download"
+                      href="{% url 'core_main_app_rest_template_download' version.object %}">
+                       <i class="fas fa-download"></i> Download
+                   </a>
                    {% endblock %}
                </td>
            </tr>
