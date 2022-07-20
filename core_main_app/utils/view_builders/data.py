@@ -72,9 +72,13 @@ def build_page(data_object, display_admin_version=False):
                     "path": "core_main_app/user/js/data/change_display.js",
                     "is_raw": False,
                 },
+                {"path": "core_main_app/common/js/data_detail.js", "is_raw": False},
+                {"path": "core_main_app/common/js/modals/download.js", "is_raw": False},
             ],
             "css": ["core_main_app/common/css/XMLTree.css"],
         }
+
+        page_info["modals"].append("core_main_app/common/modals/download-options.html")
 
         if "core_file_preview_app" in settings.INSTALLED_APPS:
             page_info["assets"]["js"].extend(

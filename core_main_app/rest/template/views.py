@@ -5,11 +5,14 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core_main_app.commons.exceptions import XMLError
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions as exceptions
 from core_main_app.components.template import api as template_api
 from core_main_app.rest.template.serializers import TemplateSerializer
 from core_main_app.utils.file import get_file_http_response
+from core_main_app.utils.boolean import to_bool
+from core_main_app.utils.xml import format_content_xml
 
 
 class TemplateDetail(APIView):
@@ -97,6 +100,11 @@ class TemplateDownload(APIView):
             request: HTTP request
             pk: ObjectId
 
+        Examples:
+
+            ../template/[template_id]/download
+            ../template/[template_id]/download?pretty_print=false
+
         Returns:
 
             - code: 200
@@ -110,12 +118,25 @@ class TemplateDownload(APIView):
             # Get object
             template_object = self.get_object(pk, request=request)
 
+            # get xml content
+            content = template_object.content
+
+            # get format bool
+            format = request.query_params.get("pretty_print", False)
+
+            # format content
+            if to_bool(format):
+                content = format_content_xml(content)
+
             return get_file_http_response(
-                template_object.content, template_object.filename, "text/xsd", "xsd"
+                content, template_object.filename, "text/xsd", "xsd"
             )
         except Http404:
             content = {"message": "Template not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
+        except XMLError:
+            content = {"message": "Content is not well formatted XML."}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except AccessControlError:
             content = {"message": "Access Forbidden."}
             return Response(content, status=status.HTTP_403_FORBIDDEN)

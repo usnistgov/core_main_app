@@ -34,7 +34,8 @@ from core_main_app.utils.file import get_file_http_response
 from core_main_app.utils.pagination.rest_framework_paginator.pagination import (
     StandardResultsSetPagination,
 )
-from core_main_app.utils.xml import get_content_by_xpath
+from core_main_app.commons.exceptions import XMLError
+from core_main_app.utils.xml import get_content_by_xpath, format_content_xml
 
 
 class DataList(APIView):
@@ -481,6 +482,11 @@ class DataDownload(APIView):
             request: HTTP request
             pk: ObjectId
 
+        Examples:
+
+            ../data/download/[data_id]
+            ../data/download/[data_id]?pretty_print=true
+
         Returns:
 
             - code: 200
@@ -494,12 +500,25 @@ class DataDownload(APIView):
             # Get object
             data_object = self.get_object(request, pk)
 
+            # get xml content
+            xml_content = data_object.xml_content
+
+            # get format bool
+            format = request.query_params.get("pretty_print", False)
+
+            # format content
+            if to_bool(format):
+                xml_content = format_content_xml(xml_content)
+
             return get_file_http_response(
-                data_object.xml_content, data_object.title, "text/xml", "xml"
+                xml_content, data_object.title, "text/xml", "xml"
             )
         except Http404:
             content = {"message": "Data not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
+        except XMLError:
+            content = {"message": "Content is not well formatted XML."}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
