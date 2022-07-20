@@ -4,7 +4,7 @@
  */
 var showSpinner = function($btnID) {
      // Show loading spinner
-     $btnID.attr('class','fas fa-spinner fa-spin');
+     $btnID.attr('class','fas fa-spinner fa-pulse');
 }
 
 /**
@@ -23,6 +23,6 @@ var displaySpinner = function(container) {
      // clear container
      container.html("");
      // display loading spinner
-     container.append($("<i class='fa fa-spinner fa-spin fa-3x fa-fw loading-spinner'></i>"));
+     container.append($("<i class='fa fa-spinner fa-pulse fa-3x fa-fw loading-spinner'></i>"));
 }
 
