@@ -83,7 +83,12 @@ def check_can_write(document, user):
     Returns:
 
     """
-    # TODO: data will inherit of workspace rights, which means a owner can't edit or delete a data if data in wkp that doesn't give hin write rights
+    # Raise error if anonymous user
+    if user.is_anonymous:
+        raise AccessControlError("Unable to write if not authenticated.")
+
+    # TODO: data will inherit of workspace rights, which means a owner can't edit
+    #  or delete a data if data in wkp that doesn't give hin write rights
     if hasattr(document, "workspace") and document.workspace is not None:
         if workspace_api.is_workspace_public(document.workspace):
             has_perm_publish(user, rights.publish_data)
