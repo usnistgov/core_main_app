@@ -11,12 +11,15 @@ from core_main_app.components.template_xsl_rendering import (
 logger = logging.getLogger(__name__)
 
 
-def build_page(data_object, display_admin_version=False):
+def build_page(
+    data_object, display_admin_version=False, display_download_options=False
+):
     """Generic page building data
 
     Args:
         data_object:
         display_admin_version:
+        display_download_options:
 
     Returns:
     """
@@ -58,6 +61,7 @@ def build_page(data_object, display_admin_version=False):
             "template_xsl_rendering": template_xsl_rendering,
             "xsl_transformation_id": xsl_transformation_id,
             "can_display_selector": display_xslt_selector,
+            "display_download_options": display_download_options,
         }
 
         page_info["assets"] = {
@@ -68,13 +72,23 @@ def build_page(data_object, display_admin_version=False):
                     "path": "core_main_app/user/js/data/change_display.js",
                     "is_raw": False,
                 },
-                {"path": "core_main_app/common/js/data_detail.js", "is_raw": False},
-                {"path": "core_main_app/common/js/modals/download.js", "is_raw": False},
             ],
             "css": ["core_main_app/common/css/XMLTree.css"],
         }
 
-        page_info["modals"].append("core_main_app/common/modals/download-options.html")
+        if display_download_options:
+            page_info["assets"]["js"].extend(
+                [
+                    {"path": "core_main_app/common/js/data_detail.js", "is_raw": False},
+                    {
+                        "path": "core_main_app/common/js/modals/download.js",
+                        "is_raw": False,
+                    },
+                ]
+            )
+            page_info["modals"].append(
+                "core_main_app/common/modals/download-options.html"
+            )
 
         if "core_file_preview_app" in settings.INSTALLED_APPS:
             page_info["assets"]["js"].extend(
