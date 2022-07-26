@@ -107,3 +107,11 @@ class TemplateXslRendering(models.Model):
 
         """
         return TemplateXslRendering.objects.all()
+
+    def __str__(self):
+        """Template Xsl Rendering as string
+
+        Returns:
+
+        """
+        return str(self.template)

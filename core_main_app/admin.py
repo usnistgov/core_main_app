@@ -8,17 +8,30 @@ from django.urls import reverse_lazy
 from django.views.generic.base import RedirectView
 
 from core_main_app.commons.enums import WEB_PAGE_TYPES
+from core_main_app.components.blob.admin_site import CustomBlobAdmin
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.data.admin_site import CustomDataAdmin
 from core_main_app.components.data.models import Data
+from core_main_app.components.lock.admin_site import CustomDatabaseLockAdmin
 from core_main_app.components.lock.models import DatabaseLockObject
+from core_main_app.components.template.admin_site import CustomTemplateAdmin
 from core_main_app.components.template.models import Template
+from core_main_app.components.template_version_manager.admin_site import (
+    CustomTemplateVersionManagerAdmin,
+)
 from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
 )
+from core_main_app.components.template_xsl_rendering.admin_site import (
+    CustomTemplateXslRenderingAdmin,
+)
 from core_main_app.components.template_xsl_rendering.models import TemplateXslRendering
 from core_main_app.components.web_page_login import api as login_page_api
+from core_main_app.components.workspace.admin_site import CustomWorkspaceAdmin
 from core_main_app.components.workspace.models import Workspace
+from core_main_app.components.xsl_transformation.admin_site import (
+    CustomXslTransformationAdmin,
+)
 from core_main_app.components.xsl_transformation.models import XslTransformation
 from core_main_app.utils.rendering import admin_render
 from core_main_app.views.admin import views as admin_views, ajax as admin_ajax
@@ -124,13 +137,13 @@ admin_urls = [
 
 
 admin.site.register(Data, CustomDataAdmin)
-admin.site.register(Blob)
-admin.site.register(Workspace)
-admin.site.register(TemplateVersionManager)
-admin.site.register(Template)
-admin.site.register(XslTransformation)
-admin.site.register(TemplateXslRendering)
-admin.site.register(DatabaseLockObject)
+admin.site.register(Blob, CustomBlobAdmin)
+admin.site.register(Workspace, CustomWorkspaceAdmin)
+admin.site.register(TemplateVersionManager, CustomTemplateVersionManagerAdmin)
+admin.site.register(Template, CustomTemplateAdmin)
+admin.site.register(XslTransformation, CustomXslTransformationAdmin)
+admin.site.register(TemplateXslRendering, CustomTemplateXslRenderingAdmin)
+admin.site.register(DatabaseLockObject, CustomDatabaseLockAdmin)
 
 
 class CoreAdminSite(AdminSite):

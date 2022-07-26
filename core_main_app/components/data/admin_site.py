@@ -128,6 +128,8 @@ class CustomDataAdmin(admin.ModelAdmin):
     list_display = ["title", "last_modification_date", "owner_name", "workspace"]
     action_form = UpdateActionForm
     actions = [update_data_list]
+    readonly_fields = ["checksum", "xml_file"]
+    exclude = ["vector_column", "dict_content"]
 
     def has_add_permission(self, request, obj=None):
         """Prevent from manually adding data"""

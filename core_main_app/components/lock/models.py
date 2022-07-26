@@ -95,3 +95,11 @@ class DatabaseLockObject(models.Model):
 
         """
         return DatabaseLockObject.objects.get(object=obj)
+
+    def __str__(self):
+        """Database Lock as string
+
+        Returns:
+
+        """
+        return str(self.object)

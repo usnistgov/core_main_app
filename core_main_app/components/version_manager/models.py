@@ -117,3 +117,11 @@ class VersionManager(models.Model):
 
         """
         self.title = self.title.strip()
+
+    def __str__(self):
+        """Version Manager as string
+
+        Returns:
+
+        """
+        return self.title

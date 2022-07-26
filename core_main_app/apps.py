@@ -14,6 +14,8 @@ from core_main_app.utils.requests_utils.ssl import check_ssl_certificates_dir_se
 class InitApp(AppConfig):
     """Core application settings."""
 
+    verbose_name = "Core Main App"
+
     name = "core_main_app"
     """ :py:class:`str`: Package name
     """
