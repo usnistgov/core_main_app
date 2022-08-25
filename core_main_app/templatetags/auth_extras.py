@@ -27,7 +27,7 @@ def has_perm(user, permission):
         if user.is_anonymous:
             # We can give directly the permission name
             access = group_api.get_by_name_and_permission(
-                name=RIGHTS.anonymous_group, permission_codename=permission_name
+                name=RIGHTS.ANONYMOUS_GROUP, permission_codename=permission_name
             )
         else:
             # We need to prefix with the app name

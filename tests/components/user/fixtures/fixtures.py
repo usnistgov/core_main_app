@@ -63,6 +63,6 @@ class UserFixtures(FixtureInterface):
         Returns:
 
         """
-        publish_perm = permissions_api.get_by_codename(rights.publish_data)
+        publish_perm = permissions_api.get_by_codename(rights.PUBLISH_DATA)
         user.user_permissions.add(publish_perm)
         user.save()

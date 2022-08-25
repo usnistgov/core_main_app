@@ -1,3 +1,6 @@
+""" Forms
+"""
+
 from django import forms
 
 from core_main_app.commons.validators import BlankSpacesValidator

@@ -8,11 +8,20 @@ class UserSerializer(serializers.ModelSerializer):
     """User serializer"""
 
     class Meta:
+        """Meta"""
+
         model = User
         fields = ["id", "username", "email", "password"]
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
+        """create
+
+        Args:
+            validated_data
+
+        Returns:
+        """
         password = validated_data.pop("password")
         user = User(**validated_data)
         user.set_password(password)
@@ -21,6 +30,14 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
     def update(self, instance, validated_data):
+        """update
+
+        Args:
+            instance:
+            validated_data:
+
+        Returns:
+        """
         instance.username = validated_data.get("username", instance.username)
         instance.email = validated_data.get("email", instance.email)
 

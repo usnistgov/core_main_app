@@ -211,8 +211,8 @@ class AccessControlDataFixture(FixtureInterface):
             self.data_3.workspace = self.workspace_1
             self.data_4.workspace = self.workspace_2
             self.data_5.workspace = self.workspace_1
-        except Exception as e:
-            print(str(e))
+        except Exception as exception:
+            print(str(exception))
 
 
 class AccessControlDataFixture2(FixtureInterface):

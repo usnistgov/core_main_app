@@ -21,6 +21,8 @@ class Version(models.Model):
     is_disabled = models.BooleanField(default=False)
 
     class Meta:
+        """Meta"""
+
         abstract = True
 
 
@@ -105,8 +107,8 @@ class VersionManager(models.Model):
             self._cls = self.class_name
             not_empty_or_whitespaces(self.title)
             self.save()
-        except IntegrityError as e:
-            raise exceptions.NotUniqueError(str(e))
+        except IntegrityError as exception:
+            raise exceptions.NotUniqueError(str(exception))
         except Exception as ex:
             raise exceptions.ModelError(str(ex))
 

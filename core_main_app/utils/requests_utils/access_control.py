@@ -7,6 +7,12 @@ from core_main_app.commons.exceptions import CoreError
 
 
 def get_request_from_args(*args, **kwargs):
+    """get_request_from_args
+
+    Args:
+
+    Returns:
+    """
     # get request from parameters
     request = kwargs["request"]
     if (

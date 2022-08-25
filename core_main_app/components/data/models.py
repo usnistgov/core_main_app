@@ -28,6 +28,8 @@ class Data(AbstractData):
     )
 
     class Meta:
+        """Meta"""
+
         verbose_name = "Data"
         verbose_name_plural = "Data"
         indexes = [

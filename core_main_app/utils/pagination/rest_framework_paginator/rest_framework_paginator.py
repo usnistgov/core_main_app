@@ -31,11 +31,11 @@ def get_page_number(page):
         # rest framework returns base (without 'page=') url when page is 1
         if "page=" not in query_url:
             return 1
-        else:
-            return int(query_url.split("=")[1])
-    except Exception as e:
+
+        return int(query_url.split("=")[1])
+    except Exception as exception:
         return PaginationError(
-            f"An error occurred when getting page number from url: {str(e)}."
+            f"An error occurred when getting page number from url: {str(exception)}."
         )
 
 

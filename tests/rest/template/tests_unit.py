@@ -14,13 +14,19 @@ import core_main_app.components.template.api as template_api
 
 
 class TestTemplateDownload(SimpleTestCase):
+    """Test Template Download"""
+
     def setUp(self):
-        super(TestTemplateDownload, self).setUp()
+        """setUp"""
+
+        super().setUp()
 
     @patch.object(template_api, "get_by_id")
     def test_get_returns_http_404_when_data_not_found(
         self, mock_template_api_get_by_id
     ):
+        """test_get_returns_http_404_when_data_not_found"""
+
         # Arrange
         mock_user = create_mock_user("1")
         mock_template_api_get_by_id.side_effect = DoesNotExist("error")
@@ -35,6 +41,8 @@ class TestTemplateDownload(SimpleTestCase):
 
     @patch.object(template_api, "get_by_id")
     def test_get_returns_http_200_when_data_found(self, mock_template_api_get_by_id):
+        """test_get_returns_http_200_when_data_found"""
+
         # Arrange
         mock_user = create_mock_user("1")
         mock_template = _get_template()
@@ -52,6 +60,8 @@ class TestTemplateDownload(SimpleTestCase):
     def test_get_returns_http_400_when_data_not_well_formatted(
         self, mock_template_api_get_by_id
     ):
+        """test_get_returns_http_400_when_data_not_well_formatted"""
+
         # Arrange
         mock_user = create_mock_user("1")
         mock_template = Template()
@@ -71,6 +81,8 @@ class TestTemplateDownload(SimpleTestCase):
 
     @patch.object(template_api, "get_by_id")
     def test_get_without_pretty_print_returns_data(self, mock_template_api_get_by_id):
+        """test_get_without_pretty_print_returns_data"""
+
         # Arrange
         mock_user = create_mock_user("1")
         mock_template = _get_template()
@@ -92,6 +104,8 @@ class TestTemplateDownload(SimpleTestCase):
     def test_get_with_pretty_print_returns_formatted_data(
         self, mock_template_api_get_by_id
     ):
+        """test_get_with_pretty_print_returns_formatted_data"""
+
         # Arrange
         mock_user = create_mock_user("1")
         mock_template = _get_template()
@@ -112,6 +126,12 @@ class TestTemplateDownload(SimpleTestCase):
 
 
 def _get_template():
+    """_get_template
+
+    Args:
+
+    Returns:
+    """
     template = Template()
     template.id = 1
     template.filename = "test"

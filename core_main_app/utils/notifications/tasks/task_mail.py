@@ -44,8 +44,8 @@ def send_mail(
             html_message=body,
             fail_silently=fail_silently,
         )
-    except Exception as e:
-        raise e
+    except Exception as exception:
+        raise exception
 
 
 @shared_task
@@ -76,8 +76,10 @@ def send_mail_to_administrators(
             html_message=message,
             fail_silently=fail_silently,
         )
-    except Exception as e:
-        logger.warning(f"send_mail_to_administrators threw an exception: {str(e)}")
+    except Exception as exception:
+        logger.warning(
+            "send_mail_to_administrators threw an exception:  %s", str(exception)
+        )
 
 
 @shared_task
@@ -106,5 +108,5 @@ def send_mail_to_managers(subject, path_to_template, context=None, fail_silently
             html_message=message,
             fail_silently=fail_silently,
         )
-    except Exception as e:
-        logger.warning(f"send_mail_to_managers throws an exception: {str(e)}")
+    except Exception as exception:
+        logger.warning("send_mail_to_managers throws an exception: %s", str(exception))

@@ -41,6 +41,17 @@ class CommonView(View, metaclass=ABCMeta):
     def common_render(
         self, request, template_name, modals=None, assets=None, context=None
     ):
+        """common_render
+
+        Args:
+            request:
+            template_name:
+            modals:
+            assets:
+            context:
+
+        Returns:
+        """
         return (
             admin_render(request, template_name, modals, assets, context)
             if self.administration
@@ -48,6 +59,10 @@ class CommonView(View, metaclass=ABCMeta):
         )
 
     def is_administration(self):
+        """is_administration
+
+        Returns:
+        """
         return self.administration
 
 
@@ -60,6 +75,13 @@ class EditWorkspaceRights(CommonView):
     template = "core_main_app/user/workspaces/edit_rights.html"
 
     def get(self, request, *args, **kwargs):
+        """get
+
+        Args:
+            request:
+
+        Returns:
+        """
 
         try:
             workspace_id = kwargs["workspace_id"]
@@ -197,6 +219,13 @@ class ViewData(CommonView):
     template = "core_main_app/user/data/detail.html"
 
     def get(self, request, *args, **kwargs):
+        """get
+
+        Args:
+            request:
+
+        Returns:
+        """
         data_id = request.GET["id"]
 
         try:

@@ -2,8 +2,8 @@
 """
 import logging
 
-from core_main_app.utils.requests_utils.requests_utils import send_get_request
 from xml_utils.xml_validation.resolvers.default_uri_resolver import DefaultURIResolver
+from core_main_app.utils.requests_utils.requests_utils import send_get_request
 
 logger = logging.getLogger(__name__)
 

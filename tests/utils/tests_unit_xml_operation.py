@@ -409,7 +409,11 @@ class TestGetContentByXpath(TestCase):
 
 
 class TestFormatContentXml(TestCase):
+    """Test Format Content Xml"""
+
     def test_format_valid_content_xml_returns_content_formatted(self):
+        """test_format_valid_content_xml_returns_content_formatted"""
+
         # Arrange
         xml_string = "<root><test>Hello</test><test>1</test></root>"
         expected_result = "<root>\n  <test>Hello</test>\n  <test>1</test>\n</root>\n"
@@ -418,9 +422,11 @@ class TestFormatContentXml(TestCase):
         content = format_content_xml(xml_string)
 
         # Assert
-        self.assertEquals(content, expected_result)
+        self.assertEqual(content, expected_result)
 
     def test_format_invalid_content_xml_raises_error(self):
+        """test_format_invalid_content_xml_raises_error"""
+
         # Arrange
         xml_string = "<root><test>Hello</test?</root>"
 

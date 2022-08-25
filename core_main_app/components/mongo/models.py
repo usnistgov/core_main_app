@@ -53,10 +53,30 @@ try:
 
             @staticmethod
             def post_save_data(sender, instance, **kwargs):
+                """post_save_data
+
+                Args:
+                    sender:
+                    instance:
+                    kwargs:
+
+                Returns:
+
+                """
                 raise NotImplementedError("post_save_data not implemented")
 
             @staticmethod
             def post_delete_data(sender, instance, **kwargs):
+                """post_delete_data
+
+                Args:
+                    sender:
+                    instance:
+                    kwargs:
+
+                Returns:
+
+                """
                 raise NotImplementedError("post_delete_data not implemented")
 
         class MongoData(AbstractMongoData):

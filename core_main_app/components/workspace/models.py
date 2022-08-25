@@ -76,8 +76,8 @@ class Workspace(models.Model):
         """
         try:
             return Workspace.objects.get(pk=workspace_id)
-        except ObjectDoesNotExist as e:
-            raise exceptions.DoesNotExist(str(e))
+        except ObjectDoesNotExist as exception:
+            raise exceptions.DoesNotExist(str(exception))
         except Exception as ex:
             raise exceptions.ModelError(str(ex))
 
@@ -204,8 +204,8 @@ class Workspace(models.Model):
         """
         try:
             return Workspace.objects.get(owner=None, is_public=True)
-        except ObjectDoesNotExist as e:
-            raise exceptions.DoesNotExist(str(e))
+        except ObjectDoesNotExist as exception:
+            raise exceptions.DoesNotExist(str(exception))
         except Exception as ex:
             raise exceptions.ModelError(str(ex))
 

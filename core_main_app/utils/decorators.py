@@ -36,7 +36,7 @@ def add_default_group(sender, **kwargs):
     user = kwargs["instance"]
     # If it's a creation
     if kwargs["created"]:
-        group = Group.objects.get(name=rights.default_group)
+        group = Group.objects.get(name=rights.DEFAULT_GROUP)
         user.groups.add(group)
         user.save()
 
@@ -54,7 +54,7 @@ def login_or_anonymous_perm_required(
     # Exceptions:    None
     # Description:   Custom decorator for checking user authentication or anonymous user permission.
     #                Manages the authorisation to execute a function decorated by this decorator.
-    #                Conditions: user connected or anonymous_group assigned with the anonymous_permission in parameter.
+    #                Conditions: user connected or ANONYMOUS_GROUP assigned with the anonymous_permission in parameter.
 
     :param anonymous_permission:
     :param function:
@@ -79,7 +79,7 @@ def login_or_anonymous_perm_required(
             request.has_anonymous_access = False
             if request.user.is_anonymous:
                 access = Group.objects.filter(
-                    Q(name=rights.anonymous_group)
+                    Q(name=rights.ANONYMOUS_GROUP)
                     & Q(permissions__codename=anonymous_permission)
                 )
             else:
@@ -121,7 +121,7 @@ def permission_required(
     # Outputs:       decorator
     # Exceptions:    None
     # Description:   Check if the user has the required permission given in parameter
-    #                If the user is anonymous, check if the anonymous_group has the required permission
+    #                If the user is anonymous, check if the ANONYMOUS_GROUP has the required permission
 
     :param content_type:
     :param permission:
@@ -145,9 +145,9 @@ def permission_required(
 
             """
             if request.user.is_anonymous:
-                # Check in the anonymous_group
+                # Check in the ANONYMOUS_GROUP
                 access = Group.objects.filter(
-                    Q(name=rights.anonymous_group) & Q(permissions__codename=permission)
+                    Q(name=rights.ANONYMOUS_GROUP) & Q(permissions__codename=permission)
                 )
             else:
                 # Check the permission for the current user
@@ -224,7 +224,7 @@ def api_permission_required(content_type, permission, raise_exception=False):
     # Outputs:       decorator
     # Exceptions:    None
     # Description:   Check if the user has the required permission given in parameter.
-    #                If the user is anonymous, check if the anonymous_group has the required permission
+    #                If the user is anonymous, check if the ANONYMOUS_GROUP has the required permission
     #                Used by the API
 
     :param content_type:
@@ -247,15 +247,15 @@ def api_permission_required(content_type, permission, raise_exception=False):
             """
             if request.user.is_anonymous:
                 access_api = Group.objects.filter(
-                    Q(name=rights.anonymous_group)
-                    & Q(permissions__codename=rights.api_access)
+                    Q(name=rights.ANONYMOUS_GROUP)
+                    & Q(permissions__codename=rights.API_ACCESS)
                 )
                 access = Group.objects.filter(
-                    Q(name=rights.anonymous_group) & Q(permissions__codename=permission)
+                    Q(name=rights.ANONYMOUS_GROUP) & Q(permissions__codename=permission)
                 )
             else:
                 prefixed_api_permission = "{!s}.{!s}".format(
-                    rights.api_content_type, rights.api_access
+                    rights.API_CONTENT_TYPE, rights.API_ACCESS
                 )
                 access_api = request.user.has_perm(prefixed_api_permission)
                 prefixed_permission = "{!s}.{!s}".format(content_type, permission)
@@ -267,11 +267,11 @@ def api_permission_required(content_type, permission, raise_exception=False):
                 # In case the 403 handler should be called raise the exception
                 if raise_exception:
                     raise PermissionDenied
-                else:
-                    content = {
-                        "message": "You don't have enough rights to use this feature."
-                    }
-                    return Response(content, status=status.HTTP_403_FORBIDDEN)
+
+                content = {
+                    "message": "You don't have enough rights to use this feature."
+                }
+                return Response(content, status=status.HTTP_403_FORBIDDEN)
 
         return wrapper
 

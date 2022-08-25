@@ -10,6 +10,8 @@ class WebPageSerializer(ModelSerializer):
     """Represents the web page serializer"""
 
     class Meta:
+        """Meta"""
+
         model = WebPage
 
         fields = ["id", "type", "content"]

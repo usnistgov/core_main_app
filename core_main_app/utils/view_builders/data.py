@@ -49,7 +49,7 @@ def build_page(
 
         except Exception as exception:
             logger.warning(
-                "An exception occurred when retrieving XSLT: %s" % str(exception)
+                "An exception occurred when retrieving XSLT: %s", str(exception)
             )
             display_xslt_selector = False
             template_xsl_rendering = None
@@ -135,8 +135,8 @@ def build_page(
         page_info["error"] = "Data not found"
     except exceptions.ModelError:
         page_info["error"] = "Model error"
-    except Exception as e:
-        page_info["error"] = str(e)
+    except Exception as exception:
+        page_info["error"] = str(exception)
     finally:
         return page_info
 

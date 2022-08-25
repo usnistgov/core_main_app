@@ -20,6 +20,6 @@ class Main(models.Model):
         verbose_name = "core_main_app"
         default_permissions = ()
         permissions = (
-            (rights.publish_data, get_formatted_name(rights.publish_data)),
-            (rights.publish_blob, get_formatted_name(rights.publish_blob)),
+            (rights.PUBLISH_DATA, get_formatted_name(rights.PUBLISH_DATA)),
+            (rights.PUBLISH_BLOB, get_formatted_name(rights.PUBLISH_BLOB)),
         )

@@ -33,13 +33,18 @@ class MongoIntegrationTransactionTestCase(TransactionTestCase):
 
         """
         self.clear_database()
-        group_api.get_or_create(name=rights.anonymous_group)
-        group_api.get_or_create(name=rights.default_group)
+        group_api.get_or_create(name=rights.ANONYMOUS_GROUP)
+        group_api.get_or_create(name=rights.DEFAULT_GROUP)
 
         if self.fixture is not None:
             self.fixture.insert_data()
 
     def clear_database(self):
+        """clear_database
+
+        Returns:
+
+        """
         execute_from_command_line(["", "flush", "--no-input"])
         if MONGODB_INDEXING:
             self.database.clean_database()

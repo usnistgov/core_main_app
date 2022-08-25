@@ -13,6 +13,9 @@ from django.utils.html import escape as html_escape
 from django.views.generic import View
 from markdown import markdown
 
+from xml_utils.commons.exceptions import HTMLError
+from xml_utils.html_tree.parser import parse_html
+
 from core_main_app.commons import constants as constants
 from core_main_app.commons import exceptions
 from core_main_app.components.template.models import Template
@@ -27,7 +30,6 @@ from core_main_app.components.xsl_transformation import api as xslt_transformati
 from core_main_app.components.xsl_transformation.models import XslTransformation
 from core_main_app.templatetags.stripjs import stripjs
 from core_main_app.utils.rendering import admin_render
-from core_main_app.utils.rendering import admin_render as render
 from core_main_app.utils.xml import get_imports_and_includes
 from core_main_app.views.admin.ajax import EditXSLTView
 from core_main_app.views.admin.forms import TextAreaForm
@@ -42,8 +44,6 @@ from core_main_app.views.common.ajax import (
 )
 from core_main_app.views.common.views import read_xsd_file
 from core_main_app.views.user.views import get_context_manage_template_versions
-from xml_utils.commons.exceptions import HTMLError
-from xml_utils.html_tree.parser import parse_html
 
 
 @staff_member_required
@@ -156,11 +156,11 @@ def manage_template_versions(request, version_manager_id):
             modals=modals,
             context=context,
         )
-    except Exception as e:
+    except Exception as exception:
         return admin_render(
             request,
             "core_main_app/common/commons/error.html",
-            context={"error": str(e)},
+            context={"error": str(exception)},
         )
 
 
@@ -201,9 +201,9 @@ def upload_template(request):
 
         if form.is_valid():
             return _save_template(request, assets, context)
-        else:
-            # Display error from the form
-            return _upload_template_response(request, assets, context)
+
+        # Display error from the form
+        return _upload_template_response(request, assets, context)
     # method is GET
     else:
         # render the form to upload a template
@@ -260,9 +260,9 @@ def upload_template_version(request, version_manager_id):
             return _save_template_version(
                 request, assets, context, template_version_manager
             )
-        else:
-            # Display errors from the form
-            return _upload_template_response(request, assets, context)
+
+        # Display errors from the form
+        return _upload_template_response(request, assets, context)
     # method is GET
     else:
         # render the form to upload a template
@@ -304,8 +304,8 @@ def _save_template(request, assets, context):
             "A template with the same name already exists. Please choose another name."
         )
         return _upload_template_response(request, assets, context)
-    except Exception as e:
-        context["errors"] = html_escape(str(e))
+    except Exception as exception:
+        context["errors"] = html_escape(str(exception))
         return _upload_template_response(request, assets, context)
 
 
@@ -353,8 +353,8 @@ def _save_template_version(request, assets, context, template_version_manager):
         return handle_xsd_errors(
             request, assets, context, xsd_error, xsd_data, xsd_file.name
         )
-    except Exception as e:
-        context["errors"] = html_escape(str(e))
+    except Exception as exception:
+        context["errors"] = html_escape(str(exception))
         return _upload_template_response(request, assets, context)
 
 
@@ -382,6 +382,14 @@ class XSLTView(View):
     @staticmethod
     @staff_member_required
     def get(request, *args, **kwargs):
+        """get request
+
+        Args:
+            request:
+
+        Returns:
+        """
+
         modals = [
             EditXSLTView.get_modal_html_path(),
             DeleteObjectModalView.get_modal_html_path(),
@@ -423,11 +431,25 @@ class UploadXSLTView(View):
 
     @method_decorator(staff_member_required)
     def get(self, request, *args, **kwargs):
+        """get
+
+        Args:
+            request:
+
+        Returns:
+        """
         self.context.update({"upload_form": self.form_class()})
         return admin_render(request, self.template_name, context=self.context)
 
     @method_decorator(staff_member_required)
     def post(self, request, *args, **kwargs):
+        """post
+
+        Args:
+            request:
+
+        Returns:
+        """
         form = self.form_class(request.POST, request.FILES)
         self.context.update({"upload_form": form})
 
@@ -462,8 +484,8 @@ class UploadXSLTView(View):
             return admin_render(
                 request, "core_main_app/admin/xslt/upload.html", context=self.context
             )
-        except Exception as e:
-            self.context.update({"errors": html_escape(str(e))})
+        except Exception as exception:
+            self.context.update({"errors": html_escape(str(exception))})
             return admin_render(
                 request, "core_main_app/admin/xslt/upload.html", context=self.context
             )
@@ -491,9 +513,9 @@ def handle_xsd_errors(request, assets, context, xsd_error, xsd_content, filename
             imports, includes, xsd_content, filename, request=request
         )
         return _upload_template_response(request, assets, context)
-    else:
-        context["errors"] = html_escape(str(xsd_error))
-        return _upload_template_response(request, assets, context)
+
+    context["errors"] = html_escape(str(xsd_error))
+    return _upload_template_response(request, assets, context)
 
 
 def get_dependency_resolver_html(imports, includes, xsd_data, filename, request):
@@ -538,6 +560,8 @@ def get_dependency_resolver_html(imports, includes, xsd_data, filename, request)
 
 
 class WebPageView(View):
+    """Web Page View"""
+
     form_class = TextAreaForm
     api = None
     get_redirect = None
@@ -571,7 +595,7 @@ class WebPageView(View):
 
         assets = {"css": ["core_main_app/admin/css/web_page/style.css"]}
 
-        return render(request, self.get_redirect, context=context, assets=assets)
+        return admin_render(request, self.get_redirect, context=context, assets=assets)
 
     @method_decorator(staff_member_required)
     def post(self, request):

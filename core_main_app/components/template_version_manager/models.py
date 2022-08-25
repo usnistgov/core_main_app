@@ -33,10 +33,10 @@ class TemplateVersionManager(VersionManager):
         """
         try:
             return TemplateVersionManager.objects.get(pk=version_manager_id)
-        except ObjectDoesNotExist as e:
-            raise exceptions.DoesNotExist(str(e))
-        except Exception as e:
-            raise exceptions.ModelError(str(e))
+        except ObjectDoesNotExist as exception:
+            raise exceptions.DoesNotExist(str(exception))
+        except Exception as exception:
+            raise exceptions.ModelError(str(exception))
 
     @staticmethod
     def get_global_version_managers(_cls=True):
@@ -149,7 +149,7 @@ class TemplateVersionManager(VersionManager):
             return TemplateVersionManager.objects.get(
                 is_disabled=False, title=version_manager_title, user=None
             )
-        except ObjectDoesNotExist as e:
-            raise exceptions.DoesNotExist(str(e))
-        except Exception as e:
-            raise exceptions.ModelError(str(e))
+        except ObjectDoesNotExist as exception:
+            raise exceptions.DoesNotExist(str(exception))
+        except Exception as exception:
+            raise exceptions.ModelError(str(exception))

@@ -6,8 +6,19 @@ from core_main_app.settings import RESULTS_PER_PAGE
 
 
 class ResultsPaginator:
+    """Results Paginator"""
+
     @staticmethod
     def get_results(results_list, page, results_per_page=RESULTS_PER_PAGE):
+        """get_results
+
+        Args:
+            results_list:
+            page:
+            results_per_page:
+
+        Returns:
+        """
         # Pagination
         paginator = Paginator(results_list, results_per_page)
 

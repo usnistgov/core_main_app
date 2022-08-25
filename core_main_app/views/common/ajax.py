@@ -31,29 +31,43 @@ class AddObjectModalView(CreateView):
     success_message = None
 
     def form_invalid(self, form):
+        """form_invalid
+
+        Args:
+            form:
+
+        Return:
+        """
         # Get initial response
         response = super().form_invalid(form)
         data = {"is_valid": False, "responseText": response.rendered_content}
         return JsonResponse(data)
 
     def form_valid(self, form):
+        """form_valid
+
+        Args:
+            form:
+
+        Return:
+        """
         # This method is called when valid form data has been POSTed.
         # Call private save method
         # Populate self.object without committing to the database
         self.object = form.save(commit=False)
         self._save(form)
-        if form.is_valid():
-            data = {
-                "is_valid": True,
-                "url": self.get_success_url(),
-            }
-
-            if self.success_message:
-                messages.success(self.request, self.success_message)
-
-            return JsonResponse(data)
-        else:
+        if not form.is_valid():
             return self.form_invalid(form)
+
+        data = {
+            "is_valid": True,
+            "url": self.get_success_url(),
+        }
+
+        if self.success_message:
+            messages.success(self.request, self.success_message)
+
+        return JsonResponse(data)
 
     def _save(self, form):
         # Save treatment.
@@ -61,10 +75,22 @@ class AddObjectModalView(CreateView):
 
     @staticmethod
     def get_modal_html_path():
+        """get_modal_html_path
+
+        Args:
+
+        Return:
+        """
         return "core_main_app/common/modals/add_page_modal.html"
 
     @staticmethod
     def get_modal_js_path():
+        """get_modal_js_path
+
+        Args:
+
+        Return:
+        """
         return {"path": "core_main_app/common/js/modals/add.js", "is_raw": False}
 
 
@@ -80,12 +106,26 @@ class EditObjectModalView(UpdateView):
     success_message = None
 
     def form_invalid(self, form):
+        """form_invalid
+
+        Args:
+            form:
+
+        Return:
+        """
         # Get initial response
         response = super().form_invalid(form)
         data = {"is_valid": False, "responseText": response.rendered_content}
         return JsonResponse(data)
 
     def form_valid(self, form):
+        """form_valid
+
+        Args:
+            form:
+
+        Return:
+        """
         # This method is called when valid form data has been POSTed.
         # Call private save method
         self._save(form)
@@ -108,10 +148,22 @@ class EditObjectModalView(UpdateView):
 
     @staticmethod
     def get_modal_html_path():
+        """get_modal_html_path
+
+        Args:
+
+        Return:
+        """
         return "core_main_app/common/modals/edit_page_modal.html"
 
     @staticmethod
     def get_modal_js_path():
+        """get_modal_js_path
+
+        Args:
+
+        Return:
+        """
         return {"path": "core_main_app/common/js/modals/edit.js", "is_raw": False}
 
 
@@ -127,8 +179,12 @@ class DeleteObjectModalView(DeleteView):
     success_message = None
 
     def delete(self, request, *args, **kwargs):
-        """
-        Delete method.
+        """Delete method.
+
+        Args:
+            request:
+
+        Returns:
         """
         try:
             self.object = self.get_object()
@@ -136,8 +192,8 @@ class DeleteObjectModalView(DeleteView):
 
             if self.success_message:
                 messages.success(self.request, self.success_message)
-        except Exception as e:
-            messages.error(self.request, str(e))
+        except Exception as exception:
+            messages.error(self.request, str(exception))
 
         data = {"url": self.get_success_url()}
         return JsonResponse(data)
@@ -152,6 +208,8 @@ class DeleteObjectModalView(DeleteView):
     def _get_object_name(self):
         """
         Get object name
+
+        Returns:
         """
         object_name = ""
         if self.object:
@@ -165,6 +223,12 @@ class DeleteObjectModalView(DeleteView):
         return object_name
 
     def get_context_data(self, **kwargs):
+        """get_context_data
+
+        Args:
+
+        Return:
+        """
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         # Add the object representation
@@ -174,10 +238,22 @@ class DeleteObjectModalView(DeleteView):
 
     @staticmethod
     def get_modal_html_path():
+        """get_modal_html_path
+
+        Args:
+
+        Return:
+        """
         return "core_main_app/common/modals/delete_page_modal.html"
 
     @staticmethod
     def get_modal_js_path():
+        """get_modal_js_path
+
+        Args:
+
+        Return:
+        """
         return {"path": "core_main_app/common/js/modals/delete.js", "is_raw": False}
 
 
@@ -200,5 +276,5 @@ class EditTemplateVersionManagerView(EditObjectModalView):
                 "An object with the same name already exists. Please choose "
                 "another name.",
             )
-        except Exception as e:
-            form.add_error(None, str(e))
+        except Exception as exception:
+            form.add_error(None, str(exception))

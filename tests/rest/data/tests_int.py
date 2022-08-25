@@ -31,7 +31,7 @@ fixture_data_workspace = AccessControlDataFixture()
 
 
 class TestDataListByWorkspace(MongoIntegrationBaseTestCase):
-    """TestDataListByWorkspace"""
+    """Test Data List By Workspace"""
 
     fixture = fixture_data_workspace
 
@@ -270,7 +270,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
 
 
 class TestDataDetail(MongoIntegrationBaseTestCase):
-    """TestDataDetail"""
+    """Test Data Detail"""
 
     fixture = fixture_data
 
@@ -484,6 +484,11 @@ class TestDataDownload(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_with_param_returns_http_200(self):
+        """test_get_with_param_returns_http_200
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 
@@ -499,6 +504,11 @@ class TestDataDownload(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_with_param_returns_http_400_when_content_not_well_formatted(self):
+        """test_get_with_param_returns_http_400_when_content_not_well_formatted
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 

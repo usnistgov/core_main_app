@@ -1,6 +1,7 @@
 """ Data API
 """
 
+from xml_utils.xsd_tree.xsd_tree import XSDTree
 import core_main_app.access_control.api
 import core_main_app.components.workspace.access_control
 from core_main_app.access_control import api as access_control_api
@@ -22,7 +23,6 @@ from core_main_app.utils.query.mongo.prepare import (
     get_access_filters_from_query,
 )
 from core_main_app.utils.xml import validate_xml_data
-from xml_utils.xsd_tree.xsd_tree import XSDTree
 
 if MONGODB_INDEXING:
     from core_main_app.components.mongo import api as mongo_api
@@ -170,17 +170,17 @@ def check_xml_file_is_valid(data, request=None):
 
     try:
         xml_tree = XSDTree.build_tree(data.xml_content)
-    except Exception as e:
-        raise exceptions.XMLError(str(e))
+    except Exception as exception:
+        raise exceptions.XMLError(str(exception))
     try:
         xsd_tree = XSDTree.build_tree(template.content)
-    except Exception as e:
-        raise exceptions.XSDError(str(e))
+    except Exception as exception:
+        raise exceptions.XSDError(str(exception))
     error = validate_xml_data(xsd_tree, xml_tree, request=request)
     if error is not None:
         raise exceptions.XMLError(error)
-    else:
-        return True
+
+    return True
 
 
 def execute_json_query(json_query, user, order_by_field=DATA_SORTING_FIELDS):
@@ -200,12 +200,12 @@ def execute_json_query(json_query, user, order_by_field=DATA_SORTING_FIELDS):
         return _execute_mongo_query(
             json_query, user, workspace_filter, user_filter, order_by_field
         )
-    else:
-        # convert JSON query to Django syntax
-        query = convert_to_django(query_dict=json_query)
 
-        # execute query and return results
-        return execute_query(query, user, workspace_filter, user_filter, order_by_field)
+    # convert JSON query to Django syntax
+    query = convert_to_django(query_dict=json_query)
+
+    # execute query and return results
+    return execute_query(query, user, workspace_filter, user_filter, order_by_field)
 
 
 @access_control(data_api_access_control.can_read_data_query)

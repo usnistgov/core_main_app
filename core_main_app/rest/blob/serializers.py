@@ -26,6 +26,8 @@ class BlobSerializer(ModelSerializer):
         pid = SerializerMethodField()
 
     class Meta:
+        """Meta"""
+
         model = Blob
         fields = [
             "id",
@@ -131,6 +133,8 @@ class DeleteBlobsSerializer(ModelSerializer):
     id = CharField()
 
     class Meta:
+        """Meta"""
+
         model = Blob
         fields = ("id",)
 

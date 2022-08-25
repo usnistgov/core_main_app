@@ -215,6 +215,14 @@ class TestDataDownload(SimpleTestCase):
 
     @patch.object(data_api, "get_by_id")
     def test_get_returns_http_200_when_data_found(self, mock_data_api_get_by_id):
+        """test_get_returns_http_200_when_data_found
+
+        Args:
+            mock_data_api_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1")
         mock_data = _create_data()
@@ -232,6 +240,14 @@ class TestDataDownload(SimpleTestCase):
     def test_get_returns_http_400_when_data_not_well_formatted(
         self, mock_data_api_get_by_id
     ):
+        """test_get_returns_http_400_when_data_not_well_formatted
+
+        Args:
+            mock_data_api_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1")
         mock_data = Data(user_id="1")
@@ -250,6 +266,14 @@ class TestDataDownload(SimpleTestCase):
 
     @patch.object(data_api, "get_by_id")
     def test_get_without_pretty_print_returns_data(self, mock_data_api_get_by_id):
+        """test_get_without_pretty_print_returns_data
+
+        Args:
+            mock_data_api_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1")
         mock_data = _create_data()
@@ -271,6 +295,14 @@ class TestDataDownload(SimpleTestCase):
     def test_get_with_pretty_print_returns_formatted_data(
         self, mock_data_api_get_by_id
     ):
+        """test_get_with_pretty_print_returns_formatted_data
+
+        Args:
+            mock_data_api_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1")
         mock_data = _create_data()

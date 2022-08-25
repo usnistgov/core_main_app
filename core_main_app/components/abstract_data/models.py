@@ -50,6 +50,8 @@ class AbstractData(models.Model):
     _xml_content = None
 
     class Meta:
+        """Meta"""
+
         abstract = True
 
     @property
@@ -159,7 +161,7 @@ class AbstractData(models.Model):
                     self.xml_content.encode(), CHECKSUM_ALGORITHM
                 )
             self.save()
-        except IntegrityError as e:
-            raise exceptions.NotUniqueError(e)
+        except IntegrityError as exception:
+            raise exceptions.NotUniqueError(exception)
         except Exception as ex:
             raise exceptions.ModelError(ex)

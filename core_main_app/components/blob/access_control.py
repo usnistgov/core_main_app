@@ -34,7 +34,7 @@ def has_perm_publish_blob(user):
 
     Returns
     """
-    has_perm_publish(user, rights.publish_blob)
+    has_perm_publish(user, rights.PUBLISH_BLOB)
 
 
 def can_write_blob_workspace(func, data, workspace, user):
@@ -49,4 +49,4 @@ def can_write_blob_workspace(func, data, workspace, user):
     Returns:
 
     """
-    return can_write_in_workspace(func, data, workspace, user, rights.publish_blob)
+    return can_write_in_workspace(func, data, workspace, user, rights.PUBLISH_BLOB)

@@ -110,10 +110,10 @@ class Template(Version):
         """
         try:
             return Template.objects.get(pk=template_id)
-        except ObjectDoesNotExist as e:
-            raise exceptions.DoesNotExist(str(e))
-        except Exception as e:
-            raise exceptions.ModelError(str(e))
+        except ObjectDoesNotExist as exception:
+            raise exceptions.DoesNotExist(str(exception))
+        except Exception as exception:
+            raise exceptions.ModelError(str(exception))
 
     @staticmethod
     def get_all_by_hash(template_hash, users):
@@ -206,10 +206,10 @@ class Template(Version):
                     self.content.encode(), CHECKSUM_ALGORITHM
                 )
             self.save()
-        except IntegrityError as e:
-            raise exceptions.NotUniqueError(str(e))
-        except ValidationError as e:
-            raise e
+        except IntegrityError as exception:
+            raise exceptions.NotUniqueError(str(exception))
+        except ValidationError as exception:
+            raise exception
         except Exception as ex:
             raise exceptions.ModelError(str(ex))
 

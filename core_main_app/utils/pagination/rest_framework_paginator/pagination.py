@@ -9,6 +9,8 @@ from core_main_app.utils.pagination.mongoengine_paginator.paginator import (
 
 
 class StandardResultsSetPagination(PageNumberPagination):
+    """Standard Results Set Pagination"""
+
     page_size = RESULTS_PER_PAGE
     if MONGODB_INDEXING:
         django_paginator_class = MongoenginePaginator

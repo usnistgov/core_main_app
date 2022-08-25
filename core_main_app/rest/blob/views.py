@@ -26,6 +26,8 @@ from core_main_app.utils.file import get_file_http_response
 
 
 class AbstractBlobList(APIView, metaclass=ABCMeta):
+    """Abstract Blob List"""
+
     @abstractmethod
     def _get_blobs(self, request):
         """Retrieve blobs
@@ -80,8 +82,8 @@ class AbstractBlobList(APIView, metaclass=ABCMeta):
 
             # Return response
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except AccessControlError as e:
-            content = {"message": str(e)}
+        except AccessControlError as exception:
+            content = {"message": str(exception)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
@@ -271,8 +273,8 @@ class BlobDetail(APIView):
 
             # Return response
             return Response(serializer.data)
-        except AccessControlError as e:
-            content = {"message": str(e)}
+        except AccessControlError as exception:
+            content = {"message": str(exception)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Http404:
             content = {"message": "Blob not found."}
@@ -308,8 +310,8 @@ class BlobDetail(APIView):
             blob_api.delete(blob_object, request.user)
 
             return Response(status=status.HTTP_204_NO_CONTENT)
-        except AccessControlError as e:
-            content = {"message": str(e)}
+        except AccessControlError as exception:
+            content = {"message": str(exception)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Http404:
             content = {"message": "Blob not found."}
@@ -363,8 +365,8 @@ class BlobDownload(APIView):
             blob_object = self.get_object(request, pk)
 
             return get_file_http_response(blob_object.blob.read(), blob_object.filename)
-        except AccessControlError as e:
-            content = {"message": str(e)}
+        except AccessControlError as exception:
+            content = {"message": str(exception)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Http404:
             content = {"message": "Blob not found."}

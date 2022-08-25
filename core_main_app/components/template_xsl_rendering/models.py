@@ -49,8 +49,8 @@ class TemplateXslRendering(models.Model):
         """
         try:
             return TemplateXslRendering.objects.get(pk=template_xsl_rendering_id)
-        except ObjectDoesNotExist as e:
-            raise exceptions.DoesNotExist(str(e))
+        except ObjectDoesNotExist as exception:
+            raise exceptions.DoesNotExist(str(exception))
         except Exception as ex:
             raise exceptions.ModelError(str(ex))
 
@@ -71,10 +71,10 @@ class TemplateXslRendering(models.Model):
         """
         try:
             return TemplateXslRendering.objects.get(template=template_id)
-        except ObjectDoesNotExist as e:
-            raise exceptions.DoesNotExist(str(e))
-        except Exception as e:
-            raise exceptions.ModelError(str(e))
+        except ObjectDoesNotExist as exception:
+            raise exceptions.DoesNotExist(str(exception))
+        except Exception as exception:
+            raise exceptions.ModelError(str(exception))
 
     @staticmethod
     def get_by_template_hash(template_hash):
@@ -93,10 +93,10 @@ class TemplateXslRendering(models.Model):
         """
         try:
             return TemplateXslRendering.objects.get(template__hash=template_hash)
-        except ObjectDoesNotExist as e:
-            raise exceptions.DoesNotExist(str(e))
-        except Exception as e:
-            raise exceptions.ModelError(str(e))
+        except ObjectDoesNotExist as exception:
+            raise exceptions.DoesNotExist(str(exception))
+        except Exception as exception:
+            raise exceptions.ModelError(str(exception))
 
     @staticmethod
     def get_all():

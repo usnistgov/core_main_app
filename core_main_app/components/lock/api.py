@@ -58,8 +58,8 @@ def remove_lock_on_object(object, user):
         # Only the user who created the lock can remove it
         if database_lock_object.user_id == str(user.id):
             lock.remove_lock(database_lock_object)
-    except Exception as e:
-        logger.warning(f"remove_lock_on_object threw an exception: {str(e)}")
+    except Exception as exception:
+        logger.warning("remove_lock_on_object threw an exception: %s", str(exception))
     finally:
         Lock.release()
 

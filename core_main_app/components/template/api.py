@@ -189,8 +189,8 @@ def _register_local_dependencies(template, request):
             dependency_object = get_by_id(local_dependency, request=request)
             # add the dependency
             template.dependencies.add(dependency_object)
-        except exceptions.DoesNotExist as e:
+        except exceptions.DoesNotExist as exception:
             logger.warning(
-                f"Dependency {local_dependency} throw an exception: {str(e)}"
+                "Dependency %s threw an exception: %s", local_dependency, str(exception)
             )
     template.save()

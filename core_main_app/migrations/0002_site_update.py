@@ -1,3 +1,6 @@
+""" Migrations
+"""
+
 from __future__ import unicode_literals
 
 from django.contrib.sites.models import Site
@@ -7,6 +10,14 @@ from core_main_app.settings import SERVER_URI
 
 
 def update_site(code, reverse_code):
+    """update_site
+
+    Args:
+        code:
+        reverse_code:
+
+    Return:
+    """
     site_domain = SERVER_URI
 
     for i in (("http://", ""), ("https://", "")):
@@ -19,6 +30,7 @@ def update_site(code, reverse_code):
 
 
 class Migration(migrations.Migration):
+    """Migration"""
 
     dependencies = [
         ("sites", "0001_initial"),

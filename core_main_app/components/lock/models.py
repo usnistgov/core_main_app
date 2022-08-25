@@ -24,6 +24,13 @@ class Lock:
 
     @classmethod
     def acquire(cls):
+        """acquire.
+
+        Args:
+            cls:
+
+        Returns:
+        """
         if not cls.__singleton_instance:
             with cls.__singleton_lock:
                 if not cls.__singleton_instance:
@@ -33,6 +40,13 @@ class Lock:
 
     @classmethod
     def release(cls):
+        """release.
+
+        Args:
+            cls:
+
+        Returns:
+        """
         sem.release()
 
     def set_lock(self, object, user):
@@ -69,8 +83,8 @@ class Lock:
         """
         try:
             return DatabaseLockObject.get_lock_by_object(object)
-        except ObjectDoesNotExist as e:
-            raise exceptions.DoesNotExist(str(e))
+        except ObjectDoesNotExist as exception:
+            raise exceptions.DoesNotExist(str(exception))
         except Exception as ex:
             raise exceptions.ModelError(str(ex))
 

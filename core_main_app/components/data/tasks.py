@@ -71,11 +71,11 @@ def async_migration_task(data_list, xslt_id, template_id, user_id, migrate):
                     state="PROGRESS",
                     meta={"current": current_progress, "total": total_data},
                 )
-    except Exception as e:
+    except Exception as exception:
         async_migration_task.update_state(
             state="ABORT", meta={"current": current_progress, "total": total_data}
         )
-        raise Exception(f"Something went wrong: {str(e)}")
+        raise Exception(f"Something went wrong: {str(exception)}")
 
     return {"valid": success, "wrong": errors}
 
@@ -176,7 +176,7 @@ def async_template_migration_task(
                 if not target_template_id
                 else "Please provide template id."
             )
-    except Exception as e:
+    except Exception as exception:
         async_template_migration_task.update_state(
             state="ABORT",
             meta={
@@ -186,7 +186,7 @@ def async_template_migration_task(
                 "data_total": total_data,
             },
         )
-        raise Exception(f"Something went wrong: {str(e)}")
+        raise Exception(f"Something went wrong: {str(exception)}")
 
 
 def get_task_progress(task_id):
@@ -234,10 +234,14 @@ def index_mongo_data(data_id):
 
             mongo_data = MongoData.init_mongo_data(data)
             mongo_data.save()
-        except Exception as e:
-            logger.error(f"ERROR : An error occurred while indexing data : {str(e)}")
-    except Exception as e:
-        logger.error(f"ERROR : An error occurred while indexing data : {str(e)}")
+        except Exception as exception:
+            logger.error(
+                f"ERROR : An error occurred while indexing data : {str(exception)}"
+            )
+    except Exception as exception:
+        logger.error(
+            f"ERROR : An error occurred while indexing data : {str(exception)}"
+        )
 
 
 @shared_task
@@ -249,7 +253,11 @@ def delete_mongo_data(data_id):
 
             mongo_data = MongoData.objects.get(pk=data_id)
             mongo_data.delete()
-        except Exception as e:
-            logger.error(f"ERROR : An error occurred while deleting data : {str(e)}")
-    except Exception as e:
-        logger.error(f"ERROR : An error occurred while deleting data : {str(e)}")
+        except Exception as exception:
+            logger.error(
+                f"ERROR : An error occurred while deleting data : {str(exception)}"
+            )
+    except Exception as exception:
+        logger.error(
+            f"ERROR : An error occurred while deleting data : {str(exception)}"
+        )

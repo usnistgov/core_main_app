@@ -28,11 +28,11 @@ class QueryBuilder:
             # try to load the query in Json
             # in case the user give a query in string format
             query = json.loads(query)
-        except TypeError as e:
+        except TypeError as exception:
             # if type error, we use the query as is
             # (the query must be directly given in json format)
             # Log the exception
-            logger.warning(str(e))
+            logger.warning(str(exception))
 
         self.criteria = [
             prepare_query(query, regex=True, sub_document_root=sub_document_root)

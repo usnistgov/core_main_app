@@ -123,6 +123,8 @@ def update_data_list(model_admin, request, queryset):
 
 
 class CustomDataAdmin(admin.ModelAdmin):
+    """Custom Data Admin"""
+
     search_fields = ["title", "vector_column"]
     list_filter = ["template", "user_id", "workspace"]
     list_display = ["title", "last_modification_date", "owner_name", "workspace"]

@@ -242,8 +242,8 @@ def delete_permission(permission_id):
     try:
         perm = get_by_id(permission_id)
         perm.delete()
-    except Exception as e:
-        logger.warning(f"delete_permission threw an exception: {str(e)}")
+    except Exception as exception:
+        logger.warning("delete_permission threw an exception: %s", str(exception))
 
 
 def get_permission_label(permission_id):

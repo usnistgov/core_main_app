@@ -13,6 +13,8 @@ from core_main_app.views.admin.commons.upload.forms import UploadForm
 
 
 class EditTemplateForm(ModelForm):
+    """Edit Template Form"""
+
     title = forms.CharField(
         label="Name",
         widget=forms.TextInput(
@@ -21,11 +23,15 @@ class EditTemplateForm(ModelForm):
     )
 
     class Meta:
+        """Meta"""
+
         model = TemplateVersionManager
         fields = ["title"]
 
 
 class EditXSLTForm(ModelForm):
+    """Edit XSLT Form"""
+
     name = forms.CharField(
         label="Name",
         widget=forms.TextInput(
@@ -34,6 +40,8 @@ class EditXSLTForm(ModelForm):
     )
 
     class Meta:
+        """Meta"""
+
         model = XslTransformation
         fields = ["name"]
 

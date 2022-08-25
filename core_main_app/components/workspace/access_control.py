@@ -40,7 +40,7 @@ def can_user_set_workspace_public(func, workspace, user):
 
     _check_is_owner_workspace(workspace, user)
 
-    publish_perm = permissions_api.get_by_codename(rights.publish_data)
+    publish_perm = permissions_api.get_by_codename(rights.PUBLISH_DATA)
     if not user.has_perm(
         publish_perm.content_type.app_label + "." + publish_perm.codename
     ):

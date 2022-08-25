@@ -9,11 +9,6 @@ from urllib.parse import urlparse
 import xmltodict
 from django.urls import reverse
 
-from core_main_app.commons import exceptions
-from core_main_app.commons.exceptions import XMLError
-from core_main_app.settings import XERCES_VALIDATION, SERVER_URI
-from core_main_app.utils.resolvers.resolver_utils import lmxl_uri_resolver
-from core_main_app.utils.urls import get_template_download_pattern
 from xml_utils import xpath as xml_utils_xpath
 from xml_utils.commons import constants as xml_utils_constants
 from xml_utils.commons import exceptions as xml_utils_exceptions
@@ -22,6 +17,12 @@ from xml_utils.xml_validation import validation as xml_validation
 from xml_utils.xsd_hash import xsd_hash
 from xml_utils.xsd_tree.operations.namespaces import get_namespaces
 from xml_utils.xsd_tree.xsd_tree import XSDTree
+
+from core_main_app.commons import exceptions
+from core_main_app.settings import XERCES_VALIDATION, SERVER_URI
+from core_main_app.utils.resolvers.resolver_utils import lmxl_uri_resolver
+from core_main_app.utils.urls import get_template_download_pattern
+
 
 logger = logging.getLogger(__name__)
 
@@ -146,8 +147,8 @@ def has_xsl_namespace(xml_string):
     has_namespace = False
     try:
         has_namespace = XSL_NAMESPACE in list(get_namespaces(xml_string).values())
-    except Exception as e:
-        logger.warning(f"has_xsl_namespace threw an exception: {str(e)}")
+    except Exception as exception:
+        logger.warning("has_xsl_namespace threw an exception: %s", str(exception))
 
     return has_namespace
 
@@ -428,7 +429,9 @@ def get_local_dependencies(xsd_string):
                 # add id to list of internal dependencies
                 dependencies.append(object_id)
             except Exception:
-                raise XMLError("Local dependency schemaLocation is not well formed.")
+                raise exceptions.XMLError(
+                    "Local dependency schemaLocation is not well formed."
+                )
 
     return dependencies
 
@@ -559,8 +562,8 @@ def validate_xpath(xpath):
     """
     try:
         xml_utils_xpath.validate_xpath(xpath)
-    except xml_utils_exceptions.XPathError as e:
-        raise exceptions.XMLError(str(e))
+    except xml_utils_exceptions.XPathError as exception:
+        raise exceptions.XMLError(str(exception))
 
 
 def get_content_by_xpath(xml_string, xpath, namespaces=None):

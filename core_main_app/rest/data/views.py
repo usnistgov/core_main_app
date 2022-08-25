@@ -170,6 +170,8 @@ class DataList(APIView):
 
 
 class AdminDataList(DataList):
+    """Admin Data List"""
+
     permission_classes = (IsAdminUser,)
     serializer = AdminDataSerializer
 
@@ -295,8 +297,8 @@ class DataDetail(APIView):
         except Http404:
             content = {"message": "Data not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
-        except AccessControlError as e:
-            content = {"message": str(e)}
+        except AccessControlError as exception:
+            content = {"message": str(exception)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
@@ -331,8 +333,8 @@ class DataDetail(APIView):
         except Http404:
             content = {"message": "Data not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
-        except AccessControlError as e:
-            content = {"message": str(e)}
+        except AccessControlError as exception:
+            content = {"message": str(exception)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
@@ -388,8 +390,8 @@ class DataDetail(APIView):
         except Http404:
             content = {"message": "Data not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
-        except AccessControlError as e:
-            content = {"message": str(e)}
+        except AccessControlError as exception:
+            content = {"message": str(exception)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
@@ -598,6 +600,8 @@ def get_by_id_with_template_info(request):
 
 
 class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
+    """Execute Local Query View"""
+
     if MONGODB_INDEXING:
         serializer = MongoDataSerializer
     else:
@@ -705,6 +709,8 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
 
 
 class ExecuteLocalKeywordQueryView(ExecuteLocalQueryView):
+    """Execute Local Keyword Query View"""
+
     def build_query(
         self, query, workspaces=None, templates=None, options=None, title=None
     ):
@@ -953,8 +959,8 @@ class DataPermissions(APIView):
             return True
         except AccessControlError:
             return False
-        except Exception as e:
-            raise e
+        except Exception as exception:
+            raise exception
 
 
 class Validation(AbstractMigrationView):
@@ -1081,10 +1087,10 @@ class BulkUploadFolder(APIView):
         try:
             # Bulk insert list of data
             Data.objects.bulk_create(data_list)
-        except Exception as e:
+        except Exception as exception:
             # Log errors that occurred during bulk insert
             logger.error("Bulk upload failed.")
-            logger.error(str(e))
+            logger.error(str(exception))
             # try inserting each data of the batch individually
             for error_data in data_list:
                 try:
@@ -1174,8 +1180,10 @@ class BulkUploadFolder(APIView):
                         )
                     # Add data to list
                     data_list.append(instance)
-                except Exception as e:
-                    logger.error(f"ERROR: Unable to insert {xml_data}: {str(e)}")
+                except Exception as exception:
+                    logger.error(
+                        f"ERROR: Unable to insert {xml_data}: {str(exception)}"
+                    )
                 # If data list reaches batch size
                 if len(data_list) == batch_size:
                     # Bulk insert list of data

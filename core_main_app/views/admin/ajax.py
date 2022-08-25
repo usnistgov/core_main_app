@@ -63,8 +63,8 @@ def resolve_dependencies(request):
         template_version_manager_api.insert(
             template_version_manager, template, request=request
         )
-    except Exception as e:
-        return HttpResponseBadRequest(escape(str(e)))
+    except Exception as exception:
+        return HttpResponseBadRequest(escape(str(exception)))
 
     return HttpResponse(json.dumps({}), content_type="application/javascript")
 
@@ -105,6 +105,8 @@ def _get_xsd_content_from_html(xsd_content):
 
 
 class EditXSLTView(EditObjectModalView):
+    """Edit XSLT View"""
+
     form_class = EditXSLTForm
     model = XslTransformation
     success_url = reverse_lazy("core-admin:core_main_app_xslt")
@@ -120,11 +122,13 @@ class EditXSLTView(EditObjectModalView):
                 "An object with the same name already exists. Please choose "
                 "another name.",
             )
-        except Exception as e:
-            form.add_error(None, str(e))
+        except Exception as exception:
+            form.add_error(None, str(exception))
 
 
 class DeleteXSLTView(DeleteObjectModalView):
+    """Delete XSLT View"""
+
     model = XslTransformation
     success_url = reverse_lazy("core-admin:core_main_app_xslt")
     success_message = "XSLT deleted with success."

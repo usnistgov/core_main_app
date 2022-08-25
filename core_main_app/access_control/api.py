@@ -91,7 +91,7 @@ def check_can_write(document, user):
     #  or delete a data if data in wkp that doesn't give hin write rights
     if hasattr(document, "workspace") and document.workspace is not None:
         if workspace_api.is_workspace_public(document.workspace):
-            has_perm_publish(user, rights.publish_data)
+            has_perm_publish(user, rights.PUBLISH_DATA)
         else:
             _check_can_write_in_workspace(document.workspace, user)
 
@@ -156,7 +156,7 @@ def can_write_document_in_workspace(func, document, workspace, user):
     Returns:
 
     """
-    return can_write_in_workspace(func, document, workspace, user, rights.publish_data)
+    return can_write_in_workspace(func, document, workspace, user, rights.PUBLISH_DATA)
 
 
 def can_read_or_write_in_workspace(func, workspace, user):

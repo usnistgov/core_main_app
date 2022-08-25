@@ -4,6 +4,14 @@ from django.conf import settings
 
 
 def domain_context_processor(request):
+    """domain_context_processor
+
+    Args:
+        request:
+
+    Returns
+    """
+
     return {
         "WEBSITE_ADMIN_COLOR": settings.WEBSITE_ADMIN_COLOR
         if hasattr(settings, "WEBSITE_ADMIN_COLOR")

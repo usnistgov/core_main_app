@@ -38,6 +38,14 @@ class LoadFormChangeWorkspace(View):
     show_global_workspace = True
 
     def post(self, request, *args, **kwargs):
+        """post
+
+        Args:
+             request:
+
+        Returns:
+
+        """
 
         is_administration = request.POST.get("administration", False) == "True"
 

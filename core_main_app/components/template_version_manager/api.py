@@ -60,11 +60,11 @@ def insert(template_version_manager, template, request):
         template.save_template()
         # return version manager
         return template_version_manager
-    except exceptions.NotUniqueError as e:
-        raise e
-    except Exception as e:
+    except exceptions.NotUniqueError as exception:
+        raise exception
+    except Exception as exception:
         template_version_manager.delete()
-        raise e
+        raise exception
 
 
 @access_control(can_write)

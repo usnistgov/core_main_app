@@ -113,10 +113,10 @@ class XslTransformation(models.Model):
         """
         try:
             return XslTransformation.objects.get(name=xslt_name)
-        except ObjectDoesNotExist as e:
-            raise exceptions.DoesNotExist(str(e))
-        except Exception as e:
-            raise exceptions.ModelError(str(e))
+        except ObjectDoesNotExist as exception:
+            raise exceptions.DoesNotExist(str(exception))
+        except Exception as exception:
+            raise exceptions.ModelError(str(exception))
 
     @staticmethod
     def get_by_id(xslt_id):
@@ -131,8 +131,8 @@ class XslTransformation(models.Model):
         """
         try:
             return XslTransformation.objects.get(pk=xslt_id)
-        except ObjectDoesNotExist as e:
-            raise exceptions.DoesNotExist(str(e))
+        except ObjectDoesNotExist as exception:
+            raise exceptions.DoesNotExist(str(exception))
         except Exception as ex:
             raise exceptions.ModelError(str(ex))
 
@@ -155,8 +155,8 @@ class XslTransformation(models.Model):
                     self.content.encode(), CHECKSUM_ALGORITHM
                 )
             return self.save()
-        except IntegrityError as e:
-            raise exceptions.NotUniqueError(str(e))
+        except IntegrityError as exception:
+            raise exceptions.NotUniqueError(str(exception))
         except Exception as ex:
             raise exceptions.ModelError(str(ex))
 

@@ -14,6 +14,8 @@ from core_main_app.utils.query.mongo.query_builder import QueryBuilder
 
 
 class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
+    """Abstract Execute Local Query View"""
+
     sub_document_root = "dict_content"
 
     def get(self, request):
@@ -198,6 +200,8 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
 
 
 class AbstractMigrationView(APIView, metaclass=ABCMeta):
+    """Abstract Migration View"""
+
     def post(self, request, template_id, migrate):
         """Retrieve all the Data and validate the associated
         Template and perform a migration if migrate = True
@@ -254,7 +258,8 @@ class AbstractMigrationView(APIView, metaclass=ABCMeta):
                 )
         except AccessControlError as ace:
             return Response(str(ace), status.HTTP_403_FORBIDDEN)
-        except Exception as e:
+        except Exception as exception:
             return Response(
-                f"Wrong request, {str(e)}", status.HTTP_500_INTERNAL_SERVER_ERROR
+                f"Wrong request, {str(exception)}",
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
             )

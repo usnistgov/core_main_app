@@ -2,27 +2,27 @@
 """
 
 # Anonymous group
-anonymous_group = "anonymous"
+ANONYMOUS_GROUP = "anonymous"
 
 # Default group
-default_group = "default"
+DEFAULT_GROUP = "default"
 
 # API rights
-api_content_type = "api"
-api_access = "api_access"
+API_CONTENT_TYPE = "api"
+API_ACCESS = "api_access"
 
 # Data
 # FIXME edit and delete rights are never used
-edit_data = "edit_data"
-delete_data = "delete_data"
-publish_data = "publish_data"
+EDIT_DATA = "edit_data"
+DELETE_DATA = "delete_data"
+PUBLISH_DATA = "publish_data"
 
 # Blob
-publish_blob = "publish_blob"
+PUBLISH_BLOB = "publish_blob"
 
 # Form
-edit_form = "edit_form"
-delete_form = "delete_form"
+EDIT_FORM = "edit_form"
+DELETE_FORM = "delete_form"
 
 # Workspace
 CAN_READ_CODENAME = "can_read_workspace_"

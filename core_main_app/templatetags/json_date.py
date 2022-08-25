@@ -31,6 +31,6 @@ def json_date(value, directive):
         # format the date thanks to the directive for UI display
         formatted_date = formats.date_format(input_datetime, directive)
         return formatted_date
-    except Exception as e:
-        logger.error(str(e))
+    except Exception as exception:
+        logger.error(str(exception))
         return formatted_date

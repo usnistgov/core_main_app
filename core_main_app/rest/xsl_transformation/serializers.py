@@ -15,14 +15,31 @@ class XslTransformationSerializer(ModelSerializer):
     content = CharField(required=True)
 
     class Meta:
+        """Meta"""
+
         model = XslTransformation
         fields = ["name", "filename", "checksum", "content"]
         read_only_fields = ["checksum"]
 
     def create(self, validated_data):
+        """create
+
+        Args:
+            validated_data
+
+        Returns:
+        """
         return xsl_api.upsert(XslTransformation(**validated_data))
 
     def update(self, instance, validated_data):
+        """update
+
+        Args:
+            instance:
+            validated_data
+
+        Returns:
+        """
         instance.name = validated_data.get("name", instance.name)
         instance.content = validated_data.get("content", instance.content)
         instance.filename = validated_data.get("filename", instance.filename)
@@ -30,5 +47,7 @@ class XslTransformationSerializer(ModelSerializer):
 
 
 class TransformSerializer(BasicSerializer):
+    """Transform Serializer"""
+
     xml_content = CharField(required=True)
     xslt_name = CharField(required=True)

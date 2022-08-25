@@ -60,7 +60,7 @@ def get_anonymous_group():
 
     Returns:
     """
-    return Group.objects.filter(name=rights.anonymous_group).first()
+    return Group.objects.filter(name=rights.ANONYMOUS_GROUP).first()
 
 
 def get_default_group():
@@ -68,7 +68,7 @@ def get_default_group():
 
     Returns:
     """
-    return Group.objects.filter(name=rights.default_group).first()
+    return Group.objects.filter(name=rights.DEFAULT_GROUP).first()
 
 
 def get_all_groups_by_list_id(list_groups_ids):
