@@ -162,6 +162,6 @@ class AbstractData(models.Model):
                 )
             self.save()
         except IntegrityError as exception:
-            raise exceptions.NotUniqueError(exception)
+            raise exceptions.NotUniqueError(str(exception))
         except Exception as ex:
-            raise exceptions.ModelError(ex)
+            raise exceptions.ModelError(str(ex))
