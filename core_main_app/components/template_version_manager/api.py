@@ -60,10 +60,8 @@ def insert(template_version_manager, template, request):
         template.save_template()
         # return version manager
         return template_version_manager
-    except exceptions.NotUniqueError as exception:
-        raise exception
     except Exception as exception:
-        template_version_manager.delete()
+        template.delete()
         raise exception
 
 
