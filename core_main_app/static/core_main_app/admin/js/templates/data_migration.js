@@ -96,7 +96,7 @@ $(document).ready(function() {
     });
 
     // get the fragment from url to select a predefined state if needed
-    // ex. #from=1234567,12345678,1234567&to12345678
+    // ex. #from=1234567,12345678,1234567&to12345678&tvm=987123
     if (location.hash.substr(1) !== "") {
         // enable back to version manager button
         $(".back-to-version-manager").attr("hidden",false);
@@ -108,8 +108,11 @@ $(document).ready(function() {
 
         sourceTemplates = sourceTemplates[0].split("from=")[1].split(",");
 
-        if (typeof targetTemplate === "string" && sourceTemplates && sourceTemplates.length > 0) {
+        if (targetTemplate && sourceTemplates && sourceTemplates.length > 0) {
             setState(sourceTemplates, targetTemplate);
+        }
+        else{
+            console.error('An error occurred while parsing url parameters.');
         }
     }
 
