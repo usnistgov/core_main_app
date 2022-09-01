@@ -245,6 +245,54 @@ def index_mongo_data(data_id):
 
 
 @shared_task
+def update_mongo_data_user(data_ids, user_id):
+    """Update user id of all data in list
+
+    Args:
+        data_ids:
+        user_id:
+
+    Returns:
+
+    """
+    try:
+        from core_main_app.components.mongo.models import MongoData
+
+        for data_id in data_ids:
+            mongo_data = MongoData.objects.get(pk=data_id)
+            mongo_data.user_id = user_id
+            mongo_data.save()
+    except Exception as exception:
+        logger.error(
+            f"ERROR : An error occurred while updating data owner : {str(exception)}"
+        )
+
+
+@shared_task
+def update_mongo_data_workspace(data_ids, workspace_id):
+    """Update workspace id of all data in list
+    Args:
+        data_ids:
+        workspace_id:
+
+    Returns:
+
+    """
+
+    try:
+        from core_main_app.components.mongo.models import MongoData
+
+        for data_id in data_ids:
+            mongo_data = MongoData.objects.get(pk=data_id)
+            mongo_data._workspace_id = workspace_id
+            mongo_data.save()
+    except Exception as exception:
+        logger.error(
+            f"ERROR : An error occurred while updating data workspace : {str(exception)}"
+        )
+
+
+@shared_task
 def delete_mongo_data(data_id):
     """Delete a data in MongoDB"""
     try:

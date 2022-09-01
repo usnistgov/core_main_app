@@ -8,6 +8,7 @@ from django.forms import ChoiceField
 from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
+from core_main_app.settings import MONGODB_INDEXING
 
 
 class UpdateActionForm(ActionForm):
@@ -83,6 +84,11 @@ def update_data_list(model_admin, request, queryset):
                 )
             # Update user
             queryset.update(user_id=user_id)
+            # No signals on queryset, start update in mongo
+            if MONGODB_INDEXING:
+                from core_main_app.components.mongo.models import MongoData
+
+                MongoData.update_user_id_from_queryset(queryset, user_id)
             # Display success message
             model_admin.message_user(
                 request,
@@ -110,6 +116,11 @@ def update_data_list(model_admin, request, queryset):
                 )
             # Update workspace
             queryset.update(workspace=workspace)
+            if MONGODB_INDEXING:
+                from core_main_app.components.mongo.models import MongoData
+
+                workspace_id = workspace.id if workspace else None
+                MongoData.update_workspace_id_from_queryset(queryset, workspace_id)
             # Display success message
             model_admin.message_user(
                 request,

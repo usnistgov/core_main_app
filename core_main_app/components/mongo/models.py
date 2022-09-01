@@ -7,7 +7,12 @@ from django.db.models.signals import post_save, post_delete
 
 from core_main_app.commons.exceptions import CoreError
 from core_main_app.components.data.models import Data
-from core_main_app.components.data.tasks import index_mongo_data, delete_mongo_data
+from core_main_app.components.data.tasks import (
+    index_mongo_data,
+    delete_mongo_data,
+    update_mongo_data_user,
+    update_mongo_data_workspace,
+)
 from core_main_app.components.template.models import Template
 from core_main_app.components.workspace.models import Workspace
 from core_main_app.settings import (
@@ -210,6 +215,56 @@ try:
                 mongo_data.last_modification_date = data.last_modification_date
                 mongo_data.last_change_date = data.last_change_date
                 return mongo_data
+
+            @staticmethod
+            def update_user_id_from_queryset(data_queryset, user_id):
+                """Update user id of all data in queryset
+
+                Args:
+                    data_queryset:
+                    user_id:
+
+                Returns:
+
+                """
+                data_ids = data_queryset.values_list("id", flat=True)
+                if MONGODB_ASYNC_SAVE:
+                    update_mongo_data_user.apply_async(
+                        (
+                            list(data_ids),
+                            user_id,
+                        )
+                    )
+                else:
+                    for data_id in data_ids:
+                        mongo_data = MongoData.objects.get(pk=data_id)
+                        mongo_data.user_id = user_id
+                        mongo_data.save()
+
+            @staticmethod
+            def update_workspace_id_from_queryset(data_queryset, workspace_id):
+                """Update workspace id of all data in queryset
+
+                Args:
+                    data_queryset:
+                    workspace_id:
+
+                Returns:
+
+                """
+                data_ids = data_queryset.values_list("id", flat=True)
+                if MONGODB_ASYNC_SAVE:
+                    update_mongo_data_workspace.apply_async(
+                        (
+                            list(data_ids),
+                            workspace_id,
+                        )
+                    )
+                else:
+                    for data_id in data_ids:
+                        mongo_data = MongoData.objects.get(pk=data_id)
+                        mongo_data._workspace_id = workspace_id
+                        mongo_data.save()
 
             @staticmethod
             def post_save_data(sender, instance, **kwargs):
