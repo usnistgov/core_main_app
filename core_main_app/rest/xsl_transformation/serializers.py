@@ -18,8 +18,8 @@ class XslTransformationSerializer(ModelSerializer):
         """Meta"""
 
         model = XslTransformation
-        fields = ["name", "filename", "checksum", "content"]
-        read_only_fields = ["checksum"]
+        fields = ["id", "name", "filename", "checksum", "content"]
+        read_only_fields = ["id", "checksum"]
 
     def create(self, validated_data):
         """create
