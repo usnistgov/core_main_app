@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.data import api as data_api
+from core_main_app.settings import DATA_SORTING_FIELDS
 from core_main_app.utils.query.constants import VISIBILITY_OPTION
 from core_main_app.utils.query.mongo.query_builder import QueryBuilder
 
@@ -97,8 +98,9 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
                 options = json.loads(options)
             title = self.request.data.get("title", None)
             order_by_field = self.request.data.get("order_by_field", "")
-            if order_by_field:
-                order_by_field = order_by_field.split(",")
+            order_by_field = (
+                order_by_field.split(",") if order_by_field else DATA_SORTING_FIELDS
+            )
             if query is not None:
                 # prepare query
                 raw_query = self.build_query(
