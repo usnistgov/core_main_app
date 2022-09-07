@@ -19,7 +19,7 @@ class TemplateVersionManager(VersionManager):
 
     @property
     def version_set(self):
-        return self.template_set.all()
+        return self.template_set.all().order_by("pk")
 
     @staticmethod
     def get_by_id(version_manager_id):
