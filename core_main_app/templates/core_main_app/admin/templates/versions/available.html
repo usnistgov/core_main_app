@@ -54,6 +54,10 @@
                                 <i class="fas fa-cubes"></i> Modules
                             </a>
                        {% endif %}
+                        <a class="btn btn-secondary download"
+                           href="{% url 'core_main_app_rest_template_download' version.object %}">
+                            <i class="fas fa-download"></i> Download
+                        </a>
                        {% if version.object != data.version_manager.current %}
                             <span class='icon legend long current' objectid='{{ version.object }}'>
                                <a class="btn btn-secondary" href="#"><i class="fas fa-bookmark"></i> Set Current</a>
@@ -62,10 +66,6 @@
                                <button class="btn btn-danger"><i class="fas fa-trash"></i> Disable</button>
                             </span>
                         {% endif %}
-                        <a class="btn btn-secondary download"
-                           href="{% url 'core_main_app_rest_template_download' version.object %}">
-                            <i class="fas fa-download"></i> Download
-                        </a>
                    {% endblock %}
                </td>
            </tr>
