@@ -263,7 +263,7 @@ let createDataListHtml = function(data, append, tbodySelector) {
             dataHtml += '<tr>' +
                 '<td width="20px"><input class="data-checkbox" type="checkbox"></td>' +
                 '<td data-id="' + results[index].id + '"><div>' +
-                '<a href="/admin/data?id=' + results[index].id + '">' + results[index].title + '</a>' +
+                '<a href="/core-admin/data?id=' + results[index].id + '">' + results[index].title + '</a>' +
                 '</div></td>' +
                 '</tr>';
         }
@@ -627,8 +627,8 @@ let displaySummary = function(taskData, migrate) {
                         '<ul class="error-container list-group list-group-flush">';
 
                     taskData.details.wrong.forEach((dataId) => {
-                        failedButtonHtml += '<li class="list-group-item"><a href="/admin/data?id=' + dataId + '">' +
-                                dataId + '</a></li>';
+                        failedButtonHtml += '<li class="list-group-item"><a href="/core-admin/data?id=' + dataId + '">' +
+                                'Data (' + dataId + ')</a></li>';
                     });
 
                     failedButtonHtml += '</ul></div>';
