@@ -47,6 +47,9 @@ $(document).ready(function() {
             $("#data-number").html(totalDataCount);
             viewXsltList(true)
         }
+        else{
+            $(".data-count").hide();
+        }
 
     });
     // create the listener for the select all template button
