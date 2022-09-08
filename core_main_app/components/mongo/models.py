@@ -3,7 +3,7 @@
 
 import logging
 
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save, post_delete, pre_delete
 
 from core_main_app.commons.exceptions import CoreError
 from core_main_app.components.data.models import Data
@@ -268,7 +268,7 @@ try:
 
             @staticmethod
             def post_save_data(sender, instance, **kwargs):
-                """Method executed after a saving of a Data object.
+                """Method executed after saving of Data.
                 Args:
                     sender: Class.
                     instance: Data document.
@@ -283,7 +283,7 @@ try:
 
             @staticmethod
             def post_delete_data(sender, instance, **kwargs):
-                """Method executed after a deleting of a Data object.
+                """Method executed after deleting a Data.
                 Args:
                     sender: Class.
                     instance: Data document.
@@ -303,12 +303,26 @@ try:
                     except Exception as e:
                         logger.error(f"An unexpected error occurred: {str(e)}")
 
+            @staticmethod
+            def pre_delete_workspace(sender, instance, **kwargs):
+                """Method executed before deleting a Workspace.
+                Args:
+                    sender: Class.
+                    instance: Workspace document.
+                    **kwargs: Args.
+
+                """
+                queryset = Data.objects.filter(workspace=instance.id).all()
+                MongoData.update_workspace_id_from_queryset(queryset, None)
+
         # Initialize text index
         init_text_index(MongoData)
         # connect sync method to Data post save
         post_save.connect(MongoData.post_save_data, sender=Data)
         # connect sync method to Data post delete
         post_delete.connect(MongoData.post_delete_data, sender=Data)
+        # connect sync method to Workspace pre delete
+        pre_delete.connect(MongoData.pre_delete_workspace, sender=Workspace)
 except ImportError:
     raise CoreError(
         "Mongoengine needs to be installed when MongoDB indexing is enabled. "
