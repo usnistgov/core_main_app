@@ -105,7 +105,7 @@ class VersionManager(models.Model):
         """
         try:
             self._cls = self.class_name
-            not_empty_or_whitespaces(self.title)
+            self.clean()
             self.save()
         except IntegrityError as exception:
             raise exceptions.NotUniqueError(str(exception))
@@ -118,6 +118,7 @@ class VersionManager(models.Model):
         Returns:
 
         """
+        not_empty_or_whitespaces(self.title)
         self.title = self.title.strip()
 
     def __str__(self):

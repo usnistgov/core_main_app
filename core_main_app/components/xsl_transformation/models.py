@@ -154,6 +154,7 @@ class XslTransformation(models.Model):
                 self.checksum = compute_checksum(
                     self.content.encode(), CHECKSUM_ALGORITHM
                 )
+            self.clean()
             return self.save()
         except IntegrityError as exception:
             raise exceptions.NotUniqueError(str(exception))
