@@ -253,6 +253,11 @@ class ViewData(CommonView):
         return self.common_render(
             request,
             "core_main_app/common/commons/error.html",
+            assets={
+                "js": [
+                    {"path": "core_main_app/user/js/data/detail.js", "is_raw": False}
+                ]
+            },
             context={
                 "error": "Unable to access the requested "
                 + get_data_label()
