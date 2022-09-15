@@ -1,37 +1,58 @@
 """ Abstract Data model
 """
-from io import BytesIO
 
-from django_mongoengine import fields, Document
-from mongoengine import errors as mongoengine_errors
+from django.contrib.postgres.search import SearchVectorField
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.validators import RegexValidator
+from django.db import models, IntegrityError
 
 from core_main_app.commons import exceptions
+from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
 from core_main_app.settings import (
-    GRIDFS_DATA_COLLECTION,
     SEARCHABLE_DATA_OCCURRENCES_LIMIT,
+    MONGODB_INDEXING,
     XML_POST_PROCESSOR,
     XML_FORCE_LIST,
+    CHECKSUM_ALGORITHM,
 )
 from core_main_app.utils import xml as xml_utils
+from core_main_app.utils.checksum import compute_checksum
 from core_main_app.utils.datetime_tools.utils import datetime_now
-from core_main_app.utils.validation.regex_validation import not_empty_or_whitespaces
+from core_main_app.utils.storage.storage import core_file_storage, user_directory_path
 
 
-class AbstractData(Document):
+class AbstractData(models.Model):
     """AbstractData object"""
 
-    dict_content = fields.DictField(blank=True)
-    title = fields.StringField(blank=False, validation=not_empty_or_whitespaces)
-    xml_file = fields.FileField(blank=False, collection_name=GRIDFS_DATA_COLLECTION)
-    creation_date = fields.DateTimeField(blank=True, default=None)
-    last_modification_date = fields.DateTimeField(blank=True, default=None)
-    last_change_date = fields.DateTimeField(blank=True, default=None)
-
+    dict_content = models.JSONField(blank=True, null=True)
+    title = models.CharField(
+        blank=False,
+        validators=[
+            RegexValidator(
+                regex=NOT_EMPTY_OR_WHITESPACES,
+                message="Title must not be empty or only whitespaces",
+                code="invalid_title",
+            ),
+        ],
+        max_length=200,
+    )
+    xml_file = models.FileField(
+        blank=False,
+        max_length=250,
+        upload_to=user_directory_path,
+        storage=core_file_storage(model="data"),
+    )
+    checksum = models.CharField(max_length=512, blank=True, default=None, null=True)
+    vector_column = SearchVectorField(null=True)
+    creation_date = models.DateTimeField(blank=True, default=None, null=True)
+    last_modification_date = models.DateTimeField(blank=True, default=None, null=True)
+    last_change_date = models.DateTimeField(blank=True, default=None, null=True)
     _xml_content = None
 
-    meta = {
-        "abstract": True,
-    }
+    class Meta:
+        """Meta"""
+
+        abstract = True
 
     @property
     def xml_content(self):
@@ -41,7 +62,7 @@ class AbstractData(Document):
 
         """
         # private field xml_content not set yet, and reference to xml_file to read is set
-        if self._xml_content is None and self.xml_file is not None:
+        if self._xml_content is None and self.xml_file.name:
             # read xml file into xml_content field
             xml_content = self.xml_file.read()
             try:
@@ -68,6 +89,14 @@ class AbstractData(Document):
         # update content
         self._xml_content = value
 
+    def get_dict_content(self):
+        """Get dict_content from object or from MongoDB
+
+        Returns:
+
+        """
+        raise NotImplementedError("get_dict_content is not implemented")
+
     def convert_and_save(self):
         """Save Data object and convert the xml to dict if needed.
 
@@ -77,7 +106,7 @@ class AbstractData(Document):
         self.convert_to_dict()
         self.convert_to_file()
 
-        return self.save_object()
+        self.save_object()
 
     def convert_to_dict(self):
         """Convert the xml contained in xml_content into a dictionary.
@@ -85,20 +114,16 @@ class AbstractData(Document):
         Returns:
 
         """
+        # if data stored in mongo, don't store dict_content
+        if MONGODB_INDEXING:
+            return
         # transform xml content into a dictionary
-        dict_content = xml_utils.raw_xml_to_dict(
+        self.dict_content = xml_utils.raw_xml_to_dict(
             self.xml_content,
             postprocessor=XML_POST_PROCESSOR,
             force_list=XML_FORCE_LIST,
+            list_limit=SEARCHABLE_DATA_OCCURRENCES_LIMIT,
         )
-        # if limit on element occurrences is set
-        if SEARCHABLE_DATA_OCCURRENCES_LIMIT is not None:
-            # Remove lists which size exceed the limit size
-            xml_utils.remove_lists_from_xml_dict(
-                dict_content, SEARCHABLE_DATA_OCCURRENCES_LIMIT
-            )
-        # store dictionary
-        self.dict_content = dict_content
 
     def convert_to_file(self):
         """Convert the xml string into a file.
@@ -107,16 +132,13 @@ class AbstractData(Document):
 
         """
         try:
-            xml_file = BytesIO(self.xml_content.encode("utf-8"))
-        except Exception:
-            xml_file = BytesIO(self.xml_content)
+            xml_content = self.xml_content.encode("utf-8")
+        except UnicodeEncodeError:
+            xml_content = self.xml_content
 
-        if self.xml_file.grid_id is None:
-            # new file
-            self.xml_file.put(xml_file, content_type="application/xml")
-        else:
-            # editing (self.xml_file gets a new id)
-            self.xml_file.replace(xml_file, content_type="application/xml")
+        self.xml_file = SimpleUploadedFile(
+            name=self.title, content=xml_content, content_type="application/xml"
+        )
 
     def save_object(self):
         """Custom save. Set the datetime fields and save.
@@ -134,8 +156,12 @@ class AbstractData(Document):
                 self.creation_date = now
                 # initialize when first saved, then only updates when content is updated
                 self.last_modification_date = now
-            return self.save()
-        except mongoengine_errors.NotUniqueError as e:
-            raise exceptions.NotUniqueError(e)
+            if self.xml_content and CHECKSUM_ALGORITHM:
+                self.checksum = compute_checksum(
+                    self.xml_content.encode(), CHECKSUM_ALGORITHM
+                )
+            self.save()
+        except IntegrityError as exception:
+            raise exceptions.NotUniqueError(str(exception))
         except Exception as ex:
-            raise exceptions.ModelError(ex)
+            raise exceptions.ModelError(str(ex))

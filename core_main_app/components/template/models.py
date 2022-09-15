@@ -1,26 +1,81 @@
 """
 Template models
 """
-from mongoengine import errors as mongoengine_errors
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.validators import RegexValidator
+from django.db import models, IntegrityError
+from django.db.models import Q
 
 from core_main_app.commons import exceptions
+from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
+from core_main_app.components.template_version_manager.models import (
+    TemplateVersionManager,
+)
+from core_main_app.components.version_manager.models import Version
+from core_main_app.settings import XSD_UPLOAD_DIR, CHECKSUM_ALGORITHM
+from core_main_app.utils.checksum import compute_checksum
+from core_main_app.utils.storage.storage import core_file_storage
 from core_main_app.utils.validation.regex_validation import not_empty_or_whitespaces
-from django_mongoengine import fields, Document
 
 
-class Template(Document):
+class Template(Version):
     """Represents an XML schema template that defines the structure of data"""
 
-    filename = fields.StringField(validation=not_empty_or_whitespaces)
-    content = fields.StringField()
-    user = fields.StringField(blank=True)
-    hash = fields.StringField()
-    _display_name = fields.StringField(blank=True)
-    dependencies = fields.ListField(
-        fields.ReferenceField("self"), default=[], blank=True
-    )
+    class_name = "Template"
 
-    meta = {"allow_inheritance": True}
+    version_manager = models.ForeignKey(
+        TemplateVersionManager, on_delete=models.CASCADE, null=True, default=None
+    )
+    filename = models.CharField(
+        validators=[
+            RegexValidator(
+                regex=NOT_EMPTY_OR_WHITESPACES,
+                message="Title must not be empty or only whitespaces",
+                code="invalid_title",
+            ),
+        ],
+        max_length=200,
+    )
+    file = models.FileField(
+        blank=False,
+        max_length=250,
+        # NOTE: needed to check owner during upload (cf. core_main_app.utils.xml._get_schema_location_uri)
+        upload_to=XSD_UPLOAD_DIR,
+        storage=core_file_storage(model="template"),
+    )
+    checksum = models.CharField(max_length=512, blank=True, default=None, null=True)
+    user = models.CharField(blank=True, max_length=200, null=True, default=None)
+    hash = models.CharField(max_length=200)
+    _display_name = models.CharField(blank=True, max_length=200)
+    dependencies = models.ManyToManyField("self", blank=True, default=[])
+    creation_date = models.DateTimeField(auto_now_add=True)
+    _cls = models.CharField(default="Template", max_length=200)
+    _content = None
+
+    @property
+    def content(self):
+        """Read template content
+
+        Returns:
+
+        """
+        if not self._content:
+            self._content = self.file.read().decode("utf-8")
+        return self._content
+
+    @content.setter
+    def content(self, xsd_content):
+        """Set template content
+
+        Args:
+            xsd_content:
+
+        Returns:
+
+        """
+        # Set template content
+        self._content = xsd_content
 
     @staticmethod
     def get_all(is_cls, users=None):
@@ -33,15 +88,15 @@ class Template(Document):
         Returns:
             list<Template> - List of template following the query parameters.
         """
-        template_query_kwargs = dict()
+        template_query = Q()
 
         if is_cls:  # will return all Template object only
-            template_query_kwargs["_cls"] = Template.__name__
+            template_query &= Q(_cls=Template.class_name)
 
         if users is not None:  # select specific user if it is defined
-            template_query_kwargs["user__in"] = users
+            template_query &= users
 
-        return Template.objects(**template_query_kwargs).all()
+        return Template.objects.filter(template_query).all()
 
     @staticmethod
     def get_by_id(template_id):
@@ -54,11 +109,11 @@ class Template(Document):
 
         """
         try:
-            return Template.objects().get(pk=str(template_id))
-        except mongoengine_errors.DoesNotExist as e:
-            raise exceptions.DoesNotExist(str(e))
-        except Exception as e:
-            raise exceptions.ModelError(str(e))
+            return Template.objects.get(pk=template_id)
+        except ObjectDoesNotExist as exception:
+            raise exceptions.DoesNotExist(str(exception))
+        except Exception as exception:
+            raise exceptions.ModelError(str(exception))
 
     @staticmethod
     def get_all_by_hash(template_hash, users):
@@ -73,8 +128,8 @@ class Template(Document):
 
         """
         if users is not None:
-            return Template.objects(hash=template_hash, user__in=users).all()
-        return Template.objects(hash=template_hash).all()
+            return Template.objects.filter(Q(hash=template_hash) & users).all()
+        return Template.objects.filter(hash=template_hash).all()
 
     @staticmethod
     def get_all_by_hash_list(template_hash_list, users):
@@ -89,8 +144,8 @@ class Template(Document):
 
         """
         if users is not None:
-            return Template.objects(hash__in=template_hash_list, user__in=users).all()
-        return Template.objects(hash__in=template_hash_list).all()
+            return Template.objects.filter(Q(hash__in=template_hash_list) & users).all()
+        return Template.objects.filter(hash__in=template_hash_list).all()
 
     @staticmethod
     def get_all_by_id_list(template_id_list, users=None):
@@ -104,8 +159,8 @@ class Template(Document):
 
         """
         if users is not None:
-            return Template.objects(pk__in=template_id_list, user__in=users).all()
-        return Template.objects(pk__in=template_id_list).all()
+            return Template.objects.filter(Q(pk__in=template_id_list) & users).all()
+        return Template.objects.filter(pk__in=template_id_list).all()
 
     @property
     def display_name(self):
@@ -116,8 +171,7 @@ class Template(Document):
         """
         if self._display_name is not None:
             return self._display_name
-        else:
-            return self.filename
+        return self.filename
 
     @display_name.setter
     def display_name(self, value):
@@ -130,3 +184,39 @@ class Template(Document):
 
         """
         self._display_name = value
+
+    def save_template(self):
+        """Custom save.
+
+        Returns:
+            Saved Instance.
+
+        """
+        try:
+            self._cls = self.class_name
+            if self._content:
+                self.file = SimpleUploadedFile(
+                    name=self.filename,
+                    content=self._content.encode("utf-8"),
+                    content_type="application/xml",
+                )
+            not_empty_or_whitespaces(self.filename)
+            if self.content and CHECKSUM_ALGORITHM:
+                self.checksum = compute_checksum(
+                    self.content.encode(), CHECKSUM_ALGORITHM
+                )
+            self.save()
+        except IntegrityError as exception:
+            raise exceptions.NotUniqueError(str(exception))
+        except ValidationError as exception:
+            raise exception
+        except Exception as ex:
+            raise exceptions.ModelError(str(ex))
+
+    def __str__(self):
+        """Template object as string
+
+        Returns:
+
+        """
+        return self.display_name

@@ -1,8 +1,8 @@
 """ Login page api
 """
-import core_main_app.components.web_page.api as web_page_api
 from core_main_app.commons.enums import WEB_PAGE_TYPES
 from core_main_app.commons.exceptions import ApiError
+from core_main_app.components.web_page import api as web_page_api
 
 LOGIN_PAGE_NAME = "login"
 LOGIN_PAGE_TYPE = WEB_PAGE_TYPES[LOGIN_PAGE_NAME]

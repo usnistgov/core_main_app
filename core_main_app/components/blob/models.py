@@ -1,33 +1,44 @@
 """ Blob model
 """
-from mongoengine import errors as mongoengine_errors
-from mongoengine.queryset.base import NULLIFY
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.validators import RegexValidator
+from django.db import models
 
-from blob_utils.blob_host_factory import BLOBHostFactory
 from core_main_app.commons import exceptions
+from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
 from core_main_app.components.workspace.models import Workspace
-from core_main_app.settings import (
-    BLOB_HOST,
-    BLOB_HOST_URI,
-    BLOB_HOST_USER,
-    BLOB_HOST_PASSWORD,
-)
-from core_main_app.utils.validation.regex_validation import not_empty_or_whitespaces
-from django_mongoengine import fields, Document
+from core_main_app.settings import CHECKSUM_ALGORITHM
+from core_main_app.utils.checksum import compute_checksum
+from core_main_app.utils.storage.storage import user_directory_path, core_file_storage
 
 
-class Blob(Document):
+class Blob(models.Model):
     """Blob object"""
 
-    filename = fields.StringField(blank=False, validation=not_empty_or_whitespaces)
-    handle = fields.StringField(blank=False)
-    user_id = fields.StringField(blank=False)
-    workspace = fields.ReferenceField(
-        Workspace, reverse_delete_rule=NULLIFY, blank=True
+    filename = models.CharField(
+        blank=False,
+        validators=[
+            RegexValidator(
+                regex=NOT_EMPTY_OR_WHITESPACES,
+                message="Filename must not be empty or only whitespaces",
+                code="invalid_title",
+            ),
+        ],
+        max_length=200,
     )
+    user_id = models.CharField(blank=False, max_length=200)
+    workspace = models.ForeignKey(
+        Workspace, on_delete=models.SET_NULL, blank=True, null=True
+    )
+    blob = models.FileField(
+        null=True,
+        max_length=250,
+        upload_to=user_directory_path,
+        storage=core_file_storage(model="blob"),
+    )
+    checksum = models.CharField(max_length=512, blank=True, default=None, null=True)
 
-    _blob_host = None
-    _blob = None
+    creation_date = models.DateTimeField(auto_now_add=True)
 
     @staticmethod
     def get_by_id(blob_id):
@@ -41,8 +52,8 @@ class Blob(Document):
 
         """
         try:
-            return Blob.objects.get(pk=str(blob_id))
-        except mongoengine_errors.DoesNotExist as e:
+            return Blob.objects.get(pk=blob_id)
+        except ObjectDoesNotExist as e:
             raise exceptions.DoesNotExist(str(e))
         except Exception as ex:
             raise exceptions.ModelError(str(ex))
@@ -70,7 +81,7 @@ class Blob(Document):
             List of Blob instances for the given user id.
 
         """
-        return Blob.objects(user_id=str(user_id)).all()
+        return Blob.objects.filter(user_id=str(user_id)).all()
 
     @staticmethod
     def get_all_by_workspace(workspace):
@@ -82,7 +93,7 @@ class Blob(Document):
         Returns:
 
         """
-        return Blob.objects(workspace=workspace).all()
+        return Blob.objects.filter(workspace=workspace).all()
 
     @staticmethod
     def get_all_by_list_workspace(list_workspace):
@@ -94,7 +105,7 @@ class Blob(Document):
         Returns:
 
         """
-        return Blob.objects(workspace__in=list_workspace).all()
+        return Blob.objects.filter(workspace__in=list_workspace).all()
 
     @staticmethod
     def get_none():
@@ -103,64 +114,26 @@ class Blob(Document):
         Returns:
 
         """
-        return Blob.objects().none()
+        return Blob.objects.none()
 
-    @classmethod
-    def blob_host(cls):
-        """Return blob host.
-
-        Returns:
-
-        """
-        if cls._blob_host is None:
-            blob_host_factory = BLOBHostFactory(
-                blob_host=BLOB_HOST,
-                blob_host_uri=BLOB_HOST_URI,
-                blob_host_user=BLOB_HOST_USER,
-                blob_host_password=BLOB_HOST_PASSWORD,
-            )
-            cls._blob_host = blob_host_factory.create_blob_host()
-        return cls._blob_host
-
-    @property
-    def blob(self):
-        """Return blob from blob host.
+    def __str__(self):
+        """Blob object as string
 
         Returns:
 
         """
-        # if the blob is not set
-        if self._blob is None:
-            # if an handle is set
-            if self.handle is not None:
-                # get the blob using its handle
-                self._blob = Blob.blob_host().get(self.handle)
-        return self._blob
+        return self.filename
 
-    @blob.setter
-    def blob(self, value):
-        """Set blob value.
-
-        Args:
-            value: file
+    def save_object(self):
+        """Custom save.
 
         Returns:
+            Saved Instance.
 
         """
-        self._blob = value
-
-    def save_blob(self):
-        """Save blob on the blob host.
-
-        Returns:
-
-        """
-        self.handle = str(Blob.blob_host().save(self._blob))
-
-    def delete_blob(self):
-        """Delete blob on the blob host.
-
-        Returns:
-
-        """
-        Blob.blob_host().delete(self.handle)
+        try:
+            if self.blob.file and CHECKSUM_ALGORITHM:
+                self.checksum = compute_checksum(self.blob.file, CHECKSUM_ALGORITHM)
+            return self.save()
+        except Exception as ex:
+            raise exceptions.ModelError(str(ex))

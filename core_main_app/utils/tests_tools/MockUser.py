@@ -1,7 +1,7 @@
 """Mock user for tests
 """
+from unittest.mock import Mock
 from django.contrib.auth.models import User
-from mock.mock import Mock
 
 
 def create_mock_user(

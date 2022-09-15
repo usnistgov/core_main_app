@@ -2,13 +2,21 @@
 """
 from unittest import TestCase
 
+from mock import patch
+
 from core_main_app.commons.exceptions import CoreError
 from core_main_app.utils.file import get_base_64_content_from_response
-from mock import patch
 
 
 class TestFileUtilsGetBase64ContentFromResponse(TestCase):
+    """TestFileUtilsGetBase64ContentFromResponse"""
+
     def test_get_base_64_content_from_response_return_base_64_encoded_string(self):
+        """test get base 64 content from response return base 64 encoded string
+
+        Returns:
+
+        """
         # Arrange
         response = MockResponse()
         # Act
@@ -19,6 +27,11 @@ class TestFileUtilsGetBase64ContentFromResponse(TestCase):
     def test_get_base_64_content_from_response_raise_core_exception_if_encoding_fails(
         self,
     ):
+        """test get base 64 content from response raise core exception if encoding fails
+
+        Returns:
+
+        """
         # Arrange
         response = MockResponse()
         response.content = "this_is_a_string and it will fail"
@@ -31,6 +44,14 @@ class TestFileUtilsGetBase64ContentFromResponse(TestCase):
     def test_get_base_64_content_from_response_raise_core_exception_if_ascii_decoding_fails(
         self, mock_b64decode
     ):
+        """test get base 64 content from response raise core exception if ascii decoding fails
+
+        Args:
+            mock_b64decode:
+
+        Returns:
+
+        """
         # Arrange
         response = MockResponse()
         response.content = "this_is_a_string and it will fail"
@@ -41,5 +62,7 @@ class TestFileUtilsGetBase64ContentFromResponse(TestCase):
             get_base_64_content_from_response(response)
 
 
-class MockResponse(object):
+class MockResponse:
+    """MockResponse"""
+
     content = b"my_string"

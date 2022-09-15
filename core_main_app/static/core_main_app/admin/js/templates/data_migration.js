@@ -4,11 +4,13 @@ let jqWarning = $('.alert-warning');
 let jqError = $('.alert-error');
 let isAllDataSelected = false;
 let isAllTemplateSelected = false;
+let isTargetCreated = false;
 let nextPageUrl = null;
 let setStatesPending = 0;
 let setStatesTargetTemplateId;
 let totalDataCount = 0;
 let showError = false;
+let versionManagerId = null
 /**
  * Init controllers for the results page
  */
@@ -16,7 +18,7 @@ $(document).ready(function() {
     // create the action button listeners
     $("#validate-button").on("click", () => { actionButtonClicked(false) });
     $("#migrate-button").on("click", () => { actionButtonClicked(true) });
-
+    $(".back-to-version-manager").on("click", () => { backToVersionManager() });
 
     // create the listener for the select all data button
     $("#select-all-data").on("click", (event) => {
@@ -44,6 +46,9 @@ $(document).ready(function() {
             $(".data-count").show();
             $("#data-number").html(totalDataCount);
             viewXsltList(true)
+        }
+        else{
+            $(".data-count").hide();
         }
 
     });
@@ -94,15 +99,23 @@ $(document).ready(function() {
     });
 
     // get the fragment from url to select a predefined state if needed
-    // ex. #from=1234567,12345678,1234567&to12345678
+    // ex. #from=1234567,12345678,1234567&to12345678&tvm=987123
     if (location.hash.substr(1) !== "") {
+        // enable back to version manager button
+        $(".back-to-version-manager").attr("hidden",false);
+
+        isTargetCreated = true
         let sourceTemplates = location.hash.substr(1).split("&to=");
-        let targetTemplate = sourceTemplates.pop();
+        let targetTemplate = sourceTemplates.pop().split("&tvm=");
+        versionManagerId = targetTemplate.pop();
 
         sourceTemplates = sourceTemplates[0].split("from=")[1].split(",");
 
-        if (typeof targetTemplate === "string" && sourceTemplates && sourceTemplates.length > 0) {
+        if (targetTemplate && sourceTemplates && sourceTemplates.length > 0) {
             setState(sourceTemplates, targetTemplate);
+        }
+        else{
+            console.error('An error occurred while parsing url parameters.');
         }
     }
 
@@ -253,12 +266,12 @@ let createDataListHtml = function(data, append, tbodySelector) {
             dataHtml += '<tr>' +
                 '<td width="20px"><input class="data-checkbox" type="checkbox"></td>' +
                 '<td data-id="' + results[index].id + '"><div>' +
-                '<a href="/admin/data?id=' + results[index].id + '">' + results[index].title + '</a>' +
+                '<a href="/core-admin/data?id=' + results[index].id + '">' + results[index].title + '</a>' +
                 '</div></td>' +
                 '</tr>';
         }
 
-        // add the button to show more result if nest page exist
+        // add the button to show more result if next page exist
         if (data.next) {
             dataHtml += '<tr>' +
                 '<td class="bt-more" colspan=2>' +
@@ -300,7 +313,10 @@ let createDataListHtml = function(data, append, tbodySelector) {
             $(".data-count").show();
             $("#data-number").html(jqCheckedDataCheckbox.length);
             viewXsltList(true);
-            createTargetTemplateListHtml(true);
+            if(!isTargetCreated){
+                isTargetCreated = true
+                createTargetTemplateListHtml(true);
+            }
         } else {
             createTargetTemplateListHtml(false);
             // hide the couter
@@ -360,7 +376,6 @@ let createTargetTemplateListHtml = function(isDataSelected) {
             return { id: templateId, titleHtml: jpTemplateRow.html() };
         })
         .get();
-
     if (targetTemplateId && targetTemplateId.length > 0 && isDataSelected) {
         targetTemplateId.forEach((item, index) => {
             targetTemplateHtml += '<tr>' +
@@ -371,7 +386,7 @@ let createTargetTemplateListHtml = function(isDataSelected) {
                 '</tr>';
         });
     } else if (targetTemplateId.length === 0 || !isDataSelected) {
-
+        isTargetCreated = false
         emptyPanelMessage = isDataSelected ? 'You have selected all the ' +
             'source templates, please uncheck at least one of them to have at least a target template.' :
             'Please select at least one data to migrate.'
@@ -410,6 +425,14 @@ let createTargetTemplateListHtml = function(isDataSelected) {
 
     }
 
+}
+/**
+ * Handle the click action for back to version manager button
+ */
+let backToVersionManager = function(){
+    if(versionManagerId){
+        window.location.href = versionManagerUrlBase.replace("version_manager_id",versionManagerId);
+    }
 }
 
 
@@ -607,8 +630,8 @@ let displaySummary = function(taskData, migrate) {
                         '<ul class="error-container list-group list-group-flush">';
 
                     taskData.details.wrong.forEach((dataId) => {
-                        failedButtonHtml += '<li class="list-group-item"><a href="/admin/data?id=' + dataId + '">' +
-                                dataId + '</a></li>';
+                        failedButtonHtml += '<li class="list-group-item"><a href="/core-admin/data?id=' + dataId + '">' +
+                                'Data (' + dataId + ')</a></li>';
                     });
 
                     failedButtonHtml += '</ul></div>';

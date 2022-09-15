@@ -1,18 +1,31 @@
 """Utils for mongodb raw query
 """
+from core_main_app.utils.raw_query.common import (
+    check_user_filter,
+    check_workspace_filter,
+)
 
 
-def add_access_criteria(query, accessible_workspaces, user):
+def add_access_criteria(
+    query, accessible_workspaces, user, workspace_filter=None, user_filter=None
+):
     """Add access criteria to the query.
 
     Args:
         query:
         accessible_workspaces:
         user:
+        workspace_filter:
+        user_filter:
 
     Returns:
 
     """
+    # check if user can filter by user
+    check_user_filter(user_filter, user)
+    # check if user can filter by workspace
+    check_workspace_filter(workspace_filter, accessible_workspaces)
+    # get access criteria query
     access_criteria = _get_accessible_criteria(accessible_workspaces, user)
     # add access criteria to original query
     query = {"$and": [query, access_criteria]}
@@ -59,7 +72,7 @@ def _get_accessible_criteria(accessible_workspaces, user):
     # workspace should be in list of accessible workspaces
     workspace_criteria = {"workspace": {"$in": accessible_workspaces}}
     # user_id should have the id of the user making the query
-    user_criteria = {"user_id": str(user.id)}
+    user_criteria = {"user_id": user.id}
     # access granted if workspace or user criteria true
     access_criteria = {"$or": [workspace_criteria, user_criteria]}
     # return access criteria

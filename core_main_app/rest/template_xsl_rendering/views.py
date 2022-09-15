@@ -3,12 +3,12 @@
 
 from django.http import Http404
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
 from core_main_app.components.template_xsl_rendering import (
     api as template_xsl_rendering_api,
@@ -17,7 +17,6 @@ from core_main_app.components.xsl_transformation import api as xsl_transformatio
 from core_main_app.rest.template_xsl_rendering.serializers import (
     TemplateXslRenderingSerializer,
 )
-from core_main_app.access_control.exceptions import AccessControlError
 
 
 class TemplateXslRenderingList(APIView):

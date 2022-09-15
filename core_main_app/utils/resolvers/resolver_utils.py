@@ -1,9 +1,10 @@
 """ LXML URI Resolver utils
 """
+from logging import getLogger
+
 from core_main_app.commons.exceptions import CoreError
 from core_main_app.settings import XSD_URI_RESOLVER
 from core_main_app.utils.resolvers.xsd_uri_resolvers import XSD_URI_RESOLVERS
-from logging import getLogger
 
 logger = getLogger(__name__)
 

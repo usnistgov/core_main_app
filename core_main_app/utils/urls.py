@@ -38,5 +38,5 @@ def get_blob_download_regex(xml_string):
     )
     download_blob_url = download_blob_url.replace("blob_id/", "")
     # make the regex
-    regex = ">(http[s]?:[^<>]+" + download_blob_url + "[0-9a-f]{24}/?)<"
+    regex = ">(http[s]?:[^<>]+" + download_blob_url + "[0-9]+/?)<"
     return re.findall(regex, xml_string)

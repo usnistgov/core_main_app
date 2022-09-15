@@ -14,8 +14,10 @@ from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from rest_framework.status import HTTP_405_METHOD_NOT_ALLOWED
 
-import core_main_app.components.web_page_login.api as web_page_login_api
-from core_main_app.components.version_manager import api as version_manager_api
+from core_main_app.components.template_version_manager import (
+    api as template_version_manager_api,
+)
+from core_main_app.components.web_page_login import api as web_page_login_api
 from core_main_app.settings import INSTALLED_APPS, PASSWORD_RESET_DOMAIN_OVERRIDE
 from core_main_app.utils.markdown_parser import parse
 from core_main_app.utils.rendering import render
@@ -198,7 +200,9 @@ def manage_template_versions(request, version_manager_id):
     """
     try:
         # get the version manager
-        version_manager = version_manager_api.get(version_manager_id, request=request)
+        version_manager = template_version_manager_api.get_by_id(
+            version_manager_id, request=request
+        )
 
         if not request.user.is_staff and version_manager.user != str(request.user.id):
             raise Exception("You do not have the rights to perform this action.")
@@ -253,18 +257,25 @@ def get_context_manage_template_versions(version_manager, object_name="Template"
     """
 
     # Use categorized version for easier manipulation in template
-    versions = version_manager.versions
+    versions = version_manager.version_set
     categorized_versions = {"available": [], "disabled": []}
     for index, version in enumerate(versions, 1):
-        indexed_version = {"index": index, "object": version}
+        indexed_version = {
+            "index": index,
+            "object": str(version.id),
+            "creation_date": version.creation_date,
+        }
 
-        if version not in version_manager.disabled_versions:
+        if str(version.id) not in version_manager.disabled_versions:
             categorized_versions["available"].append(indexed_version)
         else:
             categorized_versions["disabled"].append(indexed_version)
 
-    version_manager.versions = categorized_versions
-    context = {"object_name": object_name, "version_manager": version_manager}
+    context = {
+        "object_name": object_name,
+        "version_manager": version_manager,
+        "categorized_versions": categorized_versions,
+    }
 
     return context
 

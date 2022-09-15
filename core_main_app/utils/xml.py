@@ -9,19 +9,20 @@ from urllib.parse import urlparse
 import xmltodict
 from django.urls import reverse
 
-import core_main_app.commons.exceptions as exceptions
-import xml_utils.commons.constants as xml_utils_constants
-import xml_utils.commons.exceptions as xml_utils_exceptions
-import xml_utils.xml_validation.validation as xml_validation
-from core_main_app.commons.exceptions import XMLError
-from core_main_app.settings import XERCES_VALIDATION, SERVER_URI, XML_POST_PROCESSOR
-from core_main_app.utils.resolvers.resolver_utils import lmxl_uri_resolver
-from core_main_app.utils.urls import get_template_download_pattern
 from xml_utils import xpath as xml_utils_xpath
+from xml_utils.commons import constants as xml_utils_constants
+from xml_utils.commons import exceptions as xml_utils_exceptions
 from xml_utils.commons.constants import XSL_NAMESPACE
+from xml_utils.xml_validation import validation as xml_validation
 from xml_utils.xsd_hash import xsd_hash
 from xml_utils.xsd_tree.operations.namespaces import get_namespaces
 from xml_utils.xsd_tree.xsd_tree import XSDTree
+
+from core_main_app.commons import exceptions
+from core_main_app.settings import XERCES_VALIDATION, SERVER_URI
+from core_main_app.utils.resolvers.resolver_utils import lmxl_uri_resolver
+from core_main_app.utils.urls import get_template_download_pattern
+
 
 logger = logging.getLogger(__name__)
 
@@ -146,8 +147,8 @@ def has_xsl_namespace(xml_string):
     has_namespace = False
     try:
         has_namespace = XSL_NAMESPACE in list(get_namespaces(xml_string).values())
-    except Exception as e:
-        logger.warning("has_xsl_namespace threw an exception: ".format(str(e)))
+    except Exception as exception:
+        logger.warning("has_xsl_namespace threw an exception: %s", str(exception))
 
     return has_namespace
 
@@ -172,13 +173,14 @@ def unparse(json_dict, full_document=True):
     return xmltodict.unparse(preprocessed_dict, full_document=full_document)
 
 
-def raw_xml_to_dict(raw_xml, postprocessor=None, force_list=None):
+def raw_xml_to_dict(raw_xml, postprocessor=None, force_list=None, list_limit=None):
     """Transform a raw xml to dict. Returns an empty dict if the parsing failed.
 
     Args:
         raw_xml:
         postprocessor:
         force_list:
+        list_limit:
 
     Returns:
 
@@ -196,9 +198,13 @@ def raw_xml_to_dict(raw_xml, postprocessor=None, force_list=None):
                 raise exceptions.CoreError("postprocessor is not callable")
 
         # convert xml to dict
-        return xmltodict.parse(
+        dict_raw = xmltodict.parse(
             raw_xml, postprocessor=postprocessor, force_list=force_list
         )
+        if list_limit:
+            # Remove lists which size exceed the limit size
+            remove_lists_from_xml_dict(dict_raw, list_limit)
+        return dict_raw
     except xmltodict.expat.ExpatError:
         raise exceptions.XMLError(
             "An unexpected error happened during the XML parsing."
@@ -352,13 +358,9 @@ def get_imports_and_includes(xsd_string):
     """
     xsd_tree = XSDTree.build_tree(xsd_string)
     # get the imports
-    imports = xsd_tree.findall(
-        "{}import".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE)
-    )
+    imports = xsd_tree.findall(f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}import")
     # get the includes
-    includes = xsd_tree.findall(
-        "{}include".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE)
-    )
+    includes = xsd_tree.findall(f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}include")
     return imports, includes
 
 
@@ -375,12 +377,10 @@ def update_dependencies(xsd_string, dependencies):
     # build the tree
     xsd_tree = XSDTree.build_tree(xsd_string)
     # get the imports
-    xsd_imports = xsd_tree.findall(
-        "{}import".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE)
-    )
+    xsd_imports = xsd_tree.findall(f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}import")
     # get the includes
     xsd_includes = xsd_tree.findall(
-        "{}include".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE)
+        f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}include"
     )
 
     for schema_location, dependency_id in dependencies.items():
@@ -429,7 +429,9 @@ def get_local_dependencies(xsd_string):
                 # add id to list of internal dependencies
                 dependencies.append(object_id)
             except Exception:
-                raise XMLError("Local dependency schemaLocation is not well formed.")
+                raise exceptions.XMLError(
+                    "Local dependency schemaLocation is not well formed."
+                )
 
     return dependencies
 
@@ -450,13 +452,9 @@ def _check_core_support(xsd_string):
     xsd_tree = XSDTree.build_tree(xsd_string)
 
     # get the imports
-    imports = xsd_tree.findall(
-        "{}import".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE)
-    )
+    imports = xsd_tree.findall(f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}import")
     # get the includes
-    includes = xsd_tree.findall(
-        "{}include".format(xml_utils_constants.LXML_SCHEMA_NAMESPACE)
-    )
+    includes = xsd_tree.findall(f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}include")
 
     if len(imports) != 0 or len(includes) != 0:
         for el_import in imports:
@@ -564,8 +562,8 @@ def validate_xpath(xpath):
     """
     try:
         xml_utils_xpath.validate_xpath(xpath)
-    except xml_utils_exceptions.XPathError as e:
-        raise exceptions.XMLError(str(e))
+    except xml_utils_exceptions.XPathError as exception:
+        raise exceptions.XMLError(str(exception))
 
 
 def get_content_by_xpath(xml_string, xpath, namespaces=None):

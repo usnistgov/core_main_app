@@ -3,9 +3,9 @@
 from django.core.management import execute_from_command_line
 from django.test.testcases import TransactionTestCase
 
-import core_main_app.permissions.rights as rights
 from core_main_app.components.group import api as group_api
-from tests.test_settings import database as settings_database
+from core_main_app.permissions import rights
+from core_main_app.settings import MONGODB_INDEXING
 
 
 class MongoIntegrationTransactionTestCase(TransactionTestCase):
@@ -16,8 +16,11 @@ class MongoIntegrationTransactionTestCase(TransactionTestCase):
     """
         Fields
     """
-    database = settings_database  # database to use
     fixture = None  # data fixture from component's tests
+    if MONGODB_INDEXING:
+        from tests.test_settings_mongo import database as settings_database
+
+        database = settings_database
 
     """
         Methods
@@ -30,12 +33,18 @@ class MongoIntegrationTransactionTestCase(TransactionTestCase):
 
         """
         self.clear_database()
-        group_api.get_or_create(name=rights.anonymous_group)
-        group_api.get_or_create(name=rights.default_group)
+        group_api.get_or_create(name=rights.ANONYMOUS_GROUP)
+        group_api.get_or_create(name=rights.DEFAULT_GROUP)
 
         if self.fixture is not None:
             self.fixture.insert_data()
 
     def clear_database(self):
+        """clear_database
+
+        Returns:
+
+        """
         execute_from_command_line(["", "flush", "--no-input"])
-        self.database.clean_database()
+        if MONGODB_INDEXING:
+            self.database.clean_database()

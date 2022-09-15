@@ -9,11 +9,14 @@ from rest_framework.views import APIView
 
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.data import api as data_api
+from core_main_app.settings import DATA_SORTING_FIELDS
 from core_main_app.utils.query.constants import VISIBILITY_OPTION
 from core_main_app.utils.query.mongo.query_builder import QueryBuilder
 
 
 class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
+    """Abstract Execute Local Query View"""
+
     sub_document_root = "dict_content"
 
     def get(self, request):
@@ -94,7 +97,10 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
             if type(options) is str:
                 options = json.loads(options)
             title = self.request.data.get("title", None)
-            order_by_field = self.request.data.get("order_by_field", "").split(",")
+            order_by_field = self.request.data.get("order_by_field", "")
+            order_by_field = (
+                order_by_field.split(",") if order_by_field else DATA_SORTING_FIELDS
+            )
             if query is not None:
                 # prepare query
                 raw_query = self.build_query(
@@ -111,6 +117,9 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
             else:
                 content = {"message": "Expected parameters not provided."}
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        except AccessControlError as acl_error:
+            content = {"message": str(acl_error)}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
             return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -132,16 +141,19 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
 
             The raw query
         """
-
         # build query builder
         query_builder = QueryBuilder(query, self.sub_document_root)
         # update the criteria with workspaces information
         if workspaces is not None and len(workspaces) > 0:
-            list_workspace_ids = [workspace["id"] for workspace in workspaces]
+            list_workspace_ids = [
+                self._parser_id(workspace["id"]) for workspace in workspaces
+            ]
             query_builder.add_list_criteria("workspace", list_workspace_ids)
         # update the criteria with templates information
         if templates is not None and len(templates) > 0:
-            list_template_ids = [template["id"] for template in templates]
+            list_template_ids = [
+                self._parser_id(template["id"]) for template in templates
+            ]
             query_builder.add_list_criteria("template", list_template_ids)
         # update the criteria with visibility information
         if options is not None and VISIBILITY_OPTION in options:
@@ -165,7 +177,7 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
 
             Results of the query
         """
-        return data_api.execute_query(raw_query, self.request.user, order_by_field)
+        return data_api.execute_json_query(raw_query, self.request.user, order_by_field)
 
     @abstractmethod
     def build_response(self, data_list):
@@ -181,8 +193,17 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
         """
         raise NotImplementedError("build_response method is not implemented.")
 
+    @staticmethod
+    def _parser_id(_id):
+        try:
+            return int(_id)
+        except (ValueError, TypeError):
+            return _id
+
 
 class AbstractMigrationView(APIView, metaclass=ABCMeta):
+    """Abstract Migration View"""
+
     def post(self, request, template_id, migrate):
         """Retrieve all the Data and validate the associated
         Template and perform a migration if migrate = True
@@ -239,7 +260,8 @@ class AbstractMigrationView(APIView, metaclass=ABCMeta):
                 )
         except AccessControlError as ace:
             return Response(str(ace), status.HTTP_403_FORBIDDEN)
-        except Exception as e:
+        except Exception as exception:
             return Response(
-                f"Wrong request, {str(e)}", status.HTTP_500_INTERNAL_SERVER_ERROR
+                f"Wrong request, {str(exception)}",
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
             )

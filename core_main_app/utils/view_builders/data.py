@@ -7,8 +7,6 @@ from core_main_app.commons import exceptions
 from core_main_app.components.template_xsl_rendering import (
     api as template_xsl_rendering_api,
 )
-from bson import ObjectId
-
 
 logger = logging.getLogger(__name__)
 
@@ -27,9 +25,9 @@ def build_page(
     """
     page_info = {
         "error": None,
-        "context": dict(),
-        "assets": dict(),
-        "modals": list(),
+        "context": {},
+        "assets": {},
+        "modals": [],
     }
 
     try:
@@ -43,17 +41,15 @@ def build_page(
                 if template_xsl_rendering.default_detail_xslt
                 else None
             )
-            if not template_xsl_rendering.list_detail_xslt or (
+            if template_xsl_rendering.list_detail_xslt.count() == 0 or (
                 template_xsl_rendering.default_detail_xslt is not None
-                and len(template_xsl_rendering.list_detail_xslt) == 1
+                and template_xsl_rendering.list_detail_xslt.count() == 1
             ):
                 display_xslt_selector = False
 
-            if xsl_transformation_id is not None:
-                xsl_transformation_id = ObjectId(xsl_transformation_id)
         except Exception as exception:
             logger.warning(
-                "An exception occurred when retrieving XSLT: %s" % str(exception)
+                "An exception occurred when retrieving XSLT: %s", str(exception)
             )
             display_xslt_selector = False
             template_xsl_rendering = None
@@ -139,24 +135,35 @@ def build_page(
         page_info["error"] = "Data not found"
     except exceptions.ModelError:
         page_info["error"] = "Model error"
-    except Exception as e:
-        page_info["error"] = str(e)
+    except Exception as exception:
+        page_info["error"] = str(exception)
     finally:
         return page_info
 
 
 def render_page(request, render_function, template, context):
-    if context["error"] is None:
-        return render_function(
-            request,
-            template,
-            context=context["context"],
-            assets=context["assets"],
-            modals=context["modals"],
-        )
-    else:
+    """render page
+
+    Args:
+        request:
+        render_function:
+        template:
+        context:
+
+    Returns:
+
+    """
+    if context["error"] is not None:
         return render_function(
             request,
             "core_main_app/common/commons/error.html",
             context={"error": context["error"]},
         )
+
+    return render_function(
+        request,
+        template,
+        context=context["context"],
+        assets=context["assets"],
+        modals=context["modals"],
+    )

@@ -1,130 +1,51 @@
-"""
-Version Manager unit tests
+"""Version Manager unit tests
 """
 from unittest.case import TestCase
 
-from bson.objectid import ObjectId
+import mock
 from mock.mock import Mock, patch
-from mongoengine import errors as mongoengine_errors
 
 from core_main_app.commons import exceptions
+from core_main_app.commons.exceptions import DoesNotExist
+from core_main_app.components.template.models import Template
+from core_main_app.components.template_version_manager import (
+    api as template_version_manager_api,
+)
+from core_main_app.components.template_version_manager.models import (
+    TemplateVersionManager,
+)
 from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.components.version_manager.models import VersionManager
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import create_mock_request
 
 
-class TestVersionManagerGet(TestCase):
-    @patch("core_main_app.components.version_manager.models.VersionManager.get_by_id")
-    def test_version_manager_get_returns_version_manager(self, mock_get_by_id):
-        # Arrange
-        mock_user = create_mock_user("1", is_superuser=True)
-        mock_request = create_mock_request(mock_user)
-        mock_version_manager = _create_mock_version_manager(title="Schema")
-
-        mock_get_by_id.return_value = mock_version_manager
-
-        # Act
-        result = version_manager_api.get(mock_version_manager.id, request=mock_request)
-
-        # Assert
-        self.assertIsInstance(result, VersionManager)
-
-    @patch("core_main_app.components.version_manager.models.VersionManager.get_by_id")
-    def test_version_manager_get_raises_exception_if_object_does_not_exist(
-        self, mock_get_by_id
-    ):
-        # Arrange
-        mock_user = create_mock_user("1", is_superuser=True)
-        mock_request = create_mock_request(mock_user)
-        mock_absent_id = ObjectId()
-        mock_get_by_id.side_effect = mongoengine_errors.DoesNotExist
-
-        # Act + Assert
-        with self.assertRaises(mongoengine_errors.DoesNotExist):
-            version_manager_api.get(mock_absent_id, request=mock_request)
-
-
-class TestVersionManagerGetFromVersionId(TestCase):
-    @patch("core_main_app.components.version_manager.models.VersionManager.get_all")
-    def test_version_manager_get_from_version_id_returns_version_manager(
-        self, mock_get_all
-    ):
-        # Arrange
-        mock_user = create_mock_user("1", is_superuser=True)
-        mock_request = create_mock_request(mock_user)
-        mock_version_manager_1 = _create_mock_version_manager(title="Schema1")
-        version = _create_mock_object()
-        mock_version_manager_1.versions.append(str(version.id))
-
-        mock_version_manager_2 = _create_mock_version_manager(title="Schema2")
-
-        mock_get_all.return_value = [mock_version_manager_1, mock_version_manager_2]
-
-        # Act
-        result = version_manager_api.get_from_version(version, request=mock_request)
-
-        # Assert
-        self.assertIsInstance(result, VersionManager)
-
-    @patch("core_main_app.components.version_manager.models.VersionManager.get_all")
-    def test_version_manager_get_from_version_id_throws_exception_if_id_absent(
-        self, mock_get_all
-    ):
-        # Arrange
-        mock_user = create_mock_user("1", is_superuser=True)
-        mock_request = create_mock_request(mock_user)
-        mock_version_manager_1 = _create_mock_version_manager(title="Schema1")
-        mock_version_manager_2 = _create_mock_version_manager(title="Schema2")
-
-        mock_get_all.return_value = [mock_version_manager_1, mock_version_manager_2]
-
-        mock_absent = _create_mock_object()
-
-        # Act + Assert
-        with self.assertRaises(exceptions.ApiError):
-            version_manager_api.get_from_version(mock_absent, request=mock_request)
-
-
-class TestVersionManagerRestoreVersion(TestCase):
-    @patch("core_main_app.components.version_manager.models.VersionManager.get_all")
-    def test_version_manager_get_raises_exception_if_object_does_not_exist(
-        self, mock_get_all
-    ):
-        # Arrange
-        mock_user = create_mock_user("1", is_superuser=True)
-        mock_request = create_mock_request(mock_user)
-        mock_absent = _create_mock_object()
-        mock_version_manager = _create_mock_version_manager()
-
-        mock_get_all.return_value = [mock_version_manager]
-
-        # Act + Assert
-        with self.assertRaises(exceptions.ApiError):
-            version_manager_api.restore_version(mock_absent, request=mock_request)
-
-
 class TestVersionManagerDisableVersion(TestCase):
-    @patch("core_main_app.components.version_manager.models.VersionManager.get_all")
+    """TestVersionManagerDisableVersion"""
+
     def test_version_manager_disable_version_raises_exception_if_object_does_not_exist(
-        self, mock_get_all
+        self,
     ):
+        """test version manager disable version raises exception if object does not exist
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
         mock_absent = _create_mock_object()
-        mock_version_manager = _create_mock_version_manager()
-
-        mock_get_all.return_value = [mock_version_manager]
 
         # Act + Assert
         with self.assertRaises(exceptions.ApiError):
             version_manager_api.disable_version(mock_absent, request=mock_request)
 
-    @patch("core_main_app.components.version_manager.models.VersionManager.get_all")
-    def test_version_manager_disable_current_version_throws_exception(
-        self, mock_get_all
-    ):
+    def test_version_manager_disable_current_version_throws_exception(self):
+        """test version manager disable current version throws exception
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
@@ -132,27 +53,32 @@ class TestVersionManagerDisableVersion(TestCase):
         mock_current = _create_mock_object()
         mock_version_manager.versions.append(str(mock_current.id))
         mock_version_manager.current = str(mock_current.id)
-
-        mock_get_all.return_value = [mock_version_manager]
 
         # Act + Assert
         with self.assertRaises(exceptions.ApiError):
             version_manager_api.disable_version(mock_current, request=mock_request)
 
-    @patch("core_main_app.components.version_manager.models.VersionManager.get_all")
+    @patch.object(TemplateVersionManager, "version_set", new_callable=mock.PropertyMock)
     def test_version_manager_disable_version_raises_exception_if_new_current_does_not_exist(
-        self, mock_get_all
+        self, mock_versions
     ):
+        """test version manager disable version raises exception if new current does not exist
+
+        Args:
+            mock_versions:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
-        mock_version_manager = _create_mock_version_manager()
+        mock_version_manager = _create_version_manager()
         mock_absent = _create_mock_object()
-        mock_current = _create_mock_object()
-        mock_version_manager.versions.append(str(mock_current.id))
-        mock_version_manager.current = str(mock_current.id)
-
-        mock_get_all.return_value = [mock_version_manager]
+        mock_current = _get_template()
+        mock_current.is_current = True
+        mock_current.version_manager = mock_version_manager
+        mock_versions.return_value = [mock_current]
 
         # Act + Assert
         with self.assertRaises(exceptions.ApiError):
@@ -162,64 +88,37 @@ class TestVersionManagerDisableVersion(TestCase):
 
 
 class TestVersionManagerSetCurrent(TestCase):
-    @patch("core_main_app.components.version_manager.models.VersionManager.get_all")
-    @patch(
-        "core_main_app.components.version_manager.models.VersionManager.get_disabled_versions"
-    )
-    def test_version_manager_set_current_raises_api_error_if_disabled(
-        self, mock_get_disabled_versions, mock_get_all
-    ):
+    """TestVersionManagerSetCurrent"""
+
+    def test_version_manager_set_current_raises_api_error_if_disabled(self):
+        """test version manager set current raises api error if disabled
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
         to_disable = _create_mock_object()
-        mock_vm = _create_mock_version_manager()
-
-        mock_get_all.return_value = [mock_vm]
-        mock_get_disabled_versions.return_value = [str(to_disable.id)]
 
         # Act + Assert
         with self.assertRaises(exceptions.ApiError):
             version_manager_api.set_current(to_disable, request=mock_request)
 
 
-class TestVersionManagerInsert(TestCase):
-    @patch("core_main_app.components.version_manager.models.VersionManager.save")
-    def test_version_manager_insert_first_version_adds_versions(self, mock_save):
-        # Arrange
-        mock_user = create_mock_user("1", is_superuser=True)
-        mock_request = create_mock_request(mock_user)
-        version_manager = _create_version_manager()
-        version = _create_mock_object()
-        mock_save.return_value = None
-
-        # Act + Assert
-        version_manager_api.insert_version(
-            version_manager, version, request=mock_request
-        )
-
-        self.assertEquals(version_manager.versions[0], str(version.id))
-
-    @patch("core_main_app.components.version_manager.models.VersionManager.save")
-    def test_version_manager_insert_first_version_sets_current(self, mock_save):
-        # Arrange
-        mock_user = create_mock_user("1", is_superuser=True)
-        mock_request = create_mock_request(mock_user)
-        version_manager = _create_version_manager()
-        version = _create_mock_object()
-        mock_save.return_value = None
-
-        # Act + Assert
-        version_manager_api.insert_version(
-            version_manager, version, request=mock_request
-        )
-
-        self.assertEquals(version_manager.current, str(version.id))
-
-
 class TestVersionManagerGetActiveGlobalVersionManagerByTitle(TestCase):
-    @patch.object(VersionManager, "get_active_global_version_manager_by_title")
+    """TestVersionManagerGetActiveGlobalVersionManagerByTitle"""
+
+    @patch.object(TemplateVersionManager, "get_active_global_version_manager_by_title")
     def test_version_manager_get_returns_version_manager(self, mock_get_active_global):
+        """test version manager get returns version manager
+
+        Args:
+            mock_get_active_global:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
@@ -229,36 +128,58 @@ class TestVersionManagerGetActiveGlobalVersionManagerByTitle(TestCase):
         mock_get_active_global.return_value = mock_version_manager
 
         # Act
-        result = version_manager_api.get_active_global_version_manager_by_title(
-            title, request=mock_request
+        result = (
+            template_version_manager_api.get_active_global_version_manager_by_title(
+                title, request=mock_request
+            )
         )
 
         # Assert
         self.assertIsInstance(result, VersionManager)
 
-    @patch.object(VersionManager, "get_active_global_version_manager_by_title")
+    @patch.object(TemplateVersionManager, "get_active_global_version_manager_by_title")
     def test_version_manager_get_raises_exception_if_object_does_not_exist(
         self, mock_get_active_global
     ):
+        """test version manager get raises exception if object does not exist
+
+        Args:
+            mock_get_active_global:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
         mock_absent_title = "Schema"
-        mock_get_active_global.side_effect = mongoengine_errors.DoesNotExist
+        mock_get_active_global.side_effect = DoesNotExist("")
 
         # Act + Assert
-        with self.assertRaises(mongoengine_errors.DoesNotExist):
-            version_manager_api.get_active_global_version_manager_by_title(
+        with self.assertRaises(DoesNotExist):
+            template_version_manager_api.get_active_global_version_manager_by_title(
                 mock_absent_title, request=mock_request
             )
 
 
 class TestVersionManagerGetVersionByNumber(TestCase):
-    def test_version_manager_get_returns_version(self):
+    """TestVersionManagerGetVersionByNumber"""
+
+    @patch.object(TemplateVersionManager, "version_set", new_callable=mock.PropertyMock)
+    def test_version_manager_get_returns_version(self, mock_versions):
+        """test version manager get returns version
+
+        Args:
+            mock_versions:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(user=mock_user)
-        version = str(ObjectId())
+        version = _get_template()
+        mock_versions.return_value = [version]
         version_manager = _create_version_manager("Schema1", [version])
 
         # Act
@@ -267,14 +188,18 @@ class TestVersionManagerGetVersionByNumber(TestCase):
         )
 
         # Assert
-        self.assertEquals(result, version)
+        self.assertEqual(result, str(version.id))
 
     def test_version_manager_get_raises_exception_if_object_does_not_exist(self):
+        """test version manager get raises exception if object does not exist
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(user=mock_user)
-        version = str(ObjectId())
-        version_manager = _create_version_manager("Schema1", [version])
+        version_manager = _create_version_manager("Schema1", [_get_template()])
 
         # Act + Assert
         with self.assertRaises(IndexError):
@@ -284,28 +209,45 @@ class TestVersionManagerGetVersionByNumber(TestCase):
 
 
 class TestVersionManagerGetVersionNumber(TestCase):
-    def test_version_manager_get_returns_number(self):
+    """TestVersionManagerGetVersionNumber"""
+
+    @patch.object(TemplateVersionManager, "version_set", new_callable=mock.PropertyMock)
+    def test_version_manager_get_returns_number(self, mock_versions):
+        """test version manager get returns number
+
+        Args:
+            mock_versions:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(user=mock_user)
-        version = str(ObjectId())
+        version = _get_template()
+        mock_versions.return_value = [version]
         version_manager = _create_version_manager("Schema1", [version])
 
         # Act
         result = version_manager_api.get_version_number(
-            version_manager, version, request=mock_request
+            version_manager, version.id, request=mock_request
         )
 
         # Assert
-        self.assertEquals(result, 1)
+        self.assertEqual(result, 1)
 
     def test_version_manager_get_raises_exception_if_object_does_not_exist(self):
+        """test version manager get raises exception if object does not exist
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(user=mock_user)
-        version = str(ObjectId())
-        absent_version = str(ObjectId())
-        version_manager = _create_version_manager("Schema1", [version])
+        # version = 1
+        absent_version = -1
+        version_manager = _create_version_manager("Schema1", [_get_template()])
 
         # Act + Assert
         with self.assertRaises(ValueError):
@@ -315,35 +257,65 @@ class TestVersionManagerGetVersionNumber(TestCase):
 
 
 def _create_mock_version_manager(title=""):
-    """
-    Create a mock version manager
-    :param title:
-    :return:
+    """Create a mock version manager
+
+    Args:
+        title:
+
+    Returns:
+
     """
     mock_vm = Mock(spec=VersionManager)
     mock_vm.title = title
-    mock_vm.current = ObjectId()
+    mock_vm.current = 1
     mock_vm.versions = [str(mock_vm.current)]
-    mock_vm.id = ObjectId()
+    mock_vm.id = 1
     return mock_vm
 
 
 def _create_mock_object():
-    """
-    Create a mock object
-    :return:
+    """Create a mock object
+
+    Returns:
+
     """
     mock_object = Mock()
-    mock_object.id = ObjectId()
+    mock_object.id = 1
     return mock_object
 
 
-def _create_version_manager(title="", versions=[]):
+def _create_version_manager(title="", versions=None):
+    """Return a templates version manager
+
+    Args:
+        title:
+        versions:
+
+    Returns:
+
     """
-    Returns a templates version manager
-    :param title:
-    :return:
-    """
-    return VersionManager(
-        id=ObjectId(), title=title, versions=versions, disabled_versions=[]
+    tvm = TemplateVersionManager(
+        id=1,
+        title=title,
     )
+    if versions:
+        for template in versions:
+            template.version_manager = tvm
+
+    return tvm
+
+
+def _get_template():
+    """Get template
+
+    Returns:
+
+    """
+    template = Template()
+    template.id = 1
+    xsd = (
+        "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+        "<xs:element name='tag'></xs:element></xs:schema>"
+    )
+    template.content = xsd
+    return template

@@ -8,11 +8,23 @@ from core_main_app.utils.tests_tools.RequestMock import RequestMock
 
 
 class TestGetAllUserList(TestCase):
+    """TestGetAllUserList"""
+
     def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
         super().setUp()
         self.data = None
 
     def test_get_all_returns_list(self):
+        """test_get_all_returns_list
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("0", is_staff=True)
 

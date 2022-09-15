@@ -2,7 +2,7 @@
 """
 
 from core_main_app.access_control.exceptions import AccessControlError
-from core_main_app.components.version_manager.models import VersionManager
+from core_main_app.components.version_manager.models import VersionManager, Version
 from core_main_app.settings import CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT
 from core_main_app.utils.requests_utils.access_control import (
     get_request_from_args,
@@ -35,11 +35,10 @@ def can_read(func, document_id, request):
             raise AccessControlError(
                 "Version Manager: The user doesn't have enough rights."
             )
-        else:
-            if not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
-                raise AccessControlError(
-                    "Version Manager: The user doesn't have enough rights."
-                )
+        if not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
+            raise AccessControlError(
+                "Version Manager: The user doesn't have enough rights."
+            )
 
     # user is set
     if document.user and document.user != str(request.user.id):
@@ -73,13 +72,14 @@ def can_write(func, *args, **kwargs):
             "Version Manager: The user doesn't have enough rights."
         )
 
-    version_manager = next(
-        (arg for arg in args if isinstance(arg, VersionManager)), None
+    object_to_check = next(
+        (arg for arg in args if isinstance(arg, (VersionManager, Version))),
+        None,
     )
 
     # user is set
-    if version_manager.user:
-        if version_manager.user == str(request.user.id):
+    if object_to_check.user:
+        if object_to_check.user == str(request.user.id):
             return func(*args, **kwargs)
     # user is not set
     else:
@@ -112,11 +112,10 @@ def can_read_list(func, list_id, request):
                 raise AccessControlError(
                     "Version Manager: The user doesn't have enough rights."
                 )
-            else:
-                if not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
-                    raise AccessControlError(
-                        "Version Manager: The user doesn't have enough rights."
-                    )
+            if not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
+                raise AccessControlError(
+                    "Version Manager: The user doesn't have enough rights."
+                )
 
         # user is set
         if version_manager.user and version_manager.user != str(request.user.id):
@@ -169,11 +168,10 @@ def can_read_version_manager(func, version_manager, version, request):
             raise AccessControlError(
                 "Version Manager: The user doesn't have enough rights."
             )
-        else:
-            if not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
-                raise AccessControlError(
-                    "Version Manager: The user doesn't have enough rights."
-                )
+        if not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
+            raise AccessControlError(
+                "Version Manager: The user doesn't have enough rights."
+            )
 
     # user is set
     if version_manager.user and version_manager.user != str(request.user.id):

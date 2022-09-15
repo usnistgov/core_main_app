@@ -1,14 +1,18 @@
 """ Data tasks
 """
 
-from bson.objectid import ObjectId
+import logging
+
 from celery import shared_task
 from celery.result import AsyncResult
+from django.db.models import Q
 
 from core_main_app.components.data import api as data_api
-from core_main_app.components.xsl_transformation import api as xsl_transformation_api
 from core_main_app.components.user import api as user_api
+from core_main_app.components.xsl_transformation import api as xsl_transformation_api
 from core_main_app.system import api as system_api
+
+logger = logging.getLogger(__name__)
 
 
 @shared_task
@@ -58,7 +62,7 @@ def async_migration_task(data_list, xslt_id, template_id, user_id, migrate):
                     data_api.check_xml_file_is_valid(data)
 
                 success.append(str(data.id))
-            except Exception as e:
+            except Exception:
                 errors.append(str(data.id))
             finally:
                 # increase the current progress and update the task state
@@ -67,11 +71,11 @@ def async_migration_task(data_list, xslt_id, template_id, user_id, migrate):
                     state="PROGRESS",
                     meta={"current": current_progress, "total": total_data},
                 )
-    except Exception as e:
+    except Exception as exception:
         async_migration_task.update_state(
             state="ABORT", meta={"current": current_progress, "total": total_data}
         )
-        raise Exception(f"Something went wrong: {str(e)}")
+        raise Exception(f"Something went wrong: {str(exception)}")
 
     return {"valid": success, "wrong": errors}
 
@@ -117,20 +121,11 @@ def async_template_migration_task(
                 current_data_progress = 0
 
                 # get a QuerySet of all the data with the given template
-                data_list = data_api.execute_query(
-                    {"template": ObjectId(template_id)}, user=user
-                )
+                data_list = data_api.execute_query(Q(template=template_id), user=user)
 
                 total_data = data_list.count()
 
-                # extract the data id from the list
-                data_list_id = data_list.values_list("id")
-
-                for data_id in data_list_id:
-
-                    # get the data
-                    data = data_api.get_by_id(data_id, user)
-
+                for data in data_list.all():
                     # modify the data temporarily with the new targeted template
                     data.template = target_template
 
@@ -149,7 +144,7 @@ def async_template_migration_task(
                             data_api.check_xml_file_is_valid(data)
 
                         success.append(str(data.id))
-                    except Exception as e:
+                    except Exception:
                         error.append(str(data.id))
                     finally:
                         # increase the current progress and update the task state
@@ -181,7 +176,7 @@ def async_template_migration_task(
                 if not target_template_id
                 else "Please provide template id."
             )
-    except Exception as e:
+    except Exception as exception:
         async_template_migration_task.update_state(
             state="ABORT",
             meta={
@@ -191,7 +186,7 @@ def async_template_migration_task(
                 "data_total": total_data,
             },
         )
-        raise Exception(f"Something went wrong: {str(e)}")
+        raise Exception(f"Something went wrong: {str(exception)}")
 
 
 def get_task_progress(task_id):
@@ -227,3 +222,90 @@ def get_task_result(task_id):
     """
     result = AsyncResult(task_id).result
     return result
+
+
+@shared_task
+def index_mongo_data(data_id):
+    """Index a data in MongoDB"""
+    try:
+        data = system_api.get_data_by_id(data_id)
+        try:
+            from core_main_app.components.mongo.models import MongoData
+
+            mongo_data = MongoData.init_mongo_data(data)
+            mongo_data.save()
+        except Exception as exception:
+            logger.error(
+                f"ERROR : An error occurred while indexing data : {str(exception)}"
+            )
+    except Exception as exception:
+        logger.error(
+            f"ERROR : An error occurred while indexing data : {str(exception)}"
+        )
+
+
+@shared_task
+def update_mongo_data_user(data_ids, user_id):
+    """Update user id of all data in list
+
+    Args:
+        data_ids:
+        user_id:
+
+    Returns:
+
+    """
+    try:
+        from core_main_app.components.mongo.models import MongoData
+
+        for data_id in data_ids:
+            mongo_data = MongoData.objects.get(pk=data_id)
+            mongo_data.user_id = user_id
+            mongo_data.save()
+    except Exception as exception:
+        logger.error(
+            f"ERROR : An error occurred while updating data owner : {str(exception)}"
+        )
+
+
+@shared_task
+def update_mongo_data_workspace(data_ids, workspace_id):
+    """Update workspace id of all data in list
+    Args:
+        data_ids:
+        workspace_id:
+
+    Returns:
+
+    """
+
+    try:
+        from core_main_app.components.mongo.models import MongoData
+
+        for data_id in data_ids:
+            mongo_data = MongoData.objects.get(pk=data_id)
+            mongo_data._workspace_id = workspace_id
+            mongo_data.save()
+    except Exception as exception:
+        logger.error(
+            f"ERROR : An error occurred while updating data workspace : {str(exception)}"
+        )
+
+
+@shared_task
+def delete_mongo_data(data_id):
+    """Delete a data in MongoDB"""
+    try:
+        try:
+            from core_main_app.components.mongo.models import MongoData
+
+            mongo_data = MongoData.objects.get(pk=data_id)
+            mongo_data.delete()
+        except Exception as exception:
+            logger.error(
+                f"ERROR : An error occurred while deleting data : {str(exception)}"
+            )
+    except Exception as exception:
+        logger.error(
+            f"ERROR : An error occurred while deleting data : {str(exception)}"
+        )

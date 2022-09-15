@@ -1,18 +1,27 @@
+""" Integration test for data ordering
+"""
+from tests.components.data.fixtures.fixtures import AccessControlDataFixture
+
 from core_main_app.components.data.models import Data
 from core_main_app.utils.integration_tests.integration_base_test_case import (
     MongoIntegrationBaseTestCase,
 )
-
-from tests.components.data.fixtures.fixtures import AccessControlDataFixture
 
 # FIXME move other tests (from tests_int.py) here
 ordering_data_fixture = AccessControlDataFixture()
 
 
 class TestGetAllByListTemplate(MongoIntegrationBaseTestCase):
+    """TestGetAllByListTemplate"""
+
     fixture = ordering_data_fixture
 
     def test_get_all_by_list_template_data_ordering(self):
+        """test_get_all_by_list_template_data_ordering
+
+        Returns:
+
+        """
         # Arrange
         template = self.fixture.template.id
         ascending_order_by_field = ["+title"]
@@ -32,6 +41,11 @@ class TestGetAllByListTemplate(MongoIntegrationBaseTestCase):
             )
 
     def test_get_all_by_list_template_data_ascending_sorting(self):
+        """test_get_all_by_list_template_data_ascending_sorting
+
+        Returns:
+
+        """
         # Arrange
         ascending_order_by_field = ["+title"]
         template = self.fixture.template.id
@@ -44,6 +58,11 @@ class TestGetAllByListTemplate(MongoIntegrationBaseTestCase):
         self.assertTrue(self.fixture.data_2.title == ascending_result.all()[1].title)
 
     def test_get_all_by_list_template_data_descending_sorting(self):
+        """test_get_all_by_list_template_data_descending_sorting
+
+        Returns:
+
+        """
         # Arrange
         descending_order_by_field = ["-title"]
         template = self.fixture.template.id
@@ -62,6 +81,11 @@ class TestGetAllByListTemplate(MongoIntegrationBaseTestCase):
         )
 
     def test_get_all_by_list_template_multi_field_sorting(self):
+        """test_get_all_by_list_template_multi_field_sorting
+
+        Returns:
+
+        """
         # Arrange
         ascending_order_by_multi_field = ["+template", "+title"]
         descending_order_by_multi_field = ["+template", "-title"]
@@ -86,9 +110,16 @@ class TestGetAllByListTemplate(MongoIntegrationBaseTestCase):
 
 
 class TestGetAllByListWorkspace(MongoIntegrationBaseTestCase):
+    """TestGetAllByListWorkspace"""
+
     fixture = ordering_data_fixture
 
     def test_get_all_by_list_workspace_data_ordering(self):
+        """test_get_all_by_list_workspace_data_ordering
+
+        Returns:
+
+        """
         # Arrange
         workspace = self.fixture.workspace_1.id
         ascending_order_by_field = ["+title"]
@@ -108,6 +139,11 @@ class TestGetAllByListWorkspace(MongoIntegrationBaseTestCase):
             )
 
     def test_get_all_by_list_workspace_data_ascending_sorting(self):
+        """test_get_all_by_list_workspace_data_ascending_sorting
+
+        Returns:
+
+        """
         # Arrange
         ascending_order_by_field = ["+title"]
         workspace = self.fixture.workspace_1.id
@@ -120,6 +156,11 @@ class TestGetAllByListWorkspace(MongoIntegrationBaseTestCase):
         self.assertTrue(self.fixture.data_5.title == ascending_result.all()[1].title)
 
     def test_get_all_by_list_workspace_data_descending_sorting(self):
+        """test_get_all_by_list_workspace_data_descending_sorting
+
+        Returns:
+
+        """
         # Arrange
         descending_order_by_field = ["-title"]
         workspace = self.fixture.workspace_1.id
@@ -138,6 +179,11 @@ class TestGetAllByListWorkspace(MongoIntegrationBaseTestCase):
         )
 
     def test_get_all_by_list_workspace_multi_field_sorting(self):
+        """test_get_all_by_list_workspace_multi_field_sorting
+
+        Returns:
+
+        """
         # Arrange
         ascending_order_by_multi_field = ["+workspace", "+title"]
         descending_order_by_multi_field = ["+workspace", "-title"]

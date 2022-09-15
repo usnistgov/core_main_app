@@ -1,17 +1,17 @@
 """ Web page model
 """
-from django_mongoengine import fields, Document
-from mongoengine import errors as mongoengine_errors
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import models
 
 from core_main_app.commons import exceptions
 from core_main_app.commons.enums import WEB_PAGE_TYPES
 
 
-class WebPage(Document):
+class WebPage(models.Model):
     """Represents a WebPage"""
 
-    type = fields.IntField()
-    content = fields.StringField()
+    type = models.IntegerField()
+    content = models.TextField()
 
     @staticmethod
     def get_by_type(page_type):
@@ -25,7 +25,7 @@ class WebPage(Document):
         """
         try:
             return WebPage.objects.get(type=WEB_PAGE_TYPES[page_type])
-        except mongoengine_errors.DoesNotExist as e:
+        except ObjectDoesNotExist as e:
             raise exceptions.DoesNotExist(str(e))
         except Exception as ex:
             raise exceptions.ModelError(str(ex))
@@ -40,4 +40,4 @@ class WebPage(Document):
         Returns:
 
         """
-        return WebPage.objects(type=page_type_key).delete()
+        return WebPage.objects.filter(type=page_type_key).delete()

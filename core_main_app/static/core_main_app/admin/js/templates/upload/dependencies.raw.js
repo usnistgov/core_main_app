@@ -1,1 +1,1 @@
-var templateDependenciesPostUrl = "{% url 'admin:core_main_app_resolve_dependencies' %}";
+var templateDependenciesPostUrl = "{% url 'core-admin:core_main_app_resolve_dependencies' %}";

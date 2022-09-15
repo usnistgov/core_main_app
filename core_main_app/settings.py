@@ -19,12 +19,20 @@ SERVER_URI = getattr(settings, "SERVER_URI", "http://127.0.0.1:8000")
 """ :py:class:`str`: Server URI for import reference.
 """
 
+XSD_UPLOAD_DIR = getattr(settings, "XSD_UPLOAD_DIR", "xml_schemas")
+""" :py:class:`str`: Name of the media folder where XML schemas are uploaded to.
+"""
+
+XSLT_UPLOAD_DIR = getattr(settings, "XSLT_UPLOAD_DIR", "xslt")
+""" :py:class:`str`: Name of the media folder where XML schemas are uploaded to.
+"""
+
 INSTALLED_APPS = getattr(settings, "INSTALLED_APPS", [])
 """ :py:class:`list`: List of apps installed.
 """
 
-# Choose from:  black, black-light, blue, blue-light, green, green-light, purple, purple-light, red, red-light, yellow,
-#               yellow-light
+# Choose from:  black, black-light, blue, blue-light, green, green-light, purple,
+#               purple-light, red, red-light, yellow, yellow-light
 WEBSITE_ADMIN_COLOR = getattr(settings, "WEBSITE_ADMIN_COLOR", "yellow")
 """ :py:class:`str`: color of the admin dashboard.
 """
@@ -34,19 +42,9 @@ XERCES_VALIDATION = getattr(settings, "XERCES_VALIDATION", False)
 """ :py:class:`bool`: Enables Xerces validation (requires additional packages).
 """
 
-# GridFS
-GRIDFS_DATA_COLLECTION = getattr(settings, "GRIDFS_DATA_COLLECTION", "fs_data")
-""" :py:class:`str`: Collection name for file storage in MongoDB.
-"""
-
-# Celery configuration
-USE_BACKGROUND_TASK = getattr(settings, "USE_BACKGROUND_TASK", False)
-""" :py:class:`bool`: Define use of celery for background tasks.
-"""
-
 # SMTP Configuration
-USE_EMAIL = getattr(settings, "USE_EMAIL", False)
-""" :py:class:`bool`: Activate email sending on the platform.
+SEND_EMAIL_ASYNC = getattr(settings, "SEND_EMAIL_ASYNC", False)
+""" :py:class:`bool`: Send email asynchronously.
 """
 
 SERVER_EMAIL = getattr(settings, "SERVER_EMAIL", "root@localhost")
@@ -58,39 +56,11 @@ ADMINS = getattr(settings, "ADMINS", [])
 """
 
 MANAGERS = getattr(settings, "MANAGERS", [])
-""" :py:class:`list`: Email addresses of moderators (managers). 
+""" :py:class:`list`: Email addresses of moderators (managers).
 """
 
 EMAIL_SUBJECT_PREFIX = getattr(settings, "EMAIL_SUBJECT_PREFIX", "[CURATOR] ")
 """ :py:class:`str`: Prefix for easy classification of emails.
-"""
-
-MONGO_HOST = getattr(settings, "MONGO_HOST", "localhost")
-""" :py:class:`str`: MongoDB host.
-"""
-
-MONGO_PORT = getattr(settings, "MONGO_PORT", "27017")
-""" :py:class:`str`: MongoDB port.
-"""
-
-MONGO_USER = getattr(settings, "MONGO_USER", "")
-""" :py:class:`str`: MongoDB user.
-"""
-
-MONGO_PASSWORD = getattr(settings, "MONGO_PASSWORD", "")
-""" :py:class:`str`: MongoDB password.
-"""
-
-MONGO_DB = getattr(settings, "MONGO_DB", "cdcs")
-""" :py:class:`str`: MongoDB database.
-"""
-
-mongodb_uri_default = (
-    f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@{MONGO_HOST}:{MONGO_PORT}/{MONGO_DB}"
-)
-
-MONGODB_URI = getattr(settings, "MONGODB_URI", mongodb_uri_default)
-""" :py:class:`str`: MongoDB connection URI. Automatically generated from other parameters.
 """
 
 USE_TZ = getattr(settings, "USE_TZ", True)
@@ -101,22 +71,6 @@ SEARCHABLE_DATA_OCCURRENCES_LIMIT = getattr(
     settings, "SEARCHABLE_DATA_OCCURRENCES_LIMIT", None
 )
 """ :py:class:`int` | :py:attr:`None`: Limit for number of occurent to be returned by a search.
-"""
-
-BLOB_HOST = getattr(settings, "BLOB_HOST", "GRIDFS")
-""" :py:class:`str`: Type of file storage.
-"""
-
-BLOB_HOST_URI = getattr(settings, "BLOB_HOST_URI", MONGODB_URI)
-""" :py:class:`str`: File storage system URI.
-"""
-
-BLOB_HOST_USER = getattr(settings, "BLOB_HOST_USER", None)
-""" :py:class:`str`: User for file storage.
-"""
-
-BLOB_HOST_PASSWORD = getattr(settings, "BLOB_HOST_PASSWORD", None)
-""" :py:class:`str`: Password for file storage.
 """
 
 # Lock
@@ -180,7 +134,7 @@ XSD_URI_RESOLVER = getattr(settings, "XSD_URI_RESOLVER", None)
 """
 
 XML_FORCE_LIST = getattr(settings, "XML_FORCE_LIST", False)
-""" :py:class:`str`: force_list parameter for xml to dict, choose between a boolean, 
+""" :py:class:`str`: force_list parameter for xml to dict, choose between a boolean,
     a list of elements to convert to list or a callable.
     boolean: convert or not xml elements to list,
     list: list of xml element that need to be converted to list,
@@ -188,7 +142,8 @@ XML_FORCE_LIST = getattr(settings, "XML_FORCE_LIST", False)
 """
 
 XML_POST_PROCESSOR = getattr(settings, "XML_POST_PROCESSOR", "NUMERIC")
-""" :py:class:`str`: postprocessor for xml to dict, choose between 'NUMERIC' and 'NUMERIC_AND_STRING' or a callable.
+""" :py:class:`str`: postprocessor for xml to dict.
+     Choose between 'NUMERIC' and 'NUMERIC_AND_STRING' or a callable:
     'NUMERIC' convert numeric values from the xml document to integer or float.
     'NUMERIC_AND_STRING' convert numeric values and also store string representation .
     callable for other custom xml post processing.
@@ -199,9 +154,9 @@ VERIFY_DATA_ACCESS = getattr(settings, "VERIFY_DATA_ACCESS", False)
 """
 
 DATA_SORTING_FIELDS = getattr(settings, "DATA_SORTING_FIELDS", [])
-""" ::py:class:`str` Set the default sort fields for the data query. all the field must 
-    be prefixed by "+" or "-" (asc or desc sort) the sort can be multi field and each 
-    field must be delimited by "," (ex. ["-title","+name","+date"]) 
+""" ::py:class:`str` Set the default sort fields for the data query. all the field must
+    be prefixed by "+" or "-" (asc or desc sort) the sort can be multi field and each
+    field must be delimited by "," (ex. ["-title","+name","+date"])
 """
 
 AUTO_SET_PID = getattr(settings, "AUTO_SET_PID", False)
@@ -216,4 +171,67 @@ PASSWORD_RESET_DOMAIN_OVERRIDE = getattr(
 
 ENABLE_SAML2_SSO_AUTH = getattr(settings, "ENABLE_SAML2_SSO_AUTH", False)
 """ :py:class:`bool`: Enable SAML2 SSO Authentication
+"""
+
+MONGODB_INDEXING = getattr(settings, "MONGODB_INDEXING", False)
+""" :py:class:`bool`: Use MongoDB for data indexing.
+    If True:
+        - a copy of the data will be stored in MongoDB,
+        - queries will be executed against MongoDB.
+"""
+
+MONGODB_ASYNC_SAVE = getattr(settings, "MONGODB_ASYNC_SAVE", True)
+""" :py:class:`bool`: Save data in MongoDB asynchronously.
+    If True, data are saved in MongoDB asynchronously.
+"""
+
+MONGO_HOST = getattr(settings, "MONGO_HOST", "localhost")
+""" :py:class:`str`: MongoDB host.
+"""
+
+MONGO_PORT = getattr(settings, "MONGO_PORT", "27017")
+""" :py:class:`str`: MongoDB port.
+"""
+
+MONGO_USER = getattr(settings, "MONGO_USER", "")
+""" :py:class:`str`: MongoDB user.
+"""
+
+MONGO_PASS = getattr(settings, "MONGO_PASS", "")
+""" :py:class:`str`: MongoDB password.
+"""
+
+MONGO_DB = getattr(settings, "MONGO_DB", "cdcs")
+""" :py:class:`str`: MongoDB database.
+"""
+
+GRIDFS_STORAGE = getattr(settings, "GRIDFS_STORAGE", False)
+""" :py:class:`bool`: Use GridFS for file storage.
+"""
+
+CUSTOM_FILE_STORAGE = getattr(settings, "CUSTOM_FILE_STORAGE", {})
+""" :py:class:`dict`: File Storage by model.
+    Example:
+    from django.core.files.storage import default_storage
+    {
+        'data': default_storage,
+        'template': default_storage,
+        'blob': 'core_main_app.utils.storage.gridfs_storage.GridFSStorage',
+        'exported_compressed_files': 'core_main_app.utils.storage.gridfs_storage.GridFSStorage'
+        'xsl_transformation': 'core_main_app.utils.storage.gridfs_storage.GridFSStorage'
+    }
+"""
+
+MAX_DOCUMENT_LIST = getattr(settings, "MAX_DOCUMENT_LIST", 100)
+""" :py:class:`int`: Maximum number of documents to be returned at once by the api.
+"""
+
+CHECKSUM_ALGORITHM = getattr(settings, "CHECKSUM_ALGORITHM", None)
+""" :py:class:`str`: Checksum algorithm used for uploaded files.
+    Examples:
+    CHECKSUM_ALGORITHM = None
+    CHECKSUM_ALGORITHM = "MD5"
+    CHECKSUM_ALGORITHM = "SHA1"
+    CHECKSUM_ALGORITHM = "SHA256"
+    CHECKSUM_ALGORITHM = "SHA512"
 """

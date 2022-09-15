@@ -7,8 +7,8 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-import core_main_app.components.xsl_transformation.api as xsl_api
 from core_main_app.commons import exceptions
+from core_main_app.components.xsl_transformation import api as xsl_api
 from core_main_app.rest.xsl_transformation.serializers import (
     XslTransformationSerializer,
     TransformSerializer,

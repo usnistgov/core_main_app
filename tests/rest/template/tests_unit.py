@@ -14,14 +14,22 @@ import core_main_app.components.template.api as template_api
 
 
 class TestTemplateDownload(SimpleTestCase):
-    def setUp(self):
-        super(TestTemplateDownload, self).setUp()
+    """Test Template Download"""
 
-    @patch.object(template_api, "get")
-    def test_get_returns_http_404_when_data_not_found(self, mock_template_api_get):
+    def setUp(self):
+        """setUp"""
+
+        super().setUp()
+
+    @patch.object(template_api, "get_by_id")
+    def test_get_returns_http_404_when_data_not_found(
+        self, mock_template_api_get_by_id
+    ):
+        """test_get_returns_http_404_when_data_not_found"""
+
         # Arrange
         mock_user = create_mock_user("1")
-        mock_template_api_get.side_effect = DoesNotExist("error")
+        mock_template_api_get_by_id.side_effect = DoesNotExist("error")
 
         # Mock
         response = RequestMock.do_request_get(
@@ -31,12 +39,14 @@ class TestTemplateDownload(SimpleTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    @patch.object(template_api, "get")
-    def test_get_returns_http_200_when_data_found(self, mock_template_api_get):
+    @patch.object(template_api, "get_by_id")
+    def test_get_returns_http_200_when_data_found(self, mock_template_api_get_by_id):
+        """test_get_returns_http_200_when_data_found"""
+
         # Arrange
         mock_user = create_mock_user("1")
         mock_template = _get_template()
-        mock_template_api_get.return_value = mock_template
+        mock_template_api_get_by_id.return_value = mock_template
 
         # Mock
         response = RequestMock.do_request_get(
@@ -46,14 +56,17 @@ class TestTemplateDownload(SimpleTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    @patch.object(template_api, "get")
+    @patch.object(template_api, "get_by_id")
     def test_get_returns_http_400_when_data_not_well_formatted(
-        self, mock_template_api_get
+        self, mock_template_api_get_by_id
     ):
+        """test_get_returns_http_400_when_data_not_well_formatted"""
+
         # Arrange
         mock_user = create_mock_user("1")
         mock_template = Template()
-        mock_template_api_get.return_value = mock_template
+        mock_template.content = "/test"
+        mock_template_api_get_by_id.return_value = mock_template
 
         # Mock
         response = RequestMock.do_request_get(
@@ -66,12 +79,14 @@ class TestTemplateDownload(SimpleTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    @patch.object(template_api, "get")
-    def test_get_without_pretty_print_returns_data(self, mock_template_api_get):
+    @patch.object(template_api, "get_by_id")
+    def test_get_without_pretty_print_returns_data(self, mock_template_api_get_by_id):
+        """test_get_without_pretty_print_returns_data"""
+
         # Arrange
         mock_user = create_mock_user("1")
         mock_template = _get_template()
-        mock_template_api_get.return_value = mock_template
+        mock_template_api_get_by_id.return_value = mock_template
         expected_value = b'<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:element name="tag"></xs:element></xs:schema>'
         # Mock
         response = RequestMock.do_request_get(
@@ -85,12 +100,16 @@ class TestTemplateDownload(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.content, expected_value)
 
-    @patch.object(template_api, "get")
-    def test_get_with_pretty_print_returns_formatted_data(self, mock_template_api_get):
+    @patch.object(template_api, "get_by_id")
+    def test_get_with_pretty_print_returns_formatted_data(
+        self, mock_template_api_get_by_id
+    ):
+        """test_get_with_pretty_print_returns_formatted_data"""
+
         # Arrange
         mock_user = create_mock_user("1")
         mock_template = _get_template()
-        mock_template_api_get.return_value = mock_template
+        mock_template_api_get_by_id.return_value = mock_template
         expected_value = b'<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">\n  <xs:element name="tag"/>\n</xs:schema>\n'
 
         # Mock
@@ -107,8 +126,14 @@ class TestTemplateDownload(SimpleTestCase):
 
 
 def _get_template():
+    """_get_template
+
+    Args:
+
+    Returns:
+    """
     template = Template()
-    template.id_field = 1
+    template.id = 1
     template.filename = "test"
     xsd = (
         '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">'

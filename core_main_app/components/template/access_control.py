@@ -1,5 +1,6 @@
 """ Template access control
 """
+from django.db.models import Q
 
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.template.models import Template
@@ -33,11 +34,8 @@ def can_read(func, document_id, request):
     if request.user.is_anonymous:
         if document.user:
             raise AccessControlError("Template: The user doesn't have enough rights.")
-        else:
-            if not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
-                raise AccessControlError(
-                    "Template: The user doesn't have enough rights."
-                )
+        if not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
+            raise AccessControlError("Template: The user doesn't have enough rights.")
 
     # user is set
     if document.user and document.user != str(request.user.id):
@@ -111,16 +109,17 @@ def get_accessible_owners(request):
     if not request or request.user.is_anonymous:
         if CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
             # global templates only
-            return [None]
-        else:
-            # nothing
-            return []
+            return Q(user__isnull=True)
+        # nothing
+        return Q(user__in=[])
     if request.user.is_superuser:
         # no restrictions
         return None
-    else:
-        # global and owned templates
-        return [None, str(request.user.id)]
+    # global and owned templates
+    in_q_list = Q()
+    in_q_list |= Q(user__isnull=True)
+    in_q_list |= Q(user=str(request.user.id))
+    return in_q_list
 
 
 def can_read_list(func, *args, **kwargs):
@@ -145,11 +144,10 @@ def can_read_list(func, *args, **kwargs):
                 raise AccessControlError(
                     "Template: The user doesn't have enough rights."
                 )
-            else:
-                if not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
-                    raise AccessControlError(
-                        "Template: The user doesn't have enough rights."
-                    )
+            if not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
+                raise AccessControlError(
+                    "Template: The user doesn't have enough rights."
+                )
 
         # user is set
         if template.user and template.user != str(request.user.id):

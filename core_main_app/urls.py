@@ -6,14 +6,14 @@ from django.urls import re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 
+from core_main_app import settings
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.data import api as data_api
 from core_main_app.utils.rendering import render
 from core_main_app.views.common import ajax as common_ajax, views as common_views
 from core_main_app.views.user import views as user_views, ajax as user_ajax
-from core_main_app import settings
 
-schema_view = get_schema_view(
+SchemaView = get_schema_view(
     openapi.Info(
         title="REST API",
         default_version="v1",
@@ -96,7 +96,7 @@ urlpatterns = [
     ),
     re_path(
         r"^docs/api$",
-        schema_view.with_ui("swagger", cache_timeout=0),
+        SchemaView.with_ui("swagger", cache_timeout=0),
         name="swagger_view",
     ),
     re_path(r"^tz_detect/", include("tz_detect.urls")),

@@ -2,7 +2,7 @@
 """
 import logging
 
-import core_main_app.permissions.rights as rights
+from core_main_app.permissions import rights
 
 logger = logging.getLogger(__name__)
 
@@ -21,21 +21,21 @@ def init_rules(apps):
         group = apps.get_model("auth", "Group")
 
         # Get or Create the Group anonymous
-        group.objects.get_or_create(name=rights.anonymous_group)
+        group.objects.get_or_create(name=rights.ANONYMOUS_GROUP)
 
         # Get or Create the default group
-        default_group, created = group.objects.get_or_create(name=rights.default_group)
+        default_group, created = group.objects.get_or_create(name=rights.DEFAULT_GROUP)
 
         # Get curate permissions
         permission = apps.get_model("auth", "Permission")
-        publish_data_perm = permission.objects.get(codename=rights.publish_data)
-        publish_blob_perm = permission.objects.get(codename=rights.publish_blob)
+        publish_data_perm = permission.objects.get(codename=rights.PUBLISH_DATA)
+        publish_blob_perm = permission.objects.get(codename=rights.PUBLISH_BLOB)
 
         # Add permissions to default group
         default_group.permissions.add(publish_data_perm)
         default_group.permissions.add(publish_blob_perm)
-    except Exception as e:
-        logger.error("Impossible to init the rules: %s" % str(e))
+    except Exception as exception:
+        logger.error("Impossible to init the rules: %s", str(exception))
 
     logger.info("FINISH init rules.")
 
@@ -60,7 +60,7 @@ def create_public_workspace():
             workspace_api.create_and_save("Global Public Workspace", is_public=True)
             logger.info("Public workspace created.")
 
-    except Exception as e:
-        logger.error("Impossible to create global public workspace: %s" % str(e))
+    except Exception as exception:
+        logger.error("Impossible to create global public workspace: %s", str(exception))
 
     logger.info("FINISH create public workspace.")

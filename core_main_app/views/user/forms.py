@@ -39,7 +39,7 @@ class GroupRightForm(forms.Form):
         for group in sort_groups:
             self.GROUPS_OPTIONS.append((group.id, group.name))
 
-        super(GroupRightForm, self).__init__()
+        super().__init__()
         self.fields["groups"].choices = []
         self.fields["groups"].choices = self.GROUPS_OPTIONS
 
@@ -64,7 +64,7 @@ class UserRightForm(forms.Form):
         for user in sort_users:
             self.USERS_OPTIONS.append((user.id, user.username))
 
-        super(UserRightForm, self).__init__()
+        super().__init__()
         self.fields["users"].choices = []
         self.fields["users"].choices = self.USERS_OPTIONS
 
@@ -90,13 +90,15 @@ class ChangeWorkspaceForm(forms.Form):
     def __init__(
         self,
         user,
-        list_current_workspace=[],
+        list_current_workspace=None,
         is_administration=False,
         show_global_workspace=False,
     ):
         self.WORKSPACES_OPTIONS = []
         self.WORKSPACES_OPTIONS.append(("", "-----------"))
 
+        if not list_current_workspace:
+            list_current_workspace = []
         # We retrieve all workspaces with write access, or all workspaces if administration
         if is_administration:
             all_workspaces = workspace_api.get_all()
@@ -147,6 +149,6 @@ class ChangeWorkspaceForm(forms.Form):
                     )
                 )
 
-        super(ChangeWorkspaceForm, self).__init__()
+        super().__init__()
         self.fields["workspaces"].choices = []
         self.fields["workspaces"].choices = self.WORKSPACES_OPTIONS

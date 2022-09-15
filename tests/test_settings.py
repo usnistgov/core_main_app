@@ -1,4 +1,12 @@
-from core_main_app.utils.databases.mongoengine_database import Database
+""" Tests Settings
+"""
+
+import os
+
+from dotenv import load_dotenv
+
+# load environment variables from .env
+load_dotenv()
 
 SECRET_KEY = "fake-key"
 
@@ -21,18 +29,22 @@ INSTALLED_APPS = [
 ]
 
 # SERVER URI
-SERVER_URI = "http://example.com"
+SERVER_URI = "http://127.0.0.1:8000"
 
-# IN-MEMORY TEST DATABASE
+# TEST DATABASE
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": ":memory:",
-        "USER": "",
-        "PASSWORD": "",
-        "HOST": "",
-        "PORT": "",
-    },
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "HOST": os.environ["POSTGRES_HOST"] if "POSTGRES_HOST" in os.environ else None,
+        "PORT": int(os.environ["POSTGRES_PORT"])
+        if "POSTGRES_PORT" in os.environ
+        else 5432,
+        "NAME": os.environ["POSTGRES_DB"] if "POSTGRES_DB" in os.environ else None,
+        "USER": os.environ["POSTGRES_USER"] if "POSTGRES_USER" in os.environ else None,
+        "PASSWORD": os.environ["POSTGRES_PASS"]
+        if "POSTGRES_PASS" in os.environ
+        else None,
+    }
 }
 
 MIDDLEWARE = (
@@ -53,7 +65,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "core_main_app.utils.custom_context_processors.domain_context_processor",  # Needed by any curator app
+                "core_main_app.utils.custom_context_processors.domain_context_processor",
                 "django.template.context_processors.i18n",
             ],
         },
@@ -63,18 +75,18 @@ TEMPLATES = [
 LOGIN_URL = "/login"
 STATIC_URL = "/static/"
 ROOT_URLCONF = "tests.urls"
-DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CELERYBEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+MEDIA_ROOT = "tests_media"
 
 PASSWORD_HASHERS = ("django.contrib.auth.hashers.UnsaltedMD5PasswordHasher",)
 
-MOCK_DATABASE_NAME = "db_mock"
-MOCK_DATABASE_HOST = "mongomock://localhost"
 
 DATA_SORTING_FIELDS = ["+title"]
 
 CUSTOM_NAME = "Curator"
 ENABLE_SAML2_SSO_AUTH = False
+VERIFY_DATA_ACCESS = False
 
-database = Database(MOCK_DATABASE_HOST, MOCK_DATABASE_NAME)
-database.connect()
+USE_TZ = True
+CHECKSUM_ALGORITHM = "MD5"

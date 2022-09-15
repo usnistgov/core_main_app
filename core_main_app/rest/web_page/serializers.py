@@ -1,15 +1,17 @@
 """ Web Page serializer
 """
-from rest_framework_mongoengine.serializers import DocumentSerializer
+from rest_framework.serializers import ModelSerializer
 
-import core_main_app.components.web_page.api as web_page_api
+from core_main_app.components.web_page import api as web_page_api
 from core_main_app.components.web_page.models import WebPage
 
 
-class WebPageSerializer(DocumentSerializer):
+class WebPageSerializer(ModelSerializer):
     """Represents the web page serializer"""
 
-    class Meta(object):
+    class Meta:
+        """Meta"""
+
         model = WebPage
 
         fields = ["id", "type", "content"]

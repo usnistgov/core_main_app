@@ -4,6 +4,14 @@ from django.conf import settings
 
 
 def domain_context_processor(request):
+    """domain_context_processor
+
+    Args:
+        request:
+
+    Returns
+    """
+
     return {
         "WEBSITE_ADMIN_COLOR": settings.WEBSITE_ADMIN_COLOR
         if hasattr(settings, "WEBSITE_ADMIN_COLOR")
@@ -23,9 +31,6 @@ def domain_context_processor(request):
         else "",
         "CUSTOM_DATA": settings.CUSTOM_DATA if hasattr(settings, "CUSTOM_DATA") else "",
         "CUSTOM_URL": settings.CUSTOM_URL if hasattr(settings, "CUSTOM_URL") else "",
-        "USE_EMAIL": settings.USE_EMAIL is True
-        if hasattr(settings, "USE_EMAIL")
-        else False,
         "DATA_SOURCES_EXPLORE_APPS": settings.DATA_SOURCES_EXPLORE_APPS
         if hasattr(settings, "DATA_SOURCES_EXPLORE_APPS")
         else [],

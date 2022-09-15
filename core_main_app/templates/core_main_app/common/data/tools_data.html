@@ -1,5 +1,5 @@
 <div>
-    <button id="btn-previous-page" type="button" class="btn btn-secondary float-right">
+    <button id="btn-previous-page" type="button" class="btn btn-secondary mb-2 float-right">
         <i class="fas fa-arrow-left"></i> Back to previous
     </button>
     {% if data.display_download_options %}
@@ -19,7 +19,7 @@
             <div class="form-group ">
                 <select class="selectpicker form-control" id="xslt-selector" >
                    {% if not template_xsl_rendering.default_detail_xslt %}  <option value={{None}}>Default</option>{% endif %}
-                   {% for xslt in template_xsl_rendering.list_detail_xslt %}
+                   {% for xslt in template_xsl_rendering.list_detail_xslt.all %}
                         {% if xslt.id == xslt_id %}
                             <option value="{{xslt.id}}" selected >{{xslt.name}} {% if xslt == template_xsl_rendering.default_detail_xslt %} (default) {% endif %}</option>
                         {% else %}

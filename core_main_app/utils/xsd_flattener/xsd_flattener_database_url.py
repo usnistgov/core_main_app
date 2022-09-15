@@ -2,13 +2,14 @@
 """
 from urllib.parse import urlparse
 
+from xml_utils.xsd_flattener.xsd_flattener_url import XSDFlattenerURL
+
 from core_main_app.commons import exceptions
 from core_main_app.components.template import api as template_api
 from core_main_app.utils.urls import get_template_download_pattern
 from core_main_app.utils.xsd_flattener.xsd_flattener_requests_url import (
     XSDFlattenerRequestsURL,
 )
-from xml_utils.xsd_flattener.xsd_flattener_url import XSDFlattenerURL
 
 
 class XSDFlattenerDatabaseOrURL(XSDFlattenerRequestsURL):
@@ -50,14 +51,12 @@ class XSDFlattenerDatabaseOrURL(XSDFlattenerRequestsURL):
                 # get pk from match
                 object_id = match.group("pk")
                 # get template object using pk
-                template = template_api.get(object_id, request=self.request)
+                template = template_api.get_by_id(object_id, request=self.request)
                 # get template content
                 content = template.content
             except (exceptions.DoesNotExist, exceptions.ModelError, Exception):
-                content = super(XSDFlattenerDatabaseOrURL, self).get_dependency_content(
-                    uri
-                )
+                content = super().get_dependency_content(uri)
         else:
-            content = super(XSDFlattenerDatabaseOrURL, self).get_dependency_content(uri)
+            content = super().get_dependency_content(uri)
 
         return content

@@ -1,13 +1,16 @@
 """ Integration Test for Blob Rest API
 """
-import unittest
 from os.path import join, dirname, abspath
 
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import override_settings
 from mock import patch
 from rest_framework import status
+from tests.components.blob.fixtures.fixtures import (
+    BlobFixtures,
+    AccessControlBlobFixture,
+)
 
-from core_main_app.components.blob import api as blob_api
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.workspace.models import Workspace
 from core_main_app.rest.blob import views
@@ -16,10 +19,6 @@ from core_main_app.utils.integration_tests.integration_base_test_case import (
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
-from tests.components.blob.fixtures.fixtures import (
-    BlobFixtures,
-    AccessControlBlobFixture,
-)
 
 RESOURCES_PATH = join(dirname(abspath(__file__)), "data")
 fixture_blob = BlobFixtures()
@@ -27,10 +26,17 @@ fixture_blob_workspace = AccessControlBlobFixture()
 
 
 class TestBlobListAdmin(MongoIntegrationBaseTestCase):
+    """TestBlobListAdmin"""
+
     fixture = fixture_blob
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_get_as_user_returns_http_403(self):
+        """test_get_as_user_returns_http_403
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 
@@ -42,6 +48,11 @@ class TestBlobListAdmin(MongoIntegrationBaseTestCase):
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_get_as_superuser_returns_all_blobs(self):
+        """test_get_as_superuser_returns_all_blobs
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1", is_staff=True, is_superuser=True)
 
@@ -53,17 +64,29 @@ class TestBlobListAdmin(MongoIntegrationBaseTestCase):
 
 
 class TestBlobList(MongoIntegrationBaseTestCase):
+    """TestBlobList"""
+
     fixture = fixture_blob
 
     def setUp(self):
-        super(TestBlobList, self).setUp()
+        """setUp
+
+        Returns:
+
+        """
+        super().setUp()
         self.data = {
             "filename": "file.txt",
-            "blob": open(join(RESOURCES_PATH, "test.txt"), "r"),
+            "blob": SimpleUploadedFile("blob.txt", b"blob"),
         }
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_get_returns_http_200(self):
+        """test_get_returns_http_200
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 
@@ -75,6 +98,11 @@ class TestBlobList(MongoIntegrationBaseTestCase):
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_get_returns_all_user_blobs(self):
+        """test_get_returns_all_user_blobs
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 
@@ -86,6 +114,11 @@ class TestBlobList(MongoIntegrationBaseTestCase):
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_get_as_superuser_returns_all_user_blobs(self):
+        """test_get_as_superuser_returns_all_user_blobs
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1", is_superuser=True)
 
@@ -97,6 +130,11 @@ class TestBlobList(MongoIntegrationBaseTestCase):
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_get_filtered_by_correct_name_returns_http_200(self):
+        """test_get_filtered_by_correct_name_returns_http_200
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1", is_superuser=True)
 
@@ -112,6 +150,11 @@ class TestBlobList(MongoIntegrationBaseTestCase):
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_get_filtered_by_correct_name_returns_correct_blob(self):
+        """test_get_filtered_by_correct_name_returns_correct_blob
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1", is_superuser=True)
 
@@ -127,6 +170,11 @@ class TestBlobList(MongoIntegrationBaseTestCase):
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_get_filtered_by_incorrect_name_returns_http_200(self):
+        """test_get_filtered_by_incorrect_name_returns_http_200
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1", is_superuser=True)
 
@@ -140,6 +188,11 @@ class TestBlobList(MongoIntegrationBaseTestCase):
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_get_filtered_by_incorrect_name_returns_empty_list(self):
+        """test_get_filtered_by_incorrect_name_returns_empty_list
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1", is_superuser=True)
 
@@ -151,36 +204,49 @@ class TestBlobList(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(len(response.data), 0)
 
-    @unittest.skip("need to mock GridFS Blob Host")
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_post_returns_http_201(self):
+        """test_post_returns_http_201
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 
         # Act
         response = RequestMock.do_request_post(
-            views.BlobList.as_view(), user, data=self.data
+            views.BlobList.as_view(), user, data=self.data, content_type=None
         )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    @unittest.skip("need to mock GridFS Blob Host")
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_post_adds_an_entry_in_database(self):
+        """test_post_adds_an_entry_in_database
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 
         # Act
-        response = RequestMock.do_request_post(
-            views.BlobList.as_view(), user, data=self.data
+        RequestMock.do_request_post(
+            views.BlobList.as_view(), user, data=self.data, content_type=None
         )
 
         # Assert
-        self.assertEqual(len(blob_api.get_all()), 4)
+        self.assertEqual(len(Blob.get_all()), 4)
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_post_incorrect_file_parameter_returns_http_400(self):
+        """test_post_incorrect_file_parameter_returns_http_400
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
         self.data["blob"] = "test.txt"
@@ -195,13 +261,25 @@ class TestBlobList(MongoIntegrationBaseTestCase):
 
 
 class TestBlobDetail(MongoIntegrationBaseTestCase):
+    """TestBlobDetail"""
+
     fixture = fixture_blob
 
     def setUp(self):
-        super(TestBlobDetail, self).setUp()
+        """setUp
+
+        Returns:
+
+        """
+        super().setUp()
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_get_returns_http_200(self):
+        """test_get_returns_http_200
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 
@@ -215,6 +293,11 @@ class TestBlobDetail(MongoIntegrationBaseTestCase):
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_get_returns_blob(self):
+        """test_get_returns_blob
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 
@@ -228,12 +311,17 @@ class TestBlobDetail(MongoIntegrationBaseTestCase):
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_get_wrong_id_returns_http_404(self):
+        """test_get_wrong_id_returns_http_404
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 
         # Act
         response = RequestMock.do_request_get(
-            views.BlobDetail.as_view(), user, param={"pk": "507f1f77bcf86cd799439011"}
+            views.BlobDetail.as_view(), user, param={"pk": -1}
         )
 
         # Assert
@@ -241,6 +329,11 @@ class TestBlobDetail(MongoIntegrationBaseTestCase):
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_get_other_user_blob_returns_http_403(self):
+        """test_get_other_user_blob_returns_http_403
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("2")
 
@@ -252,9 +345,13 @@ class TestBlobDetail(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @unittest.skip("need to mock GridFS Blob Host")
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_delete_returns_http_204(self):
+        """test_delete_returns_http_204
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 
@@ -266,28 +363,37 @@ class TestBlobDetail(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-    @unittest.skip("need to mock GridFS Blob Host")
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_delete_deletes_one_blob_from_database(self):
+        """test_delete_deletes_one_blob_from_database
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 
         # Act
-        response = RequestMock.do_request_delete(
+        RequestMock.do_request_delete(
             views.BlobDetail.as_view(), user, param={"pk": str(self.fixture.blob_1.id)}
         )
 
         # Assert
-        self.assertEqual(len(blob_api.get_all()), 2)
+        self.assertEqual(len(Blob.get_all()), 2)
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_delete_wrong_id_returns_http_404(self):
+        """test_delete_wrong_id_returns_http_404
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 
         # Act
         response = RequestMock.do_request_delete(
-            views.BlobDetail.as_view(), user, param={"pk": "507f1f77bcf86cd799439011"}
+            views.BlobDetail.as_view(), user, param={"pk": -1}
         )
 
         # Assert
@@ -295,6 +401,11 @@ class TestBlobDetail(MongoIntegrationBaseTestCase):
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_delete_other_user_blob_returns_http_403(self):
+        """test_delete_other_user_blob_returns_http_403
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("2")
 
@@ -306,9 +417,13 @@ class TestBlobDetail(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @unittest.skip("need to mock GridFS Blob Host")
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_delete_other_user_as_superuser_returns_http_204(self):
+        """test_delete_other_user_as_superuser_returns_http_204
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("2", is_superuser=True)
 
@@ -322,15 +437,26 @@ class TestBlobDetail(MongoIntegrationBaseTestCase):
 
 
 class TestBlobDownload(MongoIntegrationBaseTestCase):
+    """TestBlobDownload"""
+
     fixture = fixture_blob
 
     def setUp(self):
-        super(TestBlobDownload, self).setUp()
+        """setUp
+
+        Returns:
+
+        """
+        super().setUp()
         self.blob = open(join(RESOURCES_PATH, "test.txt"), "r").read()
 
-    @unittest.skip("need to mock GridFS Blob Host")
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_get_returns_http_200(self):
+        """test_get_returns_http_200
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 
@@ -346,20 +472,29 @@ class TestBlobDownload(MongoIntegrationBaseTestCase):
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_get_wrong_id_returns_http_404(self):
+        """test_get_wrong_id_returns_http_404
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 
         # Act
         response = RequestMock.do_request_get(
-            views.BlobDownload.as_view(), user, param={"pk": "507f1f77bcf86cd799439011"}
+            views.BlobDownload.as_view(), user, param={"pk": -1}
         )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    @unittest.skip("need to mock GridFS Blob Host")
     @override_settings(ROOT_URLCONF="core_main_app.urls")
-    def test_get_other_user_blob_returns_http_200(self):
+    def test_get_other_user_blob_returns_http_403(self):
+        """test_get_other_user_blob_returns_http_403
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("2")
 
@@ -371,20 +506,32 @@ class TestBlobDownload(MongoIntegrationBaseTestCase):
         )
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class TestBlobDeleteList(MongoIntegrationBaseTestCase):
+    """TestBlobDeleteList"""
+
     fixture = fixture_blob
 
     def setUp(self):
-        super(TestBlobDeleteList, self).setUp()
+        """setUp
+
+        Returns:
+
+        """
+        super().setUp()
         self.data = [
             {"id": str(self.fixture.blob_1.id)},
             {"id": str(self.fixture.blob_2.id)},
         ]
 
     def test_post_a_list_containing_other_user_blob_returns_http_403(self):
+        """test_post_a_list_containing_other_user_blob_returns_http_403
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("2")
 
@@ -396,8 +543,12 @@ class TestBlobDeleteList(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @unittest.skip("need to mock GridFS Blob Host")
     def test_post_a_list_containing_other_user_blob_as_superuser_returns_http_204(self):
+        """test_post_a_list_containing_other_user_blob_as_superuser_returns_http_204
+
+        Returns:
+
+        """
         # Arrange
         user = create_mock_user("1")
 
@@ -411,11 +562,22 @@ class TestBlobDeleteList(MongoIntegrationBaseTestCase):
 
 
 class TestBlobAssign(MongoIntegrationBaseTestCase):
+    """TestBlobAssign"""
+
     fixture = fixture_blob_workspace
 
     @patch.object(Workspace, "get_by_id")
     @patch.object(Blob, "get_by_id")
     def test_get_returns_http_200(self, blob_get_by_id, workspace_get_by_id):
+        """test_get_returns_http_200
+
+        Args:
+            blob_get_by_id:
+            workspace_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
         user = create_mock_user(blob.user_id, is_superuser=True)
@@ -437,6 +599,15 @@ class TestBlobAssign(MongoIntegrationBaseTestCase):
     def test_assign_blob_to_workspace_updates_workspace(
         self, blob_get_by_id, workspace_get_by_id
     ):
+        """test_assign_blob_to_workspace_updates_workspace
+
+        Args:
+            blob_get_by_id:
+            workspace_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
         user = create_mock_user(blob.user_id, is_superuser=True)
@@ -458,6 +629,15 @@ class TestBlobAssign(MongoIntegrationBaseTestCase):
     def test_assign_blob_to_workspace_returns_http_200(
         self, blob_get_by_id, workspace_get_by_id
     ):
+        """test_assign_blob_to_workspace_returns_http_200
+
+        Args:
+            blob_get_by_id:
+            workspace_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
         user = create_mock_user(blob.user_id, is_superuser=True)
@@ -476,8 +656,16 @@ class TestBlobAssign(MongoIntegrationBaseTestCase):
 
     @patch.object(Workspace, "get_by_id")
     def test_assign_bad_blob_id_returns_http_404(self, workspace_get_by_id):
+        """test_assign_bad_blob_id_returns_http_404
+
+        Args:
+            workspace_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
-        fake_blob_id = "507f1f77bcf86cd799439011"
+        fake_blob_id = -1
         user = create_mock_user("1", is_superuser=True)
         workspace_get_by_id.return_value = self.fixture.workspace_2
 
@@ -493,208 +681,16 @@ class TestBlobAssign(MongoIntegrationBaseTestCase):
 
     @patch.object(Blob, "get_by_id")
     def test_assign_bad_workspace_id_returns_http_404(self, blob_get_by_id):
+        """test_assign_bad_workspace_id_returns_http_404
+
+        Args:
+            blob_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
-        fake_workspace_id = "507f1f77bcf86cd799439011"
-        blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
-        user = create_mock_user(blob.user_id, is_superuser=True)
-        blob_get_by_id.return_value = blob
-
-        # Act
-        response = RequestMock.do_request_patch(
-            views.BlobAssign.as_view(),
-            user,
-            param={"pk": blob.id, "workspace_id": fake_workspace_id},
-        )
-
-        # Assert
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-
-class TestBlobAssign(MongoIntegrationBaseTestCase):
-    fixture = fixture_blob_workspace
-
-    @patch.object(Workspace, "get_by_id")
-    @patch.object(Blob, "get_by_id")
-    def test_get_returns_http_200(self, blob_get_by_id, workspace_get_by_id):
-        # Arrange
-        blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
-        user = create_mock_user(blob.user_id, is_superuser=True)
-        blob_get_by_id.return_value = blob
-        workspace_get_by_id.return_value = self.fixture.workspace_1
-
-        # Act
-        response = RequestMock.do_request_patch(
-            views.BlobAssign.as_view(),
-            user,
-            param={"pk": blob.id, "workspace_id": self.fixture.workspace_1.id},
-        )
-
-        # Assert
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    @patch.object(Workspace, "get_by_id")
-    @patch.object(Blob, "get_by_id")
-    def test_assign_blob_to_workspace_updates_workspace(
-        self, blob_get_by_id, workspace_get_by_id
-    ):
-        # Arrange
-        blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
-        user = create_mock_user(blob.user_id, is_superuser=True)
-        blob_get_by_id.return_value = blob
-        workspace_get_by_id.return_value = self.fixture.workspace_2
-
-        # Act
-        RequestMock.do_request_patch(
-            views.BlobAssign.as_view(),
-            user,
-            param={"pk": blob.id, "workspace_id": self.fixture.workspace_2.id},
-        )
-
-        # Assert
-        self.assertEqual(str(blob.workspace.id), str(self.fixture.workspace_2.id))
-
-    @patch.object(Workspace, "get_by_id")
-    @patch.object(Blob, "get_by_id")
-    def test_assign_blob_to_workspace_returns_http_200(
-        self, blob_get_by_id, workspace_get_by_id
-    ):
-        # Arrange
-        blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
-        user = create_mock_user(blob.user_id, is_superuser=True)
-        blob_get_by_id.return_value = blob
-        workspace_get_by_id.return_value = self.fixture.workspace_2
-
-        # Act
-        response = RequestMock.do_request_patch(
-            views.BlobAssign.as_view(),
-            user,
-            param={"pk": blob.id, "workspace_id": self.fixture.workspace_2.id},
-        )
-
-        # Assert
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    @patch.object(Workspace, "get_by_id")
-    def test_assign_bad_blob_id_returns_http_404(self, workspace_get_by_id):
-        # Arrange
-        fake_blob_id = "507f1f77bcf86cd799439011"
-        user = create_mock_user("1", is_superuser=True)
-        workspace_get_by_id.return_value = self.fixture.workspace_2
-
-        # Act
-        response = RequestMock.do_request_patch(
-            views.BlobAssign.as_view(),
-            user,
-            param={"pk": fake_blob_id, "workspace_id": self.fixture.workspace_2.id},
-        )
-
-        # Assert
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-    @patch.object(Blob, "get_by_id")
-    def test_assign_bad_workspace_id_returns_http_404(self, blob_get_by_id):
-        # Arrange
-        fake_workspace_id = "507f1f77bcf86cd799439011"
-        blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
-        user = create_mock_user(blob.user_id, is_superuser=True)
-        blob_get_by_id.return_value = blob
-
-        # Act
-        response = RequestMock.do_request_patch(
-            views.BlobAssign.as_view(),
-            user,
-            param={"pk": blob.id, "workspace_id": fake_workspace_id},
-        )
-
-        # Assert
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-
-class TestBlobAssign(MongoIntegrationBaseTestCase):
-    fixture = fixture_blob_workspace
-
-    @patch.object(Workspace, "get_by_id")
-    @patch.object(Blob, "get_by_id")
-    def test_get_returns_http_200(self, blob_get_by_id, workspace_get_by_id):
-        # Arrange
-        blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
-        user = create_mock_user(blob.user_id, is_superuser=True)
-        blob_get_by_id.return_value = blob
-        workspace_get_by_id.return_value = self.fixture.workspace_1
-
-        # Act
-        response = RequestMock.do_request_patch(
-            views.BlobAssign.as_view(),
-            user,
-            param={"pk": blob.id, "workspace_id": self.fixture.workspace_1.id},
-        )
-
-        # Assert
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    @patch.object(Workspace, "get_by_id")
-    @patch.object(Blob, "get_by_id")
-    def test_assign_blob_to_workspace_updates_workspace(
-        self, blob_get_by_id, workspace_get_by_id
-    ):
-        # Arrange
-        blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
-        user = create_mock_user(blob.user_id, is_superuser=True)
-        blob_get_by_id.return_value = blob
-        workspace_get_by_id.return_value = self.fixture.workspace_2
-
-        # Act
-        RequestMock.do_request_patch(
-            views.BlobAssign.as_view(),
-            user,
-            param={"pk": blob.id, "workspace_id": self.fixture.workspace_2.id},
-        )
-
-        # Assert
-        self.assertEqual(str(blob.workspace.id), str(self.fixture.workspace_2.id))
-
-    @patch.object(Workspace, "get_by_id")
-    @patch.object(Blob, "get_by_id")
-    def test_assign_blob_to_workspace_returns_http_200(
-        self, blob_get_by_id, workspace_get_by_id
-    ):
-        # Arrange
-        blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
-        user = create_mock_user(blob.user_id, is_superuser=True)
-        blob_get_by_id.return_value = blob
-        workspace_get_by_id.return_value = self.fixture.workspace_2
-
-        # Act
-        response = RequestMock.do_request_patch(
-            views.BlobAssign.as_view(),
-            user,
-            param={"pk": blob.id, "workspace_id": self.fixture.workspace_2.id},
-        )
-
-        # Assert
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    @patch.object(Workspace, "get_by_id")
-    def test_assign_bad_blob_id_returns_http_404(self, workspace_get_by_id):
-        # Arrange
-        fake_blob_id = "507f1f77bcf86cd799439011"
-        user = create_mock_user("1", is_superuser=True)
-        workspace_get_by_id.return_value = self.fixture.workspace_2
-
-        # Act
-        response = RequestMock.do_request_patch(
-            views.BlobAssign.as_view(),
-            user,
-            param={"pk": fake_blob_id, "workspace_id": self.fixture.workspace_2.id},
-        )
-
-        # Assert
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-    @patch.object(Blob, "get_by_id")
-    def test_assign_bad_workspace_id_returns_http_404(self, blob_get_by_id):
-        # Arrange
-        fake_workspace_id = "507f1f77bcf86cd799439011"
+        fake_workspace_id = -1
         blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
         user = create_mock_user(blob.user_id, is_superuser=True)
         blob_get_by_id.return_value = blob
@@ -711,6 +707,8 @@ class TestBlobAssign(MongoIntegrationBaseTestCase):
 
 
 class TestBlobChangeOwner(MongoIntegrationBaseTestCase):
+    """TestBlobChangeOwner"""
+
     fixture = fixture_blob_workspace
 
     @patch("core_main_app.components.user.api.get_user_by_id")
@@ -718,6 +716,15 @@ class TestBlobChangeOwner(MongoIntegrationBaseTestCase):
     def test_get_returns_http_200_if_user_is_superuser(
         self, blob_get_by_id, user_get_by_id
     ):
+        """test_get_returns_http_200_if_user_is_superuser
+
+        Args:
+            blob_get_by_id:
+            user_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
         user_request = create_mock_user("65467", is_staff=True, is_superuser=True)
@@ -740,6 +747,15 @@ class TestBlobChangeOwner(MongoIntegrationBaseTestCase):
     def test_get_returns_http_200_if_user_is_not_superuser_but_have_access_to_the_blob(
         self, blob_get_by_id, user_get_by_id
     ):
+        """test_get_returns_http_200_if_user_is_not_superuser_but_have_access_to_the_blob
+
+        Args:
+            blob_get_by_id:
+            user_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
         user_request = create_mock_user("1", is_staff=True)
@@ -765,6 +781,16 @@ class TestBlobChangeOwner(MongoIntegrationBaseTestCase):
     def test_get_returns_http_403_if_user_is_not_superuser_or_have_no_access_to_the_blob(
         self, blob_get_by_id, user_get_by_id, read_access_mock
     ):
+        """test_get_returns_http_403_if_user_is_not_superuser_or_have_no_access_to_the_blob
+
+        Args:
+            blob_get_by_id:
+            user_get_by_id:
+            read_access_mock:
+
+        Returns:
+
+        """
         # Arrange
         blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
         user_request = create_mock_user("65467", is_staff=True)

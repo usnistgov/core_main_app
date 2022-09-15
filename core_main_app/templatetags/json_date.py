@@ -3,7 +3,6 @@
 import logging
 
 import dateutil.parser
-
 from django import template
 from django.template.defaultfilters import stringfilter
 from django.utils import formats
@@ -15,7 +14,8 @@ register = template.Library()
 @register.filter(name="json_date")
 @stringfilter
 def json_date(value, directive):
-    """get JSON date string input and return a formatted date string according to the parsing directive
+    """get JSON date string input and return a formatted date string
+    according to the parsing directive
 
     Args:
         value: input JSON date string
@@ -31,6 +31,6 @@ def json_date(value, directive):
         # format the date thanks to the directive for UI display
         formatted_date = formats.date_format(input_datetime, directive)
         return formatted_date
-    except Exception as e:
-        logger.error(str(e))
+    except Exception as exception:
+        logger.error(str(exception))
         return formatted_date

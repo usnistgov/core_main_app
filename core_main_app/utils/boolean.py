@@ -16,7 +16,7 @@ def to_bool(value):
     if hasattr(value, "upper"):
         if value.upper() == "FALSE":
             return False
-        elif value.upper() == "TRUE":
+        if value.upper() == "TRUE":
             return True
 
     raise ValueError("Error: a boolean value is expected.")

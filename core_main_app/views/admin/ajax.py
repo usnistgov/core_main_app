@@ -18,7 +18,6 @@ from core_main_app.components.template_version_manager import (
 from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
 )
-from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.components.xsl_transformation import api as xsl_transformation_api
 from core_main_app.components.xsl_transformation.models import XslTransformation
 from core_main_app.views.admin.forms import EditXSLTForm
@@ -56,7 +55,7 @@ def resolve_dependencies(request):
 
         # get the version manager or create a new one
         if version_manager_id != "":
-            template_version_manager = version_manager_api.get(
+            template_version_manager = template_version_manager_api.get_by_id(
                 version_manager_id, request=request
             )
         else:
@@ -64,8 +63,8 @@ def resolve_dependencies(request):
         template_version_manager_api.insert(
             template_version_manager, template, request=request
         )
-    except Exception as e:
-        return HttpResponseBadRequest(escape(str(e)))
+    except Exception as exception:
+        return HttpResponseBadRequest(escape(str(exception)))
 
     return HttpResponse(json.dumps({}), content_type="application/javascript")
 
@@ -106,9 +105,11 @@ def _get_xsd_content_from_html(xsd_content):
 
 
 class EditXSLTView(EditObjectModalView):
+    """Edit XSLT View"""
+
     form_class = EditXSLTForm
-    document = XslTransformation
-    success_url = reverse_lazy("admin:core_main_app_xslt")
+    model = XslTransformation
+    success_url = reverse_lazy("core-admin:core_main_app_xslt")
     success_message = "XSLT edited with success."
 
     def _save(self, form):
@@ -121,13 +122,15 @@ class EditXSLTView(EditObjectModalView):
                 "An object with the same name already exists. Please choose "
                 "another name.",
             )
-        except Exception as e:
-            form.add_error(None, str(e))
+        except Exception as exception:
+            form.add_error(None, str(exception))
 
 
 class DeleteXSLTView(DeleteObjectModalView):
-    document = XslTransformation
-    success_url = reverse_lazy("admin:core_main_app_xslt")
+    """Delete XSLT View"""
+
+    model = XslTransformation
+    success_url = reverse_lazy("core-admin:core_main_app_xslt")
     success_message = "XSLT deleted with success."
     field_for_name = "name"
 

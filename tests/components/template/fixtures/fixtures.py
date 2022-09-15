@@ -1,5 +1,7 @@
 """ Fixtures file for Templates
 """
+from django.core.files.uploadedfile import SimpleUploadedFile
+
 from core_main_app.components.template.models import Template
 from core_main_app.utils.integration_tests.fixture_interface import FixtureInterface
 
@@ -35,20 +37,29 @@ class AccessControlTemplateFixture(FixtureInterface):
             content=xsd,
             hash="user1_template_hash",
             filename="user1_template.xsd",
+            file=SimpleUploadedFile("user1_template.xsd", xsd.encode("utf-8")),
             user="1",
-        ).save()
+            _cls="Template",
+        )
+        self.user1_template.save()
         self.user2_template = Template(
             content=xsd,
             hash="user2_template_hash",
             filename="user2_template.xsd",
+            file=SimpleUploadedFile("user2_template.xsd", xsd.encode("utf-8")),
             user="2",
-        ).save()
+            _cls="Template",
+        )
+        self.user2_template.save()
         self.global_template = Template(
             content=xsd,
             hash="global_template_hash",
             filename="global_template.xsd",
+            file=SimpleUploadedFile("global_template.xsd", xsd.encode("utf-8")),
             user=None,
-        ).save()
+            _cls="Template",
+        )
+        self.global_template.save()
         self.template_collection = [
             self.user1_template,
             self.user2_template,

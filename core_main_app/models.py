@@ -14,10 +14,12 @@ class Main(models.Model):
         Meta.permissions (:py:class:`list`): Default set of permissions bundled with the app.
     """
 
-    class Meta(object):
+    class Meta:
+        """Meta"""
+
         verbose_name = "core_main_app"
         default_permissions = ()
         permissions = (
-            (rights.publish_data, get_formatted_name(rights.publish_data)),
-            (rights.publish_blob, get_formatted_name(rights.publish_blob)),
+            (rights.PUBLISH_DATA, get_formatted_name(rights.PUBLISH_DATA)),
+            (rights.PUBLISH_BLOB, get_formatted_name(rights.PUBLISH_BLOB)),
         )

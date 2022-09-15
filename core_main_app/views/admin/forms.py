@@ -1,10 +1,9 @@
 """Forms for admin views
 """
 from django import forms
-from django_mongoengine.forms import DocumentForm
+from django.forms import ModelForm
 
 from core_main_app.commons.validators import ExtensionValidator
-from core_main_app.components.template import api as template_api
 from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
 )
@@ -13,7 +12,9 @@ from core_main_app.components.xsl_transformation.models import XslTransformation
 from core_main_app.views.admin.commons.upload.forms import UploadForm
 
 
-class EditTemplateForm(DocumentForm):
+class EditTemplateForm(ModelForm):
+    """Edit Template Form"""
+
     title = forms.CharField(
         label="Name",
         widget=forms.TextInput(
@@ -21,12 +22,16 @@ class EditTemplateForm(DocumentForm):
         ),
     )
 
-    class Meta(object):
-        document = TemplateVersionManager
+    class Meta:
+        """Meta"""
+
+        model = TemplateVersionManager
         fields = ["title"]
 
 
-class EditXSLTForm(DocumentForm):
+class EditXSLTForm(ModelForm):
+    """Edit XSLT Form"""
+
     name = forms.CharField(
         label="Name",
         widget=forms.TextInput(
@@ -34,8 +39,10 @@ class EditXSLTForm(DocumentForm):
         ),
     )
 
-    class Meta(object):
-        document = XslTransformation
+    class Meta:
+        """Meta"""
+
+        model = XslTransformation
         fields = ["name"]
 
 
@@ -45,7 +52,7 @@ class UploadTemplateForm(UploadForm):
     """
 
     def __init__(self, *args, **kwargs):
-        super(UploadTemplateForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["name"].label = "Enter Template name"
         self.fields["upload_file"].validators = [ExtensionValidator(".xsd")]
         self.fields["upload_file"].widget = forms.FileInput(attrs={"accept": ".xsd"})
@@ -83,7 +90,7 @@ class UploadXSLTForm(UploadForm):
     """
 
     def __init__(self, *args, **kwargs):
-        super(UploadXSLTForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["name"].label = "Enter XSLT name"
         self.fields["upload_file"].validators = [ExtensionValidator(".xsl")]
         self.fields["upload_file"].widget = forms.FileInput(
@@ -122,7 +129,7 @@ class TemplateXsltRenderingForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        super(TemplateXsltRenderingForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["list_detail_xslt"].choices = _get_xsl_transformation()
 
 

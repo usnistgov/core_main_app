@@ -1,9 +1,9 @@
 """ Serializers used throughout the data Rest API for the admin user
 """
 
+from core_main_app.components.data import api as data_api
 from core_main_app.components.data.models import Data
 from core_main_app.rest.data.serializers import DataSerializer, XMLContentField
-from core_main_app.components.data import api as data_api
 
 
 class AdminDataSerializer(DataSerializer):
@@ -11,7 +11,7 @@ class AdminDataSerializer(DataSerializer):
 
     xml_content = XMLContentField()
 
-    class Meta(object):
+    class Meta:
         """Meta"""
 
         model = Data

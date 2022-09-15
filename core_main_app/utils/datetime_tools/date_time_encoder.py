@@ -32,5 +32,5 @@ class DateTimeEncoder(JSONEncoder):
                 "second": obj.second,
                 "microsecond": obj.microsecond,
             }
-        else:
-            return JSONEncoder.default(self, obj)
+
+        return JSONEncoder.default(self, obj)

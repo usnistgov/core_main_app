@@ -16,17 +16,32 @@ from tests.components.data.fixtures.fixtures import QueryDataFixtures
 
 
 class TestDataList(SimpleTestCase):
+    """TestDataList"""
+
     def setUp(self):
-        super(TestDataList, self).setUp()
+        """setUp
+
+        Returns:
+
+        """
+        super().setUp()
         self.data = {
-            "template": "1",
+            "template": None,
             "user_id": "1",
             "xml_content": "test",
             "title": "test",
         }
 
-    @patch.object(Data, "get_all")
+    @patch.object(Data, "get_all_by_user_id")
     def test_get_all_returns_http_200(self, mock_get_all):
+        """test_get_all_returns_http_200
+
+        Args:
+            mock_get_all:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1")
         mock_get_all.return_value = []
@@ -40,6 +55,11 @@ class TestDataList(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_post_returns_http_400_if_invalid_data(self):
+        """test_post_returns_http_400_if_invalid_data
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1")
 
@@ -53,11 +73,26 @@ class TestDataList(SimpleTestCase):
 
 
 class TestDataDetail(SimpleTestCase):
+    """TestDataDetail"""
+
     def setUp(self):
-        super(TestDataDetail, self).setUp()
+        """setUp
+
+        Returns:
+
+        """
+        super().setUp()
 
     @patch.object(Data, "get_by_id")
     def test_get_returns_http_404_when_data_not_found(self, mock_get_by_id):
+        """test_get_returns_http_404_when_data_not_found
+
+        Args:
+            mock_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1")
         mock_get_by_id.side_effect = DoesNotExist("error")
@@ -72,6 +107,14 @@ class TestDataDetail(SimpleTestCase):
 
     @patch.object(Data, "get_by_id")
     def test_delete_returns_http_404_when_data_not_found(self, mock_get_by_id):
+        """test_delete_returns_http_404_when_data_not_found
+
+        Args:
+            mock_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1")
         mock_get_by_id.side_effect = DoesNotExist("error")
@@ -86,6 +129,14 @@ class TestDataDetail(SimpleTestCase):
 
     @patch.object(Data, "get_by_id")
     def test_patch_returns_http_404_when_data_not_found(self, mock_get_by_id):
+        """test_patch_returns_http_404_when_data_not_found
+
+        Args:
+            mock_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1")
         mock_get_by_id.side_effect = DoesNotExist("error")
@@ -103,6 +154,15 @@ class TestDataDetail(SimpleTestCase):
     def test_patch_returns_http_400_when_no_update_data_provided(
         self, mock_get_by_id, mock_upsert
     ):
+        """test_patch_returns_http_400_when_no_update_data_provided
+
+        Args:
+            mock_get_by_id:
+            mock_upsert:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1")
         mock_data = Data(user_id="1")
@@ -119,13 +179,28 @@ class TestDataDetail(SimpleTestCase):
 
 
 class TestDataDownload(SimpleTestCase):
+    """TestDataDownload"""
+
     fixture_data = QueryDataFixtures()
 
     def setUp(self):
-        super(TestDataDownload, self).setUp()
+        """setUp
+
+        Returns:
+
+        """
+        super().setUp()
 
     @patch.object(Data, "get_by_id")
     def test_get_returns_http_404_when_data_not_found(self, mock_get_by_id):
+        """test_get_returns_http_404_when_data_not_found
+
+        Args:
+            mock_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1")
         mock_get_by_id.side_effect = DoesNotExist("error")
@@ -140,6 +215,14 @@ class TestDataDownload(SimpleTestCase):
 
     @patch.object(data_api, "get_by_id")
     def test_get_returns_http_200_when_data_found(self, mock_data_api_get_by_id):
+        """test_get_returns_http_200_when_data_found
+
+        Args:
+            mock_data_api_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1")
         mock_data = _create_data()
@@ -157,6 +240,14 @@ class TestDataDownload(SimpleTestCase):
     def test_get_returns_http_400_when_data_not_well_formatted(
         self, mock_data_api_get_by_id
     ):
+        """test_get_returns_http_400_when_data_not_well_formatted
+
+        Args:
+            mock_data_api_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1")
         mock_data = Data(user_id="1")
@@ -175,6 +266,14 @@ class TestDataDownload(SimpleTestCase):
 
     @patch.object(data_api, "get_by_id")
     def test_get_without_pretty_print_returns_data(self, mock_data_api_get_by_id):
+        """test_get_without_pretty_print_returns_data
+
+        Args:
+            mock_data_api_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1")
         mock_data = _create_data()
@@ -196,6 +295,14 @@ class TestDataDownload(SimpleTestCase):
     def test_get_with_pretty_print_returns_formatted_data(
         self, mock_data_api_get_by_id
     ):
+        """test_get_with_pretty_print_returns_formatted_data
+
+        Args:
+            mock_data_api_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1")
         mock_data = _create_data()
@@ -216,11 +323,26 @@ class TestDataDownload(SimpleTestCase):
 
 
 class TestDataPermissions(SimpleTestCase):
+    """TestDataPermissions"""
+
     def setUp(self):
-        super(TestDataPermissions, self).setUp()
+        """setUp
+
+        Returns:
+
+        """
+        super().setUp()
 
     @patch.object(Data, "get_by_id")
     def test_get_returns_http_404_when_data_not_found(self, mock_get_by_id):
+        """test_get_returns_http_404_when_data_not_found
+
+        Args:
+            mock_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1")
         mock_get_by_id.side_effect = DoesNotExist("error")
@@ -235,6 +357,14 @@ class TestDataPermissions(SimpleTestCase):
 
     @patch.object(Data, "get_by_id")
     def test_get_returns_permissions_for_superuser(self, mock_get_by_id):
+        """test_get_returns_permissions_for_superuser
+
+        Args:
+            mock_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_data = Data(user_id="1")
@@ -251,6 +381,14 @@ class TestDataPermissions(SimpleTestCase):
 
     @patch.object(Data, "get_by_id")
     def test_get_returns_permissions_for_owner(self, mock_get_by_id):
+        """test_get_returns_permissions_for_owner
+
+        Args:
+            mock_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("1", is_staff=True)
         mock_data = Data(user_id="1")
@@ -267,6 +405,14 @@ class TestDataPermissions(SimpleTestCase):
 
     @patch.object(Data, "get_by_id")
     def test_get_returns_permissions_for_non_owner(self, mock_get_by_id):
+        """test_get_returns_permissions_for_non_owner
+
+        Args:
+            mock_get_by_id:
+
+        Returns:
+
+        """
         # Arrange
         mock_user = create_mock_user("2", is_staff=True)
         mock_data = Data(user_id="1")
@@ -284,7 +430,7 @@ class TestDataPermissions(SimpleTestCase):
 
 def _get_template():
     template = Template()
-    template.id_field = 1
+    template.id = 1
     xsd = (
         '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">'
         '<xs:element name="tag"></xs:element></xs:schema>'
@@ -301,7 +447,7 @@ def _create_data(title="test"):
 
     Returns:
     """
-    data = Data(title=title, template="6137af4b91cb055990297f35", user_id="1")
-    data.template = _get_template()
+    template = _get_template()
+    data = Data(title=title, template=template, user_id="1")
     data.xml_content = '<root  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ><string>x</string></root>'
     return data

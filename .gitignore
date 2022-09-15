@@ -214,6 +214,8 @@ conf/my-mongodb.conf
 # tests
 curate/tests/data/parser/schema/namespace/results*
 curate/tests/data/parser/extension/explicit-implicit/results*
+tests_media
+tests/.env
 
 # redis server
 *.rdb
@@ -237,3 +239,4 @@ radon.xml
 
 #virtual env
 venv/
+

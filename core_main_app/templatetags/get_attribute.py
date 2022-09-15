@@ -1,3 +1,6 @@
+""" Get attribute
+"""
+
 from django import template
 
 register = template.Library()
@@ -5,13 +8,22 @@ register = template.Library()
 
 @register.filter(name="get_attribute")
 def get_attribute(value, arg):
-    """@see https://stackoverflow.com/questions/844746/performing-a-getattr-style-lookup-in-a-django-template"""
+    """get attribute
+
+    https://stackoverflow.com/q/844746
+
+    Args:
+        value:
+        arg:
+
+    Returns:
+
+    """
 
     if hasattr(value, str(arg)):
         return getattr(value, arg)
-    elif isinstance(value, dict) and arg in value:
+    if isinstance(value, dict) and arg in value:
         return value[arg]
-    elif arg.isdigit() and len(value) > int(arg):
+    if arg.isdigit() and len(value) > int(arg):
         return value[int(arg)]
-    else:
-        return ""
+    return ""

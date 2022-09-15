@@ -1,10 +1,12 @@
 """ Fixtures files for Data
 """
+from django.core.files.uploadedfile import SimpleUploadedFile
+
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
+from core_main_app.components.workspace import api as workspace_api
 from core_main_app.components.workspace.models import Workspace
 from core_main_app.components.xsl_transformation.models import XslTransformation
-from core_main_app.components.workspace import api as workspace_api
 from core_main_app.utils.integration_tests.fixture_interface import FixtureInterface
 
 
@@ -36,13 +38,16 @@ class DataFixtures(FixtureInterface):
         # NOTE: no xml_content to avoid using unsupported GridFS mock
         self.data_1 = Data(
             template=self.template, user_id="1", dict_content=None, title="title"
-        ).save()
+        )
+        self.data_1.save()
         self.data_2 = Data(
             template=self.template, user_id="2", dict_content=None, title="title2"
-        ).save()
+        )
+        self.data_2.save()
         self.data_3 = Data(
             template=self.template, user_id="1", dict_content=None, title="title3"
-        ).save()
+        )
+        self.data_3.save()
         self.data_collection = [self.data_1, self.data_2, self.data_3]
 
     def generate_template(self):
@@ -51,15 +56,15 @@ class DataFixtures(FixtureInterface):
         Returns:
 
         """
-        template = Template()
+        self.template = Template()
         xsd = (
             '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">'
             '<xs:element name="tag"></xs:element></xs:schema>'
         )
-        template.content = xsd
-        template.hash = ""
-        template.filename = "filename"
-        self.template = template.save()
+        self.template.content = xsd
+        self.template.hash = ""
+        self.template.filename = "filename"
+        self.template.save()
 
 
 class QueryDataFixtures(DataFixtures):
@@ -82,10 +87,12 @@ class QueryDataFixtures(DataFixtures):
         # NOTE: no xml_content to avoid using unsupported GridFS mock
         self.data_1 = Data(
             template=self.template, user_id="1", dict_content=content_1, title="title"
-        ).save()
+        )
+        self.data_1.save()
         self.data_2 = Data(
             template=self.template, user_id="2", dict_content=content_2, title="title2"
-        ).save()
+        )
+        self.data_2.save()
         self.data_collection = [self.data_1, self.data_2]
 
 
@@ -127,27 +134,32 @@ class AccessControlDataFixture(FixtureInterface):
 
         content = {"root": {"element": "value2"}}
 
-        self.data_1 = Data(template=self.template, title="Data 1", user_id="1").save()
-        self.data_2 = Data(template=self.template, title="Data 2", user_id="2").save()
+        self.data_1 = Data(template=self.template, title="Data 1", user_id="1")
+        self.data_1.save()
+        self.data_2 = Data(template=self.template, title="Data 2", user_id="2")
+        self.data_2.save()
         self.data_3 = Data(
             template=self.template,
             title="Data 3",
             user_id="1",
-            workspace=self.workspace_1.id,
+            workspace=self.workspace_1,
             dict_content=content,
-        ).save()
+        )
+        self.data_3.save()
         self.data_4 = Data(
             template=self.template,
             title="DataDoubleTitle",
             user_id="2",
-            workspace=self.workspace_2.id,
-        ).save()
+            workspace=self.workspace_2,
+        )
+        self.data_4.save()
         self.data_5 = Data(
             template=self.template,
             title="DataDoubleTitle",
             user_id="1",
-            workspace=self.workspace_1.id,
-        ).save()
+            workspace=self.workspace_1,
+        )
+        self.data_5.save()
         self.data_collection = [
             self.data_1,
             self.data_2,
@@ -162,15 +174,15 @@ class AccessControlDataFixture(FixtureInterface):
         Returns:
 
         """
-        template = Template()
+        self.template = Template()
         xsd = (
             '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">'
             '<xs:element name="tag"></xs:element></xs:schema>'
         )
-        template.content = xsd
-        template.hash = ""
-        template.filename = "filename"
-        self.template = template.save()
+        self.template.content = xsd
+        self.template.hash = ""
+        self.template.filename = "filename"
+        self.template.save()
 
     def generate_workspace(self):
         """Generate the workspaces.
@@ -180,10 +192,12 @@ class AccessControlDataFixture(FixtureInterface):
         """
         self.workspace_1 = Workspace(
             title="Workspace 1", owner="1", read_perm_id="1", write_perm_id="1"
-        ).save()
+        )
+        self.workspace_1.save()
         self.workspace_2 = Workspace(
             title="Workspace 2", owner="2", read_perm_id="2", write_perm_id="2"
-        ).save()
+        )
+        self.workspace_2.save()
 
     def generate_workspace_with_perm(self):
         """Generate the workspaces and the perm object.
@@ -197,8 +211,211 @@ class AccessControlDataFixture(FixtureInterface):
             self.data_3.workspace = self.workspace_1
             self.data_4.workspace = self.workspace_2
             self.data_5.workspace = self.workspace_1
-        except Exception as e:
-            print(str(e))
+        except Exception as exception:
+            print(str(exception))
+
+
+class AccessControlDataFixture2(FixtureInterface):
+    """Access Control Data fixture
+    - User1: 1 private data
+    - User2: 1 data in workspace 1
+    - User3: 1 private data and 1 data in workspace 1
+    """
+
+    template = None
+    workspace_1 = None
+    data_collection = None
+    data_1 = None
+    data_2 = None
+    data_3_1 = None
+    data_3_2 = None
+
+    def insert_data(self):
+        """Insert a set of Data.
+
+        Returns:
+
+        """
+        # Make a connexion with a mock database
+        self.generate_template()
+        self.generate_workspace()
+        self.generate_data_collection()
+
+    def generate_data_collection(self):
+        """Generate a Data collection.
+
+        Returns:
+
+        """
+
+        content = {"root": {"element": "value2"}}
+
+        self.data_1 = Data(
+            template=self.template, title="Data 1", user_id="1", dict_content=content
+        )
+        self.data_1.save()
+        self.data_2 = Data(
+            template=self.template,
+            title="Data 2",
+            user_id="2",
+            workspace=self.workspace_1,
+        )
+        self.data_2.save()
+        self.data_3_1 = Data(
+            template=self.template,
+            title="Data 3.1",
+            user_id="3",
+            dict_content=content,
+        )
+        self.data_3_1.save()
+        self.data_3_2 = Data(
+            template=self.template,
+            title="Data 3.2",
+            user_id="3",
+            workspace=self.workspace_1,
+            dict_content=content,
+        )
+        self.data_3_2.save()
+        self.data_collection = [
+            self.data_1,
+            self.data_2,
+            self.data_3_1,
+            self.data_3_2,
+        ]
+
+    def generate_template(self):
+        """Generate an unique Template.
+
+        Returns:
+
+        """
+        self.template = Template()
+        xsd = (
+            '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">'
+            '<xs:element name="tag"></xs:element></xs:schema>'
+        )
+        self.template.content = xsd
+        self.template.hash = ""
+        self.template.filename = "filename"
+        self.template.save()
+
+    def generate_workspace(self):
+        """Generate the workspaces.
+
+        Returns:
+
+        """
+        self.workspace_1 = Workspace(
+            title="Workspace 1", owner=None, read_perm_id="1", write_perm_id="1"
+        )
+        self.workspace_1.save()
+
+
+class AccessControlDataFullTextSearchFixture(FixtureInterface):
+    """Access Control Data fixture
+    - User1: 1 private data
+    - User2: 1 data in workspace 1
+    - User3: 1 private data and 1 data in workspace 1
+    """
+
+    template = None
+    workspace_1 = None
+    data_collection = None
+    data_1 = None
+    data_2 = None
+    data_3_1 = None
+    data_3_2 = None
+
+    def insert_data(self):
+        """Insert a set of Data.
+
+        Returns:
+
+        """
+        # Make a connexion with a mock database
+        self.generate_template()
+        self.generate_workspace()
+        self.generate_data_collection()
+
+    def generate_data_collection(self):
+        """Generate a Data collection.
+
+        Returns:
+
+        """
+
+        # _1: user1 is unique and private, value1 is also in _2
+        xml_content_1 = "<root><element>user1</element><element>value1</element></root>"
+        # _2: value1 is common to _1 and _2
+        xml_content_2 = "<root><element>value1</element></root>"
+        # _3_1: value31 is unique and private
+        xml_content_3_1 = "<root><element>value31</element></root>"
+        # _3_2: value32 is unique
+        xml_content_3_2 = "<root><element>value32</element></root>"
+
+        self.data_1 = Data(
+            template=self.template,
+            title="Data 1",
+            user_id="1",
+            xml_content=xml_content_1,
+        )
+        self.data_1.convert_and_save()
+        self.data_2 = Data(
+            template=self.template,
+            title="Data 2",
+            user_id="2",
+            xml_content=xml_content_2,
+            workspace=self.workspace_1,
+        )
+        self.data_2.convert_and_save()
+        self.data_3_1 = Data(
+            template=self.template,
+            title="Data 3.1",
+            user_id="3",
+            xml_content=xml_content_3_1,
+        )
+        self.data_3_1.convert_and_save()
+        self.data_3_2 = Data(
+            template=self.template,
+            title="Data 3.2",
+            user_id="3",
+            workspace=self.workspace_1,
+            xml_content=xml_content_3_2,
+        )
+        self.data_3_2.convert_and_save()
+        self.data_collection = [
+            self.data_1,
+            self.data_2,
+            self.data_3_1,
+            self.data_3_2,
+        ]
+
+    def generate_template(self):
+        """Generate an unique Template.
+
+        Returns:
+
+        """
+        self.template = Template()
+        xsd = (
+            '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">'
+            '<xs:element name="tag"></xs:element></xs:schema>'
+        )
+        self.template.content = xsd
+        self.template.hash = ""
+        self.template.filename = "filename"
+        self.template.save()
+
+    def generate_workspace(self):
+        """Generate the workspaces.
+
+        Returns:
+
+        """
+        self.workspace_1 = Workspace(
+            title="Workspace 1", owner=None, read_perm_id="1", write_perm_id="1"
+        )
+        self.workspace_1.save()
 
 
 class DataMigrationFixture(FixtureInterface):
@@ -278,10 +495,10 @@ class DataMigrationFixture(FixtureInterface):
         Returns:
 
         """
-        template1 = Template()
-        template2 = Template()
-        template3 = Template()
-        template4 = Template()
+        self.template_1 = Template()
+        self.template_2 = Template()
+        self.template_3 = Template()
+        self.template_4 = Template()
         xsd1 = '<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"> \
                 <xsd:element name="root" type="simpleString"/> \
                 <xsd:complexType name="simpleString"> \
@@ -296,7 +513,6 @@ class DataMigrationFixture(FixtureInterface):
                     <xsd:element name="test" type="xsd:string"/></xsd:sequence> \
                 </xsd:complexType> \
             </xsd:schema>'
-
         xsd3 = '<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"> \
                 <xsd:element name="root" type="simpleString"/> \
                 <xsd:complexType name="simpleString"> \
@@ -313,22 +529,22 @@ class DataMigrationFixture(FixtureInterface):
                             </xsd:sequence> \
                         </xsd:complexType> \
                 </xsd:schema>'
-        template1.content = xsd1
-        template1.hash = ""
-        template1.filename = "filename"
-        template2.content = xsd2
-        template2.hash = ""
-        template2.filename = "filename"
-        template3.content = xsd3
-        template3.hash = ""
-        template3.filename = "filename"
-        template4.content = xsd4
-        template4.hash = ""
-        template4.filename = "filename"
-        self.template_1 = template1.save()
-        self.template_2 = template2.save()
-        self.template_3 = template3.save()
-        self.template_4 = template4.save()
+        self.template_1.content = xsd1
+        self.template_1.hash = ""
+        self.template_1.filename = "filename"
+        self.template_2.content = xsd2
+        self.template_2.hash = ""
+        self.template_2.filename = "filename"
+        self.template_3.content = xsd3
+        self.template_3.hash = ""
+        self.template_3.filename = "filename"
+        self.template_4.content = xsd4
+        self.template_4.hash = ""
+        self.template_4.filename = "filename"
+        self.template_1.save_template()
+        self.template_2.save_template()
+        self.template_3.save_template()
+        self.template_4.save_template()
 
     def generate_xslt(self):
         """Generate xsl transformation .
@@ -349,10 +565,12 @@ class DataMigrationFixture(FixtureInterface):
                         <element>new_element</element> \
                     </xsl:template> \
                 </xsl:stylesheet>'
-        xsl_transformation = XslTransformation(
+        self.xsl_transformation = XslTransformation(
             name="xsl_transformation",
             filename="xsl_transformation.xsl",
-            content=content,
+            file=SimpleUploadedFile(
+                "xsl_transformation.xsl", content=content.encode("utf-8")
+            ),
         )
 
-        self.xsl_transformation = xsl_transformation.save()
+        self.xsl_transformation.save()

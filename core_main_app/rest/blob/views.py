@@ -13,19 +13,21 @@ from rest_framework.permissions import (
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-import core_main_app.components.blob.api as blob_api
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
+from core_main_app.components.blob import api as blob_api
+from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.rest.blob.serializers import (
     BlobSerializer,
     DeleteBlobsSerializer,
 )
 from core_main_app.utils.file import get_file_http_response
-from core_main_app.components.user import api as user_api
 
 
 class AbstractBlobList(APIView, metaclass=ABCMeta):
+    """Abstract Blob List"""
+
     @abstractmethod
     def _get_blobs(self, request):
         """Retrieve blobs
@@ -80,8 +82,8 @@ class AbstractBlobList(APIView, metaclass=ABCMeta):
 
             # Return response
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except AccessControlError as e:
-            content = {"message": str(e)}
+        except AccessControlError as exception:
+            content = {"message": str(exception)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
@@ -129,7 +131,7 @@ class BlobListAdmin(AbstractBlobList):
             - code: 500
               content: Internal server error
         """
-        return super(BlobListAdmin, self).get(request)
+        return super().get(request)
 
 
 class BlobList(AbstractBlobList):
@@ -173,7 +175,7 @@ class BlobList(AbstractBlobList):
             - code: 500
               content: Internal server error
         """
-        return super(BlobList, self).get(request)
+        return super().get(request)
 
     def post(self, request):
         """Create Blob
@@ -271,8 +273,8 @@ class BlobDetail(APIView):
 
             # Return response
             return Response(serializer.data)
-        except AccessControlError as e:
-            content = {"message": str(e)}
+        except AccessControlError as exception:
+            content = {"message": str(exception)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Http404:
             content = {"message": "Blob not found."}
@@ -308,8 +310,8 @@ class BlobDetail(APIView):
             blob_api.delete(blob_object, request.user)
 
             return Response(status=status.HTTP_204_NO_CONTENT)
-        except AccessControlError as e:
-            content = {"message": str(e)}
+        except AccessControlError as exception:
+            content = {"message": str(exception)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Http404:
             content = {"message": "Blob not found."}
@@ -362,9 +364,9 @@ class BlobDownload(APIView):
             # Get object
             blob_object = self.get_object(request, pk)
 
-            return get_file_http_response(blob_object.blob, blob_object.filename)
-        except AccessControlError as e:
-            content = {"message": str(e)}
+            return get_file_http_response(blob_object.blob.read(), blob_object.filename)
+        except AccessControlError as exception:
+            content = {"message": str(exception)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Http404:
             content = {"message": "Blob not found."}

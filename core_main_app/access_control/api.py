@@ -47,7 +47,7 @@ def has_perm_administration(func, *args, **kwargs):
         if user and user.is_superuser:
             return func(*args, **kwargs)
     except Exception as e:
-        logger.warning("has_perm_administration threw an exception: ".format(str(e)))
+        logger.warning(f"has_perm_administration threw an exception: {str(e)}")
 
     raise AccessControlError("The user doesn't have enough rights.")
 
@@ -68,7 +68,7 @@ def is_superuser(func, *args, **kwargs):
         if request and request.user.is_superuser:
             return func(*args, **kwargs)
     except Exception as e:
-        logger.warning("has_perm_administration threw an exception: ".format(str(e)))
+        logger.warning(f"has_perm_administration threw an exception: {str(e)}")
 
     raise AccessControlError("The user doesn't have enough rights.")
 
@@ -91,7 +91,7 @@ def check_can_write(document, user):
     #  or delete a data if data in wkp that doesn't give hin write rights
     if hasattr(document, "workspace") and document.workspace is not None:
         if workspace_api.is_workspace_public(document.workspace):
-            has_perm_publish(user, rights.publish_data)
+            has_perm_publish(user, rights.PUBLISH_DATA)
         else:
             _check_can_write_in_workspace(document.workspace, user)
 
@@ -112,22 +112,36 @@ def check_can_read_list(document_list, user):
     Returns:
 
     """
-    if len(document_list) > 0:
-        # get list of accessible workspaces
-        accessible_workspaces = (
-            workspace_api.get_all_workspaces_with_read_access_by_user(user)
+    if document_list.count() > 0:
+        # exclude own data
+        other_users_documents = document_list.exclude(user_id=str(user.id))
+
+        # check that other users private data is not accessed
+        other_users_private_document = other_users_documents.filter(
+            workspace__isnull=True
         )
-        # check access is correct
-        for document in document_list:
-            # user is document owner
-            if document.user_id == str(user.id):
-                continue
-            # user is not owner or document not in accessible workspace
-            if (
-                document.workspace is None
-                or document.workspace not in accessible_workspaces
-            ):
-                raise AccessControlError("The user doesn't have enough rights.")
+        if other_users_private_document.count() > 0:
+            raise AccessControlError(
+                "The user doesn't have enough rights to access this data"
+            )
+
+        # get list of accessible workspaces
+        accessible_workspaces = [
+            workspace.id
+            for workspace in workspace_api.get_all_workspaces_with_read_access_by_user(
+                user
+            )
+        ]
+        # get list of all workspaces of returned data
+        document_workspaces = set(
+            other_users_documents.values_list("workspace", flat=True)
+        )
+        # check that accessed workspaces are in the list of accessible workspaces
+        for workspace in document_workspaces:
+            if workspace not in accessible_workspaces:
+                raise AccessControlError(
+                    "The user doesn't have enough rights to access this data"
+                )
 
 
 def can_write_document_in_workspace(func, document, workspace, user):
@@ -142,7 +156,7 @@ def can_write_document_in_workspace(func, document, workspace, user):
     Returns:
 
     """
-    return can_write_in_workspace(func, document, workspace, user, rights.publish_data)
+    return can_write_in_workspace(func, document, workspace, user, rights.PUBLISH_DATA)
 
 
 def can_read_or_write_in_workspace(func, workspace, user):

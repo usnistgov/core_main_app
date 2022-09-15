@@ -1,3 +1,6 @@
+"""Conf
+"""
+
 # -*- coding: utf-8 -*-
 #
 # Django app documentation build configuration file
@@ -20,13 +23,6 @@ import sys
 
 import django
 from django.conf import settings
-from mongoengine import connect
-
-# Configure mock connection
-MONGO_HOST = "localhost"
-MONGO_NAME = "test"
-MONGODB_URI = "mongomock://%s/%s" % (MONGO_HOST, MONGO_NAME)
-connect(MONGO_NAME, host=MONGODB_URI)
 
 # Configure settings for documentation
 sys.path.insert(0, os.path.abspath(".."))

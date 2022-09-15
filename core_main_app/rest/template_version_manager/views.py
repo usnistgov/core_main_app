@@ -75,7 +75,7 @@ class TemplateVersionManagerDetail(APIView):
             TemplateVersionManager
         """
         try:
-            return version_manager_api.get(pk, request=request)
+            return template_version_manager_api.get_by_id(pk, request=request)
         except exceptions.DoesNotExist:
             raise Http404
 
@@ -211,7 +211,7 @@ class UserTemplateList(AbstractTemplateList):
             - code: 500
               content: Internal server error
         """
-        return super(UserTemplateList, self).post(request)
+        return super().post(request)
 
     def get_user(self):
         """Retrieve the user from the request
@@ -255,7 +255,7 @@ class GlobalTemplateList(AbstractTemplateList):
             - code: 500
               content: Internal server error
         """
-        return super(GlobalTemplateList, self).post(request)
+        return super().post(request)
 
     def get_user(self):
         """The user is None for a global template

@@ -5,7 +5,7 @@ from mock.mock import patch
 from rest_framework import status
 from rest_framework.response import Response
 
-import core_main_app.components.workspace.api as workspace_api
+from core_main_app.components.workspace import api as workspace_api
 from core_main_app.rest.workspace import views as workspace_rest_views
 from core_main_app.rest.workspace.serializers import WorkspaceSerializer
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
@@ -16,6 +16,11 @@ class TestGetWorkspaceDetail(SimpleTestCase):
     """Test Get Workspace Detail"""
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         # Act
         response = RequestMock.do_request_get(
             workspace_rest_views.WorkspaceDetail.as_view(), None, param={"pk": 0}
@@ -29,6 +34,15 @@ class TestGetWorkspaceDetail(SimpleTestCase):
     def test_staff_returns_http_200(
         self, mock_workspace_api_get_by_id, mock_data_serializer_data
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            mock_workspace_api_get_by_id:
+            mock_data_serializer_data:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1", is_staff=True)
         mock_workspace_api_get_by_id.return_value = None
@@ -47,6 +61,12 @@ class TestGetWorkspaceDetail(SimpleTestCase):
     def test_authenticated_returns_http_200(
         self, mock_workspace_api_get_by_id, mock_data_serializer_data
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            mock_workspace_api_get_by_id:
+            mock_data_serializer_data:
+        """
         # Context
         user = create_mock_user("1")
         mock_workspace_api_get_by_id.return_value = None
@@ -65,6 +85,11 @@ class TestDeleteWorkspace(SimpleTestCase):
     """Test Delete Workspace"""
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         # Act
         response = RequestMock.do_request_delete(
             workspace_rest_views.WorkspaceDetail.as_view(), None, param={"pk": 0}
@@ -77,6 +102,15 @@ class TestDeleteWorkspace(SimpleTestCase):
     def test_staff_returns_http_204(
         self, mock_workspace_api_get_by_id, mock_workspace_api_delete
     ):
+        """test_staff_returns_http_204
+
+        Args:
+            mock_workspace_api_get_by_id:
+            mock_workspace_api_delete:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1", is_staff=True)
         mock_workspace_api_get_by_id.return_value = None
@@ -95,6 +129,15 @@ class TestDeleteWorkspace(SimpleTestCase):
     def test_authenticated_returns_http_204(
         self, mock_workspace_api_get_by_id, mock_workspace_api_delete
     ):
+        """test_authenticated_returns_http_204
+
+        Args:
+            mock_workspace_api_get_by_id:
+            mock_workspace_api_delete:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1")
         mock_workspace_api_get_by_id.return_value = None
@@ -113,6 +156,11 @@ class TestGetWorkspace(SimpleTestCase):
     """Test Get Workspace"""
 
     def test_get_anonymous_returns_http_403(self):
+        """test_get_anonymous_returns_http_403
+
+        Returns:
+
+        """
         # Act
         response = RequestMock.do_request_get(
             workspace_rest_views.WorkspaceList.as_view(), None
@@ -121,14 +169,23 @@ class TestGetWorkspace(SimpleTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @patch.object(workspace_api, "get_by_id")
+    @patch.object(workspace_api, "get_all_by_owner")
     @patch.object(WorkspaceSerializer, "data")
     def test_get_staff_returns_http_200(
-        self, mock_workspace_api_get_by_id, mock_data_serializer_data
+        self, mock_workspace_api_get_all_by_owner, mock_data_serializer_data
     ):
+        """test_get_staff_returns_http_200
+
+        Args:
+            mock_workspace_api_get_all_by_owner:
+            mock_data_serializer_data:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_workspace_api_get_by_id.return_value = None
+        mock_workspace_api_get_all_by_owner.return_value = None
         mock_data_serializer_data.return_value = []
 
         # Act
@@ -139,14 +196,23 @@ class TestGetWorkspace(SimpleTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    @patch.object(workspace_api, "get_by_id")
+    @patch.object(workspace_api, "get_all_by_owner")
     @patch.object(WorkspaceSerializer, "data")
     def test_get_authenticated_returns_http_200(
-        self, mock_workspace_api_get_by_id, mock_data_serializer_data
+        self, mock_workspace_api_get_all_by_owner, mock_data_serializer_data
     ):
+        """test_get_authenticated_returns_http_200
+
+        Args:
+            mock_workspace_api_get_all_by_owner:
+            mock_data_serializer_data:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1")
-        mock_workspace_api_get_by_id.return_value = None
+        mock_workspace_api_get_all_by_owner.return_value = None
         mock_data_serializer_data.return_value = []
 
         # Act
@@ -162,6 +228,11 @@ class TestCreateWorkspace(SimpleTestCase):
     """Test Create Workspace"""
 
     def test_post_anonymous_returns_http_403(self):
+        """test_post_anonymous_returns_http_403
+
+        Returns:
+
+        """
         # Act
         response = RequestMock.do_request_post(
             workspace_rest_views.WorkspaceList.as_view(),
@@ -180,6 +251,16 @@ class TestCreateWorkspace(SimpleTestCase):
         mock_data_serializer_is_valid,
         mock_data_serializer_data,
     ):
+        """test_post_staff_returns_http_201
+
+        Args:
+            mock_data_serializer_save:
+            mock_data_serializer_is_valid:
+            mock_data_serializer_data:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1", is_staff=True)
         mock_data_serializer_is_valid.return_value = True
@@ -204,6 +285,16 @@ class TestCreateWorkspace(SimpleTestCase):
         mock_data_serializer_is_valid,
         mock_data_serializer_data,
     ):
+        """test_post_authenticated_returns_http_201
+
+        Args:
+            mock_data_serializer_save:
+            mock_data_serializer_is_valid:
+            mock_data_serializer_data:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1")
         mock_data_serializer_is_valid.return_value = True
@@ -224,6 +315,11 @@ class TestWorkspaceReadAccess(SimpleTestCase):
     """Test Workspace Read Access"""
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         # Act
         response = RequestMock.do_request_get(
             workspace_rest_views.get_workspaces_with_read_access, None
@@ -239,6 +335,15 @@ class TestWorkspaceReadAccess(SimpleTestCase):
         mock_workspace_rest_views__list_of_workspaces_to_response,
         mock_workspace_api_get_all_workspaces_with_read_access_by_user,
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            mock_workspace_rest_views__list_of_workspaces_to_response:
+            mock_workspace_api_get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1", is_staff=True)
         mock_workspace_api_get_all_workspaces_with_read_access_by_user.return_value = (
@@ -263,6 +368,15 @@ class TestWorkspaceReadAccess(SimpleTestCase):
         mock_workspace_rest_views__list_of_workspaces_to_response,
         mock_workspace_api_get_all_workspaces_with_read_access_by_user,
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            mock_workspace_rest_views__list_of_workspaces_to_response:
+            mock_workspace_api_get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1")
         mock_workspace_api_get_all_workspaces_with_read_access_by_user.return_value = (
@@ -285,6 +399,11 @@ class TestWorkspaceWriteAccess(SimpleTestCase):
     """Test Workspace Write Access"""
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         # Act
         response = RequestMock.do_request_get(
             workspace_rest_views.get_workspaces_with_write_access, None
@@ -300,6 +419,15 @@ class TestWorkspaceWriteAccess(SimpleTestCase):
         mock_workspace_rest_views__list_of_workspaces_to_response,
         mock_workspace_api_get_all_workspaces_with_write_access_by_user,
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            mock_workspace_rest_views__list_of_workspaces_to_response:
+            mock_workspace_api_get_all_workspaces_with_write_access_by_user:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1", is_staff=True)
         mock_workspace_api_get_all_workspaces_with_write_access_by_user.return_value = (
@@ -324,6 +452,15 @@ class TestWorkspaceWriteAccess(SimpleTestCase):
         mock_workspace_rest_views__list_of_workspaces_to_response,
         mock_workspace_api_get_all_workspaces_with_write_access_by_user,
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            mock_workspace_rest_views__list_of_workspaces_to_response:
+            mock_workspace_api_get_all_workspaces_with_write_access_by_user:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1")
         mock_workspace_api_get_all_workspaces_with_write_access_by_user.return_value = (
@@ -346,6 +483,11 @@ class TestWorkspaceIsPublic(SimpleTestCase):
     """Test Workspace Is Public"""
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         # Act
         response = RequestMock.do_request_get(
             workspace_rest_views.is_workspace_public, None, param={"pk": 0}
@@ -359,6 +501,15 @@ class TestWorkspaceIsPublic(SimpleTestCase):
     def test_staff_returns_http_200(
         self, mock_workspace_api_get_by_id, mock_workspace_api_is_workspace_public
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            mock_workspace_api_get_by_id:
+            mock_workspace_api_is_workspace_public:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1", is_staff=True)
         mock_workspace_api_get_by_id.return_value = None
@@ -377,6 +528,15 @@ class TestWorkspaceIsPublic(SimpleTestCase):
     def test_authenticated_returns_http_200(
         self, mock_workspace_api_get_by_id, mock_workspace_api_is_workspace_public
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            mock_workspace_api_get_by_id:
+            mock_workspace_api_is_workspace_public:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1")
         mock_workspace_api_get_by_id.return_value = None
@@ -395,6 +555,11 @@ class TestWorkspaceSetPublic(SimpleTestCase):
     """Test Workspace Set Public"""
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         # Act
         response = RequestMock.do_request_patch(
             workspace_rest_views.set_workspace_public, None, param={"pk": 0}
@@ -408,6 +573,15 @@ class TestWorkspaceSetPublic(SimpleTestCase):
     def test_staff_returns_http_200(
         self, mock_workspace_api_get_by_id, mock_workspace_api_set_workspace_public
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            mock_workspace_api_get_by_id:
+            mock_workspace_api_set_workspace_public:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1", is_staff=True)
         mock_workspace_api_get_by_id.return_value = None
@@ -426,6 +600,15 @@ class TestWorkspaceSetPublic(SimpleTestCase):
     def test_authenticated_returns_http_200(
         self, mock_workspace_api_get_by_id, mock_workspace_api_set_workspace_public
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            mock_workspace_api_get_by_id:
+            mock_workspace_api_set_workspace_public:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1")
         mock_workspace_api_get_by_id.return_value = None
@@ -444,6 +627,11 @@ class TestWorkspaceSetPrivate(SimpleTestCase):
     """Test Workspace Set Private"""
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         # Act
         response = RequestMock.do_request_patch(
             workspace_rest_views.set_workspace_private, None, param={"pk": 0}
@@ -457,6 +645,15 @@ class TestWorkspaceSetPrivate(SimpleTestCase):
     def test_staff_returns_http_200(
         self, mock_workspace_api_get_by_id, mock_workspace_api_set_workspace_private
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            mock_workspace_api_get_by_id:
+            mock_workspace_api_set_workspace_private:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1", is_staff=True)
         mock_workspace_api_get_by_id.return_value = None
@@ -475,6 +672,15 @@ class TestWorkspaceSetPrivate(SimpleTestCase):
     def test_authenticated_returns_http_200(
         self, mock_workspace_api_get_by_id, mock_workspace_api_set_workspace_private
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            mock_workspace_api_get_by_id:
+            mock_workspace_api_set_workspace_private:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1")
         mock_workspace_api_get_by_id.return_value = None
@@ -493,6 +699,11 @@ class TestWorkspaceListUserCanRead(SimpleTestCase):
     """Test Workspace List User Can read"""
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         # Act
         response = RequestMock.do_request_get(
             workspace_rest_views.get_list_user_can_read_workspace, None, param={"pk": 0}
@@ -505,6 +716,14 @@ class TestWorkspaceListUserCanRead(SimpleTestCase):
     def test_staff_returns_http_200(
         self, mock_workspace_rest_views__list_of_users_or_groups_to_response
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            mock_workspace_rest_views__list_of_users_or_groups_to_response:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1", is_staff=True)
         mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
@@ -523,6 +742,14 @@ class TestWorkspaceListUserCanRead(SimpleTestCase):
     def test_authenticated_returns_http_200(
         self, mock_workspace_rest_views__list_of_users_or_groups_to_response
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            mock_workspace_rest_views__list_of_users_or_groups_to_response:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1")
         mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
@@ -542,6 +769,11 @@ class TestWorkspaceListUserCanWrite(SimpleTestCase):
     """Test Workspace List User Can Write"""
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         # Act
         response = RequestMock.do_request_get(
             workspace_rest_views.get_list_user_can_write_workspace,
@@ -556,6 +788,14 @@ class TestWorkspaceListUserCanWrite(SimpleTestCase):
     def test_staff_returns_http_200(
         self, mock_workspace_rest_views__list_of_users_or_groups_to_response
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            mock_workspace_rest_views__list_of_users_or_groups_to_response:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1", is_staff=True)
         mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
@@ -576,6 +816,14 @@ class TestWorkspaceListUserCanWrite(SimpleTestCase):
     def test_authenticated_returns_http_200(
         self, mock_workspace_rest_views__list_of_users_or_groups_to_response
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            mock_workspace_rest_views__list_of_users_or_groups_to_response:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1")
         mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
@@ -597,6 +845,11 @@ class TestWorkspaceListGroupCanRead(SimpleTestCase):
     """Test Workspace List Group Can read"""
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         # Act
         response = RequestMock.do_request_get(
             workspace_rest_views.get_list_group_can_read_workspace,
@@ -611,6 +864,14 @@ class TestWorkspaceListGroupCanRead(SimpleTestCase):
     def test_staff_returns_http_200(
         self, mock_workspace_rest_views__list_of_users_or_groups_to_response
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            mock_workspace_rest_views__list_of_users_or_groups_to_response:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1", is_staff=True)
         mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
@@ -631,6 +892,14 @@ class TestWorkspaceListGroupCanRead(SimpleTestCase):
     def test_authenticated_returns_http_200(
         self, mock_workspace_rest_views__list_of_users_or_groups_to_response
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            mock_workspace_rest_views__list_of_users_or_groups_to_response:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1")
         mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
@@ -652,6 +921,11 @@ class TestWorkspaceListGroupCanWrite(SimpleTestCase):
     """Test Workspace List Group Can Write"""
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         # Act
         response = RequestMock.do_request_get(
             workspace_rest_views.get_list_group_can_write_workspace,
@@ -666,6 +940,14 @@ class TestWorkspaceListGroupCanWrite(SimpleTestCase):
     def test_staff_returns_http_200(
         self, mock_workspace_rest_views__list_of_users_or_groups_to_response
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            mock_workspace_rest_views__list_of_users_or_groups_to_response:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1", is_staff=True)
         mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
@@ -686,6 +968,14 @@ class TestWorkspaceListGroupCanWrite(SimpleTestCase):
     def test_authenticated_returns_http_200(
         self, mock_workspace_rest_views__list_of_users_or_groups_to_response
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            mock_workspace_rest_views__list_of_users_or_groups_to_response:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1")
         mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
@@ -707,6 +997,11 @@ class TestAddUserReadRightToWorkspace(SimpleTestCase):
     """Test Add User Read Right To Workspace"""
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         # Act
         response = RequestMock.do_request_patch(
             workspace_rest_views.add_user_read_right_to_workspace,
@@ -722,11 +1017,19 @@ class TestAddUserReadRightToWorkspace(SimpleTestCase):
     )
     def test_staff_returns_http_200(
         self,
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace,
+        mock_add_or_remove_to_user_or_group_right_to_workspace,
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            mock_add_or_remove_to_user_or_group_right_to_workspace:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
             status=status.HTTP_200_OK
         )
 
@@ -745,11 +1048,19 @@ class TestAddUserReadRightToWorkspace(SimpleTestCase):
     )
     def test_authenticated_returns_http_200(
         self,
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace,
+        mock_add_or_remove_to_user_or_group_right_to_workspace,
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            mock_add_or_remove_to_user_or_group_right_to_workspace:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1")
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
             status=status.HTTP_200_OK
         )
 
@@ -768,6 +1079,11 @@ class TestAddUserWriteRightToWorkspace(SimpleTestCase):
     """Test Add User Write Right To Workspace"""
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         # Act
         response = RequestMock.do_request_patch(
             workspace_rest_views.add_user_write_right_to_workspace,
@@ -783,11 +1099,19 @@ class TestAddUserWriteRightToWorkspace(SimpleTestCase):
     )
     def test_staff_returns_http_200(
         self,
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace,
+        mock_add_or_remove_to_user_or_group_right_to_workspace,
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            mock_add_or_remove_to_user_or_group_right_to_workspace:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
             status=status.HTTP_200_OK
         )
 
@@ -806,11 +1130,19 @@ class TestAddUserWriteRightToWorkspace(SimpleTestCase):
     )
     def test_authenticated_returns_http_200(
         self,
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace,
+        mock_add_or_remove_to_user_or_group_right_to_workspace,
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            mock_add_or_remove_to_user_or_group_right_to_workspace:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1")
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
             status=status.HTTP_200_OK
         )
 
@@ -829,6 +1161,11 @@ class TestAddGroupReadRightToWorkspace(SimpleTestCase):
     """Test Add Group Read Right To Workspace"""
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         # Act
         response = RequestMock.do_request_patch(
             workspace_rest_views.add_group_read_right_to_workspace,
@@ -844,11 +1181,19 @@ class TestAddGroupReadRightToWorkspace(SimpleTestCase):
     )
     def test_staff_returns_http_200(
         self,
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace,
+        mock_add_or_remove_to_user_or_group_right_to_workspace,
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            mock_add_or_remove_to_user_or_group_right_to_workspace:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
             status=status.HTTP_200_OK
         )
 
@@ -867,11 +1212,19 @@ class TestAddGroupReadRightToWorkspace(SimpleTestCase):
     )
     def test_authenticated_returns_http_200(
         self,
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace,
+        mock_add_or_remove_to_user_or_group_right_to_workspace,
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            mock_add_or_remove_to_user_or_group_right_to_workspace:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1")
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
             status=status.HTTP_200_OK
         )
 
@@ -890,6 +1243,11 @@ class TestAddGroupWriteRightToWorkspace(SimpleTestCase):
     """Test Add Group Write Right To Workspace"""
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         # Act
         response = RequestMock.do_request_patch(
             workspace_rest_views.add_group_write_right_to_workspace,
@@ -905,11 +1263,19 @@ class TestAddGroupWriteRightToWorkspace(SimpleTestCase):
     )
     def test_staff_returns_http_200(
         self,
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace,
+        mock_add_or_remove_to_user_or_group_right_to_workspace,
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            mock_add_or_remove_to_user_or_group_right_to_workspace:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
             status=status.HTTP_200_OK
         )
 
@@ -928,11 +1294,19 @@ class TestAddGroupWriteRightToWorkspace(SimpleTestCase):
     )
     def test_authenticated_returns_http_200(
         self,
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace,
+        mock_add_or_remove_to_user_or_group_right_to_workspace,
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            mock_add_or_remove_to_user_or_group_right_to_workspace:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1")
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
             status=status.HTTP_200_OK
         )
 
@@ -951,6 +1325,11 @@ class TestRemoveUserReadRightToWorkspace(SimpleTestCase):
     """Test Remove User Read Right To Workspace"""
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         # Act
         response = RequestMock.do_request_patch(
             workspace_rest_views.remove_user_read_right_to_workspace,
@@ -966,11 +1345,19 @@ class TestRemoveUserReadRightToWorkspace(SimpleTestCase):
     )
     def test_returns_http_200(
         self,
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace,
+        mock_add_or_remove_to_user_or_group_right_to_workspace,
     ):
+        """test_returns_http_200
+
+        Args:
+            mock_add_or_remove_to_user_or_group_right_to_workspace:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
             status=status.HTTP_200_OK
         )
 
@@ -989,11 +1376,19 @@ class TestRemoveUserReadRightToWorkspace(SimpleTestCase):
     )
     def test_authenticated_returns_http_200(
         self,
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace,
+        mock_add_or_remove_to_user_or_group_right_to_workspace,
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            mock_add_or_remove_to_user_or_group_right_to_workspace:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1")
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
             status=status.HTTP_200_OK
         )
 
@@ -1012,6 +1407,11 @@ class TestRemoveUserWriteRightToWorkspace(SimpleTestCase):
     """Test Remove User Write Right To Workspace"""
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         # Act
         response = RequestMock.do_request_patch(
             workspace_rest_views.remove_user_write_right_to_workspace,
@@ -1027,11 +1427,19 @@ class TestRemoveUserWriteRightToWorkspace(SimpleTestCase):
     )
     def test_staff_returns_http_200(
         self,
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace,
+        mock_add_or_remove_to_user_or_group_right_to_workspace,
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            mock_add_or_remove_to_user_or_group_right_to_workspace:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
             status=status.HTTP_200_OK
         )
 
@@ -1050,11 +1458,19 @@ class TestRemoveUserWriteRightToWorkspace(SimpleTestCase):
     )
     def test_authenticated_returns_http_200(
         self,
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace,
+        mock_add_or_remove_to_user_or_group_right_to_workspace,
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            mock_add_or_remove_to_user_or_group_right_to_workspace:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1")
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
             status=status.HTTP_200_OK
         )
 
@@ -1073,6 +1489,11 @@ class TestRemoveGroupReadRightToWorkspace(SimpleTestCase):
     """Test Remove Group Read Right To Workspace"""
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         # Act
         response = RequestMock.do_request_patch(
             workspace_rest_views.remove_group_read_right_to_workspace,
@@ -1088,11 +1509,19 @@ class TestRemoveGroupReadRightToWorkspace(SimpleTestCase):
     )
     def test_staff_returns_http_200(
         self,
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace,
+        mock_add_or_remove_to_user_or_group_right_to_workspace,
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            mock_add_or_remove_to_user_or_group_right_to_workspace:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
             status=status.HTTP_200_OK
         )
 
@@ -1111,11 +1540,19 @@ class TestRemoveGroupReadRightToWorkspace(SimpleTestCase):
     )
     def test_authenticated_returns_http_200(
         self,
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace,
+        mock_add_or_remove_to_user_or_group_right_to_workspace,
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            mock_add_or_remove_to_user_or_group_right_to_workspace:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1")
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
             status=status.HTTP_200_OK
         )
 
@@ -1134,6 +1571,11 @@ class TestRemoveGroupWriteRightToWorkspace(SimpleTestCase):
     """Test Remove Group Write Right To Workspace"""
 
     def test_anonymous_returns_http_403(self):
+        """test_anonymous_returns_http_403
+
+        Returns:
+
+        """
         # Act
         response = RequestMock.do_request_patch(
             workspace_rest_views.remove_group_write_right_to_workspace,
@@ -1149,11 +1591,19 @@ class TestRemoveGroupWriteRightToWorkspace(SimpleTestCase):
     )
     def test_staff_returns_http_200(
         self,
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace,
+        mock_add_or_remove_to_user_or_group_right_to_workspace,
     ):
+        """test_staff_returns_http_200
+
+        Args:
+            mock_add_or_remove_to_user_or_group_right_to_workspace:
+
+        Returns:
+
+        """
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
             status=status.HTTP_200_OK
         )
 
@@ -1172,10 +1622,18 @@ class TestRemoveGroupWriteRightToWorkspace(SimpleTestCase):
     )
     def test_authenticated_returns_http_200(
         self,
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace,
+        mock_add_or_remove_to_user_or_group_right_to_workspace,
     ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            mock_add_or_remove_to_user_or_group_right_to_workspace:
+
+        Returns:
+
+        """
         # Context
-        mock_workspace_rest_views__add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
             status=status.HTTP_200_OK
         )
         user = create_mock_user("1", is_staff=True)

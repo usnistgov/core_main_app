@@ -3,8 +3,6 @@
 from django.urls import re_path
 from rest_framework.urlpatterns import format_suffix_patterns
 
-import core_main_app.rest.web_page.views as web_page_views
-import core_main_app.rest.xsl_transformation.views as xsl_transformation_views
 from core_main_app.rest.blob import views as blob_views
 from core_main_app.rest.data import views as data_views
 from core_main_app.rest.template import views as template_views
@@ -15,7 +13,10 @@ from core_main_app.rest.template_xsl_rendering import (
     views as template_xsl_rendering_views,
 )
 from core_main_app.rest.user import views as user_views
+from core_main_app.rest.views import CoreSettings
+from core_main_app.rest.web_page import views as web_page_views
 from core_main_app.rest.workspace import views as workspace_views
+from core_main_app.rest.xsl_transformation import views as xsl_transformation_views
 
 urlpatterns = [
     re_path(
@@ -120,6 +121,11 @@ urlpatterns = [
         r"^data/query/$",
         data_views.ExecuteLocalQueryView.as_view(),
         name="core_main_app_rest_data_query",
+    ),
+    re_path(
+        r"^data/bulk-upload/$",
+        data_views.BulkUploadFolder.as_view(),
+        name="core_main_app_rest_data_bulk_upload",
     ),
     re_path(
         r"^data/(?P<pk>\w+)/assign/(?P<workspace_id>\w+)$",
@@ -353,6 +359,11 @@ urlpatterns = [
         r"^admin/data/$",
         data_views.AdminDataList.as_view(),
         name="core_main_app_rest_admin_data_list",
+    ),
+    re_path(
+        r"^core-settings/$",
+        CoreSettings.as_view(),
+        name="core_main_app_rest_core_settings",
     ),
 ]
 

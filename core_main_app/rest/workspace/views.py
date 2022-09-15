@@ -7,11 +7,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-import core_main_app.components.group.api as group_api
-import core_main_app.components.user.api as user_api
-import core_main_app.components.workspace.api as workspace_api
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
+from core_main_app.components.group import api as group_api
+from core_main_app.components.user import api as user_api
+from core_main_app.components.workspace import api as workspace_api
 from core_main_app.rest.group.serializers import GroupSerializer
 from core_main_app.rest.user.serializers import UserSerializer
 from core_main_app.rest.workspace.serializers import WorkspaceSerializer

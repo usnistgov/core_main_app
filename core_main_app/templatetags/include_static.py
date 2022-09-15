@@ -1,3 +1,5 @@
+""" include static templatetag
+"""
 import io
 
 from django import template
@@ -9,10 +11,20 @@ register = template.Library()
 
 @register.simple_tag(takes_context=True)
 def include_static(context, path, encoding="utf-8"):
+    """include_static
+
+    Args:
+        context:
+        path:
+        encoding:
+
+    Returns:
+
+    """
     file_path = finders.find(path)
-    with io.open(file_path, "r", encoding=encoding) as f:
-        string = f.read()
+    with io.open(file_path, "r", encoding=encoding) as file:
+        string = file.read()
 
-    t = Template(string)
+    template_obj = Template(string)
 
-    return t.render(context)
+    return template_obj.render(context)

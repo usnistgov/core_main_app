@@ -44,13 +44,13 @@ def send_mail(
             html_message=body,
             fail_silently=fail_silently,
         )
-    except Exception as e:
-        raise e
+    except Exception as exception:
+        raise exception
 
 
 @shared_task
 def send_mail_to_administrators(
-    subject, path_to_template, context={}, fail_silently=True
+    subject, path_to_template, context=None, fail_silently=True
 ):
     """Send email to administrators.
 
@@ -63,6 +63,8 @@ def send_mail_to_administrators(
     Returns:
 
     """
+    if context is None:
+        context = {}
     try:
         # Render the given template with context information
         template = loader.get_template(path_to_template)
@@ -74,14 +76,14 @@ def send_mail_to_administrators(
             html_message=message,
             fail_silently=fail_silently,
         )
-    except Exception as e:
+    except Exception as exception:
         logger.warning(
-            "send_mail_to_administrators threw an exception: ".format(str(e))
+            "send_mail_to_administrators threw an exception:  %s", str(exception)
         )
 
 
 @shared_task
-def send_mail_to_managers(subject, path_to_template, context={}, fail_silently=True):
+def send_mail_to_managers(subject, path_to_template, context=None, fail_silently=True):
     """Send email to managers.
 
     Args:
@@ -93,6 +95,8 @@ def send_mail_to_managers(subject, path_to_template, context={}, fail_silently=T
     Returns:
 
     """
+    if context is None:
+        context = {}
     try:
         # Render the given template with context information
         template = loader.get_template(path_to_template)
@@ -104,5 +108,5 @@ def send_mail_to_managers(subject, path_to_template, context={}, fail_silently=T
             html_message=message,
             fail_silently=fail_silently,
         )
-    except Exception as e:
-        logger.warning("send_mail_to_managers throws an exception: ".format(str(e)))
+    except Exception as exception:
+        logger.warning("send_mail_to_managers throws an exception: %s", str(exception))

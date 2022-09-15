@@ -1,10 +1,10 @@
-""" Mongo engine database tools
+""" Mongoengine database tools
 """
 from mongoengine import connect
 from mongoengine.connection import disconnect
 
 
-class Database(object):
+class Database:
     """Represent a Database."""
 
     def __init__(self, host, name):
@@ -47,11 +47,3 @@ class Database(object):
                     self.database[self.database_name].get_collection(
                         collection
                     ).delete_many({})
-
-
-def init_text_index(document_object):
-    """Create index for full text search."""
-    collection = document_object._get_collection()
-    collection.create_index(
-        [("$**", "text")], default_language="en", language_override="en"
-    )

@@ -1,5 +1,7 @@
 """ Data API
 """
+
+from xml_utils.xsd_tree.xsd_tree import XSDTree
 import core_main_app.access_control.api
 import core_main_app.components.workspace.access_control
 from core_main_app.access_control import api as access_control_api
@@ -12,11 +14,18 @@ from core_main_app.components.data.tasks import (
     async_migration_task,
     async_template_migration_task,
 )
+
 from core_main_app.components.workspace import api as workspace_api
-from core_main_app.settings import DATA_SORTING_FIELDS
+from core_main_app.settings import DATA_SORTING_FIELDS, MONGODB_INDEXING
 from core_main_app.utils.datetime_tools.utils import datetime_now
+from core_main_app.utils.query.mongo.prepare import (
+    convert_to_django,
+    get_access_filters_from_query,
+)
 from core_main_app.utils.xml import validate_xml_data
-from xml_utils.xsd_tree.xsd_tree import XSDTree
+
+if MONGODB_INDEXING:
+    from core_main_app.components.mongo import api as mongo_api
 
 
 @access_control(access_control_api.can_read_or_write_in_workspace)
@@ -113,7 +122,8 @@ def upsert(data, request):
         raise exceptions.ApiError("Unable to save data: xml_content field is not set.")
 
     check_xml_file_is_valid(data, request=request)
-    return data.convert_and_save()
+    data.convert_and_save()
+    return data
 
 
 @access_control(is_superuser)
@@ -160,32 +170,85 @@ def check_xml_file_is_valid(data, request=None):
 
     try:
         xml_tree = XSDTree.build_tree(data.xml_content)
-    except Exception as e:
-        raise exceptions.XMLError(str(e))
+    except Exception as exception:
+        raise exceptions.XMLError(str(exception))
     try:
         xsd_tree = XSDTree.build_tree(template.content)
-    except Exception as e:
-        raise exceptions.XSDError(str(e))
+    except Exception as exception:
+        raise exceptions.XSDError(str(exception))
     error = validate_xml_data(xsd_tree, xml_tree, request=request)
     if error is not None:
         raise exceptions.XMLError(error)
-    else:
-        return True
+
+    return True
 
 
-@access_control(data_api_access_control.can_read_data_query)
-def execute_query(query, user, order_by_field=DATA_SORTING_FIELDS):
-    """Execute a query on the Data collection.
+def execute_json_query(json_query, user, order_by_field=DATA_SORTING_FIELDS):
+    """Converts JSON query to ORM syntax and call execute query.
 
     Args:
-        query:
+        json_query:
         user:
         order_by_field:
 
     Returns:
 
     """
+    # get workspace and user filters from JSON query
+    workspace_filter, user_filter = get_access_filters_from_query(query_dict=json_query)
+    if MONGODB_INDEXING:
+        return _execute_mongo_query(
+            json_query, user, workspace_filter, user_filter, order_by_field
+        )
+
+    # convert JSON query to Django syntax
+    query = convert_to_django(query_dict=json_query)
+
+    # execute query and return results
+    return execute_query(query, user, workspace_filter, user_filter, order_by_field)
+
+
+@access_control(data_api_access_control.can_read_data_query)
+def execute_query(
+    query,
+    user,
+    workspace_filter=None,
+    user_filter=None,
+    order_by_field=DATA_SORTING_FIELDS,
+):
+    """Execute a query on the Data collection.
+
+    Args:
+        query:
+        user:
+        workspace_filter:
+        user_filter:
+        order_by_field:
+
+    Returns:
+
+    """
     return Data.execute_query(query, order_by_field)
+
+
+def _execute_mongo_query(
+    json_query, user, workspace_filter, user_filter, order_by_field=DATA_SORTING_FIELDS
+):
+    """
+
+    Args:
+        json_query:
+        user:
+        workspace_filter:
+        user_filter:
+        order_by_field:
+
+    Returns:
+
+    """
+    return mongo_api.execute_mongo_query(
+        json_query, user, workspace_filter, user_filter, order_by_field
+    )
 
 
 @access_control(core_main_app.access_control.api.can_write)
@@ -240,20 +303,6 @@ def is_data_public(data):
         if data.workspace is not None
         else False
     )
-
-
-@access_control(data_api_access_control.can_read_aggregate_query)
-def aggregate(pipeline, user):
-    """Execute an aggregate on the Data collection.
-
-    Args:
-        pipeline:
-        user:
-
-    Returns:
-
-    """
-    return Data.aggregate(pipeline)
 
 
 @access_control(data_api_access_control.can_write_data_workspace)

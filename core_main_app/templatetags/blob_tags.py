@@ -1,6 +1,5 @@
 """ Blob tags
 """
-import re
 
 from django import template
 

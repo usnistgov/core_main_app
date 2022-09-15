@@ -1,29 +1,33 @@
 """ TemplateXslRendering model
 """
-from django_mongoengine import fields, Document
-from mongoengine import errors as mongoengine_errors
-from mongoengine.queryset.base import CASCADE, NULLIFY
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import models
 
 from core_main_app.commons import exceptions
 from core_main_app.components.template.models import Template
 from core_main_app.components.xsl_transformation.models import XslTransformation
 
 
-class TemplateXslRendering(Document):
+class TemplateXslRendering(models.Model):
     """TemplateXslRendering object"""
 
-    template = fields.ReferenceField(
-        Template, blank=False, reverse_delete_rule=CASCADE, unique=True
+    template = models.OneToOneField(Template, on_delete=models.CASCADE, blank=False)
+    list_xslt = models.ForeignKey(
+        XslTransformation,
+        on_delete=models.SET_NULL,
+        blank=True,
+        related_name="list_xslt",
+        null=True,
     )
-    list_xslt = fields.ReferenceField(
-        XslTransformation, reverse_delete_rule=NULLIFY, blank=True
+    default_detail_xslt = models.ForeignKey(
+        XslTransformation,
+        on_delete=models.SET_NULL,
+        blank=True,
+        related_name="default_detail_xslt",
+        null=True,
     )
-    default_detail_xslt = fields.ReferenceField(
-        XslTransformation, reverse_delete_rule=CASCADE, blank=True
-    )
-    list_detail_xslt = fields.ListField(
-        fields.ReferenceField(XslTransformation),
-        reverse_delete_rule=CASCADE,
+    list_detail_xslt = models.ManyToManyField(
+        XslTransformation,
         blank=True,
         default=[],
     )
@@ -44,9 +48,9 @@ class TemplateXslRendering(Document):
 
         """
         try:
-            return TemplateXslRendering.objects.get(pk=str(template_xsl_rendering_id))
-        except mongoengine_errors.DoesNotExist as e:
-            raise exceptions.DoesNotExist(str(e))
+            return TemplateXslRendering.objects.get(pk=template_xsl_rendering_id)
+        except ObjectDoesNotExist as exception:
+            raise exceptions.DoesNotExist(str(exception))
         except Exception as ex:
             raise exceptions.ModelError(str(ex))
 
@@ -67,10 +71,10 @@ class TemplateXslRendering(Document):
         """
         try:
             return TemplateXslRendering.objects.get(template=template_id)
-        except mongoengine_errors.DoesNotExist as e:
-            raise exceptions.DoesNotExist(str(e))
-        except Exception as e:
-            raise exceptions.ModelError(str(e))
+        except ObjectDoesNotExist as exception:
+            raise exceptions.DoesNotExist(str(exception))
+        except Exception as exception:
+            raise exceptions.ModelError(str(exception))
 
     @staticmethod
     def get_by_template_hash(template_hash):
@@ -88,13 +92,11 @@ class TemplateXslRendering(Document):
 
         """
         try:
-            return TemplateXslRendering.objects.get(
-                template__in=Template.objects.filter(hash=template_hash)
-            )  # TODO: use template__hash with Django
-        except mongoengine_errors.DoesNotExist as e:
-            raise exceptions.DoesNotExist(str(e))
-        except Exception as e:
-            raise exceptions.ModelError(str(e))
+            return TemplateXslRendering.objects.get(template__hash=template_hash)
+        except ObjectDoesNotExist as exception:
+            raise exceptions.DoesNotExist(str(exception))
+        except Exception as exception:
+            raise exceptions.ModelError(str(exception))
 
     @staticmethod
     def get_all():
@@ -105,3 +107,11 @@ class TemplateXslRendering(Document):
 
         """
         return TemplateXslRendering.objects.all()
+
+    def __str__(self):
+        """Template Xsl Rendering as string
+
+        Returns:
+
+        """
+        return str(self.template)

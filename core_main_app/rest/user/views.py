@@ -8,6 +8,8 @@ from core_main_app.rest.user.serializers import UserSerializer
 
 
 class UserListCreateView(ListCreateAPIView):
+    """User List Create View"""
+
     permission_classes = (permissions.IsAdminUser,)
 
     queryset = User.objects.all()
@@ -15,6 +17,8 @@ class UserListCreateView(ListCreateAPIView):
 
 
 class UserRetrieveUpdateView(RetrieveUpdateDestroyAPIView):
+    """User Retrieve Update View"""
+
     permission_classes = (permissions.IsAdminUser,)
 
     queryset = User.objects.all()

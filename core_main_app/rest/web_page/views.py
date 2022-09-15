@@ -9,8 +9,8 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-import core_main_app.components.web_page.api as web_page_api
 from core_main_app.commons import exceptions as exceptions
+from core_main_app.components.web_page import api as web_page_api
 from core_main_app.components.web_page.models import WEB_PAGE_TYPES
 from core_main_app.rest.web_page.serializers import WebPageSerializer
 from core_main_app.utils.decorators import api_staff_member_required

@@ -10,7 +10,7 @@ from rest_framework import status
 from rest_framework.test import APIRequestFactory
 
 
-class RequestMock(object):
+class RequestMock:
     """Represent a request.
     Use this class to simulate an HTTP request.
     """

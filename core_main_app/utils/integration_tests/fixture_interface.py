@@ -2,7 +2,7 @@
 """
 
 
-class FixtureInterface(object):
+class FixtureInterface:
     """Represent the fixture interface with methods which must be implemented."""
 
     def insert_data(self):

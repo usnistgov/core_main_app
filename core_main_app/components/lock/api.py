@@ -22,7 +22,7 @@ def is_object_locked(object, user):
         lock = Lock.acquire()
         _check_object_locked(object, user, lock)
         return False
-    except LockError as ler:
+    except LockError:
         return True
     finally:
         Lock.release()
@@ -58,8 +58,8 @@ def remove_lock_on_object(object, user):
         # Only the user who created the lock can remove it
         if database_lock_object.user_id == str(user.id):
             lock.remove_lock(database_lock_object)
-    except Exception as e:
-        logger.warning("remove_lock_on_object threw an exception: ".format(str(e)))
+    except Exception as exception:
+        logger.warning("remove_lock_on_object threw an exception: %s", str(exception))
     finally:
         Lock.release()
 
@@ -84,7 +84,9 @@ def _check_object_locked(object, user, lock):
 
     # Check if lock has expired
     date = database_lock_object.lock_date
-    if (datetime.datetime.now() - date).total_seconds() > LOCK_OBJECT_TTL:
+    if (
+        datetime.datetime.now() - date.replace(tzinfo=None)
+    ).total_seconds() > LOCK_OBJECT_TTL:
         lock.remove_lock(database_lock_object)
         return False
 

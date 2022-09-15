@@ -51,22 +51,26 @@ class AccessControlDataFixture(FixtureInterface):
 
         content = {"root": {"element": "value2"}}
 
-        self.data_1 = Data(template=self.template, title="Data 1", user_id="1").save()
-        self.data_2 = Data(template=self.template, title="Data 2", user_id="2").save()
+        self.data_1 = Data(template=self.template, title="Data 1", user_id="1")
+        self.data_1.save()
+        self.data_2 = Data(template=self.template, title="Data 2", user_id="2")
+        self.data_2.save()
         self.data_public_workspace = Data(
             template=self.template,
             title="Data Public Workspace",
             user_id="1",
-            workspace=self.public_workspace.id,
+            workspace=self.public_workspace,
             dict_content=content,
-        ).save()
+        )
+        self.data_public_workspace.save()
         self.data_workspace_1 = Data(
             template=self.template,
             title="Data Workspace 1",
             user_id="1",
-            workspace=self.workspace_1.id,
+            workspace=self.workspace_1,
             dict_content=content,
-        ).save()
+        )
+        self.data_workspace_1.save()
         self.data_collection = [
             self.data_1,
             self.data_2,
@@ -82,26 +86,26 @@ class AccessControlDataFixture(FixtureInterface):
         """
         self.blob_1 = Blob(
             filename="blob1.txt",
-            handle="http://127.0.0.1:8000/rest/blob/download/id1/",
             user_id="1",
-        ).save()
+        )
+        self.blob_1.save()
         self.blob_2 = Blob(
             filename="blob2.txt",
-            handle="http://127.0.0.1:8000/rest/blob/download/id2/",
             user_id="2",
-        ).save()
+        )
+        self.blob_2.save()
         self.blob_public_workspace = Blob(
             filename="blob3.txt",
-            handle="http://127.0.0.1:8000/rest/blob/download/id3/",
             user_id="1",
-            workspace=self.public_workspace.id,
-        ).save()
+            workspace=self.public_workspace,
+        )
+        self.blob_public_workspace.save()
         self.blob_workspace_1 = Blob(
             filename="blob4.txt",
-            handle="http://127.0.0.1:8000/rest/blob/download/id4/",
             user_id="1",
-            workspace=self.workspace_1.id,
-        ).save()
+            workspace=self.workspace_1,
+        )
+        self.blob_workspace_1.save()
         self.blob_collection = [
             self.blob_1,
             self.blob_2,
@@ -115,15 +119,15 @@ class AccessControlDataFixture(FixtureInterface):
         Returns:
 
         """
-        template = Template()
+        self.template = Template()
         xsd = (
             '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">'
             '<xs:element name="tag"></xs:element></xs:schema>'
         )
-        template.content = xsd
-        template.hash = ""
-        template.filename = "filename"
-        self.template = template.save()
+        self.template.content = xsd
+        self.template.hash = ""
+        self.template.filename = "filename"
+        self.template.save()
 
     def generate_workspaces(self):
         """Generate the workspaces.
@@ -133,14 +137,17 @@ class AccessControlDataFixture(FixtureInterface):
         """
         self.workspace_1 = Workspace(
             title="Workspace 1", owner="1", read_perm_id="1", write_perm_id="1"
-        ).save()
+        )
+        self.workspace_1.save()
         self.workspace_2 = Workspace(
             title="Workspace 2", owner="2", read_perm_id="2", write_perm_id="2"
-        ).save()
+        )
+        self.workspace_2.save()
         self.public_workspace = Workspace(
             title="Public",
             owner="1",
             read_perm_id="3",
             write_perm_id="3",
             is_public=True,
-        ).save()
+        )
+        self.public_workspace.save()

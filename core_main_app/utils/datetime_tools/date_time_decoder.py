@@ -12,6 +12,8 @@ from core_main_app import settings
 
 
 class DateTimeDecoder(json.JSONDecoder):
+    """Date Time Decoder"""
+
     def __init__(self, *args, **kargs):
         """
 
@@ -21,27 +23,27 @@ class DateTimeDecoder(json.JSONDecoder):
         """
         JSONDecoder.__init__(self, object_hook=self.dict_to_object, *args, **kargs)
 
-    def dict_to_object(self, d):
-        """
+    def dict_to_object(self, dictionary):
+        """dict_to_object
 
         Args:
-            d:
+            dictionary:
 
         Returns:
 
         """
-        if "__type__" not in d:
-            return d
+        if "__type__" not in dictionary:
+            return dictionary
 
-        type = d.pop("__type__")
+        type = dictionary.pop("__type__")
         try:
             if settings.USE_TZ:
                 # timeit shows that datetime.now(tz=utc) is 24% slower
-                date_obj = timezone.make_aware(datetime(**d), timezone.utc)
+                date_obj = timezone.make_aware(datetime(**dictionary), timezone.utc)
             else:
-                return datetime(**d)
+                return datetime(**dictionary)
 
             return date_obj
         except:
-            d["__type__"] = type
-            return d
+            dictionary["__type__"] = type
+            return dictionary

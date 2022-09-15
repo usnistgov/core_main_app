@@ -9,15 +9,17 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions as exceptions
 from core_main_app.commons.exceptions import NotUniqueError, ApiError, XSDError
 from core_main_app.components.template import api as template_api
-from core_main_app.components.version_manager import api as version_manager_api
+from core_main_app.components.template_version_manager import (
+    api as template_version_manager_api,
+)
 from core_main_app.rest.template_version_manager.serializers import (
     TemplateVersionManagerSerializer,
     CreateTemplateSerializer,
 )
-from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.utils.boolean import to_bool
 from core_main_app.utils.decorators import api_staff_member_required
 
@@ -93,7 +95,7 @@ class AbstractStatusTemplateVersion(APIView, metaclass=ABCMeta):
             Template
         """
         try:
-            template_object = template_api.get(pk, request=request)
+            template_object = template_api.get_by_id(pk, request=request)
             return template_object
         except exceptions.DoesNotExist:
             raise Http404
@@ -165,7 +167,7 @@ class AbstractTemplateVersionManagerDetail(APIView, metaclass=ABCMeta):
             TemplateVersionManager
         """
         try:
-            template_version_manager_object = version_manager_api.get(
+            template_version_manager_object = template_version_manager_api.get_by_id(
                 pk, request=self.request
             )
             return template_version_manager_object
