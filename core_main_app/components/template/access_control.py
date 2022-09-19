@@ -4,7 +4,7 @@ from django.db.models import Q
 
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.template.models import Template
-from core_main_app.settings import CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT
+from django.conf import settings
 from core_main_app.utils.requests_utils.access_control import (
     get_request_from_args,
 )
@@ -36,7 +36,7 @@ def can_read(func, document_id, request):
             raise AccessControlError(
                 "Template: The user doesn't have enough rights."
             )
-        if not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
+        if not settings.CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
             raise AccessControlError(
                 "Template: The user doesn't have enough rights."
             )
@@ -63,7 +63,7 @@ def can_read_global(func, *args, **kwargs):
     """
     request = get_request_from_args(*args, **kwargs)
     if request.user.is_anonymous:
-        if not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
+        if not settings.CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
             raise AccessControlError(
                 "Template: The user doesn't have enough rights."
             )
@@ -117,7 +117,7 @@ def get_accessible_owners(request):
 
     """
     if not request or request.user.is_anonymous:
-        if CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
+        if settings.CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
             # global templates only
             return Q(user__isnull=True)
         # nothing
@@ -154,7 +154,7 @@ def can_read_list(func, *args, **kwargs):
                 raise AccessControlError(
                     "Template: The user doesn't have enough rights."
                 )
-            if not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
+            if not settings.CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
                 raise AccessControlError(
                     "Template: The user doesn't have enough rights."
                 )

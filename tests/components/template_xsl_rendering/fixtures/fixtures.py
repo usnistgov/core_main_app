@@ -18,6 +18,7 @@ class TemplateXslRenderingFixtures(FixtureInterface):
 
     template_1 = None
     template_2 = None
+    template_3 = None
     template_xsl_rendering_1 = None
     template_xsl_rendering_2 = None
     xsl_transformation_1 = None
@@ -50,6 +51,10 @@ class TemplateXslRenderingFixtures(FixtureInterface):
             filename="template_2.xsd", content="content2", hash="hash2"
         )
         self.template_2.save()
+        self.template_3 = Template(
+            filename="template_3.xsd", content="content3", hash="hash3"
+        )
+        self.template_3.save()
         self.template_xsl_rendering_1 = TemplateXslRendering(
             template=self.template_1
         )

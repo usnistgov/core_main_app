@@ -5,6 +5,7 @@ import logging
 from django.contrib.auth.models import User
 
 from core_main_app.access_control.exceptions import AccessControlError
+from core_main_app.commons.exceptions import ApiError
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.permissions import api as permissions_api, rights as rights
 from core_main_app.settings import (
@@ -69,9 +70,13 @@ def is_superuser(func, *args, **kwargs):
         request = kwargs["request"]
         if request and request.user.is_superuser:
             return func(*args, **kwargs)
-    except Exception as e:
-        logger.warning(f"has_perm_administration threw an exception: {str(e)}")
 
+    except ApiError as api_error_exception:
+        raise api_error_exception
+    except Exception as exception:
+        logger.warning(
+            f"has_perm_administration threw an exception: {str(exception)}"
+        )
     raise AccessControlError("The user doesn't have enough rights.")
 
 

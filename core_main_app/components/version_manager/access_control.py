@@ -1,12 +1,12 @@
 """ Version Manager Access Control
 """
 
+from django.conf import settings
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.version_manager.models import (
     VersionManager,
     Version,
 )
-from core_main_app.settings import CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT
 from core_main_app.utils.requests_utils.access_control import (
     get_request_from_args,
 )
@@ -38,7 +38,7 @@ def can_read(func, document_id, request):
             raise AccessControlError(
                 "Version Manager: The user doesn't have enough rights."
             )
-        if not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
+        if not settings.CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
             raise AccessControlError(
                 "Version Manager: The user doesn't have enough rights."
             )
@@ -117,7 +117,7 @@ def can_read_list(func, list_id, request):
                 raise AccessControlError(
                     "Version Manager: The user doesn't have enough rights."
                 )
-            if not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
+            if not settings.CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
                 raise AccessControlError(
                     "Version Manager: The user doesn't have enough rights."
                 )
@@ -146,7 +146,7 @@ def can_read_global(func, *args, **kwargs):
     """
     request = get_request_from_args(*args, **kwargs)
     if request.user.is_anonymous:
-        if not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
+        if not settings.CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
             raise AccessControlError(
                 "Version Manager: The user doesn't have enough rights."
             )
@@ -175,7 +175,7 @@ def can_read_version_manager(func, version_manager, version, request):
             raise AccessControlError(
                 "Version Manager: The user doesn't have enough rights."
             )
-        if not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
+        if not settings.CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
             raise AccessControlError(
                 "Version Manager: The user doesn't have enough rights."
             )

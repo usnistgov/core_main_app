@@ -1,4 +1,4 @@
-""" Unit Test Data
+""" Integration tests Data
 """
 import datetime
 from types import SimpleNamespace
@@ -942,6 +942,81 @@ class TestGetAllByWorkspace(MongoIntegrationBaseTestCase):
         self.assertListEqual(
             list(data), [self.fixture.data_3, self.fixture.data_5]
         )
+
+
+class TestGetByIdList(MongoIntegrationBaseTestCase):
+    """TestGetByIdList"""
+
+    fixture = access_control_data_fixture
+
+    def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
+        self.user = create_mock_user(1, is_superuser=True)
+
+    @patch.object(Data, "get_all_by_id_list")
+    def test_get_by_id_list_returns_data_object(self, mock_get_all_by_id_list):
+        """test_get_by_id_list_returns_list_data_object
+
+        Returns:
+
+        """
+        mock_get_all_by_id_list.return_value = [
+            self.fixture.data_1,
+            self.fixture.data_3,
+        ]
+        result = data_api.get_by_id_list(
+            [self.fixture.data_1.id, self.fixture.data_3.id], self.user
+        )
+        self.assertTrue(all(isinstance(item, Data) for item in result))
+
+    @patch.object(Data, "get_all_by_id_list")
+    def test_get_by_id_list_returns_correct_count(
+        self, mock_get_all_by_id_list
+    ):
+        """test_get_by_id_list_returns_correct_count
+
+        Returns:
+
+        """
+        mock_get_all_by_id_list.return_value = [
+            self.fixture.data_1,
+            self.fixture.data_3,
+        ]
+        result = data_api.get_by_id_list(
+            [self.fixture.data_1.id, self.fixture.data_3.id], self.user
+        )
+        self.assertEqual(len(result), 2)
+
+    def test_get_by_id_list_none_returns_empty_list(self):
+        """test_get_by_id_list_none_returns_empty_list
+
+        Returns:
+
+        """
+        result = data_api.get_by_id_list([None], self.user)
+        self.assertEqual(len(result), 0)
+
+    def test_get_by_id_list_empty_returns_empty_list(self):
+        """test_get_by_id_list_empty_returns_empty_list
+
+        Returns:
+
+        """
+        result = data_api.get_by_id_list([], self.user)
+        self.assertEqual(len(result), 0)
+
+    def test_get_by_id_list_invalid_id_returns_empty_list(self):
+        """test_get_by_id_list_invalid_id_returns_empty_list
+
+        Returns:
+
+        """
+        result = data_api.get_by_id_list([-1], self.user)
+        self.assertEqual(len(result), 0)
 
 
 class TestGetAllByListTemplate(MongoIntegrationBaseTestCase):

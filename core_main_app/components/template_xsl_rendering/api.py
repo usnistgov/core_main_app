@@ -6,6 +6,9 @@ from core_main_app.commons.exceptions import ApiError
 from core_main_app.components.template_xsl_rendering.models import (
     TemplateXslRendering,
 )
+from core_main_app.components.xsl_transformation import (
+    api as xsl_transformation_api,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -161,7 +164,11 @@ def upsert(
         template_xsl_rendering = get_by_id(template_xsl_rendering_id)
         template_xsl_rendering.list_xslt = list_xslt
         template_xsl_rendering.default_detail_xslt = default_detail_xslt
-        template_xsl_rendering.list_detail_xslt.set(list_detail_xslt)
+        template_xsl_rendering.list_detail_xslt.set(
+            list_detail_xslt
+            if list_detail_xslt
+            else xsl_transformation_api.get_none()
+        )
         template_xsl_rendering.save()
     except Exception as exception:
         logger.warning(
@@ -175,7 +182,11 @@ def upsert(
         )
         template_xsl_rendering.save()
 
-        template_xsl_rendering.list_detail_xslt.set(list_detail_xslt)
+        template_xsl_rendering.list_detail_xslt.set(
+            list_detail_xslt
+            if list_detail_xslt
+            else xsl_transformation_api.get_none()
+        )
 
     return template_xsl_rendering
 

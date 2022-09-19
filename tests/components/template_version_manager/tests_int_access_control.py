@@ -1,6 +1,7 @@
 """ Access control testing
 """
 
+from django.test import override_settings
 from tests.components.template_version_manager.fixtures.fixtures import (
     TemplateVersionManagerAccessControlFixtures,
 )
@@ -16,9 +17,6 @@ from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import create_mock_request
 
 fixture_template_vm = TemplateVersionManagerAccessControlFixtures()
-
-
-# FIXME: missing tests where CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT is True
 
 
 class TestTemplateVersionManagerGet(MongoIntegrationBaseTestCase):
@@ -52,6 +50,21 @@ class TestTemplateVersionManagerGet(MongoIntegrationBaseTestCase):
                 self.fixture.user1_tvm.id, request=mock_request
             )
 
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_get_user_version_manager_as_anonymous_with_access_right_raises_access_control_error(
+        self,
+    ):
+        """test get user version manager as anonymous with access right raises access control error
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        with self.assertRaises(AccessControlError):
+            template_vm_api.get_by_id(
+                self.fixture.user1_tvm.id, request=mock_request
+            )
+
     def test_get_global_version_manager_as_anonymous_raises_access_control_error(
         self,
     ):
@@ -65,6 +78,21 @@ class TestTemplateVersionManagerGet(MongoIntegrationBaseTestCase):
             template_vm_api.get_by_id(
                 self.fixture.global_tvm.id, request=mock_request
             )
+
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_get_global_version_manager_as_anonymous_with_access_right_returns_global_template(
+        self,
+    ):
+        """test get global version manager as anonymous with access right returns version manager
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        version_manager = template_vm_api.get_by_id(
+            self.fixture.global_tvm.id, request=mock_request
+        )
+        self.assertEqual(version_manager, self.fixture.global_tvm)
 
     def test_get_own_version_manager_as_user_returns_version_manager(self):
         """test get own version manager as user returns version manager
@@ -139,7 +167,7 @@ class TestTemplateVersionManagerGet(MongoIntegrationBaseTestCase):
             )
 
 
-class TesTemplateVersionManagerGetByIdList(MongoIntegrationBaseTestCase):
+class TestTemplateVersionManagerGetByIdList(MongoIntegrationBaseTestCase):
     """TesTemplateVersionManagerGetByIdList"""
 
     fixture = fixture_template_vm
@@ -170,6 +198,21 @@ class TesTemplateVersionManagerGetByIdList(MongoIntegrationBaseTestCase):
                 [str(self.fixture.user1_tvm.id)], request=mock_request
             )
 
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_get_by_id_list_user_version_manager_as_anonymous_with_access_right_raises_access_control_error(
+        self,
+    ):
+        """test get by id list user version manager as anonymous with access right raises access control error
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        with self.assertRaises(AccessControlError):
+            template_vm_api.get_by_id_list(
+                [str(self.fixture.user1_tvm.id)], request=mock_request
+            )
+
     def test_get_by_id_list_global_version_manager_as_anonymous_raises_access_control_error(
         self,
     ):
@@ -184,10 +227,25 @@ class TesTemplateVersionManagerGetByIdList(MongoIntegrationBaseTestCase):
                 [str(self.fixture.global_tvm.id)], request=mock_request
             )
 
-    def test_get_by_id_list_user_version_manager_as_user_returns_version_version_manager(
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_get_by_id_list_global_version_manager_as_anonymous_with_access_right_returns_version_manager(
         self,
     ):
-        """test get by id list user version manager as user returns version version manager
+        """test get by id list global version manager as anonymous with access right version manager
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        version_managers = template_vm_api.get_by_id_list(
+            [str(self.fixture.global_tvm.id)], request=mock_request
+        )
+        self.assertTrue(self.fixture.global_tvm in list(version_managers))
+
+    def test_get_by_id_list_user_version_manager_as_user_returns_version_manager(
+        self,
+    ):
+        """test get by id list user version manager as user returns template version manager
 
         Returns:
 
@@ -358,6 +416,23 @@ class TestTemplateVersionManagerGetActiveGlobalVersionManagerByTitle(
                 self.fixture.global_tvm.title, request=mock_request
             )
 
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_get_active_global_version_manager_by_title_as_anonymous_with_access_right_returns_version_manager(
+        self,
+    ):
+        """test get active global version manager by title as anonymous with access right returns version manager
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        version_manager = (
+            template_vm_api.get_active_global_version_manager_by_title(
+                self.fixture.global_tvm.title, request=mock_request
+            )
+        )
+        self.assertEqual(version_manager, self.fixture.global_tvm)
+
     def test_get_active_global_version_manager_as_user_returns_version_manager(
         self,
     ):
@@ -440,10 +515,44 @@ class TestTemplateVersionManagerInsert(MongoIntegrationBaseTestCase):
                 request=mock_request,
             )
 
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_insert_user_template_as_anonymous_with_access_right_raises_access_control_error(
+        self,
+    ):
+        """test insert user template as anonymous with access right raises access control error
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        with self.assertRaises(AccessControlError):
+            template_vm_api.insert(
+                self.fixture.user1_tvm,
+                self.fixture.user1_template,
+                request=mock_request,
+            )
+
     def test_insert_global_template_as_anonymous_raises_access_control_error(
         self,
     ):
         """test insert global template as anonymous raises access control error
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        with self.assertRaises(AccessControlError):
+            template_vm_api.insert(
+                self.fixture.global_tvm,
+                self.fixture.global_template,
+                request=mock_request,
+            )
+
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_insert_global_template_as_anonymous_with_access_right_raises_access_control_error(
+        self,
+    ):
+        """test insert global template as anonymous with access right raises access control error
 
         Returns:
 
@@ -612,10 +721,40 @@ class TestTemplateEditTitle(MongoIntegrationBaseTestCase):
                 self.fixture.user1_tvm, "new_name", request=mock_request
             )
 
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_edit_title_user_template_as_anonymous_with_access_right_raises_access_control_error(
+        self,
+    ):
+        """test edit title user template as anonymous with access right  raises access control error
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        with self.assertRaises(AccessControlError):
+            template_vm_api.edit_title(
+                self.fixture.user1_tvm, "new_name", request=mock_request
+            )
+
     def test_edit_title_global_template_as_anonymous_raises_access_control_error(
         self,
     ):
         """test edit title global template as anonymous raises access control error
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        with self.assertRaises(AccessControlError):
+            template_vm_api.edit_title(
+                self.fixture.global_tvm, "new_name", request=mock_request
+            )
+
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_edit_title_global_template_as_anonymous_with_access_right_raises_access_control_error(
+        self,
+    ):
+        """test edit title global template as anonymous with access right  raises access control error
 
         Returns:
 
@@ -752,10 +891,10 @@ class TestTemplateGetGlobalVersionManagers(MongoIntegrationBaseTestCase):
         self.superuser1 = create_mock_user(user_id="1", is_superuser=True)
         self.fixture.insert_data()
 
-    def test_get_global_version_managers_as_anonymous_raises_acces_control_error(
+    def test_get_global_version_managers_as_anonymous_raises_access_control_error(
         self,
     ):
-        """test get global version managers as anonymous raises acces control error
+        """test get global version managers as anonymous raises access control error
 
         Returns:
 
@@ -763,6 +902,22 @@ class TestTemplateGetGlobalVersionManagers(MongoIntegrationBaseTestCase):
         mock_request = create_mock_request(user=self.anonymous_user)
         with self.assertRaises(AccessControlError):
             template_vm_api.get_global_version_managers(request=mock_request)
+
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_get_global_version_managers_as_anonymous_with_access_right_returns_global_tvm(
+        self,
+    ):
+        """test get global version managers as anonymous with access right returns global tvm
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        list_tvm = template_vm_api.get_global_version_managers(
+            request=mock_request
+        )
+        for tvm in list_tvm:
+            self.assertEqual(tvm.user, None)
 
     def test_get_global_version_managers_as_user_returns_global_tvm(self):
         """test get global version managers as user returns global tvm
@@ -821,10 +976,10 @@ class TestTemplateGetActiveGlobalVersionManager(MongoIntegrationBaseTestCase):
         self.superuser1 = create_mock_user(user_id="1", is_superuser=True)
         self.fixture.insert_data()
 
-    def test_get_active_global_version_manager_as_anonymous_raises_acces_control_error(
+    def test_get_active_global_version_manager_as_anonymous_raises_access_control_error(
         self,
     ):
-        """test get active global version manager as anonymous raises acces control error
+        """test get active global version manager as anonymous raises access control error
 
         Returns:
 
@@ -834,6 +989,22 @@ class TestTemplateGetActiveGlobalVersionManager(MongoIntegrationBaseTestCase):
             template_vm_api.get_active_global_version_manager(
                 request=mock_request
             )
+
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_get_active_global_version_manager_as_anonymous_with_access_right_returns_global_tvm(
+        self,
+    ):
+        """test get active global version manager as anonymous with access right returns global tvm
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        list_tvm = template_vm_api.get_active_global_version_manager(
+            request=mock_request
+        )
+        for tvm in list_tvm:
+            self.assertEqual(tvm.user, None)
 
     def test_get_active_global_version_manager_as_user_returns_global_tvm(
         self,
@@ -914,6 +1085,21 @@ class TestTemplateGetActiveVersionManagerByUserId(
         )
         self.assertEqual(list_tvm.count(), 0)
 
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_get_active_version_manager_by_user_id_as_anonymous_with_access_right_returns_nothing(
+        self,
+    ):
+        """test get active version manager by user id as anonymous with access right returns nothing
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        list_tvm = template_vm_api.get_active_version_manager_by_user_id(
+            request=mock_request
+        )
+        self.assertEqual(list_tvm.count(), 0)
+
     def test_get_active_version_manager_by_user_id_as_user_returns_user_templates(
         self,
     ):
@@ -979,6 +1165,19 @@ class TestTemplateGetAllByUserId(MongoIntegrationBaseTestCase):
 
     def test_get_all_by_user_id_as_anonymous_returns_nothing(self):
         """test get all by user id as anonymous returns nothing
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        list_tvm = template_vm_api.get_all_by_user_id(request=mock_request)
+        self.assertEqual(list_tvm.count(), 0)
+
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_get_all_by_user_id_as_anonymous_with_access_right_returns_nothing(
+        self,
+    ):
+        """test get all by user id as anonymous with access right returns nothing
 
         Returns:
 

@@ -1,6 +1,7 @@
 """ Access control testing
 """
 
+from django.test import override_settings
 from tests.components.template.fixtures.fixtures import (
     AccessControlTemplateFixture,
 )
@@ -14,9 +15,6 @@ from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import create_mock_request
 
 fixture_template = AccessControlTemplateFixture()
-
-
-# FIXME: missing tests where CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT is True
 
 
 class TestTemplateUpsert(MongoIntegrationBaseTestCase):
@@ -50,7 +48,37 @@ class TestTemplateUpsert(MongoIntegrationBaseTestCase):
                 self.fixture.user1_template, request=mock_request
             )
 
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_upsert_user_template_as_anonymous_with_access_right_raises_access_control_error(
+        self,
+    ):
+        """test upsert user template as anonymous with access right raises access control error
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        with self.assertRaises(AccessControlError):
+            template_api.upsert(
+                self.fixture.user1_template, request=mock_request
+            )
+
     def test_upsert_global_template_as_anonymous_raises_access_control_error(
+        self,
+    ):
+        """test upsert global template as anonymous raises access control error
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        with self.assertRaises(AccessControlError):
+            template_api.upsert(
+                self.fixture.global_template, request=mock_request
+            )
+
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_upsert_global_template_as_anonymous_with_access_right_raises_access_control_error(
         self,
     ):
         """test upsert global template as anonymous raises access control error
@@ -190,10 +218,40 @@ class TestTemplateSetDisplayName(MongoIntegrationBaseTestCase):
                 self.fixture.user1_template, "new_name", request=mock_request
             )
 
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_set_display_name_user_template_as_anonymous_with_access_right_access_raises_control_error(
+        self,
+    ):
+        """test set display name user template as anonymous with right access raises access control error
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        with self.assertRaises(AccessControlError):
+            template_api.set_display_name(
+                self.fixture.user1_template, "new_name", request=mock_request
+            )
+
     def test_set_display_name_global_template_as_anonymous_raises_access_control_error(
         self,
     ):
         """test set display name global template as anonymous raises access control error
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        with self.assertRaises(AccessControlError):
+            template_api.set_display_name(
+                self.fixture.global_template, "new_name", request=mock_request
+            )
+
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_set_display_name_global_template_as_anonymous_with_access_right_access_raises_control_error(
+        self,
+    ):
+        """test set display name global template as anonymous with right access raises access control error
 
         Returns:
 
@@ -342,6 +400,21 @@ class TestTemplateGet(MongoIntegrationBaseTestCase):
                 self.fixture.user1_template.id, request=mock_request
             )
 
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_get_user_template_as_anonymous_with_access_right_raises_access_control_error(
+        self,
+    ):
+        """test get user template as anonymous with access right raises access control error
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        with self.assertRaises(AccessControlError):
+            template_api.get_by_id(
+                self.fixture.user1_template.id, request=mock_request
+            )
+
     def test_get_global_template_as_anonymous_raises_access_control_error(
         self,
     ):
@@ -355,6 +428,21 @@ class TestTemplateGet(MongoIntegrationBaseTestCase):
             template_api.get_by_id(
                 self.fixture.global_template.id, request=mock_request
             )
+
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_get_global_template_as_anonymous_with_access_right_returns_template(
+        self,
+    ):
+        """test get global template as anonymous with access right returns template
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        template = template_api.get_by_id(
+            self.fixture.global_template.id, request=mock_request
+        )
+        self.assertEqual(template, self.fixture.global_template)
 
     def test_get_own_template_as_user_returns_template(self):
         """test get own template as user returns template
@@ -461,6 +549,22 @@ class TestTemplateGetAllAccessibleByIdList(MongoIntegrationBaseTestCase):
         )
         self.assertTrue(templates.count() == 0)
 
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_get_all_accessible_by_id_list_as_anonymous_with_access_right_returns_global(
+        self,
+    ):
+        """test get all accessible by id list as anonymous with access right returns global templates
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        templates = template_api.get_all_accessible_by_id_list(
+            self.template_id_list, request=mock_request
+        )
+        self.assertTrue(templates.count() == 1)
+        self.assertTrue((template.user is None for template in templates))
+
     def test_get_all_accessible_by_id_list_as_user_returns_accessible_templates(
         self,
     ):
@@ -541,6 +645,21 @@ class TestTemplateGetAllByHash(MongoIntegrationBaseTestCase):
         )
         self.assertTrue(templates.count() == 0)
 
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_get_all_accessible_by_hash_as_anonymous_with_access_right_does_not_return_user_template(
+        self,
+    ):
+        """test get all accessible by hash as anonymous with access right does not return user template
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        templates = template_api.get_all_accessible_by_hash(
+            self.fixture.user1_template.hash, request=mock_request
+        )
+        self.assertTrue(templates.count() == 0)
+
     def test_get_all_accessible_by_hash_as_anonymous_does_not_return_global(
         self,
     ):
@@ -554,6 +673,22 @@ class TestTemplateGetAllByHash(MongoIntegrationBaseTestCase):
             self.fixture.global_template.hash, request=mock_request
         )
         self.assertTrue(templates.count() == 0)
+
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_get_all_accessible_by_hash_as_anonymous_with_access_right_returns_global(
+        self,
+    ):
+        """test get all accessible by hash as anonymous with access right returns global
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        templates = template_api.get_all_accessible_by_hash(
+            self.fixture.global_template.hash, request=mock_request
+        )
+        self.assertTrue(templates.count() == 1)
+        self.assertTrue((template.user is None for template in templates))
 
     def test_get_all_accessible_by_hash_as_user_returns_user_template(self):
         """test get all accessible by hash as user returns user template
@@ -721,6 +856,21 @@ class TestTemplateGetAllByHashList(MongoIntegrationBaseTestCase):
         )
         self.assertTrue(templates.count() == 0)
 
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_get_all_accessible_by_hash_list_as_anonymous_with_access_right_does_not_return_user_template(
+        self,
+    ):
+        """test get all accessible by hash list as anonymous with access right does not return user template
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        templates = template_api.get_all_accessible_by_hash_list(
+            [self.fixture.user1_template.hash], request=mock_request
+        )
+        self.assertTrue(templates.count() == 0)
+
     def test_get_all_accessible_by_hash_list_as_anonymous_does_not_return_global(
         self,
     ):
@@ -734,6 +884,22 @@ class TestTemplateGetAllByHashList(MongoIntegrationBaseTestCase):
             [self.fixture.global_template.hash], request=mock_request
         )
         self.assertTrue(templates.count() == 0)
+
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_get_all_accessible_by_hash_list_as_anonymous_with_access_right_returns_global(
+        self,
+    ):
+        """test get all accessible by hash list as anonymous with access right returns global
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        templates = template_api.get_all_accessible_by_hash_list(
+            [self.fixture.global_template.hash], request=mock_request
+        )
+        self.assertTrue(templates.count() == 1)
+        self.assertTrue((template.user is None for template in templates))
 
     def test_get_all_accessible_by_hash_list_as_user_returns_user_template(
         self,
@@ -910,6 +1076,20 @@ class TestTemplateGetAll(MongoIntegrationBaseTestCase):
         templates = template_api.get_all(request=mock_request)
         self.assertEqual(templates.count(), 0)
 
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_get_all_as_anonymous_with_access_right_returns_global_templates(
+        self,
+    ):
+        """test get all as anonymous with access right returns global templates
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        templates = template_api.get_all(request=mock_request)
+        self.assertEqual(templates.count(), 1)
+        self.assertTrue((template.user is None for template in templates))
+
     def test_get_all_as_user_returns_accessible_templates(self):
         """test get all as user returns accessible templates
 
@@ -979,10 +1159,40 @@ class TestTemplateDelete(MongoIntegrationBaseTestCase):
                 self.fixture.user1_template, request=mock_request
             )
 
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_delete_user_template_as_anonymous_with_access_right_raises_access_control_error(
+        self,
+    ):
+        """test delete user template as anonymous with access right raises access control error
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        with self.assertRaises(AccessControlError):
+            template_api.delete(
+                self.fixture.user1_template, request=mock_request
+            )
+
     def test_delete_global_template_as_anonymous_raises_access_control_error(
         self,
     ):
         """test delete global template as anonymous raises access control error
+
+        Returns:
+
+        """
+        mock_request = create_mock_request(user=self.anonymous_user)
+        with self.assertRaises(AccessControlError):
+            template_api.delete(
+                self.fixture.global_template, request=mock_request
+            )
+
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_delete_global_template_as_anonymous_with_access_right_raises_access_control_error(
+        self,
+    ):
+        """test delete global template as anonymous with access right raises access control error
 
         Returns:
 

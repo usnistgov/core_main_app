@@ -275,6 +275,21 @@ class TestDataUpsert(TestCase):
         with self.assertRaises(exceptions.XMLError):
             data_api.upsert(data, mock_request)
 
+    def test_data_upsert_without_xml_content_raises_api_error(self):
+        """test_data_without_xml_content_upsert_raises_api_error
+
+        Returns:
+
+        """
+        # Arrange
+        template = _get_template()
+        data = _create_data(template, user_id="1", title="title", content=None)
+        mock_user = create_mock_user("1")
+        mock_request = create_mock_request(user=mock_user)
+        # Act # Assert
+        with self.assertRaises(exceptions.ApiError):
+            data_api.upsert(data, mock_request)
+
 
 class TestAdminDataInsert(TestCase):
     """TestAdminDataInsert"""
@@ -465,6 +480,21 @@ class TestAdminDataInsert(TestCase):
         # Assert
         self.assertIsNotNone(result.last_change_date)
 
+    def test_data_admin_insert_without_xml_content_raises_api_error(self):
+        """test_data_admin_insert_without_xml_content_raises_api_error
+
+        Returns:
+
+        """
+        # Arrange
+        template = _get_template()
+        data = _create_data(template, user_id="1", title="title", content=None)
+        mock_user = create_mock_user("1", is_superuser=True)
+        mock_request = create_mock_request(user=mock_user)
+        # Act # Assert
+        with self.assertRaises(exceptions.ApiError):
+            data_api.admin_insert(data, request=mock_request)
+
 
 class TestDataCheckXmlFileIsValid(TestCase):
     """TestDataCheckXmlFileIsValid"""
@@ -543,6 +573,24 @@ class TestDataCheckXmlFileIsValid(TestCase):
         result = data_api.check_xml_file_is_valid(data, request=mock_request)
         # Assert
         self.assertEqual(result, True)
+
+
+class TestDataGetNone(TestCase):
+    """TestDataGetNone"""
+
+    def test_data_get_none_returns_empty_list(
+        self,
+    ):
+        """test_data_get_none_returns_empty_list
+
+        Returns:
+
+        """
+
+        # Act
+        result = data_api.get_none()
+        # Assert
+        self.assertEqual(len(result), 0)
 
 
 class TestTimes(TestCase):

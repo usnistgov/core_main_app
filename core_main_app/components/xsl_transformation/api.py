@@ -102,3 +102,12 @@ def get_by_id_list(list_data_id):
     Returns: data object
     """
     return XslTransformation.get_by_id_list(list_data_id)
+
+
+def get_none():
+    """Return None object
+
+    Returns:
+
+    """
+    return XslTransformation.objects.none()

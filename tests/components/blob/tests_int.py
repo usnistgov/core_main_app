@@ -1,6 +1,7 @@
 """ Int test Blob
 """
 
+from django.core.files.uploadedfile import SimpleUploadedFile
 from tests.components.blob.fixtures.fixtures import (
     BlobFixtures,
     AccessControlBlobFixture,
@@ -11,6 +12,8 @@ from core_main_app.components.blob.models import Blob
 from core_main_app.utils.integration_tests.integration_base_test_case import (
     MongoIntegrationBaseTestCase,
 )
+from core_main_app.utils.tests_tools.MockUser import create_mock_user
+from core_main_app.components.blob import api as blob_api
 
 fixture_blob = BlobFixtures()
 fixture_blob_workspace = AccessControlBlobFixture()
@@ -182,3 +185,60 @@ class TestBlobGetAllByListWorkspace(MongoIntegrationBaseTestCase):
         )
         # Assert
         self.assertTrue(result.count() == 0)
+
+
+class TestBlobInsert(MongoIntegrationBaseTestCase):
+    """TestBlobInsert"""
+
+    def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
+        self.user = create_mock_user(1, False)
+        self.blob = Blob(
+            filename="blob",
+            user_id="1",
+            blob=SimpleUploadedFile("blob.txt", b"blob"),
+        )
+
+    def test_insert_blob_creates_blob(
+        self,
+    ):
+        """test_insert_blob_creates_blob
+
+        Returns:
+
+        """
+        # Act
+        result = blob_api.insert(self.blob, self.user)
+        # Assert
+        self.assertIsInstance(result, Blob)
+
+    def test_insert_blob_raises_api_error_if_already_exists(
+        self,
+    ):
+        """test_insert_blob_raises_api_error_if_already_exists
+
+        Returns:
+
+        """
+        # Arrange
+        blob = blob_api.insert(self.blob, self.user)
+        # Act # Assert
+        with self.assertRaises(exceptions.ApiError):
+            blob_api.insert(blob, self.user)
+
+    def test_insert_blob_without_blob_raises_error(self):
+        """test_insert_blob_without_blob_raises_error
+
+        Returns:
+
+        """
+        # Arrange
+        blob = Blob(filename="blob", user_id="1", blob=None)
+
+        # Act # Assert
+        with self.assertRaises(exceptions.ModelError):
+            blob_api.insert(blob, self.user)
