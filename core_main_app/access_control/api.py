@@ -90,9 +90,11 @@ def check_can_write(document, user):
     # TODO: data will inherit of workspace rights, which means a owner can't edit
     #  or delete a data if data in wkp that doesn't give hin write rights
     if hasattr(document, "workspace") and document.workspace is not None:
-        if workspace_api.is_workspace_public(document.workspace):
+        if workspace_api.is_workspace_public(
+            document.workspace
+        ) and document.user_id == str(user.id):
             has_perm_publish(user, rights.PUBLISH_DATA)
-        else:
+        else:  # Workspace not public OR editing someone else's data.
             _check_can_write_in_workspace(document.workspace, user)
 
     # not the owner and workspace is not set or None
