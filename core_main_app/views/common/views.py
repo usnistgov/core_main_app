@@ -88,7 +88,7 @@ class EditWorkspaceRights(CommonView):
             workspace = workspace_api.get_by_id(workspace_id)
         except DoesNotExist:
             return HttpResponseBadRequest("The workspace does not exist.")
-        except:
+        except Exception:
             return HttpResponseBadRequest("Something wrong happened.")
 
         if workspace.owner != str(request.user.id) and not self.administration:
@@ -119,7 +119,7 @@ class EditWorkspaceRights(CommonView):
                             "can_write": user in users_write_workspace,
                         }
                     )
-        except:
+        except Exception:
             detailed_users = []
 
         try:
@@ -148,7 +148,7 @@ class EditWorkspaceRights(CommonView):
                         "can_write": group in groups_write_workspace,
                     }
                 )
-        except:
+        except Exception:
             detailed_groups = []
 
         context = {

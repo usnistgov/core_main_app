@@ -18,6 +18,6 @@ def load_dependencies(validated_data):
         dependencies_dict = validated_data["dependencies_dict"]
         try:
             return json.loads(dependencies_dict)
-        except:
+        except Exception:
             raise RestApiError("Incorrect format of the dependencies parameter.")
     return None

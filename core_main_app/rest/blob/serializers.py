@@ -76,7 +76,7 @@ class BlobSerializer(ModelSerializer):
                 blob_pid = linked_blob_api.get_pid_for_blob(str(instance.id))
 
                 return urljoin(settings.SERVER_URI, join(sub_url, blob_pid.record_name))
-            except:
+            except Exception:
                 return None
 
     def get_handle(self, instance):

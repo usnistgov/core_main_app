@@ -18,7 +18,7 @@ def get_template_download_pattern():
     )
     # make url a regex
     download_template_regex = download_template_url.replace(
-        "template_id", "(?P<pk>\w+)"
+        "template_id", r"(?P<pk>\w+)"
     )
     # compile regex
     pattern = re.compile(download_template_regex)

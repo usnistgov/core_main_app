@@ -44,6 +44,6 @@ class DateTimeDecoder(json.JSONDecoder):
                 return datetime(**dictionary)
 
             return date_obj
-        except:
+        except Exception:
             dictionary["__type__"] = type
             return dictionary

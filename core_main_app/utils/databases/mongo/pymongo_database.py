@@ -17,7 +17,7 @@ def get_full_text_query(text):
 
     """
     full_text_query = {}
-    word_list = re.sub("[^\w]", " ", text, flags=re.UNICODE).split()
+    word_list = re.sub(r"[^\w]", " ", text, flags=re.UNICODE).split()
     word_list = ['"' + x + '"' for x in word_list]
     word_list = " ".join(word_list)
     if len(word_list) > 0:

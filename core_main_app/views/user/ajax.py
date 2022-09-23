@@ -110,7 +110,7 @@ def load_add_user_form(request):
         return HttpResponseBadRequest(escape(str(ace)))
     except DoesNotExist as dne:
         return HttpResponseBadRequest(escape(str(dne)))
-    except:
+    except Exception:
         return HttpResponseBadRequest("Something wrong happened.")
 
     context = {"add_user_form": form}
@@ -374,7 +374,7 @@ def load_add_group_form(request):
         return HttpResponseBadRequest(escape(str(ace)))
     except DoesNotExist as dne:
         return HttpResponseBadRequest(escape(str(dne)))
-    except:
+    except Exception:
         return HttpResponseBadRequest("Something wrong happened.")
 
     context = {"add_group_form": form}
@@ -505,5 +505,5 @@ def change_data_display(request):
         )
     except AccessControlError:
         return HttpResponseForbidden("Access Forbidden")
-    except:
+    except Exception:
         return HttpResponseBadRequest("Unexpected error")

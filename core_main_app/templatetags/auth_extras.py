@@ -32,7 +32,7 @@ def has_perm(user, permission):
         else:
             # We need to prefix with the app name
             access = user.has_perm(permission)
-    except:
+    except Exception:
         # If something went wrong, we ask for an empty permission to give the access if it's a superUser
         access = user.has_perm("")
 

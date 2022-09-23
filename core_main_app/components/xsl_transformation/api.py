@@ -13,7 +13,7 @@ def get_by_name(xslt_name):
     """
     try:
         return XslTransformation.get_by_name(xslt_name)
-    except:
+    except Exception:
         raise exceptions.ApiError("No transformation can be found with the given name")
 
 

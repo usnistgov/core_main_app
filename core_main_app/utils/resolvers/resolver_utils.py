@@ -20,7 +20,7 @@ def lmxl_uri_resolver(*args, **kwargs):
     try:
         request = kwargs.pop("request")
         session_id = request.session.session_key
-    except:
+    except Exception:
         logger.info("No request or session id is None")
         session_id = None
 

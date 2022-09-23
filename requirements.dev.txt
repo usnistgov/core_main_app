@@ -1,4 +1,5 @@
 black==22.8.*
+flake8
 mongomock==4.1.*
 python-dotenv==0.21.*
 psycopg2-binary==2.9.2
