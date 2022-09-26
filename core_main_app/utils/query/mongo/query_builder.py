@@ -35,7 +35,9 @@ class QueryBuilder:
             logger.warning(str(exception))
 
         self.criteria = [
-            prepare_query(query, regex=True, sub_document_root=sub_document_root)
+            prepare_query(
+                query, regex=True, sub_document_root=sub_document_root
+            )
         ]
 
     def add_list_criteria(self, object_name, list_ids):

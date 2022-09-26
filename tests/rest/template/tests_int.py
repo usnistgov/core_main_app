@@ -2,7 +2,9 @@
 """
 
 from rest_framework import status
-from tests.components.template.fixtures.fixtures import AccessControlTemplateFixture
+from tests.components.template.fixtures.fixtures import (
+    AccessControlTemplateFixture,
+)
 
 from core_main_app.rest.template import views as template_rest_views
 from core_main_app.utils.integration_tests.integration_base_test_case import (

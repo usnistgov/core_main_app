@@ -54,8 +54,12 @@ class TestGetAllByListTemplate(MongoIntegrationBaseTestCase):
             [template], ascending_order_by_field
         )
         # Assert
-        self.assertTrue(self.fixture.data_1.title == ascending_result.all()[0].title)
-        self.assertTrue(self.fixture.data_2.title == ascending_result.all()[1].title)
+        self.assertTrue(
+            self.fixture.data_1.title == ascending_result.all()[0].title
+        )
+        self.assertTrue(
+            self.fixture.data_2.title == ascending_result.all()[1].title
+        )
 
     def test_get_all_by_list_template_data_descending_sorting(self):
         """test_get_all_by_list_template_data_descending_sorting
@@ -98,8 +102,12 @@ class TestGetAllByListTemplate(MongoIntegrationBaseTestCase):
             [template], descending_order_by_multi_field
         )
         # Assert
-        self.assertEqual(self.fixture.data_1.title, ascending_result.all()[0].title)
-        self.assertEqual(self.fixture.data_2.user_id, ascending_result.all()[1].user_id)
+        self.assertEqual(
+            self.fixture.data_1.title, ascending_result.all()[0].title
+        )
+        self.assertEqual(
+            self.fixture.data_2.user_id, ascending_result.all()[1].user_id
+        )
 
         self.assertEqual(
             self.fixture.data_2.user_id, descending_result.all()[3].user_id
@@ -152,8 +160,12 @@ class TestGetAllByListWorkspace(MongoIntegrationBaseTestCase):
             [workspace], ascending_order_by_field
         )
         # Assert
-        self.assertTrue(self.fixture.data_3.title == ascending_result.all()[0].title)
-        self.assertTrue(self.fixture.data_5.title == ascending_result.all()[1].title)
+        self.assertTrue(
+            self.fixture.data_3.title == ascending_result.all()[0].title
+        )
+        self.assertTrue(
+            self.fixture.data_5.title == ascending_result.all()[1].title
+        )
 
     def test_get_all_by_list_workspace_data_descending_sorting(self):
         """test_get_all_by_list_workspace_data_descending_sorting
@@ -197,8 +209,12 @@ class TestGetAllByListWorkspace(MongoIntegrationBaseTestCase):
         )
 
         # Assert
-        self.assertEqual(self.fixture.data_3.user_id, ascending_result.all()[0].user_id)
-        self.assertEqual(self.fixture.data_5.user_id, ascending_result.all()[1].user_id)
+        self.assertEqual(
+            self.fixture.data_3.user_id, ascending_result.all()[0].user_id
+        )
+        self.assertEqual(
+            self.fixture.data_5.user_id, ascending_result.all()[1].user_id
+        )
 
         self.assertEqual(
             self.fixture.data_3.user_id, descending_result.all()[1].user_id

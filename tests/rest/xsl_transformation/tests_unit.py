@@ -6,7 +6,9 @@ from unittest.mock import patch
 from django.test.testcases import SimpleTestCase
 from rest_framework import status
 
-from core_main_app.components.xsl_transformation.models import XslTransformation
+from core_main_app.components.xsl_transformation.models import (
+    XslTransformation,
+)
 from core_main_app.rest.xsl_transformation import views as xsl_views
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
@@ -84,7 +86,9 @@ class TestPostXslTransformation(SimpleTestCase):
         self.data = None
 
     @patch.object(XslTransformation, "save_object")
-    def test_post_xsl_document_returns_status_403_if_user_is_not_admin(self, mock_save):
+    def test_post_xsl_document_returns_status_403_if_user_is_not_admin(
+        self, mock_save
+    ):
         """test_post_xsl_document_returns_status_403_if_user_is_not_admin
 
         Args:

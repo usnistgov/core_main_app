@@ -10,7 +10,9 @@ from core_main_app.utils.file import get_base_64_content_from_response
 class TestFileUtilsGetBase64ContentFromResponse(TestCase):
     """TestFileUtilsGetBase64ContentFromResponse"""
 
-    def test_get_base_64_content_from_response_return_base_64_encoded_string(self):
+    def test_get_base_64_content_from_response_return_base_64_encoded_string(
+        self,
+    ):
         """test get base 64 content from response return base 64 encoded string
 
         Returns:

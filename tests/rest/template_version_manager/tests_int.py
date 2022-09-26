@@ -15,7 +15,10 @@ from core_main_app.utils.integration_tests.integration_base_test_case import (
     MongoIntegrationBaseTestCase,
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
-from core_main_app.utils.tests_tools.RequestMock import RequestMock, create_mock_request
+from core_main_app.utils.tests_tools.RequestMock import (
+    RequestMock,
+    create_mock_request,
+)
 
 fixture_template = TemplateVersionManagerFixtures()
 
@@ -351,7 +354,9 @@ class TestTemplateVersionManagerDetail(MongoIntegrationBaseTestCase):
         )
 
         # Assert
-        self.assertEqual(response.data["title"], self.fixture.template_vm_1.title)
+        self.assertEqual(
+            response.data["title"], self.fixture.template_vm_1.title
+        )
 
     def test_get_wrong_id_returns_http_404(self):
         """test_get_wrong_id_returns_http_404
@@ -567,7 +572,9 @@ class TestUserTemplateList(MongoIntegrationBaseTestCase):
 
         # get template version manager from posted template
         template_id = response.data["id"]
-        template_object = template_api.get_by_id(template_id, request=mock_request)
+        template_object = template_api.get_by_id(
+            template_id, request=mock_request
+        )
 
         # Assert
         self.assertEqual(template_object.version_manager.user, user.id)
@@ -668,7 +675,9 @@ class TestUserTemplateList(MongoIntegrationBaseTestCase):
             "<xs:element name='root'/></xs:schema>"
         )
 
-        self.data["dependencies_dict"] = json.dumps({"template1_1.xsd": "bad_id"})
+        self.data["dependencies_dict"] = json.dumps(
+            {"template1_1.xsd": "bad_id"}
+        )
 
         # Act
         response = RequestMock.do_request_post(
@@ -770,7 +779,9 @@ class TestGlobalTemplateList(MongoIntegrationBaseTestCase):
 
         # get template version manager from posted template
         template_id = response.data["id"]
-        template_object = template_api.get_by_id(template_id, request=mock_request)
+        template_object = template_api.get_by_id(
+            template_id, request=mock_request
+        )
 
         # Assert
         self.assertEqual(template_object.version_manager.user, None)

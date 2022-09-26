@@ -4,7 +4,9 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.workspace.models import Workspace
-from core_main_app.utils.integration_tests.fixture_interface import FixtureInterface
+from core_main_app.utils.integration_tests.fixture_interface import (
+    FixtureInterface,
+)
 
 
 class BlobFixtures(FixtureInterface):

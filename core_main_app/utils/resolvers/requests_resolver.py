@@ -2,7 +2,9 @@
 """
 import logging
 
-from xml_utils.xml_validation.resolvers.default_uri_resolver import DefaultURIResolver
+from xml_utils.xml_validation.resolvers.default_uri_resolver import (
+    DefaultURIResolver,
+)
 from core_main_app.utils.requests_utils.requests_utils import send_get_request
 
 logger = logging.getLogger(__name__)
@@ -29,7 +31,9 @@ class RequestsResolver(DefaultURIResolver):
 
         """
         try:
-            response = send_get_request(url, cookies={"sessionid": self.session_id})
+            response = send_get_request(
+                url, cookies={"sessionid": self.session_id}
+            )
             return self.resolve_string(response.content, context)
         except Exception:
             # if an error occurs return None to use the next registered resolver (or lxml default resolver)

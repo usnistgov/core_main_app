@@ -8,15 +8,21 @@ from core_main_app.components.template.models import Template
 from core_main_app.components.template_xsl_rendering import (
     api as template_xsl_rendering_api,
 )
-from core_main_app.components.template_xsl_rendering.models import TemplateXslRendering
-from core_main_app.components.xsl_transformation.models import XslTransformation
+from core_main_app.components.template_xsl_rendering.models import (
+    TemplateXslRendering,
+)
+from core_main_app.components.xsl_transformation.models import (
+    XslTransformation,
+)
 
 
 class TestTemplateXslRenderingDelete(TestCase):
     """TestTemplateXslRenderingDelete"""
 
     @patch.object(TemplateXslRendering, "delete")
-    def test_delete_template_xsl_rendering_raises_exception_if_error(self, mock_delete):
+    def test_delete_template_xsl_rendering_raises_exception_if_error(
+        self, mock_delete
+    ):
         """test delete template xsl rendering raises exception if error
 
         Args:
@@ -60,7 +66,9 @@ class TestTemplateXslRenderingGetById(TestCase):
         self.assertIsInstance(result, TemplateXslRendering)
 
     @patch.object(TemplateXslRendering, "get_by_id")
-    def test_get_by_id_raises_exception_if_object_does_not_exist(self, mock_get_by_id):
+    def test_get_by_id_raises_exception_if_object_does_not_exist(
+        self, mock_get_by_id
+    ):
         """test get by id raises exception if object does not exist
 
         Args:
@@ -79,7 +87,9 @@ class TestTemplateXslRenderingGetById(TestCase):
             template_xsl_rendering_api.get_by_id(mock_absent_id)
 
     @patch.object(TemplateXslRendering, "get_by_id")
-    def test_get_by_id_raises_exception_if_internal_error(self, mock_get_by_id):
+    def test_get_by_id_raises_exception_if_internal_error(
+        self, mock_get_by_id
+    ):
         """test get by id raises exception if internal error
 
         Args:
@@ -170,7 +180,9 @@ class TestTemplateXslRenderingGetByTemplateHash(TestCase):
     """TestTemplateXslRenderingGetByTemplateHash"""
 
     @patch.object(TemplateXslRendering, "get_by_template_hash")
-    def test_get_by_template_hash_returns_object(self, mock_get_by_template_hash):
+    def test_get_by_template_hash_returns_object(
+        self, mock_get_by_template_hash
+    ):
         """test get by template hash returns object
 
         Args:
@@ -204,7 +216,9 @@ class TestTemplateXslRenderingGetByTemplateHash(TestCase):
         """
         # Arrange
         mock_absent_hash = "dummy_hash"
-        mock_get_by_template_hash.side_effect = exceptions.DoesNotExist("Error.")
+        mock_get_by_template_hash.side_effect = exceptions.DoesNotExist(
+            "Error."
+        )
 
         # Act + Assert
         with self.assertRaises(exceptions.DoesNotExist):
@@ -227,7 +241,9 @@ class TestTemplateXslRenderingGetByTemplateHash(TestCase):
         mock_get_by_template_hash.return_value = []
 
         # Act
-        result = template_xsl_rendering_api.get_by_template_hash(mock_absent_hash)
+        result = template_xsl_rendering_api.get_by_template_hash(
+            mock_absent_hash
+        )
         # Assert
         self.assertEqual(len(result), 0)
 
@@ -278,7 +294,9 @@ class TestTemplateXslRenderingGetAll(TestCase):
         result = template_xsl_rendering_api.get_all()
 
         # Assert
-        self.assertTrue(all(isinstance(item, TemplateXslRendering) for item in result))
+        self.assertTrue(
+            all(isinstance(item, TemplateXslRendering) for item in result)
+        )
 
 
 def _create_template_xsl_rendering():
@@ -289,7 +307,9 @@ def _create_template_xsl_rendering():
 
     """
     template_xsl_rendering = TemplateXslRendering()
-    template_xsl_rendering = _set_template_xsl_rendering_fields(template_xsl_rendering)
+    template_xsl_rendering = _set_template_xsl_rendering_fields(
+        template_xsl_rendering
+    )
 
     return template_xsl_rendering
 

@@ -26,8 +26,12 @@ from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
 )
 from core_main_app.components.web_page.models import WebPage
-from core_main_app.components.xsl_transformation import api as xslt_transformation_api
-from core_main_app.components.xsl_transformation.models import XslTransformation
+from core_main_app.components.xsl_transformation import (
+    api as xslt_transformation_api,
+)
+from core_main_app.components.xsl_transformation.models import (
+    XslTransformation,
+)
 from core_main_app.templatetags.stripjs import stripjs
 from core_main_app.utils.rendering import admin_render
 from core_main_app.utils.xml import get_imports_and_includes
@@ -76,8 +80,12 @@ def manage_templates(request):
 
     context = {
         "object_name": "Template",
-        "available": [template for template in templates if not template.is_disabled],
-        "disabled": [template for template in templates if template.is_disabled],
+        "available": [
+            template for template in templates if not template.is_disabled
+        ],
+        "disabled": [
+            template for template in templates if template.is_disabled
+        ],
     }
 
     assets = {
@@ -184,7 +192,10 @@ def upload_template(request):
                 "path": "core_main_app/admin/js/templates/upload/dependencies.js",
                 "is_raw": False,
             },
-            {"path": "core_main_app/common/js/backtoprevious.js", "is_raw": True},
+            {
+                "path": "core_main_app/common/js/backtoprevious.js",
+                "is_raw": True,
+            },
         ]
     }
 
@@ -294,7 +305,9 @@ def _save_template(request, assets, context):
         template_version_manager_api.insert(
             template_version_manager, template, request=request
         )
-        return HttpResponseRedirect(reverse("core-admin:core_main_app_templates"))
+        return HttpResponseRedirect(
+            reverse("core-admin:core_main_app_templates")
+        )
     except exceptions.XSDError as xsd_error:
         return handle_xsd_errors(
             request, assets, context, xsd_error, xsd_data, xsd_file.name
@@ -457,7 +470,9 @@ class UploadXSLTView(View):
             return self._save_xslt(request)
         else:
             # Display error from the form
-            return admin_render(request, self.template_name, context=self.context)
+            return admin_render(
+                request, self.template_name, context=self.context
+            )
 
     def _save_xslt(self, request):
         """Saves an XSLT.
@@ -478,20 +493,30 @@ class UploadXSLTView(View):
             )
             xslt_transformation_api.upsert(xslt)
 
-            return HttpResponseRedirect(reverse("core-admin:core_main_app_xslt"))
+            return HttpResponseRedirect(
+                reverse("core-admin:core_main_app_xslt")
+            )
         except exceptions.NotUniqueError:
-            self.context.update({"errors": html_escape("This name already exists.")})
+            self.context.update(
+                {"errors": html_escape("This name already exists.")}
+            )
             return admin_render(
-                request, "core_main_app/admin/xslt/upload.html", context=self.context
+                request,
+                "core_main_app/admin/xslt/upload.html",
+                context=self.context,
             )
         except Exception as exception:
             self.context.update({"errors": html_escape(str(exception))})
             return admin_render(
-                request, "core_main_app/admin/xslt/upload.html", context=self.context
+                request,
+                "core_main_app/admin/xslt/upload.html",
+                context=self.context,
             )
 
 
-def handle_xsd_errors(request, assets, context, xsd_error, xsd_content, filename):
+def handle_xsd_errors(
+    request, assets, context, xsd_error, xsd_content, filename
+):
     """Handle XSD errors. Builds dependency resolver if needed.
 
     Args:
@@ -518,7 +543,9 @@ def handle_xsd_errors(request, assets, context, xsd_error, xsd_content, filename
     return _upload_template_response(request, assets, context)
 
 
-def get_dependency_resolver_html(imports, includes, xsd_data, filename, request):
+def get_dependency_resolver_html(
+    imports, includes, xsd_data, filename, request
+):
     """Return HTML for dependency resolver form.
 
     Args:
@@ -532,15 +559,19 @@ def get_dependency_resolver_html(imports, includes, xsd_data, filename, request)
 
     """
     # build the list of dependencies
-    current_templates = template_version_manager_api.get_global_version_managers(
-        request=request, _cls=False
+    current_templates = (
+        template_version_manager_api.get_global_version_managers(
+            request=request, _cls=False
+        )
     )
     list_dependencies_template = loader.get_template(
         "core_main_app/admin/list_dependencies.html"
     )
     context = {
         "templates": [
-            template for template in current_templates if not template.is_disabled
+            template
+            for template in current_templates
+            if not template.is_disabled
         ],
     }
     list_dependencies_html = list_dependencies_template.render(context)
@@ -583,19 +614,25 @@ class WebPageView(View):
             content = kwargs["current_content"]
         else:
             website_object = self.api.get()
-            content = website_object.content if website_object is not None else ""
+            content = (
+                website_object.content if website_object is not None else ""
+            )
 
         context = {"form": self.form_class({"content": content})}
 
         if "error_id" in kwargs:
             if kwargs["error_id"] < len(constants.MARKDOWN_ERRORS):
-                context["error_msg"] = constants.MARKDOWN_ERRORS[kwargs["error_id"]]
+                context["error_msg"] = constants.MARKDOWN_ERRORS[
+                    kwargs["error_id"]
+                ]
             else:
                 context["error_msg"] = constants.UNKNOWN_ERROR
 
         assets = {"css": ["core_main_app/admin/css/web_page/style.css"]}
 
-        return admin_render(request, self.get_redirect, context=context, assets=assets)
+        return admin_render(
+            request, self.get_redirect, context=context, assets=assets
+        )
 
     @method_decorator(staff_member_required)
     def post(self, request):
@@ -617,7 +654,9 @@ class WebPageView(View):
             markdown_content = markdown(content)
             if markdown_content != stripjs(markdown_content):
                 return self.get(
-                    request, current_content=content, error_id=constants.MARKDOWN_UNSAFE
+                    request,
+                    current_content=content,
+                    error_id=constants.MARKDOWN_UNSAFE,
                 )
 
             try:
@@ -686,7 +725,10 @@ def data_migration(request):
             )
             version_index += 1
 
-    context = {"templates": templates, "xslt": xslt_transformation_api.get_all()}
+    context = {
+        "templates": templates,
+        "xslt": xslt_transformation_api.get_all(),
+    }
 
     return admin_render(
         request,

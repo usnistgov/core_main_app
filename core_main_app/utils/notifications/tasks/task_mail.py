@@ -3,7 +3,11 @@
 from logging import getLogger
 
 from celery import shared_task
-from django.core.mail import send_mail as django_send_mail, mail_admins, mail_managers
+from django.core.mail import (
+    send_mail as django_send_mail,
+    mail_admins,
+    mail_managers,
+)
 from django.template import loader
 
 from core_main_app.settings import SERVER_EMAIL, EMAIL_SUBJECT_PREFIX
@@ -76,12 +80,15 @@ def send_mail_to_administrators(
         )
     except Exception as exception:
         logger.warning(
-            "send_mail_to_administrators threw an exception:  %s", str(exception)
+            "send_mail_to_administrators threw an exception:  %s",
+            str(exception),
         )
 
 
 @shared_task
-def send_mail_to_managers(subject, path_to_template, context=None, fail_silently=True):
+def send_mail_to_managers(
+    subject, path_to_template, context=None, fail_silently=True
+):
     """Send email to managers.
 
     Args:
@@ -107,4 +114,6 @@ def send_mail_to_managers(subject, path_to_template, context=None, fail_silently
             fail_silently=fail_silently,
         )
     except Exception as exception:
-        logger.warning("send_mail_to_managers throws an exception: %s", str(exception))
+        logger.warning(
+            "send_mail_to_managers throws an exception: %s", str(exception)
+        )

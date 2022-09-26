@@ -13,7 +13,10 @@ def update_logger_with_local_app(logging_dict, local_logger_conf, list_app):
     Returns:
     """
     logging_dict["loggers"].update(
-        {app: copy.deepcopy(local_logger_conf) for app in get_list_local_app(list_app)}
+        {
+            app: copy.deepcopy(local_logger_conf)
+            for app in get_list_local_app(list_app)
+        }
     )
 
 

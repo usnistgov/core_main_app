@@ -87,7 +87,9 @@ class AbstractBlobList(APIView, metaclass=ABCMeta):
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class BlobListAdmin(AbstractBlobList):
@@ -205,7 +207,9 @@ class BlobList(AbstractBlobList):
         """
         try:
             # Build serializer
-            serializer = BlobSerializer(data=request.data, context={"request": request})
+            serializer = BlobSerializer(
+                data=request.data, context={"request": request}
+            )
 
             # Validate data
             serializer.is_valid(raise_exception=True)
@@ -220,7 +224,9 @@ class BlobList(AbstractBlobList):
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class BlobDetail(APIView):
@@ -269,7 +275,9 @@ class BlobDetail(APIView):
             blob_object = self.get_object(request, pk)
 
             # Serialize object
-            serializer = BlobSerializer(blob_object, context={"request": request})
+            serializer = BlobSerializer(
+                blob_object, context={"request": request}
+            )
 
             # Return response
             return Response(serializer.data)
@@ -281,7 +289,9 @@ class BlobDetail(APIView):
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     def delete(self, request, pk):
         """Delete Blob
@@ -318,7 +328,9 @@ class BlobDetail(APIView):
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class BlobDownload(APIView):
@@ -364,7 +376,9 @@ class BlobDownload(APIView):
             # Get object
             blob_object = self.get_object(request, pk)
 
-            return get_file_http_response(blob_object.blob.read(), blob_object.filename)
+            return get_file_http_response(
+                blob_object.blob.read(), blob_object.filename
+            )
         except AccessControlError as exception:
             content = {"message": str(exception)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
@@ -373,7 +387,9 @@ class BlobDownload(APIView):
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class BlobDeleteList(APIView):
@@ -438,7 +454,9 @@ class BlobDeleteList(APIView):
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class BlobAssign(APIView):
@@ -516,7 +534,9 @@ class BlobAssign(APIView):
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class BlobChangeOwner(APIView):
@@ -594,4 +614,6 @@ class BlobChangeOwner(APIView):
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

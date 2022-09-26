@@ -95,7 +95,9 @@ def is_schema_valid(xsd_string, *args, **kwargs):
         errors_str = ", ".join(errors)
         raise exceptions.CoreError(errors_str)
 
-    error = validate_xml_schema(XSDTree.build_tree(xsd_string), *args, **kwargs)
+    error = validate_xml_schema(
+        XSDTree.build_tree(xsd_string), *args, **kwargs
+    )
     if error is not None:
         raise exceptions.XSDError(error)
 
@@ -146,9 +148,13 @@ def has_xsl_namespace(xml_string):
     """
     has_namespace = False
     try:
-        has_namespace = XSL_NAMESPACE in list(get_namespaces(xml_string).values())
+        has_namespace = XSL_NAMESPACE in list(
+            get_namespaces(xml_string).values()
+        )
     except Exception as exception:
-        logger.warning("has_xsl_namespace threw an exception: %s", str(exception))
+        logger.warning(
+            "has_xsl_namespace threw an exception: %s", str(exception)
+        )
 
     return has_namespace
 
@@ -173,7 +179,9 @@ def unparse(json_dict, full_document=True):
     return xmltodict.unparse(preprocessed_dict, full_document=full_document)
 
 
-def raw_xml_to_dict(raw_xml, postprocessor=None, force_list=None, list_limit=None):
+def raw_xml_to_dict(
+    raw_xml, postprocessor=None, force_list=None, list_limit=None
+):
     """Transform a raw xml to dict. Returns an empty dict if the parsing failed.
 
     Args:
@@ -240,7 +248,9 @@ def remove_lists_from_xml_dict(xml_dict, max_list_size=0):
         del xml_dict[key_to_delete]
 
 
-def get_template_with_server_dependencies(xsd_string, dependencies, request=None):
+def get_template_with_server_dependencies(
+    xsd_string, dependencies, request=None
+):
     """Return the template with schema locations pointing to the server.
 
     Args:
@@ -255,13 +265,17 @@ def get_template_with_server_dependencies(xsd_string, dependencies, request=None
     try:
         xsd_tree = update_dependencies(xsd_string, dependencies)
     except Exception:
-        raise exceptions.XSDError("Something went wrong during dependency update.")
+        raise exceptions.XSDError(
+            "Something went wrong during dependency update."
+        )
 
     # validate the schema
     try:
         error = validate_xml_schema(xsd_tree, request=request)
     except Exception:
-        raise exceptions.XSDError("Something went wrong during XSD validation.")
+        raise exceptions.XSDError(
+            "Something went wrong during XSD validation."
+        )
 
     # is it a valid XML document ?
     if error is None:
@@ -284,7 +298,9 @@ def get_hash(xml_string):
     try:
         return xsd_hash.get_hash(xml_string)
     except Exception:
-        raise exceptions.XSDError("Something wrong happened during the hashing.")
+        raise exceptions.XSDError(
+            "Something wrong happened during the hashing."
+        )
 
 
 def get_numeric_value(value):
@@ -358,9 +374,13 @@ def get_imports_and_includes(xsd_string):
     """
     xsd_tree = XSDTree.build_tree(xsd_string)
     # get the imports
-    imports = xsd_tree.findall(f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}import")
+    imports = xsd_tree.findall(
+        f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}import"
+    )
     # get the includes
-    includes = xsd_tree.findall(f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}include")
+    includes = xsd_tree.findall(
+        f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}include"
+    )
     return imports, includes
 
 
@@ -377,7 +397,9 @@ def update_dependencies(xsd_string, dependencies):
     # build the tree
     xsd_tree = XSDTree.build_tree(xsd_string)
     # get the imports
-    xsd_imports = xsd_tree.findall(f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}import")
+    xsd_imports = xsd_tree.findall(
+        f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}import"
+    )
     # get the includes
     xsd_includes = xsd_tree.findall(
         f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}include"
@@ -387,15 +409,15 @@ def update_dependencies(xsd_string, dependencies):
         if dependency_id is not None:
             for xsd_include in xsd_includes:
                 if schema_location == xsd_include.attrib["schemaLocation"]:
-                    xsd_include.attrib["schemaLocation"] = _get_schema_location_uri(
-                        dependency_id
-                    )
+                    xsd_include.attrib[
+                        "schemaLocation"
+                    ] = _get_schema_location_uri(dependency_id)
 
             for xsd_import in xsd_imports:
                 if schema_location == xsd_import.attrib["schemaLocation"]:
-                    xsd_import.attrib["schemaLocation"] = _get_schema_location_uri(
-                        dependency_id
-                    )
+                    xsd_import.attrib[
+                        "schemaLocation"
+                    ] = _get_schema_location_uri(dependency_id)
     return xsd_tree
 
 
@@ -452,9 +474,13 @@ def _check_core_support(xsd_string):
     xsd_tree = XSDTree.build_tree(xsd_string)
 
     # get the imports
-    imports = xsd_tree.findall(f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}import")
+    imports = xsd_tree.findall(
+        f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}import"
+    )
     # get the includes
-    includes = xsd_tree.findall(f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}include")
+    includes = xsd_tree.findall(
+        f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}include"
+    )
 
     if len(imports) != 0 or len(includes) != 0:
         for el_import in imports:
@@ -497,7 +523,9 @@ def _get_schema_location_uri(schema_id):
     Returns:
 
     """
-    url = reverse("core_main_app_rest_template_download", kwargs={"pk": str(schema_id)})
+    url = reverse(
+        "core_main_app_rest_template_download", kwargs={"pk": str(schema_id)}
+    )
     return str(SERVER_URI) + url
 
 
@@ -587,7 +615,9 @@ def get_content_by_xpath(xml_string, xpath, namespaces=None):
     # Iterate through all xml elements found
     for value in values_list:
         # Get string value for element
-        str_value = value if isinstance(value, str) else XSDTree.tostring(value)
+        str_value = (
+            value if isinstance(value, str) else XSDTree.tostring(value)
+        )
         # Add value to list
         str_values_list.append(str_value)
 

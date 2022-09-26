@@ -68,7 +68,9 @@ def prepare_query(query_dict, regex=True, sub_document_root=None):
     return query
 
 
-def get_access_filters_from_query(query_dict, workspace_list=None, user_list=None):
+def get_access_filters_from_query(
+    query_dict, workspace_list=None, user_list=None
+):
     """Get workspaces criteria from queries
 
     Args:
@@ -124,7 +126,10 @@ def get_access_filters_from_query(query_dict, workspace_list=None, user_list=Non
             if key in ["$and", "$or"]:
                 # iterate though sub dict
                 for sub_value in value:
-                    sub_workspace_list, sub_user_list = get_access_filters_from_query(
+                    (
+                        sub_workspace_list,
+                        sub_user_list,
+                    ) = get_access_filters_from_query(
                         sub_value, workspace_list, user_list
                     )
                     # add values found in sub dict to existing lists
@@ -271,12 +276,18 @@ def convert_to_django(query_dict):
             # if operators text and search found
             elif key == "$text" and "$search" in value:
                 if uses_postgresql_backend():
-                    q_list &= Q(vector_column=query_dict["$text"]["$search"].strip())
+                    q_list &= Q(
+                        vector_column=query_dict["$text"]["$search"].strip()
+                    )
                 else:
                     # extract keywords from dict
-                    for keyword in query_dict["$text"]["$search"].strip().split(" "):
+                    for keyword in (
+                        query_dict["$text"]["$search"].strip().split(" ")
+                    ):
                         # add text filter
-                        q_list &= Q(dict_content__icontains=keyword.replace('"', ""))
+                        q_list &= Q(
+                            dict_content__icontains=keyword.replace('"', "")
+                        )
             else:
                 # raise an error if another operator was found
                 raise CoreError(f"Unsupported operator found: {key}")

@@ -31,4 +31,6 @@ def validate_alphanum(name):
 
     """
     if re.match(r"^[a-zA-Z][a-zA-Z0-9]+$", name) is None:
-        raise ValidationError("Name should only contains alpha-numerical characters.")
+        raise ValidationError(
+            "Name should only contains alpha-numerical characters."
+        )

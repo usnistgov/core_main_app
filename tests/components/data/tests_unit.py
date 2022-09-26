@@ -79,7 +79,10 @@ class TestDataUpsert(TestCase):
         """
         # Arrange
         data = _create_data(
-            _get_template(), user_id="2", title="new_title", content="<tag></tag>"
+            _get_template(),
+            user_id="2",
+            title="new_title",
+            content="<tag></tag>",
         )
         mock_save.return_value = data
         mock_check.return_value = None
@@ -109,7 +112,10 @@ class TestDataUpsert(TestCase):
         """
         # Arrange
         data = _create_data(
-            _get_template(), user_id="3", title="new_title", content="<tag></tag>"
+            _get_template(),
+            user_id="3",
+            title="new_title",
+            content="<tag></tag>",
         )
         mock_save.return_value = data
         mock_check.return_value = None
@@ -139,7 +145,9 @@ class TestDataUpsert(TestCase):
         """
         # Arrange
         xml = "<new_tag></new_tag>"
-        data = _create_data(_get_template(), user_id="3", title="title", content=xml)
+        data = _create_data(
+            _get_template(), user_id="3", title="title", content=xml
+        )
         mock_save.return_value = data
         mock_check.return_value = None
         mock_convert_file.return_value = None
@@ -212,21 +220,27 @@ class TestDataUpsert(TestCase):
         data_api.upsert(data, mock_request)
         self.assertNotEqual(creation_date, data.last_modification_date)
 
-    def test_data_upsert_raises_xml_error_if_failed_during_xml_validation(self):
+    def test_data_upsert_raises_xml_error_if_failed_during_xml_validation(
+        self,
+    ):
         """test_data_upsert_raises_xml_error_if_failed_during_xml_validation
 
         Returns:
 
         """
         # Arrange
-        data = _create_data(_get_template(), user_id="3", title="title", content="")
+        data = _create_data(
+            _get_template(), user_id="3", title="title", content=""
+        )
         mock_user = create_mock_user("3")
         mock_request = create_mock_request(user=mock_user)
         # Act # Assert
         with self.assertRaises(exceptions.XMLError):
             data_api.upsert(data, mock_request)
 
-    def test_data_upsert_raises_xsd_error_if_failed_during_xsd_validation(self):
+    def test_data_upsert_raises_xsd_error_if_failed_during_xsd_validation(
+        self,
+    ):
         """test_data_upsert_raises_xsd_error_if_failed_during_xsd_validation
 
         Returns:
@@ -466,7 +480,9 @@ class TestDataCheckXmlFileIsValid(TestCase):
         # Arrange
         user = create_mock_user("3")
         mock_request = create_mock_request(user=user)
-        data = _create_data(_get_template(), user_id="3", title="title", content="")
+        data = _create_data(
+            _get_template(), user_id="3", title="title", content=""
+        )
         # Act # Assert
         with self.assertRaises(exceptions.XMLError):
             data_api.check_xml_file_is_valid(data, request=mock_request)

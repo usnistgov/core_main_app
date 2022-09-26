@@ -32,7 +32,9 @@ def get_all_by_template(template):
     return Data.objects.filter(template=template)
 
 
-def get_all_by_list_template(list_template, order_by_field=DATA_SORTING_FIELDS):
+def get_all_by_list_template(
+    list_template, order_by_field=DATA_SORTING_FIELDS
+):
     """Get all data that belong to the template list.
 
     Args:
@@ -119,7 +121,9 @@ def upsert_data(data):
     from core_main_app.components.data.api import check_xml_file_is_valid
 
     if data.xml_content is None:
-        raise exceptions.ApiError("Unable to save data: xml_content field is not set.")
+        raise exceptions.ApiError(
+            "Unable to save data: xml_content field is not set."
+        )
 
     check_xml_file_is_valid(data)
     data.convert_and_save()

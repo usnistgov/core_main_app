@@ -110,7 +110,9 @@ class TestBlobGetAllByWorkspace(MongoIntegrationBaseTestCase):
 
     fixture = fixture_blob_workspace
 
-    def test_blob_get_all_by_workspace_return_collection_of_blob_from_user(self):
+    def test_blob_get_all_by_workspace_return_collection_of_blob_from_user(
+        self,
+    ):
         """test_blob_get_all_by_workspace_return_collection_of_blob_from_user
 
         Returns:
@@ -120,7 +122,10 @@ class TestBlobGetAllByWorkspace(MongoIntegrationBaseTestCase):
         result = Blob.get_all_by_workspace(self.fixture.workspace_1)
         # Assert
         self.assertTrue(
-            all(item.user_id == str(self.fixture.workspace_1.owner) for item in result)
+            all(
+                item.user_id == str(self.fixture.workspace_1.owner)
+                for item in result
+            )
         )
 
     def test_blob_get_all_by_workspace_return_empty_collection_of_blob_from_empty_workspace(
@@ -142,7 +147,9 @@ class TestBlobGetAllByListWorkspace(MongoIntegrationBaseTestCase):
 
     fixture = fixture_blob_workspace
 
-    def test_blob_get_all_by_workspace_return_collection_of_blob_from_user(self):
+    def test_blob_get_all_by_workspace_return_collection_of_blob_from_user(
+        self,
+    ):
         """test_blob_get_all_by_workspace_return_collection_of_blob_from_user
 
         Returns:
@@ -170,6 +177,8 @@ class TestBlobGetAllByListWorkspace(MongoIntegrationBaseTestCase):
 
         """
         # Act
-        result = Blob.get_all_by_list_workspace([self.fixture.workspace_without_data])
+        result = Blob.get_all_by_list_workspace(
+            [self.fixture.workspace_without_data]
+        )
         # Assert
         self.assertTrue(result.count() == 0)

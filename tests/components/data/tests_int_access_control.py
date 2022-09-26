@@ -43,7 +43,9 @@ class TestDataGetById(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        data_id = self.fixture.data_collection[fixture_data.USER_1_WORKSPACE_1].id
+        data_id = self.fixture.data_collection[
+            fixture_data.USER_1_WORKSPACE_1
+        ].id
         mock_user = _create_user(1)
         get_all_workspaces_with_read_access_by_user.return_value = [
             fixture_data.workspace_1
@@ -65,7 +67,9 @@ class TestDataGetById(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        data_id = self.fixture.data_collection[fixture_data.USER_1_WORKSPACE_1].id
+        data_id = self.fixture.data_collection[
+            fixture_data.USER_1_WORKSPACE_1
+        ].id
         mock_user = _create_user(1)
         get_all_workspaces_with_read_access_by_user.return_value = []
         data = data_api.get_by_id(data_id, mock_user)
@@ -85,7 +89,9 @@ class TestDataGetById(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        data_id = self.fixture.data_collection[fixture_data.USER_1_WORKSPACE_1].id
+        data_id = self.fixture.data_collection[
+            fixture_data.USER_1_WORKSPACE_1
+        ].id
         mock_user = _create_user(2)
         get_all_workspaces_with_read_access_by_user.return_value = []
         with self.assertRaises(AccessControlError):
@@ -97,7 +103,9 @@ class TestDataGetById(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        data_id = self.fixture.data_collection[fixture_data.USER_1_NO_WORKSPACE].id
+        data_id = self.fixture.data_collection[
+            fixture_data.USER_1_NO_WORKSPACE
+        ].id
         mock_user = _create_user(1)
         data = data_api.get_by_id(data_id, mock_user)
         self.assertTrue(isinstance(data, Data))
@@ -108,7 +116,9 @@ class TestDataGetById(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        data_id = self.fixture.data_collection[fixture_data.USER_1_NO_WORKSPACE].id
+        data_id = self.fixture.data_collection[
+            fixture_data.USER_1_NO_WORKSPACE
+        ].id
         mock_user = _create_user(2)
         with self.assertRaises(AccessControlError):
             data_api.get_by_id(data_id, mock_user)
@@ -148,7 +158,9 @@ class TestDataGetAllByUser(MongoIntegrationBaseTestCase):
     @patch(
         "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
     )
-    def test_get_all_returns_data(self, get_all_workspaces_with_read_access_by_user):
+    def test_get_all_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
         """test get all returns data
 
         Args:
@@ -387,9 +399,7 @@ class TestDataUpsert(MongoIntegrationBaseTestCase):
         get_all_workspaces_with_write_access_by_user.return_value = [
             fixture_data.workspace_2
         ]
-        fixture_data.data_4.xml_content = (
-            '<tag  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ></tag>'
-        )
+        fixture_data.data_4.xml_content = '<tag  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ></tag>'
         data_api.upsert(fixture_data.data_4, mock_request)
 
     @patch(
@@ -432,9 +442,7 @@ class TestDataUpsert(MongoIntegrationBaseTestCase):
         get_all_workspaces_with_write_access_by_user.return_value = [
             fixture_data.workspace_1
         ]
-        fixture_data.data_3.xml_content = (
-            '<tag  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ></tag>'
-        )
+        fixture_data.data_3.xml_content = '<tag  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ></tag>'
         data_api.upsert(fixture_data.data_3, mock_request)
 
     def test_edit_own_data_with_no_workspace_updates_data(self):
@@ -445,9 +453,7 @@ class TestDataUpsert(MongoIntegrationBaseTestCase):
         """
         user = create_mock_user(user_id=1)
         mock_request = create_mock_request(user)
-        fixture_data.data_1.xml_content = (
-            '<tag  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ></tag>'
-        )
+        fixture_data.data_1.xml_content = '<tag  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ></tag>'
         data_api.upsert(fixture_data.data_1, mock_request)
 
 
@@ -713,7 +719,8 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         data_list = data_api.execute_json_query(query, mock_user)
         self.assertTrue(data_list.count() > 0)
         self.assertTrue(
-            str(data.user_id) == "1" or str(data.workspace) == "1" for data in data_list
+            str(data.user_id) == "1" or str(data.workspace) == "1"
+            for data in data_list
         )
 
     @patch(
@@ -738,7 +745,8 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         data_list = data_api.execute_json_query(query, mock_user)
         self.assertTrue(data_list.count() > 0)
         self.assertTrue(
-            str(data.user_id) == "2" or str(data.workspace) == "1" for data in data_list
+            str(data.user_id) == "2" or str(data.workspace) == "1"
+            for data in data_list
         )
 
     @patch(
@@ -763,7 +771,8 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         data_list = data_api.execute_json_query(query, mock_user)
         self.assertTrue(data_list.count() > 0)
         self.assertTrue(
-            str(data.user_id) == "3" or str(data.workspace) == "1" for data in data_list
+            str(data.user_id) == "3" or str(data.workspace) == "1"
+            for data in data_list
         )
 
     @patch(
@@ -1525,7 +1534,8 @@ class TestDataDelete(MongoIntegrationBaseTestCase):
             fixture_data.workspace_1
         ]
         data_api.delete(
-            fixture_data.data_collection[fixture_data.USER_1_WORKSPACE_1], mock_user
+            fixture_data.data_collection[fixture_data.USER_1_WORKSPACE_1],
+            mock_user,
         )
 
     # FIXME: test is not true.
@@ -1549,7 +1559,8 @@ class TestDataDelete(MongoIntegrationBaseTestCase):
         mock_user = _create_user(1)
         get_all_workspaces_with_write_access_by_user.return_value = []
         data_api.delete(
-            fixture_data.data_collection[fixture_data.USER_1_WORKSPACE_1], mock_user
+            fixture_data.data_collection[fixture_data.USER_1_WORKSPACE_1],
+            mock_user,
         )
 
     @patch(
@@ -1571,7 +1582,8 @@ class TestDataDelete(MongoIntegrationBaseTestCase):
             fixture_data.workspace_2
         ]
         data_api.delete(
-            fixture_data.data_collection[fixture_data.USER_2_WORKSPACE_2], mock_user
+            fixture_data.data_collection[fixture_data.USER_2_WORKSPACE_2],
+            mock_user,
         )
 
     @patch(
@@ -1594,7 +1606,8 @@ class TestDataDelete(MongoIntegrationBaseTestCase):
         ]
         with self.assertRaises(AccessControlError):
             data_api.delete(
-                fixture_data.data_collection[fixture_data.USER_2_WORKSPACE_2], mock_user
+                fixture_data.data_collection[fixture_data.USER_2_WORKSPACE_2],
+                mock_user,
             )
 
     @patch(
@@ -1615,7 +1628,8 @@ class TestDataDelete(MongoIntegrationBaseTestCase):
         get_all_workspaces_with_write_access_by_user.return_value = []
         with self.assertRaises(AccessControlError):
             data_api.delete(
-                fixture_data.data_collection[fixture_data.USER_1_WORKSPACE_1], mock_user
+                fixture_data.data_collection[fixture_data.USER_1_WORKSPACE_1],
+                mock_user,
             )
 
     @patch(
@@ -1654,7 +1668,9 @@ class TestDataChangeOwner(MongoIntegrationBaseTestCase):
         """
         mock_owner = _create_user(1)
         data_api.change_owner(
-            document=fixture_data.data_collection[fixture_data.USER_1_NO_WORKSPACE],
+            document=fixture_data.data_collection[
+                fixture_data.USER_1_NO_WORKSPACE
+            ],
             new_user=mock_owner,
             user=mock_owner,
         )
@@ -1668,7 +1684,9 @@ class TestDataChangeOwner(MongoIntegrationBaseTestCase):
         mock_owner = _create_user(1)
         mock_user = _create_user(2)
         data_api.change_owner(
-            document=fixture_data.data_collection[fixture_data.USER_1_NO_WORKSPACE],
+            document=fixture_data.data_collection[
+                fixture_data.USER_1_NO_WORKSPACE
+            ],
             new_user=mock_user,
             user=mock_owner,
         )
@@ -1683,7 +1701,9 @@ class TestDataChangeOwner(MongoIntegrationBaseTestCase):
         mock_user = _create_user(2)
         with self.assertRaises(AccessControlError):
             data_api.change_owner(
-                document=fixture_data.data_collection[fixture_data.USER_1_NO_WORKSPACE],
+                document=fixture_data.data_collection[
+                    fixture_data.USER_1_NO_WORKSPACE
+                ],
                 new_user=mock_owner,
                 user=mock_user,
             )
@@ -1696,7 +1716,9 @@ class TestDataChangeOwner(MongoIntegrationBaseTestCase):
         """
         mock_user = _create_user(2, is_superuser=True)
         data_api.change_owner(
-            document=fixture_data.data_collection[fixture_data.USER_1_NO_WORKSPACE],
+            document=fixture_data.data_collection[
+                fixture_data.USER_1_NO_WORKSPACE
+            ],
             new_user=mock_user,
             user=mock_user,
         )

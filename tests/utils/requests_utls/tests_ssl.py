@@ -3,7 +3,9 @@
 from unittest import TestCase
 
 from core_main_app.commons.exceptions import SSLError
-from core_main_app.utils.requests_utils.ssl import check_ssl_certificates_dir_setting
+from core_main_app.utils.requests_utils.ssl import (
+    check_ssl_certificates_dir_setting,
+)
 
 
 class TestCheckSslCertificatesDirSetting(TestCase):
@@ -36,7 +38,9 @@ class TestCheckSslCertificatesDirSetting(TestCase):
         with self.assertRaises(SSLError):
             check_ssl_certificates_dir_setting(1)
 
-    def test_check_ssl_certificates_dir_setting_fails_when_set_to_bad_location(self):
+    def test_check_ssl_certificates_dir_setting_fails_when_set_to_bad_location(
+        self,
+    ):
         """test check ssl certificates dir setting fails when set to bad location
 
         Returns:

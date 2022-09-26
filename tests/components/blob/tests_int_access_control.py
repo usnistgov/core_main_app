@@ -29,7 +29,9 @@ class TestBlobGetById(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        blob_id = self.fixture.blob_collection[fixture_blob.USER_1_WORKSPACE_1].id
+        blob_id = self.fixture.blob_collection[
+            fixture_blob.USER_1_WORKSPACE_1
+        ].id
         mock_user = _create_user("1")
         blob = blob_api.get_by_id(blob_id, mock_user)
         self.assertTrue(isinstance(blob, Blob))
@@ -48,7 +50,9 @@ class TestBlobGetById(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        blob_id = self.fixture.blob_collection[fixture_blob.USER_1_WORKSPACE_1].id
+        blob_id = self.fixture.blob_collection[
+            fixture_blob.USER_1_WORKSPACE_1
+        ].id
         get_all_workspaces_with_read_access_by_user.return_value = []
         mock_user = _create_user("2")
         with self.assertRaises(AccessControlError):
@@ -60,7 +64,9 @@ class TestBlobGetById(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        blob_id = self.fixture.blob_collection[fixture_blob.USER_1_NO_WORKSPACE].id
+        blob_id = self.fixture.blob_collection[
+            fixture_blob.USER_1_NO_WORKSPACE
+        ].id
         mock_user = _create_user("1")
         blob = blob_api.get_by_id(blob_id, mock_user)
         self.assertTrue(isinstance(blob, Blob))
@@ -71,7 +77,9 @@ class TestBlobGetById(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        blob_id = self.fixture.blob_collection[fixture_blob.USER_1_NO_WORKSPACE].id
+        blob_id = self.fixture.blob_collection[
+            fixture_blob.USER_1_NO_WORKSPACE
+        ].id
         mock_user = _create_user("2")
         with self.assertRaises(AccessControlError):
             blob_api.get_by_id(blob_id, mock_user)
@@ -173,7 +181,9 @@ class TestBlobGetAllByWorkspace(MongoIntegrationBaseTestCase):
         get_all_workspaces_with_write_access_by_user.return_value = [
             self.fixture.workspace_1
         ]
-        blob_list = blob_api.get_all_by_workspace(self.fixture.workspace_1, mock_user)
+        blob_list = blob_api.get_all_by_workspace(
+            self.fixture.workspace_1, mock_user
+        )
         self.assertTrue(blob.user_id == mock_user.id for blob in blob_list)
 
     @patch(
@@ -229,7 +239,9 @@ class TestBlobGetAllByWorkspace(MongoIntegrationBaseTestCase):
         get_all_workspaces_with_write_access_by_user.return_value = [
             self.fixture.workspace_1
         ]
-        blob_list = blob_api.get_all_by_workspace(self.fixture.workspace_1, mock_user)
+        blob_list = blob_api.get_all_by_workspace(
+            self.fixture.workspace_1, mock_user
+        )
         self.assertTrue(blob.user_id == mock_user.id for blob in blob_list)
 
 
@@ -257,7 +269,8 @@ class TestBlobDelete(MongoIntegrationBaseTestCase):
             fixture_blob.workspace_1
         ]
         blob_api.delete(
-            fixture_blob.blob_collection[fixture_blob.USER_1_WORKSPACE_1], mock_user
+            fixture_blob.blob_collection[fixture_blob.USER_1_WORKSPACE_1],
+            mock_user,
         )
 
     # FIXME: test is not true. Deleting own data in workspace without write access raises ACL error.
@@ -280,7 +293,8 @@ class TestBlobDelete(MongoIntegrationBaseTestCase):
         mock_user = _create_user("1")
         get_all_workspaces_with_write_access_by_user.return_value = []
         blob_api.delete(
-            fixture_blob.blob_collection[fixture_blob.USER_1_WORKSPACE_1], mock_user
+            fixture_blob.blob_collection[fixture_blob.USER_1_WORKSPACE_1],
+            mock_user,
         )
 
     @patch(
@@ -302,7 +316,8 @@ class TestBlobDelete(MongoIntegrationBaseTestCase):
             fixture_blob.workspace_2
         ]
         blob_api.delete(
-            fixture_blob.blob_collection[fixture_blob.USER_2_WORKSPACE_2], mock_user
+            fixture_blob.blob_collection[fixture_blob.USER_2_WORKSPACE_2],
+            mock_user,
         )
 
     @patch(
@@ -325,7 +340,8 @@ class TestBlobDelete(MongoIntegrationBaseTestCase):
         ]
         with self.assertRaises(AccessControlError):
             blob_api.delete(
-                fixture_blob.blob_collection[fixture_blob.USER_2_WORKSPACE_2], mock_user
+                fixture_blob.blob_collection[fixture_blob.USER_2_WORKSPACE_2],
+                mock_user,
             )
 
     @patch(
@@ -346,7 +362,8 @@ class TestBlobDelete(MongoIntegrationBaseTestCase):
         get_all_workspaces_with_write_access_by_user.return_value = []
         with self.assertRaises(AccessControlError):
             blob_api.delete(
-                fixture_blob.blob_collection[fixture_blob.USER_1_WORKSPACE_1], mock_user
+                fixture_blob.blob_collection[fixture_blob.USER_1_WORKSPACE_1],
+                mock_user,
             )
 
     @patch(
@@ -385,7 +402,9 @@ class TestBlobChangeOwner(MongoIntegrationBaseTestCase):
         """
         mock_owner = _create_user("1")
         blob_api.change_owner(
-            document=fixture_blob.blob_collection[fixture_blob.USER_1_NO_WORKSPACE],
+            document=fixture_blob.blob_collection[
+                fixture_blob.USER_1_NO_WORKSPACE
+            ],
             new_user=mock_owner,
             user=mock_owner,
         )
@@ -399,7 +418,9 @@ class TestBlobChangeOwner(MongoIntegrationBaseTestCase):
         mock_owner = _create_user("1")
         mock_user = _create_user("2")
         blob_api.change_owner(
-            document=fixture_blob.blob_collection[fixture_blob.USER_1_NO_WORKSPACE],
+            document=fixture_blob.blob_collection[
+                fixture_blob.USER_1_NO_WORKSPACE
+            ],
             new_user=mock_user,
             user=mock_owner,
         )
@@ -414,7 +435,9 @@ class TestBlobChangeOwner(MongoIntegrationBaseTestCase):
         mock_user = _create_user("2")
         with self.assertRaises(AccessControlError):
             blob_api.change_owner(
-                document=fixture_blob.blob_collection[fixture_blob.USER_1_NO_WORKSPACE],
+                document=fixture_blob.blob_collection[
+                    fixture_blob.USER_1_NO_WORKSPACE
+                ],
                 new_user=mock_owner,
                 user=mock_user,
             )
@@ -427,7 +450,9 @@ class TestBlobChangeOwner(MongoIntegrationBaseTestCase):
         """
         mock_user = _create_user("2", is_superuser=True)
         blob_api.change_owner(
-            document=fixture_blob.blob_collection[fixture_blob.USER_1_NO_WORKSPACE],
+            document=fixture_blob.blob_collection[
+                fixture_blob.USER_1_NO_WORKSPACE
+            ],
             new_user=mock_user,
             user=mock_user,
         )
@@ -490,7 +515,8 @@ class TestBlobInsert(MongoIntegrationBaseTestCase):
         """
         with self.assertRaises(exceptions.ApiError):
             blob_api.insert(
-                fixture_blob.blob_collection[fixture_blob.USER_1_WORKSPACE_1], self.user
+                fixture_blob.blob_collection[fixture_blob.USER_1_WORKSPACE_1],
+                self.user,
             )
 
     def test_edit_blob_as_superuser_raises_error(
@@ -582,7 +608,9 @@ class TestBlobAssign(MongoIntegrationBaseTestCase):
         """
         user = _create_user("1")
         blob_api.assign(
-            fixture_blob.blob_collection[fixture_blob.USER_1_NO_WORKSPACE], None, user
+            fixture_blob.blob_collection[fixture_blob.USER_1_NO_WORKSPACE],
+            None,
+            user,
         )
 
     @patch(

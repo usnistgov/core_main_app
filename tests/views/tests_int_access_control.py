@@ -57,7 +57,9 @@ class TestViewData(MongoIntegrationBaseTestCase):
         response = ViewData.as_view()(request)
         self.assertTrue(self.fixture.data_1.title in response.content.decode())
 
-    def test_an_anonymous_user_can_not_access_a_data_that_is_not_in_a_workspace(self):
+    def test_an_anonymous_user_can_not_access_a_data_that_is_not_in_a_workspace(
+        self,
+    ):
         """test_an_anonymous_user_can_not_access_a_data_that_is_not_in_a_workspace
 
         Returns:
@@ -67,7 +69,9 @@ class TestViewData(MongoIntegrationBaseTestCase):
         request.user = self.anonymous
         request.GET = {"id": str(self.fixture.data_1.id)}
         response = ViewData.as_view()(request)
-        self.assertTrue(self.fixture.data_1.title not in response.content.decode())
+        self.assertTrue(
+            self.fixture.data_1.title not in response.content.decode()
+        )
         self.assertTrue("Error 403" in response.content.decode())
 
     def test_an_anonymous_user_can_not_access_a_data_that_is_in_a_private_workspace(
@@ -82,7 +86,9 @@ class TestViewData(MongoIntegrationBaseTestCase):
         request.user = self.anonymous
         request.GET = {"id": str(self.fixture.data_1.id)}
         response = ViewData.as_view()(request)
-        self.assertTrue(self.fixture.data_1.title not in response.content.decode())
+        self.assertTrue(
+            self.fixture.data_1.title not in response.content.decode()
+        )
         self.assertTrue("Error" in response.content.decode())
 
     def test_an_anonymous_user_can_not_access_a_data_that_is_in_a_public_workspace_and_access_setting_is_false(
@@ -98,7 +104,8 @@ class TestViewData(MongoIntegrationBaseTestCase):
         request.GET = {"id": str(self.fixture.data_public_workspace.id)}
         response = ViewData.as_view()(request)
         self.assertTrue(
-            self.fixture.data_public_workspace.title not in response.content.decode()
+            self.fixture.data_public_workspace.title
+            not in response.content.decode()
         )
         self.assertTrue("Error" in response.content.decode())
 
@@ -362,7 +369,10 @@ class TestChangeDataDisplayView(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        data = {"xslt_id": "id", "data_id": str(self.fixture.data_workspace_1.id)}
+        data = {
+            "xslt_id": "id",
+            "data_id": str(self.fixture.data_workspace_1.id),
+        }
         request = self.factory.post("core_main_add_change_data_display", data)
         request.user = self.anonymous
         response = change_data_display(request)
@@ -374,7 +384,10 @@ class TestChangeDataDisplayView(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        data = {"xslt_id": "id", "data_id": str(self.fixture.data_public_workspace.id)}
+        data = {
+            "xslt_id": "id",
+            "data_id": str(self.fixture.data_public_workspace.id),
+        }
         request = self.factory.post("core_main_add_change_data_display", data)
         request.user = self.anonymous
         response = change_data_display(request)

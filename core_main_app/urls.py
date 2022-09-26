@@ -10,7 +10,10 @@ from core_main_app import settings
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.data import api as data_api
 from core_main_app.utils.rendering import render
-from core_main_app.views.common import ajax as common_ajax, views as common_views
+from core_main_app.views.common import (
+    ajax as common_ajax,
+    views as common_views,
+)
 from core_main_app.views.user import views as user_views, ajax as user_ajax
 
 SchemaView = get_schema_view(
@@ -22,10 +25,16 @@ SchemaView = get_schema_view(
 
 urlpatterns = [
     re_path(r"^$", user_views.homepage, name="core_main_app_homepage"),
-    re_path(r"^locked", common_views.defender_error_page, name="core_main_app_locked"),
+    re_path(
+        r"^locked",
+        common_views.defender_error_page,
+        name="core_main_app_locked",
+    ),
     re_path(r"^rest/", include("core_main_app.rest.urls")),
     re_path(
-        r"^data", common_views.ViewData.as_view(), name="core_main_app_data_detail"
+        r"^data",
+        common_views.ViewData.as_view(),
+        name="core_main_app_data_detail",
     ),
     re_path(
         r"^template/versions/(?P<version_manager_id>\w+)",
@@ -78,7 +87,9 @@ urlpatterns = [
         user_ajax.add_user_right_to_workspace,
         name="core_main_add_user_right_to_workspace",
     ),
-    re_path(r"^switch-right", user_ajax.switch_right, name="core_main_switch_right"),
+    re_path(
+        r"^switch-right", user_ajax.switch_right, name="core_main_switch_right"
+    ),
     re_path(
         r"^remove-rights",
         user_ajax.remove_user_or_group_rights,
@@ -101,7 +112,9 @@ urlpatterns = [
     ),
     re_path(r"^tz_detect/", include("tz_detect.urls")),
     re_path(
-        r"^password_reset/$", user_views.custom_reset_password, name="password_reset"
+        r"^password_reset/$",
+        user_views.custom_reset_password,
+        name="password_reset",
     ),
     re_path(
         r"^password_reset/done/$",
@@ -131,7 +144,9 @@ if settings.ENABLE_SAML2_SSO_AUTH:
     urlpatterns.append(re_path(r"saml2/", include("djangosaml2.urls")))
     urlpatterns.append(
         re_path(
-            r"^saml2/login", saml2_views.LoginView.as_view(), name="core_main_app_login"
+            r"^saml2/login",
+            saml2_views.LoginView.as_view(),
+            name="core_main_app_login",
         )
     )
     urlpatterns.append(
@@ -146,5 +161,7 @@ else:
         re_path(r"^login", user_views.custom_login, name="core_main_app_login")
     )
     urlpatterns.append(
-        re_path(r"^logout", user_views.custom_logout, name="core_main_app_logout")
+        re_path(
+            r"^logout", user_views.custom_logout, name="core_main_app_logout"
+        )
     )

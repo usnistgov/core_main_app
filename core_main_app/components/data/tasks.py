@@ -9,7 +9,9 @@ from django.db.models import Q
 
 from core_main_app.components.data import api as data_api
 from core_main_app.components.user import api as user_api
-from core_main_app.components.xsl_transformation import api as xsl_transformation_api
+from core_main_app.components.xsl_transformation import (
+    api as xsl_transformation_api,
+)
 from core_main_app.system import api as system_api
 
 logger = logging.getLogger(__name__)
@@ -73,7 +75,8 @@ def async_migration_task(data_list, xslt_id, template_id, user_id, migrate):
                 )
     except Exception as exception:
         async_migration_task.update_state(
-            state="ABORT", meta={"current": current_progress, "total": total_data}
+            state="ABORT",
+            meta={"current": current_progress, "total": total_data},
         )
         raise Exception(f"Something went wrong: {str(exception)}")
 
@@ -121,7 +124,9 @@ def async_template_migration_task(
                 current_data_progress = 0
 
                 # get a QuerySet of all the data with the given template
-                data_list = data_api.execute_query(Q(template=template_id), user=user)
+                data_list = data_api.execute_query(
+                    Q(template=template_id), user=user
+                )
 
                 total_data = data_list.count()
 
@@ -131,8 +136,10 @@ def async_template_migration_task(
 
                     if xslt_id is not None:
                         # modify the xml content temporarily with the transformed data content
-                        data.xml_content = xsl_transformation_api.xsl_transform(
-                            data.xml_content, xslt.name
+                        data.xml_content = (
+                            xsl_transformation_api.xsl_transform(
+                                data.xml_content, xslt.name
+                            )
                         )
 
                     # check if the data is valid

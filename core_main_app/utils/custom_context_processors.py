@@ -29,8 +29,12 @@ def domain_context_processor(request):
         "CUSTOM_SUBTITLE": settings.CUSTOM_SUBTITLE
         if hasattr(settings, "CUSTOM_SUBTITLE")
         else "",
-        "CUSTOM_DATA": settings.CUSTOM_DATA if hasattr(settings, "CUSTOM_DATA") else "",
-        "CUSTOM_URL": settings.CUSTOM_URL if hasattr(settings, "CUSTOM_URL") else "",
+        "CUSTOM_DATA": settings.CUSTOM_DATA
+        if hasattr(settings, "CUSTOM_DATA")
+        else "",
+        "CUSTOM_URL": settings.CUSTOM_URL
+        if hasattr(settings, "CUSTOM_URL")
+        else "",
         "DATA_SOURCES_EXPLORE_APPS": settings.DATA_SOURCES_EXPLORE_APPS
         if hasattr(settings, "DATA_SOURCES_EXPLORE_APPS")
         else [],

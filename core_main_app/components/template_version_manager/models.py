@@ -47,7 +47,9 @@ class TemplateVersionManager(VersionManager):
         """
         queryset = TemplateVersionManager.objects.filter(user=None).all()
         if _cls:
-            queryset = queryset.filter(_cls=TemplateVersionManager._class_name).all()
+            queryset = queryset.filter(
+                _cls=TemplateVersionManager._class_name
+            ).all()
         return queryset
 
     @staticmethod
@@ -61,7 +63,9 @@ class TemplateVersionManager(VersionManager):
             is_disabled=False, user=None
         ).all()
         if _cls:
-            queryset = queryset.filter(_cls=TemplateVersionManager._class_name).all()
+            queryset = queryset.filter(
+                _cls=TemplateVersionManager._class_name
+            ).all()
         return queryset
 
     @staticmethod
@@ -77,7 +81,9 @@ class TemplateVersionManager(VersionManager):
             is_disabled=False, user=str(user_id)
         ).all()
         if _cls:
-            queryset = queryset.filter(_cls=TemplateVersionManager._class_name).all()
+            queryset = queryset.filter(
+                _cls=TemplateVersionManager._class_name
+            ).all()
         return queryset
 
     @staticmethod
@@ -93,9 +99,13 @@ class TemplateVersionManager(VersionManager):
         """
         if not user_id:
             return TemplateVersionManager.objects.none()
-        queryset = TemplateVersionManager.objects.filter(user=str(user_id)).all()
+        queryset = TemplateVersionManager.objects.filter(
+            user=str(user_id)
+        ).all()
         if _cls:
-            queryset = queryset.filter(_cls=TemplateVersionManager._class_name).all()
+            queryset = queryset.filter(
+                _cls=TemplateVersionManager._class_name
+            ).all()
         return queryset
 
     @staticmethod
@@ -110,7 +120,9 @@ class TemplateVersionManager(VersionManager):
         """
         queryset = TemplateVersionManager.objects.all()
         if _cls:
-            queryset = queryset.filter(_cls=TemplateVersionManager._class_name).all()
+            queryset = queryset.filter(
+                _cls=TemplateVersionManager._class_name
+            ).all()
         return queryset
 
     @staticmethod

@@ -1,7 +1,9 @@
 """ XslTransformation API calls
 """
 from core_main_app.commons import exceptions
-from core_main_app.components.xsl_transformation.models import XslTransformation
+from core_main_app.components.xsl_transformation.models import (
+    XslTransformation,
+)
 from core_main_app.utils import xml
 from core_main_app.utils.xml import is_well_formed_xml, has_xsl_namespace
 
@@ -14,7 +16,9 @@ def get_by_name(xslt_name):
     try:
         return XslTransformation.get_by_name(xslt_name)
     except Exception:
-        raise exceptions.ApiError("No transformation can be found with the given name")
+        raise exceptions.ApiError(
+            "No transformation can be found with the given name"
+        )
 
 
 def get_by_id(xslt_id):
@@ -51,7 +55,9 @@ def upsert(xsl_transformation):
     if not is_well_formed_xml(xsl_transformation.content):
         raise exceptions.ApiError("Uploaded file is not well formatted XSLT.")
     elif not has_xsl_namespace(xsl_transformation.content):
-        raise exceptions.ApiError("XSLT namespace not found in the uploaded file.")
+        raise exceptions.ApiError(
+            "XSLT namespace not found in the uploaded file."
+        )
     else:
         xsl_transformation.save_object()
         return xsl_transformation

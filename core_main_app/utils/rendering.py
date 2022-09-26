@@ -87,7 +87,12 @@ def _render(
 
 
 def render(
-    request, template_name, modals=None, assets=None, context=None, use_theme=True
+    request,
+    template_name,
+    modals=None,
+    assets=None,
+    context=None,
+    use_theme=True,
 ):
     """Render a selected template with the project's theme or a default one.
 
@@ -113,7 +118,9 @@ def render(
     )
 
 
-def admin_render(request, template_name, modals=None, assets=None, context=None):
+def admin_render(
+    request, template_name, modals=None, assets=None, context=None
+):
     """Render a selected template with the project's theme,
 
     Parameters:

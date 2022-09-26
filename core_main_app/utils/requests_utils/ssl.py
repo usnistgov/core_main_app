@@ -56,5 +56,7 @@ def check_ssl_certificates_dir_setting(ssl_certificates_dir):
 
     # setting is not a boolean or a string
     else:
-        logger.error("SSL_CERTIFICATES_DIR: Bad value. %s", accepted_values_msg)
+        logger.error(
+            "SSL_CERTIFICATES_DIR: Bad value. %s", accepted_values_msg
+        )
         raise SSLError("SSL_CERTIFICATES_DIR improperly configured.")

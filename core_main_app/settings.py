@@ -110,7 +110,9 @@ DISPLAY_NIST_HEADERS = getattr(settings, "DISPLAY_NIST_HEADERS", False)
 
 # Locale folder
 BASE_DIR = getattr(
-    settings, "BASE_DIR", os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    settings,
+    "BASE_DIR",
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
 )
 """ :py:class:`str`: Project installation directory.
 """

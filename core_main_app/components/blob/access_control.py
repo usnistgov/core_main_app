@@ -2,7 +2,10 @@
 """
 import logging
 
-from core_main_app.access_control.api import has_perm_publish, can_write_in_workspace
+from core_main_app.access_control.api import (
+    has_perm_publish,
+    can_write_in_workspace,
+)
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.permissions import rights
 
@@ -49,4 +52,6 @@ def can_write_blob_workspace(func, data, workspace, user):
     Returns:
 
     """
-    return can_write_in_workspace(func, data, workspace, user, rights.PUBLISH_BLOB)
+    return can_write_in_workspace(
+        func, data, workspace, user, rights.PUBLISH_BLOB
+    )

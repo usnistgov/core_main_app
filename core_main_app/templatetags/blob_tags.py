@@ -32,7 +32,9 @@ def render_blob_links_in_span(*args, **kwargs):
         url_blobs += pid_blob_utils.get_blob_download_regex(xml_string)
 
     # Apply special template for the blob urls found
-    blob_html_pattern = "<span class='blob-link' data-blob-url=\"{0}\">{0}</span>"
+    blob_html_pattern = (
+        "<span class='blob-link' data-blob-url=\"{0}\">{0}</span>"
+    )
 
     for url in url_blobs:
         xml_string = xml_string.replace(url, blob_html_pattern.format(url))

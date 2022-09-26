@@ -23,7 +23,9 @@ class TestBlobDownloaderIsUrlFormLocalInstance(TestCase):
 
         """
         # Arrange / Act
-        return_value = BlobDownloader("http://google.com").is_url_from_local_instance()
+        return_value = BlobDownloader(
+            "http://google.com"
+        ).is_url_from_local_instance()
         # Assert
         self.assertEqual(return_value, False)
 
@@ -85,7 +87,9 @@ class TestBlobDownloaderGetBlobResponse(TestCase):
             # Arrange / Act
             BlobDownloader("random_string").get_blob_response()
 
-    @patch("core_main_app.utils.requests_utils.requests_utils.send_get_request")
+    @patch(
+        "core_main_app.utils.requests_utils.requests_utils.send_get_request"
+    )
     def test_get_blob_response_return_blob_from_local_if_url_is_local(
         self, mock_send_get_request
     ):
@@ -122,7 +126,9 @@ class TestBlobDownloaderGetBlobResponse(TestCase):
         """
         # Arrange / Act
         mock_send_get_request.return_value = "remote"
-        with patch.object(settings, "INSTALLED_APPS", ["core_federated_search_app"]):
+        with patch.object(
+            settings, "INSTALLED_APPS", ["core_federated_search_app"]
+        ):
             return_value = BlobDownloader(
                 "http://my.remote.com/987653456789"
             ).get_blob_response()

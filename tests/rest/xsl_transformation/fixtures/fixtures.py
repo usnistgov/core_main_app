@@ -2,8 +2,12 @@
 """
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from core_main_app.components.xsl_transformation.models import XslTransformation
-from core_main_app.utils.integration_tests.fixture_interface import FixtureInterface
+from core_main_app.components.xsl_transformation.models import (
+    XslTransformation,
+)
+from core_main_app.utils.integration_tests.fixture_interface import (
+    FixtureInterface,
+)
 
 
 class XslTransformationFixtures(FixtureInterface):

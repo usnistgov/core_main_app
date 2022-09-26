@@ -38,12 +38,16 @@ class XslTransformationList(APIView):
             # Get object
             xsl_object_list = xsl_api.get_all()
             # Serialize object
-            return_value = XslTransformationSerializer(xsl_object_list, many=True)
+            return_value = XslTransformationSerializer(
+                xsl_object_list, many=True
+            )
             # Return response
             return Response(return_value.data)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     def post(self, request):
         """Save an XSL document
@@ -76,13 +80,17 @@ class XslTransformationList(APIView):
             xsl_serializer.is_valid(raise_exception=True)
             # save or update the object
             xsl_serializer.save()
-            return Response(xsl_serializer.data, status=status.HTTP_201_CREATED)
+            return Response(
+                xsl_serializer.data, status=status.HTTP_201_CREATED
+            )
         except ValidationError as validation_exception:
             content = {"message": validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class XslTransformationDetail(APIView):
@@ -135,7 +143,9 @@ class XslTransformationDetail(APIView):
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     def delete(self, request, pk):
         """Delete an xsl document
@@ -166,7 +176,9 @@ class XslTransformationDetail(APIView):
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     def patch(self, request, pk):
         """Update xsl
@@ -215,7 +227,9 @@ class XslTransformationDetail(APIView):
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class XslTransformationTransform(APIView):
@@ -259,4 +273,6 @@ class XslTransformationTransform(APIView):
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

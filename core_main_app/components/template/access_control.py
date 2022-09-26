@@ -33,13 +33,19 @@ def can_read(func, document_id, request):
     # anonymous user
     if request.user.is_anonymous:
         if document.user:
-            raise AccessControlError("Template: The user doesn't have enough rights.")
+            raise AccessControlError(
+                "Template: The user doesn't have enough rights."
+            )
         if not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
-            raise AccessControlError("Template: The user doesn't have enough rights.")
+            raise AccessControlError(
+                "Template: The user doesn't have enough rights."
+            )
 
     # user is set
     if document.user and document.user != str(request.user.id):
-        raise AccessControlError("Template: The user doesn't have enough rights.")
+        raise AccessControlError(
+            "Template: The user doesn't have enough rights."
+        )
 
     return document
 
@@ -58,7 +64,9 @@ def can_read_global(func, *args, **kwargs):
     request = get_request_from_args(*args, **kwargs)
     if request.user.is_anonymous:
         if not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
-            raise AccessControlError("Template: The user doesn't have enough rights.")
+            raise AccessControlError(
+                "Template: The user doesn't have enough rights."
+            )
     return func(*args, **kwargs)
 
 
@@ -83,7 +91,9 @@ def can_write(func, *args, **kwargs):
 
     # anonymous
     if request.user.is_anonymous:
-        raise AccessControlError("Template: The user doesn't have enough rights.")
+        raise AccessControlError(
+            "Template: The user doesn't have enough rights."
+        )
 
     # user is set
     if template.user:
@@ -151,6 +161,8 @@ def can_read_list(func, *args, **kwargs):
 
         # user is set
         if template.user and template.user != str(request.user.id):
-            raise AccessControlError("Template: The user doesn't have enough rights.")
+            raise AccessControlError(
+                "Template: The user doesn't have enough rights."
+            )
 
     return document_list

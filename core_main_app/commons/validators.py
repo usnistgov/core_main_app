@@ -81,7 +81,10 @@ class UpperCaseLetterCountValidator:
         Returns:
 
         """
-        if sum(1 for char in password if char.isupper()) < self.get_min_count():
+        if (
+            sum(1 for char in password if char.isupper())
+            < self.get_min_count()
+        ):
             raise ValidationError(self.get_help_text())
 
     def get_help_text(self):
@@ -125,7 +128,10 @@ class LowerCaseLetterCountValidator:
         Returns:
 
         """
-        if sum(1 for char in password if char.islower()) < self.get_min_count():
+        if (
+            sum(1 for char in password if char.islower())
+            < self.get_min_count()
+        ):
             raise ValidationError(self.get_help_text())
 
     def get_help_text(self):
@@ -169,7 +175,10 @@ class AlphabeticCharCountValidator:
         Returns:
 
         """
-        if sum(1 for char in password if self.is_alpha(char)) < self.get_min_count():
+        if (
+            sum(1 for char in password if self.is_alpha(char))
+            < self.get_min_count()
+        ):
             raise ValidationError(self.get_help_text())
 
     def get_help_text(self):

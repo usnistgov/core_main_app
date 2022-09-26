@@ -9,6 +9,4 @@ MARKDOWN_ERRORS = [
     "HTML is not generated properly, please check your Markdown and HTML syntax!",
 ]
 
-UNKNOWN_ERROR = (
-    "An unknown error occured, please contact your administrator for more information."
-)
+UNKNOWN_ERROR = "An unknown error occured, please contact your administrator for more information."

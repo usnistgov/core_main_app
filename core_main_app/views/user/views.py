@@ -18,7 +18,10 @@ from core_main_app.components.template_version_manager import (
     api as template_version_manager_api,
 )
 from core_main_app.components.web_page_login import api as web_page_login_api
-from core_main_app.settings import INSTALLED_APPS, PASSWORD_RESET_DOMAIN_OVERRIDE
+from core_main_app.settings import (
+    INSTALLED_APPS,
+    PASSWORD_RESET_DOMAIN_OVERRIDE,
+)
 from core_main_app.utils.markdown_parser import parse
 from core_main_app.utils.rendering import render
 from core_main_app.views.user.forms import LoginForm
@@ -82,9 +85,12 @@ def default_custom_login(request):
                     request,
                     "core_main_app/user/login/main.html",
                     context={
-                        "login_form": LoginForm(initial={"next_page": next_page}),
+                        "login_form": LoginForm(
+                            initial={"next_page": next_page}
+                        ),
                         "login_locked": True,
-                        "with_website_features": "core_website_app" in INSTALLED_APPS,
+                        "with_website_features": "core_website_app"
+                        in INSTALLED_APPS,
                     },
                 )
 
@@ -98,7 +104,8 @@ def default_custom_login(request):
                 context={
                     "login_form": LoginForm(initial={"next_page": next_page}),
                     "login_error": True,
-                    "with_website_features": "core_website_app" in INSTALLED_APPS,
+                    "with_website_features": "core_website_app"
+                    in INSTALLED_APPS,
                 },
             )
     elif request.method == "GET":
@@ -182,7 +189,9 @@ def homepage(request):
         assets["css"] = ["core_main_app/css/homepage.css"]
 
     if finders.find("core_main_app/js/homepage.js") is not None:
-        assets["js"] = [{"path": "core_main_app/js/homepage.js", "is_raw": False}]
+        assets["js"] = [
+            {"path": "core_main_app/js/homepage.js", "is_raw": False}
+        ]
 
     return render(request, "core_main_app/user/homepage.html", assets=assets)
 
@@ -204,8 +213,12 @@ def manage_template_versions(request, version_manager_id):
             version_manager_id, request=request
         )
 
-        if not request.user.is_staff and version_manager.user != str(request.user.id):
-            raise Exception("You do not have the rights to perform this action.")
+        if not request.user.is_staff and version_manager.user != str(
+            request.user.id
+        ):
+            raise Exception(
+                "You do not have the rights to perform this action."
+            )
 
         context = get_context_manage_template_versions(version_manager)
         if "core_parser_app" in settings.INSTALLED_APPS:
@@ -245,7 +258,9 @@ def manage_template_versions(request, version_manager_id):
         )
 
 
-def get_context_manage_template_versions(version_manager, object_name="Template"):
+def get_context_manage_template_versions(
+    version_manager, object_name="Template"
+):
     """Get the context to manage the template versions.
 
     Args:

@@ -67,7 +67,9 @@ class DataSerializer(ModelSerializer):
             user_id=str(self.context["request"].user.id),
         )
         # Get template
-        template_api.get_by_id(instance.template.id, request=self.context["request"])
+        template_api.get_by_id(
+            instance.template.id, request=self.context["request"]
+        )
 
         # Set xml content
         instance.xml_content = validated_data["xml_content"]
@@ -85,7 +87,9 @@ class DataSerializer(ModelSerializer):
         Update and return an existing `Data` instance, given the validated data.
         """
         instance.title = validated_data.get("title", instance.title)
-        instance.xml_content = validated_data.get("xml_content", instance.xml_content)
+        instance.xml_content = validated_data.get(
+            "xml_content", instance.xml_content
+        )
         return data_api.upsert(instance, self.context["request"])
 
 

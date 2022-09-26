@@ -27,9 +27,13 @@ def lmxl_uri_resolver(*args, **kwargs):
     if XSD_URI_RESOLVER:
         # Check that the setting is an accepted value
         if XSD_URI_RESOLVER not in XSD_URI_RESOLVERS:
-            raise CoreError("Error: XSD_URI_RESOLVER setting has an incorrect value.")
+            raise CoreError(
+                "Error: XSD_URI_RESOLVER setting has an incorrect value."
+            )
         # Return the correct resolver depending on the setting
 
-        uri_resolver = XSD_URI_RESOLVERS[XSD_URI_RESOLVER](session_id=session_id)
+        uri_resolver = XSD_URI_RESOLVERS[XSD_URI_RESOLVER](
+            session_id=session_id
+        )
 
     return uri_resolver

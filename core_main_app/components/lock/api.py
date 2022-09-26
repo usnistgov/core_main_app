@@ -59,7 +59,9 @@ def remove_lock_on_object(object, user):
         if database_lock_object.user_id == str(user.id):
             lock.remove_lock(database_lock_object)
     except Exception as exception:
-        logger.warning("remove_lock_on_object threw an exception: %s", str(exception))
+        logger.warning(
+            "remove_lock_on_object threw an exception: %s", str(exception)
+        )
     finally:
         Lock.release()
 
@@ -95,5 +97,7 @@ def _check_object_locked(object, user, lock):
     if database_lock_object.user_id == str(user.id):
         return True
 
-    logger.warning("_check_object_locked: A user asked to access a locked object.")
+    logger.warning(
+        "_check_object_locked: A user asked to access a locked object."
+    )
     raise LockError("The object is used by another user and is locked.")

@@ -3,7 +3,9 @@
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from core_main_app.components.template.models import Template
-from core_main_app.utils.integration_tests.fixture_interface import FixtureInterface
+from core_main_app.utils.integration_tests.fixture_interface import (
+    FixtureInterface,
+)
 
 
 class AccessControlTemplateFixture(FixtureInterface):
@@ -55,7 +57,9 @@ class AccessControlTemplateFixture(FixtureInterface):
             content=xsd,
             hash="global_template_hash",
             filename="global_template.xsd",
-            file=SimpleUploadedFile("global_template.xsd", xsd.encode("utf-8")),
+            file=SimpleUploadedFile(
+                "global_template.xsd", xsd.encode("utf-8")
+            ),
             user=None,
             _cls="Template",
         )

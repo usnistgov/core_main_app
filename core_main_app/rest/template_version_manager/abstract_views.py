@@ -66,7 +66,9 @@ class AbstractTemplateVersionManagerList(APIView, metaclass=ABCMeta):
 
             is_disabled = self.request.query_params.get("is_disabled", None)
             if is_disabled is not None:
-                object_list = object_list.filter(is_disabled=to_bool(is_disabled))
+                object_list = object_list.filter(
+                    is_disabled=to_bool(is_disabled)
+                )
 
             # Serialize object
             serializer = self.serializer(object_list, many=True)
@@ -76,7 +78,9 @@ class AbstractTemplateVersionManagerList(APIView, metaclass=ABCMeta):
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class AbstractStatusTemplateVersion(APIView, metaclass=ABCMeta):
@@ -149,7 +153,9 @@ class AbstractStatusTemplateVersion(APIView, metaclass=ABCMeta):
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class AbstractTemplateVersionManagerDetail(APIView, metaclass=ABCMeta):
@@ -167,8 +173,10 @@ class AbstractTemplateVersionManagerDetail(APIView, metaclass=ABCMeta):
             TemplateVersionManager
         """
         try:
-            template_version_manager_object = template_version_manager_api.get_by_id(
-                pk, request=self.request
+            template_version_manager_object = (
+                template_version_manager_api.get_by_id(
+                    pk, request=self.request
+                )
             )
             return template_version_manager_object
         except exceptions.DoesNotExist:
@@ -225,7 +233,9 @@ class AbstractStatusTemplateVersionManager(
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class AbstractTemplateList(APIView, metaclass=ABCMeta):
@@ -267,34 +277,42 @@ class AbstractTemplateList(APIView, metaclass=ABCMeta):
             template_serializer = self.create_serializer(
                 data=request.data, context={"request": request}
             )
-            template_version_manager_serializer = self.serializer(data=request.data)
+            template_version_manager_serializer = self.serializer(
+                data=request.data
+            )
 
             # Validate data
             template_serializer.is_valid(raise_exception=True)
             template_version_manager_serializer.is_valid(raise_exception=True)
 
             # Save data
-            template_version_manager_object = template_version_manager_serializer.save(
-                user=self.get_user()
+            template_version_manager_object = (
+                template_version_manager_serializer.save(user=self.get_user())
             )
             template_serializer.save(
                 template_version_manager=template_version_manager_object,
                 user=self.get_user(),
             )
 
-            return Response(template_serializer.data, status=status.HTTP_201_CREATED)
+            return Response(
+                template_serializer.data, status=status.HTTP_201_CREATED
+            )
         except ValidationError as validation_exception:
             content = {"message": validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except NotUniqueError:
-            content = {"message": "A template with the same title already exists."}
+            content = {
+                "message": "A template with the same title already exists."
+            }
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except XSDError as xsd_error:
             content = {"message": "XSD Error: " + str(xsd_error)}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     @abstractmethod
     def get_user(self):

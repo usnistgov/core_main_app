@@ -18,7 +18,9 @@ from menu import Menu, MenuItem
 
 Menu.add_item(
     "main",
-    MenuItem("Home", reverse("core_main_app_homepage"), icon="home", weight=-1000),
+    MenuItem(
+        "Home", reverse("core_main_app_homepage"), icon="home", weight=-1000
+    ),
 )
 
 Menu.add_item(
@@ -33,7 +35,9 @@ Menu.add_item(
 
 Menu.add_item(
     "admin",
-    MenuItem("Django admin", reverse("admin:index"), icon="sitemap", weight=-80000),
+    MenuItem(
+        "Django admin", reverse("admin:index"), icon="sitemap", weight=-80000
+    ),
 )
 
 Menu.add_item(
@@ -48,7 +52,9 @@ Menu.add_item(
 
 templates_children = (
     MenuItem(
-        "Template List", reverse("core-admin:core_main_app_templates"), icon="list"
+        "Template List",
+        reverse("core-admin:core_main_app_templates"),
+        icon="list",
     ),
     MenuItem(
         "Upload New Template",
@@ -62,10 +68,14 @@ templates_children = (
     ),
 )
 
-Menu.add_item("admin", MenuItem("TEMPLATES", None, children=templates_children))
+Menu.add_item(
+    "admin", MenuItem("TEMPLATES", None, children=templates_children)
+)
 
 xslt_children = (
-    MenuItem("XSLT List", reverse("core-admin:core_main_app_xslt"), icon="list"),
+    MenuItem(
+        "XSLT List", reverse("core-admin:core_main_app_xslt"), icon="list"
+    ),
     MenuItem(
         "Upload New XSLT",
         reverse("core-admin:core_main_app_upload_xslt"),

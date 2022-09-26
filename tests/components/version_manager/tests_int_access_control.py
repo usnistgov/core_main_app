@@ -36,7 +36,9 @@ class TestVersionManagerDisable(MongoIntegrationBaseTestCase):
         self.superuser1 = create_mock_user(user_id="1", is_superuser=True)
         self.fixture.insert_data()
 
-    def test_anonymous_disable_user_version_manager_raises_access_control_error(self):
+    def test_anonymous_disable_user_version_manager_raises_access_control_error(
+        self,
+    ):
         """test anonymous disable user version manager raises access control error
 
         Returns:
@@ -44,9 +46,13 @@ class TestVersionManagerDisable(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.anonymous_user)
         with self.assertRaises(AccessControlError):
-            version_manager_api.disable(self.fixture.user1_tvm, request=mock_request)
+            version_manager_api.disable(
+                self.fixture.user1_tvm, request=mock_request
+            )
 
-    def test_anonymous_disable_global_version_manager_raises_access_control_error(self):
+    def test_anonymous_disable_global_version_manager_raises_access_control_error(
+        self,
+    ):
         """test anonymous disable global version manager raises access control error
 
         Returns:
@@ -54,7 +60,9 @@ class TestVersionManagerDisable(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.anonymous_user)
         with self.assertRaises(AccessControlError):
-            version_manager_api.disable(self.fixture.global_tvm, request=mock_request)
+            version_manager_api.disable(
+                self.fixture.global_tvm, request=mock_request
+            )
 
     def test_user_can_disable_user_version_manager(self):
         """test user can disable user version manager
@@ -65,10 +73,14 @@ class TestVersionManagerDisable(MongoIntegrationBaseTestCase):
         self.fixture.user1_tvm.is_disabled = False
         self.fixture.user1_tvm.save()
         mock_request = create_mock_request(user=self.user1)
-        version_manager_api.disable(self.fixture.user1_tvm, request=mock_request)
+        version_manager_api.disable(
+            self.fixture.user1_tvm, request=mock_request
+        )
         self.assertTrue(self.fixture.user1_tvm.is_disabled)
 
-    def test_user_disable_global_version_manager_raises_access_control_error(self):
+    def test_user_disable_global_version_manager_raises_access_control_error(
+        self,
+    ):
         """test user disable global version manager raises access control error
 
         Returns:
@@ -76,9 +88,13 @@ class TestVersionManagerDisable(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.user1)
         with self.assertRaises(AccessControlError):
-            version_manager_api.disable(self.fixture.global_tvm, request=mock_request)
+            version_manager_api.disable(
+                self.fixture.global_tvm, request=mock_request
+            )
 
-    def test_user_disable_other_user_version_manager_raises_access_control_error(self):
+    def test_user_disable_other_user_version_manager_raises_access_control_error(
+        self,
+    ):
         """test user disable other user version manager raises access control error
 
         Returns:
@@ -86,7 +102,9 @@ class TestVersionManagerDisable(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.user1)
         with self.assertRaises(AccessControlError):
-            version_manager_api.disable(self.fixture.user2_tvm, request=mock_request)
+            version_manager_api.disable(
+                self.fixture.user2_tvm, request=mock_request
+            )
 
     def test_staff_can_disable_user_version_manager(self):
         """test staff can disable user version manager
@@ -97,7 +115,9 @@ class TestVersionManagerDisable(MongoIntegrationBaseTestCase):
         self.fixture.user1_tvm.is_disabled = False
         self.fixture.user1_tvm.save()
         mock_request = create_mock_request(user=self.staff_user1)
-        version_manager_api.disable(self.fixture.user1_tvm, request=mock_request)
+        version_manager_api.disable(
+            self.fixture.user1_tvm, request=mock_request
+        )
         self.assertTrue(self.fixture.user1_tvm.is_disabled)
 
     def test_staff_can_disable_global_version_manager(self):
@@ -109,10 +129,14 @@ class TestVersionManagerDisable(MongoIntegrationBaseTestCase):
         self.fixture.global_tvm.is_disabled = False
         self.fixture.global_tvm.save()
         mock_request = create_mock_request(user=self.staff_user1)
-        version_manager_api.disable(self.fixture.global_tvm, request=mock_request)
+        version_manager_api.disable(
+            self.fixture.global_tvm, request=mock_request
+        )
         self.assertTrue(self.fixture.global_tvm.is_disabled)
 
-    def test_staff_disable_other_user_version_manager_raises_access_control_error(self):
+    def test_staff_disable_other_user_version_manager_raises_access_control_error(
+        self,
+    ):
         """test staff disable other user version manager raises access control error
 
         Returns:
@@ -120,7 +144,9 @@ class TestVersionManagerDisable(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.staff_user1)
         with self.assertRaises(AccessControlError):
-            version_manager_api.disable(self.fixture.user2_tvm, request=mock_request)
+            version_manager_api.disable(
+                self.fixture.user2_tvm, request=mock_request
+            )
 
     def test_superuser_can_disable_user_version_manager(self):
         """test superuser can disable user version manager
@@ -131,7 +157,9 @@ class TestVersionManagerDisable(MongoIntegrationBaseTestCase):
         self.fixture.user1_tvm.is_disabled = False
         self.fixture.user1_tvm.save()
         mock_request = create_mock_request(user=self.superuser1)
-        version_manager_api.disable(self.fixture.user1_tvm, request=mock_request)
+        version_manager_api.disable(
+            self.fixture.user1_tvm, request=mock_request
+        )
         self.assertTrue(self.fixture.user1_tvm.is_disabled)
 
     def test_superuser_can_disable_global_version_manager(self):
@@ -143,7 +171,9 @@ class TestVersionManagerDisable(MongoIntegrationBaseTestCase):
         self.fixture.global_tvm.is_disabled = False
         self.fixture.global_tvm.save()
         mock_request = create_mock_request(user=self.superuser1)
-        version_manager_api.disable(self.fixture.global_tvm, request=mock_request)
+        version_manager_api.disable(
+            self.fixture.global_tvm, request=mock_request
+        )
         self.assertTrue(self.fixture.global_tvm.is_disabled)
 
     def test_superuser_can_disable_other_user_version_manager(self):
@@ -155,7 +185,9 @@ class TestVersionManagerDisable(MongoIntegrationBaseTestCase):
         self.fixture.user2_tvm.is_disabled = False
         self.fixture.user2_tvm.save()
         mock_request = create_mock_request(user=self.superuser1)
-        version_manager_api.disable(self.fixture.user2_tvm, request=mock_request)
+        version_manager_api.disable(
+            self.fixture.user2_tvm, request=mock_request
+        )
         self.assertTrue(self.fixture.user2_tvm.is_disabled)
 
 
@@ -176,7 +208,9 @@ class TestVersionManagerRestore(MongoIntegrationBaseTestCase):
         self.superuser1 = create_mock_user(user_id="1", is_superuser=True)
         self.fixture.insert_data()
 
-    def test_anonymous_restore_user_version_manager_raises_access_control_error(self):
+    def test_anonymous_restore_user_version_manager_raises_access_control_error(
+        self,
+    ):
         """test anonymous restore user version manager raises access control error
 
         Returns:
@@ -184,9 +218,13 @@ class TestVersionManagerRestore(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.anonymous_user)
         with self.assertRaises(AccessControlError):
-            version_manager_api.restore(self.fixture.user1_tvm, request=mock_request)
+            version_manager_api.restore(
+                self.fixture.user1_tvm, request=mock_request
+            )
 
-    def test_anonymous_restore_global_version_manager_raises_access_control_error(self):
+    def test_anonymous_restore_global_version_manager_raises_access_control_error(
+        self,
+    ):
         """test anonymous restore global version manager raises access control error
 
         Returns:
@@ -194,7 +232,9 @@ class TestVersionManagerRestore(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.anonymous_user)
         with self.assertRaises(AccessControlError):
-            version_manager_api.restore(self.fixture.global_tvm, request=mock_request)
+            version_manager_api.restore(
+                self.fixture.global_tvm, request=mock_request
+            )
 
     def test_user_can_restore_user_version_manager(self):
         """test user can restore user version manager
@@ -205,10 +245,14 @@ class TestVersionManagerRestore(MongoIntegrationBaseTestCase):
         self.fixture.user1_tvm.is_disabled = True
         self.fixture.user1_tvm.save()
         mock_request = create_mock_request(user=self.user1)
-        version_manager_api.restore(self.fixture.user1_tvm, request=mock_request)
+        version_manager_api.restore(
+            self.fixture.user1_tvm, request=mock_request
+        )
         self.assertFalse(self.fixture.user1_tvm.is_disabled)
 
-    def test_user_restore_global_version_manager_raises_access_control_error(self):
+    def test_user_restore_global_version_manager_raises_access_control_error(
+        self,
+    ):
         """test user restore global version manager raises access control error
 
         Returns:
@@ -216,9 +260,13 @@ class TestVersionManagerRestore(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.user1)
         with self.assertRaises(AccessControlError):
-            version_manager_api.restore(self.fixture.global_tvm, request=mock_request)
+            version_manager_api.restore(
+                self.fixture.global_tvm, request=mock_request
+            )
 
-    def test_user_restore_other_user_version_manager_raises_access_control_error(self):
+    def test_user_restore_other_user_version_manager_raises_access_control_error(
+        self,
+    ):
         """test user restore other user version manager raises access control error
 
         Returns:
@@ -226,7 +274,9 @@ class TestVersionManagerRestore(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.user1)
         with self.assertRaises(AccessControlError):
-            version_manager_api.restore(self.fixture.user2_tvm, request=mock_request)
+            version_manager_api.restore(
+                self.fixture.user2_tvm, request=mock_request
+            )
 
     def test_staff_can_restore_user_version_manager(self):
         """test staff can restore user version manager
@@ -237,7 +287,9 @@ class TestVersionManagerRestore(MongoIntegrationBaseTestCase):
         self.fixture.user1_tvm.is_disabled = True
         self.fixture.user1_tvm.save()
         mock_request = create_mock_request(user=self.staff_user1)
-        version_manager_api.restore(self.fixture.user1_tvm, request=mock_request)
+        version_manager_api.restore(
+            self.fixture.user1_tvm, request=mock_request
+        )
         self.assertFalse(self.fixture.user1_tvm.is_disabled)
 
     def test_staff_can_restore_global_version_manager(self):
@@ -249,10 +301,14 @@ class TestVersionManagerRestore(MongoIntegrationBaseTestCase):
         self.fixture.global_tvm.is_disabled = True
         self.fixture.global_tvm.save()
         mock_request = create_mock_request(user=self.staff_user1)
-        version_manager_api.restore(self.fixture.global_tvm, request=mock_request)
+        version_manager_api.restore(
+            self.fixture.global_tvm, request=mock_request
+        )
         self.assertFalse(self.fixture.global_tvm.is_disabled)
 
-    def test_staff_restore_other_user_version_manager_raises_access_control_error(self):
+    def test_staff_restore_other_user_version_manager_raises_access_control_error(
+        self,
+    ):
         """test staff restore other user version manager raises access control error
 
         Returns:
@@ -260,7 +316,9 @@ class TestVersionManagerRestore(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.staff_user1)
         with self.assertRaises(AccessControlError):
-            version_manager_api.restore(self.fixture.user2_tvm, request=mock_request)
+            version_manager_api.restore(
+                self.fixture.user2_tvm, request=mock_request
+            )
 
     def test_superuser_can_restore_user_version_manager(self):
         """test superuser can restore user version manager
@@ -271,7 +329,9 @@ class TestVersionManagerRestore(MongoIntegrationBaseTestCase):
         self.fixture.user1_tvm.is_disabled = True
         self.fixture.user1_tvm.save()
         mock_request = create_mock_request(user=self.superuser1)
-        version_manager_api.restore(self.fixture.user1_tvm, request=mock_request)
+        version_manager_api.restore(
+            self.fixture.user1_tvm, request=mock_request
+        )
         self.assertFalse(self.fixture.user1_tvm.is_disabled)
 
     def test_superuser_can_restore_global_version_manager(self):
@@ -283,7 +343,9 @@ class TestVersionManagerRestore(MongoIntegrationBaseTestCase):
         self.fixture.global_tvm.is_disabled = True
         self.fixture.global_tvm.save()
         mock_request = create_mock_request(user=self.superuser1)
-        version_manager_api.restore(self.fixture.global_tvm, request=mock_request)
+        version_manager_api.restore(
+            self.fixture.global_tvm, request=mock_request
+        )
         self.assertFalse(self.fixture.global_tvm.is_disabled)
 
     def test_superuser_can_restore_other_user_version_manager(self):
@@ -295,7 +357,9 @@ class TestVersionManagerRestore(MongoIntegrationBaseTestCase):
         self.fixture.user2_tvm.is_disabled = True
         self.fixture.user2_tvm.save()
         mock_request = create_mock_request(user=self.superuser1)
-        version_manager_api.restore(self.fixture.user2_tvm, request=mock_request)
+        version_manager_api.restore(
+            self.fixture.user2_tvm, request=mock_request
+        )
         self.assertFalse(self.fixture.user2_tvm.is_disabled)
 
 
@@ -737,7 +801,9 @@ class TestVersionManagerSetCurrent(MongoIntegrationBaseTestCase):
             self.fixture.user1_template.version_manager.current,
         )
 
-    def test_user_set_current_global_version_manager_raises_access_control_error(self):
+    def test_user_set_current_global_version_manager_raises_access_control_error(
+        self,
+    ):
         """test user set current global version manager raises access control error
 
         Returns:
@@ -876,7 +942,9 @@ class TestVersionManagerUpsert(MongoIntegrationBaseTestCase):
         self.superuser1 = create_mock_user(user_id="1", is_superuser=True)
         self.fixture.insert_data()
 
-    def test_upsert_user_version_manager_as_anonymous_raises_access_control_error(self):
+    def test_upsert_user_version_manager_as_anonymous_raises_access_control_error(
+        self,
+    ):
         """test upsert user version manager as anonymous raises access control error
 
         Returns:
@@ -884,7 +952,9 @@ class TestVersionManagerUpsert(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.anonymous_user)
         with self.assertRaises(AccessControlError):
-            version_manager_api.upsert(self.fixture.user1_tvm, request=mock_request)
+            version_manager_api.upsert(
+                self.fixture.user1_tvm, request=mock_request
+            )
 
     def test_upsert_global_version_manager_as_anonymous_raises_access_control_error(
         self,
@@ -896,7 +966,9 @@ class TestVersionManagerUpsert(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.anonymous_user)
         with self.assertRaises(AccessControlError):
-            version_manager_api.upsert(self.fixture.global_tvm, request=mock_request)
+            version_manager_api.upsert(
+                self.fixture.global_tvm, request=mock_request
+            )
 
     def test_upsert_own_version_manager_as_user_saves(self):
         """test upsert own version manager as user saves
@@ -905,7 +977,9 @@ class TestVersionManagerUpsert(MongoIntegrationBaseTestCase):
 
         """
         mock_request = create_mock_request(user=self.user1)
-        version_manager_api.upsert(self.fixture.user1_tvm, request=mock_request)
+        version_manager_api.upsert(
+            self.fixture.user1_tvm, request=mock_request
+        )
 
     def test_upsert_other_users_version_manager_as_user_raises_access_control_error(
         self,
@@ -917,9 +991,13 @@ class TestVersionManagerUpsert(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.user1)
         with self.assertRaises(AccessControlError):
-            version_manager_api.upsert(self.fixture.user2_tvm, request=mock_request)
+            version_manager_api.upsert(
+                self.fixture.user2_tvm, request=mock_request
+            )
 
-    def test_upsert_global_version_manager_as_user_raises_access_control_error(self):
+    def test_upsert_global_version_manager_as_user_raises_access_control_error(
+        self,
+    ):
         """test upsert global version manager as user raises access control error
 
         Returns:
@@ -927,7 +1005,9 @@ class TestVersionManagerUpsert(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.user1)
         with self.assertRaises(AccessControlError):
-            version_manager_api.upsert(self.fixture.global_tvm, request=mock_request)
+            version_manager_api.upsert(
+                self.fixture.global_tvm, request=mock_request
+            )
 
     def test_upsert_own_version_manager_as_staff_saves(self):
         """test upsert own version manager as staff saves
@@ -936,7 +1016,9 @@ class TestVersionManagerUpsert(MongoIntegrationBaseTestCase):
 
         """
         mock_request = create_mock_request(user=self.staff_user1)
-        version_manager_api.upsert(self.fixture.user1_tvm, request=mock_request)
+        version_manager_api.upsert(
+            self.fixture.user1_tvm, request=mock_request
+        )
 
     def test_upsert_other_users_version_manager_as_staff_raises_access_control_error(
         self,
@@ -948,7 +1030,9 @@ class TestVersionManagerUpsert(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.staff_user1)
         with self.assertRaises(AccessControlError):
-            version_manager_api.upsert(self.fixture.user2_tvm, request=mock_request)
+            version_manager_api.upsert(
+                self.fixture.user2_tvm, request=mock_request
+            )
 
     def test_upsert_global_version_manager_as_staff_saves(self):
         """test upsert global version manager as staff saves
@@ -957,7 +1041,9 @@ class TestVersionManagerUpsert(MongoIntegrationBaseTestCase):
 
         """
         mock_request = create_mock_request(user=self.staff_user1)
-        version_manager_api.upsert(self.fixture.global_tvm, request=mock_request)
+        version_manager_api.upsert(
+            self.fixture.global_tvm, request=mock_request
+        )
 
     def test_upsert_own_version_manager_as_superuser_saves(self):
         """test upsert own version manager as superuser saves
@@ -966,7 +1052,9 @@ class TestVersionManagerUpsert(MongoIntegrationBaseTestCase):
 
         """
         mock_request = create_mock_request(user=self.superuser1)
-        version_manager_api.upsert(self.fixture.user1_tvm, request=mock_request)
+        version_manager_api.upsert(
+            self.fixture.user1_tvm, request=mock_request
+        )
 
     def test_upsert_other_users_version_manager_as_superuser_saves(self):
         """test upsert other users version manager as superuser saves
@@ -975,7 +1063,9 @@ class TestVersionManagerUpsert(MongoIntegrationBaseTestCase):
 
         """
         mock_request = create_mock_request(user=self.superuser1)
-        version_manager_api.upsert(self.fixture.user2_tvm, request=mock_request)
+        version_manager_api.upsert(
+            self.fixture.user2_tvm, request=mock_request
+        )
 
     def test_upsert_global_version_manager_as_superuser_saves(self):
         """test upsert global version manager as superuser saves
@@ -984,7 +1074,9 @@ class TestVersionManagerUpsert(MongoIntegrationBaseTestCase):
 
         """
         mock_request = create_mock_request(user=self.superuser1)
-        version_manager_api.upsert(self.fixture.global_tvm, request=mock_request)
+        version_manager_api.upsert(
+            self.fixture.global_tvm, request=mock_request
+        )
 
 
 class TestVersionManagerGetVersionNumber(MongoIntegrationBaseTestCase):
@@ -1046,7 +1138,9 @@ class TestVersionManagerGetVersionNumber(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.user1)
         version_number = version_manager_api.get_version_number(
-            self.fixture.user1_tvm, self.fixture.user1_template.id, request=mock_request
+            self.fixture.user1_tvm,
+            self.fixture.user1_template.id,
+            request=mock_request,
         )
         self.assertEqual(version_number, 1)
 
@@ -1090,11 +1184,15 @@ class TestVersionManagerGetVersionNumber(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.superuser1)
         version_number = version_manager_api.get_version_number(
-            self.fixture.user1_tvm, self.fixture.user1_template.id, request=mock_request
+            self.fixture.user1_tvm,
+            self.fixture.user1_template.id,
+            request=mock_request,
         )
         self.assertEqual(version_number, 1)
         version_number = version_manager_api.get_version_number(
-            self.fixture.user2_tvm, self.fixture.user2_template.id, request=mock_request
+            self.fixture.user2_tvm,
+            self.fixture.user2_template.id,
+            request=mock_request,
         )
         self.assertEqual(version_number, 1)
         version_number = version_manager_api.get_version_number(
@@ -1166,7 +1264,9 @@ class TestVersionManagerGetVersionByNumber(MongoIntegrationBaseTestCase):
                 self.fixture.global_tvm, 1, request=mock_request
             )
 
-    def test_get_version_by_number_own_version_manager_as_user_returns_version(self):
+    def test_get_version_by_number_own_version_manager_as_user_returns_version(
+        self,
+    ):
         """test get version by number own version manager as user returns version
 
         Returns:

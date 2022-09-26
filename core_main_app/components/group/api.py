@@ -101,4 +101,6 @@ def get_all_groups_except_list(list_group):
 
     Returns:
     """
-    return get_all_groups_except_list_id([str(group.id) for group in list_group])
+    return get_all_groups_except_list_id(
+        [str(group.id) for group in list_group]
+    )

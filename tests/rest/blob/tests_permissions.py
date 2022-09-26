@@ -10,7 +10,10 @@ from core_main_app.components.blob import api as blob_api
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.rest.blob import views as blob_rest_views
-from core_main_app.rest.blob.serializers import BlobSerializer, DeleteBlobsSerializer
+from core_main_app.rest.blob.serializers import (
+    BlobSerializer,
+    DeleteBlobsSerializer,
+)
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
 
@@ -71,7 +74,9 @@ class TestBlobListGetPermissions(SimpleTestCase):
         Returns:
 
         """
-        response = RequestMock.do_request_get(blob_rest_views.BlobList.as_view(), None)
+        response = RequestMock.do_request_get(
+            blob_rest_views.BlobList.as_view(), None
+        )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -121,7 +126,9 @@ class TestBlobListPostPermissions(SimpleTestCase):
         Returns:
 
         """
-        response = RequestMock.do_request_post(blob_rest_views.BlobList.as_view(), None)
+        response = RequestMock.do_request_post(
+            blob_rest_views.BlobList.as_view(), None
+        )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -375,7 +382,9 @@ class TestBlobDownloadGetPermissions(SimpleTestCase):
         mock_user = create_mock_user("1")
 
         response = RequestMock.do_request_get(
-            blob_rest_views.BlobDownload.as_view(), mock_user, param={"pk": "0"}
+            blob_rest_views.BlobDownload.as_view(),
+            mock_user,
+            param={"pk": "0"},
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -399,7 +408,9 @@ class TestBlobDownloadGetPermissions(SimpleTestCase):
         mock_user = create_mock_user("1", is_staff=True)
 
         response = RequestMock.do_request_get(
-            blob_rest_views.BlobDownload.as_view(), mock_user, param={"pk": "0"}
+            blob_rest_views.BlobDownload.as_view(),
+            mock_user,
+            param={"pk": "0"},
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -423,7 +434,9 @@ class TestBlobDeleteListPatchPermissions(SimpleTestCase):
     @patch.object(DeleteBlobsSerializer, "validated_data")
     @patch.object(DeleteBlobsSerializer, "is_valid")
     def test_authenticated_returns_http_204(
-        self, mock_blob_serializer_is_valid, mock_blob_serializer_validated_data
+        self,
+        mock_blob_serializer_is_valid,
+        mock_blob_serializer_validated_data,
     ):
         """test_authenticated_returns_http_204
 
@@ -448,7 +461,9 @@ class TestBlobDeleteListPatchPermissions(SimpleTestCase):
     @patch.object(DeleteBlobsSerializer, "validated_data")
     @patch.object(DeleteBlobsSerializer, "is_valid")
     def test_staff_returns_http_204(
-        self, mock_blob_serializer_is_valid, mock_blob_serializer_validated_data
+        self,
+        mock_blob_serializer_is_valid,
+        mock_blob_serializer_validated_data,
     ):
         """test_staff_returns_http_204
 

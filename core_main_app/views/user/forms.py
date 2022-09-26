@@ -33,7 +33,9 @@ class GroupRightForm(forms.Form):
         self.GROUPS_OPTIONS = []
 
         # We sort by name, case sensitive
-        sort_groups = sorted(groups_with_no_access, key=lambda s: s.name.lower())
+        sort_groups = sorted(
+            groups_with_no_access, key=lambda s: s.name.lower()
+        )
 
         # We add them
         for group in sort_groups:
@@ -58,7 +60,9 @@ class UserRightForm(forms.Form):
         self.USERS_OPTIONS = []
 
         # We sort by username, case sensitive
-        sort_users = sorted(users_with_no_access, key=lambda s: s.username.lower())
+        sort_users = sorted(
+            users_with_no_access, key=lambda s: s.username.lower()
+        )
 
         # We add them
         for user in sort_users:
@@ -83,7 +87,9 @@ class ChangeWorkspaceForm(forms.Form):
     """
 
     workspaces = forms.ChoiceField(
-        label="", required=True, widget=forms.Select(attrs={"class": "form-control"})
+        label="",
+        required=True,
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
     WORKSPACES_OPTIONS = []
 
@@ -104,7 +110,9 @@ class ChangeWorkspaceForm(forms.Form):
             all_workspaces = workspace_api.get_all()
         else:
             all_workspaces = list(
-                workspace_api.get_all_workspaces_with_write_access_by_user(user)
+                workspace_api.get_all_workspaces_with_write_access_by_user(
+                    user
+                )
             )
             if show_global_workspace:
                 workspace_global = workspace_api.get_global_workspace()
@@ -143,7 +151,9 @@ class ChangeWorkspaceForm(forms.Form):
                         + (
                             "GLOBAL"
                             if is_workspace_global
-                            else user_api.get_user_by_id(workspace.owner).username
+                            else user_api.get_user_by_id(
+                                workspace.owner
+                            ).username
                         )
                         + ")",
                     )

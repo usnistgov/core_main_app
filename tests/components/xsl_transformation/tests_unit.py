@@ -5,8 +5,12 @@ from unittest.case import TestCase
 from unittest.mock import Mock, patch
 
 from core_main_app.commons import exceptions
-from core_main_app.components.xsl_transformation import api as xsl_transformation_api
-from core_main_app.components.xsl_transformation.models import XslTransformation
+from core_main_app.components.xsl_transformation import (
+    api as xsl_transformation_api,
+)
+from core_main_app.components.xsl_transformation.models import (
+    XslTransformation,
+)
 from xml_utils.html_tree.parser import html_diff as htmldiff
 
 
@@ -14,7 +18,9 @@ class TestXslTransformationGet(TestCase):
     """TestXslTransformationGet"""
 
     @patch.object(XslTransformation, "get_by_name")
-    def test_xsl_transformation_get_return_xsl_transformation(self, mock_get_by_name):
+    def test_xsl_transformation_get_return_xsl_transformation(
+        self, mock_get_by_name
+    ):
         """test xsl transformation get return xsl transformation
 
         Args:
@@ -80,7 +86,9 @@ class TestXslTransformationGetById(TestCase):
             xsl_transformation_api.get_by_id(1)
 
     @patch.object(XslTransformation, "get_by_id")
-    def test_xsl_transformation_get_by_id_returns_xsl_transformation(self, mock_get):
+    def test_xsl_transformation_get_by_id_returns_xsl_transformation(
+        self, mock_get
+    ):
         """test xsl transformation get by id returns xsl transformation
 
         Args:
@@ -91,7 +99,9 @@ class TestXslTransformationGetById(TestCase):
         """
         # Arrange
         mock_data = _create_mock_xsl_transformation(
-            name="xslt_name_1", filename="xslt_filename_1", content="xslt_content_1"
+            name="xslt_name_1",
+            filename="xslt_filename_1",
+            content="xslt_content_1",
         )
         mock_get.return_value = mock_data
 
@@ -119,11 +129,15 @@ class TestXslTransformationGetAll(TestCase):
         """
         # Arrange
         mock_xslt_1 = _create_mock_xsl_transformation(
-            name="xslt_name_1", filename="xslt_filename_1", content="xslt_content_1"
+            name="xslt_name_1",
+            filename="xslt_filename_1",
+            content="xslt_content_1",
         )
 
         mock_xslt_2 = _create_mock_xsl_transformation(
-            name="xslt_name_2", filename="xslt_filename_2", content="xslt_content_2"
+            name="xslt_name_2",
+            filename="xslt_filename_2",
+            content="xslt_content_2",
         )
 
         mock_get_all.return_value = [mock_xslt_1, mock_xslt_2]
@@ -132,14 +146,18 @@ class TestXslTransformationGetAll(TestCase):
         result = xsl_transformation_api.get_all()
 
         # Assert
-        self.assertTrue(all(isinstance(item, XslTransformation) for item in result))
+        self.assertTrue(
+            all(isinstance(item, XslTransformation) for item in result)
+        )
 
 
 class TestXslTransformationUpsert(TestCase):
     """TestXslTransformationUpsert"""
 
     @patch.object(XslTransformation, "save")
-    def test_xsl_transformation_upsert_return_xsl_transformation(self, mock_save):
+    def test_xsl_transformation_upsert_return_xsl_transformation(
+        self, mock_save
+    ):
         """test xsl transformation upsert return xsl transformation
 
         Args:
@@ -259,7 +277,9 @@ class TestXslTransform(TestCase):
             expected_result = html_file.read()
 
         # Act
-        result = xsl_transformation_api.xsl_transform(mock_xml_data, mock_xslt.name)
+        result = xsl_transformation_api.xsl_transform(
+            mock_xml_data, mock_xslt.name
+        )
         html_diff = htmldiff(
             result, expected_result
         )  # Computing difference in resulting content
@@ -269,7 +289,9 @@ class TestXslTransform(TestCase):
         self.assertNotIn("<del>", html_diff)
 
     @patch.object(XslTransformation, "get_by_name")
-    def test_xsl_transform_raise_api_error_on_encode_exception(self, mock_get_by_name):
+    def test_xsl_transform_raise_api_error_on_encode_exception(
+        self, mock_get_by_name
+    ):
         """test xsl transform raise api error on encode exception
 
         Args:
@@ -287,7 +309,9 @@ class TestXslTransform(TestCase):
 
         # two .encode() in a row will trigger the exception
         mock_xslt = _create_mock_xsl_transformation(
-            name="mock_xslt", filename="mock_xslt.xsl", content="\u2000".encode("utf-8")
+            name="mock_xslt",
+            filename="mock_xslt.xsl",
+            content="\u2000".encode("utf-8"),
         )
 
         mock_get_by_name.return_value = mock_xslt
@@ -297,7 +321,9 @@ class TestXslTransform(TestCase):
             xsl_transformation_api.xsl_transform(mock_xml_data, mock_xslt.name)
 
     @patch.object(XslTransformation, "get_by_name")
-    def test_xsl_transform_raise_api_error_on_malformed_xslt(self, mock_get_by_name):
+    def test_xsl_transform_raise_api_error_on_malformed_xslt(
+        self, mock_get_by_name
+    ):
         """test xsl transform raise api error on malformed xslt
 
         Args:
@@ -314,7 +340,9 @@ class TestXslTransform(TestCase):
             mock_xml_data = xml_file.read()
 
         mock_xslt = _create_mock_xsl_transformation(
-            name="mock_xslt", filename="mock_xslt.xsl", content="mock_malformed_xslt/>"
+            name="mock_xslt",
+            filename="mock_xslt.xsl",
+            content="mock_malformed_xslt/>",
         )
         mock_get_by_name.return_value = mock_xslt
 
@@ -323,7 +351,9 @@ class TestXslTransform(TestCase):
             xsl_transformation_api.xsl_transform(mock_xml_data, mock_xslt.name)
 
     @patch.object(XslTransformation, "get_by_name")
-    def test_xsl_transform_raise_api_error_on_malformed_xml(self, mock_get_by_name):
+    def test_xsl_transform_raise_api_error_on_malformed_xml(
+        self, mock_get_by_name
+    ):
         """test xsl transform raise api error on malformed xml
 
         Args:

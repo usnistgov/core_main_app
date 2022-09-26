@@ -6,8 +6,12 @@ from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.components.workspace.models import Workspace
-from core_main_app.components.xsl_transformation.models import XslTransformation
-from core_main_app.utils.integration_tests.fixture_interface import FixtureInterface
+from core_main_app.components.xsl_transformation.models import (
+    XslTransformation,
+)
+from core_main_app.utils.integration_tests.fixture_interface import (
+    FixtureInterface,
+)
 
 
 class DataFixtures(FixtureInterface):
@@ -37,15 +41,24 @@ class DataFixtures(FixtureInterface):
         """
         # NOTE: no xml_content to avoid using unsupported GridFS mock
         self.data_1 = Data(
-            template=self.template, user_id="1", dict_content=None, title="title"
+            template=self.template,
+            user_id="1",
+            dict_content=None,
+            title="title",
         )
         self.data_1.save()
         self.data_2 = Data(
-            template=self.template, user_id="2", dict_content=None, title="title2"
+            template=self.template,
+            user_id="2",
+            dict_content=None,
+            title="title2",
         )
         self.data_2.save()
         self.data_3 = Data(
-            template=self.template, user_id="1", dict_content=None, title="title3"
+            template=self.template,
+            user_id="1",
+            dict_content=None,
+            title="title3",
         )
         self.data_3.save()
         self.data_collection = [self.data_1, self.data_2, self.data_3]
@@ -86,11 +99,17 @@ class QueryDataFixtures(DataFixtures):
         content_2 = {"root": {"element": "value2"}}
         # NOTE: no xml_content to avoid using unsupported GridFS mock
         self.data_1 = Data(
-            template=self.template, user_id="1", dict_content=content_1, title="title"
+            template=self.template,
+            user_id="1",
+            dict_content=content_1,
+            title="title",
         )
         self.data_1.save()
         self.data_2 = Data(
-            template=self.template, user_id="2", dict_content=content_2, title="title2"
+            template=self.template,
+            user_id="2",
+            dict_content=content_2,
+            title="title2",
         )
         self.data_2.save()
         self.data_collection = [self.data_1, self.data_2]
@@ -251,7 +270,10 @@ class AccessControlDataFixture2(FixtureInterface):
         content = {"root": {"element": "value2"}}
 
         self.data_1 = Data(
-            template=self.template, title="Data 1", user_id="1", dict_content=content
+            template=self.template,
+            title="Data 1",
+            user_id="1",
+            dict_content=content,
         )
         self.data_1.save()
         self.data_2 = Data(
@@ -306,7 +328,10 @@ class AccessControlDataFixture2(FixtureInterface):
 
         """
         self.workspace_1 = Workspace(
-            title="Workspace 1", owner=None, read_perm_id="1", write_perm_id="1"
+            title="Workspace 1",
+            owner=None,
+            read_perm_id="1",
+            write_perm_id="1",
         )
         self.workspace_1.save()
 
@@ -345,7 +370,9 @@ class AccessControlDataFullTextSearchFixture(FixtureInterface):
         """
 
         # _1: user1 is unique and private, value1 is also in _2
-        xml_content_1 = "<root><element>user1</element><element>value1</element></root>"
+        xml_content_1 = (
+            "<root><element>user1</element><element>value1</element></root>"
+        )
         # _2: value1 is common to _1 and _2
         xml_content_2 = "<root><element>value1</element></root>"
         # _3_1: value31 is unique and private
@@ -413,7 +440,10 @@ class AccessControlDataFullTextSearchFixture(FixtureInterface):
 
         """
         self.workspace_1 = Workspace(
-            title="Workspace 1", owner=None, read_perm_id="1", write_perm_id="1"
+            title="Workspace 1",
+            owner=None,
+            read_perm_id="1",
+            write_perm_id="1",
         )
         self.workspace_1.save()
 
@@ -450,32 +480,42 @@ class DataMigrationFixture(FixtureInterface):
         Returns:
 
         """
-        self.data_1 = Data(template=self.template_1, title="Data 1", user_id="1")
+        self.data_1 = Data(
+            template=self.template_1, title="Data 1", user_id="1"
+        )
         self.data_1.xml_content = '<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
                                     <test>test</test> \
                                   </root>'
         self.data_1.save()
 
-        self.data_2 = Data(template=self.template_1, title="Data 2", user_id="1")
+        self.data_2 = Data(
+            template=self.template_1, title="Data 2", user_id="1"
+        )
         self.data_2.xml_content = '<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
                                     <test>test</test> \
                                   </root>'
         self.data_2.save()
 
-        self.data_3 = Data(template=self.template_2, title="Data 3", user_id="1")
+        self.data_3 = Data(
+            template=self.template_2, title="Data 3", user_id="1"
+        )
         self.data_3.xml_content = '<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
                                     <test>test</test> \
                                   </root>'
 
         self.data_3.save()
 
-        self.data_4 = Data(template=self.template_3, title="Data4", user_id="1")
+        self.data_4 = Data(
+            template=self.template_3, title="Data4", user_id="1"
+        )
         self.data_4.xml_content = '<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
                                     <other>test</other> \
                                   </root>'
         self.data_4.save()
 
-        self.data_5 = Data(template=self.template_3, title="Data5", user_id="1")
+        self.data_5 = Data(
+            template=self.template_3, title="Data5", user_id="1"
+        )
         self.data_5.xml_content = '<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
                                     <other>test</other> \
                                   </root>'

@@ -112,7 +112,9 @@ def update_data_list(model_admin, request, queryset):
                 )
             except DoesNotExist:
                 model_admin.message_user(
-                    request, "No workspace found with this id.", messages.WARNING
+                    request,
+                    "No workspace found with this id.",
+                    messages.WARNING,
                 )
             # Update workspace
             queryset.update(workspace=workspace)
@@ -120,7 +122,9 @@ def update_data_list(model_admin, request, queryset):
                 from core_main_app.components.mongo.models import MongoData
 
                 workspace_id = workspace.id if workspace else None
-                MongoData.update_workspace_id_from_queryset(queryset, workspace_id)
+                MongoData.update_workspace_id_from_queryset(
+                    queryset, workspace_id
+                )
             # Display success message
             model_admin.message_user(
                 request,
@@ -138,7 +142,12 @@ class CustomDataAdmin(admin.ModelAdmin):
 
     search_fields = ["title", "vector_column"]
     list_filter = ["template", "user_id", "workspace"]
-    list_display = ["title", "last_modification_date", "owner_name", "workspace"]
+    list_display = [
+        "title",
+        "last_modification_date",
+        "owner_name",
+        "workspace",
+    ]
     action_form = UpdateActionForm
     actions = [update_data_list]
     readonly_fields = ["checksum", "xml_file"]

@@ -55,7 +55,8 @@ class TestTemplateXslRenderingAddDetailXslt(MongoIntegrationBaseTestCase):
             self.fixture.xsl_transformation_1.id,
         )
         self.assertIn(
-            self.fixture.xsl_transformation_1.id, response.data["list_detail_xslt"]
+            self.fixture.xsl_transformation_1.id,
+            response.data["list_detail_xslt"],
         )
 
     def test_add_detail_xslt(self):
@@ -86,7 +87,8 @@ class TestTemplateXslRenderingAddDetailXslt(MongoIntegrationBaseTestCase):
         )
         self.assertEqual(len(response.data["list_detail_xslt"]), 2)
         self.assertIn(
-            self.fixture.xsl_transformation_1.id, response.data["list_detail_xslt"]
+            self.fixture.xsl_transformation_1.id,
+            response.data["list_detail_xslt"],
         )
 
     def test_add_detail_xslt_if_object_does_not_exist(self):
@@ -110,10 +112,14 @@ class TestTemplateXslRenderingAddDetailXslt(MongoIntegrationBaseTestCase):
 
         # Assert
 
-        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        self.assertEqual(
+            response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
-class TestTemplateXslRenderingSetDefaultDetailXslt(MongoIntegrationBaseTestCase):
+class TestTemplateXslRenderingSetDefaultDetailXslt(
+    MongoIntegrationBaseTestCase
+):
     """TestTemplateXslRenderingSetDefaultDetailXslt"""
 
     fixture = fixture_template_xsl_rendering
@@ -181,7 +187,9 @@ class TestTemplateXslRenderingSetDefaultDetailXslt(MongoIntegrationBaseTestCase)
 
         # Assert
 
-        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        self.assertEqual(
+            response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
 class TestTemplateXslRenderingRemoveDetailXslt(MongoIntegrationBaseTestCase):
@@ -227,7 +235,8 @@ class TestTemplateXslRenderingRemoveDetailXslt(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertNotIn(
-            str(self.fixture.xsl_transformation_1.id), response.data["list_detail_xslt"]
+            str(self.fixture.xsl_transformation_1.id),
+            response.data["list_detail_xslt"],
         )
         self.assertEqual(len(response.data["list_detail_xslt"]), 1)
 
@@ -290,7 +299,8 @@ class TestTemplateXslRenderingRemoveDetailXslt(MongoIntegrationBaseTestCase):
             str(self.fixture.xsl_transformation_1.id),
         )
         self.assertNotIn(
-            str(self.fixture.xsl_transformation_3.id), response.data["list_detail_xslt"]
+            str(self.fixture.xsl_transformation_3.id),
+            response.data["list_detail_xslt"],
         )
         self.assertNotEqual(response.data["list_detail_xslt"], [])
 
@@ -315,7 +325,9 @@ class TestTemplateXslRenderingRemoveDetailXslt(MongoIntegrationBaseTestCase):
 
         # Assert
 
-        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        self.assertEqual(
+            response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
 class TestTemplateXslRenderingSetListDetailXslt(MongoIntegrationBaseTestCase):

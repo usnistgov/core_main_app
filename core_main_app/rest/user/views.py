@@ -2,7 +2,10 @@
 """
 from django.contrib.auth.models import User
 from rest_framework import permissions
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import (
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView,
+)
 
 from core_main_app.rest.user.serializers import UserSerializer
 

@@ -35,7 +35,9 @@ class TestsWebPageApiGet(TestCase):
         self.assertEqual("content web page login", result.content)
 
     @patch("core_main_app.components.web_page.models.WebPage.get_by_type")
-    def test_web_page_get_not_in_database_return_none(self, mock_get_web_page_by_type):
+    def test_web_page_get_not_in_database_return_none(
+        self, mock_get_web_page_by_type
+    ):
         """test web page get not in database return none
 
         Args:

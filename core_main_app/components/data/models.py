@@ -21,7 +21,9 @@ from core_main_app.utils.raw_query.django_raw_query import get_workspace_query
 class Data(AbstractData):
     """Data object"""
 
-    template = models.ForeignKey(Template, blank=False, on_delete=models.CASCADE)
+    template = models.ForeignKey(
+        Template, blank=False, on_delete=models.CASCADE
+    )
     user_id = models.CharField(blank=False, max_length=200)
     workspace = models.ForeignKey(
         Workspace, blank=True, on_delete=models.SET_NULL, null=True
@@ -34,7 +36,12 @@ class Data(AbstractData):
         verbose_name_plural = "Data"
         indexes = [
             models.Index(
-                fields=["title", "last_modification_date", "template", "user_id"]
+                fields=[
+                    "title",
+                    "last_modification_date",
+                    "template",
+                    "user_id",
+                ]
             ),
             GinIndex(fields=["vector_column"]),
         ]
@@ -85,7 +92,9 @@ class Data(AbstractData):
         Returns:
         """
         if id_list is None:
-            return Data.get_all([field.replace("+", "") for field in order_by_field])
+            return Data.get_all(
+                [field.replace("+", "") for field in order_by_field]
+            )
 
         return Data.objects.exclude(pk__in=id_list).order_by(
             *[field.replace("+", "") for field in order_by_field]
@@ -202,9 +211,9 @@ class Data(AbstractData):
         Returns:
 
         """
-        return Data.objects.filter(get_workspace_query(list_workspace)).order_by(
-            *[field.replace("+", "") for field in order_by_field]
-        )
+        return Data.objects.filter(
+            get_workspace_query(list_workspace)
+        ).order_by(*[field.replace("+", "") for field in order_by_field])
 
     @staticmethod
     def get_all_by_list_template(list_template, order_by_field):

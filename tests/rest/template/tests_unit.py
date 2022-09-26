@@ -33,14 +33,18 @@ class TestTemplateDownload(SimpleTestCase):
 
         # Mock
         response = RequestMock.do_request_get(
-            template_rest_views.TemplateDownload.as_view(), mock_user, param={"pk": "1"}
+            template_rest_views.TemplateDownload.as_view(),
+            mock_user,
+            param={"pk": "1"},
         )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @patch.object(template_api, "get_by_id")
-    def test_get_returns_http_200_when_data_found(self, mock_template_api_get_by_id):
+    def test_get_returns_http_200_when_data_found(
+        self, mock_template_api_get_by_id
+    ):
         """test_get_returns_http_200_when_data_found"""
 
         # Arrange
@@ -50,7 +54,9 @@ class TestTemplateDownload(SimpleTestCase):
 
         # Mock
         response = RequestMock.do_request_get(
-            template_rest_views.TemplateDownload.as_view(), mock_user, param={"pk": "1"}
+            template_rest_views.TemplateDownload.as_view(),
+            mock_user,
+            param={"pk": "1"},
         )
 
         # Assert
@@ -80,7 +86,9 @@ class TestTemplateDownload(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @patch.object(template_api, "get_by_id")
-    def test_get_without_pretty_print_returns_data(self, mock_template_api_get_by_id):
+    def test_get_without_pretty_print_returns_data(
+        self, mock_template_api_get_by_id
+    ):
         """test_get_without_pretty_print_returns_data"""
 
         # Arrange

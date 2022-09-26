@@ -23,7 +23,9 @@ class TestRawToDict(TestCase):
         """
         # Arrange
         raw_xml = "<root><test>Hello</test></root>"
-        expected_dict = OrderedDict([("root", OrderedDict([("test", "Hello")]))])
+        expected_dict = OrderedDict(
+            [("root", OrderedDict([("test", "Hello")]))]
+        )
 
         # Act
         xml_dict = raw_xml_to_dict(raw_xml)
@@ -52,7 +54,9 @@ class TestRawToDict(TestCase):
         """
         # Arrange
         raw_xml = "<root><test>Hello</test><test>1</test></root>"
-        expected_dict = OrderedDict([("root", OrderedDict([("test", ["Hello", "1"])]))])
+        expected_dict = OrderedDict(
+            [("root", OrderedDict([("test", ["Hello", "1"])]))]
+        )
 
         # Act
         xml_dict = raw_xml_to_dict(raw_xml, postprocessor=None)
@@ -68,7 +72,9 @@ class TestRawToDict(TestCase):
         """
         # Arrange
         raw_xml = "<root><test>Hello</test><test>1</test></root>"
-        expected_dict = OrderedDict([("root", OrderedDict([("test", ["Hello", 1])]))])
+        expected_dict = OrderedDict(
+            [("root", OrderedDict([("test", ["Hello", 1])]))]
+        )
 
         # Act
         xml_dict = raw_xml_to_dict(raw_xml, postprocessor="NUMERIC")
@@ -211,9 +217,13 @@ class TestRemoveListsFromXmlDict(TestCase):
         # Act
         remove_lists_from_xml_dict(xml_dict, 3)
         # Assert
-        self.assertTrue(xml_dict == {"root": {"list": [{"value": 1}, {"value": 2}]}})
+        self.assertTrue(
+            xml_dict == {"root": {"list": [{"value": 1}, {"value": 2}]}}
+        )
 
-    def test_remove_lists_from_xml_dict_sub_elements_only_list_is_removed(self):
+    def test_remove_lists_from_xml_dict_sub_elements_only_list_is_removed(
+        self,
+    ):
         """Test remove lists from xml dict sub elements only list is removed
 
         Returns:
@@ -232,7 +242,8 @@ class TestRemoveListsFromXmlDict(TestCase):
         remove_lists_from_xml_dict(xml_dict)
         # Assert
         self.assertTrue(
-            xml_dict == {"root": {"int": 3, "str": "test", "dict": {"value": "test"}}}
+            xml_dict
+            == {"root": {"int": 3, "str": "test", "dict": {"value": "test"}}}
         )
 
 
@@ -272,7 +283,9 @@ class TestGetContentByXpath(TestCase):
 
         """
         # Arrange
-        raw_xml = "<root><element>Hello</element><element>World</element></root>"
+        raw_xml = (
+            "<root><element>Hello</element><element>World</element></root>"
+        )
         # Act
         content = get_content_by_xpath(raw_xml, "/root/element")
         # Assert
@@ -416,7 +429,9 @@ class TestFormatContentXml(TestCase):
 
         # Arrange
         xml_string = "<root><test>Hello</test><test>1</test></root>"
-        expected_result = "<root>\n  <test>Hello</test>\n  <test>1</test>\n</root>\n"
+        expected_result = (
+            "<root>\n  <test>Hello</test>\n  <test>1</test>\n</root>\n"
+        )
 
         # Act
         content = format_content_xml(xml_string)

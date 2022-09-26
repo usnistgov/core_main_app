@@ -91,7 +91,10 @@ class AddObjectModalView(CreateView):
 
         Return:
         """
-        return {"path": "core_main_app/common/js/modals/add.js", "is_raw": False}
+        return {
+            "path": "core_main_app/common/js/modals/add.js",
+            "is_raw": False,
+        }
 
 
 class EditObjectModalView(UpdateView):
@@ -164,7 +167,10 @@ class EditObjectModalView(UpdateView):
 
         Return:
         """
-        return {"path": "core_main_app/common/js/modals/edit.js", "is_raw": False}
+        return {
+            "path": "core_main_app/common/js/modals/edit.js",
+            "is_raw": False,
+        }
 
 
 class DeleteObjectModalView(DeleteView):
@@ -254,7 +260,10 @@ class DeleteObjectModalView(DeleteView):
 
         Return:
         """
-        return {"path": "core_main_app/common/js/modals/delete.js", "is_raw": False}
+        return {
+            "path": "core_main_app/common/js/modals/delete.js",
+            "is_raw": False,
+        }
 
 
 @method_decorator(login_required, name="dispatch")
@@ -268,7 +277,9 @@ class EditTemplateVersionManagerView(EditObjectModalView):
         # Save treatment.
         try:
             template_version_manager_api.edit_title(
-                self.object, form.cleaned_data.get("title"), request=self.request
+                self.object,
+                form.cleaned_data.get("title"),
+                request=self.request,
             )
         except exceptions.NotUniqueError:
             form.add_error(

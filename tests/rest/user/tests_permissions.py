@@ -32,7 +32,9 @@ class TestUserGetPermissions(MongoIntegrationTransactionTestCase):
 
         """
         response = RequestMock.do_request_get(
-            user_rest_views.UserRetrieveUpdateView.as_view(), None, param={"pk": 0}
+            user_rest_views.UserRetrieveUpdateView.as_view(),
+            None,
+            param={"pk": 0},
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -46,7 +48,9 @@ class TestUserGetPermissions(MongoIntegrationTransactionTestCase):
         mock_user = create_mock_user("1")
 
         response = RequestMock.do_request_get(
-            user_rest_views.UserRetrieveUpdateView.as_view(), mock_user, param={"pk": 0}
+            user_rest_views.UserRetrieveUpdateView.as_view(),
+            mock_user,
+            param={"pk": 0},
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

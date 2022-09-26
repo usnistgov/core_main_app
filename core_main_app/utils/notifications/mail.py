@@ -136,7 +136,9 @@ def send_mail_to_administrators(
         )
 
 
-def send_mail_to_managers(subject, path_to_template, context=None, fail_silently=True):
+def send_mail_to_managers(
+    subject, path_to_template, context=None, fail_silently=True
+):
     """Send email to managers.
 
     Args:
@@ -157,4 +159,6 @@ def send_mail_to_managers(subject, path_to_template, context=None, fail_silently
         )
     else:
         # Sync call
-        task.send_mail_to_managers(subject, path_to_template, context, fail_silently)
+        task.send_mail_to_managers(
+            subject, path_to_template, context, fail_silently
+        )

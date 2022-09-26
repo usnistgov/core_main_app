@@ -2,7 +2,9 @@
 """
 
 from rest_framework import status
-from tests.rest.xsl_transformation.fixtures.fixtures import XslTransformationFixtures
+from tests.rest.xsl_transformation.fixtures.fixtures import (
+    XslTransformationFixtures,
+)
 
 from core_main_app.rest.xsl_transformation import views as xsl_views
 from core_main_app.utils.integration_tests.integration_base_test_case import (
@@ -76,7 +78,9 @@ class TestPostXslTransformationList(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_post_returns_status_400_if_data_are_not_valid_with_admin_user(self):
+    def test_post_returns_status_400_if_data_are_not_valid_with_admin_user(
+        self,
+    ):
         """test_post_returns_status_400_if_data_are_not_valid_with_admin_user
 
         Returns:
@@ -144,7 +148,10 @@ class TestGetXslTransformationDetail(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_get(
-            xsl_views.XslTransformationDetail.as_view(), user, self.data, self.param
+            xsl_views.XslTransformationDetail.as_view(),
+            user,
+            self.data,
+            self.param,
         )
 
         # Assert
@@ -162,7 +169,10 @@ class TestGetXslTransformationDetail(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_get(
-            xsl_views.XslTransformationDetail.as_view(), user, self.data, self.param
+            xsl_views.XslTransformationDetail.as_view(),
+            user,
+            self.data,
+            self.param,
         )
 
         # Assert
@@ -180,11 +190,16 @@ class TestGetXslTransformationDetail(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_get(
-            xsl_views.XslTransformationDetail.as_view(), user, self.data, self.param
+            xsl_views.XslTransformationDetail.as_view(),
+            user,
+            self.data,
+            self.param,
         )
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        self.assertEqual(
+            response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
 class TestDeleteXslTransformationDetail(MongoIntegrationBaseTestCase):
@@ -213,7 +228,10 @@ class TestDeleteXslTransformationDetail(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_delete(
-            xsl_views.XslTransformationDetail.as_view(), user, self.data, self.param
+            xsl_views.XslTransformationDetail.as_view(),
+            user,
+            self.data,
+            self.param,
         )
 
         # Assert
@@ -231,7 +249,10 @@ class TestDeleteXslTransformationDetail(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_delete(
-            xsl_views.XslTransformationDetail.as_view(), user, self.data, self.param
+            xsl_views.XslTransformationDetail.as_view(),
+            user,
+            self.data,
+            self.param,
         )
 
         # Assert
@@ -249,11 +270,16 @@ class TestDeleteXslTransformationDetail(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_delete(
-            xsl_views.XslTransformationDetail.as_view(), user, self.data, self.param
+            xsl_views.XslTransformationDetail.as_view(),
+            user,
+            self.data,
+            self.param,
         )
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        self.assertEqual(
+            response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
     def test_post_return_204_if_document_is_deleted_whit_success(self):
         """test_post_return_204_if_document_is_deleted_whit_success
@@ -267,7 +293,10 @@ class TestDeleteXslTransformationDetail(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_delete(
-            xsl_views.XslTransformationDetail.as_view(), user, self.data, self.param
+            xsl_views.XslTransformationDetail.as_view(),
+            user,
+            self.data,
+            self.param,
         )
 
         # Assert
@@ -300,7 +329,10 @@ class TestPatchXslTransformationDetail(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_patch(
-            xsl_views.XslTransformationDetail.as_view(), user, self.data, self.param
+            xsl_views.XslTransformationDetail.as_view(),
+            user,
+            self.data,
+            self.param,
         )
 
         # Assert
@@ -318,7 +350,10 @@ class TestPatchXslTransformationDetail(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_patch(
-            xsl_views.XslTransformationDetail.as_view(), user, self.data, self.param
+            xsl_views.XslTransformationDetail.as_view(),
+            user,
+            self.data,
+            self.param,
         )
 
         # Assert
@@ -359,7 +394,10 @@ class TestPatchXslTransformationDetail(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_patch(
-            xsl_views.XslTransformationDetail.as_view(), user, self.data, self.param
+            xsl_views.XslTransformationDetail.as_view(),
+            user,
+            self.data,
+            self.param,
         )
 
         # Assert
@@ -400,9 +438,13 @@ class TestPostXslTransformationTransform(MongoIntegrationBaseTestCase):
         )
 
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        self.assertEqual(
+            response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
-    def test_post_return_status_200_if_xml_and_xslt_name_are_valid_parameters(self):
+    def test_post_return_status_200_if_xml_and_xslt_name_are_valid_parameters(
+        self,
+    ):
         """test_post_return_status_200_if_xml_and_xslt_name_are_valid_parameters
 
         Returns:

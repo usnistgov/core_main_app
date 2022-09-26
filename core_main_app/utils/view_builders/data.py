@@ -33,8 +33,10 @@ def build_page(
     try:
         display_xslt_selector = True
         try:
-            template_xsl_rendering = template_xsl_rendering_api.get_by_template_id(
-                data_object.template.id
+            template_xsl_rendering = (
+                template_xsl_rendering_api.get_by_template_id(
+                    data_object.template.id
+                )
             )
             xsl_transformation_id = (
                 template_xsl_rendering.default_detail_xslt.id
@@ -49,7 +51,8 @@ def build_page(
 
         except Exception as exception:
             logger.warning(
-                "An exception occurred when retrieving XSLT: %s", str(exception)
+                "An exception occurred when retrieving XSLT: %s",
+                str(exception),
             )
             display_xslt_selector = False
             template_xsl_rendering = None
@@ -66,8 +69,14 @@ def build_page(
 
         page_info["assets"] = {
             "js": [
-                {"path": "core_main_app/common/js/XMLTree.js", "is_raw": False},
-                {"path": "core_main_app/user/js/data/detail.js", "is_raw": False},
+                {
+                    "path": "core_main_app/common/js/XMLTree.js",
+                    "is_raw": False,
+                },
+                {
+                    "path": "core_main_app/user/js/data/detail.js",
+                    "is_raw": False,
+                },
                 {
                     "path": "core_main_app/user/js/data/change_display.js",
                     "is_raw": False,
@@ -79,7 +88,10 @@ def build_page(
         if display_download_options:
             page_info["assets"]["js"].extend(
                 [
-                    {"path": "core_main_app/common/js/data_detail.js", "is_raw": False},
+                    {
+                        "path": "core_main_app/common/js/data_detail.js",
+                        "is_raw": False,
+                    },
                     {
                         "path": "core_main_app/common/js/modals/download.js",
                         "is_raw": False,

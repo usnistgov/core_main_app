@@ -71,7 +71,9 @@ class WebPageList(APIView):
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     @method_decorator(api_staff_member_required())
     def post(self, request):
@@ -108,7 +110,9 @@ class WebPageList(APIView):
                     instance=web_page, data=request.data, partial=True
                 )
             else:
-                web_page_serializer = WebPageSerializer(data=request.data, partial=True)
+                web_page_serializer = WebPageSerializer(
+                    data=request.data, partial=True
+                )
 
             # Validate web page
             web_page_serializer.is_valid(raise_exception=True)
@@ -117,13 +121,17 @@ class WebPageList(APIView):
             web_page_serializer.save(type=WEB_PAGE_TYPES[self.web_page_type])
 
             # Return the serialized web page
-            return Response(web_page_serializer.data, status=status.HTTP_201_CREATED)
+            return Response(
+                web_page_serializer.data, status=status.HTTP_201_CREATED
+            )
         except ValidationError as validation_exception:
             content = {"message": validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     @method_decorator(api_staff_member_required())
     def delete(self, request):
@@ -150,4 +158,6 @@ class WebPageList(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

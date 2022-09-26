@@ -4,7 +4,9 @@ from core_main_app.components.template.models import Template
 from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
 )
-from core_main_app.utils.integration_tests.fixture_interface import FixtureInterface
+from core_main_app.utils.integration_tests.fixture_interface import (
+    FixtureInterface,
+)
 
 
 class TemplateVersionManagerFixtures(FixtureInterface):
@@ -144,4 +146,8 @@ class TemplateVersionManagerAccessControlFixtures(FixtureInterface):
         )
         self.global_template.save()
 
-        self.template_vm_collection = [self.user1_tvm, self.user2_tvm, self.global_tvm]
+        self.template_vm_collection = [
+            self.user1_tvm,
+            self.user2_tvm,
+            self.global_tvm,
+        ]

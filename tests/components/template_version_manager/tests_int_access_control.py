@@ -6,7 +6,9 @@ from tests.components.template_version_manager.fixtures.fixtures import (
 )
 
 from core_main_app.access_control.exceptions import AccessControlError
-from core_main_app.components.template_version_manager import api as template_vm_api
+from core_main_app.components.template_version_manager import (
+    api as template_vm_api,
+)
 from core_main_app.utils.integration_tests.integration_base_test_case import (
     MongoIntegrationBaseTestCase,
 )
@@ -36,7 +38,9 @@ class TestTemplateVersionManagerGet(MongoIntegrationBaseTestCase):
         self.superuser1 = create_mock_user(user_id="1", is_superuser=True)
         self.fixture.insert_data()
 
-    def test_get_user_version_manager_as_anonymous_raises_access_control_error(self):
+    def test_get_user_version_manager_as_anonymous_raises_access_control_error(
+        self,
+    ):
         """test get user version manager as anonymous raises access control error
 
         Returns:
@@ -44,9 +48,13 @@ class TestTemplateVersionManagerGet(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.anonymous_user)
         with self.assertRaises(AccessControlError):
-            template_vm_api.get_by_id(self.fixture.user1_tvm.id, request=mock_request)
+            template_vm_api.get_by_id(
+                self.fixture.user1_tvm.id, request=mock_request
+            )
 
-    def test_get_global_version_manager_as_anonymous_raises_access_control_error(self):
+    def test_get_global_version_manager_as_anonymous_raises_access_control_error(
+        self,
+    ):
         """test get global version manager as anonymous raises access control error
 
         Returns:
@@ -54,7 +62,9 @@ class TestTemplateVersionManagerGet(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.anonymous_user)
         with self.assertRaises(AccessControlError):
-            template_vm_api.get_by_id(self.fixture.global_tvm.id, request=mock_request)
+            template_vm_api.get_by_id(
+                self.fixture.global_tvm.id, request=mock_request
+            )
 
     def test_get_own_version_manager_as_user_returns_version_manager(self):
         """test get own version manager as user returns version manager
@@ -88,9 +98,13 @@ class TestTemplateVersionManagerGet(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.user1)
         with self.assertRaises(AccessControlError):
-            template_vm_api.get_by_id(self.fixture.user2_tvm.id, request=mock_request)
+            template_vm_api.get_by_id(
+                self.fixture.user2_tvm.id, request=mock_request
+            )
 
-    def test_get_any_version_manager_as_superuser_returns_version_manager(self):
+    def test_get_any_version_manager_as_superuser_returns_version_manager(
+        self,
+    ):
         """test get any version manager as superuser returns version manager
 
         Returns:
@@ -110,7 +124,9 @@ class TestTemplateVersionManagerGet(MongoIntegrationBaseTestCase):
         )
         self.assertEqual(version_manager, self.fixture.global_tvm)
 
-    def test_get_other_users_version_manager_as_staff_raises_access_control_error(self):
+    def test_get_other_users_version_manager_as_staff_raises_access_control_error(
+        self,
+    ):
         """test get other users version manager as staff raises access control error
 
         Returns:
@@ -118,7 +134,9 @@ class TestTemplateVersionManagerGet(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.staff_user1)
         with self.assertRaises(AccessControlError):
-            template_vm_api.get_by_id(self.fixture.user2_tvm.id, request=mock_request)
+            template_vm_api.get_by_id(
+                self.fixture.user2_tvm.id, request=mock_request
+            )
 
 
 class TesTemplateVersionManagerGetByIdList(MongoIntegrationBaseTestCase):
@@ -212,7 +230,9 @@ class TesTemplateVersionManagerGetByIdList(MongoIntegrationBaseTestCase):
                 [str(self.fixture.user2_tvm.id)], request=mock_request
             )
 
-    def test_get_by_id_list_user_version_manager_as_staff_returns_version_manager(self):
+    def test_get_by_id_list_user_version_manager_as_staff_returns_version_manager(
+        self,
+    ):
         """test get by id list user version manager as staff returns version manager
 
         Returns:
@@ -338,15 +358,19 @@ class TestTemplateVersionManagerGetActiveGlobalVersionManagerByTitle(
                 self.fixture.global_tvm.title, request=mock_request
             )
 
-    def test_get_active_global_version_manager_as_user_returns_version_manager(self):
+    def test_get_active_global_version_manager_as_user_returns_version_manager(
+        self,
+    ):
         """test get active global version manager as user returns version manager
 
         Returns:
 
         """
         mock_request = create_mock_request(user=self.user1)
-        version_manager = template_vm_api.get_active_global_version_manager_by_title(
-            self.fixture.global_tvm.title, request=mock_request
+        version_manager = (
+            template_vm_api.get_active_global_version_manager_by_title(
+                self.fixture.global_tvm.title, request=mock_request
+            )
         )
         self.assertEqual(version_manager, self.fixture.global_tvm)
 
@@ -359,8 +383,10 @@ class TestTemplateVersionManagerGetActiveGlobalVersionManagerByTitle(
 
         """
         mock_request = create_mock_request(user=self.superuser1)
-        version_manager = template_vm_api.get_active_global_version_manager_by_title(
-            self.fixture.global_tvm.title, request=mock_request
+        version_manager = (
+            template_vm_api.get_active_global_version_manager_by_title(
+                self.fixture.global_tvm.title, request=mock_request
+            )
         )
         self.assertEqual(version_manager, self.fixture.global_tvm)
 
@@ -373,8 +399,10 @@ class TestTemplateVersionManagerGetActiveGlobalVersionManagerByTitle(
 
         """
         mock_request = create_mock_request(user=self.staff_user1)
-        version_manager = template_vm_api.get_active_global_version_manager_by_title(
-            self.fixture.global_tvm.title, request=mock_request
+        version_manager = (
+            template_vm_api.get_active_global_version_manager_by_title(
+                self.fixture.global_tvm.title, request=mock_request
+            )
         )
         self.assertEqual(version_manager, self.fixture.global_tvm)
 
@@ -396,7 +424,9 @@ class TestTemplateVersionManagerInsert(MongoIntegrationBaseTestCase):
         self.superuser1 = create_mock_user(user_id="1", is_superuser=True)
         self.fixture.insert_data()
 
-    def test_insert_user_template_as_anonymous_raises_access_control_error(self):
+    def test_insert_user_template_as_anonymous_raises_access_control_error(
+        self,
+    ):
         """test insert user template as anonymous raises access control error
 
         Returns:
@@ -410,7 +440,9 @@ class TestTemplateVersionManagerInsert(MongoIntegrationBaseTestCase):
                 request=mock_request,
             )
 
-    def test_insert_global_template_as_anonymous_raises_access_control_error(self):
+    def test_insert_global_template_as_anonymous_raises_access_control_error(
+        self,
+    ):
         """test insert global template as anonymous raises access control error
 
         Returns:
@@ -432,10 +464,14 @@ class TestTemplateVersionManagerInsert(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.user1)
         template_vm_api.insert(
-            self.fixture.user1_tvm, self.fixture.user1_template, request=mock_request
+            self.fixture.user1_tvm,
+            self.fixture.user1_template,
+            request=mock_request,
         )
 
-    def test_insert_other_users_template_as_user_raises_access_control_error(self):
+    def test_insert_other_users_template_as_user_raises_access_control_error(
+        self,
+    ):
         """test insert other users template as user raises access control error
 
         Returns:
@@ -471,10 +507,14 @@ class TestTemplateVersionManagerInsert(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.staff_user1)
         template_vm_api.insert(
-            self.fixture.user1_tvm, self.fixture.user1_template, request=mock_request
+            self.fixture.user1_tvm,
+            self.fixture.user1_template,
+            request=mock_request,
         )
 
-    def test_insert_other_users_template_as_staff_raises_access_control_error(self):
+    def test_insert_other_users_template_as_staff_raises_access_control_error(
+        self,
+    ):
         """test insert other users template as staff raises access control error
 
         Returns:
@@ -496,7 +536,9 @@ class TestTemplateVersionManagerInsert(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.staff_user1)
         template_vm_api.insert(
-            self.fixture.global_tvm, self.fixture.global_template, request=mock_request
+            self.fixture.global_tvm,
+            self.fixture.global_template,
+            request=mock_request,
         )
 
     def test_insert_own_template_as_superuser_saves(self):
@@ -507,7 +549,9 @@ class TestTemplateVersionManagerInsert(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.superuser1)
         template_vm_api.insert(
-            self.fixture.user1_tvm, self.fixture.user1_template, request=mock_request
+            self.fixture.user1_tvm,
+            self.fixture.user1_template,
+            request=mock_request,
         )
 
     def test_insert_other_users_template_as_superuser_saves(self):
@@ -518,7 +562,9 @@ class TestTemplateVersionManagerInsert(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.superuser1)
         template_vm_api.insert(
-            self.fixture.user2_tvm, self.fixture.user2_template, request=mock_request
+            self.fixture.user2_tvm,
+            self.fixture.user2_template,
+            request=mock_request,
         )
 
     def test_insert_global_template_as_superuser_saves(self):
@@ -529,7 +575,9 @@ class TestTemplateVersionManagerInsert(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.superuser1)
         template_vm_api.insert(
-            self.fixture.global_tvm, self.fixture.global_template, request=mock_request
+            self.fixture.global_tvm,
+            self.fixture.global_template,
+            request=mock_request,
         )
 
 
@@ -603,7 +651,9 @@ class TestTemplateEditTitle(MongoIntegrationBaseTestCase):
                 self.fixture.user2_tvm, "new_name", request=mock_request
             )
 
-    def test_edit_title_global_template_as_user_raises_access_control_error(self):
+    def test_edit_title_global_template_as_user_raises_access_control_error(
+        self,
+    ):
         """test edit title global template as user raises access control error
 
         Returns:
@@ -702,7 +752,9 @@ class TestTemplateGetGlobalVersionManagers(MongoIntegrationBaseTestCase):
         self.superuser1 = create_mock_user(user_id="1", is_superuser=True)
         self.fixture.insert_data()
 
-    def test_get_global_version_managers_as_anonymous_raises_acces_control_error(self):
+    def test_get_global_version_managers_as_anonymous_raises_acces_control_error(
+        self,
+    ):
         """test get global version managers as anonymous raises acces control error
 
         Returns:
@@ -719,7 +771,9 @@ class TestTemplateGetGlobalVersionManagers(MongoIntegrationBaseTestCase):
 
         """
         mock_request = create_mock_request(user=self.user1)
-        list_tvm = template_vm_api.get_global_version_managers(request=mock_request)
+        list_tvm = template_vm_api.get_global_version_managers(
+            request=mock_request
+        )
         for tvm in list_tvm:
             self.assertEqual(tvm.user, None)
 
@@ -730,7 +784,9 @@ class TestTemplateGetGlobalVersionManagers(MongoIntegrationBaseTestCase):
 
         """
         mock_request = create_mock_request(user=self.staff_user1)
-        list_tvm = template_vm_api.get_global_version_managers(request=mock_request)
+        list_tvm = template_vm_api.get_global_version_managers(
+            request=mock_request
+        )
         for tvm in list_tvm:
             self.assertEqual(tvm.user, None)
 
@@ -741,7 +797,9 @@ class TestTemplateGetGlobalVersionManagers(MongoIntegrationBaseTestCase):
 
         """
         mock_request = create_mock_request(user=self.superuser1)
-        list_tvm = template_vm_api.get_global_version_managers(request=mock_request)
+        list_tvm = template_vm_api.get_global_version_managers(
+            request=mock_request
+        )
         for tvm in list_tvm:
             self.assertEqual(tvm.user, None)
 
@@ -773,9 +831,13 @@ class TestTemplateGetActiveGlobalVersionManager(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.anonymous_user)
         with self.assertRaises(AccessControlError):
-            template_vm_api.get_active_global_version_manager(request=mock_request)
+            template_vm_api.get_active_global_version_manager(
+                request=mock_request
+            )
 
-    def test_get_active_global_version_manager_as_user_returns_global_tvm(self):
+    def test_get_active_global_version_manager_as_user_returns_global_tvm(
+        self,
+    ):
         """test get active global version manager as user returns global tvm
 
         Returns:
@@ -788,7 +850,9 @@ class TestTemplateGetActiveGlobalVersionManager(MongoIntegrationBaseTestCase):
         for tvm in list_tvm:
             self.assertEqual(tvm.user, None)
 
-    def test_get_active_global_version_manager_as_staff_returns_global_tvm(self):
+    def test_get_active_global_version_manager_as_staff_returns_global_tvm(
+        self,
+    ):
         """test get active global version manager as staff returns global tvm
 
         Returns:
@@ -801,7 +865,9 @@ class TestTemplateGetActiveGlobalVersionManager(MongoIntegrationBaseTestCase):
         for tvm in list_tvm:
             self.assertEqual(tvm.user, None)
 
-    def test_get_active_global_version_manager_as_superuser_returns_global_tvm(self):
+    def test_get_active_global_version_manager_as_superuser_returns_global_tvm(
+        self,
+    ):
         """test get active global version manager as superuser returns global tvm
 
         Returns:
@@ -815,7 +881,9 @@ class TestTemplateGetActiveGlobalVersionManager(MongoIntegrationBaseTestCase):
             self.assertEqual(tvm.user, None)
 
 
-class TestTemplateGetActiveVersionManagerByUserId(MongoIntegrationBaseTestCase):
+class TestTemplateGetActiveVersionManagerByUserId(
+    MongoIntegrationBaseTestCase
+):
     """TestTemplateGetActiveVersionManagerByUserId"""
 
     fixture = fixture_template_vm
@@ -832,7 +900,9 @@ class TestTemplateGetActiveVersionManagerByUserId(MongoIntegrationBaseTestCase):
         self.superuser1 = create_mock_user(user_id="1", is_superuser=True)
         self.fixture.insert_data()
 
-    def test_get_active_version_manager_by_user_id_as_anonymous_returns_nothing(self):
+    def test_get_active_version_manager_by_user_id_as_anonymous_returns_nothing(
+        self,
+    ):
         """test get active version manager by user id as anonymous returns nothing
 
         Returns:
@@ -844,7 +914,9 @@ class TestTemplateGetActiveVersionManagerByUserId(MongoIntegrationBaseTestCase):
         )
         self.assertEqual(list_tvm.count(), 0)
 
-    def test_get_active_version_manager_by_user_id_as_user_returns_user_templates(self):
+    def test_get_active_version_manager_by_user_id_as_user_returns_user_templates(
+        self,
+    ):
         """test get active version manager by user id as user returns user templates
 
         Returns:

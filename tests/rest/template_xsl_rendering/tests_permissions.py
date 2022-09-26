@@ -28,7 +28,8 @@ class TestTemplateXslRenderingListGetPermission(SimpleTestCase):
 
         """
         response = RequestMock.do_request_get(
-            template_xsl_rendering_views.TemplateXslRenderingList.as_view(), None
+            template_xsl_rendering_views.TemplateXslRenderingList.as_view(),
+            None,
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -50,13 +51,16 @@ class TestTemplateXslRenderingListGetPermission(SimpleTestCase):
         mock_user = create_mock_user("1")
 
         response = RequestMock.do_request_get(
-            template_xsl_rendering_views.TemplateXslRenderingList.as_view(), mock_user
+            template_xsl_rendering_views.TemplateXslRenderingList.as_view(),
+            mock_user,
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @patch.object(template_xsl_rendering_api, "get_all")
-    def test_staff_returns_http_200(self, mock_template_xsl_rendering_api_get_all):
+    def test_staff_returns_http_200(
+        self, mock_template_xsl_rendering_api_get_all
+    ):
         """test_staff_returns_http_200
 
         Args:
@@ -70,7 +74,8 @@ class TestTemplateXslRenderingListGetPermission(SimpleTestCase):
         mock_user = create_mock_user("1", is_staff=True)
 
         response = RequestMock.do_request_get(
-            template_xsl_rendering_views.TemplateXslRenderingList.as_view(), mock_user
+            template_xsl_rendering_views.TemplateXslRenderingList.as_view(),
+            mock_user,
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

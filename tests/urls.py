@@ -8,7 +8,10 @@ from drf_yasg.views import get_schema_view
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.data import api as data_api
 from core_main_app.utils.rendering import render
-from core_main_app.views.common import ajax as common_ajax, views as common_views
+from core_main_app.views.common import (
+    ajax as common_ajax,
+    views as common_views,
+)
 from core_main_app.views.user import views as user_views, ajax as user_ajax
 
 get_schema_view(
@@ -23,7 +26,9 @@ urlpatterns = [
     re_path(r"^login", user_views.custom_login, name="core_main_app_login"),
     re_path(r"^rest/", include("tests.rest_urls")),
     re_path(
-        r"^data", common_views.ViewData.as_view(), name="core_main_app_data_detail"
+        r"^data",
+        common_views.ViewData.as_view(),
+        name="core_main_app_data_detail",
     ),
     re_path(
         r"^template/versions/(?P<version_manager_id>\w+)",
@@ -74,7 +79,9 @@ urlpatterns = [
         user_ajax.add_user_right_to_workspace,
         name="core_main_add_user_right_to_workspace",
     ),
-    re_path(r"^switch-right", user_ajax.switch_right, name="core_main_switch_right"),
+    re_path(
+        r"^switch-right", user_ajax.switch_right, name="core_main_switch_right"
+    ),
     re_path(
         r"^remove-rights",
         user_ajax.remove_user_or_group_rights,

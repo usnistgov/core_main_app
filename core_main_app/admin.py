@@ -25,14 +25,18 @@ from core_main_app.components.template_version_manager.models import (
 from core_main_app.components.template_xsl_rendering.admin_site import (
     CustomTemplateXslRenderingAdmin,
 )
-from core_main_app.components.template_xsl_rendering.models import TemplateXslRendering
+from core_main_app.components.template_xsl_rendering.models import (
+    TemplateXslRendering,
+)
 from core_main_app.components.web_page_login import api as login_page_api
 from core_main_app.components.workspace.admin_site import CustomWorkspaceAdmin
 from core_main_app.components.workspace.models import Workspace
 from core_main_app.components.xsl_transformation.admin_site import (
     CustomXslTransformationAdmin,
 )
-from core_main_app.components.xsl_transformation.models import XslTransformation
+from core_main_app.components.xsl_transformation.models import (
+    XslTransformation,
+)
 from core_main_app.utils.rendering import admin_render
 from core_main_app.views.admin import views as admin_views, ajax as admin_ajax
 from core_main_app.views.admin.views import WebPageView
@@ -51,19 +55,28 @@ admin_urls = [
         ),
         name="core_main_app_login_page",
     ),
-    re_path(r"^login", RedirectView.as_view(url=reverse_lazy("core_main_app_login"))),
-    re_path(r"^logout", RedirectView.as_view(url=reverse_lazy("core_main_app_logout"))),
+    re_path(
+        r"^login",
+        RedirectView.as_view(url=reverse_lazy("core_main_app_login")),
+    ),
+    re_path(
+        r"^logout",
+        RedirectView.as_view(url=reverse_lazy("core_main_app_logout")),
+    ),
     re_path(
         r"^data$",
         staff_member_required(
             common_views.ViewData.as_view(
-                administration=True, template="core_main_app/admin/data/detail.html"
+                administration=True,
+                template="core_main_app/admin/data/detail.html",
             )
         ),
         name="core_main_app_data_detail",
     ),
     re_path(
-        r"^templates$", admin_views.manage_templates, name="core_main_app_templates"
+        r"^templates$",
+        admin_views.manage_templates,
+        name="core_main_app_templates",
     ),
     re_path(
         r"^template/upload$",
@@ -97,7 +110,9 @@ admin_urls = [
         ),
         name="core_main_app_template_xslt",
     ),
-    re_path(r"^dashboard$", admin_views.admin_home, name="core_main_app_admin_home"),
+    re_path(
+        r"^dashboard$", admin_views.admin_home, name="core_main_app_admin_home"
+    ),
     re_path(
         r"^template/resolve-dependencies",
         admin_ajax.resolve_dependencies,

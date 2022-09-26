@@ -207,14 +207,18 @@ class TestDataDownload(SimpleTestCase):
 
         # Mock
         response = RequestMock.do_request_get(
-            data_rest_views.DataDownload.as_view(), mock_user, param={"pk": "1"}
+            data_rest_views.DataDownload.as_view(),
+            mock_user,
+            param={"pk": "1"},
         )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @patch.object(data_api, "get_by_id")
-    def test_get_returns_http_200_when_data_found(self, mock_data_api_get_by_id):
+    def test_get_returns_http_200_when_data_found(
+        self, mock_data_api_get_by_id
+    ):
         """test_get_returns_http_200_when_data_found
 
         Args:
@@ -230,7 +234,9 @@ class TestDataDownload(SimpleTestCase):
 
         # Mock
         response = RequestMock.do_request_get(
-            data_rest_views.DataDownload.as_view(), mock_user, param={"pk": "1"}
+            data_rest_views.DataDownload.as_view(),
+            mock_user,
+            param={"pk": "1"},
         )
 
         # Assert
@@ -265,7 +271,9 @@ class TestDataDownload(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @patch.object(data_api, "get_by_id")
-    def test_get_without_pretty_print_returns_data(self, mock_data_api_get_by_id):
+    def test_get_without_pretty_print_returns_data(
+        self, mock_data_api_get_by_id
+    ):
         """test_get_without_pretty_print_returns_data
 
         Args:
@@ -349,7 +357,9 @@ class TestDataPermissions(SimpleTestCase):
 
         # Mock
         response = RequestMock.do_request_get(
-            data_rest_views.DataPermissions.as_view(), mock_user, data={"ids": '["1"]'}
+            data_rest_views.DataPermissions.as_view(),
+            mock_user,
+            data={"ids": '["1"]'},
         )
 
         # Assert
@@ -372,7 +382,9 @@ class TestDataPermissions(SimpleTestCase):
 
         # Mock
         response = RequestMock.do_request_get(
-            data_rest_views.DataPermissions.as_view(), mock_user, data={"ids": '["1"]'}
+            data_rest_views.DataPermissions.as_view(),
+            mock_user,
+            data={"ids": '["1"]'},
         )
 
         # Assert
@@ -396,7 +408,9 @@ class TestDataPermissions(SimpleTestCase):
 
         # Mock
         response = RequestMock.do_request_get(
-            data_rest_views.DataPermissions.as_view(), mock_user, data={"ids": '["1"]'}
+            data_rest_views.DataPermissions.as_view(),
+            mock_user,
+            data={"ids": '["1"]'},
         )
 
         # Assert
@@ -420,7 +434,9 @@ class TestDataPermissions(SimpleTestCase):
 
         # Mock
         response = RequestMock.do_request_get(
-            data_rest_views.DataPermissions.as_view(), mock_user, data={"ids": '["1"]'}
+            data_rest_views.DataPermissions.as_view(),
+            mock_user,
+            data={"ids": '["1"]'},
         )
 
         # Assert

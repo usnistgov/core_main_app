@@ -44,7 +44,9 @@ class RequestMock:
         Returns:
             Response: Request response.
         """
-        return RequestMock._do_request("POST", view, user, data, param, content_type)
+        return RequestMock._do_request(
+            "POST", view, user, data, param, content_type
+        )
 
     @staticmethod
     def do_request_put(
@@ -62,7 +64,9 @@ class RequestMock:
             Response: Request response.
 
         """
-        return RequestMock._do_request("PUT", view, user, data, param, content_type)
+        return RequestMock._do_request(
+            "PUT", view, user, data, param, content_type
+        )
 
     @staticmethod
     def do_request_delete(
@@ -80,7 +84,9 @@ class RequestMock:
             Response: Request response.
 
         """
-        return RequestMock._do_request("DELETE", view, user, data, param, content_type)
+        return RequestMock._do_request(
+            "DELETE", view, user, data, param, content_type
+        )
 
     @staticmethod
     def do_request_patch(
@@ -98,11 +104,18 @@ class RequestMock:
             Response: Request response.
 
         """
-        return RequestMock._do_request("PATCH", view, user, data, param, content_type)
+        return RequestMock._do_request(
+            "PATCH", view, user, data, param, content_type
+        )
 
     @staticmethod
     def _do_request(
-        http_method, view, user, data=None, param=None, content_type="application/json"
+        http_method,
+        view,
+        user,
+        data=None,
+        param=None,
+        content_type="application/json",
     ):
         """Execute the http_method request.
         Args:

@@ -8,7 +8,9 @@ from django.db import models, IntegrityError
 
 from core_main_app.commons import exceptions
 from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
-from core_main_app.utils.validation.regex_validation import not_empty_or_whitespaces
+from core_main_app.utils.validation.regex_validation import (
+    not_empty_or_whitespaces,
+)
 
 
 # TODO: could make is_disabled a Status with other possible values taken from an enum
@@ -40,7 +42,9 @@ class VersionManager(models.Model):
         ],
         max_length=200,
     )
-    user = models.CharField(blank=True, max_length=200, null=True, default=None)
+    user = models.CharField(
+        blank=True, max_length=200, null=True, default=None
+    )
     is_disabled = models.BooleanField(default=False)
     # TODO: for now, set _cls for backward compatibility in apis
     _cls = models.CharField(default="VersionManager", max_length=200)

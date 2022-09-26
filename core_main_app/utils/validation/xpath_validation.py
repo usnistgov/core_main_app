@@ -23,5 +23,6 @@ def validate_xpath_list(xpath_list):
             item_position += 1
         except exceptions.XMLError as exception:
             raise ValidationError(
-                "XPath syntax error (item #%d): %s" % (item_position, str(exception))
+                "XPath syntax error (item #%d): %s"
+                % (item_position, str(exception))
             )

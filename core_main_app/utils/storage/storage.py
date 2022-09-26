@@ -37,7 +37,9 @@ def core_file_storage(model):
             # check if GridFS storage is enabled
             if GRIDFS_STORAGE:
                 # return GridFS storage if enabled
-                from core_main_app.utils.storage.gridfs_storage import GridFSStorage
+                from core_main_app.utils.storage.gridfs_storage import (
+                    GridFSStorage,
+                )
 
                 return GridFSStorage(collection=model)
             else:

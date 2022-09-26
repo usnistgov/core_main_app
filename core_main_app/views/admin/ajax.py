@@ -10,7 +10,9 @@ from django.urls import reverse_lazy
 from django.utils.html import escape
 
 from core_main_app.commons.exceptions import NotUniqueError
-from core_main_app.components.template.api import init_template_with_dependencies
+from core_main_app.components.template.api import (
+    init_template_with_dependencies,
+)
 from core_main_app.components.template.models import Template
 from core_main_app.components.template_version_manager import (
     api as template_version_manager_api,
@@ -18,10 +20,17 @@ from core_main_app.components.template_version_manager import (
 from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
 )
-from core_main_app.components.xsl_transformation import api as xsl_transformation_api
-from core_main_app.components.xsl_transformation.models import XslTransformation
+from core_main_app.components.xsl_transformation import (
+    api as xsl_transformation_api,
+)
+from core_main_app.components.xsl_transformation.models import (
+    XslTransformation,
+)
 from core_main_app.views.admin.forms import EditXSLTForm
-from core_main_app.views.common.ajax import EditObjectModalView, DeleteObjectModalView
+from core_main_app.views.common.ajax import (
+    EditObjectModalView,
+    DeleteObjectModalView,
+)
 
 
 @staff_member_required

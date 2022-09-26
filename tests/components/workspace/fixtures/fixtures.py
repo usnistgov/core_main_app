@@ -4,7 +4,9 @@
 from core_main_app.components.group import api as group_api
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.permissions import api as permission_api
-from core_main_app.utils.integration_tests.fixture_interface import FixtureInterface
+from core_main_app.utils.integration_tests.fixture_interface import (
+    FixtureInterface,
+)
 
 
 class WorkspaceFixtures(FixtureInterface):

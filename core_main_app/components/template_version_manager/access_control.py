@@ -29,7 +29,9 @@ def can_write(func, *args, **kwargs):
 
     # anonymous cannot write
     if request.user.is_anonymous:
-        raise AccessControlError("Template VM: The user doesn't have enough rights.")
+        raise AccessControlError(
+            "Template VM: The user doesn't have enough rights."
+        )
 
     template_version_manager = next(
         (arg for arg in args if isinstance(arg, TemplateVersionManager)), None
@@ -44,4 +46,6 @@ def can_write(func, *args, **kwargs):
         if request.user.is_staff:
             return func(*args, **kwargs)
 
-    raise AccessControlError("Template VM: The user doesn't have enough rights.")
+    raise AccessControlError(
+        "Template VM: The user doesn't have enough rights."
+    )

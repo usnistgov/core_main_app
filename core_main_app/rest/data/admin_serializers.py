@@ -50,7 +50,9 @@ class AdminDataSerializer(DataSerializer):
         instance.last_modification_date = validated_data.get(
             "last_modification_date", None
         )
-        instance.last_change_date = validated_data.get("last_change_date", None)
+        instance.last_change_date = validated_data.get(
+            "last_change_date", None
+        )
         # Save the data
         data_api.admin_insert(instance, request=self.context["request"])
         # Encode the response body

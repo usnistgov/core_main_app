@@ -109,7 +109,8 @@ def load_saml_config_from_env(server_uri, base_dir):
                     "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512",
                 ),
                 "digest_algorithm": os.getenv(
-                    "SAML_DIGEST_ALGORITHM", "http://www.w3.org/2001/04/xmlenc#sha512"
+                    "SAML_DIGEST_ALGORITHM",
+                    "http://www.w3.org/2001/04/xmlenc#sha512",
                 ),
                 "endpoints": {
                     # url and binding to the assertion consumer service view
@@ -121,8 +122,14 @@ def load_saml_config_from_env(server_uri, base_dir):
                     # do not change the binding or service name
                     "single_logout_service": [
                         # Disable next two lines for HTTP_REDIRECT for IDP's that only support HTTP_POST. Ex. Okta:
-                        (f"{server_uri}/saml2/ls/", saml2.BINDING_HTTP_REDIRECT),
-                        (f"{server_uri}/saml2/ls/post/", saml2.BINDING_HTTP_POST),
+                        (
+                            f"{server_uri}/saml2/ls/",
+                            saml2.BINDING_HTTP_REDIRECT,
+                        ),
+                        (
+                            f"{server_uri}/saml2/ls/post/",
+                            saml2.BINDING_HTTP_POST,
+                        ),
                     ],
                 },
                 # Mandates that the identity provider MUST authenticate the
@@ -177,7 +184,9 @@ def load_contact_person_from_env():
     contact_person_list = list()
     contact_person_count = 0
     while 1:
-        contact_person = os.getenv(f"CONTACT_PERSON_{str(contact_person_count+1)}")
+        contact_person = os.getenv(
+            f"CONTACT_PERSON_{str(contact_person_count+1)}"
+        )
         if contact_person:
             contact_person_info = contact_person.split(",")
             contact_person_list.append(

@@ -17,8 +17,6 @@ if MONGODB_INDEXING or GRIDFS_STORAGE:
         MONGO_DB,
     )
 
-    MONGODB_URI = (
-        f"mongodb://{MONGO_USER}:{MONGO_PASS}@{MONGO_HOST}:{MONGO_PORT}/{MONGO_DB}"
-    )
+    MONGODB_URI = f"mongodb://{MONGO_USER}:{MONGO_PASS}@{MONGO_HOST}:{MONGO_PORT}/{MONGO_DB}"
 
     MONGO_CLIENT = connect(host=MONGODB_URI, connect=False)

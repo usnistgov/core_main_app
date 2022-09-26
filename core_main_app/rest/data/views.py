@@ -24,10 +24,15 @@ from core_main_app.commons.exceptions import XMLError
 from core_main_app.components.data import api as data_api
 from core_main_app.components.data.api import check_xml_file_is_valid
 from core_main_app.components.data.models import Data
-from core_main_app.components.data.tasks import get_task_progress, get_task_result
+from core_main_app.components.data.tasks import (
+    get_task_progress,
+    get_task_result,
+)
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
-from core_main_app.rest.data.abstract_views import AbstractExecuteLocalQueryView
+from core_main_app.rest.data.abstract_views import (
+    AbstractExecuteLocalQueryView,
+)
 from core_main_app.rest.data.abstract_views import AbstractMigrationView
 from core_main_app.rest.data.admin_serializers import AdminDataSerializer
 from core_main_app.rest.data.serializers import (
@@ -39,7 +44,9 @@ from core_main_app.settings import MONGODB_INDEXING, MAX_DOCUMENT_LIST
 from core_main_app.settings import XML_POST_PROCESSOR, XML_FORCE_LIST
 from core_main_app.utils import xml as main_xml_utils
 from core_main_app.utils.boolean import to_bool
-from core_main_app.utils.databases.mongo.pymongo_database import get_full_text_query
+from core_main_app.utils.databases.mongo.pymongo_database import (
+    get_full_text_query,
+)
 from core_main_app.utils.datetime_tools.utils import datetime_now
 from core_main_app.utils.file import get_file_http_response
 from core_main_app.utils.pagination.rest_framework_paginator.pagination import (
@@ -116,7 +123,9 @@ class DataList(APIView):
 
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     def post(self, request):
         """Create a Data
@@ -157,7 +166,9 @@ class DataList(APIView):
             data_serializer.save()
 
             # Return the serialized data
-            return Response(data_serializer.data, status=status.HTTP_201_CREATED)
+            return Response(
+                data_serializer.data, status=status.HTTP_201_CREATED
+            )
         except ValidationError as validation_exception:
             content = {"message": validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
@@ -166,7 +177,9 @@ class DataList(APIView):
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class AdminDataList(DataList):
@@ -236,7 +249,9 @@ class AdminDataList(DataList):
             return Response(data_serializer.data, status=status.HTTP_200_OK)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     def post(self, request):
         if not request.user.is_superuser:
@@ -302,7 +317,9 @@ class DataDetail(APIView):
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     def delete(self, request, pk):
         """Delete a Data
@@ -338,7 +355,9 @@ class DataDetail(APIView):
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     def patch(self, request, pk):
         """Update a Data
@@ -395,7 +414,9 @@ class DataDetail(APIView):
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class DataChangeOwner(APIView):
@@ -473,7 +494,9 @@ class DataChangeOwner(APIView):
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class DataDownload(APIView):
@@ -543,7 +566,9 @@ class DataDownload(APIView):
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 # FIXME: Should use in the future an serializer with dynamic fields (init depth with parameter for example)
@@ -815,7 +840,9 @@ class DataAssign(APIView):
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class DataListByWorkspace(APIView):
@@ -845,7 +872,9 @@ class DataListByWorkspace(APIView):
         """
         try:
             # Get object
-            data_object_list = data_api.get_all_by_workspace(workspace_id, request.user)
+            data_object_list = data_api.get_all_by_workspace(
+                workspace_id, request.user
+            )
 
             # Serialize object
             data_serializer = self.serializer(data_object_list, many=True)
@@ -854,7 +883,9 @@ class DataListByWorkspace(APIView):
             return Response(data_serializer.data, status=status.HTTP_200_OK)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class DataPermissions(APIView):
@@ -932,7 +963,9 @@ class DataPermissions(APIView):
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     def can_write_data(self, request, id):
         """Get the data permissions of a data
@@ -1145,7 +1178,9 @@ class BulkUploadFolder(APIView):
                 content = {"message": "Folder not found."}
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
-            for xml_data in os.listdir(os.path.join(settings.MEDIA_ROOT, folder)):
+            for xml_data in os.listdir(
+                os.path.join(settings.MEDIA_ROOT, folder)
+            ):
                 try:
                     # initialize times
                     now = datetime_now()
@@ -1171,7 +1206,8 @@ class BulkUploadFolder(APIView):
                         check_xml_file_is_valid(instance, request=request)
                     # Convert to JSON
                     with open(
-                        os.path.join(settings.MEDIA_ROOT, folder, xml_data), "rb"
+                        os.path.join(settings.MEDIA_ROOT, folder, xml_data),
+                        "rb",
                     ) as xml_file:
                         instance.dict_content = main_xml_utils.raw_xml_to_dict(
                             xml_file,
@@ -1193,9 +1229,13 @@ class BulkUploadFolder(APIView):
             # insert the last batch
             BulkUploadFolder._bulk_create(data_list)
 
-            content = {"message": "Bulk upload is complete. Check the logs for errors."}
+            content = {
+                "message": "Bulk upload is complete. Check the logs for errors."
+            }
             return Response(content, status=status.HTTP_200_OK)
 
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

@@ -5,10 +5,15 @@ from xml_utils.xsd_tree.xsd_tree import XSDTree
 import core_main_app.access_control.api
 import core_main_app.components.workspace.access_control
 from core_main_app.access_control import api as access_control_api
-from core_main_app.access_control.api import has_perm_administration, is_superuser
+from core_main_app.access_control.api import (
+    has_perm_administration,
+    is_superuser,
+)
 from core_main_app.access_control.decorators import access_control
 from core_main_app.commons import exceptions as exceptions
-from core_main_app.components.data import access_control as data_api_access_control
+from core_main_app.components.data import (
+    access_control as data_api_access_control,
+)
 from core_main_app.components.data.models import Data
 from core_main_app.components.data.tasks import (
     async_migration_task,
@@ -119,7 +124,9 @@ def upsert(data, request):
 
     """
     if data.xml_content is None:
-        raise exceptions.ApiError("Unable to save data: xml_content field is not set.")
+        raise exceptions.ApiError(
+            "Unable to save data: xml_content field is not set."
+        )
 
     check_xml_file_is_valid(data, request=request)
     data.convert_and_save()
@@ -138,7 +145,9 @@ def admin_insert(data, request):
 
     """
     if data.xml_content is None:
-        raise exceptions.ApiError("Unable to save data: xml_content field is not set.")
+        raise exceptions.ApiError(
+            "Unable to save data: xml_content field is not set."
+        )
 
     # initialize times - use values if provided, set now otherwise
     now = datetime_now()
@@ -195,7 +204,9 @@ def execute_json_query(json_query, user, order_by_field=DATA_SORTING_FIELDS):
 
     """
     # get workspace and user filters from JSON query
-    workspace_filter, user_filter = get_access_filters_from_query(query_dict=json_query)
+    workspace_filter, user_filter = get_access_filters_from_query(
+        query_dict=json_query
+    )
     if MONGODB_INDEXING:
         return _execute_mongo_query(
             json_query, user, workspace_filter, user_filter, order_by_field
@@ -205,7 +216,9 @@ def execute_json_query(json_query, user, order_by_field=DATA_SORTING_FIELDS):
     query = convert_to_django(query_dict=json_query)
 
     # execute query and return results
-    return execute_query(query, user, workspace_filter, user_filter, order_by_field)
+    return execute_query(
+        query, user, workspace_filter, user_filter, order_by_field
+    )
 
 
 @access_control(data_api_access_control.can_read_data_query)
@@ -232,7 +245,11 @@ def execute_query(
 
 
 def _execute_mongo_query(
-    json_query, user, workspace_filter, user_filter, order_by_field=DATA_SORTING_FIELDS
+    json_query,
+    user,
+    workspace_filter,
+    user_filter,
+    order_by_field=DATA_SORTING_FIELDS,
 ):
     """
 
@@ -344,7 +361,9 @@ def migrate_data_list(data_list, xslt_id, target_template_id, migrate, user):
 
 
 @access_control(has_perm_administration)
-def migrate_template_list(template_id_list, xslt_id, target_template_id, migrate, user):
+def migrate_template_list(
+    template_id_list, xslt_id, target_template_id, migrate, user
+):
     """Perform a migration / validation of all the data which belong to the given template id list
     NB: This action is executed with an async task, use the progress / result function to retrieve
     information about the task status

@@ -5,7 +5,9 @@ from unittest.mock import patch
 from django.test import SimpleTestCase
 from rest_framework import status
 
-from core_main_app.components.xsl_transformation.models import XslTransformation
+from core_main_app.components.xsl_transformation.models import (
+    XslTransformation,
+)
 from core_main_app.rest.xsl_transformation import views as xslt_views
 from core_main_app.rest.xsl_transformation.serializers import (
     XslTransformationSerializer,
@@ -46,7 +48,9 @@ class TestXslTransformationListGetPermission(SimpleTestCase):
 
     @patch.object(XslTransformation, "get_all")
     @patch.object(XslTransformationSerializer, "data")
-    def test_is_staff_returns_http_200(self, xslt_serializer_data, xslt_get_all):
+    def test_is_staff_returns_http_200(
+        self, xslt_serializer_data, xslt_get_all
+    ):
         """test_is_staff_returns_http_200
 
         Args:
@@ -172,7 +176,9 @@ class TestXslTransformationDetailGetPermission(SimpleTestCase):
 
     @patch.object(XslTransformation, "get_by_id")
     @patch.object(XslTransformationSerializer, "data")
-    def test_is_staff_returns_http_200(self, xslt_serializer_data, xslt_get_by_id):
+    def test_is_staff_returns_http_200(
+        self, xslt_serializer_data, xslt_get_by_id
+    ):
         """test_is_staff_returns_http_200
 
         Args:

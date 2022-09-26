@@ -4,7 +4,9 @@ from rest_framework.serializers import CharField, ModelSerializer
 
 from core_main_app.commons.serializers import BasicSerializer
 from core_main_app.components.xsl_transformation import api as xsl_api
-from core_main_app.components.xsl_transformation.models import XslTransformation
+from core_main_app.components.xsl_transformation.models import (
+    XslTransformation,
+)
 
 
 class XslTransformationSerializer(ModelSerializer):

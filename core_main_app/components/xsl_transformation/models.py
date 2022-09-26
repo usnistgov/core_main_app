@@ -44,7 +44,9 @@ class XslTransformation(models.Model):
         upload_to=XSLT_UPLOAD_DIR,
         storage=core_file_storage(model="xsl_transformation"),
     )
-    checksum = models.CharField(max_length=512, blank=True, default=None, null=True)
+    checksum = models.CharField(
+        max_length=512, blank=True, default=None, null=True
+    )
     _content = None
 
     @property

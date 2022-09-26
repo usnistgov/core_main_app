@@ -36,7 +36,9 @@ class TestVersionManagerDisableVersion(TestCase):
 
         # Act + Assert
         with self.assertRaises(exceptions.ApiError):
-            version_manager_api.disable_version(mock_absent, request=mock_request)
+            version_manager_api.disable_version(
+                mock_absent, request=mock_request
+            )
 
     def test_version_manager_disable_current_version_throws_exception(self):
         """test version manager disable current version throws exception
@@ -54,9 +56,13 @@ class TestVersionManagerDisableVersion(TestCase):
 
         # Act + Assert
         with self.assertRaises(exceptions.ApiError):
-            version_manager_api.disable_version(mock_current, request=mock_request)
+            version_manager_api.disable_version(
+                mock_current, request=mock_request
+            )
 
-    @patch.object(TemplateVersionManager, "version_set", new_callable=PropertyMock)
+    @patch.object(
+        TemplateVersionManager, "version_set", new_callable=PropertyMock
+    )
     def test_version_manager_disable_version_raises_exception_if_new_current_does_not_exist(
         self, mock_versions
     ):
@@ -107,8 +113,12 @@ class TestVersionManagerSetCurrent(TestCase):
 class TestVersionManagerGetActiveGlobalVersionManagerByTitle(TestCase):
     """TestVersionManagerGetActiveGlobalVersionManagerByTitle"""
 
-    @patch.object(TemplateVersionManager, "get_active_global_version_manager_by_title")
-    def test_version_manager_get_returns_version_manager(self, mock_get_active_global):
+    @patch.object(
+        TemplateVersionManager, "get_active_global_version_manager_by_title"
+    )
+    def test_version_manager_get_returns_version_manager(
+        self, mock_get_active_global
+    ):
         """test version manager get returns version manager
 
         Args:
@@ -126,16 +136,16 @@ class TestVersionManagerGetActiveGlobalVersionManagerByTitle(TestCase):
         mock_get_active_global.return_value = mock_version_manager
 
         # Act
-        result = (
-            template_version_manager_api.get_active_global_version_manager_by_title(
-                title, request=mock_request
-            )
+        result = template_version_manager_api.get_active_global_version_manager_by_title(
+            title, request=mock_request
         )
 
         # Assert
         self.assertIsInstance(result, VersionManager)
 
-    @patch.object(TemplateVersionManager, "get_active_global_version_manager_by_title")
+    @patch.object(
+        TemplateVersionManager, "get_active_global_version_manager_by_title"
+    )
     def test_version_manager_get_raises_exception_if_object_does_not_exist(
         self, mock_get_active_global
     ):
@@ -163,7 +173,9 @@ class TestVersionManagerGetActiveGlobalVersionManagerByTitle(TestCase):
 class TestVersionManagerGetVersionByNumber(TestCase):
     """TestVersionManagerGetVersionByNumber"""
 
-    @patch.object(TemplateVersionManager, "version_set", new_callable=PropertyMock)
+    @patch.object(
+        TemplateVersionManager, "version_set", new_callable=PropertyMock
+    )
     def test_version_manager_get_returns_version(self, mock_versions):
         """test version manager get returns version
 
@@ -188,7 +200,9 @@ class TestVersionManagerGetVersionByNumber(TestCase):
         # Assert
         self.assertEqual(result, str(version.id))
 
-    def test_version_manager_get_raises_exception_if_object_does_not_exist(self):
+    def test_version_manager_get_raises_exception_if_object_does_not_exist(
+        self,
+    ):
         """test version manager get raises exception if object does not exist
 
         Returns:
@@ -209,7 +223,9 @@ class TestVersionManagerGetVersionByNumber(TestCase):
 class TestVersionManagerGetVersionNumber(TestCase):
     """TestVersionManagerGetVersionNumber"""
 
-    @patch.object(TemplateVersionManager, "version_set", new_callable=PropertyMock)
+    @patch.object(
+        TemplateVersionManager, "version_set", new_callable=PropertyMock
+    )
     def test_version_manager_get_returns_number(self, mock_versions):
         """test version manager get returns number
 
@@ -234,7 +250,9 @@ class TestVersionManagerGetVersionNumber(TestCase):
         # Assert
         self.assertEqual(result, 1)
 
-    def test_version_manager_get_raises_exception_if_object_does_not_exist(self):
+    def test_version_manager_get_raises_exception_if_object_does_not_exist(
+        self,
+    ):
         """test version manager get raises exception if object does not exist
 
         Returns:

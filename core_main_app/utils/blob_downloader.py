@@ -43,11 +43,17 @@ class BlobDownloader:
             import core_federated_search_app.components.instance.api as instance_api
 
             try:
-                return instance_api.get_blob_response_from_url(self.url_base, self.url)
+                return instance_api.get_blob_response_from_url(
+                    self.url_base, self.url
+                )
             except exceptions.DoesNotExist:
-                logger.info("BlobDownloader: The blob's url is not a known source")
+                logger.info(
+                    "BlobDownloader: The blob's url is not a known source"
+                )
         else:
-            logger.info("BlobDownloader: core_federated_search_app is required")
+            logger.info(
+                "BlobDownloader: core_federated_search_app is required"
+            )
 
         # here is the case where the blob come from an unidentified source
         raise exceptions.BlobDownloaderError("Blob can't be downloaded")

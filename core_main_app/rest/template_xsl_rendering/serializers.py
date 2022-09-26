@@ -5,7 +5,9 @@ from rest_framework.serializers import ModelSerializer
 from core_main_app.components.template_xsl_rendering import (
     api as template_xsl_rendering_api,
 )
-from core_main_app.components.template_xsl_rendering.models import TemplateXslRendering
+from core_main_app.components.template_xsl_rendering.models import (
+    TemplateXslRendering,
+)
 
 
 class TemplateXslRenderingSerializer(ModelSerializer):

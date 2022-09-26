@@ -55,16 +55,24 @@ class TestCompileRegex(TestCase):
         _compile_regex(query)
         # assert
         self.assertTrue(
-            isinstance(query["$and"][0]["$or"][0]["dot.notation.1"], re.Pattern)
+            isinstance(
+                query["$and"][0]["$or"][0]["dot.notation.1"], re.Pattern
+            )
         )
         self.assertTrue(
-            isinstance(query["$and"][0]["$or"][1]["dot.notation.1.#text"], re.Pattern)
+            isinstance(
+                query["$and"][0]["$or"][1]["dot.notation.1.#text"], re.Pattern
+            )
         )
         self.assertFalse(
-            isinstance(query["$and"][1]["$or"][0]["dot.notation.2"], re.Pattern)
+            isinstance(
+                query["$and"][1]["$or"][0]["dot.notation.2"], re.Pattern
+            )
         )
         self.assertFalse(
-            isinstance(query["$and"][1]["$or"][1]["dot.notation.2"], re.Pattern)
+            isinstance(
+                query["$and"][1]["$or"][1]["dot.notation.2"], re.Pattern
+            )
         )
 
     def test_query_without_regex_returns_same_query(self):
@@ -90,7 +98,10 @@ class TestCompileRegex(TestCase):
         """
         # set query
         query = {
-            "$or": [{"dot.notation": {"$gt": 0}}, {"dot.notation.#text": {"$gt": 0}}]
+            "$or": [
+                {"dot.notation": {"$gt": 0}},
+                {"dot.notation.#text": {"$gt": 0}},
+            ]
         }
         # save original query
         query_origin = copy.deepcopy(query)
@@ -126,7 +137,10 @@ class TestAddSubDocumentRoot(TestCase):
         """
         # set query
         query = {
-            "$and": [{"dot.notation": {"$gt": 0}}, {"dot.notation.#text": {"$gt": 0}}]
+            "$and": [
+                {"dot.notation": {"$gt": 0}},
+                {"dot.notation.#text": {"$gt": 0}},
+            ]
         }
         # set expected query
         expected_query = {
@@ -148,7 +162,10 @@ class TestAddSubDocumentRoot(TestCase):
         """
         # set query
         query = {
-            "$or": [{"dot.notation": {"$gt": 0}}, {"dot.notation.#text": {"$gt": 0}}]
+            "$or": [
+                {"dot.notation": {"$gt": 0}},
+                {"dot.notation.#text": {"$gt": 0}},
+            ]
         }
         # set expected query
         expected_query = {

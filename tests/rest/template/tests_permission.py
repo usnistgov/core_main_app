@@ -41,7 +41,9 @@ class TestTemplateDetailGetPermission(SimpleTestCase):
         template_serializer_data.return_value = True
 
         response = RequestMock.do_request_get(
-            template_views.TemplateDetail.as_view(), None, param={"pk": self.fake_id}
+            template_views.TemplateDetail.as_view(),
+            None,
+            param={"pk": self.fake_id},
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -75,7 +77,9 @@ class TestTemplateDetailGetPermission(SimpleTestCase):
 
     @patch.object(Template, "get_by_id")
     @patch.object(TemplateSerializer, "data")
-    def test_staff_returns_http_200(self, template_serializer_data, template_get_by_id):
+    def test_staff_returns_http_200(
+        self, template_serializer_data, template_get_by_id
+    ):
         """test_staff_returns_http_200
 
         Args:
@@ -121,10 +125,14 @@ class TestTemplateDownloadGetPermission(SimpleTestCase):
         Returns:
 
         """
-        template_get_by_id.return_value = Template(content="test", filename="test.txt")
+        template_get_by_id.return_value = Template(
+            content="test", filename="test.txt"
+        )
 
         response = RequestMock.do_request_get(
-            template_views.TemplateDownload.as_view(), None, param={"pk": self.fake_id}
+            template_views.TemplateDownload.as_view(),
+            None,
+            param={"pk": self.fake_id},
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -139,7 +147,9 @@ class TestTemplateDownloadGetPermission(SimpleTestCase):
         Returns:
 
         """
-        template_get_by_id.return_value = Template(content="test", filename="test.txt")
+        template_get_by_id.return_value = Template(
+            content="test", filename="test.txt"
+        )
 
         mock_user = create_mock_user("1")
 
@@ -161,7 +171,9 @@ class TestTemplateDownloadGetPermission(SimpleTestCase):
         Returns:
 
         """
-        template_get_by_id.return_value = Template(content="test", filename="test.txt")
+        template_get_by_id.return_value = Template(
+            content="test", filename="test.txt"
+        )
 
         mock_user = create_mock_user("1", is_staff=True)
 

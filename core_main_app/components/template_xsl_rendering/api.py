@@ -3,7 +3,9 @@
 import logging
 
 from core_main_app.commons.exceptions import ApiError
-from core_main_app.components.template_xsl_rendering.models import TemplateXslRendering
+from core_main_app.components.template_xsl_rendering.models import (
+    TemplateXslRendering,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +54,9 @@ def add_or_delete(
 
         return None
     except Exception:
-        raise ApiError("An error occurred while deleting the TemplateXSLRendering")
+        raise ApiError(
+            "An error occurred while deleting the TemplateXSLRendering"
+        )
 
 
 def set_list_detail_xslt(template_xsl_rendering, list_detail_xslt):
@@ -161,7 +165,8 @@ def upsert(
         template_xsl_rendering.save()
     except Exception as exception:
         logger.warning(
-            "Exception when saving TemplateXSLRendering object: %s" % str(exception)
+            "Exception when saving TemplateXSLRendering object: %s"
+            % str(exception)
         )
         template_xsl_rendering = TemplateXslRendering(
             template=template,

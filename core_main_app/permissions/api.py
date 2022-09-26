@@ -52,7 +52,12 @@ def create_read_perm(title, owner_id):
         app_label=CONTENT_TYPE_APP_LABEL, model="main"
     )
     codename = (
-        CAN_READ_CODENAME + "_" + _title_to_codename(title) + " (" + owner_id + ")"
+        CAN_READ_CODENAME
+        + "_"
+        + _title_to_codename(title)
+        + " ("
+        + owner_id
+        + ")"
     )
     return _create_perm(name, content_type, codename)
 
@@ -71,7 +76,12 @@ def create_write_perm(title, owner_id):
         app_label=CONTENT_TYPE_APP_LABEL, model="main"
     )
     codename = (
-        CAN_WRITE_CODENAME + "_" + _title_to_codename(title) + " (" + owner_id + ")"
+        CAN_WRITE_CODENAME
+        + "_"
+        + _title_to_codename(title)
+        + " ("
+        + owner_id
+        + ")"
     )
     return _create_perm(name, content_type, codename)
 
@@ -243,7 +253,9 @@ def delete_permission(permission_id):
         perm = get_by_id(permission_id)
         perm.delete()
     except Exception as exception:
-        logger.warning("delete_permission threw an exception: %s", str(exception))
+        logger.warning(
+            "delete_permission threw an exception: %s", str(exception)
+        )
 
 
 def get_permission_label(permission_id):

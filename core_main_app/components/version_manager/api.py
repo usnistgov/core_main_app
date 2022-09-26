@@ -54,7 +54,9 @@ def restore_version(version, request):
 
     """
     if not version.is_disabled:
-        raise ApiError("Unable to restore this version: status is not disabled.")
+        raise ApiError(
+            "Unable to restore this version: status is not disabled."
+        )
     version.is_disabled = False
     version.save()
 

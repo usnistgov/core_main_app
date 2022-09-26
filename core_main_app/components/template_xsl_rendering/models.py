@@ -5,13 +5,17 @@ from django.db import models
 
 from core_main_app.commons import exceptions
 from core_main_app.components.template.models import Template
-from core_main_app.components.xsl_transformation.models import XslTransformation
+from core_main_app.components.xsl_transformation.models import (
+    XslTransformation,
+)
 
 
 class TemplateXslRendering(models.Model):
     """TemplateXslRendering object"""
 
-    template = models.OneToOneField(Template, on_delete=models.CASCADE, blank=False)
+    template = models.OneToOneField(
+        Template, on_delete=models.CASCADE, blank=False
+    )
     list_xslt = models.ForeignKey(
         XslTransformation,
         on_delete=models.SET_NULL,
@@ -48,7 +52,9 @@ class TemplateXslRendering(models.Model):
 
         """
         try:
-            return TemplateXslRendering.objects.get(pk=template_xsl_rendering_id)
+            return TemplateXslRendering.objects.get(
+                pk=template_xsl_rendering_id
+            )
         except ObjectDoesNotExist as exception:
             raise exceptions.DoesNotExist(str(exception))
         except Exception as ex:
@@ -92,7 +98,9 @@ class TemplateXslRendering(models.Model):
 
         """
         try:
-            return TemplateXslRendering.objects.get(template__hash=template_hash)
+            return TemplateXslRendering.objects.get(
+                template__hash=template_hash
+            )
         except ObjectDoesNotExist as exception:
             raise exceptions.DoesNotExist(str(exception))
         except Exception as exception:

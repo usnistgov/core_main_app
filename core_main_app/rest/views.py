@@ -35,4 +35,6 @@ class CoreSettings(APIView):
             return Response(response_dict, status=status.HTTP_200_OK)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

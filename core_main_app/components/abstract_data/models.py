@@ -18,7 +18,10 @@ from core_main_app.settings import (
 from core_main_app.utils import xml as xml_utils
 from core_main_app.utils.checksum import compute_checksum
 from core_main_app.utils.datetime_tools.utils import datetime_now
-from core_main_app.utils.storage.storage import core_file_storage, user_directory_path
+from core_main_app.utils.storage.storage import (
+    core_file_storage,
+    user_directory_path,
+)
 
 
 class AbstractData(models.Model):
@@ -42,11 +45,17 @@ class AbstractData(models.Model):
         upload_to=user_directory_path,
         storage=core_file_storage(model="data"),
     )
-    checksum = models.CharField(max_length=512, blank=True, default=None, null=True)
+    checksum = models.CharField(
+        max_length=512, blank=True, default=None, null=True
+    )
     vector_column = SearchVectorField(null=True)
     creation_date = models.DateTimeField(blank=True, default=None, null=True)
-    last_modification_date = models.DateTimeField(blank=True, default=None, null=True)
-    last_change_date = models.DateTimeField(blank=True, default=None, null=True)
+    last_modification_date = models.DateTimeField(
+        blank=True, default=None, null=True
+    )
+    last_change_date = models.DateTimeField(
+        blank=True, default=None, null=True
+    )
     _xml_content = None
 
     class Meta:
@@ -137,7 +146,9 @@ class AbstractData(models.Model):
             xml_content = self.xml_content
 
         self.xml_file = SimpleUploadedFile(
-            name=self.title, content=xml_content, content_type="application/xml"
+            name=self.title,
+            content=xml_content,
+            content_type="application/xml",
         )
 
     def save_object(self):

@@ -66,7 +66,9 @@ class BlobSerializer(ModelSerializer):
             from core_linked_records_app.components.blob import (
                 api as linked_blob_api,
             )
-            from core_linked_records_app.settings import ID_PROVIDER_SYSTEM_NAME
+            from core_linked_records_app.settings import (
+                ID_PROVIDER_SYSTEM_NAME,
+            )
 
             try:
                 sub_url = reverse(
@@ -75,7 +77,9 @@ class BlobSerializer(ModelSerializer):
                 )
                 blob_pid = linked_blob_api.get_pid_for_blob(str(instance.id))
 
-                return urljoin(settings.SERVER_URI, join(sub_url, blob_pid.record_name))
+                return urljoin(
+                    settings.SERVER_URI, join(sub_url, blob_pid.record_name)
+                )
             except Exception:
                 return None
 

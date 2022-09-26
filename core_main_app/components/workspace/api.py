@@ -56,8 +56,12 @@ def _create_workspace(title, owner_id=None, is_public=False):
     return Workspace(
         title=title,
         owner=str(owner_id),
-        read_perm_id=str(permission_api.create_read_perm(title, str(owner_id)).id),
-        write_perm_id=str(permission_api.create_write_perm(title, str(owner_id)).id),
+        read_perm_id=str(
+            permission_api.create_read_perm(title, str(owner_id)).id
+        ),
+        write_perm_id=str(
+            permission_api.create_write_perm(title, str(owner_id)).id
+        ),
         is_public=is_public,
     )
 
@@ -132,7 +136,9 @@ def get_all_workspaces_with_read_access_by_user(user):
     Returns:
 
     """
-    read_permissions = permission_api.get_all_workspace_permissions_user_can_read(user)
+    read_permissions = (
+        permission_api.get_all_workspace_permissions_user_can_read(user)
+    )
     return Workspace.get_all_workspaces_with_read_access_by_user_id(
         user.id, read_permissions
     )
@@ -147,8 +153,8 @@ def get_all_workspaces_with_write_access_by_user(user):
     Returns:
 
     """
-    write_permissions = permission_api.get_all_workspace_permissions_user_can_write(
-        user
+    write_permissions = (
+        permission_api.get_all_workspace_permissions_user_can_write(user)
     )
     return Workspace.get_all_workspaces_with_write_access_by_user_id(
         user.id, write_permissions
@@ -164,7 +170,9 @@ def get_all_workspaces_with_read_access_not_owned_by_user(user):
     Returns:
 
     """
-    read_permissions = permission_api.get_all_workspace_permissions_user_can_read(user)
+    read_permissions = (
+        permission_api.get_all_workspace_permissions_user_can_read(user)
+    )
     return Workspace.get_all_workspaces_with_read_access_not_owned_by_user_id(
         user.id, read_permissions
     )
@@ -179,8 +187,8 @@ def get_all_workspaces_with_write_access_not_owned_by_user_id(user):
     Returns:
 
     """
-    write_permissions = permission_api.get_all_workspace_permissions_user_can_write(
-        user
+    write_permissions = (
+        permission_api.get_all_workspace_permissions_user_can_write(user)
     )
     return Workspace.get_all_workspaces_with_write_access_not_owned_by_user_id(
         user.id, write_permissions
@@ -274,8 +282,12 @@ def can_user_read_workspace(workspace, user):
     """
     if is_workspace_public(workspace):
         return True
-    permission_label = permission_api.get_permission_label(workspace.read_perm_id)
-    return str(workspace.owner) == str(user.id) or user.has_perm(permission_label)
+    permission_label = permission_api.get_permission_label(
+        workspace.read_perm_id
+    )
+    return str(workspace.owner) == str(user.id) or user.has_perm(
+        permission_label
+    )
 
 
 def can_user_write_workspace(workspace, user):
@@ -287,8 +299,12 @@ def can_user_write_workspace(workspace, user):
 
     Return:
     """
-    permission_label = permission_api.get_permission_label(workspace.write_perm_id)
-    return str(workspace.owner) == str(user.id) or user.has_perm(permission_label)
+    permission_label = permission_api.get_permission_label(
+        workspace.write_perm_id
+    )
+    return str(workspace.owner) == str(user.id) or user.has_perm(
+        permission_label
+    )
 
 
 def can_group_read_workspace(workspace, group):
@@ -360,7 +376,8 @@ def get_list_user_can_access_workspace(workspace, user):
 
 
 def check_if_workspace_can_be_changed(
-    document, allow_change_workspace_if_public=settings.CAN_SET_PUBLIC_DATA_TO_PRIVATE
+    document,
+    allow_change_workspace_if_public=settings.CAN_SET_PUBLIC_DATA_TO_PRIVATE,
 ):
     """Check if a workspace of a document can be changed
 
@@ -411,7 +428,9 @@ def set_workspace_private(workspace, user):
     Return:
     """
     if is_workspace_global(workspace):
-        raise exceptions.ApiError("You can't change the state of the global workspace.")
+        raise exceptions.ApiError(
+            "You can't change the state of the global workspace."
+        )
 
     if settings.CAN_SET_PUBLIC_DATA_TO_PRIVATE:
         workspace.is_public = False

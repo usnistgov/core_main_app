@@ -10,7 +10,9 @@ from django.http.response import HttpResponse
 from core_main_app.commons.exceptions import CoreError
 
 
-def get_file_http_response(file_content, file_name, content_type=None, extension=""):
+def get_file_http_response(
+    file_content, file_name, content_type=None, extension=""
+):
     """Return http response with file to download
 
     Args:

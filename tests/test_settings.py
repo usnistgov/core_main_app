@@ -35,12 +35,18 @@ SERVER_URI = "http://127.0.0.1:8000"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "HOST": os.environ["POSTGRES_HOST"] if "POSTGRES_HOST" in os.environ else None,
+        "HOST": os.environ["POSTGRES_HOST"]
+        if "POSTGRES_HOST" in os.environ
+        else None,
         "PORT": int(os.environ["POSTGRES_PORT"])
         if "POSTGRES_PORT" in os.environ
         else 5432,
-        "NAME": os.environ["POSTGRES_DB"] if "POSTGRES_DB" in os.environ else None,
-        "USER": os.environ["POSTGRES_USER"] if "POSTGRES_USER" in os.environ else None,
+        "NAME": os.environ["POSTGRES_DB"]
+        if "POSTGRES_DB" in os.environ
+        else None,
+        "USER": os.environ["POSTGRES_USER"]
+        if "POSTGRES_USER" in os.environ
+        else None,
         "PASSWORD": os.environ["POSTGRES_PASS"]
         if "POSTGRES_PASS" in os.environ
         else None,

@@ -47,7 +47,8 @@ class TestWebPageListGetPermission(SimpleTestCase):
         mock_user = create_mock_user("1")
 
         response = RequestMock.do_request_get(
-            web_page_views.WebPageList.as_view(web_page_type="login"), mock_user
+            web_page_views.WebPageList.as_view(web_page_type="login"),
+            mock_user,
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -66,7 +67,8 @@ class TestWebPageListGetPermission(SimpleTestCase):
         mock_user = create_mock_user("1", is_staff=True)
 
         response = RequestMock.do_request_get(
-            web_page_views.WebPageList.as_view(web_page_type="login"), mock_user
+            web_page_views.WebPageList.as_view(web_page_type="login"),
+            mock_user,
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -96,7 +98,8 @@ class TestWebPageListPostPermission(SimpleTestCase):
         mock_user = create_mock_user("1")
 
         response = RequestMock.do_request_post(
-            web_page_views.WebPageList.as_view(web_page_type="login"), mock_user
+            web_page_views.WebPageList.as_view(web_page_type="login"),
+            mock_user,
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -106,7 +109,11 @@ class TestWebPageListPostPermission(SimpleTestCase):
     @patch.object(WebPageSerializer, "save")
     @patch.object(WebPageSerializer, "data")
     def test_staff_returns_http_201(
-        self, serializer_data, serializer_save, serializer_is_valid, web_page_api_get
+        self,
+        serializer_data,
+        serializer_save,
+        serializer_is_valid,
+        web_page_api_get,
     ):
         """test_staff_returns_http_201
 
@@ -126,7 +133,8 @@ class TestWebPageListPostPermission(SimpleTestCase):
         mock_user = create_mock_user("1", is_staff=True)
 
         response = RequestMock.do_request_post(
-            web_page_views.WebPageList.as_view(web_page_type="login"), mock_user
+            web_page_views.WebPageList.as_view(web_page_type="login"),
+            mock_user,
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -156,7 +164,8 @@ class TestWebPageListDeletePermission(SimpleTestCase):
         mock_user = create_mock_user("1")
 
         response = RequestMock.do_request_delete(
-            web_page_views.WebPageList.as_view(web_page_type="login"), mock_user
+            web_page_views.WebPageList.as_view(web_page_type="login"),
+            mock_user,
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -190,7 +199,8 @@ class TestWebPageListDeletePermission(SimpleTestCase):
         mock_user = create_mock_user("1", is_staff=True)
 
         response = RequestMock.do_request_delete(
-            web_page_views.WebPageList.as_view(web_page_type="login"), mock_user
+            web_page_views.WebPageList.as_view(web_page_type="login"),
+            mock_user,
         )
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

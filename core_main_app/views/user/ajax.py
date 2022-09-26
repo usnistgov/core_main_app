@@ -3,7 +3,11 @@
 import json
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.http import (
+    HttpResponse,
+    HttpResponseBadRequest,
+    HttpResponseForbidden,
+)
 from django.template import loader
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
@@ -51,7 +55,10 @@ class LoadFormChangeWorkspace(View):
 
         try:
             form = ChangeWorkspaceForm(
-                request.user, list(), is_administration, self.show_global_workspace
+                request.user,
+                list(),
+                is_administration,
+                self.show_global_workspace,
             )
         except DoesNotExist as dne:
             return HttpResponseBadRequest(escape(str(dne)))
@@ -100,10 +107,14 @@ def load_add_user_form(request):
 
         # We remove the owner of the workspace
         if len(users_with_no_access) > 0:
-            users_with_no_access.remove(user_api.get_user_by_id(workspace.owner))
+            users_with_no_access.remove(
+                user_api.get_user_by_id(workspace.owner)
+            )
 
         if len(users_with_no_access) == 0:
-            return HttpResponseBadRequest("There is no users that can be added.")
+            return HttpResponseBadRequest(
+                "There is no users that can be added."
+            )
 
         form = UserRightForm(users_with_no_access)
     except AccessControlError as ace:
@@ -190,9 +201,13 @@ def switch_right(request):
         workspace = workspace_api.get_by_id(str(workspace_id))
 
         if group_or_user == USER:
-            _switch_user_right(object_id, action, value, workspace, request.user)
+            _switch_user_right(
+                object_id, action, value, workspace, request.user
+            )
         if group_or_user == GROUP:
-            _switch_group_right(object_id, action, value, workspace, request.user)
+            _switch_group_right(
+                object_id, action, value, workspace, request.user
+            )
 
     except AccessControlError as ace:
         return HttpResponseBadRequest(escape(str(ace)))
@@ -317,8 +332,12 @@ def _remove_user_rights(object_id, workspace, request_user):
     Returns:
     """
     user = user_api.get_user_by_id(object_id)
-    workspace_api.remove_user_read_access_to_workspace(workspace, user, request_user)
-    workspace_api.remove_user_write_access_to_workspace(workspace, user, request_user)
+    workspace_api.remove_user_read_access_to_workspace(
+        workspace, user, request_user
+    )
+    workspace_api.remove_user_write_access_to_workspace(
+        workspace, user, request_user
+    )
 
 
 def _remove_group_rights(object_id, workspace, request_user):
@@ -332,8 +351,12 @@ def _remove_group_rights(object_id, workspace, request_user):
     Returns:
     """
     group = group_api.get_group_by_id(object_id)
-    workspace_api.remove_group_read_access_to_workspace(workspace, group, request_user)
-    workspace_api.remove_group_write_access_to_workspace(workspace, group, request_user)
+    workspace_api.remove_group_read_access_to_workspace(
+        workspace, group, request_user
+    )
+    workspace_api.remove_group_write_access_to_workspace(
+        workspace, group, request_user
+    )
 
 
 @login_required
@@ -364,10 +387,15 @@ def load_add_group_form(request):
         if len(groups_with_no_access) > 0:
             group_utils.remove_list_object_from_list(
                 groups_with_no_access,
-                [group_api.get_anonymous_group(), group_api.get_default_group()],
+                [
+                    group_api.get_anonymous_group(),
+                    group_api.get_default_group(),
+                ],
             )
         if len(groups_with_no_access) == 0:
-            return HttpResponseBadRequest("There is no groups that can be added.")
+            return HttpResponseBadRequest(
+                "There is no groups that can be added."
+            )
 
         form = GroupRightForm(groups_with_no_access)
     except AccessControlError as ace:
@@ -466,14 +494,18 @@ class AssignView(View):
         for data_id in document_ids:
             try:
                 self.api.assign(
-                    self.api.get_by_id(data_id, request.user), workspace, request.user
+                    self.api.get_by_id(data_id, request.user),
+                    workspace,
+                    request.user,
                 )
             except AccessControlError as ace:
                 return HttpResponseForbidden(escape(str(ace)))
             except Exception:
                 return HttpResponseBadRequest("Something wrong happened.")
 
-        return HttpResponse(json.dumps({}), content_type="application/javascript")
+        return HttpResponse(
+            json.dumps({}), content_type="application/javascript"
+        )
 
 
 def change_data_display(request):

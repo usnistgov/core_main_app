@@ -111,9 +111,13 @@ def can_read_data_mongo_query(
         return func(query, user, workspace_filter, user_filter, order_by_field)
 
     # update the query
-    query = _update_can_read_mongo_query(query, user, workspace_filter, user_filter)
+    query = _update_can_read_mongo_query(
+        query, user, workspace_filter, user_filter
+    )
     # get list of data
-    data_list = func(query, user, workspace_filter, user_filter, order_by_field)
+    data_list = func(
+        query, user, workspace_filter, user_filter, order_by_field
+    )
     # TODO: check if necessary because it is time consuming (checking that user has access to list of returned data)
     # check that user can access the list of data
     if VERIFY_DATA_ACCESS:
@@ -164,7 +168,9 @@ def can_read_aggregate_query(func, query, user):
     return data
 
 
-def _update_can_read_query(query, user, workspace_filter=None, user_filter=None):
+def _update_can_read_query(
+    query, user, workspace_filter=None, user_filter=None
+):
     """Update query with access control parameters.
 
     Args:
@@ -238,4 +244,6 @@ def can_write_data_workspace(func, data, workspace, user):
     Returns:
 
     """
-    return can_write_in_workspace(func, data, workspace, user, rights.PUBLISH_DATA)
+    return can_write_in_workspace(
+        func, data, workspace, user, rights.PUBLISH_DATA
+    )

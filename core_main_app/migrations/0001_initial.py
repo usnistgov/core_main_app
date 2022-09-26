@@ -142,7 +142,10 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("hash", models.CharField(max_length=200)),
-                ("_display_name", models.CharField(blank=True, max_length=200)),
+                (
+                    "_display_name",
+                    models.CharField(blank=True, max_length=200),
+                ),
                 ("creation_date", models.DateTimeField(auto_now_add=True)),
                 ("_cls", models.CharField(default="Template", max_length=200)),
                 (
@@ -192,7 +195,10 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("is_disabled", models.BooleanField(default=False)),
-                ("_cls", models.CharField(default="VersionManager", max_length=200)),
+                (
+                    "_cls",
+                    models.CharField(default="VersionManager", max_length=200),
+                ),
                 ("creation_date", models.DateTimeField(auto_now_add=True)),
             ],
             options={
@@ -240,7 +246,10 @@ class Migration(migrations.Migration):
                         ],
                     ),
                 ),
-                ("owner", models.CharField(blank=True, max_length=200, null=True)),
+                (
+                    "owner",
+                    models.CharField(blank=True, max_length=200, null=True),
+                ),
                 ("read_perm_id", models.CharField(max_length=200)),
                 ("write_perm_id", models.CharField(max_length=200)),
                 ("is_public", models.BooleanField(default=False)),
@@ -287,7 +296,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "file",
-                    models.FileField(max_length=250, upload_to=XSLT_UPLOAD_DIR),
+                    models.FileField(
+                        max_length=250, upload_to=XSLT_UPLOAD_DIR
+                    ),
                 ),
                 (
                     "checksum",
@@ -322,7 +333,9 @@ class Migration(migrations.Migration):
                 (
                     "list_detail_xslt",
                     models.ManyToManyField(
-                        blank=True, default=[], to="core_main_app.XslTransformation"
+                        blank=True,
+                        default=[],
+                        to="core_main_app.XslTransformation",
                     ),
                 ),
                 (
@@ -381,7 +394,8 @@ class Migration(migrations.Migration):
             model_name="data",
             name="template",
             field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, to="core_main_app.template"
+                on_delete=django.db.models.deletion.CASCADE,
+                to="core_main_app.template",
             ),
         ),
         migrations.AddField(
@@ -449,7 +463,12 @@ class Migration(migrations.Migration):
         migrations.AddIndex(
             model_name="data",
             index=models.Index(
-                fields=["title", "last_modification_date", "template", "user_id"],
+                fields=[
+                    "title",
+                    "last_modification_date",
+                    "template",
+                    "user_id",
+                ],
                 name="core_main_a_title_3e9383_idx",
             ),
         ),

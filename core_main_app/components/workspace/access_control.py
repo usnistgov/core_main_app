@@ -5,7 +5,9 @@ from core_main_app.permissions import api as permissions_api, rights as rights
 from core_main_app.settings import CAN_SET_PUBLIC_DATA_TO_PRIVATE
 
 
-def is_workspace_owner_to_perform_action_for_others(func, workspace, new_user_id, user):
+def is_workspace_owner_to_perform_action_for_others(
+    func, workspace, new_user_id, user
+):
     """Check if the user is the owner of the workspace to perform action for other user.
 
     Args:

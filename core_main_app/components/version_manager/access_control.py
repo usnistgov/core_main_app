@@ -2,7 +2,10 @@
 """
 
 from core_main_app.access_control.exceptions import AccessControlError
-from core_main_app.components.version_manager.models import VersionManager, Version
+from core_main_app.components.version_manager.models import (
+    VersionManager,
+    Version,
+)
 from core_main_app.settings import CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT
 from core_main_app.utils.requests_utils.access_control import (
     get_request_from_args,
@@ -86,7 +89,9 @@ def can_write(func, *args, **kwargs):
         if request.user.is_staff:
             return func(*args, **kwargs)
 
-    raise AccessControlError("Version Manager: The user doesn't have enough rights.")
+    raise AccessControlError(
+        "Version Manager: The user doesn't have enough rights."
+    )
 
 
 def can_read_list(func, list_id, request):
@@ -118,7 +123,9 @@ def can_read_list(func, list_id, request):
                 )
 
         # user is set
-        if version_manager.user and version_manager.user != str(request.user.id):
+        if version_manager.user and version_manager.user != str(
+            request.user.id
+        ):
             raise AccessControlError(
                 "Version Manager: The user doesn't have enough rights."
             )

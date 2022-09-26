@@ -129,7 +129,9 @@ class TestDataList(MongoIntegrationBaseTestCase):
         mock_xml_content.return_value = "content"
 
         # Act
-        response = RequestMock.do_request_get(data_rest_views.DataList.as_view(), user)
+        response = RequestMock.do_request_get(
+            data_rest_views.DataList.as_view(), user
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -144,7 +146,9 @@ class TestDataList(MongoIntegrationBaseTestCase):
         user = create_mock_user(1)
 
         # Act
-        response = RequestMock.do_request_get(data_rest_views.DataList.as_view(), user)
+        response = RequestMock.do_request_get(
+            data_rest_views.DataList.as_view(), user
+        )
 
         # Assert
         self.assertEqual(len(response.data["results"]), 2)
@@ -179,7 +183,9 @@ class TestDataList(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_get(
-            data_rest_views.DataList.as_view(), user, data={"title": "bad title"}
+            data_rest_views.DataList.as_view(),
+            user,
+            data={"title": "bad title"},
         )
 
         # Assert
@@ -503,7 +509,9 @@ class TestDataDownload(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_get_with_param_returns_http_400_when_content_not_well_formatted(self):
+    def test_get_with_param_returns_http_400_when_content_not_well_formatted(
+        self,
+    ):
         """test_get_with_param_returns_http_400_when_content_not_well_formatted
 
         Returns:
@@ -552,7 +560,9 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user,
+            data=self.data,
         )
 
         # Assert
@@ -569,7 +579,9 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user,
+            data=self.data,
         )
 
         # Assert
@@ -583,12 +595,16 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
         """
         # Arrange
         self.data.update(
-            {"query": '{"$or": [{"root.element": "value"}, {"root.element":"value2"}]}'}
+            {
+                "query": '{"$or": [{"root.element": "value"}, {"root.element":"value2"}]}'
+            }
         )
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user,
+            data=self.data,
         )
 
         # Assert
@@ -609,7 +625,9 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user,
+            data=self.data,
         )
 
         # Assert
@@ -631,13 +649,17 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user,
+            data=self.data,
         )
 
         # Assert
         self.assertEqual(len(response.data), 1)
 
-    def test_post_query_string_filtered_by_wrong_template_id_returns_no_data(self):
+    def test_post_query_string_filtered_by_wrong_template_id_returns_no_data(
+        self,
+    ):
         """test_post_query_string_filtered_by_wrong_template_id_returns_no_data
 
         Returns:
@@ -653,7 +675,9 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user,
+            data=self.data,
         )
 
         # Assert
@@ -670,7 +694,9 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user,
+            data=self.data,
         )
 
         # Assert
@@ -687,7 +713,9 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user,
+            data=self.data,
         )
 
         # Assert
@@ -704,7 +732,9 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user,
+            data=self.data,
         )
 
         # Assert
@@ -721,7 +751,9 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user,
+            data=self.data,
         )
 
         # Assert
@@ -735,12 +767,21 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
         """
         # Arrange
         self.data.update(
-            {"query": {"$or": [{"root.element": "value"}, {"root.element": "value2"}]}}
+            {
+                "query": {
+                    "$or": [
+                        {"root.element": "value"},
+                        {"root.element": "value2"},
+                    ]
+                }
+            }
         )
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user,
+            data=self.data,
         )
 
         # Assert
@@ -766,7 +807,9 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user,
+            data=self.data,
         )
 
         # Assert
@@ -785,14 +828,18 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user,
+            data=self.data,
         )
 
         # Assert
         self.assertEqual(len(response.data), 1)
 
 
-class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase):
+class TestExecuteLocalQueryViewWorkspaceCase(
+    MongoIntegrationTransactionTestCase
+):
     """TestExecuteLocalQueryViewWorkspaceCase"""
 
     fixture = fixture_data_workspace
@@ -828,7 +875,9 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user,
+            data=self.data,
         )
 
         # Assert
@@ -847,7 +896,9 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
         self.data.update({"query": "{}", "workspaces": []})
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user2, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user2,
+            data=self.data,
         )
 
         # Assert
@@ -867,19 +918,26 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
 
         # Arrange
         self.data.update(
-            {"query": "{}", "workspaces": [{"id": self.fixture.workspace_1.id}]}
+            {
+                "query": "{}",
+                "workspaces": [{"id": self.fixture.workspace_1.id}],
+            }
         )
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user,
+            data=self.data,
         )
 
         # Assert
         self.assertEqual(len(response.data), 2)
 
         for data in response.data:
-            self.assertEqual(str(data["workspace"]), str(self.fixture.workspace_1.id))
+            self.assertEqual(
+                str(data["workspace"]), str(self.fixture.workspace_1.id)
+            )
 
     def test_post_empty_query_string_filter_by_workspaces_returns_all_data_of_those_workspaces(
         self,
@@ -903,13 +961,18 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user,
+            data=self.data,
         )
 
         # Assert
         self.assertEqual(len(response.data), 3)
 
-        list_ids = [str(self.fixture.workspace_1.id), str(self.fixture.workspace_2.id)]
+        list_ids = [
+            str(self.fixture.workspace_1.id),
+            str(self.fixture.workspace_2.id),
+        ]
         for data in response.data:
             self.assertIn(str(data["workspace"]), list_ids)
 
@@ -935,14 +998,18 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user,
+            data=self.data,
         )
 
         # Assert
         self.assertEqual(len(response.data), 1)
 
         for data in response.data:
-            self.assertEqual(str(data["workspace"]), str(self.fixture.workspace_2.id))
+            self.assertEqual(
+                str(data["workspace"]), str(self.fixture.workspace_2.id)
+            )
 
     def test_post_query_filter_by_correct_and_wrong_workspaces_raises_acl_error(
         self,
@@ -966,7 +1033,9 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user2, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user2,
+            data=self.data,
         )
 
         # Assert
@@ -989,7 +1058,9 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user,
+            data=self.data,
         )
 
         # Assert
@@ -997,7 +1068,9 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
 
         for data in response.data:
             self.assertEqual(str(data["id"]), str(self.fixture.data_3.id))
-            self.assertEqual(str(data["workspace"]), str(self.fixture.workspace_1.id))
+            self.assertEqual(
+                str(data["workspace"]), str(self.fixture.workspace_1.id)
+            )
 
     def test_post_query_string_filter_by_workspace_returns_no_data(self):
         """test_post_query_string_filter_by_workspace_returns_no_data
@@ -1016,7 +1089,9 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user,
+            data=self.data,
         )
 
         # Assert
@@ -1036,7 +1111,9 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user,
+            data=self.data,
         )
 
         # Assert
@@ -1058,7 +1135,9 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user2, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user2,
+            data=self.data,
         )
 
         # Assert
@@ -1086,7 +1165,9 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user,
+            data=self.data,
         )
 
         # Assert
@@ -1118,7 +1199,9 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user2, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user2,
+            data=self.data,
         )
 
         # Assert
@@ -1135,7 +1218,9 @@ class TestExecuteLocalQueryViewWorkspaceCase(MongoIntegrationTransactionTestCase
 
         # Act
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(), self.user, data=self.data
+            data_rest_views.ExecuteLocalQueryView.as_view(),
+            self.user,
+            data=self.data,
         )
 
         # Assert
@@ -1203,7 +1288,9 @@ class TestDataAssign(MongoIntegrationBaseTestCase):
         )
 
         # Assert
-        self.assertEqual(str(data.workspace.id), str(self.fixture.workspace_2.id))
+        self.assertEqual(
+            str(data.workspace.id), str(self.fixture.workspace_2.id)
+        )
 
     @patch.object(Workspace, "get_by_id")
     @patch.object(Data, "get_by_id")
@@ -1254,7 +1341,10 @@ class TestDataAssign(MongoIntegrationBaseTestCase):
         response = RequestMock.do_request_patch(
             data_rest_views.DataAssign.as_view(),
             user,
-            param={"pk": fake_data_id, "workspace_id": self.fixture.workspace_2.id},
+            param={
+                "pk": fake_data_id,
+                "workspace_id": self.fixture.workspace_2.id,
+            },
         )
 
         # Assert
@@ -1308,7 +1398,9 @@ class TestDataChangeOwner(MongoIntegrationBaseTestCase):
         """
         # Arrange
         data = self.fixture.data_collection[self.fixture.USER_1_WORKSPACE_1]
-        user_request = create_mock_user("65467", is_staff=True, is_superuser=True)
+        user_request = create_mock_user(
+            "65467", is_staff=True, is_superuser=True
+        )
         user_new_owner = create_mock_user("123")
         data_get_by_id.return_value = data
         user_get_by_id.return_value = user_new_owner
@@ -1452,7 +1544,9 @@ class TestDataPermissions(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.data, excepted_result)
 
     @patch.object(data_api, "get_by_id")
-    def test_get_returns_correct_permissions_if_user_is_not_owner(self, data_get_by_id):
+    def test_get_returns_correct_permissions_if_user_is_not_owner(
+        self, data_get_by_id
+    ):
         """test_get_returns_correct_permissions_if_user_is_not_owner
 
         Args:
@@ -1462,7 +1556,9 @@ class TestDataPermissions(MongoIntegrationTransactionTestCase):
 
         """
         # Arrange
-        user_request = UserFixtures().create_user("no_owner_user", is_staff=True)
+        user_request = UserFixtures().create_user(
+            "no_owner_user", is_staff=True
+        )
         data = self.fixture.data_4
         data_get_by_id.return_value = data
 
@@ -1479,7 +1575,9 @@ class TestDataPermissions(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.data, excepted_result)
 
     @patch.object(data_api, "get_by_id")
-    def test_get_returns_correct_permissions_if_user_is_owner(self, data_get_by_id):
+    def test_get_returns_correct_permissions_if_user_is_owner(
+        self, data_get_by_id
+    ):
         """test_get_returns_correct_permissions_if_user_is_owner
 
         Args:
@@ -1508,7 +1606,9 @@ class TestDataPermissions(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.data, excepted_result)
 
     @patch.object(data_api, "get_by_id")
-    def test_get_if_user_has_read_permission_in_workspace(self, data_get_by_id):
+    def test_get_if_user_has_read_permission_in_workspace(
+        self, data_get_by_id
+    ):
         """test_get_if_user_has_read_permission_in_workspace
 
         Args:
@@ -1538,7 +1638,9 @@ class TestDataPermissions(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.data, excepted_result)
 
     @patch.object(data_api, "get_by_id")
-    def test_get_if_user_has_write_permission_in_workspace(self, data_get_by_id):
+    def test_get_if_user_has_write_permission_in_workspace(
+        self, data_get_by_id
+    ):
         """test_get_if_user_has_write_permission_in_workspace
 
         Args:
@@ -1568,7 +1670,9 @@ class TestDataPermissions(MongoIntegrationTransactionTestCase):
         self.assertEqual(response.data, excepted_result)
 
     @patch.object(data_api, "get_by_id")
-    def test_get_if_user_has_write_read_permission_in_workspace(self, data_get_by_id):
+    def test_get_if_user_has_write_read_permission_in_workspace(
+        self, data_get_by_id
+    ):
         """test_get_if_user_has_write_read_permission_in_workspace
 
         Args:

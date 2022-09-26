@@ -28,7 +28,9 @@ def has_perm_publish(user, codename):
     if not user.has_perm(
         publish_perm.content_type.app_label + "." + publish_perm.codename
     ):
-        raise AccessControlError("The user doesn't have enough rights to publish.")
+        raise AccessControlError(
+            "The user doesn't have enough rights to publish."
+        )
 
 
 def has_perm_administration(func, *args, **kwargs):
@@ -158,7 +160,9 @@ def can_write_document_in_workspace(func, document, workspace, user):
     Returns:
 
     """
-    return can_write_in_workspace(func, document, workspace, user, rights.PUBLISH_DATA)
+    return can_write_in_workspace(
+        func, document, workspace, user, rights.PUBLISH_DATA
+    )
 
 
 def can_read_or_write_in_workspace(func, workspace, user):
@@ -205,15 +209,18 @@ def can_write_in_workspace(func, document, workspace, user, codename):
     # if we can not unpublish
     if CAN_SET_PUBLIC_DATA_TO_PRIVATE is False:
         # if document is in public workspace
-        if document.workspace is not None and workspace_api.is_workspace_public(
-            document.workspace
+        if (
+            document.workspace is not None
+            and workspace_api.is_workspace_public(document.workspace)
         ):
             # if target workspace is private
             if (
                 workspace is None
                 or workspace_api.is_workspace_public(workspace) is False
             ):
-                raise AccessControlError("The document can not be unpublished.")
+                raise AccessControlError(
+                    "The document can not be unpublished."
+                )
 
     return func(document, workspace, user)
 
@@ -321,8 +328,8 @@ def _check_can_write_in_workspace(workspace, user):
     Returns:
 
     """
-    accessible_workspaces = workspace_api.get_all_workspaces_with_write_access_by_user(
-        user
+    accessible_workspaces = (
+        workspace_api.get_all_workspaces_with_write_access_by_user(user)
     )
     if workspace not in accessible_workspaces:
         raise AccessControlError(
@@ -362,7 +369,9 @@ def _check_anonymous_access(user):
 
     Returns:
     """
-    if (user is None or user.is_anonymous) and not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
+    if (
+        user is None or user.is_anonymous
+    ) and not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
         raise AccessControlError(
             "The user doesn't have enough rights to access this document."
         )

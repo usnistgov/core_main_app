@@ -154,7 +154,9 @@ def get_all(request, is_cls=True):
     Returns:
 
     """
-    return Template.get_all(is_cls, users=get_accessible_owners(request=request))
+    return Template.get_all(
+        is_cls, users=get_accessible_owners(request=request)
+    )
 
 
 @access_control(can_write)
@@ -191,6 +193,8 @@ def _register_local_dependencies(template, request):
             template.dependencies.add(dependency_object)
         except exceptions.DoesNotExist as exception:
             logger.warning(
-                "Dependency %s threw an exception: %s", local_dependency, str(exception)
+                "Dependency %s threw an exception: %s",
+                local_dependency,
+                str(exception),
             )
     template.save()

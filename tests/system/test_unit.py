@@ -45,7 +45,9 @@ class TestSystemGetAllExcept(TestCase):
     """TestSystemGetAllExcept"""
 
     @patch.object(Data, "get_all_except")
-    def test_system_get_all_except_return_data_object(self, mock_get_all_except):
+    def test_system_get_all_except_return_data_object(
+        self, mock_get_all_except
+    ):
         """test system get all except return data object
 
         Args:
@@ -66,7 +68,9 @@ class TestSystemGetAllExcept(TestCase):
         self.assertTrue(all(isinstance(item, Data) for item in result))
 
     @patch.object(Data, "get_all_except")
-    def test_system_get_all_except_return_correct_count(self, mock_get_all_except):
+    def test_system_get_all_except_return_correct_count(
+        self, mock_get_all_except
+    ):
         """test system get all except return correct count
 
         Args:
@@ -133,7 +137,9 @@ class TestSystemGetAllExcept(TestCase):
         self.assertEqual(len(result), 1)
 
     @patch.object(Data, "get_all_except")
-    def test_system_get_all_except_bad_id_return_data_object(self, mock_get_all_except):
+    def test_system_get_all_except_bad_id_return_data_object(
+        self, mock_get_all_except
+    ):
         """test system get all except bad id return data object
 
         Args:
@@ -284,7 +290,9 @@ class TestGetAllDataInWorkspaces(TestCase):
         self.assertEqual(len(result), 0)
 
     @patch.object(Data, "get_all_by_list_workspace")
-    def test_invalid_workspace_returns_no_data(self, mock_get_all_by_list_workspace):
+    def test_invalid_workspace_returns_no_data(
+        self, mock_get_all_by_list_workspace
+    ):
         """test invalid workspace returns no data
 
         Args:
@@ -303,7 +311,9 @@ class TestGetAllDataInWorkspacesForTemplates(TestCase):
     """TestGetAllDataInWorkspacesForTemplates"""
 
     @patch.object(Data, "get_all_by_templates_and_workspaces")
-    def test_returns_data_object(self, mock_get_all_by_templates_and_workspaces):
+    def test_returns_data_object(
+        self, mock_get_all_by_templates_and_workspaces
+    ):
         """test returns data object
 
         Args:
@@ -327,7 +337,9 @@ class TestGetAllDataInWorkspacesForTemplates(TestCase):
         self.assertTrue(all(isinstance(item, Data) for item in result))
 
     @patch.object(Data, "get_all_by_templates_and_workspaces")
-    def test_returns_correct_count(self, mock_get_all_by_templates_and_workspaces):
+    def test_returns_correct_count(
+        self, mock_get_all_by_templates_and_workspaces
+    ):
         """test returns correct count
 
         Args:

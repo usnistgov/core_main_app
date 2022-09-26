@@ -16,7 +16,9 @@ from core_main_app.rest.user import views as user_views
 from core_main_app.rest.views import CoreSettings
 from core_main_app.rest.web_page import views as web_page_views
 from core_main_app.rest.workspace import views as workspace_views
-from core_main_app.rest.xsl_transformation import views as xsl_transformation_views
+from core_main_app.rest.xsl_transformation import (
+    views as xsl_transformation_views,
+)
 
 urlpatterns = [
     re_path(
@@ -95,7 +97,9 @@ urlpatterns = [
         name="core_main_app_rest_template_detail",
     ),
     re_path(
-        r"^data/$", data_views.DataList.as_view(), name="core_main_app_rest_data_list"
+        r"^data/$",
+        data_views.DataList.as_view(),
+        name="core_main_app_rest_data_list",
     ),
     re_path(
         r"^data/permissions/$",
@@ -168,7 +172,9 @@ urlpatterns = [
         name="core_main_app_rest_blob_list_admin",
     ),
     re_path(
-        r"^blob/$", blob_views.BlobList.as_view(), name="core_main_app_rest_blob_list"
+        r"^blob/$",
+        blob_views.BlobList.as_view(),
+        name="core_main_app_rest_blob_list",
     ),
     re_path(
         r"^blobs/delete/$",

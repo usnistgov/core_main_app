@@ -2,7 +2,9 @@
 """
 from rest_framework.serializers import ModelSerializer, ReadOnlyField
 
-from core_main_app.components.template.api import init_template_with_dependencies
+from core_main_app.components.template.api import (
+    init_template_with_dependencies,
+)
 from core_main_app.components.template.models import Template
 from core_main_app.components.template_version_manager import (
     api as template_version_manager_api,
@@ -63,7 +65,9 @@ class CreateTemplateSerializer(TemplateSerializer):
             content=validated_data["content"],
             user=validated_data["user"],
         )
-        template_version_manager_object = validated_data["template_version_manager"]
+        template_version_manager_object = validated_data[
+            "template_version_manager"
+        ]
 
         # load dependencies
         dependencies_dict = load_dependencies(validated_data)

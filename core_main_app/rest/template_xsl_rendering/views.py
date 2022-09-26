@@ -13,7 +13,9 @@ from core_main_app.commons import exceptions
 from core_main_app.components.template_xsl_rendering import (
     api as template_xsl_rendering_api,
 )
-from core_main_app.components.xsl_transformation import api as xsl_transformation_api
+from core_main_app.components.xsl_transformation import (
+    api as xsl_transformation_api,
+)
 from core_main_app.rest.template_xsl_rendering.serializers import (
     TemplateXslRenderingSerializer,
 )
@@ -51,7 +53,9 @@ class TemplateXslRenderingList(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     def post(self, request):
         """Create a XSL template rendering
@@ -100,7 +104,9 @@ class TemplateXslRenderingList(APIView):
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class TemplateXslRenderingDetail(APIView):
@@ -120,7 +126,9 @@ class TemplateXslRenderingDetail(APIView):
         """
         try:
             # Get object
-            template_xsl_rendering_object = template_xsl_rendering_api.get_by_id(pk)
+            template_xsl_rendering_object = (
+                template_xsl_rendering_api.get_by_id(pk)
+            )
 
             # Serialize object
             template_xsl_rendering_serializer = TemplateXslRenderingSerializer(
@@ -134,7 +142,9 @@ class TemplateXslRenderingDetail(APIView):
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     def patch(self, request, pk):
         """Edit `TemplateXSLRendering` object from db
@@ -148,7 +158,9 @@ class TemplateXslRenderingDetail(APIView):
         """
         try:
             # Get object
-            template_xsl_rendering_object = template_xsl_rendering_api.get_by_id(pk)
+            template_xsl_rendering_object = (
+                template_xsl_rendering_api.get_by_id(pk)
+            )
 
             # Build serializer
             template_xsl_rendering_serializer = TemplateXslRenderingSerializer(
@@ -161,7 +173,8 @@ class TemplateXslRenderingDetail(APIView):
             template_xsl_rendering_serializer.save()
 
             return Response(
-                template_xsl_rendering_serializer.data, status=status.HTTP_200_OK
+                template_xsl_rendering_serializer.data,
+                status=status.HTTP_200_OK,
             )
         except ValidationError as validation_exception:
             content = {"message": validation_exception.detail}
@@ -171,7 +184,9 @@ class TemplateXslRenderingDetail(APIView):
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     def delete(self, request, pk):
         """Delete a TemplateXSLRendering
@@ -192,7 +207,9 @@ class TemplateXslRenderingDetail(APIView):
         """
         try:
             # Get object
-            template_xsl_rendering_object = template_xsl_rendering_api.get_by_id(pk)
+            template_xsl_rendering_object = (
+                template_xsl_rendering_api.get_by_id(pk)
+            )
 
             # delete object
             template_xsl_rendering_api.delete(template_xsl_rendering_object)
@@ -207,7 +224,9 @@ class TemplateXslRenderingDetail(APIView):
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class TemplateXslRenderingAddDetailXslt(APIView):
@@ -228,8 +247,12 @@ class TemplateXslRenderingAddDetailXslt(APIView):
         """
         try:
             # Get objects
-            template_xsl_rendering_object = template_xsl_rendering_api.get_by_id(pk)
-            xsl_transformation_object = xsl_transformation_api.get_by_id(xslt_id)
+            template_xsl_rendering_object = (
+                template_xsl_rendering_api.get_by_id(pk)
+            )
+            xsl_transformation_object = xsl_transformation_api.get_by_id(
+                xslt_id
+            )
 
             # Add an xsl transformation
             template_xsl_rendering_api.add_detail_xslt(
@@ -242,7 +265,8 @@ class TemplateXslRenderingAddDetailXslt(APIView):
             )
 
             return Response(
-                template_xsl_rendering_serializer.data, status=status.HTTP_200_OK
+                template_xsl_rendering_serializer.data,
+                status=status.HTTP_200_OK,
             )
 
         except Http404:
@@ -250,7 +274,9 @@ class TemplateXslRenderingAddDetailXslt(APIView):
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class TemplateXslRenderingSetDefaultDetailXslt(APIView):
@@ -271,8 +297,12 @@ class TemplateXslRenderingSetDefaultDetailXslt(APIView):
         """
         try:
             # Get objects
-            template_xsl_rendering_object = template_xsl_rendering_api.get_by_id(pk)
-            xsl_transformation_object = xsl_transformation_api.get_by_id(xslt_id)
+            template_xsl_rendering_object = (
+                template_xsl_rendering_api.get_by_id(pk)
+            )
+            xsl_transformation_object = xsl_transformation_api.get_by_id(
+                xslt_id
+            )
 
             # Set default xsl transformation
             template_xsl_rendering_api.set_default_detail_xslt(
@@ -285,14 +315,17 @@ class TemplateXslRenderingSetDefaultDetailXslt(APIView):
             )
 
             return Response(
-                template_xsl_rendering_serializer.data, status=status.HTTP_200_OK
+                template_xsl_rendering_serializer.data,
+                status=status.HTTP_200_OK,
             )
         except Http404:
             content = {"message": "Data not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class TemplateXslRenderingRemoveDetailXslt(APIView):
@@ -313,8 +346,12 @@ class TemplateXslRenderingRemoveDetailXslt(APIView):
         """
         try:
             # Get objects
-            template_xsl_rendering_object = template_xsl_rendering_api.get_by_id(pk)
-            xsl_transformation_object = xsl_transformation_api.get_by_id(xslt_id)
+            template_xsl_rendering_object = (
+                template_xsl_rendering_api.get_by_id(pk)
+            )
+            xsl_transformation_object = xsl_transformation_api.get_by_id(
+                xslt_id
+            )
 
             # Remove xsl transformation
             template_xsl_rendering_api.delete_detail_xslt(
@@ -327,14 +364,17 @@ class TemplateXslRenderingRemoveDetailXslt(APIView):
             )
 
             return Response(
-                template_xsl_rendering_serializer.data, status=status.HTTP_200_OK
+                template_xsl_rendering_serializer.data,
+                status=status.HTTP_200_OK,
             )
         except Http404:
             content = {"message": "Data not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class TemplateXslRenderingSetListDetailXslt(APIView):
@@ -364,7 +404,9 @@ class TemplateXslRenderingSetListDetailXslt(APIView):
         """
         try:
             # Get objects
-            template_xsl_rendering_object = template_xsl_rendering_api.get_by_id(pk)
+            template_xsl_rendering_object = (
+                template_xsl_rendering_api.get_by_id(pk)
+            )
             xsl_transformation_objects = xsl_transformation_api.get_by_id_list(
                 request.data["ids"]
             )
@@ -380,7 +422,8 @@ class TemplateXslRenderingSetListDetailXslt(APIView):
             )
 
             return Response(
-                template_xsl_rendering_serializer.data, status=status.HTTP_200_OK
+                template_xsl_rendering_serializer.data,
+                status=status.HTTP_200_OK,
             )
         except ValidationError as validation_exception:
             content = {"message": validation_exception.detail}
@@ -390,4 +433,6 @@ class TemplateXslRenderingSetListDetailXslt(APIView):
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

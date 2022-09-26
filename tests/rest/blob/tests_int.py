@@ -41,7 +41,9 @@ class TestBlobListAdmin(MongoIntegrationBaseTestCase):
         user = create_mock_user("1")
 
         # Act
-        response = RequestMock.do_request_get(views.BlobListAdmin.as_view(), user)
+        response = RequestMock.do_request_get(
+            views.BlobListAdmin.as_view(), user
+        )
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -57,7 +59,9 @@ class TestBlobListAdmin(MongoIntegrationBaseTestCase):
         user = create_mock_user("1", is_staff=True, is_superuser=True)
 
         # Act
-        response = RequestMock.do_request_get(views.BlobListAdmin.as_view(), user)
+        response = RequestMock.do_request_get(
+            views.BlobListAdmin.as_view(), user
+        )
 
         # Assert
         self.assertEqual(len(response.data), 3)
@@ -166,7 +170,9 @@ class TestBlobList(MongoIntegrationBaseTestCase):
         )
 
         # Assert
-        self.assertEqual(response.data[0]["filename"], self.fixture.blob_1.filename)
+        self.assertEqual(
+            response.data[0]["filename"], self.fixture.blob_1.filename
+        )
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_get_filtered_by_incorrect_name_returns_http_200(self):
@@ -285,7 +291,9 @@ class TestBlobDetail(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_get(
-            views.BlobDetail.as_view(), user, param={"pk": str(self.fixture.blob_1.id)}
+            views.BlobDetail.as_view(),
+            user,
+            param={"pk": str(self.fixture.blob_1.id)},
         )
 
         # Assert
@@ -303,11 +311,15 @@ class TestBlobDetail(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_get(
-            views.BlobDetail.as_view(), user, param={"pk": str(self.fixture.blob_1.id)}
+            views.BlobDetail.as_view(),
+            user,
+            param={"pk": str(self.fixture.blob_1.id)},
         )
 
         # Assert
-        self.assertEqual(response.data["filename"], self.fixture.blob_1.filename)
+        self.assertEqual(
+            response.data["filename"], self.fixture.blob_1.filename
+        )
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_get_wrong_id_returns_http_404(self):
@@ -339,7 +351,9 @@ class TestBlobDetail(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_get(
-            views.BlobDetail.as_view(), user, param={"pk": str(self.fixture.blob_1.id)}
+            views.BlobDetail.as_view(),
+            user,
+            param={"pk": str(self.fixture.blob_1.id)},
         )
 
         # Assert
@@ -357,7 +371,9 @@ class TestBlobDetail(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_delete(
-            views.BlobDetail.as_view(), user, param={"pk": str(self.fixture.blob_1.id)}
+            views.BlobDetail.as_view(),
+            user,
+            param={"pk": str(self.fixture.blob_1.id)},
         )
 
         # Assert
@@ -375,7 +391,9 @@ class TestBlobDetail(MongoIntegrationBaseTestCase):
 
         # Act
         RequestMock.do_request_delete(
-            views.BlobDetail.as_view(), user, param={"pk": str(self.fixture.blob_1.id)}
+            views.BlobDetail.as_view(),
+            user,
+            param={"pk": str(self.fixture.blob_1.id)},
         )
 
         # Assert
@@ -411,7 +429,9 @@ class TestBlobDetail(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_delete(
-            views.BlobDetail.as_view(), user, param={"pk": str(self.fixture.blob_1.id)}
+            views.BlobDetail.as_view(),
+            user,
+            param={"pk": str(self.fixture.blob_1.id)},
         )
 
         # Assert
@@ -429,7 +449,9 @@ class TestBlobDetail(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_delete(
-            views.BlobDetail.as_view(), user, param={"pk": str(self.fixture.blob_1.id)}
+            views.BlobDetail.as_view(),
+            user,
+            param={"pk": str(self.fixture.blob_1.id)},
         )
 
         # Assert
@@ -543,7 +565,9 @@ class TestBlobDeleteList(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_post_a_list_containing_other_user_blob_as_superuser_returns_http_204(self):
+    def test_post_a_list_containing_other_user_blob_as_superuser_returns_http_204(
+        self,
+    ):
         """test_post_a_list_containing_other_user_blob_as_superuser_returns_http_204
 
         Returns:
@@ -622,7 +646,9 @@ class TestBlobAssign(MongoIntegrationBaseTestCase):
         )
 
         # Assert
-        self.assertEqual(str(blob.workspace.id), str(self.fixture.workspace_2.id))
+        self.assertEqual(
+            str(blob.workspace.id), str(self.fixture.workspace_2.id)
+        )
 
     @patch.object(Workspace, "get_by_id")
     @patch.object(Blob, "get_by_id")
@@ -673,7 +699,10 @@ class TestBlobAssign(MongoIntegrationBaseTestCase):
         response = RequestMock.do_request_patch(
             views.BlobAssign.as_view(),
             user,
-            param={"pk": fake_blob_id, "workspace_id": self.fixture.workspace_2.id},
+            param={
+                "pk": fake_blob_id,
+                "workspace_id": self.fixture.workspace_2.id,
+            },
         )
 
         # Assert
@@ -727,7 +756,9 @@ class TestBlobChangeOwner(MongoIntegrationBaseTestCase):
         """
         # Arrange
         blob = self.fixture.blob_collection[self.fixture.USER_1_WORKSPACE_1]
-        user_request = create_mock_user("65467", is_staff=True, is_superuser=True)
+        user_request = create_mock_user(
+            "65467", is_staff=True, is_superuser=True
+        )
         user_new_owner = create_mock_user("123")
         blob_get_by_id.return_value = blob
         user_get_by_id.return_value = user_new_owner

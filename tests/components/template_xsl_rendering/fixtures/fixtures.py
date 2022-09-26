@@ -2,9 +2,15 @@
 """
 
 from core_main_app.components.template.models import Template
-from core_main_app.components.template_xsl_rendering.models import TemplateXslRendering
-from core_main_app.components.xsl_transformation.models import XslTransformation
-from core_main_app.utils.integration_tests.fixture_interface import FixtureInterface
+from core_main_app.components.template_xsl_rendering.models import (
+    TemplateXslRendering,
+)
+from core_main_app.components.xsl_transformation.models import (
+    XslTransformation,
+)
+from core_main_app.utils.integration_tests.fixture_interface import (
+    FixtureInterface,
+)
 
 
 class TemplateXslRenderingFixtures(FixtureInterface):
@@ -44,7 +50,9 @@ class TemplateXslRenderingFixtures(FixtureInterface):
             filename="template_2.xsd", content="content2", hash="hash2"
         )
         self.template_2.save()
-        self.template_xsl_rendering_1 = TemplateXslRendering(template=self.template_1)
+        self.template_xsl_rendering_1 = TemplateXslRendering(
+            template=self.template_1
+        )
         self.template_xsl_rendering_1.save()
         self.xsl_transformation_3 = XslTransformation(
             name="xsl_transformation_3",
@@ -58,7 +66,9 @@ class TemplateXslRenderingFixtures(FixtureInterface):
             default_detail_xslt=self.xsl_transformation_3,
         )
         self.template_xsl_rendering_2.save()
-        self.template_xsl_rendering_2.list_detail_xslt.set([self.xsl_transformation_3])
+        self.template_xsl_rendering_2.list_detail_xslt.set(
+            [self.xsl_transformation_3]
+        )
 
         self.template_xsl_rendering_collection = [
             self.template_xsl_rendering_1,

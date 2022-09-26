@@ -27,5 +27,7 @@ class MongoenginePaginator(DjangoPaginator):
         if callable(count_func) and not inspect.isbuiltin(count_func):
             return count_func()
 
-        logger.warning("count() function was not called. Calling len() instead.")
+        logger.warning(
+            "count() function was not called. Calling len() instead."
+        )
         return len(self.object_list)

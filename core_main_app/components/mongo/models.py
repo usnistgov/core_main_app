@@ -31,7 +31,9 @@ try:
         from bson import ObjectId
         from mongoengine import Document, DoesNotExist
         from mongoengine import fields as mongo_fields
-        from core_main_app.utils.databases.mongo.pymongo_database import init_text_index
+        from core_main_app.utils.databases.mongo.pymongo_database import (
+            init_text_index,
+        )
 
         class AbstractMongoData(Document):
             """Data object stored in MongoDB"""
@@ -140,7 +142,9 @@ try:
 
                 """
                 if not self._xml_content:
-                    self._xml_content = Data.get_by_id(self.data_id).xml_content
+                    self._xml_content = Data.get_by_id(
+                        self.data_id
+                    ).xml_content
                 return self._xml_content
 
             @xml_content.setter
@@ -166,7 +170,9 @@ try:
                 Returns:
 
                 """
-                return MongoData.objects(__raw__=query).order_by(*order_by_field)
+                return MongoData.objects(__raw__=query).order_by(
+                    *order_by_field
+                )
 
             @staticmethod
             def aggregate(pipeline):
@@ -208,9 +214,13 @@ try:
                     force_list=XML_FORCE_LIST,
                     list_limit=SEARCHABLE_DATA_OCCURRENCES_LIMIT,
                 )
-                mongo_data._template_id = data.template.id if data.template else None
+                mongo_data._template_id = (
+                    data.template.id if data.template else None
+                )
                 mongo_data.user_id = data.user_id if data.user_id else None
-                mongo_data._workspace_id = data.workspace.id if data.workspace else None
+                mongo_data._workspace_id = (
+                    data.workspace.id if data.workspace else None
+                )
                 mongo_data.creation_date = data.creation_date
                 mongo_data.last_modification_date = data.last_modification_date
                 mongo_data.last_change_date = data.last_change_date

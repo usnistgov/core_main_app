@@ -7,8 +7,12 @@ from core_main_app.commons.validators import ExtensionValidator
 from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
 )
-from core_main_app.components.xsl_transformation import api as xsl_transformation_api
-from core_main_app.components.xsl_transformation.models import XslTransformation
+from core_main_app.components.xsl_transformation import (
+    api as xsl_transformation_api,
+)
+from core_main_app.components.xsl_transformation.models import (
+    XslTransformation,
+)
 from core_main_app.views.admin.commons.upload.forms import UploadForm
 
 
@@ -55,7 +59,9 @@ class UploadTemplateForm(UploadForm):
         super().__init__(*args, **kwargs)
         self.fields["name"].label = "Enter Template name"
         self.fields["upload_file"].validators = [ExtensionValidator(".xsd")]
-        self.fields["upload_file"].widget = forms.FileInput(attrs={"accept": ".xsd"})
+        self.fields["upload_file"].widget = forms.FileInput(
+            attrs={"accept": ".xsd"}
+        )
 
 
 class UploadVersionForm(forms.Form):
@@ -76,12 +82,21 @@ class EditProfileForm(forms.Form):
     Form to edit the profile information
     """
 
-    firstname = forms.CharField(label="First Name", max_length=100, required=True)
-    lastname = forms.CharField(label="Last Name", max_length=100, required=True)
-    username = forms.CharField(
-        label="Username", max_length=100, required=True, widget=forms.HiddenInput()
+    firstname = forms.CharField(
+        label="First Name", max_length=100, required=True
     )
-    email = forms.EmailField(label="Email Address", max_length=100, required=True)
+    lastname = forms.CharField(
+        label="Last Name", max_length=100, required=True
+    )
+    username = forms.CharField(
+        label="Username",
+        max_length=100,
+        required=True,
+        widget=forms.HiddenInput(),
+    )
+    email = forms.EmailField(
+        label="Email Address", max_length=100, required=True
+    )
 
 
 class UploadXSLTForm(UploadForm):
@@ -137,7 +152,9 @@ class TextAreaForm(forms.Form):
     """TextArea Form"""
 
     content = forms.CharField(
-        label="", widget=forms.Textarea(attrs={"class": "form-control"}), required=False
+        label="",
+        widget=forms.Textarea(attrs={"class": "form-control"}),
+        required=False,
     )
 
 

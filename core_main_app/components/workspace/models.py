@@ -37,7 +37,10 @@ class Workspace(models.Model):
         Returns:
         """
         # Check the title
-        if self.owner is not None and self.title.lower() == "global public workspace":
+        if (
+            self.owner is not None
+            and self.title.lower() == "global public workspace"
+        ):
             raise exceptions.ModelError(
                 "You can't create a workspace with the title: " + self.title
             )
@@ -82,7 +85,9 @@ class Workspace(models.Model):
             raise exceptions.ModelError(str(ex))
 
     @staticmethod
-    def get_all_workspaces_with_read_access_by_user_id(user_id, read_permissions):
+    def get_all_workspaces_with_read_access_by_user_id(
+        user_id, read_permissions
+    ):
         """Get all workspaces with read access for the given user id.
 
         Args:
@@ -99,7 +104,9 @@ class Workspace(models.Model):
         ).all()
 
     @staticmethod
-    def get_all_workspaces_with_write_access_by_user_id(user_id, write_permissions):
+    def get_all_workspaces_with_write_access_by_user_id(
+        user_id, write_permissions
+    ):
         """Get all workspaces with write access for the given user id.
 
         Args:
@@ -170,7 +177,9 @@ class Workspace(models.Model):
         Returns:
 
         """
-        return Workspace.objects.filter(owner__ne=str(user_id), is_public=True).all()
+        return Workspace.objects.filter(
+            owner__ne=str(user_id), is_public=True
+        ).all()
 
     @staticmethod
     def get_non_public_workspace_owned_by_user_id(user_id):
@@ -182,7 +191,9 @@ class Workspace(models.Model):
         Returns:
 
         """
-        return Workspace.objects.filter(owner=str(user_id), is_public=False).all()
+        return Workspace.objects.filter(
+            owner=str(user_id), is_public=False
+        ).all()
 
     @staticmethod
     def get_public_workspaces_owned_by_user_id(user_id):
@@ -194,7 +205,9 @@ class Workspace(models.Model):
         Returns:
 
         """
-        return Workspace.objects.filter(owner=str(user_id), is_public=True).all()
+        return Workspace.objects.filter(
+            owner=str(user_id), is_public=True
+        ).all()
 
     @staticmethod
     def get_global_workspace():

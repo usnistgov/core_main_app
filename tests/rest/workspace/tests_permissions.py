@@ -24,7 +24,9 @@ class TestGetWorkspaceDetail(SimpleTestCase):
         """
         # Act
         response = RequestMock.do_request_get(
-            workspace_rest_views.WorkspaceDetail.as_view(), None, param={"pk": 0}
+            workspace_rest_views.WorkspaceDetail.as_view(),
+            None,
+            param={"pk": 0},
         )
 
         # Assert
@@ -51,7 +53,9 @@ class TestGetWorkspaceDetail(SimpleTestCase):
 
         # Act
         response = RequestMock.do_request_get(
-            workspace_rest_views.WorkspaceDetail.as_view(), user, param={"pk": 0}
+            workspace_rest_views.WorkspaceDetail.as_view(),
+            user,
+            param={"pk": 0},
         )
 
         # Assert
@@ -75,7 +79,9 @@ class TestGetWorkspaceDetail(SimpleTestCase):
 
         # Act
         response = RequestMock.do_request_get(
-            workspace_rest_views.WorkspaceDetail.as_view(), user, param={"pk": 0}
+            workspace_rest_views.WorkspaceDetail.as_view(),
+            user,
+            param={"pk": 0},
         )
 
         # Assert
@@ -93,7 +99,9 @@ class TestDeleteWorkspace(SimpleTestCase):
         """
         # Act
         response = RequestMock.do_request_delete(
-            workspace_rest_views.WorkspaceDetail.as_view(), None, param={"pk": 0}
+            workspace_rest_views.WorkspaceDetail.as_view(),
+            None,
+            param={"pk": 0},
         )
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -119,7 +127,9 @@ class TestDeleteWorkspace(SimpleTestCase):
 
         # Act
         response = RequestMock.do_request_delete(
-            workspace_rest_views.WorkspaceDetail.as_view(), user, param={"pk": 0}
+            workspace_rest_views.WorkspaceDetail.as_view(),
+            user,
+            param={"pk": 0},
         )
 
         # Assert
@@ -146,7 +156,9 @@ class TestDeleteWorkspace(SimpleTestCase):
 
         # Act
         response = RequestMock.do_request_delete(
-            workspace_rest_views.WorkspaceDetail.as_view(), user, param={"pk": 0}
+            workspace_rest_views.WorkspaceDetail.as_view(),
+            user,
+            param={"pk": 0},
         )
 
         # Assert
@@ -350,8 +362,8 @@ class TestWorkspaceReadAccess(SimpleTestCase):
         mock_workspace_api_get_all_workspaces_with_read_access_by_user.return_value = (
             None
         )
-        mock_workspace_rest_views__list_of_workspaces_to_response.return_value = (
-            Response(status=status.HTTP_200_OK)
+        mock_workspace_rest_views__list_of_workspaces_to_response.return_value = Response(
+            status=status.HTTP_200_OK
         )
 
         # Act
@@ -383,8 +395,8 @@ class TestWorkspaceReadAccess(SimpleTestCase):
         mock_workspace_api_get_all_workspaces_with_read_access_by_user.return_value = (
             None
         )
-        mock_workspace_rest_views__list_of_workspaces_to_response.return_value = (
-            Response(status=status.HTTP_200_OK)
+        mock_workspace_rest_views__list_of_workspaces_to_response.return_value = Response(
+            status=status.HTTP_200_OK
         )
 
         # Act
@@ -413,7 +425,9 @@ class TestWorkspaceWriteAccess(SimpleTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @patch.object(workspace_api, "get_all_workspaces_with_write_access_by_user")
+    @patch.object(
+        workspace_api, "get_all_workspaces_with_write_access_by_user"
+    )
     @patch.object(workspace_rest_views, "_list_of_workspaces_to_response")
     def test_staff_returns_http_200(
         self,
@@ -434,8 +448,8 @@ class TestWorkspaceWriteAccess(SimpleTestCase):
         mock_workspace_api_get_all_workspaces_with_write_access_by_user.return_value = (
             None
         )
-        mock_workspace_rest_views__list_of_workspaces_to_response.return_value = (
-            Response(status=status.HTTP_200_OK)
+        mock_workspace_rest_views__list_of_workspaces_to_response.return_value = Response(
+            status=status.HTTP_200_OK
         )
 
         # Act
@@ -446,7 +460,9 @@ class TestWorkspaceWriteAccess(SimpleTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    @patch.object(workspace_api, "get_all_workspaces_with_write_access_by_user")
+    @patch.object(
+        workspace_api, "get_all_workspaces_with_write_access_by_user"
+    )
     @patch.object(workspace_rest_views, "_list_of_workspaces_to_response")
     def test_authenticated_returns_http_200(
         self,
@@ -467,8 +483,8 @@ class TestWorkspaceWriteAccess(SimpleTestCase):
         mock_workspace_api_get_all_workspaces_with_write_access_by_user.return_value = (
             None
         )
-        mock_workspace_rest_views__list_of_workspaces_to_response.return_value = (
-            Response(status=status.HTTP_200_OK)
+        mock_workspace_rest_views__list_of_workspaces_to_response.return_value = Response(
+            status=status.HTTP_200_OK
         )
 
         # Act
@@ -500,7 +516,9 @@ class TestWorkspaceIsPublic(SimpleTestCase):
     @patch.object(workspace_api, "get_by_id")
     @patch.object(workspace_api, "is_workspace_public")
     def test_staff_returns_http_200(
-        self, mock_workspace_api_get_by_id, mock_workspace_api_is_workspace_public
+        self,
+        mock_workspace_api_get_by_id,
+        mock_workspace_api_is_workspace_public,
     ):
         """test_staff_returns_http_200
 
@@ -527,7 +545,9 @@ class TestWorkspaceIsPublic(SimpleTestCase):
     @patch.object(workspace_api, "get_by_id")
     @patch.object(workspace_api, "is_workspace_public")
     def test_authenticated_returns_http_200(
-        self, mock_workspace_api_get_by_id, mock_workspace_api_is_workspace_public
+        self,
+        mock_workspace_api_get_by_id,
+        mock_workspace_api_is_workspace_public,
     ):
         """test_authenticated_returns_http_200
 
@@ -572,7 +592,9 @@ class TestWorkspaceSetPublic(SimpleTestCase):
     @patch.object(workspace_api, "get_by_id")
     @patch.object(workspace_api, "set_workspace_public")
     def test_staff_returns_http_200(
-        self, mock_workspace_api_get_by_id, mock_workspace_api_set_workspace_public
+        self,
+        mock_workspace_api_get_by_id,
+        mock_workspace_api_set_workspace_public,
     ):
         """test_staff_returns_http_200
 
@@ -599,7 +621,9 @@ class TestWorkspaceSetPublic(SimpleTestCase):
     @patch.object(workspace_api, "get_by_id")
     @patch.object(workspace_api, "set_workspace_public")
     def test_authenticated_returns_http_200(
-        self, mock_workspace_api_get_by_id, mock_workspace_api_set_workspace_public
+        self,
+        mock_workspace_api_get_by_id,
+        mock_workspace_api_set_workspace_public,
     ):
         """test_authenticated_returns_http_200
 
@@ -644,7 +668,9 @@ class TestWorkspaceSetPrivate(SimpleTestCase):
     @patch.object(workspace_api, "get_by_id")
     @patch.object(workspace_api, "set_workspace_private")
     def test_staff_returns_http_200(
-        self, mock_workspace_api_get_by_id, mock_workspace_api_set_workspace_private
+        self,
+        mock_workspace_api_get_by_id,
+        mock_workspace_api_set_workspace_private,
     ):
         """test_staff_returns_http_200
 
@@ -671,7 +697,9 @@ class TestWorkspaceSetPrivate(SimpleTestCase):
     @patch.object(workspace_api, "get_by_id")
     @patch.object(workspace_api, "set_workspace_private")
     def test_authenticated_returns_http_200(
-        self, mock_workspace_api_get_by_id, mock_workspace_api_set_workspace_private
+        self,
+        mock_workspace_api_get_by_id,
+        mock_workspace_api_set_workspace_private,
     ):
         """test_authenticated_returns_http_200
 
@@ -707,7 +735,9 @@ class TestWorkspaceListUserCanRead(SimpleTestCase):
         """
         # Act
         response = RequestMock.do_request_get(
-            workspace_rest_views.get_list_user_can_read_workspace, None, param={"pk": 0}
+            workspace_rest_views.get_list_user_can_read_workspace,
+            None,
+            param={"pk": 0},
         )
 
         # Assert
@@ -727,13 +757,15 @@ class TestWorkspaceListUserCanRead(SimpleTestCase):
         """
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
-            Response(status=status.HTTP_200_OK)
+        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = Response(
+            status=status.HTTP_200_OK
         )
 
         # Act
         response = RequestMock.do_request_get(
-            workspace_rest_views.get_list_user_can_read_workspace, user, param={"pk": 0}
+            workspace_rest_views.get_list_user_can_read_workspace,
+            user,
+            param={"pk": 0},
         )
 
         # Assert
@@ -753,13 +785,15 @@ class TestWorkspaceListUserCanRead(SimpleTestCase):
         """
         # Context
         user = create_mock_user("1")
-        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
-            Response(status=status.HTTP_200_OK)
+        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = Response(
+            status=status.HTTP_200_OK
         )
 
         # Act
         response = RequestMock.do_request_get(
-            workspace_rest_views.get_list_user_can_read_workspace, user, param={"pk": 0}
+            workspace_rest_views.get_list_user_can_read_workspace,
+            user,
+            param={"pk": 0},
         )
 
         # Assert
@@ -799,8 +833,8 @@ class TestWorkspaceListUserCanWrite(SimpleTestCase):
         """
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
-            Response(status=status.HTTP_200_OK)
+        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = Response(
+            status=status.HTTP_200_OK
         )
 
         # Act
@@ -827,8 +861,8 @@ class TestWorkspaceListUserCanWrite(SimpleTestCase):
         """
         # Context
         user = create_mock_user("1")
-        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
-            Response(status=status.HTTP_200_OK)
+        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = Response(
+            status=status.HTTP_200_OK
         )
 
         # Act
@@ -875,8 +909,8 @@ class TestWorkspaceListGroupCanRead(SimpleTestCase):
         """
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
-            Response(status=status.HTTP_200_OK)
+        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = Response(
+            status=status.HTTP_200_OK
         )
 
         # Act
@@ -903,8 +937,8 @@ class TestWorkspaceListGroupCanRead(SimpleTestCase):
         """
         # Context
         user = create_mock_user("1")
-        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
-            Response(status=status.HTTP_200_OK)
+        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = Response(
+            status=status.HTTP_200_OK
         )
 
         # Act
@@ -951,8 +985,8 @@ class TestWorkspaceListGroupCanWrite(SimpleTestCase):
         """
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
-            Response(status=status.HTTP_200_OK)
+        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = Response(
+            status=status.HTTP_200_OK
         )
 
         # Act
@@ -979,8 +1013,8 @@ class TestWorkspaceListGroupCanWrite(SimpleTestCase):
         """
         # Context
         user = create_mock_user("1")
-        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = (
-            Response(status=status.HTTP_200_OK)
+        mock_workspace_rest_views__list_of_users_or_groups_to_response.return_value = Response(
+            status=status.HTTP_200_OK
         )
 
         # Act
@@ -1014,7 +1048,8 @@ class TestAddUserReadRightToWorkspace(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @patch.object(
-        workspace_rest_views, "_add_or_remove_to_user_or_group_right_to_workspace"
+        workspace_rest_views,
+        "_add_or_remove_to_user_or_group_right_to_workspace",
     )
     def test_staff_returns_http_200(
         self,
@@ -1030,8 +1065,8 @@ class TestAddUserReadRightToWorkspace(SimpleTestCase):
         """
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -1045,7 +1080,8 @@ class TestAddUserReadRightToWorkspace(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @patch.object(
-        workspace_rest_views, "_add_or_remove_to_user_or_group_right_to_workspace"
+        workspace_rest_views,
+        "_add_or_remove_to_user_or_group_right_to_workspace",
     )
     def test_authenticated_returns_http_200(
         self,
@@ -1061,8 +1097,8 @@ class TestAddUserReadRightToWorkspace(SimpleTestCase):
         """
         # Context
         user = create_mock_user("1")
-        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -1096,7 +1132,8 @@ class TestAddUserWriteRightToWorkspace(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @patch.object(
-        workspace_rest_views, "_add_or_remove_to_user_or_group_right_to_workspace"
+        workspace_rest_views,
+        "_add_or_remove_to_user_or_group_right_to_workspace",
     )
     def test_staff_returns_http_200(
         self,
@@ -1112,8 +1149,8 @@ class TestAddUserWriteRightToWorkspace(SimpleTestCase):
         """
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -1127,7 +1164,8 @@ class TestAddUserWriteRightToWorkspace(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @patch.object(
-        workspace_rest_views, "_add_or_remove_to_user_or_group_right_to_workspace"
+        workspace_rest_views,
+        "_add_or_remove_to_user_or_group_right_to_workspace",
     )
     def test_authenticated_returns_http_200(
         self,
@@ -1143,8 +1181,8 @@ class TestAddUserWriteRightToWorkspace(SimpleTestCase):
         """
         # Context
         user = create_mock_user("1")
-        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -1178,7 +1216,8 @@ class TestAddGroupReadRightToWorkspace(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @patch.object(
-        workspace_rest_views, "_add_or_remove_to_user_or_group_right_to_workspace"
+        workspace_rest_views,
+        "_add_or_remove_to_user_or_group_right_to_workspace",
     )
     def test_staff_returns_http_200(
         self,
@@ -1194,8 +1233,8 @@ class TestAddGroupReadRightToWorkspace(SimpleTestCase):
         """
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -1209,7 +1248,8 @@ class TestAddGroupReadRightToWorkspace(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @patch.object(
-        workspace_rest_views, "_add_or_remove_to_user_or_group_right_to_workspace"
+        workspace_rest_views,
+        "_add_or_remove_to_user_or_group_right_to_workspace",
     )
     def test_authenticated_returns_http_200(
         self,
@@ -1225,8 +1265,8 @@ class TestAddGroupReadRightToWorkspace(SimpleTestCase):
         """
         # Context
         user = create_mock_user("1")
-        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -1260,7 +1300,8 @@ class TestAddGroupWriteRightToWorkspace(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @patch.object(
-        workspace_rest_views, "_add_or_remove_to_user_or_group_right_to_workspace"
+        workspace_rest_views,
+        "_add_or_remove_to_user_or_group_right_to_workspace",
     )
     def test_staff_returns_http_200(
         self,
@@ -1276,8 +1317,8 @@ class TestAddGroupWriteRightToWorkspace(SimpleTestCase):
         """
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -1291,7 +1332,8 @@ class TestAddGroupWriteRightToWorkspace(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @patch.object(
-        workspace_rest_views, "_add_or_remove_to_user_or_group_right_to_workspace"
+        workspace_rest_views,
+        "_add_or_remove_to_user_or_group_right_to_workspace",
     )
     def test_authenticated_returns_http_200(
         self,
@@ -1307,8 +1349,8 @@ class TestAddGroupWriteRightToWorkspace(SimpleTestCase):
         """
         # Context
         user = create_mock_user("1")
-        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -1342,7 +1384,8 @@ class TestRemoveUserReadRightToWorkspace(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @patch.object(
-        workspace_rest_views, "_add_or_remove_to_user_or_group_right_to_workspace"
+        workspace_rest_views,
+        "_add_or_remove_to_user_or_group_right_to_workspace",
     )
     def test_returns_http_200(
         self,
@@ -1358,8 +1401,8 @@ class TestRemoveUserReadRightToWorkspace(SimpleTestCase):
         """
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -1373,7 +1416,8 @@ class TestRemoveUserReadRightToWorkspace(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @patch.object(
-        workspace_rest_views, "_add_or_remove_to_user_or_group_right_to_workspace"
+        workspace_rest_views,
+        "_add_or_remove_to_user_or_group_right_to_workspace",
     )
     def test_authenticated_returns_http_200(
         self,
@@ -1389,8 +1433,8 @@ class TestRemoveUserReadRightToWorkspace(SimpleTestCase):
         """
         # Context
         user = create_mock_user("1")
-        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -1424,7 +1468,8 @@ class TestRemoveUserWriteRightToWorkspace(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @patch.object(
-        workspace_rest_views, "_add_or_remove_to_user_or_group_right_to_workspace"
+        workspace_rest_views,
+        "_add_or_remove_to_user_or_group_right_to_workspace",
     )
     def test_staff_returns_http_200(
         self,
@@ -1440,8 +1485,8 @@ class TestRemoveUserWriteRightToWorkspace(SimpleTestCase):
         """
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -1455,7 +1500,8 @@ class TestRemoveUserWriteRightToWorkspace(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @patch.object(
-        workspace_rest_views, "_add_or_remove_to_user_or_group_right_to_workspace"
+        workspace_rest_views,
+        "_add_or_remove_to_user_or_group_right_to_workspace",
     )
     def test_authenticated_returns_http_200(
         self,
@@ -1471,8 +1517,8 @@ class TestRemoveUserWriteRightToWorkspace(SimpleTestCase):
         """
         # Context
         user = create_mock_user("1")
-        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -1506,7 +1552,8 @@ class TestRemoveGroupReadRightToWorkspace(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @patch.object(
-        workspace_rest_views, "_add_or_remove_to_user_or_group_right_to_workspace"
+        workspace_rest_views,
+        "_add_or_remove_to_user_or_group_right_to_workspace",
     )
     def test_staff_returns_http_200(
         self,
@@ -1522,8 +1569,8 @@ class TestRemoveGroupReadRightToWorkspace(SimpleTestCase):
         """
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -1537,7 +1584,8 @@ class TestRemoveGroupReadRightToWorkspace(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @patch.object(
-        workspace_rest_views, "_add_or_remove_to_user_or_group_right_to_workspace"
+        workspace_rest_views,
+        "_add_or_remove_to_user_or_group_right_to_workspace",
     )
     def test_authenticated_returns_http_200(
         self,
@@ -1553,8 +1601,8 @@ class TestRemoveGroupReadRightToWorkspace(SimpleTestCase):
         """
         # Context
         user = create_mock_user("1")
-        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -1588,7 +1636,8 @@ class TestRemoveGroupWriteRightToWorkspace(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @patch.object(
-        workspace_rest_views, "_add_or_remove_to_user_or_group_right_to_workspace"
+        workspace_rest_views,
+        "_add_or_remove_to_user_or_group_right_to_workspace",
     )
     def test_staff_returns_http_200(
         self,
@@ -1604,8 +1653,8 @@ class TestRemoveGroupWriteRightToWorkspace(SimpleTestCase):
         """
         # Context
         user = create_mock_user("1", is_staff=True)
-        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
 
         # Act
@@ -1619,7 +1668,8 @@ class TestRemoveGroupWriteRightToWorkspace(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @patch.object(
-        workspace_rest_views, "_add_or_remove_to_user_or_group_right_to_workspace"
+        workspace_rest_views,
+        "_add_or_remove_to_user_or_group_right_to_workspace",
     )
     def test_authenticated_returns_http_200(
         self,
@@ -1634,8 +1684,8 @@ class TestRemoveGroupWriteRightToWorkspace(SimpleTestCase):
 
         """
         # Context
-        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = Response(
-            status=status.HTTP_200_OK
+        mock_add_or_remove_to_user_or_group_right_to_workspace.return_value = (
+            Response(status=status.HTTP_200_OK)
         )
         user = create_mock_user("1", is_staff=True)
 

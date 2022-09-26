@@ -90,7 +90,9 @@ class TestTemplateGetAllByHash(TestCase):
         _generic_get_all_test(
             self,
             mock_get_all_by_hash,
-            template_api.get_all_accessible_by_hash("fake_hash", request=mock_request),
+            template_api.get_all_accessible_by_hash(
+                "fake_hash", request=mock_request
+            ),
         )
 
 
@@ -121,7 +123,9 @@ class TestTemplateUpsert(TestCase):
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     @patch("core_main_app.components.template.models.Template.save")
-    def test_template_upsert_invalid_filename_raises_validation_error(self, mock_save):
+    def test_template_upsert_invalid_filename_raises_validation_error(
+        self, mock_save
+    ):
         """test template upsert invalid filename raises validation error
 
         Args:
@@ -152,7 +156,9 @@ class TestTemplateUpsert(TestCase):
         """
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
-        template = _create_template(filename="name.xsd", content="<schema></schema>")
+        template = _create_template(
+            filename="name.xsd", content="<schema></schema>"
+        )
         mock_save.return_value = None
         with self.assertRaises(exceptions.XSDError):
             template_api.upsert(template, request=mock_request)
@@ -188,7 +194,9 @@ def _generic_get_all_test(self, mock_get_all, act_function):
     """
     # Arrange
     mock_template_filename = "Schema"
-    mock_template_content = "<schema xmlns='http://www.w3.org/2001/XMLSchema'></schema>"
+    mock_template_content = (
+        "<schema xmlns='http://www.w3.org/2001/XMLSchema'></schema>"
+    )
 
     mock_template_1 = _create_mock_template(
         mock_template_filename, mock_template_content

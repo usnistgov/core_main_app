@@ -1,7 +1,9 @@
 """ Access control testing
 """
 
-from tests.components.template.fixtures.fixtures import AccessControlTemplateFixture
+from tests.components.template.fixtures.fixtures import (
+    AccessControlTemplateFixture,
+)
 
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.template import api as template_api
@@ -34,7 +36,9 @@ class TestTemplateUpsert(MongoIntegrationBaseTestCase):
         self.superuser1 = create_mock_user(user_id="1", is_superuser=True)
         self.fixture.insert_data()
 
-    def test_upsert_user_template_as_anonymous_raises_access_control_error(self):
+    def test_upsert_user_template_as_anonymous_raises_access_control_error(
+        self,
+    ):
         """test upsert user template as anonymous raises access control error
 
         Returns:
@@ -42,9 +46,13 @@ class TestTemplateUpsert(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.anonymous_user)
         with self.assertRaises(AccessControlError):
-            template_api.upsert(self.fixture.user1_template, request=mock_request)
+            template_api.upsert(
+                self.fixture.user1_template, request=mock_request
+            )
 
-    def test_upsert_global_template_as_anonymous_raises_access_control_error(self):
+    def test_upsert_global_template_as_anonymous_raises_access_control_error(
+        self,
+    ):
         """test upsert global template as anonymous raises access control error
 
         Returns:
@@ -52,7 +60,9 @@ class TestTemplateUpsert(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.anonymous_user)
         with self.assertRaises(AccessControlError):
-            template_api.upsert(self.fixture.global_template, request=mock_request)
+            template_api.upsert(
+                self.fixture.global_template, request=mock_request
+            )
 
     def test_upsert_own_template_as_user_saves(self):
         """test upsert own template as user saves
@@ -63,7 +73,9 @@ class TestTemplateUpsert(MongoIntegrationBaseTestCase):
         mock_request = create_mock_request(user=self.user1)
         template_api.upsert(self.fixture.user1_template, request=mock_request)
 
-    def test_upsert_other_users_template_as_user_raises_access_control_error(self):
+    def test_upsert_other_users_template_as_user_raises_access_control_error(
+        self,
+    ):
         """test upsert other users template as user raises access control error
 
         Returns:
@@ -71,7 +83,9 @@ class TestTemplateUpsert(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.user1)
         with self.assertRaises(AccessControlError):
-            template_api.upsert(self.fixture.user2_template, request=mock_request)
+            template_api.upsert(
+                self.fixture.user2_template, request=mock_request
+            )
 
     def test_upsert_global_template_as_user_raises_access_control_error(self):
         """test upsert global template as user raises access control error
@@ -81,7 +95,9 @@ class TestTemplateUpsert(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.user1)
         with self.assertRaises(AccessControlError):
-            template_api.upsert(self.fixture.global_template, request=mock_request)
+            template_api.upsert(
+                self.fixture.global_template, request=mock_request
+            )
 
     def test_upsert_own_template_as_staff_saves(self):
         """test upsert own template as staff saves
@@ -92,7 +108,9 @@ class TestTemplateUpsert(MongoIntegrationBaseTestCase):
         mock_request = create_mock_request(user=self.staff_user1)
         template_api.upsert(self.fixture.user1_template, request=mock_request)
 
-    def test_upsert_other_users_template_as_staff_raises_access_control_error(self):
+    def test_upsert_other_users_template_as_staff_raises_access_control_error(
+        self,
+    ):
         """test upsert other users template as staff raises access control error
 
         Returns:
@@ -100,7 +118,9 @@ class TestTemplateUpsert(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.staff_user1)
         with self.assertRaises(AccessControlError):
-            template_api.upsert(self.fixture.user2_template, request=mock_request)
+            template_api.upsert(
+                self.fixture.user2_template, request=mock_request
+            )
 
     def test_upsert_global_template_as_staff_saves(self):
         """test upsert global template as staff saves
@@ -209,7 +229,9 @@ class TestTemplateSetDisplayName(MongoIntegrationBaseTestCase):
                 self.fixture.user2_template, "new_name", request=mock_request
             )
 
-    def test_set_display_name_global_template_as_user_raises_access_control_error(self):
+    def test_set_display_name_global_template_as_user_raises_access_control_error(
+        self,
+    ):
         """test set display name global template as user raises access control error
 
         Returns:
@@ -316,9 +338,13 @@ class TestTemplateGet(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.anonymous_user)
         with self.assertRaises(AccessControlError):
-            template_api.get_by_id(self.fixture.user1_template.id, request=mock_request)
+            template_api.get_by_id(
+                self.fixture.user1_template.id, request=mock_request
+            )
 
-    def test_get_global_template_as_anonymous_raises_access_control_error(self):
+    def test_get_global_template_as_anonymous_raises_access_control_error(
+        self,
+    ):
         """test get global template as anonymous raises access control error
 
         Returns:
@@ -362,7 +388,9 @@ class TestTemplateGet(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.user1)
         with self.assertRaises(AccessControlError):
-            template_api.get_by_id(self.fixture.user2_template.id, request=mock_request)
+            template_api.get_by_id(
+                self.fixture.user2_template.id, request=mock_request
+            )
 
     def test_get_any_template_as_superuser_returns_template(self):
         """test get any template as superuser returns template
@@ -384,7 +412,9 @@ class TestTemplateGet(MongoIntegrationBaseTestCase):
         )
         self.assertEqual(template, self.fixture.global_template)
 
-    def test_get_other_users_template_as_staff_raises_access_control_error(self):
+    def test_get_other_users_template_as_staff_raises_access_control_error(
+        self,
+    ):
         """test get other users template as staff raises access control error
 
         Returns:
@@ -392,7 +422,9 @@ class TestTemplateGet(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.staff_user1)
         with self.assertRaises(AccessControlError):
-            template_api.get_by_id(self.fixture.user2_template.id, request=mock_request)
+            template_api.get_by_id(
+                self.fixture.user2_template.id, request=mock_request
+            )
 
 
 class TestTemplateGetAllAccessibleByIdList(MongoIntegrationBaseTestCase):
@@ -429,7 +461,9 @@ class TestTemplateGetAllAccessibleByIdList(MongoIntegrationBaseTestCase):
         )
         self.assertTrue(templates.count() == 0)
 
-    def test_get_all_accessible_by_id_list_as_user_returns_accessible_templates(self):
+    def test_get_all_accessible_by_id_list_as_user_returns_accessible_templates(
+        self,
+    ):
         """test get all accessible by id list as user returns accessible templates
 
         Returns:
@@ -443,7 +477,9 @@ class TestTemplateGetAllAccessibleByIdList(MongoIntegrationBaseTestCase):
         self.assertTrue(self.fixture.user2_template not in list(templates))
         self.assertTrue(self.fixture.global_template in list(templates))
 
-    def test_get_all_accessible_by_id_list_as_staff_returns_accessible_templates(self):
+    def test_get_all_accessible_by_id_list_as_staff_returns_accessible_templates(
+        self,
+    ):
         """test get all accessible by id list as staff returns accessible templates
 
         Returns:
@@ -505,7 +541,9 @@ class TestTemplateGetAllByHash(MongoIntegrationBaseTestCase):
         )
         self.assertTrue(templates.count() == 0)
 
-    def test_get_all_accessible_by_hash_as_anonymous_does_not_return_global(self):
+    def test_get_all_accessible_by_hash_as_anonymous_does_not_return_global(
+        self,
+    ):
         """test get all accessible by hash as anonymous does not return global
 
         Returns:
@@ -603,7 +641,9 @@ class TestTemplateGetAllByHash(MongoIntegrationBaseTestCase):
         self.assertTrue(self.fixture.user2_template not in list(templates))
         self.assertTrue(self.fixture.global_template not in list(templates))
 
-    def test_get_all_accessible_by_hash_as_superuser_returns_user_template(self):
+    def test_get_all_accessible_by_hash_as_superuser_returns_user_template(
+        self,
+    ):
         """test get all accessible by hash as superuser returns user template
 
         Returns:
@@ -617,7 +657,9 @@ class TestTemplateGetAllByHash(MongoIntegrationBaseTestCase):
         self.assertTrue(self.fixture.user2_template not in list(templates))
         self.assertTrue(self.fixture.global_template not in list(templates))
 
-    def test_get_all_accessible_by_hash_as_superuser_returns_global_template(self):
+    def test_get_all_accessible_by_hash_as_superuser_returns_global_template(
+        self,
+    ):
         """test get all accessible by hash as superuser returns global template
 
         Returns:
@@ -631,7 +673,9 @@ class TestTemplateGetAllByHash(MongoIntegrationBaseTestCase):
         self.assertTrue(self.fixture.user2_template not in list(templates))
         self.assertTrue(self.fixture.global_template in list(templates))
 
-    def test_get_all_accessible_by_hash_as_superuser_returns_other_user_template(self):
+    def test_get_all_accessible_by_hash_as_superuser_returns_other_user_template(
+        self,
+    ):
         """test get all accessible by hash as superuser returns other user template
 
         Returns:
@@ -677,7 +721,9 @@ class TestTemplateGetAllByHashList(MongoIntegrationBaseTestCase):
         )
         self.assertTrue(templates.count() == 0)
 
-    def test_get_all_accessible_by_hash_list_as_anonymous_does_not_return_global(self):
+    def test_get_all_accessible_by_hash_list_as_anonymous_does_not_return_global(
+        self,
+    ):
         """test get all accessible by hash list as anonymous does not return global
 
         Returns:
@@ -689,7 +735,9 @@ class TestTemplateGetAllByHashList(MongoIntegrationBaseTestCase):
         )
         self.assertTrue(templates.count() == 0)
 
-    def test_get_all_accessible_by_hash_list_as_user_returns_user_template(self):
+    def test_get_all_accessible_by_hash_list_as_user_returns_user_template(
+        self,
+    ):
         """test get all accessible by hash list as user returns user template
 
         Returns:
@@ -703,7 +751,9 @@ class TestTemplateGetAllByHashList(MongoIntegrationBaseTestCase):
         self.assertTrue(self.fixture.user2_template not in list(templates))
         self.assertTrue(self.fixture.global_template not in list(templates))
 
-    def test_get_all_accessible_by_hash_list_as_user_returns_global_template(self):
+    def test_get_all_accessible_by_hash_list_as_user_returns_global_template(
+        self,
+    ):
         """test get all accessible by hash list as user returns global template
 
         Returns:
@@ -731,7 +781,9 @@ class TestTemplateGetAllByHashList(MongoIntegrationBaseTestCase):
         )
         self.assertTrue(templates.count() == 0)
 
-    def test_get_all_accessible_by_hash_list_as_staff_returns_user_template(self):
+    def test_get_all_accessible_by_hash_list_as_staff_returns_user_template(
+        self,
+    ):
         """test get all accessible by hash list as staff returns user template
 
         Returns:
@@ -745,7 +797,9 @@ class TestTemplateGetAllByHashList(MongoIntegrationBaseTestCase):
         self.assertTrue(self.fixture.user2_template not in list(templates))
         self.assertTrue(self.fixture.global_template not in list(templates))
 
-    def test_get_all_accessible_by_hash_list_as_staff_returns_global_template(self):
+    def test_get_all_accessible_by_hash_list_as_staff_returns_global_template(
+        self,
+    ):
         """test get all accessible by hash list as staff returns global template
 
         Returns:
@@ -775,7 +829,9 @@ class TestTemplateGetAllByHashList(MongoIntegrationBaseTestCase):
         self.assertTrue(self.fixture.user2_template not in list(templates))
         self.assertTrue(self.fixture.global_template not in list(templates))
 
-    def test_get_all_accessible_by_hash_list_as_superuser_returns_user_template(self):
+    def test_get_all_accessible_by_hash_list_as_superuser_returns_user_template(
+        self,
+    ):
         """test get all accessible by hash list as superuser returns user template
 
         Returns:
@@ -789,7 +845,9 @@ class TestTemplateGetAllByHashList(MongoIntegrationBaseTestCase):
         self.assertTrue(self.fixture.user2_template not in list(templates))
         self.assertTrue(self.fixture.global_template not in list(templates))
 
-    def test_get_all_accessible_by_hash_list_as_superuser_returns_global_template(self):
+    def test_get_all_accessible_by_hash_list_as_superuser_returns_global_template(
+        self,
+    ):
         """test get all accessible by hash list as superuser returns global template
 
         Returns:
@@ -907,7 +965,9 @@ class TestTemplateDelete(MongoIntegrationBaseTestCase):
         self.superuser1 = create_mock_user(user_id="1", is_superuser=True)
         self.fixture.insert_data()
 
-    def test_delete_user_template_as_anonymous_raises_access_control_error(self):
+    def test_delete_user_template_as_anonymous_raises_access_control_error(
+        self,
+    ):
         """test delete user template as anonymous raises access control error
 
         Returns:
@@ -915,9 +975,13 @@ class TestTemplateDelete(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.anonymous_user)
         with self.assertRaises(AccessControlError):
-            template_api.delete(self.fixture.user1_template, request=mock_request)
+            template_api.delete(
+                self.fixture.user1_template, request=mock_request
+            )
 
-    def test_delete_global_template_as_anonymous_raises_access_control_error(self):
+    def test_delete_global_template_as_anonymous_raises_access_control_error(
+        self,
+    ):
         """test delete global template as anonymous raises access control error
 
         Returns:
@@ -925,7 +989,9 @@ class TestTemplateDelete(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.anonymous_user)
         with self.assertRaises(AccessControlError):
-            template_api.delete(self.fixture.global_template, request=mock_request)
+            template_api.delete(
+                self.fixture.global_template, request=mock_request
+            )
 
     def test_delete_own_template_as_user_saves(self):
         """test delete own template as user saves
@@ -936,7 +1002,9 @@ class TestTemplateDelete(MongoIntegrationBaseTestCase):
         mock_request = create_mock_request(user=self.user1)
         template_api.delete(self.fixture.user1_template, request=mock_request)
 
-    def test_delete_other_users_template_as_user_raises_access_control_error(self):
+    def test_delete_other_users_template_as_user_raises_access_control_error(
+        self,
+    ):
         """test delete other users template as user raises access control error
 
         Returns:
@@ -944,7 +1012,9 @@ class TestTemplateDelete(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.user1)
         with self.assertRaises(AccessControlError):
-            template_api.delete(self.fixture.user2_template, request=mock_request)
+            template_api.delete(
+                self.fixture.user2_template, request=mock_request
+            )
 
     def test_delete_global_template_as_user_raises_access_control_error(self):
         """test delete global template as user raises access control error
@@ -954,7 +1024,9 @@ class TestTemplateDelete(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.user1)
         with self.assertRaises(AccessControlError):
-            template_api.delete(self.fixture.global_template, request=mock_request)
+            template_api.delete(
+                self.fixture.global_template, request=mock_request
+            )
 
     def test_delete_own_template_as_staff_saves(self):
         """test delete own template as staff saves
@@ -965,7 +1037,9 @@ class TestTemplateDelete(MongoIntegrationBaseTestCase):
         mock_request = create_mock_request(user=self.staff_user1)
         template_api.delete(self.fixture.user1_template, request=mock_request)
 
-    def test_delete_other_users_template_as_staff_raises_access_control_error(self):
+    def test_delete_other_users_template_as_staff_raises_access_control_error(
+        self,
+    ):
         """test delete other users template as staff raises access control error
 
         Returns:
@@ -973,7 +1047,9 @@ class TestTemplateDelete(MongoIntegrationBaseTestCase):
         """
         mock_request = create_mock_request(user=self.staff_user1)
         with self.assertRaises(AccessControlError):
-            template_api.delete(self.fixture.user2_template, request=mock_request)
+            template_api.delete(
+                self.fixture.user2_template, request=mock_request
+            )
 
     def test_delete_global_template_as_staff_saves(self):
         """test delete global template as staff saves

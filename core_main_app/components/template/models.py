@@ -16,7 +16,9 @@ from core_main_app.components.version_manager.models import Version
 from core_main_app.settings import XSD_UPLOAD_DIR, CHECKSUM_ALGORITHM
 from core_main_app.utils.checksum import compute_checksum
 from core_main_app.utils.storage.storage import core_file_storage
-from core_main_app.utils.validation.regex_validation import not_empty_or_whitespaces
+from core_main_app.utils.validation.regex_validation import (
+    not_empty_or_whitespaces,
+)
 
 
 class Template(Version):
@@ -25,7 +27,10 @@ class Template(Version):
     class_name = "Template"
 
     version_manager = models.ForeignKey(
-        TemplateVersionManager, on_delete=models.CASCADE, null=True, default=None
+        TemplateVersionManager,
+        on_delete=models.CASCADE,
+        null=True,
+        default=None,
     )
     filename = models.CharField(
         validators=[
@@ -44,8 +49,12 @@ class Template(Version):
         upload_to=XSD_UPLOAD_DIR,
         storage=core_file_storage(model="template"),
     )
-    checksum = models.CharField(max_length=512, blank=True, default=None, null=True)
-    user = models.CharField(blank=True, max_length=200, null=True, default=None)
+    checksum = models.CharField(
+        max_length=512, blank=True, default=None, null=True
+    )
+    user = models.CharField(
+        blank=True, max_length=200, null=True, default=None
+    )
     hash = models.CharField(max_length=200)
     _display_name = models.CharField(blank=True, max_length=200)
     dependencies = models.ManyToManyField("self", blank=True, default=[])
@@ -144,7 +153,9 @@ class Template(Version):
 
         """
         if users is not None:
-            return Template.objects.filter(Q(hash__in=template_hash_list) & users).all()
+            return Template.objects.filter(
+                Q(hash__in=template_hash_list) & users
+            ).all()
         return Template.objects.filter(hash__in=template_hash_list).all()
 
     @staticmethod
@@ -159,7 +170,9 @@ class Template(Version):
 
         """
         if users is not None:
-            return Template.objects.filter(Q(pk__in=template_id_list) & users).all()
+            return Template.objects.filter(
+                Q(pk__in=template_id_list) & users
+            ).all()
         return Template.objects.filter(pk__in=template_id_list).all()
 
     @property

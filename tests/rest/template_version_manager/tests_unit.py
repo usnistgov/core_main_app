@@ -108,7 +108,9 @@ class TestTemplateVersionManagerDetail(SimpleTestCase):
         mock_get_by_id.return_value = TemplateVersionManager()
         # Mock
         response = RequestMock.do_request_get(
-            views.TemplateVersionManagerDetail.as_view(), mock_user, param={"pk": "id"}
+            views.TemplateVersionManagerDetail.as_view(),
+            mock_user,
+            param={"pk": "id"},
         )
 
         # Assert

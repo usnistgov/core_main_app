@@ -24,12 +24,18 @@ def init_rules(apps):
         group.objects.get_or_create(name=rights.ANONYMOUS_GROUP)
 
         # Get or Create the default group
-        default_group, created = group.objects.get_or_create(name=rights.DEFAULT_GROUP)
+        default_group, created = group.objects.get_or_create(
+            name=rights.DEFAULT_GROUP
+        )
 
         # Get curate permissions
         permission = apps.get_model("auth", "Permission")
-        publish_data_perm = permission.objects.get(codename=rights.PUBLISH_DATA)
-        publish_blob_perm = permission.objects.get(codename=rights.PUBLISH_BLOB)
+        publish_data_perm = permission.objects.get(
+            codename=rights.PUBLISH_DATA
+        )
+        publish_blob_perm = permission.objects.get(
+            codename=rights.PUBLISH_BLOB
+        )
 
         # Add permissions to default group
         default_group.permissions.add(publish_data_perm)
@@ -57,10 +63,14 @@ def create_public_workspace():
             workspace_api.get_global_workspace()
         except exceptions.DoesNotExist:
             # Create workspace public global
-            workspace_api.create_and_save("Global Public Workspace", is_public=True)
+            workspace_api.create_and_save(
+                "Global Public Workspace", is_public=True
+            )
             logger.info("Public workspace created.")
 
     except Exception as exception:
-        logger.error("Impossible to create global public workspace: %s", str(exception))
+        logger.error(
+            "Impossible to create global public workspace: %s", str(exception)
+        )
 
     logger.info("FINISH create public workspace.")

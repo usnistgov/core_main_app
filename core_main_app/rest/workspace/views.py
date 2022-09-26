@@ -49,7 +49,9 @@ class WorkspaceList(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     def post(self, request):
         """Create a Workspace
@@ -98,7 +100,9 @@ class WorkspaceList(APIView):
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class WorkspaceDetail(APIView):
@@ -132,7 +136,9 @@ class WorkspaceDetail(APIView):
             return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     def delete(self, request, pk):
         """Delete a Workspace
@@ -170,7 +176,9 @@ class WorkspaceDetail(APIView):
             return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
-            return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 @api_view(["GET"])
@@ -211,7 +219,9 @@ def get_workspaces_with_write_access(request):
           content: Internal server error
     """
     return _list_of_workspaces_to_response(
-        workspace_api.get_all_workspaces_with_write_access_by_user(request.user)
+        workspace_api.get_all_workspaces_with_write_access_by_user(
+            request.user
+        )
     )
 
 
@@ -411,7 +421,10 @@ def get_list_user_can_read_workspace(request, pk):
           content: Internal server error
     """
     return _list_of_users_or_groups_to_response(
-        pk, workspace_api.get_list_user_can_read_workspace, request.user, UserSerializer
+        pk,
+        workspace_api.get_list_user_can_read_workspace,
+        request.user,
+        UserSerializer,
     )
 
 
