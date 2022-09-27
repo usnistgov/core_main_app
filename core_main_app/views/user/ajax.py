@@ -20,7 +20,7 @@ from core_main_app.components.data import api as data_api
 from core_main_app.components.group import api as group_api
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
-from core_main_app.templatetags.xsl_transform_tag import render_xml_as_html
+from core_main_app.templatetags.xsl_transform_tag import render_xml_as_html_detail
 from core_main_app.utils import group as group_utils
 from core_main_app.views.user.forms import (
     ChangeWorkspaceForm,
@@ -524,7 +524,7 @@ def change_data_display(request):
         return HttpResponse(
             json.dumps(
                 {
-                    "template": render_xml_as_html(
+                    "template": render_xml_as_html_detail(
                         xml_content=data.xml_content,
                         template_id=data.template.id,
                         template_hash=data.template.hash,

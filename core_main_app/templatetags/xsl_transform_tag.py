@@ -26,7 +26,7 @@ class XSLType:
 
 
 @register.simple_tag(name="xsl_transform_list")
-def render_xml_as_html(*args, **kwargs):
+def render_xml_as_html_list(*args, **kwargs):
     """Render an XML to HTML using the list xslt.
     Args:
         *args:
@@ -36,21 +36,11 @@ def render_xml_as_html(*args, **kwargs):
         HTML
 
     """
-    xml_content = kwargs["xml_content"]
-    template_id = kwargs.get("template_id", None)
-    template_hash = kwargs.get("template_hash", None)
-    xsl_transform_id = kwargs.get("xslt_id", None)
-    return _render_xml_as_html(
-        xml_content,
-        template_id,
-        template_hash,
-        XSLType.type_list,
-        xsl_transform_id,
-    )
+    return _render_xml_as_html(XSLType.type_list, *args, **kwargs)
 
 
 @register.simple_tag(name="xsl_transform_detail")
-def render_xml_as_html(*args, **kwargs):
+def render_xml_as_html_detail(*args, **kwargs):
     """Render an XML to HTML using the detail xslt.
     Args:
         *args:
@@ -60,38 +50,26 @@ def render_xml_as_html(*args, **kwargs):
         HTML
 
     """
-    xml_content = kwargs["xml_content"]
-    template_id = kwargs.get("template_id", None)
-    template_hash = kwargs.get("template_hash", None)
-    xsl_transform_id = kwargs.get("xslt_id", None)
-    return _render_xml_as_html(
-        xml_content,
-        template_id,
-        template_hash,
-        XSLType.type_detail,
-        xsl_transform_id,
-    )
+    return _render_xml_as_html(XSLType.type_detail, *args, **kwargs)
 
 
-def _render_xml_as_html(
-    xml_string,
-    template_id=None,
-    template_hash=None,
-    xslt_type=XSLType.type_list,
-    xsl_transform_id=None,
-):
+def _render_xml_as_html(xslt_type, *args, **kwargs):
     """Render an XML to HTML according to an xslt type (list or detail).
     Args:
-        xml_string:
-        template_id:
-        template_hash:
-
-        xslt_type:
+        xslt_type
+        *args:
+        **kwargs:
 
     Returns:
         HTML
 
     """
+
+    xml_string = kwargs["xml_content"]
+    template_id = kwargs.get("template_id", None)
+    template_hash = kwargs.get("template_hash", None)
+    xsl_transform_id = kwargs.get("xslt_id", None)
+
     try:
         try:
             if xslt_type not in (XSLType.type_list, XSLType.type_detail):
