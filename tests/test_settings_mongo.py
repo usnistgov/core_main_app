@@ -2,7 +2,7 @@
 """
 
 from core_main_app.utils.databases.mongo.mongoengine_database import Database
-from tests.test_settings import *
+from tests.test_settings import *  # noqa
 
 MONGODB_INDEXING = True
 MONGODB_ASYNC_SAVE = False

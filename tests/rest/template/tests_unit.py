@@ -1,16 +1,16 @@
 """Unit tests for template rest api
 """
+from unittest.mock import patch
+
 from django.test import SimpleTestCase
-from mock.mock import patch
 from rest_framework import status
 
+import core_main_app.components.template.api as template_api
 from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.template.models import Template
-
 from core_main_app.rest.template import views as template_rest_views
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
-import core_main_app.components.template.api as template_api
 
 
 class TestTemplateDownload(SimpleTestCase):

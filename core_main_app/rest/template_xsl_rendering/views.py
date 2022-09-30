@@ -80,7 +80,7 @@ class TemplateXslRenderingList(APIView):
             serializer = TemplateXslRenderingSerializer(data=request.data)
 
             # Validate data
-            serializer.is_valid(True)
+            serializer.is_valid(raise_exception=True)
 
             # Save data
             serializer.save()
@@ -156,7 +156,7 @@ class TemplateXslRenderingDetail(APIView):
             )
 
             # Validate data
-            template_xsl_rendering_serializer.is_valid(True)
+            template_xsl_rendering_serializer.is_valid(raise_exception=True)
             # Save data
             template_xsl_rendering_serializer.save()
 

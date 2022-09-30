@@ -1,8 +1,8 @@
 """ Integration Test for Data Rest API
 """
 from copy import copy
+from unittest.mock import patch
 
-from mock import patch
 from rest_framework import status
 from tests.components.data.fixtures.fixtures import (
     DataFixtures,

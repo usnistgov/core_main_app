@@ -2,10 +2,10 @@
 """
 import datetime
 from types import SimpleNamespace
+from unittest.mock import patch
 
 import pytz
 from django.db.models import Q
-from mock.mock import patch
 from tests.components.data.fixtures.fixtures import (
     DataFixtures,
     AccessControlDataFixture,

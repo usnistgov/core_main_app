@@ -1,11 +1,11 @@
 """ Template Version Manager unit tests
 """
 from unittest.case import TestCase
+from unittest.mock import Mock, patch, MagicMock
 
 from django.core import exceptions as django_exceptions
 from django.core.exceptions import ValidationError
 from django.test import override_settings
-from mock.mock import Mock, patch, MagicMock
 
 from core_main_app.commons.exceptions import DoesNotExist, NotUniqueError
 from core_main_app.components.template.models import Template

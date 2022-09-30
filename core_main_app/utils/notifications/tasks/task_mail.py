@@ -1,7 +1,5 @@
 """Mailing task
 """
-from __future__ import absolute_import
-
 from logging import getLogger
 
 from celery import shared_task

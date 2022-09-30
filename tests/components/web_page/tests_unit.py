@@ -2,8 +2,7 @@
 """
 
 from unittest.case import TestCase
-
-from mock import Mock, patch
+from unittest.mock import Mock, patch
 
 from core_main_app.commons.enums import WEB_PAGE_TYPES
 from core_main_app.commons.exceptions import ApiError

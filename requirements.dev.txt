@@ -1,5 +1,4 @@
-black==22.8.0
-mock==2.0.0
-mongomock==3.20.0
-python-dotenv==0.15.0
+black==22.8.*
+mongomock==4.1.*
+python-dotenv==0.21.*
 psycopg2-binary==2.9.2

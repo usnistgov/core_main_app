@@ -73,7 +73,7 @@ class XslTransformationList(APIView):
             # Build serializer
             xsl_serializer = XslTransformationSerializer(data=request.data)
             # Validate xsl
-            xsl_serializer.is_valid(True)
+            xsl_serializer.is_valid(raise_exception=True)
             # save or update the object
             xsl_serializer.save()
             return Response(xsl_serializer.data, status=status.HTTP_201_CREATED)
@@ -203,7 +203,7 @@ class XslTransformationDetail(APIView):
                 instance=xsl_object, data=request.data, partial=True
             )
             # Validate xsl
-            xsl_serializer.is_valid(True)
+            xsl_serializer.is_valid(raise_exception=True)
             # Save xsl
             xsl_serializer.save()
             return Response(xsl_serializer.data, status=status.HTTP_200_OK)
@@ -250,7 +250,7 @@ class XslTransformationTransform(APIView):
             # Build serializer
             serializer = TransformSerializer(data=request.data)
             # Validate data
-            serializer.is_valid(True)
+            serializer.is_valid(raise_exception=True)
             # transform
             return_value = xsl_api.xsl_transform(**serializer.validated_data)
             return Response(return_value, status=status.HTTP_200_OK)

@@ -1,10 +1,10 @@
 """ Test XSD Flattener
 """
 from unittest import TestCase
+from unittest.mock import patch
 
 from django.test.utils import override_settings
 from django.urls import reverse
-from mock.mock import patch
 
 from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.template import api as template_api

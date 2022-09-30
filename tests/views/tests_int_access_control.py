@@ -2,6 +2,7 @@
 """
 from django.contrib.auth.models import AnonymousUser
 from django.test import RequestFactory
+from tests.views.fixtures import AccessControlDataFixture
 
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.data import api as data_api
@@ -26,7 +27,6 @@ from core_main_app.views.user.ajax import (
     add_group_right_to_workspace,
 )
 from core_main_app.views.user.views import manage_template_versions
-from tests.views.fixtures import AccessControlDataFixture
 from tests.test_settings import LOGIN_URL
 
 

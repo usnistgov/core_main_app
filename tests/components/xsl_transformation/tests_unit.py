@@ -2,13 +2,12 @@
 """
 from os.path import join, dirname, realpath
 from unittest.case import TestCase
+from unittest.mock import Mock, patch
 
-from mock.mock import Mock, patch
-
-from xml_utils.html_tree.parser import html_diff as htmldiff
 from core_main_app.commons import exceptions
 from core_main_app.components.xsl_transformation import api as xsl_transformation_api
 from core_main_app.components.xsl_transformation.models import XslTransformation
+from xml_utils.html_tree.parser import html_diff as htmldiff
 
 
 class TestXslTransformationGet(TestCase):

@@ -1,10 +1,9 @@
 """ Authentication tests for Blob REST API
 """
 from io import BytesIO
+from unittest.mock import patch, Mock
 
 from django.test import SimpleTestCase
-from mock import Mock
-from mock.mock import patch
 from rest_framework import status
 
 from core_main_app.components.blob import api as blob_api

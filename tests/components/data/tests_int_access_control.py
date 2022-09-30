@@ -2,8 +2,8 @@
 """
 import re
 import unittest
+from unittest.mock import patch
 
-from mock.mock import patch
 from tests.components.data.fixtures.fixtures import (
     AccessControlDataFixture,
     AccessControlDataFixture2,

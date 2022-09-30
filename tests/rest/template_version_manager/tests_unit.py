@@ -1,7 +1,8 @@
 """Unit tests for template version manager rest api
 """
+from unittest.mock import patch
+
 from django.test import SimpleTestCase
-from mock.mock import patch
 from rest_framework import status
 
 from core_main_app.commons.exceptions import DoesNotExist

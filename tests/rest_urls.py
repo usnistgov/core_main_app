@@ -2,8 +2,8 @@
 """
 from django.urls import re_path
 
-from core_main_app.rest.template import views as template_views
 from core_main_app.rest.data import views as data_views
+from core_main_app.rest.template import views as template_views
 
 urlpatterns = [
     re_path(

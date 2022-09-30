@@ -1,10 +1,10 @@
 """ Integration Test for Blob Rest API
 """
 from os.path import join, dirname, abspath
+from unittest.mock import patch
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import override_settings
-from mock import patch
 from rest_framework import status
 from tests.components.blob.fixtures.fixtures import (
     BlobFixtures,

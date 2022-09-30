@@ -3,8 +3,7 @@
 import datetime
 from collections import OrderedDict
 from unittest.case import TestCase
-
-from mock import patch
+from unittest.mock import patch
 
 from core_main_app.commons import exceptions
 from core_main_app.components.data import api as data_api

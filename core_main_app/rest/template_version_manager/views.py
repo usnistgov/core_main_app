@@ -158,7 +158,7 @@ class TemplateVersion(AbstractTemplateVersionManagerDetail):
             )
 
             # Validate data
-            template_serializer.is_valid(True)
+            template_serializer.is_valid(raise_exception=True)
 
             # Save data
             template_serializer.save(

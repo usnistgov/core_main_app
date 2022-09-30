@@ -1,11 +1,11 @@
 """ Test units
 """
 from unittest.case import TestCase
+from unittest.mock import Mock, patch
 
 from django.core import exceptions as django_exceptions
 from django.core.exceptions import ValidationError
 from django.test import override_settings
-from mock.mock import Mock, patch
 
 from core_main_app.commons import exceptions
 from core_main_app.commons.exceptions import DoesNotExist

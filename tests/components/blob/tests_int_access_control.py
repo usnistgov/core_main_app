@@ -1,9 +1,9 @@
 """ Access control testing for Blob.
 """
 import unittest
+from unittest.mock import patch
 
 from django.core.files.uploadedfile import SimpleUploadedFile
-from mock.mock import patch
 from tests.components.blob.fixtures.fixtures import AccessControlBlobFixture
 
 from core_main_app.access_control.exceptions import AccessControlError

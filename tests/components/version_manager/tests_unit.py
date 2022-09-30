@@ -1,9 +1,7 @@
 """Version Manager unit tests
 """
 from unittest.case import TestCase
-
-import mock
-from mock.mock import Mock, patch
+from unittest.mock import Mock, patch, PropertyMock
 
 from core_main_app.commons import exceptions
 from core_main_app.commons.exceptions import DoesNotExist
@@ -58,7 +56,7 @@ class TestVersionManagerDisableVersion(TestCase):
         with self.assertRaises(exceptions.ApiError):
             version_manager_api.disable_version(mock_current, request=mock_request)
 
-    @patch.object(TemplateVersionManager, "version_set", new_callable=mock.PropertyMock)
+    @patch.object(TemplateVersionManager, "version_set", new_callable=PropertyMock)
     def test_version_manager_disable_version_raises_exception_if_new_current_does_not_exist(
         self, mock_versions
     ):
@@ -165,7 +163,7 @@ class TestVersionManagerGetActiveGlobalVersionManagerByTitle(TestCase):
 class TestVersionManagerGetVersionByNumber(TestCase):
     """TestVersionManagerGetVersionByNumber"""
 
-    @patch.object(TemplateVersionManager, "version_set", new_callable=mock.PropertyMock)
+    @patch.object(TemplateVersionManager, "version_set", new_callable=PropertyMock)
     def test_version_manager_get_returns_version(self, mock_versions):
         """test version manager get returns version
 
@@ -211,7 +209,7 @@ class TestVersionManagerGetVersionByNumber(TestCase):
 class TestVersionManagerGetVersionNumber(TestCase):
     """TestVersionManagerGetVersionNumber"""
 
-    @patch.object(TemplateVersionManager, "version_set", new_callable=mock.PropertyMock)
+    @patch.object(TemplateVersionManager, "version_set", new_callable=PropertyMock)
     def test_version_manager_get_returns_number(self, mock_versions):
         """test version manager get returns number
 

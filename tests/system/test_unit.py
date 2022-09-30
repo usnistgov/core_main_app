@@ -2,8 +2,7 @@
 """
 from collections import OrderedDict
 from unittest.case import TestCase
-
-from mock import patch
+from unittest.mock import patch
 
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template

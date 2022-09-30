@@ -1,8 +1,7 @@
 """ Blob utils test class
 """
 from unittest import TestCase
-
-from mock import patch
+from unittest.mock import patch
 
 from core_main_app.commons.exceptions import CoreError
 from core_main_app.utils.file import get_base_64_content_from_response

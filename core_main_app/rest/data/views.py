@@ -20,6 +20,7 @@ from rest_framework.views import APIView
 from core_main_app.access_control.api import check_can_write
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
+from core_main_app.commons.exceptions import XMLError
 from core_main_app.components.data import api as data_api
 from core_main_app.components.data.api import check_xml_file_is_valid
 from core_main_app.components.data.models import Data
@@ -44,7 +45,6 @@ from core_main_app.utils.file import get_file_http_response
 from core_main_app.utils.pagination.rest_framework_paginator.pagination import (
     StandardResultsSetPagination,
 )
-from core_main_app.commons.exceptions import XMLError
 from core_main_app.utils.xml import get_content_by_xpath, format_content_xml
 
 logger = logging.getLogger(__name__)
@@ -152,7 +152,7 @@ class DataList(APIView):
             )
 
             # Validate data
-            data_serializer.is_valid(True)
+            data_serializer.is_valid(raise_exception=True)
             # Save data
             data_serializer.save()
 
@@ -379,7 +379,7 @@ class DataDetail(APIView):
             )
 
             # Validate data
-            data_serializer.is_valid(True)
+            data_serializer.is_valid(raise_exception=True)
             # Save data
             data_serializer.save()
 

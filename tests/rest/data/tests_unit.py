@@ -1,18 +1,18 @@
 """Unit tests for data rest api
 """
-from django.test import SimpleTestCase
-from mock.mock import patch
-from rest_framework import status
+from unittest.mock import patch
 
+from django.test import SimpleTestCase
+from rest_framework import status
+from tests.components.data.fixtures.fixtures import QueryDataFixtures
+
+import core_main_app.components.data.api as data_api
 from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
-
 from core_main_app.rest.data import views as data_rest_views
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
-import core_main_app.components.data.api as data_api
-from tests.components.data.fixtures.fixtures import QueryDataFixtures
 
 
 class TestDataList(SimpleTestCase):

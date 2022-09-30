@@ -2,10 +2,9 @@
 """
 import unittest
 from unittest import TestCase
+from unittest.mock import patch
 
-import mock
 from django.conf import settings
-from mock import patch
 
 from core_main_app.commons.exceptions import BlobDownloaderUrlParseError
 from core_main_app.utils.blob_downloader import BlobDownloader
@@ -123,9 +122,7 @@ class TestBlobDownloaderGetBlobResponse(TestCase):
         """
         # Arrange / Act
         mock_send_get_request.return_value = "remote"
-        with mock.patch.object(
-            settings, "INSTALLED_APPS", ["core_federated_search_app"]
-        ):
+        with patch.object(settings, "INSTALLED_APPS", ["core_federated_search_app"]):
             return_value = BlobDownloader(
                 "http://my.remote.com/987653456789"
             ).get_blob_response()

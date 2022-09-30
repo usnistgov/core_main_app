@@ -111,7 +111,7 @@ class WebPageList(APIView):
                 web_page_serializer = WebPageSerializer(data=request.data, partial=True)
 
             # Validate web page
-            web_page_serializer.is_valid(True)
+            web_page_serializer.is_valid(raise_exception=True)
 
             # Save web page
             web_page_serializer.save(type=WEB_PAGE_TYPES[self.web_page_type])

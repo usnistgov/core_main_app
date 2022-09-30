@@ -208,7 +208,7 @@ class BlobList(AbstractBlobList):
             serializer = BlobSerializer(data=request.data, context={"request": request})
 
             # Validate data
-            serializer.is_valid(True)
+            serializer.is_valid(raise_exception=True)
 
             # Save data
             serializer.save(user=request.user)
@@ -417,7 +417,7 @@ class BlobDeleteList(APIView):
             )
 
             # Validate data
-            serializer.is_valid(True)
+            serializer.is_valid(raise_exception=True)
 
             # Get list of unique ids
             blob_ids = set([blob["id"] for blob in serializer.validated_data])

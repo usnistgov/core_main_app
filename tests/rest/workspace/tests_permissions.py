@@ -1,7 +1,8 @@
 """ Permissions Test for Workspace Rest API
 """
+from unittest.mock import patch
+
 from django.test import SimpleTestCase
-from mock.mock import patch
 from rest_framework import status
 from rest_framework.response import Response
 

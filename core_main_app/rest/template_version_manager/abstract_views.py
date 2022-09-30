@@ -270,8 +270,8 @@ class AbstractTemplateList(APIView, metaclass=ABCMeta):
             template_version_manager_serializer = self.serializer(data=request.data)
 
             # Validate data
-            template_serializer.is_valid(True)
-            template_version_manager_serializer.is_valid(True)
+            template_serializer.is_valid(raise_exception=True)
+            template_version_manager_serializer.is_valid(raise_exception=True)
 
             # Save data
             template_version_manager_object = template_version_manager_serializer.save(

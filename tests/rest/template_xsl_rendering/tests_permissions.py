@@ -1,7 +1,8 @@
 """ Authentication tests for TemplateXSLRendering REST API
 """
+from unittest.mock import patch, Mock
+
 from django.test import SimpleTestCase
-from mock import patch, Mock
 from rest_framework import status
 
 from core_main_app.components.template_xsl_rendering import (

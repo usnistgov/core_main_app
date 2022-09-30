@@ -1,9 +1,9 @@
 """Unit tests for xsl transformation rest api
 """
 import unittest
+from unittest.mock import patch
 
 from django.test.testcases import SimpleTestCase
-from mock.mock import patch
 from rest_framework import status
 
 from core_main_app.components.xsl_transformation.models import XslTransformation
