@@ -1,1 +1,1 @@
-core-linked-records-app==2.0.0-beta2
+core-linked-records-app==2.0.*
