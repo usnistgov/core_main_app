@@ -237,3 +237,7 @@ CHECKSUM_ALGORITHM = getattr(settings, "CHECKSUM_ALGORITHM", None)
     CHECKSUM_ALGORITHM = "SHA256"
     CHECKSUM_ALGORITHM = "SHA512"
 """
+
+GA_TRACKING_ID = getattr(settings, "GA_TRACKING_ID", None)
+""" :py:class:`str`: Google Analytics tracking ID. Adds gtag to user pages if set.
+"""

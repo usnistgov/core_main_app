@@ -594,6 +594,12 @@ Miscellaneous
     More information can be found in the
     `SSL Cert Verification <https://requests.readthedocs.io/en/latest/user/advanced/#ssl-cert-verification>`_ section.
 
+* ``GA_TRACKING_ID``
+
+  Default: ``None``
+
+  Set a Google Analytics tracking ID to add the gtag on all user pages.
+
 Deployment
 ----------
 
