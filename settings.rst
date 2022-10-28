@@ -315,6 +315,35 @@ Export
 
   Number of seconds after which exported files are deleted.
 
+Dashboard
+---------
+
+* ``FORM_PER_PAGE_PAGINATION``
+
+  Default: ``"RESULTS_PER_PAGE"``
+
+  Customize the number of forms displayed per page
+
+
+* ``RECORD_PER_PAGE_PAGINATION``
+
+  Default: ``"RESULTS_PER_PAGE"``
+
+  Customize the number of records displayed per page
+
+
+* ``FILE_PER_PAGE_PAGINATION``
+
+  Default: ``"RESULTS_PER_PAGE"``
+
+  Customize the number of files displayed per page
+
+
+* ``QUERY_PER_PAGE_PAGINATION``
+
+  Default: ``"RESULTS_PER_PAGE"``
+
+  Customize the number of queries displayed per page
 
 
 UI Customization
