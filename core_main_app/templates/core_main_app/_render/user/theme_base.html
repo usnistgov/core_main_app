@@ -21,7 +21,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     {% block meta %}{% endblock %}
-    <title>{% block title %}{% endblock %}</title>
+    <title>{% block title %}{% if data.page_title%}{{data.page_title}} | {% endif %}{{ WEBSITE_SHORT_TITLE }}{% endblock %}</title>
 
     {% block core_css %}
         <link rel="stylesheet" href="{% static 'core_main_app/libs/bootstrap/4.5.2/css/bootstrap.min.css' %}" />

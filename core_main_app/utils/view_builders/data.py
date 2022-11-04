@@ -65,6 +65,7 @@ def build_page(
             "xsl_transformation_id": xsl_transformation_id,
             "can_display_selector": display_xslt_selector,
             "display_download_options": display_download_options,
+            "page_title": _get_data_title(data_object),
         }
 
         page_info["assets"] = {
@@ -151,6 +152,27 @@ def build_page(
         page_info["error"] = str(exception)
     finally:
         return page_info
+
+
+def _get_data_title(data_object):
+    """Get data title
+
+    Args:
+        data_object:
+
+    Returns:
+
+    """
+    # If data is None, title is None
+    if not data_object:
+        return None
+    # If data is a Data, return data.title
+    if hasattr(data_object, "title"):
+        return data_object.title
+    # If data is a dict, return title field
+    if isinstance(data_object, dict):
+        return data_object.get("title", None)
+    return None
 
 
 def render_page(request, render_function, template, context):

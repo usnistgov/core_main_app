@@ -231,6 +231,9 @@ class EditWorkspaceRights(CommonView):
             "core_main_app/user/workspaces/list/modals/add_group.html",
         ]
 
+        # Set page title
+        context.update({"page_title": "Edit Workspace"})
+
         return self.common_render(
             request,
             self.template,
@@ -295,6 +298,7 @@ class ViewData(CommonView):
                 + get_data_label()
                 + f": {error_message}.",
                 "status_code": status_code,
+                "page_title": "Error",
             },
         )
 
@@ -485,4 +489,8 @@ def defender_error_page(request):
     Returns:
 
     """
-    return render(request, "core_main_app/common/defender/error.html")
+    return render(
+        request,
+        "core_main_app/common/defender/error.html",
+        context={"page_title": "Error"},
+    )

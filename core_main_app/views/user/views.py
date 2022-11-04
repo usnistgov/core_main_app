@@ -91,6 +91,7 @@ def default_custom_login(request):
                         "login_locked": True,
                         "with_website_features": "core_website_app"
                         in INSTALLED_APPS,
+                        "page_title": "Login",
                     },
                 )
 
@@ -106,6 +107,7 @@ def default_custom_login(request):
                     "login_error": True,
                     "with_website_features": "core_website_app"
                     in INSTALLED_APPS,
+                    "page_title": "Login",
                 },
             )
     elif request.method == "GET":
@@ -143,6 +145,9 @@ def default_custom_login(request):
             )
             modals = ["core_main_app/user/login/modals/login_message.html"]
 
+            # Set page title
+            context.update({"page_title": "Login"})
+
             # render the page with context, assets and modals
             return render(
                 request,
@@ -151,6 +156,9 @@ def default_custom_login(request):
                 assets=assets,
                 modals=modals,
             )
+
+        # Set page title
+        context.update({"page_title": "Login"})
 
         # render the page with context, assets
         return render(
@@ -243,6 +251,9 @@ def manage_template_versions(request, version_manager_id):
 
         modals = ["core_main_app/admin/templates/versions/modals/disable.html"]
 
+        # Set page title
+        context.update({"page_title": "Template Versions"})
+
         return render(
             request,
             "core_main_app/common/templates/versions.html",
@@ -254,7 +265,7 @@ def manage_template_versions(request, version_manager_id):
         return render(
             request,
             "core_main_app/common/commons/error.html",
-            context={"error": str(e)},
+            context={"error": str(e), "page_title": "Error"},
         )
 
 
@@ -310,21 +321,21 @@ def custom_reset_password(
 ):
     """Custom reset password page.
 
-    Parameters:
-    :param request:
-    :param template_name:
-    :param email_template_name:
-    :param subject_template_name:
-    :param password_reset_form:
-    :param token_generator:
-    :param post_reset_redirect:
-    :param from_email:
-    :param extra_context:
-    :param extra_email_context:
-    :param html_email_template_name:
+    Args:
+        request:
+        template_name:
+        email_template_name:
+        subject_template_name:
+        password_reset_form:
+        token_generator:
+        post_reset_redirect:
+        from_email:
+        extra_context:
+        html_email_template_name:
+        extra_email_context:
 
     Returns:
-    :return request
+
     """
 
     if post_reset_redirect is None:
@@ -356,6 +367,9 @@ def custom_reset_password(
     if extra_context is not None:
         context.update(extra_context)
 
+    # Set page title
+    context.update({"page_title": "Reset Password"})
+
     return render(request, template_name, context=context)
 
 
@@ -366,13 +380,13 @@ def custom_password_reset_done(
 ):
     """Custom password reset done page.
 
-    Parameters:
-    :param request:
-    :param template_name:
-    :param extra_context:
+    Args:
+        request:
+        template_name:
+        extra_context:
 
     Returns:
-    :return request
+
     """
 
     context = {
@@ -383,6 +397,9 @@ def custom_password_reset_done(
 
     if extra_context is not None:
         context.update(extra_context)
+
+    # Set page title
+    context.update({"page_title": "Reset Password"})
 
     return render(request, template_name, assets=assets, context=context)
 
@@ -397,22 +414,21 @@ def custom_password_reset_confirm(
     post_reset_redirect=None,
     extra_context=None,
 ):
-    """
-    View that checks the hash in a password reset link and presents a
+    """View that checks the hash in a password reset link and presents a
     form for entering a new password.
 
-        Parameters:
-        :param request:
-        :param uidb64:
-        :param token:
-        :param template_name:
-        :param token_generator:
-        :param set_password_form:
-        :param post_reset_redirect:
-        :param extra_context:
+    Args:
+        request:
+        uidb64:
+        token:
+        template_name:
+        token_generator:
+        set_password_form:
+        post_reset_redirect:
+        extra_context:
 
-        Returns:
-        :return request
+    Returns:
+
     """
 
     user_model = get_user_model()
@@ -451,6 +467,9 @@ def custom_password_reset_confirm(
     if extra_context is not None:
         context.update(extra_context)
 
+    # Set page title
+    context.update({"page_title": "Reset Password"})
+
     return render(request, template_name, context=context)
 
 
@@ -459,16 +478,15 @@ def custom_password_reset_complete(
     template_name="core_main_app/user/registration/password_reset_complete.html",
     extra_context=None,
 ):
-    """
-    Custom password reset complete page.
+    """Custom password reset complete page.
 
-        Parameters:
-        :param request:
-        :param template_name:
-        :param extra_context:
+    Args:
+        request:
+        template_name:
+        extra_context:
 
-        Returns:
-        :return request
+    Returns:
+
     """
     context = {
         "login_url": resolve_url(settings.LOGIN_URL),
@@ -479,6 +497,9 @@ def custom_password_reset_complete(
 
     if extra_context is not None:
         context.update(extra_context)
+
+    # Set page title
+    context.update({"page_title": "Reset Password"})
 
     return render(request, template_name, context=context, assets=assets)
 
@@ -491,5 +512,6 @@ def saml2_failure(request, exception=None, status=403, **kwargs):
         "core_main_app/user/login/saml2_error.html",
         context={
             "with_website_features": "core_website_app" in INSTALLED_APPS,
+            "page_title": "Error",
         },
     )
