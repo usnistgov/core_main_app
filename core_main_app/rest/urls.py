@@ -27,6 +27,11 @@ urlpatterns = [
         name="core_main_app_rest_template_version_manager_global_list",
     ),
     re_path(
+        r"^template-version-manager/all/$",
+        template_version_manager_views.GlobalAndUserTemplateVersionManagerList.as_view(),
+        name="core_main_app_rest_all_template_version_manager_list",
+    ),
+    re_path(
         r"^template-version-manager/user/$",
         template_version_manager_views.UserTemplateVersionManagerList.as_view(),
         name="core_main_app_rest_template_version_manager_user_list",

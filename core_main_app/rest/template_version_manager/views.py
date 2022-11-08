@@ -4,7 +4,7 @@ from django.http import Http404
 from django.utils.decorators import method_decorator
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -58,6 +58,24 @@ class UserTemplateVersionManagerList(AbstractTemplateVersionManagerList):
         return template_version_manager_api.get_all_by_user_id(
             request=self.request
         )
+
+
+class GlobalAndUserTemplateVersionManagerList(
+    AbstractTemplateVersionManagerList
+):
+    """List Global And User Template Version Manager"""
+
+    permission_classes = (IsAdminUser,)
+
+    def get_template_version_managers(self):
+        """Get all Template Version Manager
+
+        Returns:
+
+            List of Template Version Manager
+        """
+
+        return template_version_manager_api.get_all(request=self.request)
 
 
 class TemplateVersionManagerDetail(APIView):

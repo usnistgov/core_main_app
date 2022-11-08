@@ -86,3 +86,25 @@
     border-radius: 5px;
     margin: 10px;
 }
+
+.show-user-template{
+    --width: 30px;
+    --height: 16px;
+    --handle-width: 8px;
+    --handle-height: 10px;
+    --handle-border-radius: 8px;
+    --box-border-radius: 8px;
+    --onclick-width: 8px;
+    --handle-top: 8px;
+    padding-top:5px
+}
+
+div > small {
+  font-size: 70%;
+  padding-left:25px;
+}
+
+.table-bordered > thead > tr > td {
+    height:75px;
+    vertical-align: middle;
+}

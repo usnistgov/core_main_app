@@ -19,6 +19,9 @@ $(document).ready(function() {
     $("#validate-button").on("click", () => { actionButtonClicked(false) });
     $("#migrate-button").on("click", () => { actionButtonClicked(true) });
     $(".back-to-version-manager").on("click", () => { backToVersionManager() });
+    $(".switch-input").change(function() {
+        fillTemplateList($(this).is(":checked"));
+    });
 
     // create the listener for the select all data button
     $("#select-all-data").on("click", (event) => {
@@ -66,37 +69,7 @@ $(document).ready(function() {
             .get() : []);
     });
     // create listener for the template selection
-    $("#template-table tr").on("click", (event) => {
-        let ancestors = $(event.target).parentsUntil("tbody");
-        let jqParent = $(ancestors[ancestors.length - 1]);
-        // if the click is out from the input trigger the check manually
-        if (event.target.tagName !== "INPUT") {
-            // search the clicked checkbox input and (un)check it
-            let currentCheckboxValue = jqParent.find("input[type=checkbox]")[0].checked;
-            jqParent.find("input[type=checkbox]")[0].checked = !currentCheckboxValue;
-        }
-
-        let jqCheckedTemplateCheckbox = $('.template-checkbox:checkbox:checked');
-        // check the check all checkbox if all the template checkbox are selected
-        isAllTemplateSelected = $('.template-checkbox:checkbox').length === jqCheckedTemplateCheckbox.length;
-        $("#select-all-template").prop('checked', isAllTemplateSelected);
-
-
-        // free the listener before the DOM rewriting
-        $("#infinite-scroll-bt").unbind();
-
-
-        // find all the checked checkbox on the page extract the template id
-        // from their parents and create a list with it
-        fillTheData(jqCheckedTemplateCheckbox
-            .map(function() {
-                let parents = $(this).parentsUntil("tbody");
-                let jqParent = $(parents[parents.length - 1]);
-                let templateId = $(jqParent.find("td[data-template-id]")[0]).attr("data-template-id")
-                return { id: templateId };
-            })
-            .get());
-    });
+    createTemplateListener()
 
     // get the fragment from url to select a predefined state if needed
     // ex. #from=1234567,12345678,1234567&to12345678&tvm=987123
@@ -192,6 +165,50 @@ let fillTheData = function(templateIdList) {
         viewXsltList(false)
 
     }
+}
+
+/**
+ *  Get the DOM element which contain template list
+ *  and fill the source template panel with the list
+ *  @param {boolean} isUserTemplateSelected List of the clicked template id
+ */
+let fillTemplateList = function(isUserTemplateSelected) {
+
+    if (isUserTemplateSelected) TemplateUrlBase =  loadAllTemplateUrlBase
+    else  TemplateUrlBase =  loadGlobalTemplateUrlBase
+    $.ajax({
+        url: TemplateUrlBase,
+        method: "GET",
+        contentType: "application/json",
+        success: (data) => {
+            resetState();
+            let templates = []
+            // format templates info
+            for (var i = 0; i< data.length; i++){
+                // skip disabled templates
+                if(!data[i].is_disabled){
+                    version_index = 1
+                    versions = data[i].versions
+                    // add version number
+                    for (var j = 0; j< versions.length; j++){
+                        templates.push(
+                        {
+                             "id": versions[j],
+                             "title":  data[i].title+ "(version "+version_index++ +")",
+                        }
+                        )
+                    }
+                }
+            }
+            createTemplateListHtml(templates, "#template-table tbody");
+
+        },
+        error: function(error) {
+            jqWarning.html('Impossible to retrieve the template: ' + error.responseJSON.message);
+            jqWarning.show();
+        }
+    });
+
 }
 
 /**
@@ -358,6 +375,40 @@ let viewXsltList = function(isDataSelected) {
 }
 
 /**
+ * Get the template list and create the HTML to display it
+ * @param {object} templates
+ * @param {DOMElement} tbodySelector DOM selector where the templates will be injected
+ */
+let createTemplateListHtml = function(templates, tbodySelector) {
+    let templateHtml = "";
+
+    if (templates && templates.length > 0) {
+        for (let index = 0; index < templates.length; ++index) {
+            templateHtml += '<tr>' +
+                '<td width="20px"><input class="template-checkbox" type="checkbox"></td>' +
+                '<td data-template-id="' + templates[index].id + '">' +
+                '<div>' + templates[index].title +'</div></td>' +
+                '</tr>';
+        }
+
+    } else {
+        $('#select-all-template').prop("disabled", true);
+        templateHtml = '<tr id="empty-data-text" class="bg-transparent text-center">' +
+            '<td>' +
+            '<strong class="text-primary">' +
+            'No Template available.' +
+            '</strong>' +
+            '</td>' +
+            '</tr>';
+    }
+
+     $($(tbodySelector)[0]).html(templateHtml);
+
+    // create the data checkbox listener
+    createTemplateListener()
+}
+
+/**
  * Handle the click actions on a data
  * @param {boolean} isDataSelected
  */
@@ -435,6 +486,43 @@ let backToVersionManager = function(){
     }
 }
 
+
+let createTemplateListener = function(){
+    $(".template-checkbox").unbind();
+
+    // create listener for the template selection
+    $("#template-table tr").on("click", (event) => {
+        let ancestors = $(event.target).parentsUntil("tbody");
+        let jqParent = $(ancestors[ancestors.length - 1]);
+        // if the click is out from the input trigger the check manually
+        if (event.target.tagName !== "INPUT") {
+            // search the clicked checkbox input and (un)check it
+            let currentCheckboxValue = jqParent.find("input[type=checkbox]")[0].checked;
+            jqParent.find("input[type=checkbox]")[0].checked = !currentCheckboxValue;
+        }
+
+        let jqCheckedTemplateCheckbox = $('.template-checkbox:checkbox:checked');
+        // check the check all checkbox if all the template checkbox are selected
+        isAllTemplateSelected = $('.template-checkbox:checkbox').length === jqCheckedTemplateCheckbox.length;
+        $("#select-all-template").prop('checked', isAllTemplateSelected);
+
+
+        // free the listener before the DOM rewriting
+        $("#infinite-scroll-bt").unbind();
+
+
+        // find all the checked checkbox on the page extract the template id
+        // from their parents and create a list with it
+        fillTheData(jqCheckedTemplateCheckbox
+            .map(function() {
+                let parents = $(this).parentsUntil("tbody");
+                let jqParent = $(parents[parents.length - 1]);
+                let templateId = $(jqParent.find("td[data-template-id]")[0]).attr("data-template-id")
+                return { id: templateId };
+            })
+            .get());
+    });
+}
 
 /**
  * Handle the click actions for the migration / validation buttons

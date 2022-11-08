@@ -12,6 +12,9 @@ from core_main_app.components.template_version_manager.models import (
 from core_main_app.rest.template_version_manager import (
     views as template_version_manager_views,
 )
+from core_main_app.components.template_version_manager import (
+    api as template_version_manager_api,
+)
 from core_main_app.rest.template_version_manager.serializers import (
     TemplateVersionManagerSerializer,
     CreateTemplateSerializer,
@@ -959,6 +962,77 @@ class TestTemplateVersionManagerOrderingPatchPermission(SimpleTestCase):
             template_version_manager_views.TemplateVersionManagerOrdering.as_view(),
             mock_user,
             data={"template_list": "[]"},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestTemplateVersionManagerListGetPermission(SimpleTestCase):
+    """TestGlobalTemplateVersionManagerListGetPermission"""
+
+    @patch.object(template_version_manager_api, "get_all")
+    def test_anonymous_returns_http_403(
+        self, template_version_manager_get_all
+    ):
+        """test_anonymous_returns_http_403
+
+        Args:
+            template_version_manager_get_all:
+
+        Returns:
+
+        """
+        template_version_manager_get_all.return_value = TemplateVersionManager(
+            user=None
+        )
+
+        response = RequestMock.do_request_get(
+            template_version_manager_views.GlobalAndUserTemplateVersionManagerList.as_view(),
+            None,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch.object(template_version_manager_api, "get_all")
+    def test_authenticated_returns_http_403(
+        self, template_version_manager_get_all
+    ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            template_version_manager_get_all:
+
+        Returns:
+
+        """
+        template_version_manager_get_all.return_value = {}
+
+        mock_user = create_mock_user("1")
+
+        response = RequestMock.do_request_get(
+            template_version_manager_views.GlobalAndUserTemplateVersionManagerList.as_view(),
+            mock_user,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch.object(template_version_manager_api, "get_all")
+    def test_staff_returns_http_200(self, template_version_manager_get_all):
+        """test_staff_returns_http_200
+
+        Args:
+            template_version_manager_get_all:
+
+        Returns:
+
+        """
+        template_version_manager_get_all.return_value = {}
+
+        mock_user = create_mock_user("1", is_staff=True)
+
+        response = RequestMock.do_request_get(
+            template_version_manager_views.GlobalAndUserTemplateVersionManagerList.as_view(),
+            mock_user,
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

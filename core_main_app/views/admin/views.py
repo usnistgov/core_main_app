@@ -706,7 +706,10 @@ def data_migration(request):
                 "is_raw": False,
             },
         ],
-        "css": ["core_main_app/admin/css/data_migration.css"],
+        "css": [
+            "core_main_app/admin/css/data_migration.css",
+            "core_explore_common_app/user/css/toggle.css",
+        ],
     }
 
     # get all current templates

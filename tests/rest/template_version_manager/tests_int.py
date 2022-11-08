@@ -8,6 +8,7 @@ from rest_framework import status
 from tests.components.template_version_manager.fixtures.fixtures import (
     TemplateVersionManagerFixtures,
     TemplateVersionManagerOrderingFixtures,
+    TemplateVersionManagerAccessControlFixtures,
 )
 
 from core_main_app.components.template import api as template_api
@@ -22,6 +23,7 @@ from core_main_app.utils.tests_tools.RequestMock import (
 )
 
 fixture_template = TemplateVersionManagerFixtures()
+fixture_template_2 = TemplateVersionManagerAccessControlFixtures()
 fixture_template_vm_ordering = TemplateVersionManagerOrderingFixtures()
 
 
@@ -1403,3 +1405,48 @@ class TemplateVersionManagerOrdering(MongoIntegrationBaseTestCase):
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestTemplateVersionManagerList(MongoIntegrationBaseTestCase):
+    """TestTemplateVersionManagerList"""
+
+    fixture = fixture_template_2
+
+    def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
+        self.user = create_mock_user("1", is_superuser=True, is_staff=True)
+        super().setUp()
+
+    def test_get_returns_http_200(self):
+        """test_get_returns_http_200
+
+        Returns:
+
+        """
+
+        # Act
+        response = RequestMock.do_request_get(
+            views.GlobalAndUserTemplateVersionManagerList.as_view(), self.user
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_returns_all_tvm(self):
+        """test_get_returns_all_tvm_when_is_user_template_selected_is_true
+
+        Returns:
+
+        """
+        # Act
+        response = RequestMock.do_request_get(
+            views.GlobalAndUserTemplateVersionManagerList.as_view(),
+            self.user,
+        )
+
+        # Assert
+        self.assertEqual(len(response.data), 3)
