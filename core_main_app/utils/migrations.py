@@ -1,6 +1,7 @@
 """ Migration utilities
 """
 import logging
+from django.db import OperationalError
 
 from django.db.migrations.recorder import MigrationRecorder
 
@@ -14,14 +15,18 @@ def ensure_migration_applied(app_name, migration_name):
 
     Inspired by https://stackoverflow.com/a/50100972/1723284.
     """
-    migrations = MigrationRecorder.Migration.objects.filter(
-        app=app_name, name=migration_name
-    )
-
-    if migrations.count() != 1:
-        error_message = (
-            f"Migration ({app_name}, {migration_name}) needs to be applied!"
+    try:
+        migrations = MigrationRecorder.Migration.objects.filter(
+            app=app_name, name=migration_name
         )
 
-        logger.error(error_message)
-        raise RuntimeError(error_message)
+        if migrations.count() != 1:
+            error_message = f"Migration ({app_name}, {migration_name}) needs to be applied!"
+
+            logger.error(error_message)
+            raise RuntimeError(error_message)
+    except OperationalError as exc:
+        logger.warning(
+            "An error occured while checking the status of the "
+            f"({app_name}, {migration_name}) migration: {exc}"
+        )

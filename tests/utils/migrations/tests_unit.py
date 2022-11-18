@@ -1,5 +1,6 @@
 """ Unit tests for migrations utilities
 """
+from django.db import OperationalError
 from unittest.mock import patch
 
 from django.test import TestCase
@@ -36,3 +37,15 @@ class TestEnsureMigrationApplied(TestCase):
 
         with self.assertRaises(RuntimeError):
             ensure_migration_applied("mock_app", "mock_migration")
+
+    @patch(
+        "django.db.migrations.recorder.MigrationRecorder.Migration.objects.filter"
+    )
+    def test_operational_error_is_discarded(self, mock_migration):
+        mock_migration.side_effect = OperationalError(
+            "mock_migration_operational_error"
+        )
+
+        self.assertIsNone(
+            ensure_migration_applied("mock_app", "mock_migration")
+        )
