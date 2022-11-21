@@ -10,8 +10,8 @@ from core_main_app.commons import exceptions
 from core_main_app.components.abstract_data.models import AbstractData
 from core_main_app.components.template.models import Template
 from core_main_app.components.workspace.models import Workspace
-from core_main_app.settings import MONGODB_INDEXING
 from core_main_app.utils.raw_query.django_raw_query import get_workspace_query
+from django.conf import settings
 
 
 # TODO: Create publication workflow manager
@@ -61,7 +61,7 @@ class Data(AbstractData):
         Returns:
 
         """
-        if MONGODB_INDEXING:
+        if settings.MONGODB_INDEXING:
             from core_main_app.components.mongo.models import MongoData
 
             return MongoData.objects.get(pk=self.id).dict_content

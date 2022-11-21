@@ -21,16 +21,14 @@ from core_main_app.components.data.tasks import (
 )
 
 from core_main_app.components.workspace import api as workspace_api
-from core_main_app.settings import DATA_SORTING_FIELDS, MONGODB_INDEXING
+from core_main_app.settings import DATA_SORTING_FIELDS
+from django.conf import settings
 from core_main_app.utils.datetime_tools.utils import datetime_now
 from core_main_app.utils.query.mongo.prepare import (
     convert_to_django,
     get_access_filters_from_query,
 )
 from core_main_app.utils.xml import validate_xml_data
-
-if MONGODB_INDEXING:
-    from core_main_app.components.mongo import api as mongo_api
 
 
 @access_control(access_control_api.can_read_or_write_in_workspace)
@@ -207,7 +205,7 @@ def execute_json_query(json_query, user, order_by_field=DATA_SORTING_FIELDS):
     workspace_filter, user_filter = get_access_filters_from_query(
         query_dict=json_query
     )
-    if MONGODB_INDEXING:
+    if settings.MONGODB_INDEXING:
         return _execute_mongo_query(
             json_query, user, workspace_filter, user_filter, order_by_field
         )
@@ -263,6 +261,8 @@ def _execute_mongo_query(
     Returns:
 
     """
+    from core_main_app.components.mongo import api as mongo_api
+
     return mongo_api.execute_mongo_query(
         json_query, user, workspace_filter, user_filter, order_by_field
     )

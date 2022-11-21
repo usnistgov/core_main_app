@@ -14,6 +14,6 @@ if __name__ == "__main__":
     execute_from_command_line(["", "migrate"])
     django.setup()
     TestRunner = get_runner(settings)
-    test_runner = TestRunner(interactive=False)
+    test_runner = TestRunner(interactive=False, exclude_tags=["mongodb"])
     failures = test_runner.run_tests(["tests"])
     sys.exit(bool(failures))

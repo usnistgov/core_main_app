@@ -3,12 +3,12 @@
 from django.test import TestCase
 
 from core_main_app.commons.exceptions import CoreError
-from core_main_app.settings import MONGODB_INDEXING
 
 MOCK_DATABASE_NAME = "db_mock"
 MOCK_DATABASE_HOST = "mongomock://localhost"
 
 
+# FIXME: Remove Mongo from name
 class MongoIntegrationBaseTestCase(TestCase):
     """Represent the Integration base test case
     The integration tests must inherit of this class
@@ -35,6 +35,21 @@ class MongoIntegrationBaseTestCase(TestCase):
 
         self.fixture.insert_data()
 
+
+class MongoDBIntegrationBaseTestCase(TestCase):
+    """Represent the Integration base test case
+    The integration tests must inherit of this class
+    """
+
+    """
+        Fields
+    """
+    database = None  # database to use
+
+    """
+        Methods
+    """
+
     @classmethod
     def setUpClass(cls):
         """Open a connection to the database.
@@ -42,14 +57,13 @@ class MongoIntegrationBaseTestCase(TestCase):
         Returns:
 
         """
-        if MONGODB_INDEXING:
-            from core_main_app.utils.databases.mongo.mongoengine_database import (
-                Database,
-            )
+        from core_main_app.utils.databases.mongo.mongoengine_database import (
+            Database,
+        )
 
-            # open a connection to a mock database
-            cls.database = Database(MOCK_DATABASE_HOST, MOCK_DATABASE_NAME)
-            cls.database.connect()
+        # open a connection to a mock database
+        cls.database = Database(MOCK_DATABASE_HOST, MOCK_DATABASE_NAME)
+        cls.database.connect()
 
     @classmethod
     def tearDownClass(cls):
@@ -57,8 +71,7 @@ class MongoIntegrationBaseTestCase(TestCase):
         Returns:
 
         """
-        if MONGODB_INDEXING:
-            cls.database.disconnect()
+        cls.database.disconnect()
 
     def tearDown(self):
         """Clean the database.
@@ -66,5 +79,4 @@ class MongoIntegrationBaseTestCase(TestCase):
         Returns:
 
         """
-        if MONGODB_INDEXING:
-            self.database.clean_database()
+        self.database.clean_database()

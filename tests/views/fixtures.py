@@ -51,17 +51,29 @@ class AccessControlDataFixture(FixtureInterface):
 
         """
 
+        xml_content = "<root><element>value2</element></root>"
         content = {"root": {"element": "value2"}}
 
-        self.data_1 = Data(template=self.template, title="Data 1", user_id="1")
+        self.data_1 = Data(
+            template=self.template,
+            title="Data 1",
+            user_id="1",
+            xml_content="<root></root>",
+        )
         self.data_1.save()
-        self.data_2 = Data(template=self.template, title="Data 2", user_id="2")
+        self.data_2 = Data(
+            template=self.template,
+            title="Data 2",
+            user_id="2",
+            xml_content="<root></root>",
+        )
         self.data_2.save()
         self.data_public_workspace = Data(
             template=self.template,
             title="Data Public Workspace",
             user_id="1",
             workspace=self.public_workspace,
+            xml_content=xml_content,
             dict_content=content,
         )
         self.data_public_workspace.save()
@@ -70,6 +82,7 @@ class AccessControlDataFixture(FixtureInterface):
             title="Data Workspace 1",
             user_id="1",
             workspace=self.workspace_1,
+            xml_content=xml_content,
             dict_content=content,
         )
         self.data_workspace_1.save()

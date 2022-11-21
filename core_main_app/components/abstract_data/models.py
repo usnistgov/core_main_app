@@ -1,6 +1,7 @@
 """ Abstract Data model
 """
 
+from django.conf import settings
 from django.contrib.postgres.search import SearchVectorField
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.validators import RegexValidator
@@ -10,7 +11,6 @@ from core_main_app.commons import exceptions
 from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
 from core_main_app.settings import (
     SEARCHABLE_DATA_OCCURRENCES_LIMIT,
-    MONGODB_INDEXING,
     XML_POST_PROCESSOR,
     XML_FORCE_LIST,
     CHECKSUM_ALGORITHM,
@@ -124,7 +124,7 @@ class AbstractData(models.Model):
 
         """
         # if data stored in mongo, don't store dict_content
-        if MONGODB_INDEXING:
+        if settings.MONGODB_INDEXING:
             return
         # transform xml content into a dictionary
         self.dict_content = xml_utils.raw_xml_to_dict(

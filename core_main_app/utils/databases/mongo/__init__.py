@@ -1,12 +1,13 @@
 """ MongoDB
 """
+from django.conf import settings
+
 from core_main_app.settings import (
-    MONGODB_INDEXING,
     GRIDFS_STORAGE,
 )
 
 # Connect to MongoDB if indexing or file storage enabled
-if MONGODB_INDEXING or GRIDFS_STORAGE:
+if settings.MONGODB_INDEXING or GRIDFS_STORAGE:
     from mongoengine import connect
 
     from core_main_app.settings import (

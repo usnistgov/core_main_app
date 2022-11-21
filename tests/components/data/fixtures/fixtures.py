@@ -45,6 +45,7 @@ class DataFixtures(FixtureInterface):
             user_id="1",
             dict_content=None,
             title="title",
+            xml_content="<root></root>",
         )
         self.data_1.save()
         self.data_2 = Data(
@@ -52,6 +53,7 @@ class DataFixtures(FixtureInterface):
             user_id="2",
             dict_content=None,
             title="title2",
+            xml_content="<root></root>",
         )
         self.data_2.save()
         self.data_3 = Data(
@@ -59,6 +61,7 @@ class DataFixtures(FixtureInterface):
             user_id="1",
             dict_content=None,
             title="title3",
+            xml_content="<root></root>",
         )
         self.data_3.save()
         self.data_collection = [self.data_1, self.data_2, self.data_3]
@@ -103,6 +106,12 @@ class QueryDataFixtures(DataFixtures):
             user_id="1",
             dict_content=content_1,
             title="title",
+            xml_content="<root>"
+            "<element>value</element>"
+            "<list><element_list_1>1</element_list_1></list>"
+            "<list><element_list_2>2</element_list_2></list>"
+            "<complex><child1>test</child1><child2>0</child2></complex>"
+            "</root>",
         )
         self.data_1.save()
         self.data_2 = Data(
@@ -110,6 +119,7 @@ class QueryDataFixtures(DataFixtures):
             user_id="2",
             dict_content=content_2,
             title="title2",
+            xml_content="<root><element>value</element></root>",
         )
         self.data_2.save()
         self.data_collection = [self.data_1, self.data_2]
@@ -151,17 +161,29 @@ class AccessControlDataFixture(FixtureInterface):
 
         """
 
+        xml_content = "<root><element>value2</element></root>"
         content = {"root": {"element": "value2"}}
 
-        self.data_1 = Data(template=self.template, title="Data 1", user_id="1")
+        self.data_1 = Data(
+            template=self.template,
+            title="Data 1",
+            user_id="1",
+            xml_content="<root></root>",
+        )
         self.data_1.save()
-        self.data_2 = Data(template=self.template, title="Data 2", user_id="2")
+        self.data_2 = Data(
+            template=self.template,
+            title="Data 2",
+            user_id="2",
+            xml_content="<root></root>",
+        )
         self.data_2.save()
         self.data_3 = Data(
             template=self.template,
             title="Data 3",
             user_id="1",
             workspace=self.workspace_1,
+            xml_content=xml_content,
             dict_content=content,
         )
         self.data_3.save()
@@ -170,6 +192,7 @@ class AccessControlDataFixture(FixtureInterface):
             title="DataDoubleTitle",
             user_id="2",
             workspace=self.workspace_2,
+            xml_content="<root></root>",
         )
         self.data_4.save()
         self.data_5 = Data(
@@ -177,6 +200,7 @@ class AccessControlDataFixture(FixtureInterface):
             title="DataDoubleTitle",
             user_id="1",
             workspace=self.workspace_1,
+            xml_content=xml_content,
         )
         self.data_5.save()
         self.data_collection = [
@@ -267,12 +291,14 @@ class AccessControlDataFixture2(FixtureInterface):
 
         """
 
+        xml_content = "<root><element>value2</element></root>"
         content = {"root": {"element": "value2"}}
 
         self.data_1 = Data(
             template=self.template,
             title="Data 1",
             user_id="1",
+            xml_content=xml_content,
             dict_content=content,
         )
         self.data_1.save()
@@ -280,6 +306,7 @@ class AccessControlDataFixture2(FixtureInterface):
             template=self.template,
             title="Data 2",
             user_id="2",
+            xml_content="<root></root>",
             workspace=self.workspace_1,
         )
         self.data_2.save()
@@ -287,6 +314,7 @@ class AccessControlDataFixture2(FixtureInterface):
             template=self.template,
             title="Data 3.1",
             user_id="3",
+            xml_content=xml_content,
             dict_content=content,
         )
         self.data_3_1.save()
@@ -295,6 +323,7 @@ class AccessControlDataFixture2(FixtureInterface):
             title="Data 3.2",
             user_id="3",
             workspace=self.workspace_1,
+            xml_content=xml_content,
             dict_content=content,
         )
         self.data_3_2.save()

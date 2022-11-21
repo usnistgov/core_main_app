@@ -16,18 +16,17 @@ from core_main_app.components.data.tasks import (
 from core_main_app.components.template.models import Template
 from core_main_app.components.workspace.models import Workspace
 from core_main_app.settings import (
-    MONGODB_INDEXING,
-    MONGODB_ASYNC_SAVE,
     SEARCHABLE_DATA_OCCURRENCES_LIMIT,
     XML_POST_PROCESSOR,
     XML_FORCE_LIST,
 )
 from core_main_app.utils import xml as xml_utils
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
 try:
-    if MONGODB_INDEXING:
+    if settings.MONGODB_INDEXING:
         from bson import ObjectId
         from mongoengine import Document, DoesNotExist
         from mongoengine import fields as mongo_fields
@@ -238,7 +237,7 @@ try:
 
                 """
                 data_ids = data_queryset.values_list("id", flat=True)
-                if MONGODB_ASYNC_SAVE:
+                if settings.MONGODB_ASYNC_SAVE:
                     update_mongo_data_user.apply_async(
                         (
                             list(data_ids),
@@ -263,7 +262,7 @@ try:
 
                 """
                 data_ids = data_queryset.values_list("id", flat=True)
-                if MONGODB_ASYNC_SAVE:
+                if settings.MONGODB_ASYNC_SAVE:
                     update_mongo_data_workspace.apply_async(
                         (
                             list(data_ids),
@@ -285,7 +284,7 @@ try:
                     **kwargs: Args.
 
                 """
-                if MONGODB_ASYNC_SAVE:
+                if settings.MONGODB_ASYNC_SAVE:
                     index_mongo_data.apply_async((str(instance.id),))
                 else:
                     mongo_data = MongoData.init_mongo_data(instance)
@@ -300,7 +299,7 @@ try:
                     **kwargs: Args.
 
                 """
-                if MONGODB_ASYNC_SAVE:
+                if settings.MONGODB_ASYNC_SAVE:
                     delete_mongo_data.apply_async((str(instance.id),))
                 else:
                     try:
