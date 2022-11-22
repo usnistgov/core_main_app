@@ -8,9 +8,9 @@ from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons.exceptions import ApiError
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.permissions import api as permissions_api, rights as rights
+from django.conf import settings
 from core_main_app.settings import (
     CAN_SET_PUBLIC_DATA_TO_PRIVATE,
-    CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT,
 )
 
 logger = logging.getLogger(__name__)
@@ -376,7 +376,7 @@ def _check_anonymous_access(user):
     """
     if (
         user is None or user.is_anonymous
-    ) and not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
+    ) and not settings.CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT:
         raise AccessControlError(
             "The user doesn't have enough rights to access this document."
         )

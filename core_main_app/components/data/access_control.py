@@ -10,9 +10,9 @@ from core_main_app.access_control.api import (
 )
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.settings import (
-    CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT,
     VERIFY_DATA_ACCESS,
 )
+from django.conf import settings
 from core_main_app.settings import DATA_SORTING_FIELDS
 from core_main_app.utils.raw_query import django_raw_query
 from core_main_app.utils.raw_query import mongo_raw_query
@@ -217,7 +217,7 @@ def _get_read_accessible_workspaces_by_user(user):
     Returns:
 
     """
-    if not CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT and user.is_anonymous:
+    if not settings.CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT and user.is_anonymous:
         accessible_workspaces = []
     else:
         # workspace case
