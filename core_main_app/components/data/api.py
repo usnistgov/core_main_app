@@ -1,7 +1,7 @@
 """ Data API
 """
+from django.conf import settings
 
-from xml_utils.xsd_tree.xsd_tree import XSDTree
 import core_main_app.access_control.api
 import core_main_app.components.workspace.access_control
 from core_main_app.access_control import api as access_control_api
@@ -19,16 +19,15 @@ from core_main_app.components.data.tasks import (
     async_migration_task,
     async_template_migration_task,
 )
-
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.settings import DATA_SORTING_FIELDS
-from django.conf import settings
 from core_main_app.utils.datetime_tools.utils import datetime_now
 from core_main_app.utils.query.mongo.prepare import (
     convert_to_django,
     get_access_filters_from_query,
 )
 from core_main_app.utils.xml import validate_xml_data
+from xml_utils.xsd_tree.xsd_tree import XSDTree
 
 
 @access_control(access_control_api.can_read_or_write_in_workspace)
@@ -205,13 +204,17 @@ def execute_json_query(json_query, user, order_by_field=DATA_SORTING_FIELDS):
     workspace_filter, user_filter = get_access_filters_from_query(
         query_dict=json_query
     )
-    if settings.MONGODB_INDEXING:
-        return _execute_mongo_query(
-            json_query, user, workspace_filter, user_filter, order_by_field
-        )
 
     # convert JSON query to Django syntax
     query = convert_to_django(query_dict=json_query)
+
+    # execute mongo query and return results
+    if settings.MONGODB_INDEXING:
+        from core_main_app.components.mongo import api as mongo_api
+
+        return mongo_api.execute_mongo_query(
+            query, user, workspace_filter, user_filter, order_by_field
+        )
 
     # execute query and return results
     return execute_query(
@@ -240,32 +243,6 @@ def execute_query(
 
     """
     return Data.execute_query(query, order_by_field)
-
-
-def _execute_mongo_query(
-    json_query,
-    user,
-    workspace_filter,
-    user_filter,
-    order_by_field=DATA_SORTING_FIELDS,
-):
-    """
-
-    Args:
-        json_query:
-        user:
-        workspace_filter:
-        user_filter:
-        order_by_field:
-
-    Returns:
-
-    """
-    from core_main_app.components.mongo import api as mongo_api
-
-    return mongo_api.execute_mongo_query(
-        json_query, user, workspace_filter, user_filter, order_by_field
-    )
 
 
 @access_control(core_main_app.access_control.api.can_write)

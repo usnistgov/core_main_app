@@ -814,21 +814,16 @@ class TestDataLocalQueryPostPermissions(SimpleTestCase):
     """TestDataLocalQueryPostPermissions"""
 
     @patch.object(data_api, "execute_query")
-    @patch.object(data_api, "_execute_mongo_query")
-    def test_anonymous_returns_http_200(
-        self, mock_data_api_execute_mongo_query, mock_data_api_execute_query
-    ):
+    def test_anonymous_returns_http_200(self, mock_data_api_execute_query):
         """test_anonymous_returns_http_200
 
         Args:
-            mock_data_api_execute_mongo_query:
             mock_data_api_execute_query:
 
         Returns:
 
         """
         mock_data_api_execute_query.return_value = []
-        mock_data_api_execute_mongo_query.return_value = []
 
         response = RequestMock.do_request_post(
             data_rest_views.ExecuteLocalQueryView.as_view(),
@@ -839,21 +834,16 @@ class TestDataLocalQueryPostPermissions(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @patch.object(data_api, "execute_query")
-    @patch.object(data_api, "_execute_mongo_query")
-    def test_authenticated_returns_http_200(
-        self, mock_data_api_execute_mongo_query, mock_data_api_execute_query
-    ):
+    def test_authenticated_returns_http_200(self, mock_data_api_execute_query):
         """test_authenticated_returns_http_200
 
         Args:
-            mock_data_api_execute_mongo_query:
             mock_data_api_execute_query:
 
         Returns:
 
         """
         mock_data_api_execute_query.return_value = []
-        mock_data_api_execute_mongo_query.return_value = []
 
         mock_user = create_mock_user(1)
 
@@ -866,21 +856,16 @@ class TestDataLocalQueryPostPermissions(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @patch.object(data_api, "execute_query")
-    @patch.object(data_api, "_execute_mongo_query")
-    def test_staff_returns_http_200(
-        self, mock_data_api_execute_mongo_query, mock_data_api_execute_query
-    ):
+    def test_staff_returns_http_200(self, mock_data_api_execute_query):
         """test_staff_returns_http_200
 
         Args:
-            mock_data_api_execute_mongo_query:
             mock_data_api_execute_query:
 
         Returns:
 
         """
         mock_data_api_execute_query.return_value = []
-        mock_data_api_execute_mongo_query.return_value = []
 
         mock_user = create_mock_user(1, is_staff=True)
 
@@ -977,21 +962,16 @@ class TestDataKeywordQueryPostPermissions(SimpleTestCase):
     """TestDataKeywordQueryPostPermissions"""
 
     @patch.object(data_api, "execute_query")
-    @patch.object(data_api, "_execute_mongo_query")
-    def test_anonymous_returns_http_200(
-        self, mock_data_api_execute_mongo_query, mock_data_api_execute_query
-    ):
+    def test_anonymous_returns_http_200(self, mock_data_api_execute_query):
         """test_anonymous_returns_http_200
 
         Args:
-            mock_data_api_execute_mongo_query:
             mock_data_api_execute_query:
 
         Returns:
 
         """
         mock_data_api_execute_query.return_value = []
-        mock_data_api_execute_mongo_query.return_value = []
 
         response = RequestMock.do_request_post(
             data_rest_views.ExecuteLocalKeywordQueryView.as_view(),
@@ -1002,21 +982,16 @@ class TestDataKeywordQueryPostPermissions(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @patch.object(data_api, "execute_query")
-    @patch.object(data_api, "_execute_mongo_query")
-    def test_authenticated_returns_http_200(
-        self, mock_data_api_execute_mongo_query, mock_data_api_execute_query
-    ):
+    def test_authenticated_returns_http_200(self, mock_data_api_execute_query):
         """test_authenticated_returns_http_200
 
         Args:
-            mock_data_api_execute_mongo_query:
             mock_data_api_execute_query:
 
         Returns:
 
         """
         mock_data_api_execute_query.return_value = []
-        mock_data_api_execute_mongo_query.return_value = []
 
         mock_user = create_mock_user(1)
 
@@ -1029,21 +1004,16 @@ class TestDataKeywordQueryPostPermissions(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @patch.object(data_api, "execute_query")
-    @patch.object(data_api, "_execute_mongo_query")
-    def test_staff_returns_http_200(
-        self, mock_data_api_execute_mongo_query, mock_data_api_execute_query
-    ):
+    def test_staff_returns_http_200(self, mock_data_api_execute_query):
         """test_staff_returns_http_200
 
         Args:
-            mock_data_api_execute_mongo_query:
             mock_data_api_execute_query:
 
         Returns:
 
         """
         mock_data_api_execute_query.return_value = []
-        mock_data_api_execute_mongo_query.return_value = []
 
         mock_user = create_mock_user(1, is_staff=True)
 

@@ -177,3 +177,15 @@ class SSLError(BaseCoreException):
             message:
         """
         super().__init__(message)
+
+
+class QueryError(BaseCoreException):
+    """Exception raised when an error occurs regarding queries."""
+
+    def __init__(self, message):
+        """Initialize exception
+
+        Args:
+            message:
+        """
+        super().__init__(message)

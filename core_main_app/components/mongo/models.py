@@ -164,7 +164,7 @@ try:
                 Returns:
 
                 """
-                return MongoData.objects(__raw__=query).order_by(
+                return MongoData.objects.filter(query).order_by(
                     *order_by_field
                 )
 

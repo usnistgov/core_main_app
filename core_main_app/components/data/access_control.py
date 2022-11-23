@@ -2,13 +2,14 @@
 """
 import logging
 
-from core_main_app.permissions import rights as rights
 from core_main_app.access_control.api import (
     has_perm_publish,
     check_can_read_list,
     can_write_in_workspace,
+    _check_anonymous_access,
 )
 from core_main_app.components.workspace import api as workspace_api
+from core_main_app.permissions import rights as rights
 from core_main_app.settings import (
     VERIFY_DATA_ACCESS,
 )
@@ -45,6 +46,9 @@ def can_read_list_data_id(func, list_data_id, user):
     if user.is_superuser:
         return func(list_data_id, user)
 
+    # check anonymous access
+    _check_anonymous_access(user)
+
     list_data = func(list_data_id, user)
     check_can_read_list(list_data, user)
 
@@ -72,6 +76,8 @@ def can_read_data_query(
     Returns:
 
     """
+    # check anonymous access
+    _check_anonymous_access(user)
     # update the query
     query = _update_can_read_query(query, user, workspace_filter, user_filter)
     # get list of data
@@ -84,66 +90,6 @@ def can_read_data_query(
     if VERIFY_DATA_ACCESS:
         check_can_read_list(data_list, user)
     return data_list
-
-
-def can_read_data_mongo_query(
-    func,
-    query,
-    user,
-    workspace_filter=None,
-    user_filter=None,
-    order_by_field=DATA_SORTING_FIELDS,
-):
-    """Can read a data, given a mongo query.
-
-    Args:
-        func:
-        query:
-        user:
-        workspace_filter:
-        user_filter:
-        order_by_field:
-
-    Returns:
-
-    """
-    if user.is_superuser:
-        return func(query, user, workspace_filter, user_filter, order_by_field)
-
-    # update the query
-    query = _update_can_read_mongo_query(
-        query, user, workspace_filter, user_filter
-    )
-    # get list of data
-    data_list = func(
-        query, user, workspace_filter, user_filter, order_by_field
-    )
-    # TODO: check if necessary because it is time consuming (checking that user has access to list of returned data)
-    # check that user can access the list of data
-    if VERIFY_DATA_ACCESS:
-        check_can_read_list(data_list, user)
-    return data_list
-
-
-def _update_can_read_mongo_query(query, user, workspace_filter, user_filter):
-    """Update query with access control parameters.
-
-    Args:
-        query:
-        user:
-        workspace_filter:
-        user_filter:
-
-    Returns:
-
-    """
-
-    accessible_workspaces = _get_read_accessible_workspaces_by_user(user)
-    # update query with workspace criteria
-    query = mongo_raw_query.add_access_criteria(
-        query, accessible_workspaces, user, workspace_filter, user_filter
-    )
-    return query
 
 
 def can_read_aggregate_query(func, query, user):
@@ -159,6 +105,9 @@ def can_read_aggregate_query(func, query, user):
     """
     if user.is_superuser:
         return func(query, user)
+
+    # check anonymous access
+    _check_anonymous_access(user)
 
     # update the query
     query = _update_can_read_aggregate_query(query, user)

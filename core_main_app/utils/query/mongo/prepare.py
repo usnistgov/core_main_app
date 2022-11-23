@@ -3,9 +3,9 @@
 import copy
 import re
 
-from django.db.models import Q
+from django.conf import settings
 
-from core_main_app.commons.exceptions import CoreError
+from core_main_app.commons.exceptions import QueryError
 from core_main_app.utils.databases.backend import uses_postgresql_backend
 
 
@@ -145,12 +145,28 @@ def convert_to_django(query_dict):
     Returns:
 
     """
+    if settings.MONGODB_INDEXING:
+        from mongoengine.queryset.visitor import Q
+
+        template_key = "_template_id"
+    else:
+        from django.db.models import Q
+
+        template_key = "template"
+
+    # check $where operator
+    if "$where" in str(query_dict):
+        raise QueryError("Unsupported operator found")
+
     # create a query object
     q_list = Q()
     # iterate through query dict key/value pairs
     for key, value in query_dict.items():
         # if the key is not an operator
         if not key.startswith("$"):
+            # check if $ found in key
+            if "$" in key:
+                raise QueryError("Unsupported $ operator found")
             # ignore workspace and user_id filters (dealt with by acl layer)
             if key in ["workspace", "user_id"]:
                 continue
@@ -162,101 +178,138 @@ def convert_to_django(query_dict):
                     and "$in" in query_dict["template"]
                 ):
                     # add filter by list of templates
-                    q_list &= Q(template__in=query_dict["template"]["$in"])
+                    q_list &= Q(
+                        **{
+                            f"{template_key}__in": sanitize_value(
+                                query_dict["template"]["$in"]
+                            )
+                        }
+                    )
                 # check if filtering by single value
                 elif isinstance(query_dict["template"], int) or isinstance(
                     query_dict["template"], str
                 ):
                     # add filter by value (template id)
-                    q_list &= Q(template=query_dict["template"])
+                    q_list &= Q(
+                        **{
+                            template_key: sanitize_value(
+                                query_dict["template"]
+                            )
+                        }
+                    )
             else:
-                # init not equal
-                not_equal = False
-                # if key contains a dot: a path in dot notation
-                if "." in key:
-                    # replace dots by double underscores (django notation)
-                    key = key.replace(".", "__")
+                # initialize negate var to invert django queries
+                negate = False
+                # replace dots by double underscores (django notation)
+                key = key.replace(".", "__") if "." in key else key
+                # initialize operator
+                operator = "exact"
                 # check if not operator
                 if isinstance(value, dict) and "$not" in value:
-                    # set not equal to create query not
-                    not_equal = True
+                    negate = True
+                    # add not to key
+                    key = (
+                        f"{key}__not"
+                        if negate and settings.MONGODB_INDEXING
+                        else key
+                    )
                     # move value to document in $not
                     value = value["$not"]
                 # if value is a regex
                 if isinstance(value, re.Pattern):
-                    # add regex operator to key
-                    key = f"{key}__regex"
+                    # set regex operator
+                    operator = "regex"
                     # set value with regex pattern
                     value = value.pattern
                 # if value is None
                 elif value is None:
-                    # add is_null operator to key
-                    key = f"{key}__isnull"
-                    # set value to True: key is None, becomes key__is_null=True
-                    value = True
+                    # mongo: __exact = None / django: __exact = None
+                    value = None
                 # if the value is a dict
                 elif isinstance(value, dict):
                     # check if ne operator (not equal)
                     if "$ne" in value:
                         # set not equal to create query not
-                        not_equal = True
+                        negate = True
+                        # set ne operator
+                        operator = (
+                            "ne" if settings.MONGODB_INDEXING else operator
+                        )
                         # set value
                         value = value["$ne"]
+                    # check if eq operator (equal to)
+                    elif "$eq" in value:
+                        # set value
+                        value = value["$eq"]
                     # check if lt operator (less than)
                     elif "$lt" in value:
-                        # add lt to key
-                        key = f"{key}__lt"
+                        # set lt operator
+                        operator = "lt"
                         # set value
-                        value = value["$lt"]
+                        value = sanitize_number(value["$lt"])
                     # check if lt operator (less than or equal)
                     elif "$lte" in value:
-                        # add lte to key
-                        key = f"{key}__lte"
+                        # set lte operator
+                        operator = "lte"
                         # set value
-                        value = value["$lte"]
+                        value = sanitize_number(value["$lte"])
                     # check if gt operator (greater than)
                     elif "$gt" in value:
-                        # add gt to key
-                        key = f"{key}__gt"
+                        # set gt operator
+                        operator = "gt"
                         # set value
-                        value = value["$gt"]
+                        value = sanitize_number(value["$gt"])
                     # check if gte operator (greater than or equal)
                     elif "$gte" in value:
-                        # add gte to key
-                        key = f"{key}__gte"
+                        # set gte operator
+                        operator = "gte"
                         # set value
-                        value = value["$gte"]
+                        value = sanitize_number(value["$gte"])
                     # check if in operator (included in list)
                     elif "$in" in value:
-                        # add in to key
-                        key = f"{key}__in"
+                        # set in operator
+                        operator = "in"
                         # set value
                         value = value["$in"]
                     # check if regex operator
                     elif "$regex" in value:
-                        # add the regex operator
-                        key = f"{key}__regex"
+                        # set regex operator
+                        operator = "regex"
                         # set the value
                         value = value["$regex"]
                     # check if exists operator
                     elif "$exists" in value:
                         # skip case where set to False for now (i.e. can not look for documents where path is absent)
-                        if not value["$exists"]:
-                            raise CoreError(
+                        if value["$exists"] is False:
+                            raise QueryError(
                                 'Unsupported operator found: {"$exists": False}'
                             )
-                        # value to look for is the last element of the key (e.g. if key is dict_content__root__element, value becomes element)
-                        value = key.split("__")[-1]
-                        # key is the rest of the path, minus the last part that was just set as value (e.g. dict_content__root__element, key is dict_content__root)
-                        key = "__".join(key.split("__")[:-1])
-                        # add has key operator to key (e.g. dict_content__root, becomes dict_content__root__has_key)
-                        key = f"{key}__has_key"
+                        if settings.MONGODB_INDEXING:
+                            # set exists operator
+                            operator = "exists"
+                            value = True
+                        else:
+                            # value to look for is the last element of the key
+                            # (e.g. if key is dict_content__root__element, value becomes element)
+                            value = key.split("__")[-1]
+                            # key is the rest of the path, minus the last part that was just set as value
+                            # (e.g. dict_content__root__element, key is dict_content__root)
+                            key = "__".join(key.split("__")[:-1])
+                            # add has key operator to key (e.g. dict_content__root, becomes dict_content__root__has_key)
+                            operator = "has_key"
                     else:
                         # If an operator not listed above is found, an exception is raised
-                        raise CoreError(f"Unsupported operator found: {value}")
-
-                query = Q(**{key: value})
-                query = ~query if not_equal else query
+                        raise QueryError(
+                            f"Unsupported operator found: {value}"
+                        )
+                # build query
+                query = Q(**{f"{key}__{operator}": sanitize_value(value)})
+                # invert django query if negate is true
+                query = (
+                    ~query
+                    if negate and not settings.MONGODB_INDEXING
+                    else query
+                )
 
                 # add AND query filter from string key and value
                 q_list &= query
@@ -269,27 +322,72 @@ def convert_to_django(query_dict):
                     q_list &= convert_to_django(sub_value)
             # if operator or
             elif key == "$or":
-                # iterate though sub dict
+                # iterate through sub dict
                 for sub_value in value:
                     # add OR filters to the query
                     q_list |= convert_to_django(sub_value)
             # if operators text and search found
             elif key == "$text" and "$search" in value:
-                if uses_postgresql_backend():
-                    q_list &= Q(
-                        vector_column=query_dict["$text"]["$search"].strip()
-                    )
+                # get text query
+                text_query = query_dict["$text"]["$search"]
+                # check text query is a string
+                if not isinstance(text_query, str):
+                    raise QueryError(f"Unsupported value found in: {key}")
+                # strip white spaces
+                text_query = text_query.strip()
+                # sanitize string
+                sanitize_value(text_query)
+                # if data stored in MongoDB
+                if settings.MONGODB_INDEXING:
+                    q_list &= Q(__raw__={"$text": {"$search": text_query}})
+                # if data stored in PostgreSQL
+                elif uses_postgresql_backend():
+                    q_list &= Q(vector_column=text_query)
                 else:
                     # extract keywords from dict
-                    for keyword in (
-                        query_dict["$text"]["$search"].strip().split(" ")
-                    ):
+                    for keyword in text_query.split(" "):
                         # add text filter
                         q_list &= Q(
                             dict_content__icontains=keyword.replace('"', "")
                         )
             else:
                 # raise an error if another operator was found
-                raise CoreError(f"Unsupported operator found: {key}")
+                raise QueryError(f"Unsupported operator found: {key}")
 
     return q_list
+
+
+def sanitize_number(value):
+    """Sanitize number
+
+
+    Args:
+        value:
+
+    Returns:
+
+    """
+    # check type of value
+    if not (isinstance(value, (int, float))):
+        raise QueryError("Unsupported value: expected a number.")
+    return value
+
+
+def sanitize_value(value):
+    """Sanitize value
+
+    Args:
+        value:
+
+    Returns:
+
+    """
+    # check if operator in value
+    if "$" in str(value):
+        raise QueryError("Unsupported $ operator found.")
+    # if value is a list
+    if isinstance(value, list):
+        # check for $ sign in the list
+        for item in value:
+            sanitize_value(item)
+    return value

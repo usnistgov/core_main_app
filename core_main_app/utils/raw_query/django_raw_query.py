@@ -1,7 +1,7 @@
 """Utils for Django raw query
 """
 
-from django.db.models import Q
+from django.conf import settings
 
 from core_main_app.utils.raw_query.common import (
     check_user_filter,
@@ -29,7 +29,7 @@ def add_access_criteria(
         accessible_workspaces, user, workspace_filter, user_filter
     )
     # add access criteria to original query
-    query = Q(access_criteria & query)
+    query &= access_criteria
     # return query
     return query
 
@@ -48,6 +48,14 @@ def _get_accessible_criteria(
     Returns:
 
     """
+    if settings.MONGODB_INDEXING:
+        from mongoengine.queryset.visitor import Q
+
+        workspace_key = "_workspace_id"
+    else:
+        from django.db.models import Q
+
+        workspace_key = "workspace"
     # if superuser don't check permissions, only apply filters
     if user.is_superuser:
         # create query
@@ -59,7 +67,7 @@ def _get_accessible_criteria(
         # if user ids provided
         if user_filter:
             # add filter by users
-            query_filter &= Q(user_id__in=str(user_filter))
+            query_filter &= Q(user_id__in=user_filter)
         # return the query
         return query_filter
 
@@ -79,11 +87,10 @@ def _get_accessible_criteria(
         else accessible_workspaces
     )
     # workspace should be in list of accessible workspaces
-    workspace_criteria = Q(workspace__in=workspace_query)
+    access_criteria = Q(**{f"{workspace_key}__in": workspace_query})
     # user_id should have the id of the user making the query
-    user_criteria = Q(user_id=str(user.id))
-    # access granted if workspace or user criteria true
-    access_criteria = Q(workspace_criteria | user_criteria)
+    if user and user.id:
+        access_criteria |= Q(user_id=str(user.id))
     # return access criteria
     return access_criteria
 
@@ -97,18 +104,27 @@ def get_workspace_query(list_workspace):
     Returns:
 
     """
+    if settings.MONGODB_INDEXING:
+        from mongoengine.queryset.visitor import Q
+
+        workspace_key = "_workspace_id"
+    else:
+        from django.db.models import Q
+
+        workspace_key = "workspace"
+
     # create initial query that returns all workspaces
     if len(list_workspace) == 0:
-        return Q(workspace__in=[])
+        return Q(**{f"{workspace_key}__in": []})
     # create empty query
     workspace_q_list = Q()
     for workspace_id in list_workspace:
         # if workspace id is None
         if workspace_id is None:
             # add query: OR workspace is null
-            workspace_q_list |= Q(workspace__isnull=True)
+            workspace_q_list |= Q(**{f"{workspace_key}__exact": None})
         else:  # workspace is not null
             # add query: OR workspace is equal to id
-            workspace_q_list |= Q(workspace=workspace_id)
+            workspace_q_list |= Q(**{f"{workspace_key}__exact": workspace_id})
     # return query
     return workspace_q_list

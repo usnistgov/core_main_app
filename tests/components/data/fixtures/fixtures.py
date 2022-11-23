@@ -477,6 +477,202 @@ class AccessControlDataFullTextSearchFixture(FixtureInterface):
         self.workspace_1.save()
 
 
+class AccessControlDataNumericFixture(FixtureInterface):
+    """Access Control Data fixture
+    - User1: 1 private data
+    - User2: 1 data in workspace 1
+    - User3: 1 private data and 1 data in workspace 1
+    """
+
+    template = None
+    workspace_1 = None
+    data_collection = None
+    data_1 = None
+    data_2 = None
+    data_3_1 = None
+    data_3_2 = None
+
+    def insert_data(self):
+        """Insert a set of Data.
+
+        Returns:
+
+        """
+        # Make a connexion with a mock database
+        self.generate_template()
+        self.generate_workspace()
+        self.generate_data_collection()
+
+    def generate_data_collection(self):
+        """Generate a Data collection.
+
+        Returns:
+
+        """
+
+        # value: 1
+        xml_content_1 = "<root><element>1</element></root>"
+        # value: 2
+        xml_content_2 = "<root><element>2</element></root>"
+        # value: 31
+        xml_content_3_1 = "<root><element>31</element></root>"
+        # value: 32
+        xml_content_3_2 = "<root><element>32</element></root>"
+
+        self.data_1 = Data(
+            template=self.template,
+            title="Data 1",
+            user_id="1",
+            xml_content=xml_content_1,
+        )
+        self.data_1.convert_and_save()
+        self.data_2 = Data(
+            template=self.template,
+            title="Data 2",
+            user_id="2",
+            xml_content=xml_content_2,
+            workspace=self.workspace_1,
+        )
+        self.data_2.convert_and_save()
+        self.data_3_1 = Data(
+            template=self.template,
+            title="Data 3.1",
+            user_id="3",
+            xml_content=xml_content_3_1,
+        )
+        self.data_3_1.convert_and_save()
+        self.data_3_2 = Data(
+            template=self.template,
+            title="Data 3.2",
+            user_id="3",
+            workspace=self.workspace_1,
+            xml_content=xml_content_3_2,
+        )
+        self.data_3_2.convert_and_save()
+        self.data_collection = [
+            self.data_1,
+            self.data_2,
+            self.data_3_1,
+            self.data_3_2,
+        ]
+
+    def generate_template(self):
+        """Generate an unique Template.
+
+        Returns:
+
+        """
+        self.template = Template()
+        xsd = (
+            '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">'
+            '<xs:element name="tag"></xs:element></xs:schema>'
+        )
+        self.template.content = xsd
+        self.template.hash = ""
+        self.template.filename = "filename"
+        self.template.save()
+
+    def generate_workspace(self):
+        """Generate the workspaces.
+
+        Returns:
+
+        """
+        self.workspace_1 = Workspace(
+            title="Workspace 1",
+            owner=None,
+            read_perm_id="1",
+            write_perm_id="1",
+        )
+        self.workspace_1.save()
+
+
+class AccessControlDataNoneFixture(FixtureInterface):
+    """Access Control Data fixture
+    - User1: 1 private data
+    - User2: 1 data in workspace 1
+    """
+
+    template = None
+    workspace_1 = None
+    data_collection = None
+    data_1 = None
+    data_2 = None
+
+    def insert_data(self):
+        """Insert a set of Data.
+
+        Returns:
+
+        """
+        # Make a connexion with a mock database
+        self.generate_template()
+        self.generate_workspace()
+        self.generate_data_collection()
+
+    def generate_data_collection(self):
+        """Generate a Data collection.
+
+        Returns:
+
+        """
+
+        # value: 1
+        xml_content_1 = "<root><element></element></root>"
+        # value: 2
+        xml_content_2 = "<root><element>value</element></root>"
+
+        self.data_1 = Data(
+            template=self.template,
+            title="Data 1",
+            user_id="1",
+            xml_content=xml_content_1,
+        )
+        self.data_1.convert_and_save()
+        self.data_2 = Data(
+            template=self.template,
+            title="Data 2",
+            user_id="2",
+            xml_content=xml_content_2,
+            workspace=self.workspace_1,
+        )
+        self.data_2.convert_and_save()
+        self.data_collection = [
+            self.data_1,
+            self.data_2,
+        ]
+
+    def generate_template(self):
+        """Generate an unique Template.
+
+        Returns:
+
+        """
+        self.template = Template()
+        xsd = (
+            '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">'
+            '<xs:element name="tag"></xs:element></xs:schema>'
+        )
+        self.template.content = xsd
+        self.template.hash = ""
+        self.template.filename = "filename"
+        self.template.save()
+
+    def generate_workspace(self):
+        """Generate the workspaces.
+
+        Returns:
+
+        """
+        self.workspace_1 = Workspace(
+            title="Workspace 1",
+            owner=None,
+            read_perm_id="1",
+            write_perm_id="1",
+        )
+        self.workspace_1.save()
+
+
 class DataMigrationFixture(FixtureInterface):
     """Data Template Fixture"""
 

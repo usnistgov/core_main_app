@@ -7,12 +7,12 @@ from core_main_app.components.data import (
 from core_main_app.settings import DATA_SORTING_FIELDS
 
 
-@access_control(data_api_access_control.can_read_data_mongo_query)
+@access_control(data_api_access_control.can_read_data_query)
 def execute_mongo_query(
     json_query,
     user,
-    workspace_filter,
-    user_filter,
+    workspace_filter=None,
+    user_filter=None,
     order_by_field=DATA_SORTING_FIELDS,
 ):
     """

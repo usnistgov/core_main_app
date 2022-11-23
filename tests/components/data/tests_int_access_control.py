@@ -4,13 +4,17 @@ import re
 import unittest
 from unittest.mock import patch
 
+from django.test import override_settings
 from tests.components.data.fixtures.fixtures import (
     AccessControlDataFixture,
     AccessControlDataFixture2,
     AccessControlDataFullTextSearchFixture,
+    AccessControlDataNumericFixture,
+    AccessControlDataNoneFixture,
 )
 
 from core_main_app.access_control.exceptions import AccessControlError
+from core_main_app.commons.exceptions import QueryError
 from core_main_app.components.data import api as data_api
 from core_main_app.components.data.models import Data
 from core_main_app.utils.integration_tests.integration_base_test_case import (
@@ -22,6 +26,8 @@ from core_main_app.utils.tests_tools.RequestMock import create_mock_request
 fixture_data = AccessControlDataFixture()
 fixture_data2 = AccessControlDataFixture2()
 fixture_data_full_text = AccessControlDataFullTextSearchFixture()
+fixture_data_numeric = AccessControlDataNumericFixture()
+fixture_data_none = AccessControlDataNoneFixture()
 
 
 class TestDataGetById(MongoIntegrationBaseTestCase):
@@ -46,7 +52,7 @@ class TestDataGetById(MongoIntegrationBaseTestCase):
         data_id = self.fixture.data_collection[
             fixture_data.USER_1_WORKSPACE_1
         ].id
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         get_all_workspaces_with_read_access_by_user.return_value = [
             fixture_data.workspace_1
         ]
@@ -70,7 +76,7 @@ class TestDataGetById(MongoIntegrationBaseTestCase):
         data_id = self.fixture.data_collection[
             fixture_data.USER_1_WORKSPACE_1
         ].id
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         get_all_workspaces_with_read_access_by_user.return_value = []
         data = data_api.get_by_id(data_id, mock_user)
         self.assertTrue(isinstance(data, Data))
@@ -92,7 +98,7 @@ class TestDataGetById(MongoIntegrationBaseTestCase):
         data_id = self.fixture.data_collection[
             fixture_data.USER_1_WORKSPACE_1
         ].id
-        mock_user = _create_user(2)
+        mock_user = create_mock_user(2)
         get_all_workspaces_with_read_access_by_user.return_value = []
         with self.assertRaises(AccessControlError):
             data_api.get_by_id(data_id, mock_user)
@@ -106,7 +112,7 @@ class TestDataGetById(MongoIntegrationBaseTestCase):
         data_id = self.fixture.data_collection[
             fixture_data.USER_1_NO_WORKSPACE
         ].id
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         data = data_api.get_by_id(data_id, mock_user)
         self.assertTrue(isinstance(data, Data))
 
@@ -119,9 +125,172 @@ class TestDataGetById(MongoIntegrationBaseTestCase):
         data_id = self.fixture.data_collection[
             fixture_data.USER_1_NO_WORKSPACE
         ].id
-        mock_user = _create_user(2)
+        mock_user = create_mock_user(2)
         with self.assertRaises(AccessControlError):
             data_api.get_by_id(data_id, mock_user)
+
+
+class TestDataGetByIdList(MongoIntegrationBaseTestCase):
+    """TestDataGetByIdList"""
+
+    fixture = fixture_data
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_get_by_id_list_owner_with_read_access_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_get_by_id_list_owner_with_read_access_returns_data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        data_id = self.fixture.data_collection[
+            fixture_data.USER_1_WORKSPACE_1
+        ].id
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            fixture_data.workspace_1
+        ]
+        data = data_api.get_by_id_list([data_id], mock_user)
+        self.assertTrue(data.count() > 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_get_by_id_list_owner_without_read_access_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_get_by_id_list_owner_without_read_access_returns_data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        data_id = self.fixture.data_collection[
+            fixture_data.USER_1_WORKSPACE_1
+        ].id
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        data = data_api.get_by_id_list([data_id], mock_user)
+        self.assertTrue(data.count() > 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_get_by_id_list_user_without_read_access_raises_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_get_by_id_list_owner_without_read_access_returns_data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        data_id = self.fixture.data_collection[
+            fixture_data.USER_1_WORKSPACE_1
+        ].id
+        mock_user = create_mock_user(2)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        with self.assertRaises(AccessControlError):
+            data_api.get_by_id_list([data_id], mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_get_by_id_list_user_one_owned_one_without_read_access_raises_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_get_by_id_list_owner_without_read_access_returns_data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        data_id1 = self.fixture.data_collection[
+            fixture_data.USER_1_WORKSPACE_1
+        ].id
+        data_id2 = self.fixture.data_collection[
+            fixture_data.USER_2_WORKSPACE_2
+        ].id
+        mock_user = create_mock_user(2)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        with self.assertRaises(AccessControlError):
+            data_api.get_by_id_list([data_id1, data_id2], mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_get_by_id_list_owner_no_workspace_read_access_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_get_by_id_list_owner_no_workspace_read_access_returns_data
+
+        Returns:
+
+        """
+        data_id = self.fixture.data_collection[
+            fixture_data.USER_1_NO_WORKSPACE
+        ].id
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        mock_user = create_mock_user(1)
+        data = data_api.get_by_id_list([data_id], mock_user)
+        self.assertTrue(data.count() > 0)
+
+    def test_get_by_id_list_not_owner_no_workspace_raises_error(self):
+        """test_get_by_id_list_not_owner_no_workspace_raises_error
+
+        Returns:
+
+        """
+        data_id = self.fixture.data_collection[
+            fixture_data.USER_1_NO_WORKSPACE
+        ].id
+        mock_user = create_mock_user(2)
+        with self.assertRaises(AccessControlError):
+            data_api.get_by_id_list([data_id], mock_user)
+
+    def test_get_by_id_list_one_owned_one_not_owner_no_workspace_raises_error(
+        self,
+    ):
+        """test_get_by_id_list_one_owned_one_not_owner_no_workspace_raises_error
+
+        Returns:
+
+        """
+        data_id1 = self.fixture.data_collection[
+            fixture_data.USER_1_NO_WORKSPACE
+        ].id
+        data_id2 = self.fixture.data_collection[
+            fixture_data.USER_2_NO_WORKSPACE
+        ].id
+        mock_user = create_mock_user(2)
+        with self.assertRaises(AccessControlError):
+            data_api.get_by_id_list([data_id1, data_id2], mock_user)
+
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=False)
+    def test_get_by_id_list_as_anonymous_without_access_raises_error(self):
+        """test_get_by_id_list_as_anonymous_without_access_raises_error
+
+        Returns:
+
+        """
+        data_id = self.fixture.data_collection[
+            fixture_data.USER_1_NO_WORKSPACE
+        ].id
+        mock_user = create_mock_user(None, is_anonymous=True)
+        with self.assertRaises(AccessControlError):
+            data_api.get_by_id_list([data_id], mock_user)
 
 
 class TestDataGetAll(MongoIntegrationBaseTestCase):
@@ -135,7 +304,7 @@ class TestDataGetAll(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1, is_superuser=True)
+        mock_user = create_mock_user(1, is_superuser=True)
         data_list = data_api.get_all(mock_user)
         self.assertTrue(len(data_list) == len(self.fixture.data_collection))
 
@@ -145,7 +314,7 @@ class TestDataGetAll(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         with self.assertRaises(AccessControlError):
             data_api.get_all(mock_user)
 
@@ -169,7 +338,7 @@ class TestDataGetAllByUser(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         get_all_workspaces_with_read_access_by_user.return_value = []
         with self.assertRaises(AccessControlError):
             data_api.get_all_except_user(mock_user)
@@ -188,7 +357,7 @@ class TestDataGetAllByUser(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         data_list = data_api.get_all_by_user(mock_user)
         get_all_workspaces_with_read_access_by_user.return_value = []
         self.assertTrue(len(data_list) == 3)
@@ -208,7 +377,7 @@ class TestDataGetAllByUser(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(3)
+        mock_user = create_mock_user(3)
         data_list = data_api.get_all_by_user(mock_user)
         get_all_workspaces_with_read_access_by_user.return_value = []
         self.assertTrue(len(data_list) == 0)
@@ -219,7 +388,7 @@ class TestDataGetAllByUser(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1, is_superuser=True)
+        mock_user = create_mock_user(1, is_superuser=True)
         data_list = data_api.get_all_by_user(mock_user)
         self.assertTrue(len(data_list) == 3)
         self.assertTrue(data.user_id == "1" for data in data_list)
@@ -246,7 +415,7 @@ class TestDataGetAllExceptUser(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         get_all_workspaces_with_read_access_by_user.return_value = []
         with self.assertRaises(AccessControlError):
             data_api.get_all_except_user(mock_user)
@@ -265,7 +434,7 @@ class TestDataGetAllExceptUser(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         get_all_workspaces_with_read_access_by_user.return_value = [
             fixture_data.workspace_1,
             fixture_data.workspace_2,
@@ -279,7 +448,7 @@ class TestDataGetAllExceptUser(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1, is_superuser=True)
+        mock_user = create_mock_user(1, is_superuser=True)
         data_list = data_api.get_all_except_user(mock_user)
         self.assertTrue(len(data_list) > 0)
         self.assertTrue(data.user_id != mock_user.id for data in data_list)
@@ -307,7 +476,7 @@ class TestDataUpsert(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         mock_request = create_mock_request(mock_user)
 
         data = _create_data(1, None)
@@ -327,7 +496,7 @@ class TestDataUpsert(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         mock_request = create_mock_request(mock_user)
         get_all_workspaces_with_write_access_by_user.return_value = [
             fixture_data.workspace_1
@@ -349,7 +518,7 @@ class TestDataUpsert(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         mock_request = create_mock_request(mock_user)
         get_all_workspaces_with_write_access_by_user.return_value = []
         data = _create_data(1, fixture_data.workspace_1)
@@ -476,7 +645,7 @@ class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(3)
+        mock_user = create_mock_user(3)
         get_all_workspaces_with_read_access_by_user.return_value = [
             fixture_data.workspace_1
         ]
@@ -498,7 +667,7 @@ class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(3)
+        mock_user = create_mock_user(3)
         get_all_workspaces_with_read_access_by_user.return_value = [
             fixture_data.workspace_1
         ]
@@ -520,7 +689,7 @@ class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(3)
+        mock_user = create_mock_user(3)
         get_all_workspaces_with_read_access_by_user.return_value = [
             fixture_data.workspace_1
         ]
@@ -542,7 +711,7 @@ class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(3)
+        mock_user = create_mock_user(3)
         get_all_workspaces_with_read_access_by_user.return_value = [
             fixture_data.workspace_1,
             fixture_data.workspace_2,
@@ -568,7 +737,7 @@ class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(3)
+        mock_user = create_mock_user(3)
         get_all_workspaces_with_read_access_by_user.return_value = [
             fixture_data.workspace_1
         ]
@@ -592,7 +761,7 @@ class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(3)
+        mock_user = create_mock_user(3)
         get_all_workspaces_with_read_access_by_user.return_value = []
         with self.assertRaises(AccessControlError):
             data_api.execute_json_query(
@@ -613,10 +782,30 @@ class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(3)
+        mock_user = create_mock_user(3)
         get_all_workspaces_with_read_access_by_user.return_value = []
         with self.assertRaises(AccessControlError):
             data_api.execute_json_query({"workspace": None}, mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_workspace_none_as_superuser_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_query_workspace_none_as_superuser_returns_data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(1, is_superuser=True)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"workspace": None}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertTrue(data_list.count() == 2)
 
     def test_execute_query_as_superuser_returns_all_data(self):
         """test execute query as superuser returns all data
@@ -624,9 +813,75 @@ class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1, is_superuser=True)
+        mock_user = create_mock_user(1, is_superuser=True)
         data_list = data_api.execute_json_query({}, mock_user)
         self.assertTrue(len(data_list) == 5)
+
+    def test_execute_query_as_superuser_with_unknown_operator_raises_error(
+        self,
+    ):
+        """test_execute_query_as_superuser_with_unknown_operator_raises_error
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(1, is_superuser=True)
+        with self.assertRaises(QueryError):
+            data_api.execute_json_query({"$test": True}, mock_user)
+
+    def test_execute_query_as_anonymous_raises_error_if_no_anonymous_access(
+        self,
+    ):
+        """test_execute_query_as_anonymous_returns_no_data_if_no_anonymous_access
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(None, is_anonymous=True)
+        with self.assertRaises(AccessControlError):
+            data_api.execute_json_query({}, mock_user)
+
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    def test_execute_query_as_anonymous_returns_only_public_data_if_anonymous_access(
+        self,
+    ):
+        """test_execute_query_as_anonymous_returns_public_data_if_anonymous_access
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(None, is_anonymous=True)
+        data_list = data_api.execute_json_query({}, mock_user)
+        # no public data in the fixture
+        self.assertEqual(data_list.count(), 0)
+
+    def test_execute_query_with_template_returns_data(
+        self,
+    ):
+        """test_execute_query_with_template_returns_data
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(None, is_superuser=True)
+        data_list = data_api.execute_json_query(
+            {"template": self.fixture.template.id}, mock_user
+        )
+        # no public data in the fixture
+        self.assertEqual(data_list.count(), 5)
+
+    def test_execute_query_with_unknown_template_id_returns_no_data(
+        self,
+    ):
+        """test_execute_query_with_unknown_template_id_returns_no_data
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(None, is_superuser=True)
+        data_list = data_api.execute_json_query({"template": -1}, mock_user)
+        # no public data in the fixture
+        self.assertEqual(data_list.count(), 0)
 
 
 class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
@@ -648,7 +903,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {}
         data_list = data_api.execute_json_query(query, mock_user)
@@ -669,7 +924,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(2)
+        mock_user = create_mock_user(2)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {}
         data_list = data_api.execute_json_query(query, mock_user)
@@ -690,7 +945,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(3)
+        mock_user = create_mock_user(3)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {}
         data_list = data_api.execute_json_query(query, mock_user)
@@ -711,7 +966,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         get_all_workspaces_with_read_access_by_user.return_value = [
             fixture_data.workspace_1
         ]
@@ -737,7 +992,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(2)
+        mock_user = create_mock_user(2)
         get_all_workspaces_with_read_access_by_user.return_value = [
             fixture_data.workspace_1
         ]
@@ -763,7 +1018,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(3)
+        mock_user = create_mock_user(3)
         get_all_workspaces_with_read_access_by_user.return_value = [
             fixture_data.workspace_1
         ]
@@ -789,7 +1044,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(3)
+        mock_user = create_mock_user(3)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"user_id": 1}
         with self.assertRaises(AccessControlError):
@@ -809,7 +1064,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(4)
+        mock_user = create_mock_user(4)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"workspace": 1}
         with self.assertRaises(AccessControlError):
@@ -829,7 +1084,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(4)
+        mock_user = create_mock_user(4)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"$or": [{"workspace": 1}]}
         with self.assertRaises(AccessControlError):
@@ -849,7 +1104,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(4)
+        mock_user = create_mock_user(4)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"workspace": {"$in": [1, 2]}}
         with self.assertRaises(AccessControlError):
@@ -869,7 +1124,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"workspace": None}
         with self.assertRaises(AccessControlError):
@@ -889,7 +1144,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(3)
+        mock_user = create_mock_user(3)
         get_all_workspaces_with_read_access_by_user.return_value = [
             fixture_data.workspace_1
         ]
@@ -911,7 +1166,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         get_all_workspaces_with_read_access_by_user.return_value = [
             fixture_data.workspace_1
         ]
@@ -933,7 +1188,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(3)
+        mock_user = create_mock_user(3)
         get_all_workspaces_with_read_access_by_user.return_value = [
             fixture_data.workspace_1
         ]
@@ -955,7 +1210,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         get_all_workspaces_with_read_access_by_user.return_value = [
             fixture_data.workspace_1
         ]
@@ -977,7 +1232,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"user_id": 3, "workspace": None}
         with self.assertRaises(AccessControlError):
@@ -997,7 +1252,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         get_all_workspaces_with_read_access_by_user.return_value = [
             fixture_data.workspace_1
         ]
@@ -1019,7 +1274,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1, is_superuser=True)
+        mock_user = create_mock_user(1, is_superuser=True)
         get_all_workspaces_with_read_access_by_user.return_value = [
             fixture_data.workspace_1
         ]
@@ -1045,7 +1300,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(3)
+        mock_user = create_mock_user(3)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"dict_content.root.element": {"$in": ["value2", "value3"]}}
         data_list = data_api.execute_json_query(query, mock_user)
@@ -1066,7 +1321,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(3)
+        mock_user = create_mock_user(3)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"dict_content.root.element": {"$in": ["value3"]}}
         data_list = data_api.execute_json_query(query, mock_user)
@@ -1086,7 +1341,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(3)
+        mock_user = create_mock_user(3)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"dict_content.root.element": {"$regex": ".*"}}
         data_list = data_api.execute_json_query(query, mock_user)
@@ -1107,7 +1362,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(3)
+        mock_user = create_mock_user(3)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"dict_content.root.element": {"$regex": "aaa"}}
         data_list = data_api.execute_json_query(query, mock_user)
@@ -1127,7 +1382,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(3)
+        mock_user = create_mock_user(3)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"dict_content.root.element": re.compile(".*")}
         data_list = data_api.execute_json_query(query, mock_user)
@@ -1148,7 +1403,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(3)
+        mock_user = create_mock_user(3)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"dict_content.root.element": re.compile("aaa")}
         data_list = data_api.execute_json_query(query, mock_user)
@@ -1168,7 +1423,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(3)
+        mock_user = create_mock_user(3)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"dict_content.root.element": {"$not": re.compile("aaa")}}
         data_list = data_api.execute_json_query(query, mock_user)
@@ -1189,7 +1444,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(3)
+        mock_user = create_mock_user(3)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"dict_content.root.element": {"$not": re.compile(".*")}}
         data_list = data_api.execute_json_query(query, mock_user)
@@ -1209,11 +1464,31 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(3)
+        mock_user = create_mock_user(3)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"dict_content.root.element": {"$exists": True}}
         data_list = data_api.execute_json_query(query, mock_user)
         self.assertTrue(data_list.count() != 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_exists_false_raises_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_query_exists_false_raises_error
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(3)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.root.element": {"$exists": False}}
+        with self.assertRaises(QueryError):
+            data_api.execute_json_query(query, mock_user)
 
     @patch(
         "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
@@ -1229,7 +1504,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(3)
+        mock_user = create_mock_user(3)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"dict_content.root.absent": {"$exists": True}}
         data_list = data_api.execute_json_query(query, mock_user)
@@ -1249,7 +1524,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"dict_content.root.element": {"$ne": "value2"}}
         data_list = data_api.execute_json_query(query, mock_user)
@@ -1269,7 +1544,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"dict_content.root.element": {"$ne": "aaa"}}
         data_list = data_api.execute_json_query(query, mock_user)
@@ -1289,7 +1564,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(4)
+        mock_user = create_mock_user(4)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"dict_content.root.element": {"$ne": "aaa"}}
         data_list = data_api.execute_json_query(query, mock_user)
@@ -1309,7 +1584,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"dict_content.root.element": {"$not": {"$regex": "value2"}}}
         data_list = data_api.execute_json_query(query, mock_user)
@@ -1329,7 +1604,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"dict_content.root.element": {"$not": {"$regex": "aaa"}}}
         data_list = data_api.execute_json_query(query, mock_user)
@@ -1349,9 +1624,227 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(4)
+        mock_user = create_mock_user(4)
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"dict_content.root.element": {"$not": {"$regex": "aaa"}}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_exact_with_matches_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_query_exact_with_matches_returns_data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.root.element": "value2"}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 1)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_exact_with_no_matches_returns_nothing(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_query_exact_with_no_matches_returns_nothing
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.root.element": "value3"}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_eq_with_matches_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_query_eq_with_matches_returns_data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.root.element": {"$eq": "value2"}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 1)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_eq_with_no_matches_returns_nothing(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_query_eq_with_no_matches_returns_nothing
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.root.element": {"$eq": "value3"}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 0)
+
+    def test_execute_query_as_superuser_with_unknown_operator_raises_error(
+        self,
+    ):
+        """test_execute_query_as_superuser_with_unknown_operator_raises_error
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(1, is_superuser=True)
+        with self.assertRaises(QueryError):
+            data_api.execute_json_query({"$test": 2}, mock_user)
+
+    def test_execute_query_as_superuser_with_unknown_operator_value_raises_error(
+        self,
+    ):
+        """test_execute_query_as_superuser_with_unknown_operator_value_raises_error
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(1, is_superuser=True)
+        with self.assertRaises(QueryError):
+            data_api.execute_json_query({"test": "$2"}, mock_user)
+
+    def test_execute_query_as_superuser_with_unknown_operator_in_list_raises_error(
+        self,
+    ):
+        """test_execute_query_as_superuser_with_unknown_operator_in_list_raises_error
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("1", is_superuser=True)
+        with self.assertRaises(QueryError):
+            data_api.execute_json_query(
+                {"$and": [{"$or": [{"root.element": {"$test": ["1", "2"]}}]}]},
+                mock_user,
+            )
+
+    def test_execute_query_as_superuser_with_unknown_operator_in_value_raises_error(
+        self,
+    ):
+        """test_execute_query_as_superuser_with_unknown_operator_in_value_raises_error
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(1, is_superuser=True)
+        with self.assertRaises(QueryError):
+            data_api.execute_json_query(
+                {
+                    "$and": [
+                        {"$or": [{"root.element": {"$in": ["$test", "2"]}}]}
+                    ]
+                },
+                mock_user,
+            )
+
+    def test_execute_query_as_superuser_with_unknown_operator_in_key_raises_error(
+        self,
+    ):
+        """test_execute_query_as_superuser_with_unknown_operator_in_key_raises_error
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(1, is_superuser=True)
+        with self.assertRaises(QueryError):
+            data_api.execute_json_query(
+                {"$and": [{"$or": [{"root.$element": {"$in": ["1", "2"]}}]}]},
+                mock_user,
+            )
+
+    def test_execute_query_as_superuser_with_where_operator_in_key_raises_error(
+        self,
+    ):
+        """test_execute_query_as_superuser_with_where_operator_in_key_raises_error
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(1, is_superuser=True)
+        with self.assertRaises(QueryError):
+            data_api.execute_json_query(
+                {
+                    "$and": [
+                        {"$or": [{"root.element": {"$where": ["1", "2"]}}]}
+                    ]
+                },
+                mock_user,
+            )
+
+
+class TestDataExecuteNoneQuery(MongoIntegrationBaseTestCase):
+    """TestDataExecuteNoneQuery"""
+
+    fixture = fixture_data_none
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_none_with_matches_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_query_none_with_matches_returns_data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.root.element": None}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 1)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_none_with_no_matches_returns_nothing(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_query_none_with_no_matches_returns_nothing
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(2)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.root.element": None}
         data_list = data_api.execute_json_query(query, mock_user)
         self.assertEqual(data_list.count(), 0)
 
@@ -1375,7 +1868,7 @@ class TestDataExecuteFullTextQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user("1")
+        mock_user = create_mock_user("1")
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"$text": {"$search": "user1"}}
         data_list = data_api.execute_json_query(query, mock_user)
@@ -1396,7 +1889,7 @@ class TestDataExecuteFullTextQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user("1")
+        mock_user = create_mock_user("1")
         get_all_workspaces_with_read_access_by_user.return_value = [
             self.fixture.workspace_1
         ]
@@ -1420,7 +1913,7 @@ class TestDataExecuteFullTextQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user("1")
+        mock_user = create_mock_user("1")
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"$text": {"$search": "value1 user1"}}
         data_list = data_api.execute_json_query(query, mock_user)
@@ -1441,7 +1934,7 @@ class TestDataExecuteFullTextQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user("1")
+        mock_user = create_mock_user("1")
         get_all_workspaces_with_read_access_by_user.return_value = [
             self.fixture.workspace_1
         ]
@@ -1463,7 +1956,7 @@ class TestDataExecuteFullTextQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user("1")
+        mock_user = create_mock_user("1")
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"$text": {"$search": "wrong"}}
         data_list = data_api.execute_json_query(query, mock_user)
@@ -1483,7 +1976,7 @@ class TestDataExecuteFullTextQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user("2")
+        mock_user = create_mock_user("2")
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"$text": {"$search": "user1"}}
         data_list = data_api.execute_json_query(query, mock_user)
@@ -1503,11 +1996,31 @@ class TestDataExecuteFullTextQuery(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user("3")
+        mock_user = create_mock_user("3")
         get_all_workspaces_with_read_access_by_user.return_value = []
         query = {"$text": {"$search": "value1"}}
         data_list = data_api.execute_json_query(query, mock_user)
         self.assertEqual(data_list.count(), 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_full_text_with_invalid_value_raises_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_query_full_text_with_invalid_value_raises_error
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"$text": {"$search": 1}}
+        with self.assertRaises(QueryError):
+            data_api.execute_json_query(query, mock_user)
 
 
 class TestDataDelete(MongoIntegrationBaseTestCase):
@@ -1529,7 +2042,7 @@ class TestDataDelete(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         get_all_workspaces_with_write_access_by_user.return_value = [
             fixture_data.workspace_1
         ]
@@ -1556,7 +2069,7 @@ class TestDataDelete(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         get_all_workspaces_with_write_access_by_user.return_value = []
         data_api.delete(
             fixture_data.data_collection[fixture_data.USER_1_WORKSPACE_1],
@@ -1577,7 +2090,7 @@ class TestDataDelete(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         get_all_workspaces_with_write_access_by_user.return_value = [
             fixture_data.workspace_2
         ]
@@ -1600,7 +2113,7 @@ class TestDataDelete(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         get_all_workspaces_with_write_access_by_user.return_value = [
             fixture_data.workspace_1
         ]
@@ -1624,7 +2137,7 @@ class TestDataDelete(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         get_all_workspaces_with_write_access_by_user.return_value = []
         with self.assertRaises(AccessControlError):
             data_api.delete(
@@ -1646,7 +2159,7 @@ class TestDataDelete(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(1)
+        mock_user = create_mock_user(1)
         get_all_workspaces_with_write_access_by_user.return_value = []
         with self.assertRaises(AccessControlError):
             data_api.delete(
@@ -1666,7 +2179,7 @@ class TestDataChangeOwner(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_owner = _create_user(1)
+        mock_owner = create_mock_user(1)
         data_api.change_owner(
             document=fixture_data.data_collection[
                 fixture_data.USER_1_NO_WORKSPACE
@@ -1681,8 +2194,8 @@ class TestDataChangeOwner(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_owner = _create_user(1)
-        mock_user = _create_user(2)
+        mock_owner = create_mock_user(1)
+        mock_user = create_mock_user(2)
         data_api.change_owner(
             document=fixture_data.data_collection[
                 fixture_data.USER_1_NO_WORKSPACE
@@ -1697,8 +2210,8 @@ class TestDataChangeOwner(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_owner = _create_user(1)
-        mock_user = _create_user(2)
+        mock_owner = create_mock_user(1)
+        mock_user = create_mock_user(2)
         with self.assertRaises(AccessControlError):
             data_api.change_owner(
                 document=fixture_data.data_collection[
@@ -1714,7 +2227,7 @@ class TestDataChangeOwner(MongoIntegrationBaseTestCase):
         Returns:
 
         """
-        mock_user = _create_user(2, is_superuser=True)
+        mock_user = create_mock_user(2, is_superuser=True)
         data_api.change_owner(
             document=fixture_data.data_collection[
                 fixture_data.USER_1_NO_WORKSPACE
@@ -1724,17 +2237,186 @@ class TestDataChangeOwner(MongoIntegrationBaseTestCase):
         )
 
 
-def _create_user(user_id, is_superuser=False):
-    """create user
+class TestDataExecuteNumericQuery(MongoIntegrationBaseTestCase):
+    """TestDataExecuteNumericQuery"""
 
-    Args:
-        user_id:
-        is_superuser:
+    fixture = fixture_data_numeric
 
-    Returns:
+    def test_exact_matches_returns_data(
+        self,
+    ):
+        """test_exact_matches_returns_data
 
-    """
-    return create_mock_user(user_id, is_superuser=is_superuser)
+        Args:
+            :
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("1", is_superuser=True)
+        query = {"dict_content.root.element": 1}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 1)
+
+    def test_exact_without_matches_returns_nothing(
+        self,
+    ):
+        """test_exact_without_matches_returns_nothing
+
+        Args:
+            :
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("1", is_superuser=True)
+        query = {"dict_content.root.element": 8}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 0)
+
+    def test_eq_matches_returns_data(
+        self,
+    ):
+        """test_eq_matches_returns_data
+
+        Args:
+            :
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("1", is_superuser=True)
+        query = {"dict_content.root.element": {"$eq": 1}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 1)
+
+    def test_eq_without_matches_returns_nothing(
+        self,
+    ):
+        """test_eq_without_matches_returns_nothing
+
+        Args:
+            :
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("1", is_superuser=True)
+        query = {"dict_content.root.element": {"$eq": 8}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 0)
+
+    def test_lte_matches_returns_data(
+        self,
+    ):
+        """test_lte_matches_returns_data
+
+        Args:
+            :
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("1", is_superuser=True)
+        query = {"dict_content.root.element": {"$lte": 2}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 2)
+
+    def test_lt_matches_returns_data(
+        self,
+    ):
+        """test_lt_matches_returns_data
+
+        Args:
+            :
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("1", is_superuser=True)
+        query = {"dict_content.root.element": {"$lt": 2}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 1)
+
+    def test_gt_matches_returns_data(
+        self,
+    ):
+        """test_gt_matches_returns_data
+
+        Args:
+            :
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("1", is_superuser=True)
+        query = {"dict_content.root.element": {"$gt": 2}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 2)
+
+    def test_gte_matches_returns_data(
+        self,
+    ):
+        """test_gte_matches_returns_data
+
+        Args:
+            :
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("1", is_superuser=True)
+        query = {"dict_content.root.element": {"$gte": 2}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 3)
+
+    def test_ne_matches_returns_data(
+        self,
+    ):
+        """test_ne_matches_returns_data
+
+        Args:
+            :
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("1", is_superuser=True)
+        query = {"dict_content.root.element": {"$ne": 2}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 3)
+
+    def test_numeric_operators_raises_error_if_not_numeric_value(self):
+        """test_numeric_operators_raises_error_if_not_numeric_value
+
+        Args:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("1", is_superuser=True)
+        for operator in ["$lt", "$lte", "$gt", "$gte"]:
+            for value in ["test", "$1", None]:
+                with self.assertRaises(QueryError):
+                    data_api.execute_json_query(
+                        {"dict_content.root.element": {operator: value}},
+                        mock_user,
+                    )
+
+    def test_numeric_operators_raises_no_error_if_numeric_value(self):
+        """test_numeric_operators_raises_no_error_if_numeric_value
+
+        Args:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("1", is_superuser=True)
+        for operator in ["$lt", "$lte", "$gt", "$gte"]:
+            for value in [0, 1, 1.2]:
+                data_api.execute_json_query(
+                    {"dict_content.root.element": {operator: value}}, mock_user
+                )
 
 
 def _create_data(user_id, workspace):

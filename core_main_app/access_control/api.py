@@ -91,7 +91,7 @@ def check_can_write(document, user):
 
     """
     # Raise error if anonymous user
-    if user.is_anonymous:
+    if user is None or user.is_anonymous:
         raise AccessControlError("Unable to write if not authenticated.")
 
     # TODO: data will inherit of workspace rights, which means a owner can't edit
@@ -184,6 +184,9 @@ def can_read_or_write_in_workspace(func, workspace, user):
     if user.is_superuser:
         return func(workspace, user)
 
+    # check anonymous access
+    _check_anonymous_access(user)
+
     _check_can_read_or_write_in_workspace(workspace, user)
     return func(workspace, user)
 
@@ -203,6 +206,10 @@ def can_write_in_workspace(func, document, workspace, user, codename):
     """
     if user.is_superuser:
         return func(document, workspace, user)
+
+    if user is None or user.is_anonymous:
+        raise AccessControlError("Unable to write if not authenticated.")
+
     if workspace is not None:
         if workspace_api.is_workspace_public(workspace):
             has_perm_publish(user, codename)
@@ -242,6 +249,9 @@ def can_read(func, user):
     """
     if user.is_superuser:
         return func(user)
+
+    # check anonymous access
+    _check_anonymous_access(user)
 
     # get list of document
     document_list = func(user)
