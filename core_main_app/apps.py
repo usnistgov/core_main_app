@@ -5,13 +5,6 @@ import sys
 from django.apps import AppConfig
 from django.conf import settings
 
-from core_main_app.commons.exceptions import CoreError
-from core_main_app.permissions import discover
-from core_main_app.settings import SSL_CERTIFICATES_DIR
-from core_main_app.utils.requests_utils.ssl import (
-    check_ssl_certificates_dir_setting,
-)
-
 
 class InitApp(AppConfig):
     """Core application settings."""
@@ -23,6 +16,13 @@ class InitApp(AppConfig):
     """
 
     def ready(self):
+        from core_main_app.commons.exceptions import CoreError
+        from core_main_app.permissions import discover
+        from core_main_app.settings import SSL_CERTIFICATES_DIR
+        from core_main_app.utils.requests_utils.ssl import (
+            check_ssl_certificates_dir_setting,
+        )
+
         """When the app is ready, run the discovery and init the indexes."""
         if "migrate" not in sys.argv:
             # check celery settings
@@ -37,3 +37,4 @@ class InitApp(AppConfig):
             check_ssl_certificates_dir_setting(SSL_CERTIFICATES_DIR)
             discover.init_rules(self.apps)
             discover.create_public_workspace()
+            discover.init_mongo_indexing()

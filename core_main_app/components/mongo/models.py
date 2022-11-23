@@ -2,8 +2,7 @@
 """
 
 import logging
-
-from django.db.models.signals import post_save, post_delete, pre_delete
+from django.conf import settings
 
 from core_main_app.commons.exceptions import CoreError
 from core_main_app.components.data.models import Data
@@ -21,7 +20,6 @@ from core_main_app.settings import (
     XML_FORCE_LIST,
 )
 from core_main_app.utils import xml as xml_utils
-from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -30,9 +28,6 @@ try:
         from bson import ObjectId
         from mongoengine import Document, DoesNotExist
         from mongoengine import fields as mongo_fields
-        from core_main_app.utils.databases.mongo.pymongo_database import (
-            init_text_index,
-        )
 
         class AbstractMongoData(Document):
             """Data object stored in MongoDB"""
@@ -324,14 +319,6 @@ try:
                 queryset = Data.objects.filter(workspace=instance.id).all()
                 MongoData.update_workspace_id_from_queryset(queryset, None)
 
-        # Initialize text index
-        init_text_index(MongoData)
-        # connect sync method to Data post save
-        post_save.connect(MongoData.post_save_data, sender=Data)
-        # connect sync method to Data post delete
-        post_delete.connect(MongoData.post_delete_data, sender=Data)
-        # connect sync method to Workspace pre delete
-        pre_delete.connect(MongoData.pre_delete_workspace, sender=Workspace)
 except ImportError:
     raise CoreError(
         "Mongoengine needs to be installed when MongoDB indexing is enabled. "

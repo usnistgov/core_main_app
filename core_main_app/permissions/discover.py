@@ -2,6 +2,11 @@
 """
 import logging
 
+from django.conf import settings
+from django.db.models.signals import post_save, post_delete, pre_delete
+
+from core_main_app.components.data.models import Data
+from core_main_app.components.workspace.models import Workspace
 from core_main_app.permissions import rights
 
 logger = logging.getLogger(__name__)
@@ -74,3 +79,19 @@ def create_public_workspace():
         )
 
     logger.info("FINISH create public workspace.")
+
+
+def init_mongo_indexing():
+    """Initialize mongo indexing if needed"""
+    if settings.MONGODB_INDEXING:
+        from core_main_app.components.mongo.models import MongoData
+        from core_main_app.utils.databases.mongo.pymongo_database import (
+            init_text_index,
+        )
+
+        # Initialize text index
+        init_text_index(MongoData)
+        # Connect MongoData sync methods to Data and Workspace signals
+        post_save.connect(MongoData.post_save_data, sender=Data)
+        post_delete.connect(MongoData.post_delete_data, sender=Data)
+        pre_delete.connect(MongoData.pre_delete_workspace, sender=Workspace)

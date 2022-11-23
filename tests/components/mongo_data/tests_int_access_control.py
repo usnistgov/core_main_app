@@ -1,14 +1,13 @@
 """ Access control testing
 """
-
 import re
 import unittest
-from unittest.mock import patch
-
 from django.test import override_settings, tag
+from unittest.mock import patch
 
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.data import api as data_api
+from core_main_app.permissions.discover import init_mongo_indexing
 from core_main_app.utils.integration_tests.integration_base_test_case import (
     MongoDBIntegrationBaseTestCase,
 )
@@ -25,13 +24,16 @@ class TestDataExecuteQuery(MongoDBIntegrationBaseTestCase):
 
         Returns:
 
-        #"""
+        """
         from core_main_app.components.mongo.models import (  # noqa: keep import to init signals
             MongoData,
         )
         from tests.components.data.fixtures.fixtures import (
             AccessControlDataFixture,
         )
+
+        # Mongo indexing is not initialized by default
+        init_mongo_indexing()
 
         # fixture needs to initialized with settings.MONGODB_INDEXING=True otherwise MongoData does not exist
         self.fixture = AccessControlDataFixture()
@@ -239,12 +241,16 @@ class TestDataExecuteRawQuery(MongoDBIntegrationBaseTestCase):
 
         Returns:
 
-        #"""
+        """
         from tests.components.data.fixtures.fixtures import (
             AccessControlDataFixture2,
         )
 
-        # fixture needs to initialized with settings.MONGODB_INDEXING=True otherwise MongoData does not exist
+        # Mongo indexing is not initialized by default
+        init_mongo_indexing()
+
+        # fixture needs to initialized with settings.MONGODB_INDEXING=True otherwise
+        # MongoData does not exist
         self.fixture = AccessControlDataFixture2()
         self.fixture.insert_data()
 
