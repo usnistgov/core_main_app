@@ -1,1 +1,1 @@
-xml-utils==1.19.*
+xml-utils==1.20.*
