@@ -411,6 +411,16 @@ class TemplateVersionManagerOrdering(APIView):
         Args:
             request:
 
+        Returns:
+
+            - code: 200
+              content: None
+            - code: 403
+              content: Authentication error
+            - code: 404
+              content: Object was not found
+            - code: 500
+              content: Internal server error
         """
         try:
             # get list template ids
@@ -422,8 +432,9 @@ class TemplateVersionManagerOrdering(APIView):
             template_version_manager_api.update_templates_ordering(
                 templates_ordering, user=self.request.user
             )
-            # Return response
-            return Response({}, status=status.HTTP_200_OK)
+
+            # return response
+            return Response(status=status.HTTP_200_OK)
         except AccessControlError as ace:
             content = {"message": str(ace)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
