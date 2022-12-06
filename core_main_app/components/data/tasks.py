@@ -5,8 +5,8 @@ import logging
 
 from celery import shared_task
 from celery.result import AsyncResult
-from django.db.models import Q
 
+from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.data import api as data_api
 from core_main_app.components.user import api as user_api
 from core_main_app.components.xsl_transformation import (
@@ -38,6 +38,10 @@ def async_migration_task(data_list, xslt_id, template_id, user_id, migrate):
 
     try:
         user = user_api.get_user_by_id(user_id)
+        # check user status
+        if not (user.is_staff or user.is_superuser):
+            raise AccessControlError("Only admin user can migrate data.")
+
         target_template = system_api.get_template_by_id(template_id)
 
         # get xsl transformation if selected
@@ -110,6 +114,9 @@ def async_template_migration_task(
         if target_template_id and total_template > 0:
             # get the user
             user = user_api.get_user_by_id(user_id)
+            # check user status
+            if not (user.is_staff or user.is_superuser):
+                raise AccessControlError("Only admin user can migrate data.")
             # get the target template
             target_template = system_api.get_template_by_id(target_template_id)
             # get xsl transformation if selected
@@ -124,9 +131,7 @@ def async_template_migration_task(
                 current_data_progress = 0
 
                 # get a QuerySet of all the data with the given template
-                data_list = data_api.execute_query(
-                    Q(template=template_id), user=user
-                )
+                data_list = system_api.get_all_by_template(template_id)
 
                 total_data = data_list.count()
 

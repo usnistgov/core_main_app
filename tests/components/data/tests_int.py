@@ -1339,6 +1339,54 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         self.fixture.insert_data()
         self.fixture.generate_xslt()
 
+    @patch("core_main_app.components.user.api.get_user_by_id")
+    def test_validation_as_regular_user_raises_error(self, user_get_by_id):
+        """test_validation_as_regular_user_raises_error
+
+        Args:
+
+        Returns:
+
+        """
+        # Arrange
+        request_user = create_mock_user("2")
+        user_get_by_id.return_value = request_user
+
+        # Act
+        with self.assertRaises(Exception):
+            data_task.async_migration_task(
+                [self.fixture.data_1.id],
+                None,
+                self.fixture.template_2.id,
+                request_user.id,
+                False,
+            )
+
+    @patch("core_main_app.components.user.api.get_user_by_id")
+    def test_template_validation_as_regular_user_raises_error(
+        self, user_get_by_id
+    ):
+        """test_template_validation_as_regular_user_raises_error
+
+        Args:
+
+        Returns:
+
+        """
+        # Arrange
+        request_user = create_mock_user("2")
+        user_get_by_id.return_value = request_user
+
+        # Act
+        with self.assertRaises(Exception):
+            data_task.async_template_migration_task(
+                [self.fixture.data_1.id],
+                None,
+                self.fixture.template_2.id,
+                request_user.id,
+                False,
+            )
+
     @patch.object(data_api, "get_by_id")
     @patch.object(template_api, "get_by_id")
     def test_data_template_validation_success_for_one_data(
@@ -1617,18 +1665,18 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         }
         self.assertEqual(response, expected_result)
 
-    @patch.object(data_api, "execute_query")
+    @patch.object(system_api, "get_all_by_template")
     @patch.object(data_api, "get_by_id")
     @patch.object(template_api, "get_by_id")
     def test_data_template_group_validation_success(
-        self, template_get, data_get_by_id, data_execute_query
+        self, template_get, data_get_by_id, system_get_all_by_template
     ):
         """test_data_template_group_validation_success
 
         Args:
             template_get:
             data_get_by_id:
-            data_execute_query:
+            system_get_all_by_template:
 
         Returns:
 
@@ -1641,7 +1689,9 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
             ],
             "count": lambda: 2,
         }
-        data_execute_query.return_value = SimpleNamespace(**mock_query_set)
+        system_get_all_by_template.return_value = SimpleNamespace(
+            **mock_query_set
+        )
         data_get_by_id.side_effect = [
             self.fixture.data_1,
             self.fixture.data_2,
@@ -1669,18 +1719,18 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         }
         self.assertEqual(response, expected_result)
 
-    @patch.object(data_api, "execute_query")
+    @patch.object(system_api, "get_all_by_template")
     @patch.object(data_api, "get_by_id")
     @patch.object(template_api, "get_by_id")
     def test_data_template_group_validation_success_with_transformation(
-        self, template_get, data_get_by_id, data_execute_query
+        self, template_get, data_get_by_id, system_get_all_by_template
     ):
         """test_data_template_group_validation_success_with_transformation
 
         Args:
             template_get:
             data_get_by_id:
-            data_execute_query:
+            system_get_all_by_template:
 
         Returns:
 
@@ -1693,7 +1743,9 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
             ],
             "count": lambda: 2,
         }
-        data_execute_query.return_value = SimpleNamespace(**mock_query_set)
+        system_get_all_by_template.return_value = SimpleNamespace(
+            **mock_query_set
+        )
         data_get_by_id.side_effect = [
             self.fixture.data_1,
             self.fixture.data_2,
@@ -1721,18 +1773,18 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         }
         self.assertEqual(response, expected_result)
 
-    @patch.object(data_api, "execute_query")
+    @patch.object(system_api, "get_all_by_template")
     @patch.object(data_api, "get_by_id")
     @patch.object(template_api, "get_by_id")
     def test_data_template_group_validation_error(
-        self, template_get, data_get_by_id, data_execute_query
+        self, template_get, data_get_by_id, system_get_all_by_template
     ):
         """test_data_template_group_validation_error
 
         Args:
             template_get:
             data_get_by_id:
-            data_execute_query:
+            system_get_all_by_template:
 
         Returns:
 
@@ -1745,7 +1797,9 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
             ],
             "count": lambda: 2,
         }
-        data_execute_query.return_value = SimpleNamespace(**mock_query_set)
+        system_get_all_by_template.return_value = SimpleNamespace(
+            **mock_query_set
+        )
         data_get_by_id.side_effect = [
             self.fixture.data_4,
             self.fixture.data_5,
@@ -1773,18 +1827,18 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         }
         self.assertEqual(response, expected_result)
 
-    @patch.object(data_api, "execute_query")
+    @patch.object(system_api, "get_all_by_template")
     @patch.object(data_api, "get_by_id")
     @patch.object(template_api, "get_by_id")
     def test_data_template_group_validation_error_with_transformation(
-        self, template_get, data_get_by_id, data_execute_query
+        self, template_get, data_get_by_id, system_get_all_by_template
     ):
         """test_data_template_group_validation_error_with_transformation
 
         Args:
             template_get:
             data_get_by_id:
-            data_execute_query:
+            system_get_all_by_template:
 
         Returns:
 
@@ -1797,7 +1851,9 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
             ],
             "count": lambda: 2,
         }
-        data_execute_query.return_value = SimpleNamespace(**mock_query_set)
+        system_get_all_by_template.return_value = SimpleNamespace(
+            **mock_query_set
+        )
         data_get_by_id.side_effect = [
             self.fixture.data_4,
             self.fixture.data_5,
@@ -2096,23 +2152,23 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
             [self.fixture.template_4.id, self.fixture.template_4.id],
         )
 
-        @patch.object(data_api, "execute_query")
+        @patch.object(system_api, "get_all_by_template")
         @patch.object(template_api, "get_by_id")
         def test_data_template_group_migration_success(
-            self, template_get, data_execute_query
+            self, template_get, system_get_all_by_template
         ):
             """test_data_template_group_migration_success
 
             Args:
                 self:
                 template_get:
-                data_execute_query:
+                system_get_all_by_template:
 
             Returns:
 
             """
             # Arrange
-            data_execute_query.return_value = [
+            system_get_all_by_template.return_value = [
                 self.fixture.data_1,
                 self.fixture.data_2,
             ]
@@ -2138,18 +2194,18 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
                 [self.fixture.template_2.id, self.fixture.template_2.id],
             )
 
-    @patch.object(data_api, "execute_query")
+    @patch.object(system_api, "get_all_by_template")
     @patch.object(data_api, "get_by_id")
     @patch.object(system_api, "get_template_by_id")
     def test_data_template_group_migration_error(
-        self, template_get, data_get_by_id, data_execute_query
+        self, template_get, data_get_by_id, system_get_all_by_template
     ):
         """test_data_template_group_migration_error
 
         Args:
             template_get:
             data_get_by_id:
-            data_execute_query:
+            system_get_all_by_template:
 
         Returns:
 
@@ -2162,7 +2218,9 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
             ],
             "count": lambda: 2,
         }
-        data_execute_query.return_value = SimpleNamespace(**mock_query_set)
+        system_get_all_by_template.return_value = SimpleNamespace(
+            **mock_query_set
+        )
         data_get_by_id.side_effect = [
             self.fixture.data_4,
             self.fixture.data_5,
@@ -2190,18 +2248,18 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
         }
         self.assertEqual(response, expected_result)
 
-    @patch.object(data_api, "execute_query")
+    @patch.object(system_api, "get_all_by_template")
     @patch.object(data_api, "get_by_id")
     @patch.object(system_api, "get_template_by_id")
     def test_data_template_group_migration_error_with_transformation(
-        self, template_get, data_get_by_id, data_execute_query
+        self, template_get, data_get_by_id, system_get_all_by_template
     ):
         """test_data_template_group_migration_error_with_transformation
 
         Args:
             template_get:
             data_get_by_id:
-            data_execute_query:
+            system_get_all_by_template:
 
         Returns:
 
@@ -2214,7 +2272,9 @@ class TestDataMigration(MongoIntegrationTransactionTestCase):
             ],
             "count": lambda: 2,
         }
-        data_execute_query.return_value = SimpleNamespace(**mock_query_set)
+        system_get_all_by_template.return_value = SimpleNamespace(
+            **mock_query_set
+        )
         data_get_by_id.side_effect = [
             self.fixture.data_4,
             self.fixture.data_5,
@@ -2403,13 +2463,23 @@ def test_result_data_template_migration_for_multi_data(
     }
     self.assertEqual(response, expected_result)
 
-    @patch.object(data_api, "execute_query")
+    @patch.object(system_api, "get_all_by_template")
     @patch.object(template_api, "get_by_id")
     def test_result_data_template_group_migration_success(
-        self, template_get, data_execute_query
+        self, template_get, system_get_all_by_template
     ):
+        """test_result_data_template_group_migration_success
+
+        Args:
+            self:
+            template_get:
+            system_get_all_by_template:
+
+        Returns:
+
+        """
         # Arrange
-        data_execute_query.return_value = [
+        system_get_all_by_template.return_value = [
             self.fixture.data_1,
             self.fixture.data_2,
         ]
@@ -2436,23 +2506,23 @@ def test_result_data_template_migration_for_multi_data(
         self.assertEqual(response, expected_result)
 
 
-@patch.object(data_api, "execute_query")
+@patch.object(system_api, "get_all_by_template")
 @patch.object(template_api, "get_by_id")
 def test_result_data_template_group_migration_error(
-    self, template_get, data_execute_query
+    self, template_get, system_get_all_by_template
 ):
     """test_result_data_template_group_migration_error
 
     Args:
         self:
         template_get:
-        data_execute_query:
+        system_get_all_by_template:
 
     Returns:
 
     """
     # Arrange
-    data_execute_query.return_value = [
+    system_get_all_by_template.return_value = [
         self.fixture.data_4,
         self.fixture.data_5,
     ]
