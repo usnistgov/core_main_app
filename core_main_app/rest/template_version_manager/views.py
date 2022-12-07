@@ -7,7 +7,6 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from core_main_app.commons import exceptions as exceptions
 from core_main_app.components.template_version_manager import (
     api as template_version_manager_api,
@@ -423,18 +422,21 @@ class TemplateVersionManagerOrdering(APIView):
               content: Internal server error
         """
         try:
-            # get list template ids
-            templates_ordering = template_version_manager_api.get_by_id_list(
-                request.data["template_list"], request
+            # get list ids
+            template_ids = request.data.get("template_list", [])
+
+            # get template list
+            template_list = template_version_manager_api.sort_by_id_list(
+                template_ids, request
             )
 
             # update template ordering
             template_version_manager_api.update_templates_ordering(
-                templates_ordering, user=self.request.user
+                template_list, user=self.request.user
             )
 
             # return response
-            return Response(status=status.HTTP_200_OK)
+            return Response({}, status=status.HTTP_200_OK)
         except AccessControlError as ace:
             content = {"message": str(ace)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)

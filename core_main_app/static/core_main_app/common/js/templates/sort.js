@@ -25,17 +25,16 @@ function dragover(){
 var saveTemplateOrdering = function()
 {
    // get template ids
-   var templateListIds = $("tr[object-id]").map(function() {
+   let queryData = {}
+   queryData.template_list = $("tr[object-id]").map(function() {
         return ($(this).attr("object-id"));
    }).get();
 
-
    $.ajax({
         url : saveTemplateOrderingUrl,
-        type: 'PATCH',
-        data: {
-          template_list: JSON.stringify(templateListIds)
-        },
+        type: "patch",
+        contentType: "application/json",
+        data: JSON.stringify(queryData),
         dataType: 'json',
         success : function(data) {
              location.reload();

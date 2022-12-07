@@ -209,6 +209,24 @@ def get_active_global_version_manager_by_title(version_manager_title, request):
     )
 
 
+@access_control(can_read_list)
+def sort_by_id_list(list_id, request):
+    """sort a version managers with the given id list.
+
+    Args:
+        list_id:
+        request
+
+    Returns:
+
+    """
+    tvm_list = dict(
+        [(tvm.id, tvm) for tvm in get_by_id_list(list_id, request)]
+    )
+
+    return [tvm_list[int(id)] for id in list_id]
+
+
 @access_control(can_write_list)
 def update_templates_ordering(template_version_manager_list, user):
     """Update templates ordering.

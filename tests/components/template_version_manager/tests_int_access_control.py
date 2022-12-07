@@ -1507,3 +1507,150 @@ class TestAccessControlCanWriteList(MongoIntegrationBaseTestCase):
             template_vm_list,
             self.superuser1,
         )
+
+
+class TestTemplateVersionManagerSortByIdList(MongoIntegrationBaseTestCase):
+    """Test Template Version Manager Sort By Id List"""
+
+    fixture = fixture_template_vm_ordering
+
+    def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
+        self.anonymous_user = create_mock_user(user_id=None, is_anonymous=True)
+        self.user1 = create_mock_user(user_id="1")
+        self.user2 = create_mock_user(user_id="2")
+        self.staff_user1 = create_mock_user(user_id="1", is_staff=True)
+        self.superuser1 = create_mock_user(user_id="1", is_superuser=True)
+        self.fixture.insert_data()
+
+    def test_sort_by_id_list_user_templates_as_anonymous_raises_access_control_error(
+        self,
+    ):
+        """test sort by id list user templates as anonymous raises access control error
+
+        Returns:x
+
+        """
+
+        # Arrange
+        list_templates_ordering = [self.fixture.tvm2.id, self.fixture.tvm1.id]
+
+        # Act # Assert
+        with self.assertRaises(AccessControlError):
+            template_vm_api.sort_by_id_list(
+                list_templates_ordering,
+                create_mock_request(user=self.anonymous_user),
+            )
+
+    def test_sort_by_id_list_global_templates_as_anonymous_raises_access_control_error(
+        self,
+    ):
+        """test sort by id list global templates as anonymous raises access control error
+
+        Returns:
+
+        """
+        # Arrange
+        list_templates_ordering = [
+            self.fixture.global_tvm2.id,
+            self.fixture.global_tvm1.id,
+        ]
+        # Act # Assert
+        with self.assertRaises(AccessControlError):
+            template_vm_api.sort_by_id_list(
+                list_templates_ordering,
+                create_mock_request(user=self.anonymous_user),
+            )
+
+    def test_sort_by_id_list_own_templates_as_user_returns_templates(self):
+        """test sort by id list own templates as user returns templates
+
+        Returns:
+
+        """
+        # Arrange
+        list_templates_ordering = [self.fixture.tvm2.id, self.fixture.tvm1.id]
+        # Act
+        result = template_vm_api.sort_by_id_list(
+            list_templates_ordering, create_mock_request(user=self.user1)
+        )
+
+        self.assertEqual(len(result), 2)
+
+    def test_sort_by_id_list_others_templates_raises_access_control_error(
+        self,
+    ):
+        """test sort by id list others templates raises access control error
+
+        Returns:
+
+        """
+        # Arrange
+        list_templates_ordering = [self.fixture.tvm2.id, self.fixture.tvm1.id]
+        # Act # Assert
+        with self.assertRaises(AccessControlError):
+            template_vm_api.sort_by_id_list(
+                list_templates_ordering, create_mock_request(user=self.user2)
+            )
+
+    def test_sort_by_id_list_global_templates_as_user_returns_templates(
+        self,
+    ):
+        """test sort by id list others templates as user returns templates
+
+        Returns:
+
+        """
+        # Arrange
+        list_templates_ordering = [
+            self.fixture.global_tvm2.id,
+            self.fixture.global_tvm1.id,
+        ]
+        # Act
+        result = template_vm_api.sort_by_id_list(
+            list_templates_ordering, create_mock_request(user=self.user1)
+        )
+        # Assert
+        self.assertEqual(len(result), 2)
+
+    def test_sort_by_id_list_users_templates_as_superuser_returns_templates(
+        self,
+    ):
+        """test sort by id list users templates as superuser saves returns templates
+
+        Returns:
+
+        """
+        # Arrange
+        list_templates_ordering = [self.fixture.tvm2.id, self.fixture.tvm1.id]
+        # Act
+        result = template_vm_api.sort_by_id_list(
+            list_templates_ordering, create_mock_request(user=self.superuser1)
+        )
+
+        # Assert
+        self.assertEqual(len(result), 2)
+
+    def test_sort_by_id_list_global_templates_as_superuser_returns_templates(
+        self,
+    ):
+        """test sort by id list users templates as superuser saves returns templates
+
+        Returns:
+
+        """
+        # Arrange
+        list_templates_ordering = [
+            self.fixture.global_tvm2.id,
+            self.fixture.global_tvm1.id,
+        ]
+        # Act
+        result = template_vm_api.sort_by_id_list(
+            list_templates_ordering, create_mock_request(user=self.superuser1)
+        )
+        # Assert
+        self.assertEqual(len(result), 2)

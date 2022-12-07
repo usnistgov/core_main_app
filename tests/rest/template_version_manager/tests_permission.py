@@ -932,7 +932,7 @@ class TestTemplateVersionManagerOrderingPatchPermission(SimpleTestCase):
         response = RequestMock.do_request_patch(
             template_version_manager_views.TemplateVersionManagerOrdering.as_view(),
             mock_user,
-            data={"template_list": "[]"},
+            data={"template_list": []},
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -961,7 +961,7 @@ class TestTemplateVersionManagerOrderingPatchPermission(SimpleTestCase):
         response = RequestMock.do_request_patch(
             template_version_manager_views.TemplateVersionManagerOrdering.as_view(),
             mock_user,
-            data={"template_list": "[]"},
+            data={"template_list": []},
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
