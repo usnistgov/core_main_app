@@ -133,8 +133,10 @@ def get_access_filters_from_query(
                         sub_value, workspace_list, user_list
                     )
                     # add values found in sub dict to existing lists
-                    workspace_list.extend(sub_workspace_list)
-                    user_list.extend(sub_user_list)
+                    if sub_workspace_list:
+                        workspace_list.extend(sub_workspace_list)
+                    if sub_user_list:
+                        user_list.extend(sub_user_list)
     # return list of workspaces and users
     return workspace_list, user_list
 
@@ -168,7 +170,7 @@ def convert_to_django(query_dict):
             if "$" in key:
                 raise QueryError("Unsupported $ operator found")
             # ignore workspace and user_id filters (dealt with by acl layer)
-            if key in ["workspace", "user_id"]:
+            if key in ["workspace", "_workspace_id", "user_id", "_id", "id"]:
                 continue
             # if key is template
             elif key == "template":

@@ -883,6 +883,70 @@ class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
         # no public data in the fixture
         self.assertEqual(data_list.count(), 0)
 
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_execute_query_get_owned_data_returns_only_owned_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test execute query returns data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(3)
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            fixture_data.workspace_1
+        ]
+        data_list = data_api.execute_json_query({"user_id": "3"}, mock_user)
+        self.assertEqual(len(data_list), 0)
+        self.assertTrue(all(data.user_id == "3" for data in data_list))
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_execute_and_workspace_user_as_superuser(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test execute query returns data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(3, is_superuser=True)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        data_list = data_api.execute_json_query(
+            {"$and": [{"workspace": 1}, {"user_id": 3}]}, mock_user
+        )
+        self.assertEqual(len(data_list), 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_execute_and_workspace_user_as_user_raises_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test execute query returns data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(3)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        with self.assertRaises(AccessControlError):
+            data_api.execute_json_query(
+                {"$and": [{"workspace": 1}, {"user_id": 3}]}, mock_user
+            )
+
 
 class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
     """TestDataExecuteRawQuery"""

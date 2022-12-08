@@ -11,3 +11,7 @@ class MockQuerySet(Mock):
     def count(self):
         """Count the number of items in the queryset"""
         return len(self.item_list)
+
+    def __getitem__(self, item):
+        """Iter items"""
+        return self.item_list[item]

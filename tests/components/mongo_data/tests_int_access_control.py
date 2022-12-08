@@ -314,6 +314,125 @@ class TestDataExecuteQuery(MongoDBIntegrationBaseTestCase):
         # no public data in the fixture
         self.assertEqual(data_list.count(), 0)
 
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    @tag("mongodb")
+    def test_execute_query_get_owned_data_returns_only_owned_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test execute query returns data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(3)
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            self.fixture.workspace_1
+        ]
+        data_list = data_api.execute_json_query({"user_id": "3"}, mock_user)
+        self.assertEqual(len(data_list), 0)
+        self.assertTrue(all(data.user_id == "3" for data in data_list))
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    @tag("mongodb")
+    def test_execute_query_get_by_empty_workspace_list(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test execute query returns data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(3)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        data_list = data_api.execute_json_query({"workspace": []}, mock_user)
+        self.assertEqual(len(data_list), 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    @tag("mongodb")
+    def test_execute_and_workspace_user_as_superuser(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test execute query returns data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(3, is_superuser=True)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        data_list = data_api.execute_json_query(
+            {"$and": [{"workspace": 1}, {"user_id": 3}]}, mock_user
+        )
+        self.assertEqual(len(data_list), 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    @tag("mongodb")
+    def test_execute_and_workspace_user_as_user_raises_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test execute query returns data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(3)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        with self.assertRaises(AccessControlError):
+            data_api.execute_json_query(
+                {"$and": [{"workspace": 1}, {"user_id": 3}]}, mock_user
+            )
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    @tag("mongodb")
+    def test_execute_with_workspace_id_returns_no_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test execute query returns data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(3)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        data_list = data_api.execute_json_query(
+            {"_workspace_id": 1}, mock_user
+        )
+        self.assertEqual(data_list.count(), 0)
+
     @override_settings(MONGODB_INDEXING=True)
     @override_settings(MONGODB_ASYNC_SAVE=False)
     @tag("mongodb")

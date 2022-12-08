@@ -5,6 +5,7 @@ from unittest.mock import patch
 from django.test import SimpleTestCase
 from rest_framework import status
 from tests.components.data.fixtures.fixtures import QueryDataFixtures
+from tests.mocks import MockQuerySet
 
 import core_main_app.components.data.api as data_api
 from core_main_app.commons.exceptions import DoesNotExist
@@ -44,7 +45,7 @@ class TestDataList(SimpleTestCase):
         """
         # Arrange
         mock_user = create_mock_user("1")
-        mock_get_all.return_value = []
+        mock_get_all.return_value = MockQuerySet()
 
         # Mock
         response = RequestMock.do_request_get(

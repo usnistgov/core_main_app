@@ -60,34 +60,6 @@ def get_all_except(id_list, order_by_field=DATA_SORTING_FIELDS):
     return Data.get_all_except(order_by_field, id_list)
 
 
-def get_all_data_in_workspaces(workspace_list):
-    """Get all data stored in a list of workspace
-
-    Args:
-        workspace_list:
-
-    Returns:
-
-    """
-    return Data.get_all_by_list_workspace(workspace_list, DATA_SORTING_FIELDS)
-
-
-def get_all_data_in_workspaces_for_templates(workspace_list, template_list):
-    """Get all data stored in a list of workspace and validated by a list of
-    templates
-
-    Args:
-        workspace_list:
-        template_list:
-
-    Returns:
-
-    """
-    return Data.get_all_by_templates_and_workspaces(
-        template_list, workspace_list, DATA_SORTING_FIELDS
-    )
-
-
 def get_all_templates():
     """Return all templates
 

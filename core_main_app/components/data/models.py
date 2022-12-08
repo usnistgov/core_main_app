@@ -1,5 +1,6 @@
 """ Data model
 """
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ObjectDoesNotExist
@@ -10,8 +11,6 @@ from core_main_app.commons import exceptions
 from core_main_app.components.abstract_data.models import AbstractData
 from core_main_app.components.template.models import Template
 from core_main_app.components.workspace.models import Workspace
-from core_main_app.utils.raw_query.django_raw_query import get_workspace_query
-from django.conf import settings
 
 
 # TODO: Create publication workflow manager
@@ -201,21 +200,6 @@ class Data(AbstractData):
         )
 
     @staticmethod
-    def get_all_by_list_workspace(list_workspace, order_by_field):
-        """Get all data that belong to the list of workspace.
-
-        Args:
-            list_workspace:
-            order_by_field:
-
-        Returns:
-
-        """
-        return Data.objects.filter(
-            get_workspace_query(list_workspace)
-        ).order_by(*[field.replace("+", "") for field in order_by_field])
-
-    @staticmethod
     def get_all_by_list_template(list_template, order_by_field):
         """Get all data that belong to the list of template.
 
@@ -229,41 +213,6 @@ class Data(AbstractData):
         return Data.objects.filter(template__in=list_template).order_by(
             *[field.replace("+", "") for field in order_by_field]
         )
-
-    @staticmethod
-    def get_all_by_user_and_workspace(user_id, list_workspace, order_by_field):
-        """Get all data that belong to the list of workspace and owned by a user.
-
-        Args:
-            list_workspace:
-            user_id:
-            order_by_field:
-
-        Returns:
-
-        """
-        return Data.objects.filter(
-            get_workspace_query(list_workspace) | Q(user_id=str(user_id))
-        ).order_by(*[field.replace("+", "") for field in order_by_field])
-
-    @staticmethod
-    def get_all_by_templates_and_workspaces(
-        list_template, list_workspace, order_by_field
-    ):
-        """Get all data stored in the list of workspace and created from the
-        list of templates.
-
-        Args:
-            list_template:
-            list_workspace:
-            order_by_field:
-
-        Returns:
-
-        """
-        return Data.objects.filter(
-            get_workspace_query(list_workspace) & Q(template__in=list_template)
-        ).order_by(*[field.replace("+", "") for field in order_by_field])
 
     @staticmethod
     def get_none():

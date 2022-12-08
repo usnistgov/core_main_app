@@ -84,6 +84,7 @@ def get_all(user, order_by_field=DATA_SORTING_FIELDS):
     return Data.get_all(order_by_field)
 
 
+@access_control(core_main_app.access_control.api.can_read)
 def get_all_by_user(user, order_by_field=DATA_SORTING_FIELDS):
     """Return all data owned by a user.
 

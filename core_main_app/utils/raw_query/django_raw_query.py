@@ -90,7 +90,13 @@ def _get_accessible_criteria(
     access_criteria = Q(**{f"{workspace_key}__in": workspace_query})
     # user_id should have the id of the user making the query
     if user and user.id:
-        access_criteria |= Q(user_id=str(user.id))
+        # if user filter is set
+        if user_filter:
+            # filter on user id
+            access_criteria &= Q(user_id=str(user.id))
+        else:
+            # otherwise include user's own data to results
+            access_criteria |= Q(user_id=str(user.id))
     # return access criteria
     return access_criteria
 

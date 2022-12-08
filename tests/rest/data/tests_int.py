@@ -43,7 +43,12 @@ class TestDataListByWorkspace(MongoIntegrationBaseTestCase):
         """
         super().setUp()
 
-    def test_get_filtered_by_correct_workspace_returns_data(self):
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_get_filtered_by_correct_workspace_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
         """test_get_filtered_by_correct_workspace_returns_data
 
         Returns:
@@ -51,6 +56,7 @@ class TestDataListByWorkspace(MongoIntegrationBaseTestCase):
         """
         # Arrange
         user = create_mock_user(1)
+        get_all_workspaces_with_read_access_by_user.return_value = []
 
         # Act
         response = RequestMock.do_request_get(
@@ -62,7 +68,12 @@ class TestDataListByWorkspace(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(len(response.data["results"]), 2)
 
-    def test_get_filtered_by_incorrect_workspace_returns_no_data(self):
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_get_filtered_by_incorrect_workspace_returns_no_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
         """test_get_filtered_by_incorrect_workspace_returns_no_data
 
         Returns:
@@ -70,6 +81,7 @@ class TestDataListByWorkspace(MongoIntegrationBaseTestCase):
         """
         # Arrange
         user = create_mock_user(1)
+        get_all_workspaces_with_read_access_by_user.return_value = []
 
         # Act
         response = RequestMock.do_request_get(
@@ -114,11 +126,17 @@ class TestDataList(MongoIntegrationBaseTestCase):
         """
         super().setUp()
 
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
     @patch.object(Data, "xml_content")
-    def test_get_returns_http_200(self, mock_xml_content):
+    def test_get_returns_http_200(
+        self, mock_xml_content, get_all_workspaces_with_read_access_by_user
+    ):
         """test_get_returns_http_200
 
         Args:
+            get_all_workspaces_with_read_access_by_user
             mock_xml_content:
 
         Returns:
@@ -126,6 +144,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
         """
         # Arrange
         user = create_mock_user(1)
+        get_all_workspaces_with_read_access_by_user.return_value = []
         mock_xml_content.return_value = "content"
 
         # Act
@@ -136,13 +155,19 @@ class TestDataList(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_get_returns_all_user_data(self):
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_get_returns_all_user_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
         """test_get_returns_all_user_data
 
         Returns:
 
         """
         # Arrange
+        get_all_workspaces_with_read_access_by_user.return_value = []
         user = create_mock_user(1)
 
         # Act
@@ -153,7 +178,12 @@ class TestDataList(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(len(response.data["results"]), 2)
 
-    def test_get_filtered_by_correct_title_returns_data(self):
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_get_filtered_by_correct_title_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
         """test_get_filtered_by_correct_title_returns_data
 
         Returns:
@@ -161,6 +191,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
         """
         # Arrange
         user = create_mock_user(1)
+        get_all_workspaces_with_read_access_by_user.return_value = []
 
         # Act
         response = RequestMock.do_request_get(
@@ -172,7 +203,12 @@ class TestDataList(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(len(response.data["results"]), 1)
 
-    def test_get_filtered_by_incorrect_title_returns_no_data(self):
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_get_filtered_by_incorrect_title_returns_no_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
         """test_get_filtered_by_incorrect_title_returns_no_data
 
         Returns:
@@ -180,6 +216,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
         """
         # Arrange
         user = create_mock_user(1)
+        get_all_workspaces_with_read_access_by_user.return_value = []
 
         # Act
         response = RequestMock.do_request_get(
@@ -210,7 +247,12 @@ class TestDataList(MongoIntegrationBaseTestCase):
         # Assert
         self.assertEqual(len(response.data), 1)
 
-    def test_get_filtered_by_incorrect_template_returns_no_data(self):
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_get_filtered_by_incorrect_template_returns_no_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
         """test_get_filtered_by_incorrect_template_returns_no_data
 
         Returns:
@@ -218,6 +260,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
         """
         # Arrange
         user = create_mock_user(1)
+        get_all_workspaces_with_read_access_by_user.return_value = []
 
         # Act
         response = RequestMock.do_request_get(
