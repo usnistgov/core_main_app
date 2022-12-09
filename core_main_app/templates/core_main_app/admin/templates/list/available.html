@@ -18,7 +18,8 @@
 
     {% for object in data.available %}
         <tr object-id={{object.id}} draggable="true" ondragstart="start()"  ondragover="dragover()">
-            <td>{{ object.display_rank }}</td>
+
+            <td>{% if object.display_rank %} {{object.display_rank}} {%else %} - {%endif%} </td>
             <td>{{ object.title }}</td>
             <td>
                 {% block box_actions %}
