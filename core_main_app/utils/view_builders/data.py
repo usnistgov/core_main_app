@@ -119,10 +119,7 @@ def build_page(
                 "core_file_preview_app/user/file_preview_modal.html"
             )
 
-        if (
-            "core_linked_records_app" in settings.INSTALLED_APPS
-            and not display_admin_version
-        ):
+        if "core_linked_records_app" in settings.INSTALLED_APPS:
             from core_linked_records_app.components.pid_settings import (
                 api as pid_settings_api,
             )
@@ -140,6 +137,9 @@ def build_page(
                             "is_raw": False,
                         },
                     ]
+                )
+                page_info["assets"]["css"].append(
+                    "core_main_app/common/css/share_link.css"
                 )
                 page_info["modals"].append(
                     "core_linked_records_app/user/sharing/data_detail/modal.html"

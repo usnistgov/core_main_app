@@ -1,0 +1,20 @@
+
+input.shared-data
+{
+    font-size: 17pt;
+    font-weight: 300;
+    transition: border-color 0.2s ease-in-out;
+    border: solid 1px #e0e0e0;
+    border-radius: 5px;
+    color: inherit;
+    padding: 0.75em;
+    width: 100%;
+    background-color: #efefef !important;
+    opacity: 0.8;
+    line-height: 1.5em;
+}
+
+h1, h2, h3, h4, h5, h6 .modal-title{
+    color: inherit;
+    font-weight: 600;
+ }
