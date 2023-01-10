@@ -3,6 +3,7 @@
 import re
 
 from django.core.exceptions import ValidationError
+from django.core.files.utils import validate_file_name
 
 from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
 
@@ -34,3 +35,19 @@ def validate_alphanum(name):
         raise ValidationError(
             "Name should only contains alpha-numerical characters."
         )
+
+
+def validate_filename(filename):
+    """Validate filename
+
+    Args:
+        filename:
+
+    Returns:
+
+    """
+    # Run validate filename from Django
+    validate_file_name(filename)
+    # Regex check filename has extension
+    if re.match(r"^[\w]+\.[a-z0-9]{2,4}$", filename) is None:
+        raise ValidationError("Invalid filename.")

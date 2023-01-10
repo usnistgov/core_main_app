@@ -80,7 +80,6 @@ class TestBlobList(MongoIntegrationBaseTestCase):
         """
         super().setUp()
         self.data = {
-            "filename": "file.txt",
             "blob": SimpleUploadedFile("blob.txt", b"blob"),
         }
 
@@ -227,6 +226,27 @@ class TestBlobList(MongoIntegrationBaseTestCase):
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["filename"], self.data["blob"].name)
+
+    @override_settings(ROOT_URLCONF="core_main_app.urls")
+    def test_post_with_filename_returns_http_201(self):
+        """test_post_returns_http_201
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user("1")
+        self.data["filename"] = "test.txt"
+
+        # Act
+        response = RequestMock.do_request_post(
+            views.BlobList.as_view(), user, data=self.data, content_type=None
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["filename"], self.data["filename"])
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_post_adds_an_entry_in_database(self):
@@ -237,6 +257,7 @@ class TestBlobList(MongoIntegrationBaseTestCase):
         """
         # Arrange
         user = create_mock_user("1")
+        number_of_blobs = Blob.get_all().count()
 
         # Act
         RequestMock.do_request_post(
@@ -244,7 +265,7 @@ class TestBlobList(MongoIntegrationBaseTestCase):
         )
 
         # Assert
-        self.assertEqual(len(Blob.get_all()), 4)
+        self.assertEqual(Blob.get_all().count(), number_of_blobs + 1)
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_post_incorrect_file_parameter_returns_http_400(self):
@@ -259,7 +280,7 @@ class TestBlobList(MongoIntegrationBaseTestCase):
 
         # Act
         response = RequestMock.do_request_post(
-            views.BlobList.as_view(), user, data=self.data
+            views.BlobList.as_view(), user, data=self.data, content_type=None
         )
 
         # Assert

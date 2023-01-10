@@ -6,7 +6,7 @@ from urllib.parse import urljoin
 
 from django.http import Http404
 from django.urls import reverse
-from rest_framework.fields import CharField
+from rest_framework.fields import CharField, ModelField
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
@@ -15,6 +15,7 @@ from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.blob.utils import get_blob_download_uri
+from core_main_app.utils.validation.regex_validation import validate_filename
 
 
 class BlobSerializer(ModelSerializer):
@@ -22,6 +23,10 @@ class BlobSerializer(ModelSerializer):
 
     handle = SerializerMethodField()
     upload_date = SerializerMethodField()
+    filename = ModelField(
+        model_field=Blob()._meta.get_field("filename"), required=False
+    )
+
     if "core_linked_records_app" in settings.INSTALLED_APPS:
         pid = SerializerMethodField()
 
@@ -41,11 +46,11 @@ class BlobSerializer(ModelSerializer):
         read_only_fields = (
             "id",
             "user_id",
-            "filename",
             "handle",
             "checksum",
             "upload_date",
         )
+
         if "core_linked_records_app" in settings.INSTALLED_APPS:
             fields.append("pid")
             read_only_fields = read_only_fields + ("pid",)
@@ -109,6 +114,21 @@ class BlobSerializer(ModelSerializer):
         # Return instance generation time
         return str(instance.creation_date)
 
+    def get_filename_from_data(self, validated_data):
+        """Get filename from validated data
+
+        Args:
+            validated_data:
+
+        Returns:
+
+        """
+        if "filename" in validated_data:
+            validate_filename(validated_data["filename"])
+            return validated_data["filename"]
+        if hasattr(validated_data["blob"], "name"):
+            return validated_data["blob"].name
+
     def create(self, validated_data):
         """Create and return a new `Blob` instance, given the validated data.
 
@@ -120,7 +140,7 @@ class BlobSerializer(ModelSerializer):
         """
         # Create blob
         blob_object = Blob(
-            filename=validated_data["blob"].name,
+            filename=self.get_filename_from_data(validated_data),
             user_id=str(self.context["request"].user.id),
             blob=validated_data["blob"],
         )
