@@ -1,0 +1,65 @@
+{% load dict_key_extras %}
+{% load draft_extras %}
+{% load xsl_transform_tag %}
+{% load blob_tags %}
+
+<h1>{{data.page_title}}</h1>
+
+
+<p>
+    Use {{data.type}} Text Editor tool to view, edit, and format {{data.type}}.
+    It shows your content side by side in a clear, editable representation.
+</p>
+
+<div class="alert alert-danger m-2" style="display: none;" role="alert">
+    <i class="fas fa-exclamation-triangle"></i>
+</div>
+
+
+<div>
+    <div class="border rounded input" contenteditable="true">
+        <pre class="content-highlight m-1"><code>{{data.content}}</code></pre>
+    </div>
+
+    {% if data.type == 'XML' %}
+        <div class="border rounded bg-light representation " hidden>
+            <div class="tree m-2">
+                {% xsl_transform_detail xml_content=data.content template_id=data.template_id xslt_id=data.xsl_transformation_id request=request as xml_representation %}
+                {% if 'core_file_preview_app' in INSTALLED_APPS %}
+                    {% render_blob_links_in_span xml_string=xml_representation as xml_representation %}
+                {% endif %}
+
+                {{ xml_representation|safe}}
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+
+<div class="float-right m-2">
+        {% if data.type == 'XML' %}
+            <select class="selectpicker form-control" style="width:100px; display:inline-block" id="xslt-selector" hidden>
+                           {% if not data.template_xsl_rendering.default_detail_xslt %}  <option value={{None}}>Default</option>{% endif %}
+                           {% for xslt in data.template_xsl_rendering.list_detail_xslt.all %}
+                                <option value="{{xslt.id}}" {% if xslt.id == xslt_id %} selected {% endif %}>{{xslt.name}} {% if xslt == template_xsl_rendering.default_detail_xslt %} (default) {% endif %}</option>
+                           {% endfor %}
+            </select>
+            <button class="btn btn-secondary refresh mr-auto" hidden><i class="fas fa-sync" ></i> Refresh  </button>
+            <button class="btn btn-secondary display mr-auto"><i class="fas fa-eye" ></i> Display  </button>
+        {% endif %}
+    	<button class="btn btn-secondary format mr-auto"><i class="fas fa-paint-brush"></i> Format </button>
+        <button class="btn btn-secondary validate"><i class="fas fa-check"></i> Validate </button>
+        <button class="btn btn-success save mr-auto" disabled><i class="fas fa-save"></i> Save </button>
+
+
+</div>
+<div id="document_id" class="hidden">{{data.document_id}}</div>
+<div id="editor_type" class="hidden">{{data.type}}</div>
+{% if data.template_id %}
+<div id="template_id" class="hidden">{{data.template_id}}</div>
+{% endif %}
+{% if data.document_name %}
+<div id="document_name" class="hidden">{{data.document_name}}</div>
+{% endif %}
+
+

@@ -31,32 +31,11 @@ def build_page(
     }
 
     try:
-        display_xslt_selector = True
-        try:
-            template_xsl_rendering = (
-                template_xsl_rendering_api.get_by_template_id(
-                    data_object.template.id
-                )
-            )
-            xsl_transformation_id = (
-                template_xsl_rendering.default_detail_xslt.id
-                if template_xsl_rendering.default_detail_xslt
-                else None
-            )
-            if template_xsl_rendering.list_detail_xslt.count() == 0 or (
-                template_xsl_rendering.default_detail_xslt is not None
-                and template_xsl_rendering.list_detail_xslt.count() == 1
-            ):
-                display_xslt_selector = False
-
-        except Exception as exception:
-            logger.warning(
-                "An exception occurred when retrieving XSLT: %s",
-                str(exception),
-            )
-            display_xslt_selector = False
-            template_xsl_rendering = None
-            xsl_transformation_id = None
+        (
+            display_xslt_selector,
+            template_xsl_rendering,
+            xsl_transformation_id,
+        ) = xslt_selector(data_object.template.id)
 
         page_info["context"] = {
             "data": data_object,
@@ -173,6 +152,44 @@ def _get_data_title(data_object):
     if isinstance(data_object, dict):
         return data_object.get("title", None)
     return None
+
+
+def xslt_selector(template_id):
+    """Setup Xslt Selector
+
+    Args:
+        template_id
+
+    Return:
+
+    """
+
+    display_xslt_selector = True
+    try:
+        template_xsl_rendering = template_xsl_rendering_api.get_by_template_id(
+            template_id
+        )
+        xsl_transformation_id = (
+            template_xsl_rendering.default_detail_xslt.id
+            if template_xsl_rendering.default_detail_xslt
+            else None
+        )
+        if template_xsl_rendering.list_detail_xslt.count() == 0 or (
+            template_xsl_rendering.default_detail_xslt is not None
+            and template_xsl_rendering.list_detail_xslt.count() == 1
+        ):
+            display_xslt_selector = False
+
+    except Exception as exception:
+        logger.warning(
+            "An exception occurred when retrieving XSLT: %s",
+            str(exception),
+        )
+        display_xslt_selector = False
+        template_xsl_rendering = None
+        xsl_transformation_id = None
+
+    return display_xslt_selector, template_xsl_rendering, xsl_transformation_id
 
 
 def render_page(request, render_function, template, context):

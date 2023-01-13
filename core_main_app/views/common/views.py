@@ -1,10 +1,16 @@
 """
     Common views
 """
-from abc import ABCMeta
+import json
+from abc import ABCMeta, abstractmethod
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseBadRequest, HttpResponseForbidden
+from django.http import (
+    HttpResponseBadRequest,
+    HttpResponseForbidden,
+    HttpResponse,
+)
+
 from django.http.response import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -31,6 +37,10 @@ from core_main_app.utils.rendering import admin_render
 from core_main_app.utils.rendering import render
 from core_main_app.utils.view_builders import data as data_view_builder
 from core_main_app.views.admin.forms import TemplateXsltRenderingForm
+
+from core_main_app.utils.xml import format_content_xml
+from xml_utils.xsd_tree.xsd_tree import XSDTree
+from core_main_app.utils import xml as main_xml_utils
 
 
 class CommonView(View, metaclass=ABCMeta):
@@ -494,3 +504,434 @@ def defender_error_page(request):
         "core_main_app/common/defender/error.html",
         context={"page_title": "Error"},
     )
+
+
+class AbstractEditorView(View, metaclass=ABCMeta):
+    """Abstract Text Editor View"""
+
+    template = "core_main_app/user/text_editor/text_editor.html"
+
+    def _get_assets(self):
+        """get assets
+
+        Return:
+        """
+        assets = {
+            "js": [
+                {
+                    "path": "core_main_app/user/js/text_editor/text_editor.js",
+                    "is_raw": False,
+                },
+                {
+                    "path": "core_main_app/user/js/text_editor/text_editor.raw.js",
+                    "is_raw": True,
+                },
+                {
+                    "path": "core_main_app/libs/highlight/11.0.0/js/highlight.min.js",
+                    "is_raw": False,
+                },
+                {
+                    "path": "core_main_app/libs/highlight/11.0.0/js/init_highlight.js",
+                    "is_raw": False,
+                },
+            ],
+            "css": [
+                "core_main_app/libs/highlight/11.0.0/css/atom-one-light.css",
+                "core_main_app/user/css/text-editor.css",
+            ],
+        }
+        return assets
+
+    def _get_context(self, document_id, type_content, content):
+        """get context
+
+        Return:
+        """
+        context = {
+            "page_title": type_content + " Text Editor",
+            "content": content,
+            "type": type_content,
+            "document_id": document_id,
+        }
+        return context
+
+    def post(self, request):
+        """post
+
+        Parameters:
+            {
+                "content":"content",
+                "action": format/validate/save
+                "document_id": document_id
+                "template_id": template_id
+            }
+
+        Args:
+            request: HTTP request
+
+        Returns:
+
+            - code: 200
+              content: action done
+            - code: 400
+              content: Bad request
+            - code: 403
+              content: Forbidden
+            - code: 500
+              content: Internal server error
+        """
+
+        try:
+            # get action
+            action = request.POST["action"]
+            # apply action: format, validate or save
+            return getattr(self, "%s" % action)()
+        except Exception as e:
+            return HttpResponseBadRequest(html_escape(str(e)))
+
+    @abstractmethod
+    def format(self, *args, **kwargs):
+        """Returns formatted content
+
+        Args:
+            args:
+            kwargs:
+
+        Returns: content
+
+        """
+        raise NotImplementedError("format method is not implemented.")
+
+    @abstractmethod
+    def validate(self, *args, **kwargs):
+        """Validate content
+
+        Args:
+            args:
+            kwargs:
+
+        Returns:
+
+        """
+        raise NotImplementedError("validate method is not implemented.")
+
+    @abstractmethod
+    def save(self, *args, **kwargs):
+        """Save content
+
+        Args:
+            args:
+            kwargs:
+
+        Returns:
+
+        """
+        raise NotImplementedError("save method is not implemented.")
+
+
+class XmlEditor(AbstractEditorView, metaclass=ABCMeta):
+    """Xml Editor"""
+
+    def format(self, *args, **kwargs):
+        """Format xml content
+
+        Args:
+            args:
+            kwargs:
+
+        Returns:
+
+        """
+        content = self.request.POST["content"].strip()
+        return HttpResponse(
+            json.dumps(format_content_xml(content)),
+            "application/javascript",
+        )
+
+    def validate(self, *args, **kwargs):
+        """Validate xml content
+
+        Args:
+            args:
+            kwargs:
+
+        Returns:
+
+        """
+        content = self.request.POST["content"].strip()
+
+        try:
+            # build the xsd tree
+            xml_tree = XSDTree.build_tree(content)
+        except Exception as exception:
+            raise exceptions.XMLError(str(exception))
+        try:
+            # get template
+            template_id = self.request.POST["template_id"]
+            template = template_api.get_by_id(template_id, self.request)
+            # build the xsd tree
+            xsd_tree = XSDTree.build_tree(template.content)
+        except Exception as exception:
+            raise exceptions.XSDError(str(exception))
+
+        # validate content
+        error = main_xml_utils.validate_xml_data(
+            xsd_tree, xml_tree, request=self.request
+        )
+        if error is not None:
+            raise exceptions.XMLError(error)
+        return HttpResponse(
+            json.dumps("Validated successfully"),
+            "application/javascript",
+        )
+
+    def _get_assets(self):
+        """get assets
+
+        Return:
+        """
+        # get assets
+        assets = super()._get_assets()
+
+        # add css relatives to xml editor
+        assets["css"].append("core_main_app/common/css/XMLTree.css")
+
+        # add js relatives to xml editor
+        assets["js"].append(
+            {
+                "path": "core_main_app/common/js/XMLTree.js",
+                "is_raw": False,
+            },
+        )
+
+        return assets
+
+    def _get_context(self, document, xml_content):
+        """get context
+
+        Args:
+            document:
+            xml_content:
+
+        Returns:
+        """
+        # get assets
+        context = super()._get_context(document.id, "XML", xml_content)
+
+        # build xslt selector
+        (
+            display_xslt_selector,
+            template_xsl_rendering,
+            xsl_transformation_id,
+        ) = data_view_builder.xslt_selector(document.template.id)
+
+        # add context relatives to xml editor
+        context.update(
+            {
+                "document_name": document.__class__.__name__,
+                "template_id": document.template.id,
+                "template_xsl_rendering": template_xsl_rendering,
+                "xsl_transformation_id": xsl_transformation_id,
+                "can_display_selector": display_xslt_selector,
+            }
+        )
+
+        return context
+
+
+class DataContentEditor(XmlEditor):
+    """Data Content Editor View"""
+
+    def get(self, request):
+        """get
+
+        Args:
+            request
+
+        Returns:
+        """
+
+        try:
+            data = data_api.get_by_id(request.GET["id"], request.user)
+            context = self._get_context(data, data.xml_content)
+            assets = self._get_assets()
+            return render(
+                request, self.template, assets=assets, context=context
+            )
+        except AccessControlError:
+            error_message = "Access Forbidden"
+            status_code = 403
+        except exceptions.DoesNotExist:
+            # fix me
+            error_message = "Data not found"
+            status_code = 404
+        except Exception as e:
+            error_message = str(e)
+            status_code = 400
+
+        return render(
+            request,
+            "core_main_app/common/commons/error.html",
+            assets={
+                "js": [
+                    {
+                        "path": "core_main_app/user/js/data/detail.js",
+                        "is_raw": False,
+                    }
+                ]
+            },
+            context={
+                "error": error_message,
+                "status_code": status_code,
+            },
+        )
+
+    def save(self, *args, **kwargs):
+        """Save xml content
+
+        Args:
+            args:
+            kwargs:
+
+        Returns:
+
+        """
+        try:
+            content = self.request.POST["content"].strip()
+            data_id = self.request.POST["document_id"]
+            data = data_api.get_by_id(data_id, self.request.user)
+            # update content
+            data.xml_content = content
+            # save data
+            data_api.upsert(data, self.request)
+            return HttpResponse(
+                json.dumps("saved successfully"),
+                "application/javascript",
+            )
+        except AccessControlError as ace:
+            return HttpResponseForbidden(html_escape(str(ace)))
+        except DoesNotExist as dne:
+            return HttpResponseBadRequest(html_escape(str(dne)))
+
+
+class XSDEditor(AbstractEditorView):
+    """XSD Editor View"""
+
+    def get(self, request):
+        """get
+
+        Args:
+            request:
+
+        Returns:
+        """
+
+        try:
+
+            template = template_api.get_by_id(request.GET["id"], request)
+            context = super()._get_context(
+                template.id, "XSD", template.content
+            )
+            assets = super()._get_assets()
+            return render(
+                request, self.template, assets=assets, context=context
+            )
+
+        except AccessControlError:
+            error_message = "Access Forbidden"
+            status_code = 403
+        except exceptions.DoesNotExist:
+            error_message = "Template not found"
+            status_code = 404
+        except Exception as e:
+            error_message = str(e)
+            status_code = 400
+        return render(
+            request,
+            "core_main_app/common/commons/error.html",
+            assets={
+                "js": [
+                    {
+                        "path": "core_main_app/user/js/data/detail.js",
+                        "is_raw": False,
+                    }
+                ]
+            },
+            context={
+                "error": error_message,
+                "status_code": status_code,
+            },
+        )
+
+    def format(self, *args, **kwargs):
+        """Format xml content
+
+        Args:
+            args:
+            kwargs:
+
+        Returns:
+
+        """
+        content = self.request.POST["content"].strip()
+        return HttpResponse(
+            json.dumps(format_content_xml(content)),
+            "application/javascript",
+        )
+
+    def validate(self, *args, **kwargs):
+        """Validate xml content
+
+        Args:
+            args:
+            kwargs:
+
+        Returns:
+
+        """
+        content = self.request.POST["content"].strip()
+        try:
+            # build the xsd tree
+            xsd_tree = XSDTree.build_tree(content)
+        except Exception as exception:
+            raise exceptions.XSDError(str(exception))
+
+        # validate the schema
+        error = main_xml_utils.validate_xml_schema(
+            xsd_tree, request=self.request
+        )
+        if error is not None:
+            raise exceptions.XMLError(error)
+
+        return HttpResponse(
+            json.dumps("Validated successfully"),
+            "application/javascript",
+        )
+
+    def save(self, *args, **kwargs):
+        """Save content
+
+        Args:
+            args:
+            kwargs:
+
+        Returns:
+
+        """
+        try:
+            content = self.request.POST["content"].strip()
+            template_id = self.request.POST["document_id"]
+            template = template_api.get_by_id(template_id, self.request)
+            # update content
+            template.content = content
+            # save template
+            template_api.upsert(template, request=self.request)
+
+            return HttpResponse(
+                json.dumps("saved successfully"),
+                "application/javascript",
+            )
+        except AccessControlError as ace:
+            return HttpResponseForbidden(html_escape(str(ace)))
+        except DoesNotExist as dne:
+            return HttpResponseBadRequest(html_escape(str(dne)))

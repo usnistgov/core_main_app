@@ -1,0 +1,15 @@
+
+.input{
+    height:542px;
+    overflow:scroll;
+}
+
+.representation{
+    height:542px;
+    width : 49%;
+    overflow:scroll;
+    display: inline-block;
+}
+
+
+

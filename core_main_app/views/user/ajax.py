@@ -30,6 +30,7 @@ from core_main_app.views.user.forms import (
     GroupRightForm,
 )
 
+
 GROUP = "group"
 USER = "user"
 
@@ -522,12 +523,12 @@ def change_data_display(request):
         xsl_transformation_id = request.POST.get("xslt_id", None)
         data_id = request.POST.get("data_id", None)
         data = data_api.get_by_id(data_id, request.user)
-
+        xml_content = request.POST.get("content", data.xml_content)
         return HttpResponse(
             json.dumps(
                 {
                     "template": render_xml_as_html_detail(
-                        xml_content=data.xml_content,
+                        xml_content=xml_content,
                         template_id=data.template.id,
                         template_hash=data.template.hash,
                         xslt_id=xsl_transformation_id,
