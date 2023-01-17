@@ -17,7 +17,7 @@ from core_main_app.settings import (
 )
 from core_main_app.utils import xml as xml_utils
 from core_main_app.utils.checksum import compute_checksum
-from core_main_app.utils.datetime_tools.utils import datetime_now
+from core_main_app.utils.datetime import datetime_now
 from core_main_app.utils.storage.storage import (
     core_file_storage,
     user_directory_path,

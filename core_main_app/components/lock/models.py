@@ -1,7 +1,6 @@
 """
  Lock model
 """
-import datetime
 import threading
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -9,6 +8,7 @@ from django.db import models
 
 from core_main_app.commons import exceptions
 from core_main_app.components.data.models import Data
+from core_main_app.utils.datetime import datetime_now
 
 sem = threading.Semaphore()
 
@@ -61,7 +61,7 @@ class Lock:
         database_lock_object = DatabaseLockObject()
         database_lock_object.object = object
         database_lock_object.user_id = str(user.id)
-        database_lock_object.lock_date = datetime.datetime.now()
+        database_lock_object.lock_date = datetime_now()
         database_lock_object.save()
 
     def remove_lock(self, database_lock_object):

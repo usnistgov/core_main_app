@@ -1,12 +1,12 @@
 """
     Lock API
 """
-import datetime
 import logging
 
 from core_main_app.commons.exceptions import LockError
 from core_main_app.components.lock.models import Lock
 from core_main_app.settings import LOCK_OBJECT_TTL
+from core_main_app.utils.datetime import datetime_now
 
 logger = logging.getLogger(__name__)
 
@@ -86,9 +86,7 @@ def _check_object_locked(object, user, lock):
 
     # Check if lock has expired
     date = database_lock_object.lock_date
-    if (
-        datetime.datetime.now() - date.replace(tzinfo=None)
-    ).total_seconds() > LOCK_OBJECT_TTL:
+    if (datetime_now() - date).total_seconds() > LOCK_OBJECT_TTL:
         lock.remove_lock(database_lock_object)
         return False
 

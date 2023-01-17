@@ -21,7 +21,7 @@ from core_main_app.components.data.tasks import (
 )
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.settings import DATA_SORTING_FIELDS
-from core_main_app.utils.datetime_tools.utils import datetime_now
+from core_main_app.utils.datetime import datetime_now
 from core_main_app.utils.query.mongo.prepare import (
     convert_to_django,
     get_access_filters_from_query,

@@ -1,17 +1,9 @@
 """ Integration tests Data
 """
-import datetime
 from types import SimpleNamespace
 from unittest.mock import patch
 
-import pytz
 from django.db.models import Q
-from tests.components.data.fixtures.fixtures import (
-    DataFixtures,
-    AccessControlDataFixture,
-)
-from tests.components.data.fixtures.fixtures import DataMigrationFixture
-from tests.components.user.fixtures.fixtures import UserFixtures
 
 from core_main_app.commons import exceptions
 from core_main_app.components.data import api as data_api
@@ -21,6 +13,7 @@ from core_main_app.components.data.models import Data
 from core_main_app.components.template import api as template_api
 from core_main_app.settings import DATA_SORTING_FIELDS
 from core_main_app.system import api as system_api
+from core_main_app.utils.datetime import datetime_now
 from core_main_app.utils.integration_tests.integration_base_test_case import (
     MongoIntegrationBaseTestCase,
 )
@@ -28,6 +21,12 @@ from core_main_app.utils.integration_tests.integration_base_transaction_test_cas
     MongoIntegrationTransactionTestCase,
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
+from tests.components.data.fixtures.fixtures import (
+    DataFixtures,
+    AccessControlDataFixture,
+)
+from tests.components.data.fixtures.fixtures import DataMigrationFixture
+from tests.components.user.fixtures.fixtures import UserFixtures
 
 fixture_data_template = DataMigrationFixture()
 fixture_data = DataFixtures()
@@ -2256,7 +2255,7 @@ def mock_upsert(data, user):
             "Unable to save data: xml_content field is not set."
         )
 
-    data.last_modification_date = datetime.datetime.now(pytz.utc)
+    data.last_modification_date = datetime_now()
     check_xml_file_is_valid(data)
     return data.save()
 

@@ -47,7 +47,7 @@ from core_main_app.utils.boolean import to_bool
 from core_main_app.utils.databases.mongo.pymongo_database import (
     get_full_text_query,
 )
-from core_main_app.utils.datetime_tools.utils import datetime_now
+from core_main_app.utils.datetime import datetime_now
 from core_main_app.utils.file import get_file_http_response
 from core_main_app.utils.pagination.rest_framework_paginator.pagination import (
     StandardResultsSetPagination,

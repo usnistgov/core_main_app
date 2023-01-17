@@ -1,6 +1,5 @@
 """ Unit Test Data
 """
-import datetime
 from collections import OrderedDict
 from unittest.case import TestCase
 from unittest.mock import patch
@@ -9,6 +8,7 @@ from core_main_app.commons import exceptions
 from core_main_app.components.data import api as data_api
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
+from core_main_app.utils.datetime import datetime_now, datetime_timedelta
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import create_mock_request
 
@@ -320,7 +320,7 @@ class TestAdminDataInsert(TestCase):
         mock_user = create_mock_user("3", is_superuser=True)
         mock_request = create_mock_request(user=mock_user)
         # Act
-        yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
+        yesterday = datetime_now() - datetime_timedelta(days=1)
         data.last_modification_date = yesterday
         result = data_api.admin_insert(data, request=mock_request)
         # Assert
@@ -382,7 +382,7 @@ class TestAdminDataInsert(TestCase):
         mock_user = create_mock_user("3", is_superuser=True)
         mock_request = create_mock_request(user=mock_user)
         # Act
-        yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
+        yesterday = datetime_now() - datetime_timedelta(days=1)
         data.creation_date = yesterday
         result = data_api.admin_insert(data, request=mock_request)
         # Assert
@@ -444,7 +444,7 @@ class TestAdminDataInsert(TestCase):
         mock_user = create_mock_user("3", is_superuser=True)
         mock_request = create_mock_request(user=mock_user)
         # Act
-        yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
+        yesterday = datetime_now() - datetime_timedelta(days=1)
         data.last_change_date = yesterday
         result = data_api.admin_insert(data, request=mock_request)
         # Assert
