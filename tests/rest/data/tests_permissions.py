@@ -4,16 +4,12 @@ from unittest.mock import patch, Mock
 
 from django.test import SimpleTestCase
 from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.status import HTTP_200_OK
+from tests.mocks import MockQuerySet
 
 from core_main_app.components.data import api as data_api
 from core_main_app.components.data.models import Data
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.rest.data import views as data_rest_views
-from core_main_app.rest.data.abstract_views import (
-    AbstractExecuteLocalQueryView,
-)
 from core_main_app.rest.data.admin_serializers import AdminDataSerializer
 from core_main_app.rest.data.serializers import (
     DataSerializer,
@@ -23,7 +19,6 @@ from core_main_app.rest.data.views import Migration as data_migration
 from core_main_app.rest.data.views import Validation as data_validation
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
-from tests.mocks import MockQuerySet
 
 
 class TestDataListPostPermissions(SimpleTestCase):
@@ -731,86 +726,6 @@ class TestDataGetFullGetPermissions(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-class TestDataLocalQueryGetPermissions(SimpleTestCase):
-    """TestDataLocalQueryGetPermissions"""
-
-    @patch.object(AbstractExecuteLocalQueryView, "execute_query")
-    def test_anonymous_returns_http_200(
-        self, mock_abstract_local_query_execute_query
-    ):
-        """test_anonymous_returns_http_200
-
-        Args:
-            mock_abstract_local_query_execute_query:
-
-        Returns:
-
-        """
-        mock_abstract_local_query_execute_query.return_value = Response(
-            status=HTTP_200_OK
-        )
-
-        response = RequestMock.do_request_get(
-            data_rest_views.ExecuteLocalQueryView.as_view(),
-            None,
-            data={"query": "{}"},
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    @patch.object(AbstractExecuteLocalQueryView, "execute_query")
-    def test_authenticated_returns_http_200(
-        self, mock_abstract_local_query_execute_query
-    ):
-        """test_authenticated_returns_http_200
-
-        Args:
-            mock_abstract_local_query_execute_query:
-
-        Returns:
-
-        """
-        mock_abstract_local_query_execute_query.return_value = Response(
-            status=HTTP_200_OK
-        )
-
-        mock_user = create_mock_user(1)
-
-        response = RequestMock.do_request_get(
-            data_rest_views.ExecuteLocalQueryView.as_view(),
-            mock_user,
-            data={"query": "{}"},
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    @patch.object(AbstractExecuteLocalQueryView, "execute_query")
-    def test_staff_returns_http_200(
-        self, mock_abstract_local_query_execute_query
-    ):
-        """test_staff_returns_http_200
-
-        Args:
-            mock_abstract_local_query_execute_query:
-
-        Returns:
-
-        """
-        mock_abstract_local_query_execute_query.return_value = Response(
-            status=HTTP_200_OK
-        )
-
-        mock_user = create_mock_user(1, is_staff=True)
-
-        response = RequestMock.do_request_get(
-            data_rest_views.ExecuteLocalQueryView.as_view(),
-            mock_user,
-            data={"query": "{}"},
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-
 class TestDataLocalQueryPostPermissions(SimpleTestCase):
     """TestDataLocalQueryPostPermissions"""
 
@@ -871,86 +786,6 @@ class TestDataLocalQueryPostPermissions(SimpleTestCase):
         mock_user = create_mock_user(1, is_staff=True)
 
         response = RequestMock.do_request_post(
-            data_rest_views.ExecuteLocalQueryView.as_view(),
-            mock_user,
-            data={"query": "{}"},
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-
-class TestDataKeywordQueryGetPermissions(SimpleTestCase):
-    """TestDataKeywordQueryGetPermissions"""
-
-    @patch.object(AbstractExecuteLocalQueryView, "execute_query")
-    def test_anonymous_returns_http_200(
-        self, mock_abstract_local_query_execute_query
-    ):
-        """test_anonymous_returns_http_200
-
-        Args:
-            mock_abstract_local_query_execute_query:
-
-        Returns:
-
-        """
-        mock_abstract_local_query_execute_query.return_value = Response(
-            status=HTTP_200_OK
-        )
-
-        response = RequestMock.do_request_get(
-            data_rest_views.ExecuteLocalQueryView.as_view(),
-            None,
-            data={"query": "{}"},
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    @patch.object(AbstractExecuteLocalQueryView, "execute_query")
-    def test_authenticated_returns_http_200(
-        self, mock_abstract_local_query_execute_query
-    ):
-        """test_authenticated_returns_http_200
-
-        Args:
-            mock_abstract_local_query_execute_query:
-
-        Returns:
-
-        """
-        mock_abstract_local_query_execute_query.return_value = Response(
-            status=HTTP_200_OK
-        )
-
-        mock_user = create_mock_user(1)
-
-        response = RequestMock.do_request_get(
-            data_rest_views.ExecuteLocalQueryView.as_view(),
-            mock_user,
-            data={"query": "{}"},
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    @patch.object(AbstractExecuteLocalQueryView, "execute_query")
-    def test_staff_returns_http_200(
-        self, mock_abstract_local_query_execute_query
-    ):
-        """test_staff_returns_http_200
-
-        Args:
-            mock_abstract_local_query_execute_query:
-
-        Returns:
-
-        """
-        mock_abstract_local_query_execute_query.return_value = Response(
-            status=HTTP_200_OK
-        )
-
-        mock_user = create_mock_user(1, is_staff=True)
-
-        response = RequestMock.do_request_get(
             data_rest_views.ExecuteLocalQueryView.as_view(),
             mock_user,
             data={"query": "{}"},

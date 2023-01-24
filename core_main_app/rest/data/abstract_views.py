@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core_main_app.access_control.exceptions import AccessControlError
+from core_main_app.commons.constants import DATA_JSON_FIELD
 from core_main_app.components.data import api as data_api
 from core_main_app.settings import DATA_SORTING_FIELDS
 from core_main_app.utils.query.constants import VISIBILITY_OPTION
@@ -17,49 +18,7 @@ from core_main_app.utils.query.mongo.query_builder import QueryBuilder
 class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
     """Abstract Execute Local Query View"""
 
-    sub_document_root = "dict_content"
-
-    def get(self, request):
-        """Execute query on local instance and return results
-
-        Parameters:
-
-            # get all results (paginated)
-            {"query": {}}
-            # get all results
-            {"query": {}, "all": "true"}
-            # get all results filtered by title
-            {"query": {}, "title": "title_string"}
-             # get all results filtered by workspaces
-            {"query": {}, "workspaces": [{"id":"[workspace_id]"}]}
-            # get all results filtered by private workspace
-            {"query": {}, "workspaces": [{"id":"None"}]}
-            # get all results filtered by templates
-            {"query": {}, "templates": [{"id":"[template_id]"}] }
-            # get all results that verify a given criteria
-            {"query": {"root.element.value": 2}}
-            # get values at xpath
-            {"query": {}, "xpath": "/ns:root/@element", "namespaces": {"ns": "<namespace_url>"}}
-            # get results using multiple options
-            {"query": {"root.element.value": 2}, "workspaces": [{"id":"workspace_id"}] , "all": "true"}
-            {"query": {"root.element.value": 2}, "templates": [{"id":"template_id"}] , "all": "true"}
-            {"query": {"root.element.value": 2}, "templates": [{"id":"template_id"}],
-            "workspaces": [{"id":"[workspace_id]"}] ,"all": "true"}
-
-        Args:
-
-            request: HTTP request
-
-        Returns:
-
-            - code: 200
-              content: List of data
-            - code: 400
-              content: Bad request
-            - code: 500
-              content: Internal server error
-        """
-        return self.execute_query()
+    sub_document_root = DATA_JSON_FIELD
 
     def post(self, request):
         """Execute query on local instance and return results
@@ -150,13 +109,13 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
         # update the criteria with workspaces information
         if workspaces is not None and len(workspaces) > 0:
             list_workspace_ids = [
-                self._parser_id(workspace["id"]) for workspace in workspaces
+                self.parse_id(workspace["id"]) for workspace in workspaces
             ]
             query_builder.add_list_criteria("workspace", list_workspace_ids)
         # update the criteria with templates information
         if templates is not None and len(templates) > 0:
             list_template_ids = [
-                self._parser_id(template["id"]) for template in templates
+                self.parse_id(template["id"]) for template in templates
             ]
             query_builder.add_list_criteria("template", list_template_ids)
         # update the criteria with visibility information
@@ -200,7 +159,7 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
         raise NotImplementedError("build_response method is not implemented.")
 
     @staticmethod
-    def _parser_id(_id):
+    def parse_id(_id):
         try:
             return int(_id)
         except (ValueError, TypeError):
