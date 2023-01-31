@@ -71,7 +71,7 @@ setup(
     url="https://github.com/usnistgov/core_main_app",
     packages=find_packages(),
     include_package_data=True,
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     install_requires=required,
     dependency_links=dep_links,
     extras_require={"develop": dev_extra, "mongodb": mongo_extra},
