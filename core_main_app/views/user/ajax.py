@@ -17,6 +17,7 @@ from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
 from core_main_app.commons.exceptions import DoesNotExist, ModelError
 from core_main_app.components.data import api as data_api
+from core_main_app.components.template import api as template_api
 from core_main_app.components.group import api as group_api
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
@@ -522,15 +523,28 @@ def change_data_display(request):
     try:
         xsl_transformation_id = request.POST.get("xslt_id", None)
         data_id = request.POST.get("data_id", None)
-        data = data_api.get_by_id(data_id, request.user)
-        xml_content = request.POST.get("content", data.xml_content)
+        if data_id:
+            data = data_api.get_by_id(data_id, request.user)
+            template_id = data.template.id
+            template_hash = data.template.hash
+            xml_content = data.xml_content
+        else:
+            template_id = request.POST.get("template_id", None)
+            xml_content = request.POST.get("content", None)
+            if template_id and xml_content:
+                template = template_api.get_by_id(template_id, request)
+                template_hash = template.hash
+            else:
+                return HttpResponseBadRequest(
+                    "missing parameters: template_id/content is missing"
+                )
         return HttpResponse(
             json.dumps(
                 {
                     "template": render_xml_as_html_detail(
                         xml_content=xml_content,
-                        template_id=data.template.id,
-                        template_hash=data.template.hash,
+                        template_id=template_id,
+                        template_hash=template_hash,
                         xslt_id=xsl_transformation_id,
                         request=request,
                     ),

@@ -520,7 +520,7 @@ class AbstractEditorView(View, metaclass=ABCMeta):
             "js": [
                 {
                     "path": "core_main_app/user/js/text_editor/text_editor.js",
-                    "is_raw": False,
+                    "is_raw": True,
                 },
                 {
                     "path": "core_main_app/user/js/text_editor/text_editor.raw.js",
@@ -542,13 +542,14 @@ class AbstractEditorView(View, metaclass=ABCMeta):
         }
         return assets
 
-    def _get_context(self, document_id, type_content, content):
+    def _get_context(self, document_id, document_name, type_content, content):
         """get context
 
         Return:
         """
         context = {
             "page_title": type_content + " Text Editor",
+            "name": document_name,
             "content": content,
             "type": type_content,
             "document_id": document_id,
@@ -706,7 +707,7 @@ class XmlEditor(AbstractEditorView, metaclass=ABCMeta):
 
         return assets
 
-    def _get_context(self, document, xml_content):
+    def _get_context(self, document, document_name, xml_content):
         """get context
 
         Args:
@@ -716,7 +717,9 @@ class XmlEditor(AbstractEditorView, metaclass=ABCMeta):
         Returns:
         """
         # get assets
-        context = super()._get_context(document.id, "XML", xml_content)
+        context = super()._get_context(
+            document.id, document_name, "XML", xml_content
+        )
 
         # build xslt selector
         (
@@ -753,7 +756,7 @@ class DataContentEditor(XmlEditor):
 
         try:
             data = data_api.get_by_id(request.GET["id"], request.user)
-            context = self._get_context(data, data.xml_content)
+            context = self._get_context(data, data.title, data.xml_content)
             assets = self._get_assets()
             return render(
                 request, self.template, assets=assets, context=context
@@ -763,7 +766,7 @@ class DataContentEditor(XmlEditor):
             status_code = 403
         except exceptions.DoesNotExist:
             # fix me
-            error_message = "Data not found"
+            error_message = get_data_label() + " not found"
             status_code = 404
         except Exception as e:
             error_message = str(e)
@@ -812,6 +815,8 @@ class DataContentEditor(XmlEditor):
             return HttpResponseForbidden(html_escape(str(ace)))
         except DoesNotExist as dne:
             return HttpResponseBadRequest(html_escape(str(dne)))
+        except Exception as e:
+            return HttpResponseBadRequest(html_escape(str(e)))
 
 
 class XSDEditor(AbstractEditorView):
@@ -830,7 +835,7 @@ class XSDEditor(AbstractEditorView):
 
             template = template_api.get_by_id(request.GET["id"], request)
             context = super()._get_context(
-                template.id, "XSD", template.content
+                template.id, template.filename, "XSD", template.content
             )
             assets = super()._get_assets()
             return render(
@@ -935,3 +940,5 @@ class XSDEditor(AbstractEditorView):
             return HttpResponseForbidden(html_escape(str(ace)))
         except DoesNotExist as dne:
             return HttpResponseBadRequest(html_escape(str(dne)))
+        except Exception as e:
+            return HttpResponseBadRequest(html_escape(str(e)))

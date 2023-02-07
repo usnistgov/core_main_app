@@ -354,6 +354,39 @@ class TestChangeDataDisplayView(MongoIntegrationBaseTestCase):
         response = change_data_display(request)
         self.assertEqual(response.status_code, 200)
 
+    def test_change_data_display_returns_http_200(self):
+        """test_change_data_display_returns_http_200
+
+        Returns:
+
+        """
+        data = {
+            "xslt_id": "1",
+            "template_id": str(self.fixture.data_1.template.id),
+            "content": "<tag></tag>",
+        }
+        request = self.factory.post("core_main_add_change_data_display", data)
+        request.user = self.user1
+        response = change_data_display(request)
+        self.assertEqual(response.status_code, 200)
+
+    def test_change_data_display_returns_error_when_template_id_is_missing(
+        self,
+    ):
+        """test_change_data_display_returns_error_when_template_id_is_missing
+
+        Returns:
+
+        """
+        data = {
+            "xslt_id": "1",
+            "content": "<tag></tag>",
+        }
+        request = self.factory.post("core_main_add_change_data_display", data)
+        request.user = self.user1
+        response = change_data_display(request)
+        self.assertEqual(response.status_code, 400)
+
     def test_an_anonymous_user_can_not_assign_a_user_data(self):
         """test_an_anonymous_user_can_not_assign_a_user_data
 
@@ -862,6 +895,23 @@ class TestDataContentEditorView(MongoIntegrationBaseTestCase):
         response = DataContentEditor.as_view()(request)
         self.assertEqual(response.status_code, 400)
 
+    def test_user_save_xml_content_returns_error(self):
+        """test_user_save_xml_content_returns_error
+
+        Returns:
+
+        """
+        data = {
+            "action": "save",
+            "document_id": "-1",
+            "id": "-1",
+        }
+        request = self.factory.post("core_main_app_xml_text_editor_view", data)
+        request.user = self.user1
+        self.user1
+        response = DataContentEditor.as_view()(request)
+        self.assertEqual(response.status_code, 400)
+
 
 class TestXSDTextEditorView(MongoIntegrationBaseTestCase):
     """Test Post XSD Text Editor View"""
@@ -1029,6 +1079,22 @@ class TestXSDTextEditorView(MongoIntegrationBaseTestCase):
         """
         data = {
             "content": self.fixture.template.content,
+            "action": "save",
+            "id": "-1",
+            "document_id": "-1",
+        }
+        request = self.factory.post("core_main_app_xsd_text_editor_view", data)
+        request.user = self.user1
+        response = XSDEditor.as_view()(request)
+        self.assertEqual(response.status_code, 400)
+
+    def test_user_save_xml_content_returns_error(self):
+        """test_user_save_xml_content_returns_error
+
+        Returns:
+
+        """
+        data = {
             "action": "save",
             "id": "-1",
             "document_id": "-1",

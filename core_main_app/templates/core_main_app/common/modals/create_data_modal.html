@@ -1,0 +1,14 @@
+{% extends 'core_main_app/_render/admin/theme/tools/modal.html' %}
+{% load i18n %}
+{% block modal_id %}create-data-modal{% endblock %}
+{% block modal_title %}Save {% trans "record_label"|title %}{% endblock %}
+
+{% block modal_body %}
+<p>Are you sure you want to save a {% trans "record_label" %} from this {% trans "form_label" %} ?<p>
+<p>Your {% trans "form_label" %} will be deleted automatically.<p>
+{% endblock %}
+
+{% block modal_footer %}
+<a class="btn btn-secondary pull-left" data-dismiss="modal"><i class="fas fa-times"></i> Close</a>
+<a class="btn btn-primary save-data" ><i class="fas fa-save"></i> Save </a>
+{% endblock %}

@@ -4,6 +4,7 @@ let documentName = null
 let templateID = null
 let textEditorUrl = null
 let showHTML = false
+let useModal = false
 
 
 /**
@@ -21,17 +22,23 @@ $(document).ready(function() {
         default:
             templateID = $("#template_id").html();
             documentName = $("#document_name").html();
-            if (documentName == "Data") textEditorUrl = dataXmlTextEditorUrl
-            else textEditorUrl = draftXmlTextEditorUrl
+            if (documentName == "Data") textEditorUrl = dataXmlTextEditorUrl;
+            else {
+                textEditorUrl = draftXmlTextEditorUrl;
+                $('.save-data').on('click', save);
+                useModal = true;
+            }
     }
 
 
     $('.btn.display').on('click', display);
     $('.btn.format').on('click', format);
     $('.btn.refresh').on('click', refresh);
-    $('.btn.save').on('click', save);
     $('.btn.validate').on('click', validate);
-
+    $('.btn.save').on('click', function(){
+        if (useModal) createDataModal();
+        else save();
+    });
 
 
 });
@@ -132,7 +139,7 @@ var refresh = function()
      $.ajax({
             url: changeDataDisplayUrl,
             data: { "content": $(".input").text(),
-                    "data_id": documentID,
+                    "template_id": templateID,
                     "xslt_id": $("#xslt-selector").val()
                   },
             dataType:"json",
@@ -167,4 +174,12 @@ let display = function(){
 
     }
     showHTML = !showHTML
+}
+
+
+/**
+* Shows a dialog to choose dialog options
+*/
+let createDataModal = function(){
+  $("#create-data-modal").modal("show");
 }

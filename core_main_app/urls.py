@@ -2,7 +2,7 @@
 """
 from django.conf.urls import include
 from django.contrib.auth.decorators import login_required
-from django.urls import re_path
+from django.urls import re_path, reverse_lazy
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 
@@ -38,12 +38,18 @@ urlpatterns = [
     ),
     re_path(
         r"^xml-editor/data",
-        common_views.DataContentEditor.as_view(),
+        login_required(
+            common_views.DataContentEditor.as_view(),
+            login_url=reverse_lazy("core_main_app_login"),
+        ),
         name="core_main_app_xml_text_editor_view",
     ),
     re_path(
         r"^xsd-editor/template",
-        common_views.XSDEditor.as_view(),
+        login_required(
+            common_views.XSDEditor.as_view(),
+            login_url=reverse_lazy("core_main_app_login"),
+        ),
         name="core_main_app_xsd_text_editor_view",
     ),
     re_path(
