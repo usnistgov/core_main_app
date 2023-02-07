@@ -48,6 +48,9 @@ $(document).ready(function() {
  */
 let save = function()
 {
+   var icon = $(".save > i").attr("class");
+   // Show loading spinner
+   showSpinner($(".save > i"))
    $.ajax({
         url : textEditorUrl,
         type : "POST",
@@ -70,6 +73,9 @@ let save = function()
             jqError.html('<i class="fas fa-exclamation-triangle"></i> '+ data.responseText);
             jqError.show();
         }
+    }).always(function(data) {
+        // get old button icon
+        hideSpinner($(".save > i"), icon)
     });
 };
 
@@ -80,6 +86,9 @@ let format = function()
 {
    $('.btn.save').prop("disabled",true);
    jqError.hide()
+   var icon = $(".format > i").attr("class");
+   // Show loading spinner
+   showSpinner($(".format > i"))
    $.ajax({
         url : textEditorUrl,
         type : "POST",
@@ -99,6 +108,9 @@ let format = function()
             jqError.show();
 
         }
+    }).always(function(data) {
+        // get old button icon
+        hideSpinner($(".format > i"), icon)
     });
 };
 
@@ -108,7 +120,9 @@ let format = function()
 var validate = function()
 {
      jqError.hide()
-
+     var icon = $(".validate > i").attr("class");
+     // Show loading spinner
+     showSpinner($(".validate > i"))
      $.ajax({
         url : textEditorUrl,
         type : "POST",
@@ -127,6 +141,9 @@ var validate = function()
            jqError.html('<i class="fas fa-exclamation-triangle"></i> '+ data.responseText);
            jqError.show();
         }
+    }).always(function(data) {
+        // get old button icon
+        hideSpinner($(".validate > i"), icon)
     });
 
 };
@@ -136,6 +153,9 @@ var validate = function()
  */
 var refresh = function()
 {
+     var icon = $(".refresh > i").attr("class");
+     // Show loading spinner
+     showSpinner($(".refresh > i"))
      $.ajax({
             url: changeDataDisplayUrl,
             data: { "content": $(".input").text(),
@@ -153,7 +173,10 @@ var refresh = function()
                  jqError.html('<i class="fas fa-exclamation-triangle"></i> '+ data.responseText);
                  jqError.show();
             }
-     });
+     }).always(function(data) {
+        // get old button icon
+        hideSpinner($(".refresh > i"), icon)
+    });
 };
 
 
@@ -161,6 +184,9 @@ var refresh = function()
  * Show/Hide html representation
  */
 let display = function(){
+    var icon = $(".display > i").attr("class");
+    // Show loading spinner
+    showSpinner($(".display > i"))
     $(".representation").attr('hidden', showHTML)
     $(".refresh").attr('hidden', showHTML)
     $("#xslt-selector").attr('hidden', showHTML)
@@ -175,6 +201,7 @@ let display = function(){
 
     }
     showHTML = !showHTML
+    hideSpinner($(".display > i"), icon)
 }
 
 
