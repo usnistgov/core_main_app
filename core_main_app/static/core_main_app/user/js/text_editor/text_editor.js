@@ -77,6 +77,7 @@ let save = function()
         // get old button icon
         hideSpinner($(".save > i"), icon)
     });
+   if (useModal) $("#create-data-modal").modal("hide");
 };
 
 /**
