@@ -145,6 +145,7 @@ var refresh = function()
             dataType:"json",
             type: "post",
             success: function(data){
+                $.notify("Content refreshed with success", { style: "success" });
                 $(".tree").html(data.template)
 
             },
