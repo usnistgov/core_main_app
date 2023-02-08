@@ -523,10 +523,6 @@ class AbstractEditorView(View, metaclass=ABCMeta):
                     "is_raw": True,
                 },
                 {
-                    "path": "core_main_app/user/js/text_editor/text_editor.raw.js",
-                    "is_raw": True,
-                },
-                {
                     "path": "core_main_app/libs/highlight/11.0.0/js/highlight.min.js",
                     "is_raw": False,
                 },
@@ -758,6 +754,13 @@ class DataContentEditor(XmlEditor):
             data = data_api.get_by_id(request.GET["id"], request.user)
             context = self._get_context(data, data.title, data.xml_content)
             assets = self._get_assets()
+            # add js relatives to data editor
+            assets["js"].append(
+                {
+                    "path": "core_main_app/user/js/text_editor/data_text_editor.raw.js",
+                    "is_raw": True,
+                },
+            )
             return render(
                 request, self.template, assets=assets, context=context
             )
@@ -838,6 +841,13 @@ class XSDEditor(AbstractEditorView):
                 template.id, template.filename, "XSD", template.content
             )
             assets = super()._get_assets()
+            # add js relatives to template editor
+            assets["js"].append(
+                {
+                    "path": "core_main_app/user/js/text_editor/template_text_editor.raw.js",
+                    "is_raw": True,
+                },
+            )
             return render(
                 request, self.template, assets=assets, context=context
             )
