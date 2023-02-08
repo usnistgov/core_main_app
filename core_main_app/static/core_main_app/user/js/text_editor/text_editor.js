@@ -11,7 +11,6 @@ let useModal = false
  * Load controllers for text editor
  */
 $(document).ready(function() {
-    $('.btn.save').prop("disabled",true);
     documentID = $("#document_id").html()
     editorType = $("#editor_type").html()
     switch(editorType) {
@@ -66,7 +65,6 @@ let save = function()
              }
              else{
                   $.notify("Document saved with success", { style: "success" });
-                  $('.btn.save').prop("disabled",true);
              }
 	    },
         error:function(data){
@@ -85,7 +83,6 @@ let save = function()
  */
 let format = function()
 {
-   $('.btn.save').prop("disabled",true);
    jqError.hide()
    var icon = $(".format > i").attr("class");
    // Show loading spinner
@@ -135,8 +132,6 @@ var validate = function()
         dataType: "json",
 		success: function(data){
 		   $.notify("Content validated with success", { style: "success" });
-           $('.btn.save').prop("disabled",false);
-
 	    },
         error:function(data){
            jqError.html('<i class="fas fa-exclamation-triangle"></i> '+ data.responseText);
