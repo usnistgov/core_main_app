@@ -60,12 +60,13 @@ let save = function()
         },
         dataType: "json",
 		success: function(data){
-             if (documentName && documentName != "Data"){
-                    window.location =  dataXmlTextEditorUrl+"?id="+data.data_id
+             if (documentName){
+                 if (documentName == "Data") window.location =  data.url
+                 else  window.location =  dataXmlTextEditorUrl+"?id="+data.data_id
              }
-             else{
-                  $.notify("Document saved with success", { style: "success" });
-             }
+             else $.notify("Document saved with success", { style: "success" });
+
+
 	    },
         error:function(data){
             jqError.html('<i class="fas fa-exclamation-triangle"></i> '+ data.responseText);

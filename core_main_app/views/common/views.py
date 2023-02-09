@@ -10,13 +10,13 @@ from django.http import (
     HttpResponseForbidden,
     HttpResponse,
 )
-
+from django.contrib import messages
 from django.http.response import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.html import escape as html_escape
 from django.views.generic import View
-
+from core_main_app.components.lock import api as lock_api
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
 from core_main_app.commons.exceptions import DoesNotExist
@@ -698,9 +698,14 @@ class XmlEditor(AbstractEditorView, metaclass=ABCMeta):
             {
                 "path": "core_main_app/common/js/XMLTree.js",
                 "is_raw": False,
-            },
+            }
         )
-
+        assets["js"].append(
+            {
+                "path": "core_main_app/user/js/text_editor/data_text_editor.raw.js",
+                "is_raw": True,
+            }
+        )
         return assets
 
     def _get_context(self, document, document_name, xml_content):
@@ -741,6 +746,8 @@ class XmlEditor(AbstractEditorView, metaclass=ABCMeta):
 class DataContentEditor(XmlEditor):
     """Data Content Editor View"""
 
+    save_redirect = "core_dashboard_records"
+
     def get(self, request):
         """get
 
@@ -752,15 +759,9 @@ class DataContentEditor(XmlEditor):
 
         try:
             data = data_api.get_by_id(request.GET["id"], request.user)
+            lock_api.set_lock_object(data, request.user)
             context = self._get_context(data, data.title, data.xml_content)
             assets = self._get_assets()
-            # add js relatives to data editor
-            assets["js"].append(
-                {
-                    "path": "core_main_app/user/js/text_editor/data_text_editor.raw.js",
-                    "is_raw": True,
-                },
-            )
             return render(
                 request, self.template, assets=assets, context=context
             )
@@ -768,7 +769,6 @@ class DataContentEditor(XmlEditor):
             error_message = "Access Forbidden"
             status_code = 403
         except exceptions.DoesNotExist:
-            # fix me
             error_message = get_data_label() + " not found"
             status_code = 404
         except Exception as e:
@@ -810,8 +810,14 @@ class DataContentEditor(XmlEditor):
             data.xml_content = content
             # save data
             data_api.upsert(data, self.request)
+            lock_api.remove_lock_on_object(data, self.request.user)
+            messages.add_message(
+                self.request,
+                messages.SUCCESS,
+                get_data_label() + " saved with success.",
+            )
             return HttpResponse(
-                json.dumps("saved successfully"),
+                json.dumps({"url": reverse(self.save_redirect)}),
                 "application/javascript",
             )
         except AccessControlError as ace:
@@ -941,7 +947,6 @@ class XSDEditor(AbstractEditorView):
             template.content = content
             # save template
             template_api.upsert(template, request=self.request)
-
             return HttpResponse(
                 json.dumps("saved successfully"),
                 "application/javascript",
