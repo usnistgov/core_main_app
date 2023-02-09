@@ -45,14 +45,6 @@ urlpatterns = [
         name="core_main_app_xml_text_editor_view",
     ),
     re_path(
-        r"^xsd-editor/template",
-        login_required(
-            common_views.XSDEditor.as_view(),
-            login_url=reverse_lazy("core_main_app_login"),
-        ),
-        name="core_main_app_xsd_text_editor_view",
-    ),
-    re_path(
         r"^template/versions/(?P<version_manager_id>\w+)",
         user_views.manage_template_versions,
         name="core_main_app_manage_template_versions",
