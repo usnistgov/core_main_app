@@ -60,13 +60,7 @@ let save = function()
         },
         dataType: "json",
 		success: function(data){
-             if (documentName){
-                 if (documentName == "Data") window.location =  data.url
-                 else  window.location =  dataXmlTextEditorUrl+"?id="+data.data_id
-             }
-             else $.notify("Document saved with success", { style: "success" });
-
-
+		     window.location =  data.url
 	    },
         error:function(data){
             jqError.html('<i class="fas fa-exclamation-triangle"></i> '+ data.responseText);

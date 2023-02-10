@@ -33,12 +33,10 @@ from core_main_app.components.xsl_transformation import (
 )
 from core_main_app.utils import group as group_utils
 from core_main_app.utils.labels import get_data_label
-from core_main_app.utils.rendering import admin_render
-from core_main_app.utils.rendering import render
+from core_main_app.utils.rendering import admin_render, render
 from core_main_app.utils.view_builders import data as data_view_builder
 from core_main_app.views.admin.forms import TemplateXsltRenderingForm
 
-from core_main_app.utils.xml import format_content_xml
 from xml_utils.xsd_tree.xsd_tree import XSDTree
 from core_main_app.utils import xml as main_xml_utils
 from core_main_app.access_control import api as acl_api
@@ -631,6 +629,8 @@ class AbstractEditorView(View, metaclass=ABCMeta):
 class XmlEditor(AbstractEditorView, metaclass=ABCMeta):
     """Xml Editor"""
 
+    save_redirect = "core_dashboard_records"
+
     def format(self, *args, **kwargs):
         """Format xml content
 
@@ -643,7 +643,7 @@ class XmlEditor(AbstractEditorView, metaclass=ABCMeta):
         """
         content = self.request.POST["content"].strip()
         return HttpResponse(
-            json.dumps(format_content_xml(content)),
+            json.dumps(main_xml_utils.format_content_xml(content)),
             "application/javascript",
         )
 
@@ -710,11 +710,12 @@ class XmlEditor(AbstractEditorView, metaclass=ABCMeta):
         )
         return assets
 
-    def _get_context(self, document, document_name, xml_content):
+    def get_context(self, document, document_name, xml_content):
         """get context
 
         Args:
             document:
+            document_name:
             xml_content:
 
         Returns:
@@ -748,8 +749,6 @@ class XmlEditor(AbstractEditorView, metaclass=ABCMeta):
 class DataContentEditor(XmlEditor):
     """Data Content Editor View"""
 
-    save_redirect = "core_dashboard_records"
-
     def get(self, request):
         """get
 
@@ -763,7 +762,7 @@ class DataContentEditor(XmlEditor):
             data = data_api.get_by_id(request.GET["id"], request.user)
             acl_api.check_can_write(data, request.user)
             lock_api.set_lock_object(data, request.user)
-            context = self._get_context(data, data.title, data.xml_content)
+            context = self.get_context(data, data.title, data.xml_content)
             assets = self._get_assets()
             return render(
                 request, self.template, assets=assets, context=context
@@ -899,7 +898,7 @@ class XSDEditor(AbstractEditorView):
         """
         content = self.request.POST["content"].strip()
         return HttpResponse(
-            json.dumps(format_content_xml(content)),
+            json.dumps(main_xml_utils.format_content_xml(content)),
             "application/javascript",
         )
 
