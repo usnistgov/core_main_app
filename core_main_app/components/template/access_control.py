@@ -81,30 +81,12 @@ def can_write(func, *args, **kwargs):
     Returns:
 
     """
-    request = get_request_from_args(*args, **kwargs)
 
     template = next((arg for arg in args if isinstance(arg, Template)), None)
 
-    # super user
-    if request.user.is_superuser:
-        return func(*args, **kwargs)
+    check_can_write(template, *args, **kwargs)
 
-    # anonymous
-    if request.user.is_anonymous:
-        raise AccessControlError(
-            "Template: The user doesn't have enough rights."
-        )
-
-    # user is set
-    if template.user:
-        if template.user == str(request.user.id):
-            return func(*args, **kwargs)
-    # user is not set
-    else:
-        if request.user.is_staff:
-            return func(*args, **kwargs)
-
-    raise AccessControlError("Template: The user doesn't have enough rights.")
+    return func(*args, **kwargs)
 
 
 def get_accessible_owners(request):
@@ -166,3 +148,38 @@ def can_read_list(func, *args, **kwargs):
             )
 
     return document_list
+
+
+def check_can_write(template, *args, **kwargs):
+    """Check can write template.
+
+    Args:
+        template:
+        args:
+        kwargs:
+
+    Returns:
+
+    """
+    request = get_request_from_args(*args, **kwargs)
+
+    # super user
+    if request.user.is_superuser:
+        return True
+
+    # anonymous
+    if request.user.is_anonymous:
+        raise AccessControlError(
+            "Template: The user doesn't have enough rights."
+        )
+
+    # user is set
+    if template.user:
+        if template.user == str(request.user.id):
+            return True
+    # user is not set
+    else:
+        if request.user.is_staff:
+            return True
+
+    raise AccessControlError("Template: The user doesn't have enough rights.")

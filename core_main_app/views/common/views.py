@@ -41,6 +41,8 @@ from core_main_app.views.admin.forms import TemplateXsltRenderingForm
 from core_main_app.utils.xml import format_content_xml
 from xml_utils.xsd_tree.xsd_tree import XSDTree
 from core_main_app.utils import xml as main_xml_utils
+from core_main_app.access_control import api as acl_api
+from core_main_app.components.template.access_control import check_can_write
 
 
 class CommonView(View, metaclass=ABCMeta):
@@ -759,14 +761,15 @@ class DataContentEditor(XmlEditor):
 
         try:
             data = data_api.get_by_id(request.GET["id"], request.user)
+            acl_api.check_can_write(data, request.user)
             lock_api.set_lock_object(data, request.user)
             context = self._get_context(data, data.title, data.xml_content)
             assets = self._get_assets()
             return render(
                 request, self.template, assets=assets, context=context
             )
-        except AccessControlError:
-            error_message = "Access Forbidden"
+        except AccessControlError as acl_exception:
+            error_message = "Access Forbidden: " + str(acl_exception)
             status_code = 403
         except exceptions.DoesNotExist:
             error_message = get_data_label() + " not found"
@@ -841,8 +844,8 @@ class XSDEditor(AbstractEditorView):
         """
 
         try:
-
             template = template_api.get_by_id(request.GET["id"], request)
+            check_can_write(template, request=request)
             context = super()._get_context(
                 template.id, template.filename, "XSD", template.content
             )
@@ -858,8 +861,8 @@ class XSDEditor(AbstractEditorView):
                 request, self.template, assets=assets, context=context
             )
 
-        except AccessControlError:
-            error_message = "Access Forbidden"
+        except AccessControlError as acl_exception:
+            error_message = str(acl_exception)
             status_code = 403
         except exceptions.DoesNotExist:
             error_message = "Template not found"
