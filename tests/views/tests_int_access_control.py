@@ -1,11 +1,15 @@
 """ Test access to views
 """
+from unittest.mock import patch
+
 from django.contrib.auth.models import AnonymousUser
+from django.contrib.messages.storage.fallback import FallbackStorage
 from django.test import RequestFactory
 from tests.views.fixtures import AccessControlDataFixture
-from django.contrib.messages.storage.fallback import FallbackStorage
+
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.data import api as data_api
+from core_main_app.settings import MAX_DOCUMENT_EDITING_SIZE
 from core_main_app.utils.integration_tests.integration_base_test_case import (
     MongoIntegrationBaseTestCase,
 )
@@ -894,7 +898,6 @@ class TestDataContentEditorView(MongoIntegrationBaseTestCase):
         }
         request = self.factory.post("core_main_app_xml_text_editor_view", data)
         request.user = self.user1
-        self.user1
         response = DataContentEditor.as_view()(request)
         self.assertEqual(response.status_code, 400)
 
@@ -911,9 +914,24 @@ class TestDataContentEditorView(MongoIntegrationBaseTestCase):
         }
         request = self.factory.post("core_main_app_xml_text_editor_view", data)
         request.user = self.user1
-        self.user1
         response = DataContentEditor.as_view()(request)
         self.assertEqual(response.status_code, 400)
+
+    @patch("core_main_app.utils.file.get_byte_size_from_string")
+    def test_xml_content_too_big_returns_error(self, mock_get_byte_size):
+        """test_user_save_xml_content_returns_error
+
+        Returns:
+
+        """
+        mock_get_byte_size.return_value = MAX_DOCUMENT_EDITING_SIZE + 1
+        request = self.factory.get("core_main_app_xml_text_editor_view")
+        request.GET = {"id": str(self.fixture.data_1.id)}
+        request.user = self.user1
+        response = DataContentEditor.as_view()(request)
+        self.assertTrue(
+            "MAX_DOCUMENT_EDITING_SIZE" in response.content.decode()
+        )
 
 
 class TestXSDTextEditorView(MongoIntegrationBaseTestCase):

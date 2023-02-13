@@ -4,25 +4,30 @@
 import json
 from abc import ABCMeta, abstractmethod
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import (
     HttpResponseBadRequest,
     HttpResponseForbidden,
     HttpResponse,
 )
-from django.contrib import messages
 from django.http.response import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.html import escape as html_escape
 from django.views.generic import View
-from core_main_app.components.lock import api as lock_api
+
+from core_main_app.access_control import api as acl_api
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
-from core_main_app.commons.exceptions import DoesNotExist
+from core_main_app.commons.exceptions import (
+    DoesNotExist,
+)
 from core_main_app.components.data import api as data_api
 from core_main_app.components.group import api as group_api
+from core_main_app.components.lock import api as lock_api
 from core_main_app.components.template import api as template_api
+from core_main_app.components.template.access_control import check_can_write
 from core_main_app.components.template_xsl_rendering import (
     api as template_xsl_rendering_api,
 )
@@ -31,16 +36,15 @@ from core_main_app.components.workspace import api as workspace_api
 from core_main_app.components.xsl_transformation import (
     api as xslt_transformation_api,
 )
+from core_main_app.settings import MAX_DOCUMENT_EDITING_SIZE
+from core_main_app.utils import file as main_file_utils
 from core_main_app.utils import group as group_utils
+from core_main_app.utils import xml as main_xml_utils
 from core_main_app.utils.labels import get_data_label
 from core_main_app.utils.rendering import admin_render, render
 from core_main_app.utils.view_builders import data as data_view_builder
 from core_main_app.views.admin.forms import TemplateXsltRenderingForm
-
 from xml_utils.xsd_tree.xsd_tree import XSDTree
-from core_main_app.utils import xml as main_xml_utils
-from core_main_app.access_control import api as acl_api
-from core_main_app.components.template.access_control import check_can_write
 
 
 class CommonView(View, metaclass=ABCMeta):
@@ -761,6 +765,13 @@ class DataContentEditor(XmlEditor):
         try:
             data = data_api.get_by_id(request.GET["id"], request.user)
             acl_api.check_can_write(data, request.user)
+            if (
+                main_file_utils.get_byte_size_from_string(data.xml_content)
+                > MAX_DOCUMENT_EDITING_SIZE
+            ):
+                raise exceptions.DocumentEditingSizeError(
+                    "The file is too large (MAX_DOCUMENT_EDITING_SIZE)."
+                )
             lock_api.set_lock_object(data, request.user)
             context = self.get_context(data, data.title, data.xml_content)
             assets = self._get_assets()

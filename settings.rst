@@ -442,6 +442,19 @@ XML
 
   Set to ``True`` to allow parser download imports.
 
+* ``PARSER_MAX_IN_MEMORY_ELEMENTS``
+
+  Default: 10000
+
+  Maximum number of in-memory elements to be generated during the parsing of an XML document.
+  An error is raised when the limit is reached.
+
+* ``MAX_DOCUMENT_EDITING_SIZE``
+
+  Default: 128 * 1024
+
+  Maximum size of XML documents being edited in the browser (in bytes).
+
 * ``XERCES_VALIDATION`` (deprecated)
 
   Default: ``False``

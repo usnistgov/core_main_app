@@ -4,7 +4,10 @@ from unittest import TestCase
 from unittest.mock import patch
 
 from core_main_app.commons.exceptions import CoreError
-from core_main_app.utils.file import get_base_64_content_from_response
+from core_main_app.utils.file import (
+    get_base_64_content_from_response,
+    get_byte_size_from_string,
+)
 
 
 class TestFileUtilsGetBase64ContentFromResponse(TestCase):
@@ -67,3 +70,32 @@ class MockResponse:
     """MockResponse"""
 
     content = b"my_string"
+
+
+class TestGetByteSizeFromString(TestCase):
+    """TestGetByteSizeFromString"""
+
+    def test_get_byte_size_from_string_returns_int(
+        self,
+    ):
+        """test_get_byte_size_from_string_returns_int
+
+        Returns:
+
+        """
+        # Arrange
+        result = get_byte_size_from_string("test")
+        self.assertTrue(isinstance(result, int))
+        self.assertTrue(result > 0)
+
+    def test_get_byte_size_from_empty_string_returns_zero(
+        self,
+    ):
+        """test_get_byte_size_from_string_returns_int
+
+        Returns:
+
+        """
+        # Arrange
+        result = get_byte_size_from_string("")
+        self.assertTrue(result == 0)

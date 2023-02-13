@@ -189,3 +189,15 @@ class QueryError(BaseCoreException):
             message:
         """
         super().__init__(message)
+
+
+class DocumentEditingSizeError(BaseCoreException):
+    """Exception raised when an edited document is too large."""
+
+    def __init__(self, message):
+        """Initialize exception
+
+        Args:
+            message:
+        """
+        super().__init__(message)

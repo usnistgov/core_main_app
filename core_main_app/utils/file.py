@@ -100,3 +100,15 @@ def get_base_64_content_from_response(response):
         return b64_content.decode("ascii")
     except Exception:
         raise CoreError("An error occurred while decoding the response.")
+
+
+def get_byte_size_from_string(content):
+    """Get byte size from string
+
+    Args:
+        content:
+
+    Returns:
+
+    """
+    return len(content.encode())
