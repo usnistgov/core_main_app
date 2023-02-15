@@ -4,7 +4,7 @@ from unittest import TestCase
 
 from core_main_app.components.data.models import Data
 from core_main_app.utils.view_builders.data import (
-    _get_data_title,
+    _get_field,
     xslt_selector,
 )
 from tests.components.template_xsl_rendering.fixtures.fixtures import (
@@ -17,8 +17,8 @@ from core_main_app.utils.integration_tests.integration_base_test_case import (
 fixture_template_rendering = TemplateXslRenderingFixtures()
 
 
-class TestPageTitle(TestCase):
-    """Test raw_xml_to_dict"""
+class TestGetField(TestCase):
+    """Test _get_field"""
 
     def setUp(self) -> None:
         self.title = "test"
@@ -32,7 +32,7 @@ class TestPageTitle(TestCase):
         # Arrange
         data = Data(title=self.title)
         # Act
-        data_title = _get_data_title(data)
+        data_title = _get_field(data, "title")
         # Assert
         self.assertEqual(data_title, self.title)
 
@@ -45,7 +45,7 @@ class TestPageTitle(TestCase):
         # Arrange
         data = Data()
         # Act
-        data_title = _get_data_title(data)
+        data_title = _get_field(data, "title")
         # Assert
         self.assertEqual(data_title, "")
 
@@ -58,7 +58,7 @@ class TestPageTitle(TestCase):
         # Arrange
         data = {}
         # Act
-        data_title = _get_data_title(data)
+        data_title = _get_field(data, "title")
         # Assert
         self.assertEqual(data_title, None)
 
@@ -71,7 +71,7 @@ class TestPageTitle(TestCase):
         # Arrange
         data = {"title": self.title}
         # Act
-        data_title = _get_data_title(data)
+        data_title = _get_field(data, "title")
         # Assert
         self.assertEqual(data_title, self.title)
 
@@ -84,7 +84,20 @@ class TestPageTitle(TestCase):
         # Arrange
         data = None
         # Act
-        data_title = _get_data_title(data)
+        data_title = _get_field(data, "title")
+        # Assert
+        self.assertEqual(data_title, None)
+
+    def test_get_bad_field_return_None(self):
+        """test_get_bad_field_return_None
+
+        Returns:
+
+        """
+        # Arrange
+        data = {"title": self.title}
+        # Act
+        data_title = _get_field(data, "bad")
         # Assert
         self.assertEqual(data_title, None)
 
