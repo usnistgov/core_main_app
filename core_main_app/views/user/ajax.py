@@ -530,13 +530,13 @@ def change_data_display(request):
             xml_content = data.xml_content
         else:
             template_id = request.POST.get("template_id", None)
-            xml_content = request.POST.get("content", None)
-            if template_id and xml_content:
+            xml_content = request.POST.get("content", "")
+            if template_id:
                 template = template_api.get_by_id(template_id, request)
                 template_hash = template.hash
             else:
                 return HttpResponseBadRequest(
-                    "missing parameters: template_id/content is missing"
+                    "missing parameters: template id is missing"
                 )
         return HttpResponse(
             json.dumps(
