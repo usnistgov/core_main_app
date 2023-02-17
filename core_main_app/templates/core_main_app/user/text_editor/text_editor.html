@@ -18,11 +18,12 @@
 
 
 <div>
-    <div class="border rounded input" contenteditable="true">
-        <pre class="content-highlight m-1">{{data.content}}</pre>
-    </div>
-
-    {% if data.type == 'XML' %}
+    <div class="row m-1">
+        <div class="border rounded bg-light line-number"><div>1</div></div>
+        <div class="border rounded input col" contenteditable="true">
+            <pre class="content-highlight m-1"><code>{{data.content}}</code></pre>
+        </div>
+        {% if data.type == 'XML' %}
         <div class="border rounded bg-light representation " hidden>
             <div class="tree m-2">
                 {% xsl_transform_detail xml_content=data.content template_id=data.template_id xslt_id=data.xsl_transformation_id request=request as xml_representation %}
@@ -34,6 +35,8 @@
             </div>
         </div>
     {% endif %}
+    </div>
+
 </div>
 
 

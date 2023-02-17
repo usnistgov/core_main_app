@@ -5,7 +5,7 @@ let templateID = null
 let textEditorUrl = null
 let showHTML = false
 let useModal = false
-
+let lineNumbers = 1
 
 /**
  * Load controllers for text editor
@@ -13,6 +13,7 @@ let useModal = false
 $(document).ready(function() {
     documentID = $("#document_id").html()
     editorType = $("#editor_type").html()
+    refreshLineNumbers()
     switch(editorType) {
         case "XSD":
             textEditorUrl = xsdTextEditorUrl
@@ -39,7 +40,9 @@ $(document).ready(function() {
         if (useModal) createDataModal();
         else save();
     });
-
+    $(".input").scroll(function() {
+        $(".line-number").prop("scrollTop", this.scrollTop);
+    });
 
 });
 
@@ -70,6 +73,7 @@ let save = function()
     }).always(function(data) {
         // get old button icon
         hideSpinner($(".save > i"), icon)
+        refreshLineNumbers();
     });
    if (useModal) $("#create-data-modal").modal("hide");
 };
@@ -104,6 +108,7 @@ let format = function()
     }).always(function(data) {
         // get old button icon
         hideSpinner($(".format > i"), icon)
+        refreshLineNumbers();
     });
 };
 
@@ -135,6 +140,7 @@ var validate = function()
     }).always(function(data) {
         // get old button icon
         hideSpinner($(".validate > i"), icon)
+        refreshLineNumbers();
     });
 
 };
@@ -186,7 +192,8 @@ let display = function(){
        $(".display").children().attr('class','fas fa-eye');
     }
     else{
-        $(".input").css("width", "49%");
+        $(".input").css("width", "45%");
+        $(".test").css("width", "45%");
         $(".input").css("display", "inline-block");
         $(".display").children().attr('class','fas fa-eye-slash');
 
@@ -236,4 +243,20 @@ let generate = function()
 */
 let createDataModal = function(){
   $("#create-data-modal").modal("show");
+}
+
+
+/**
+* Refresh Line Numbers
+*/
+let refreshLineNumbers = function(){
+    if( lineNumbers != $(".input").text().split('\n').length - 1){
+        var htmlLineNumber = ""
+        lineNumbers = $(".input").text().split('\n').length - 1
+        for (i = 1;  i < lineNumbers ; i++){
+            htmlLineNumber += "<div>"+i+"</div>"
+        }
+        $(".line-number").html(htmlLineNumber)
+    }
+
 }
