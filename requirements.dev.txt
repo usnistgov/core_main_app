@@ -1,6 +1,5 @@
 black==22.8.*
 coverage
-diff-cover
 flake8
 mongomock==4.1.*
 python-dotenv==0.21.*
