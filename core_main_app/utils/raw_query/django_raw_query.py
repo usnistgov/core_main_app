@@ -88,7 +88,10 @@ def _get_accessible_criteria(
     )
     # workspace should be in list of accessible workspaces
     access_criteria = Q(**{f"{workspace_key}__in": workspace_query})
-    # user_id should have the id of the user making the query
+    # if only workspace filter set, return access criteria
+    if workspace_filter and not user_filter:
+        return access_criteria
+    # if connected user making the query
     if user and user.id:
         # if user filter is set
         if user_filter:

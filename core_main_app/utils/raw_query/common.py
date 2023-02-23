@@ -28,7 +28,7 @@ def check_user_filter(user_filter, user):
         if user_id_filter and str(user_id_filter) != str(user_id):
             # raise access control error
             raise AccessControlError(
-                "The user does not have enough filter by user."
+                "The user does not have enough rights to filter by user."
             )
 
     # if regular user does a query on other user id, raise access control error
