@@ -19,7 +19,7 @@
 
 <div>
     <div class="border rounded input" contenteditable="true">
-        <pre class="content-highlight m-1"><code>{{data.content}}</code></pre>
+        <pre class="content-highlight m-1">{{data.content}}</pre>
     </div>
 
     {% if data.type == 'XML' %}
@@ -47,6 +47,7 @@
             </select>
             <button class="btn btn-secondary refresh mr-auto" hidden><i class="fas fa-sync" ></i> Refresh  </button>
             <button class="btn btn-secondary display mr-auto"><i class="fas fa-eye" ></i> Display  </button>
+            <button class="btn btn-secondary generate mr-auto"><i class="fas fa-cogs" ></i> Generate </button>
         {% endif %}
     	<button class="btn btn-secondary format mr-auto"><i class="fas fa-paint-brush"></i> Format </button>
         <button class="btn btn-secondary validate"><i class="fas fa-check"></i> Validate </button>

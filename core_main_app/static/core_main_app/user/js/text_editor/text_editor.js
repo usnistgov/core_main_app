@@ -34,6 +34,7 @@ $(document).ready(function() {
     $('.btn.format').on('click', format);
     $('.btn.refresh').on('click', refresh);
     $('.btn.validate').on('click', validate);
+    $('.btn.generate').on('click', generate);
     $('.btn.save').on('click', function(){
         if (useModal) createDataModal();
         else save();
@@ -93,10 +94,9 @@ let format = function()
 		success: function(data){
 		    $.notify("Document formatted successfully", { style: "success" });
 		    html = hljs.highlightAuto(data).value
-		    $(".content-highlight").html(html)
+		    $(".input").html("<pre class=\"content-highlight m-1\">"+ html +"</pre>")
 	    },
         error:function(data){
-
             jqError.html('<i class="fas fa-exclamation-triangle"></i> '+ data.responseText);
             jqError.show();
 
@@ -194,6 +194,41 @@ let display = function(){
     showHTML = !showHTML
     hideSpinner($(".display > i"), icon)
 }
+
+/**
+ * AJAX, to generate content
+ */
+let generate = function()
+{
+   jqError.hide()
+   var icon = $(".generate > i").attr("class");
+   // Show loading spinner
+   showSpinner($(".generate > i"))
+   $.ajax({
+        url : textEditorUrl,
+        type : "POST",
+        data:{
+           'content': $(".input").text(),
+           'template_id': templateID,
+           'action': 'generate',
+        },
+        dataType: "json",
+		success: function(data){
+		    $.notify("Document generated successfully", { style: "success" });
+		    html = hljs.highlightAuto(data).value
+		    $(".input").html("<pre class=\"content-highlight m-1\">"+ html +"</pre>")
+	    },
+        error:function(data){
+            jqError.html('<i class="fas fa-exclamation-triangle"></i> '+ data.responseText);
+            jqError.show();
+
+        }
+    }).always(function(data) {
+        // get old button icon
+        hideSpinner($(".generate > i"), icon)
+    });
+};
+
 
 
 /**

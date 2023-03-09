@@ -1,9 +1,10 @@
-"""
-    Common views
+""" Common views
 """
 import json
 from abc import ABCMeta, abstractmethod
+from datetime import datetime
 
+from django.conf import settings as conf_settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import (
@@ -685,6 +686,83 @@ class XmlEditor(AbstractEditorView, metaclass=ABCMeta):
             raise exceptions.XMLError(error)
         return HttpResponse(
             json.dumps("Validated successfully"),
+            "application/javascript",
+        )
+
+    def generate(self, *args, **kwargs):
+        """Generate xml content
+
+        Args:
+            args:
+            kwargs:
+
+        Returns:
+
+        """
+        content = self.request.POST["content"].strip()
+        template_id = self.request.POST["template_id"]
+
+        if "core_curate_app" not in conf_settings.INSTALLED_APPS:
+            raise exceptions.CoreError(
+                "The Curate App needs to be installed to use this feature."
+            )
+
+        if content:
+            raise exceptions.XMLError(
+                "Please clear form before generating a new XML document."
+            )
+
+        from core_main_app.utils.parser import get_parser
+        from core_parser_app.components.data_structure_element import (
+            api as data_structure_element_api,
+        )
+        from core_curate_app.components.curate_data_structure.models import (
+            CurateDataStructure,
+        )
+        from core_curate_app.components.curate_data_structure import (
+            api as curate_data_structure_api,
+        )
+        from core_curate_app.views.user import views as curate_views
+
+        # Get template
+        template = template_api.get_by_id(template_id, self.request)
+        # Create temp data structure
+        curate_data_structure = CurateDataStructure(
+            user=self.request.user.id,
+            template=template,
+            name="text_editor_tmp_" + str(datetime.now()),
+        )
+        # create new curate data structure
+        curate_data_structure_api.upsert(
+            curate_data_structure, self.request.user
+        )
+        # build parser
+        parser = get_parser(request=self.request)
+        # generate form
+        root_element_id = parser.generate_form(
+            xsd_doc_data=template.content,
+            xml_doc_data=None,
+            data_structure=curate_data_structure,
+            request=self.request,
+        )
+        # get the root element
+        root_element = data_structure_element_api.get_by_id(
+            root_element_id, self.request
+        )
+
+        # generate xml string
+        xml_data = curate_views.render_xml(self.request, root_element)
+
+        # prettify content
+        xml_data = main_xml_utils.format_content_xml(xml_data)
+
+        # delete temp data structure
+        curate_data_structure_api.delete(
+            curate_data_structure, self.request.user
+        )
+
+        return HttpResponse(
+            json.dumps(xml_data),
             "application/javascript",
         )
 

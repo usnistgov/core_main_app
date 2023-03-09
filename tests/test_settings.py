@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     "menu",
     # Local apps
     "core_main_app",
+    "core_parser_app",
     "tests",
 ]
 
