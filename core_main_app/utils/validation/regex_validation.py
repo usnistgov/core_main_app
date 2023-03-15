@@ -49,5 +49,5 @@ def validate_filename(filename):
     # Run validate filename from Django
     validate_file_name(filename)
     # Regex check filename has extension
-    if re.match(r"^[\w]+\.[a-z0-9]{2,4}$", filename) is None:
+    if re.match(r"^[a-zA-Z0-9-_]+\.[a-z0-9]{2,4}$", filename) is None:
         raise ValidationError("Invalid filename.")
