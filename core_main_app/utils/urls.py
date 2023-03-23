@@ -3,7 +3,8 @@
 
 import re
 
-from django.urls import reverse
+from django.urls import reverse, re_path, include
+from django.conf import settings
 
 
 def get_template_download_pattern():
@@ -40,3 +41,54 @@ def get_blob_download_regex(xml_string):
     # make the regex
     regex = ">(http[s]?:[^<>]+" + download_blob_url + "[0-9]+/?)<"
     return re.findall(regex, xml_string)
+
+
+def get_auth_urls():
+    """Get auth urls
+
+    Returns:
+
+    """
+    urlpatterns = []
+
+    if settings.ENABLE_SAML2_SSO_AUTH:
+        from djangosaml2 import views as saml2_views
+
+        urlpatterns.append(re_path(r"saml2/", include("djangosaml2.urls")))
+        urlpatterns.append(
+            re_path(
+                r"^saml2/login",
+                saml2_views.LoginView.as_view(),
+                name="core_main_app_login",
+            )
+        )
+        urlpatterns.append(
+            re_path(
+                r"^saml2/logout",
+                saml2_views.LogoutInitView.as_view(),
+                name="core_main_app_logout",
+            )
+        )
+    else:
+        from core_main_app.views.user import views as user_views
+
+        if settings.ENABLE_2FA:
+            from two_factor.urls import urlpatterns as tf_urls
+
+            urlpatterns.append(re_path("", include(tf_urls))),
+        else:
+            urlpatterns.append(
+                re_path(
+                    r"^login",
+                    user_views.custom_login,
+                    name="core_main_app_login",
+                )
+            )
+        urlpatterns.append(
+            re_path(
+                r"^logout",
+                user_views.custom_logout,
+                name="core_main_app_logout",
+            )
+        )
+    return urlpatterns

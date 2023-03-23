@@ -47,4 +47,7 @@ def domain_context_processor(request):
         "GA_TRACKING_ID": settings.GA_TRACKING_ID
         if hasattr(settings, "GA_TRACKING_ID")
         else None,
+        "LOGIN_URL": settings.LOGIN_URL
+        if hasattr(settings, "LOGIN_URL")
+        else "",
     }

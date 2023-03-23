@@ -2,14 +2,14 @@
 """
 from django.conf.urls import include
 from django.contrib.auth.decorators import login_required
-from django.urls import re_path, reverse_lazy
+from django.urls import re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 
-from core_main_app import settings
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.data import api as data_api
 from core_main_app.utils.rendering import render
+from core_main_app.utils.urls import get_auth_urls
 from core_main_app.views.common import (
     ajax as common_ajax,
     views as common_views,
@@ -40,7 +40,6 @@ urlpatterns = [
         r"^xml-editor/data",
         login_required(
             common_views.DataContentEditor.as_view(),
-            login_url=reverse_lazy("core_main_app_login"),
         ),
         name="core_main_app_xml_text_editor_view",
     ),
@@ -146,30 +145,4 @@ urlpatterns = [
     ),
 ]
 
-if settings.ENABLE_SAML2_SSO_AUTH:
-    from djangosaml2 import views as saml2_views
-
-    urlpatterns.append(re_path(r"saml2/", include("djangosaml2.urls")))
-    urlpatterns.append(
-        re_path(
-            r"^saml2/login",
-            saml2_views.LoginView.as_view(),
-            name="core_main_app_login",
-        )
-    )
-    urlpatterns.append(
-        re_path(
-            r"^saml2/logout",
-            saml2_views.LogoutInitView.as_view(),
-            name="core_main_app_logout",
-        )
-    )
-else:
-    urlpatterns.append(
-        re_path(r"^login", user_views.custom_login, name="core_main_app_login")
-    )
-    urlpatterns.append(
-        re_path(
-            r"^logout", user_views.custom_logout, name="core_main_app_logout"
-        )
-    )
+urlpatterns.extend(get_auth_urls())

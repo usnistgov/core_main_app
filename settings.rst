@@ -600,6 +600,37 @@ OAI-PMH
 Miscellaneous
 -------------
 
+* ``ENABLE_SAML2_SSO_AUTH``
+
+  Default: ``False``
+
+  Set to ``True`` to enable SAML2 SSO Authentication.
+
+* ``ENABLE_2FA``
+
+  Default: ``False``
+
+  Set to ``True`` to enable 2-Factor Authentication.
+  By default, it will use a token generator (can be used with Google Authenticator).
+  See ``ENABLE_2FA_EMAIL`` to send authentication tokens via email.
+  Other `options <https://django-two-factor-auth.readthedocs.io/en/stable/index.html>`_ (e.g. sms, yubikey)
+  are available in the documentation as well.
+
+* ``ENABLE_2FA_EMAIL``
+
+  Default: ``False``
+
+  Set to ``True`` to enable 2-Factor Authentication. Ignored if ``ENABLE_2FA`` is False.
+  To configure authentication token via email, the following Djajno settings need to be set:
+
+  .. code-block:: python
+    DEFAULT_FROM_EMAIL =
+    EMAIL_HOST =
+    EMAIL_PORT =
+
+  Additional `email settings <https://django-two-factor-auth.readthedocs.io/en/stable/configuration.html#email-gateway>`_
+  are available in the documentation.
+
 * ``SEND_EMAIL_ASYNC``
 
   Default: ``"False"``

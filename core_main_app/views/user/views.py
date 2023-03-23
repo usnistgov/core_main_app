@@ -9,7 +9,6 @@ from django.contrib.staticfiles import finders
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, resolve_url
 from django.urls import reverse
-from django.urls import reverse_lazy
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from rest_framework.status import HTTP_405_METHOD_NOT_ALLOWED
@@ -204,7 +203,7 @@ def homepage(request):
     return render(request, "core_main_app/user/homepage.html", assets=assets)
 
 
-@login_required(login_url=reverse_lazy("core_main_app_login"))
+@login_required
 def manage_template_versions(request, version_manager_id):
     """View that allows template versions management
 
