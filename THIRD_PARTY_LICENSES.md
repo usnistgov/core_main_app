@@ -15,6 +15,7 @@ this package (`requirements.*` files) and their dependencies.
 | django-tz-detect       | MIT License                                             | 
 | djangorestframework    | BSD License                                             |
 | django-simple-menu     | BSD License                                             |
+| django-simple-history  | BSD License                                             |
 | djangosaml2            | Apache Software License                                 |
 | django-two-factor-auth | MIT License                                             |
 | drf-yasg               | BSD License                                             |

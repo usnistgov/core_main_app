@@ -143,6 +143,31 @@ Please follow these steps to configure the SMTP server:
   EMAIL_HOST_USER = 'testsite_app'
   EMAIL_HOST_PASSWORD = 'mys3cr3tp4ssw0rd'
 
+Enable History
+--------------
+
+Django Simple History allows keeping track of changes made to an object stored in the CDCS database.
+First, install and configure the package. See the
+`django-simple-history <https://django-simple-history.readthedocs.io/en/latest/quick_start.html>`_ documentation.
+
+Then, set the `DJANGO_HISTORY_MODELS` setting with a list of models to track.
+At the moment, this feature is only available for the `Data` model.
+
+.. code:: python
+
+  DJANGO_SIMPLE_HISTORY_MODELS=["Data"]
+
+Register models to track by updating project files.
+For example in ``mdcs/mdcs_home/admin.py``, add the following lines:
+
+.. code:: python
+
+  from core_main_app.utils.admin_site.model_admin_class import register_simple_history_models
+  from django.conf import settings
+
+  DJANGO_SIMPLE_HISTORY_MODELS = getattr(settings, "DJANGO_SIMPLE_HISTORY_MODELS", None)
+  register_simple_history_models(DJANGO_SIMPLE_HISTORY_MODELS)
+
 Documentation
 =============
 

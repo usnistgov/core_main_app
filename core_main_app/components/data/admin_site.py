@@ -1,6 +1,6 @@
 """ Custom admin site for the Data model
 """
-from django.contrib import admin
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.helpers import ActionForm
 from django.forms import ChoiceField
@@ -8,7 +8,9 @@ from django.forms import ChoiceField
 from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
-from django.conf import settings
+from core_main_app.utils.admin_site.model_admin_class import (
+    get_base_model_admin_class,
+)
 
 
 class UpdateActionForm(ActionForm):
@@ -137,7 +139,7 @@ def update_data_list(model_admin, request, queryset):
         model_admin.message_user(request, str(ex), messages.ERROR)
 
 
-class CustomDataAdmin(admin.ModelAdmin):
+class CustomDataAdmin(get_base_model_admin_class("Data")):
     """Custom Data Admin"""
 
     search_fields = ["title", "vector_column"]

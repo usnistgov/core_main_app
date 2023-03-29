@@ -249,3 +249,9 @@ GA_TRACKING_ID = getattr(settings, "GA_TRACKING_ID", None)
 MAX_DOCUMENT_EDITING_SIZE = 128 * 1024
 """ :py:class:`int`: Maximum byte size allowed for document editing.
 """
+
+DJANGO_SIMPLE_HISTORY_MODELS = getattr(
+    settings, "DJANGO_SIMPLE_HISTORY_MODELS", None
+)
+""" :py:class:`list`: Track history of listed models.
+"""

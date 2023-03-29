@@ -1,3 +1,4 @@
 core-linked-records-app==2.3.*
 core-parser-app==2.3.*
 core-curate-app==2.3.*
+django-simple-history==3.3.*

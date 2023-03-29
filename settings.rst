@@ -673,6 +673,12 @@ Miscellaneous
 
   Set a Google Analytics tracking ID to add the gtag on all user pages.
 
+* ``DJANGO_HISTORY_MODELS``
+
+  Default: ``None``
+
+  Track history of listed models. Limited to `Data` for now.
+
 Deployment
 ----------
 
