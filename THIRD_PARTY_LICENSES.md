@@ -42,8 +42,7 @@ this package (`requirements.*` files) and their dependencies.
 | Name                  | License                                                 |
 |-----------------------|---------------------------------------------------------|
 | AdminLTE              | MIT License                                             |
-| bootstrap             | MIT License                                             |
-| datatables            | MIT License                                             |
+| bootstrap             | MIT License                                             | 
 | fSelect               | MIT License                                             |
 | fontawesome           | MIT License                                             |
 | highlight             | BSD License                                             |

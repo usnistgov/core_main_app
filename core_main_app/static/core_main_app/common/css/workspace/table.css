@@ -1,0 +1,23 @@
+.table-rights table tbody {
+    border-bottom: 1px solid #111;
+    height: 200px;
+    overflow-y: scroll;
+}
+
+.table-rights{
+    height:350px;
+    overflow:scroll;T
+}
+
+
+.table-rights th {
+  position: sticky;
+  background-color: white;
+  z-index: 2;
+  top: 0;
+}
+
+.table-rights table th,
+.table-rights table td {
+  text-align: center;
+}

@@ -1,35 +1,38 @@
-<table id="table-rights-{{group}}" class="display data-table" style="margin-bottom: 0em; width:100%; border: None">
-    <thead>
-        <th>{% if group == 'group' %}Name {%else%}Username{% endif %}</th>
-        <th>Can read</th>
-        <th>Can write</th>
-        <th>Actions</th>
-    </thead>
-    <tbody>
-        {% for object in objects %}
-            <tr objectid="{{object.object_id}}">
-                <td>{{ object.object_name }}</td>
-                <td>
-                    <label class="switch">
-                        <input {%if data.is_public%} disabled {% endif %} id="btn-read-{{group}}-{{object.object_id}}" autocomplete="off" type="checkbox" {% if object.can_read %} checked{% endif %}>
-                        <span class="slider"></span>
-                    </label>
-                </td>
-                <td>
-                    <label class="switch">
-                        <input {%if data.is_global%} disabled {% endif %} id="btn-write-{{group}}-{{object.object_id}}" autocomplete="off" type="checkbox" {% if object.can_write %} checked{% endif %}>
-                        <span class="slider"></span>
-                    </label>
-                </td>
-
-                <td>
-                    {% if not data.is_public %}
-                        <a class="btn btn-secondary remove-{{group}}-btn">
-                            <i class="fas fa-edit"></i> Remove {{group}} access
-                        </a>
-                    {% endif %}
-                </td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="tab-content table-rights">
+        <table id="table-rights-{{group}}" class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>{% if group == 'group' %}Name {%else%}Username{% endif %}</th>
+                    <th>Can read</th>
+                    <th>Can write</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for object in objects %}
+                    <tr objectid="{{object.object_id}}">
+                        <td>{{ object.object_name }}</td>
+                        <td>
+                            <label class="switch">
+                                <input {%if data.is_public%} disabled {% endif %} id="btn-read-{{group}}-{{object.object_id}}" autocomplete="off" type="checkbox" {% if object.can_read %} checked{% endif %}>
+                                <span class="slider"></span>
+                            </label>
+                        </td>
+                        <td>
+                            <label class="switch">
+                                <input {%if data.is_global%} disabled {% endif %} id="btn-write-{{group}}-{{object.object_id}}" autocomplete="off" type="checkbox" {% if object.can_write %} checked{% endif %}>
+                                <span class="slider"></span>
+                            </label>
+                        </td>
+                        <td>
+                            {% if not data.is_public %}
+                                <a class="btn btn-secondary remove-{{group}}-btn">
+                                    <i class="fas fa-edit"></i> Remove {{group}} access
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+</div>

@@ -195,25 +195,17 @@ class EditWorkspaceRights(CommonView):
 
         assets = {
             "css": [
-                "core_main_app/libs/datatables/1.10.13/css/jquery.dataTables.css",
                 "core_main_app/libs/fSelect/css/fSelect.css",
                 "core_main_app/common/css/switch.css",
+                "core_main_app/common/css/workspace/table.css",
             ],
             "js": [
-                {
-                    "path": "core_main_app/libs/datatables/1.10.13/js/jquery.dataTables.js",
-                    "is_raw": True,
-                },
                 {
                     "path": "core_main_app/libs/fSelect/js/fSelect.js",
                     "is_raw": False,
                 },
                 {
                     "path": "core_main_app/common/js/backtoprevious.js",
-                    "is_raw": True,
-                },
-                {
-                    "path": "core_main_app/user/js/workspaces/tables.js",
                     "is_raw": True,
                 },
                 {
