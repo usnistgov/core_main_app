@@ -33,33 +33,3 @@ class TestCheckSettings(TestCase):
         """
         with self.assertRaises(CoreError):
             _check_settings()
-
-    @override_settings(ENABLE_SAML2_SSO_AUTH=True, ENABLE_2FA=False)
-    def test_check_settings_ENABLE_SAML2_SSO_AUTH_properly_set(self):
-        """test_check_settings_CELERYBEAT_SCHEDULER_properly_set
-
-        Returns:
-
-        """
-        _check_settings()
-
-    @override_settings(ENABLE_SAML2_SSO_AUTH=False, ENABLE_2FA=True)
-    def test_check_settings_ENABLE_2FA_properly_set(self):
-        """test_check_settings_ENABLE_2FA_properly_set
-
-        Returns:
-
-        """
-        _check_settings()
-
-    @override_settings(ENABLE_SAML2_SSO_AUTH=True, ENABLE_2FA=True)
-    def test_check_settings_ENABLE_SAML2_SSO_AUTH_and_ENABLE_2FA_set_raises_error(
-        self,
-    ):
-        """test_check_settings_ENABLE_SAML2_SSO_AUTH_and_ENABLE_2FA_set_raises_error
-
-        Returns:
-
-        """
-        with self.assertRaises(CoreError):
-            _check_settings()

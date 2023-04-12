@@ -17,7 +17,6 @@ this package (`requirements.*` files) and their dependencies.
 | django-simple-menu     | BSD License                                             |
 | django-simple-history  | BSD License                                             |
 | djangosaml2            | Apache Software License                                 |
-| django-two-factor-auth | MIT License                                             |
 | drf-yasg               | BSD License                                             |
 | markdown               | BSD License                                             |
 | mongoengine            | MIT License                                             |

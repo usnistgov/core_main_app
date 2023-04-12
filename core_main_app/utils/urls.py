@@ -72,18 +72,13 @@ def get_auth_urls():
     else:
         from core_main_app.views.user import views as user_views
 
-        if settings.ENABLE_2FA:
-            from two_factor.urls import urlpatterns as tf_urls
-
-            urlpatterns.append(re_path("", include(tf_urls))),
-        else:
-            urlpatterns.append(
-                re_path(
-                    r"^login",
-                    user_views.custom_login,
-                    name="core_main_app_login",
-                )
+        urlpatterns.append(
+            re_path(
+                r"^login",
+                user_views.custom_login,
+                name="core_main_app_login",
             )
+        )
         urlpatterns.append(
             re_path(
                 r"^logout",

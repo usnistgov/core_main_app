@@ -48,8 +48,3 @@ def _check_settings():
             "CELERYBEAT_SCHEDULER setting needs to be set "
             "to 'django_celery_beat.schedulers:DatabaseScheduler'."
         )
-    # check auth settings
-    if settings.ENABLE_SAML2_SSO_AUTH and settings.ENABLE_2FA:
-        raise CoreError(
-            "SAML authentication and 2-factor authentication cannot be enabled at the same time."
-        )

@@ -175,10 +175,6 @@ ENABLE_SAML2_SSO_AUTH = getattr(settings, "ENABLE_SAML2_SSO_AUTH", False)
 """ :py:class:`bool`: Enable SAML2 SSO Authentication
 """
 
-ENABLE_2FA = getattr(settings, "ENABLE_2FA", False)
-""" :py:class:`bool`: Enable 2 Factor Authentication
-"""
-
 MONGODB_INDEXING = getattr(settings, "MONGODB_INDEXING", False)
 """ :py:class:`bool`: Use MongoDB for data indexing.
     If True:

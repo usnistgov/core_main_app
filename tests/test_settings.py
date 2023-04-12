@@ -24,11 +24,6 @@ INSTALLED_APPS = [
     "defender",
     "tz_detect",
     "menu",
-    "django_otp",
-    "django_otp.plugins.otp_static",
-    "django_otp.plugins.otp_totp",
-    "two_factor",
-    "two_factor.plugins.phonenumber",
     # Local apps
     "core_main_app",
     "core_parser_app",
@@ -103,7 +98,6 @@ DATA_SORTING_FIELDS = ["+title"]
 
 CUSTOM_NAME = "Curator"
 ENABLE_SAML2_SSO_AUTH = False
-ENABLE_2FA = False
 VERIFY_DATA_ACCESS = False
 
 USE_TZ = True

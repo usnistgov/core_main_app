@@ -10,16 +10,6 @@ from core_main_app.utils.urls import get_auth_urls
 class TestUrls(TestCase):
     """TestUrls"""
 
-    @override_settings(ENABLE_SAML2_SSO_AUTH=False, ENABLE_2FA=True)
-    def test_urls_with_ENABLE_2FA(self):
-        """test_urls_with_ENABLE_2FA
-
-        Returns:
-
-        """
-        urlpatterns = get_auth_urls()
-        self.assertTrue("core_main_app_login" not in urlpatterns)
-
     @override_settings(ENABLE_SAML2_SSO_AUTH=True)
     def test_urls_with_ENABLE_SAML2_SSO_AUTH(self):
         """test_urls_with_ENABLE_SAML2_SSO_AUTH
@@ -31,9 +21,9 @@ class TestUrls(TestCase):
         self.assertTrue("core_main_app_login" in str(urlpatterns))
         self.assertTrue("saml2" in str(urlpatterns))
 
-    @override_settings(ENABLE_SAML2_SSO_AUTH=False, ENABLE_2FA=False)
+    @override_settings(ENABLE_SAML2_SSO_AUTH=False)
     def test_urls(self):
-        """test_urls_with_ENABLE_SAML2_SSO_AUTH
+        """test_urls
 
         Returns:
 
