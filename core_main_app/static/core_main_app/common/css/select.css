@@ -1,0 +1,11 @@
+/** Checkbox Select Multiple CSS **/
+
+.multiple-columns {
+  columns: 120px 4;
+  list-style: none;
+}
+
+.double-columns {
+  columns: 270px 2;
+  list-style: none;
+}

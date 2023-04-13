@@ -195,15 +195,10 @@ class EditWorkspaceRights(CommonView):
 
         assets = {
             "css": [
-                "core_main_app/libs/fSelect/css/fSelect.css",
                 "core_main_app/common/css/switch.css",
-                "core_main_app/common/css/workspace/table.css",
+                "core_main_app/common/css/select.css",
             ],
             "js": [
-                {
-                    "path": "core_main_app/libs/fSelect/js/fSelect.js",
-                    "is_raw": False,
-                },
                 {
                     "path": "core_main_app/common/js/backtoprevious.js",
                     "is_raw": True,

@@ -25,7 +25,11 @@ class GroupRightForm(forms.Form):
     """
 
     groups = forms.MultipleChoiceField(
-        label="", required=True, widget=forms.SelectMultiple()
+        label="",
+        required=True,
+        widget=forms.CheckboxSelectMultiple(
+            attrs={"class": "multiple-columns"}
+        ),
     )
     GROUPS_OPTIONS = []
 
@@ -52,7 +56,11 @@ class UserRightForm(forms.Form):
     """
 
     users = forms.MultipleChoiceField(
-        label="", required=True, widget=forms.SelectMultiple()
+        label="",
+        required=True,
+        widget=forms.CheckboxSelectMultiple(
+            attrs={"class": "multiple-columns"}
+        ),
     )
     USERS_OPTIONS = []
 
