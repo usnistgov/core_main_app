@@ -15,6 +15,10 @@ CUSTOM_NAME = getattr(settings, "CUSTOM_NAME", "Local")
 """ :py:class:`str`: Name of the local instance
 """
 
+BOOTSTRAP_VERSION = getattr(settings, "BOOTSTRAP_VERSION", "4.6.2")
+""" :py:class:`str`: Version of the boostrap library.
+"""
+
 SERVER_URI = getattr(settings, "SERVER_URI", "http://127.0.0.1:8000")
 """ :py:class:`str`: Server URI for import reference.
 """

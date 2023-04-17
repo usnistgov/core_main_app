@@ -648,6 +648,12 @@ Miscellaneous
 
   Set a Google Analytics tracking ID to add the gtag on all user pages.
 
+* ``BOOTSTRAP_VERSION``
+
+  Default: ``4.6.2``
+
+  Version of the bootstrap library.
+
 * ``DJANGO_HISTORY_MODELS``
 
   Default: ``None``

@@ -50,4 +50,8 @@ def domain_context_processor(request):
         "LOGIN_URL": settings.LOGIN_URL
         if hasattr(settings, "LOGIN_URL")
         else "",
+        "BOOTSTRAP_VERSION": settings.BOOTSTRAP_VERSION
+        if hasattr(settings, "BOOTSTRAP_VERSION")
+        and settings.BOOTSTRAP_VERSION in ["4.6.2", "5.1.3"]
+        else "4.6.2",
     }
