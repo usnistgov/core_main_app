@@ -514,17 +514,9 @@ class AbstractEditorView(View, metaclass=ABCMeta):
                     "path": "core_main_app/user/js/text_editor/text_editor.js",
                     "is_raw": True,
                 },
-                {
-                    "path": "core_main_app/libs/highlight/11.0.0/js/highlight.min.js",
-                    "is_raw": False,
-                },
-                {
-                    "path": "core_main_app/libs/highlight/11.0.0/js/init_highlight.js",
-                    "is_raw": False,
-                },
             ],
             "css": [
-                "core_main_app/libs/highlight/11.0.0/css/atom-one-light.css",
+                "core_main_app/common/css/highlight.css",
                 "core_main_app/user/css/text-editor.css",
             ],
         }

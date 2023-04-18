@@ -22,6 +22,7 @@
   <link rel="stylesheet" href="{% static 'core_main_app/libs/jquery-ui/1.12.1/jquery-ui.css' %}" />
   <link rel="stylesheet" href="{% static 'core_main_app/libs/jquery-ui/1.12.1/jquery-ui.structure.css' %}" />
   <link rel="stylesheet" href="{% static 'core_main_app/libs/jquery-ui/1.12.1/jquery-ui.theme.css' %}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
 
   <link rel="stylesheet" href="{% static 'core_main_app/admin/_theme/css/theme.css' %}">
   <link rel="stylesheet" href="{% static 'core_main_app/admin/_theme/css/additional.css' %}">
@@ -77,6 +78,8 @@
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>
 {% endif %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
 <script src="{% static 'core_main_app/common/js/csrf.js' %}"></script>
 
 {% include 'core_main_app/_render/common/messages.html' %}
