@@ -12,7 +12,7 @@ from core_main_app.components.version_manager import (
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.version_manager import api as version_manager_api
 from core_main_app.utils.integration_tests.integration_base_test_case import (
-    MongoIntegrationBaseTestCase,
+    IntegrationBaseTestCase,
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import create_mock_request
@@ -20,7 +20,7 @@ from core_main_app.utils.tests_tools.RequestMock import create_mock_request
 fixture_template_vm = TemplateVersionManagerAccessControlFixtures()
 
 
-class TestVersionManagerDisable(MongoIntegrationBaseTestCase):
+class TestVersionManagerDisable(IntegrationBaseTestCase):
     """TestVersionManagerDisable"""
 
     fixture = fixture_template_vm
@@ -222,7 +222,7 @@ class TestVersionManagerDisable(MongoIntegrationBaseTestCase):
         self.assertTrue(self.fixture.user2_tvm.is_disabled)
 
 
-class TestVersionManagerRestore(MongoIntegrationBaseTestCase):
+class TestVersionManagerRestore(IntegrationBaseTestCase):
     """TestVersionManagerRestore"""
 
     fixture = fixture_template_vm
@@ -424,7 +424,7 @@ class TestVersionManagerRestore(MongoIntegrationBaseTestCase):
         self.assertFalse(self.fixture.user2_tvm.is_disabled)
 
 
-class TestVersionManagerRestoreVersion(MongoIntegrationBaseTestCase):
+class TestVersionManagerRestoreVersion(IntegrationBaseTestCase):
     """TestVersionManagerRestoreVersion"""
 
     fixture = fixture_template_vm
@@ -646,7 +646,7 @@ class TestVersionManagerRestoreVersion(MongoIntegrationBaseTestCase):
         )
 
 
-class TestVersionManagerDisableVersion(MongoIntegrationBaseTestCase):
+class TestVersionManagerDisableVersion(IntegrationBaseTestCase):
     """TestVersionManagerDisableVersion"""
 
     fixture = fixture_template_vm
@@ -861,7 +861,7 @@ class TestVersionManagerDisableVersion(MongoIntegrationBaseTestCase):
         )
 
 
-class TestVersionManagerSetCurrent(MongoIntegrationBaseTestCase):
+class TestVersionManagerSetCurrent(IntegrationBaseTestCase):
     """TestVersionManagerSetCurrent"""
 
     fixture = fixture_template_vm
@@ -1076,7 +1076,7 @@ class TestVersionManagerSetCurrent(MongoIntegrationBaseTestCase):
         )
 
 
-class TestVersionManagerUpsert(MongoIntegrationBaseTestCase):
+class TestVersionManagerUpsert(IntegrationBaseTestCase):
     """TestVersionManagerUpsert"""
 
     fixture = fixture_template_vm
@@ -1260,7 +1260,7 @@ class TestVersionManagerUpsert(MongoIntegrationBaseTestCase):
         )
 
 
-class TestVersionManagerGetVersionNumber(MongoIntegrationBaseTestCase):
+class TestVersionManagerGetVersionNumber(IntegrationBaseTestCase):
     """TestVersionManagerGetVersionNumber"""
 
     fixture = fixture_template_vm
@@ -1434,7 +1434,7 @@ class TestVersionManagerGetVersionNumber(MongoIntegrationBaseTestCase):
             )
 
 
-class TestVersionManagerGetVersionByNumber(MongoIntegrationBaseTestCase):
+class TestVersionManagerGetVersionByNumber(IntegrationBaseTestCase):
     """TestVersionManagerGetVersionByNumber"""
 
     fixture = fixture_template_vm
@@ -1586,7 +1586,7 @@ class TestVersionManagerGetVersionByNumber(MongoIntegrationBaseTestCase):
             )
 
 
-class TestAccessControlCanRead(MongoIntegrationBaseTestCase):
+class TestAccessControlCanRead(IntegrationBaseTestCase):
     """Test Access Control Can Read"""
 
     fixture = fixture_template_vm
@@ -1744,7 +1744,7 @@ class TestAccessControlCanRead(MongoIntegrationBaseTestCase):
         self.assertEqual(result, self.fixture.user1_tvm)
 
 
-class TestAccessControlCanReadGlobal(MongoIntegrationBaseTestCase):
+class TestAccessControlCanReadGlobal(IntegrationBaseTestCase):
     """Test Access Control Can Read Global"""
 
     fixture = fixture_template_vm

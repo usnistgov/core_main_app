@@ -7,8 +7,7 @@ from core_main_app.components.group import api as group_api
 from core_main_app.permissions import rights
 
 
-# FIXME: Remove Mongo from name
-class MongoIntegrationTransactionTestCase(TransactionTestCase):
+class IntegrationTransactionTestCase(TransactionTestCase):
     """Represent the Integration base transaction test case
     The integration tests must inherit of this class
     """

@@ -6,7 +6,7 @@ from core_main_app.utils.tests_tools.MockUser import create_mock_user
 
 from tests.components.data.fixtures.fixtures import DataFixtures
 from core_main_app.utils.integration_tests.integration_base_test_case import (
-    MongoIntegrationBaseTestCase,
+    IntegrationBaseTestCase,
 )
 from core_main_app.components.lock import api as lock_api
 
@@ -14,7 +14,7 @@ from core_main_app.components.lock import api as lock_api
 fixture_data = DataFixtures()
 
 
-class TestLockIsObjectLocked(MongoIntegrationBaseTestCase):
+class TestLockIsObjectLocked(IntegrationBaseTestCase):
     """Test Lock Is Object Locked"""
 
     fixture = fixture_data
@@ -50,7 +50,7 @@ class TestLockIsObjectLocked(MongoIntegrationBaseTestCase):
         self.assertEqual(result, False)
 
 
-class TestLockSetLock(MongoIntegrationBaseTestCase):
+class TestLockSetLock(IntegrationBaseTestCase):
     """Test Set Lock"""
 
     fixture = fixture_data
@@ -105,7 +105,7 @@ class TestLockSetLock(MongoIntegrationBaseTestCase):
             lock_api.set_lock_object(self.fixture.data_1, self.user2)
 
 
-class TestLockRemoveLockOnObject(MongoIntegrationBaseTestCase):
+class TestLockRemoveLockOnObject(IntegrationBaseTestCase):
     """Test Remove Lock On Object"""
 
     fixture = fixture_data

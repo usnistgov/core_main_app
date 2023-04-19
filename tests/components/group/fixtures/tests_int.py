@@ -5,11 +5,11 @@ from tests.components.group.fixtures.fixtures import GroupFixtures
 
 from core_main_app.components.group import api as group_api
 from core_main_app.utils.integration_tests.integration_base_transaction_test_case import (
-    MongoIntegrationTransactionTestCase,
+    IntegrationTransactionTestCase,
 )
 
 
-class TestGroupFixtures(MongoIntegrationTransactionTestCase):
+class TestGroupFixtures(IntegrationTransactionTestCase):
     """Test Group fixtures"""
 
     def test_create_group(self):

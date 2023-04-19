@@ -8,7 +8,7 @@ from core_main_app.components.template_version_manager import (
     api as template_vm_api,
 )
 from core_main_app.utils.integration_tests.integration_base_test_case import (
-    MongoIntegrationBaseTestCase,
+    IntegrationBaseTestCase,
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import create_mock_request
@@ -24,7 +24,7 @@ fixture_template_vm = TemplateVersionManagerAccessControlFixtures()
 fixture_template_vm_ordering = TemplateVersionManagerOrderingFixtures()
 
 
-class TestTemplateVersionManagerGet(MongoIntegrationBaseTestCase):
+class TestTemplateVersionManagerGet(IntegrationBaseTestCase):
     """TestTemplateVersionManagerGet"""
 
     fixture = fixture_template_vm
@@ -172,7 +172,7 @@ class TestTemplateVersionManagerGet(MongoIntegrationBaseTestCase):
             )
 
 
-class TestTemplateVersionManagerGetByIdList(MongoIntegrationBaseTestCase):
+class TestTemplateVersionManagerGetByIdList(IntegrationBaseTestCase):
     """TesTemplateVersionManagerGetByIdList"""
 
     fixture = fixture_template_vm
@@ -389,7 +389,7 @@ class TestTemplateVersionManagerGetByIdList(MongoIntegrationBaseTestCase):
 
 
 class TestTemplateVersionManagerGetActiveGlobalVersionManagerByTitle(
-    MongoIntegrationBaseTestCase
+    IntegrationBaseTestCase
 ):
     """TestTemplateVersionManagerGetActiveGlobalVersionManagerByTitle"""
 
@@ -487,7 +487,7 @@ class TestTemplateVersionManagerGetActiveGlobalVersionManagerByTitle(
         self.assertEqual(version_manager, self.fixture.global_tvm)
 
 
-class TestTemplateVersionManagerInsert(MongoIntegrationBaseTestCase):
+class TestTemplateVersionManagerInsert(IntegrationBaseTestCase):
     """TestTemplateVersionManagerInsert"""
 
     fixture = fixture_template_vm
@@ -695,7 +695,7 @@ class TestTemplateVersionManagerInsert(MongoIntegrationBaseTestCase):
         )
 
 
-class TestTemplateEditTitle(MongoIntegrationBaseTestCase):
+class TestTemplateEditTitle(IntegrationBaseTestCase):
     """TestTemplateEditTitle"""
 
     fixture = fixture_template_vm
@@ -879,7 +879,7 @@ class TestTemplateEditTitle(MongoIntegrationBaseTestCase):
         )
 
 
-class TestTemplateGetGlobalVersionManagers(MongoIntegrationBaseTestCase):
+class TestTemplateGetGlobalVersionManagers(IntegrationBaseTestCase):
     """TestTemplateGetGlobalVersionManagers"""
 
     fixture = fixture_template_vm
@@ -964,7 +964,7 @@ class TestTemplateGetGlobalVersionManagers(MongoIntegrationBaseTestCase):
             self.assertEqual(tvm.user, None)
 
 
-class TestTemplateGetActiveGlobalVersionManager(MongoIntegrationBaseTestCase):
+class TestTemplateGetActiveGlobalVersionManager(IntegrationBaseTestCase):
     """TestTemplateGetActiveGlobalVersionManager"""
 
     fixture = fixture_template_vm
@@ -1057,9 +1057,7 @@ class TestTemplateGetActiveGlobalVersionManager(MongoIntegrationBaseTestCase):
             self.assertEqual(tvm.user, None)
 
 
-class TestTemplateGetActiveVersionManagerByUserId(
-    MongoIntegrationBaseTestCase
-):
+class TestTemplateGetActiveVersionManagerByUserId(IntegrationBaseTestCase):
     """TestTemplateGetActiveVersionManagerByUserId"""
 
     fixture = fixture_template_vm
@@ -1151,7 +1149,7 @@ class TestTemplateGetActiveVersionManagerByUserId(
             self.assertEqual(tvm.user, str(self.superuser1.id))
 
 
-class TestTemplateGetAllByUserId(MongoIntegrationBaseTestCase):
+class TestTemplateGetAllByUserId(IntegrationBaseTestCase):
     """TestTemplateGetAllByUserId"""
 
     fixture = fixture_template_vm
@@ -1225,7 +1223,7 @@ class TestTemplateGetAllByUserId(MongoIntegrationBaseTestCase):
             self.assertEqual(tvm.user, str(self.superuser1.id))
 
 
-class TestUpdateTemplatesOrdering(MongoIntegrationBaseTestCase):
+class TestUpdateTemplatesOrdering(IntegrationBaseTestCase):
     """Test Update Templates Ordering"""
 
     fixture = fixture_template_vm_ordering
@@ -1387,7 +1385,7 @@ class TestUpdateTemplatesOrdering(MongoIntegrationBaseTestCase):
         )
 
 
-class TestAccessControlCanWriteList(MongoIntegrationBaseTestCase):
+class TestAccessControlCanWriteList(IntegrationBaseTestCase):
     """Test Access Control Can Write List"""
 
     fixture = fixture_template_vm_ordering
@@ -1509,7 +1507,7 @@ class TestAccessControlCanWriteList(MongoIntegrationBaseTestCase):
         )
 
 
-class TestTemplateVersionManagerSortByIdList(MongoIntegrationBaseTestCase):
+class TestTemplateVersionManagerSortByIdList(IntegrationBaseTestCase):
     """Test Template Version Manager Sort By Id List"""
 
     fixture = fixture_template_vm_ordering

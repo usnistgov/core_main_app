@@ -9,7 +9,7 @@ from tests.components.template.fixtures.fixtures import (
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.template import api as template_api
 from core_main_app.utils.integration_tests.integration_base_test_case import (
-    MongoIntegrationBaseTestCase,
+    IntegrationBaseTestCase,
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import create_mock_request
@@ -17,7 +17,7 @@ from core_main_app.utils.tests_tools.RequestMock import create_mock_request
 fixture_template = AccessControlTemplateFixture()
 
 
-class TestTemplateUpsert(MongoIntegrationBaseTestCase):
+class TestTemplateUpsert(IntegrationBaseTestCase):
     """TestTemplateUpsert"""
 
     fixture = fixture_template
@@ -187,7 +187,7 @@ class TestTemplateUpsert(MongoIntegrationBaseTestCase):
         template_api.upsert(self.fixture.global_template, request=mock_request)
 
 
-class TestTemplateSetDisplayName(MongoIntegrationBaseTestCase):
+class TestTemplateSetDisplayName(IntegrationBaseTestCase):
     """TestTemplateSetDisplayName"""
 
     fixture = fixture_template
@@ -371,7 +371,7 @@ class TestTemplateSetDisplayName(MongoIntegrationBaseTestCase):
         )
 
 
-class TestTemplateGet(MongoIntegrationBaseTestCase):
+class TestTemplateGet(IntegrationBaseTestCase):
     """TestTemplateGet"""
 
     fixture = fixture_template
@@ -515,7 +515,7 @@ class TestTemplateGet(MongoIntegrationBaseTestCase):
             )
 
 
-class TestTemplateGetAllAccessibleByIdList(MongoIntegrationBaseTestCase):
+class TestTemplateGetAllAccessibleByIdList(IntegrationBaseTestCase):
     """TestTemplateGetAllAccessibleByIdList"""
 
     fixture = fixture_template
@@ -614,7 +614,7 @@ class TestTemplateGetAllAccessibleByIdList(MongoIntegrationBaseTestCase):
         self.assertTrue(self.fixture.global_template in list(templates))
 
 
-class TestTemplateGetAllByHash(MongoIntegrationBaseTestCase):
+class TestTemplateGetAllByHash(IntegrationBaseTestCase):
     """TestTemplateGetAllByHash"""
 
     fixture = fixture_template
@@ -825,7 +825,7 @@ class TestTemplateGetAllByHash(MongoIntegrationBaseTestCase):
         self.assertTrue(self.fixture.global_template not in list(templates))
 
 
-class TestTemplateGetAllByHashList(MongoIntegrationBaseTestCase):
+class TestTemplateGetAllByHashList(IntegrationBaseTestCase):
     """TestTemplateGetAllByHashList"""
 
     fixture = fixture_template
@@ -1044,7 +1044,7 @@ class TestTemplateGetAllByHashList(MongoIntegrationBaseTestCase):
         self.assertTrue(self.fixture.global_template not in list(templates))
 
 
-class TestTemplateGetAll(MongoIntegrationBaseTestCase):
+class TestTemplateGetAll(IntegrationBaseTestCase):
     """TestTemplateGetAll"""
 
     fixture = fixture_template
@@ -1128,7 +1128,7 @@ class TestTemplateGetAll(MongoIntegrationBaseTestCase):
         self.assertTrue(self.fixture.global_template in list(templates))
 
 
-class TestTemplateDelete(MongoIntegrationBaseTestCase):
+class TestTemplateDelete(IntegrationBaseTestCase):
     """TestTemplateDelete"""
 
     fixture = fixture_template

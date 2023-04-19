@@ -5,11 +5,11 @@ from tests.components.group.fixtures.fixtures import GroupFixtures
 from django.contrib.auth.models import Group
 from core_main_app.components.group import api as group_api
 from core_main_app.utils.integration_tests.integration_base_transaction_test_case import (
-    MongoIntegrationTransactionTestCase,
+    IntegrationTransactionTestCase,
 )
 
 
-class TestGetAllGroups(MongoIntegrationTransactionTestCase):
+class TestGetAllGroups(IntegrationTransactionTestCase):
     """Test Get All Groups"""
 
     def test_get_all_groups_returns_default_groups(self):
@@ -41,7 +41,7 @@ class TestGetAllGroups(MongoIntegrationTransactionTestCase):
         self.assertTrue(all(isinstance(group, Group) for group in list_groups))
 
 
-class TestGetGroupByNameAndPermission(MongoIntegrationTransactionTestCase):
+class TestGetGroupByNameAndPermission(IntegrationTransactionTestCase):
     """Test Get Group By Name And Permission"""
 
     def test_get_group_by_name_and_permission_returns_group_list(self):
@@ -92,7 +92,7 @@ class TestGetGroupByNameAndPermission(MongoIntegrationTransactionTestCase):
         self.assertEqual(len(result), 0)
 
 
-class TestGetAllGroupByListId(MongoIntegrationTransactionTestCase):
+class TestGetAllGroupByListId(IntegrationTransactionTestCase):
     """Test Get All Group By List Id"""
 
     def test_get_all_groups_by_list_id_returns_list(self):
@@ -132,7 +132,7 @@ class TestGetAllGroupByListId(MongoIntegrationTransactionTestCase):
         self.assertEqual(len(result), 1)
 
 
-class TestGetAllGroupExceptListId(MongoIntegrationTransactionTestCase):
+class TestGetAllGroupExceptListId(IntegrationTransactionTestCase):
     """Test Get All Group Except List Id"""
 
     def test_get_all_groups_except_list_id_returns_list(self):
@@ -165,7 +165,7 @@ class TestGetAllGroupExceptListId(MongoIntegrationTransactionTestCase):
         self.assertEqual(len(result), 0)
 
 
-class TestGetAllGroupExceptList(MongoIntegrationTransactionTestCase):
+class TestGetAllGroupExceptList(IntegrationTransactionTestCase):
     """Test Get All Group Except List"""
 
     def test_get_all_groups_except_list_returns_list(self):

@@ -8,7 +8,7 @@ from tests.rest.xsl_transformation.fixtures.fixtures import (
 
 from core_main_app.rest.xsl_transformation import views as xsl_views
 from core_main_app.utils.integration_tests.integration_base_test_case import (
-    MongoIntegrationBaseTestCase,
+    IntegrationBaseTestCase,
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
@@ -16,7 +16,7 @@ from core_main_app.utils.tests_tools.RequestMock import RequestMock
 fixture_data = XslTransformationFixtures()
 
 
-class TestGetAllXslTransformationList(MongoIntegrationBaseTestCase):
+class TestGetAllXslTransformationList(IntegrationBaseTestCase):
     """TestGetAllXslTransformationList"""
 
     fixture = fixture_data
@@ -47,7 +47,7 @@ class TestGetAllXslTransformationList(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
-class TestPostXslTransformationList(MongoIntegrationBaseTestCase):
+class TestPostXslTransformationList(IntegrationBaseTestCase):
     """TestPostXslTransformationList"""
 
     fixture = fixture_data
@@ -122,7 +122,7 @@ class TestPostXslTransformationList(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
-class TestGetXslTransformationDetail(MongoIntegrationBaseTestCase):
+class TestGetXslTransformationDetail(IntegrationBaseTestCase):
     """TestGetXslTransformationDetail"""
 
     fixture = fixture_data
@@ -202,7 +202,7 @@ class TestGetXslTransformationDetail(MongoIntegrationBaseTestCase):
         )
 
 
-class TestDeleteXslTransformationDetail(MongoIntegrationBaseTestCase):
+class TestDeleteXslTransformationDetail(IntegrationBaseTestCase):
     """TestDeleteXslTransformationDetail"""
 
     fixture = fixture_data
@@ -303,7 +303,7 @@ class TestDeleteXslTransformationDetail(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
-class TestPatchXslTransformationDetail(MongoIntegrationBaseTestCase):
+class TestPatchXslTransformationDetail(IntegrationBaseTestCase):
     """TestPatchXslTransformationDetail"""
 
     fixture = fixture_data
@@ -404,7 +404,7 @@ class TestPatchXslTransformationDetail(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-class TestPostXslTransformationTransform(MongoIntegrationBaseTestCase):
+class TestPostXslTransformationTransform(IntegrationBaseTestCase):
     """TestPostXslTransformationTransform"""
 
     fixture = fixture_data

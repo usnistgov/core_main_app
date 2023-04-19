@@ -14,7 +14,7 @@ from tests.components.template_version_manager.fixtures.fixtures import (
 from core_main_app.components.template import api as template_api
 from core_main_app.rest.template_version_manager import views
 from core_main_app.utils.integration_tests.integration_base_test_case import (
-    MongoIntegrationBaseTestCase,
+    IntegrationBaseTestCase,
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import (
@@ -27,7 +27,7 @@ fixture_template_2 = TemplateVersionManagerAccessControlFixtures()
 fixture_template_vm_ordering = TemplateVersionManagerOrderingFixtures()
 
 
-class TestGlobalTemplateVersionManagerList(MongoIntegrationBaseTestCase):
+class TestGlobalTemplateVersionManagerList(IntegrationBaseTestCase):
     """TestGlobalTemplateVersionManagerList"""
 
     fixture = fixture_template
@@ -168,7 +168,7 @@ class TestGlobalTemplateVersionManagerList(MongoIntegrationBaseTestCase):
         self.assertEqual(len(response.data), 0)
 
 
-class TestUserTemplateVersionManagerList(MongoIntegrationBaseTestCase):
+class TestUserTemplateVersionManagerList(IntegrationBaseTestCase):
     """TestUserTemplateVersionManagerList"""
 
     fixture = fixture_template
@@ -309,7 +309,7 @@ class TestUserTemplateVersionManagerList(MongoIntegrationBaseTestCase):
         self.assertEqual(len(response.data), 0)
 
 
-class TestTemplateVersionManagerDetail(MongoIntegrationBaseTestCase):
+class TestTemplateVersionManagerDetail(IntegrationBaseTestCase):
     """TestTemplateVersionManagerDetail"""
 
     fixture = fixture_template
@@ -382,7 +382,7 @@ class TestTemplateVersionManagerDetail(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
-class TestTemplateVersion(MongoIntegrationBaseTestCase):
+class TestTemplateVersion(IntegrationBaseTestCase):
     """TestTemplateVersion"""
 
     fixture = fixture_template
@@ -521,7 +521,7 @@ class TestTemplateVersion(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
-class TestUserTemplateList(MongoIntegrationBaseTestCase):
+class TestUserTemplateList(IntegrationBaseTestCase):
     """TestUserTemplateList"""
 
     fixture = fixture_template
@@ -692,7 +692,7 @@ class TestUserTemplateList(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-class TestGlobalTemplateList(MongoIntegrationBaseTestCase):
+class TestGlobalTemplateList(IntegrationBaseTestCase):
     """TestGlobalTemplateList"""
 
     fixture = fixture_template
@@ -791,7 +791,7 @@ class TestGlobalTemplateList(MongoIntegrationBaseTestCase):
         self.assertEqual(template_object.version_manager.user, None)
 
 
-class TestCurrentTemplateVersion(MongoIntegrationBaseTestCase):
+class TestCurrentTemplateVersion(IntegrationBaseTestCase):
     """TestCurrentTemplateVersion"""
 
     fixture = fixture_template
@@ -892,7 +892,7 @@ class TestCurrentTemplateVersion(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
-class TestDisableTemplateVersion(MongoIntegrationBaseTestCase):
+class TestDisableTemplateVersion(IntegrationBaseTestCase):
     """TestDisableTemplateVersion"""
 
     fixture = fixture_template
@@ -1012,7 +1012,7 @@ class TestDisableTemplateVersion(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
-class TestRestoreTemplateVersion(MongoIntegrationBaseTestCase):
+class TestRestoreTemplateVersion(IntegrationBaseTestCase):
     """TestRestoreTemplateVersion"""
 
     fixture = fixture_template
@@ -1113,7 +1113,7 @@ class TestRestoreTemplateVersion(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
-class TestDisableTemplateVersionManager(MongoIntegrationBaseTestCase):
+class TestDisableTemplateVersionManager(IntegrationBaseTestCase):
     """TestDisableTemplateVersionManager"""
 
     fixture = fixture_template
@@ -1215,7 +1215,7 @@ class TestDisableTemplateVersionManager(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
-class TestRestoreTemplateVersionManager(MongoIntegrationBaseTestCase):
+class TestRestoreTemplateVersionManager(IntegrationBaseTestCase):
     """TestRestoreTemplateVersionManager"""
 
     fixture = fixture_template
@@ -1317,7 +1317,7 @@ class TestRestoreTemplateVersionManager(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
-class TemplateVersionManagerOrdering(MongoIntegrationBaseTestCase):
+class TemplateVersionManagerOrdering(IntegrationBaseTestCase):
     """TemplateVersionManagerOrdering"""
 
     fixture = fixture_template_vm_ordering
@@ -1387,7 +1387,7 @@ class TemplateVersionManagerOrdering(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-class TestTemplateVersionManagerList(MongoIntegrationBaseTestCase):
+class TestTemplateVersionManagerList(IntegrationBaseTestCase):
     """TestTemplateVersionManagerList"""
 
     fixture = fixture_template_2

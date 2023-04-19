@@ -4,14 +4,14 @@ from tests.components.data.fixtures.fixtures import AccessControlDataFixture
 
 from core_main_app.components.data.models import Data
 from core_main_app.utils.integration_tests.integration_base_test_case import (
-    MongoIntegrationBaseTestCase,
+    IntegrationBaseTestCase,
 )
 
 # FIXME move other tests (from tests_int.py) here
 ordering_data_fixture = AccessControlDataFixture()
 
 
-class TestGetAllByListTemplate(MongoIntegrationBaseTestCase):
+class TestGetAllByListTemplate(IntegrationBaseTestCase):
     """TestGetAllByListTemplate"""
 
     fixture = ordering_data_fixture

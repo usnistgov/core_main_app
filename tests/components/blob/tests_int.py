@@ -10,7 +10,7 @@ from tests.components.blob.fixtures.fixtures import (
 from core_main_app.commons import exceptions
 from core_main_app.components.blob.models import Blob
 from core_main_app.utils.integration_tests.integration_base_test_case import (
-    MongoIntegrationBaseTestCase,
+    IntegrationBaseTestCase,
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.components.blob import api as blob_api
@@ -19,7 +19,7 @@ fixture_blob = BlobFixtures()
 fixture_blob_workspace = AccessControlBlobFixture()
 
 
-class TestBlobGetAll(MongoIntegrationBaseTestCase):
+class TestBlobGetAll(IntegrationBaseTestCase):
     """TestBlobGetAll"""
 
     fixture = fixture_blob
@@ -47,7 +47,7 @@ class TestBlobGetAll(MongoIntegrationBaseTestCase):
         self.assertTrue(len(self.fixture.blob_collection) == result.count())
 
 
-class TestBlobGetById(MongoIntegrationBaseTestCase):
+class TestBlobGetById(IntegrationBaseTestCase):
     """TestBlobGetById"""
 
     fixture = fixture_blob
@@ -74,7 +74,7 @@ class TestBlobGetById(MongoIntegrationBaseTestCase):
         self.assertEqual(result, self.fixture.blob_1)
 
 
-class TestBlobGetAllByUserId(MongoIntegrationBaseTestCase):
+class TestBlobGetAllByUserId(IntegrationBaseTestCase):
     """TestBlobGetAllByUserId"""
 
     fixture = fixture_blob
@@ -108,7 +108,7 @@ class TestBlobGetAllByUserId(MongoIntegrationBaseTestCase):
         self.assertTrue(result.count() == 0)
 
 
-class TestBlobGetAllByWorkspace(MongoIntegrationBaseTestCase):
+class TestBlobGetAllByWorkspace(IntegrationBaseTestCase):
     """TestBlobGetAllByWorkspace"""
 
     fixture = fixture_blob_workspace
@@ -145,7 +145,7 @@ class TestBlobGetAllByWorkspace(MongoIntegrationBaseTestCase):
         self.assertTrue(result.count() == 0)
 
 
-class TestBlobGetAllByListWorkspace(MongoIntegrationBaseTestCase):
+class TestBlobGetAllByListWorkspace(IntegrationBaseTestCase):
     """TestBlobGetAllByListWorkspace"""
 
     fixture = fixture_blob_workspace
@@ -187,7 +187,7 @@ class TestBlobGetAllByListWorkspace(MongoIntegrationBaseTestCase):
         self.assertTrue(result.count() == 0)
 
 
-class TestBlobInsert(MongoIntegrationBaseTestCase):
+class TestBlobInsert(IntegrationBaseTestCase):
     """TestBlobInsert"""
 
     def setUp(self):

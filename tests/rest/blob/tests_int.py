@@ -15,7 +15,7 @@ from core_main_app.components.blob.models import Blob
 from core_main_app.components.workspace.models import Workspace
 from core_main_app.rest.blob import views
 from core_main_app.utils.integration_tests.integration_base_test_case import (
-    MongoIntegrationBaseTestCase,
+    IntegrationBaseTestCase,
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
@@ -25,7 +25,7 @@ fixture_blob = BlobFixtures()
 fixture_blob_workspace = AccessControlBlobFixture()
 
 
-class TestBlobListAdmin(MongoIntegrationBaseTestCase):
+class TestBlobListAdmin(IntegrationBaseTestCase):
     """TestBlobListAdmin"""
 
     fixture = fixture_blob
@@ -67,7 +67,7 @@ class TestBlobListAdmin(MongoIntegrationBaseTestCase):
         self.assertEqual(len(response.data), 3)
 
 
-class TestBlobList(MongoIntegrationBaseTestCase):
+class TestBlobList(IntegrationBaseTestCase):
     """TestBlobList"""
 
     fixture = fixture_blob
@@ -287,7 +287,7 @@ class TestBlobList(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-class TestBlobDetail(MongoIntegrationBaseTestCase):
+class TestBlobDetail(IntegrationBaseTestCase):
     """TestBlobDetail"""
 
     fixture = fixture_blob
@@ -479,7 +479,7 @@ class TestBlobDetail(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
-class TestBlobDownload(MongoIntegrationBaseTestCase):
+class TestBlobDownload(IntegrationBaseTestCase):
     """TestBlobDownload"""
 
     fixture = fixture_blob
@@ -552,7 +552,7 @@ class TestBlobDownload(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
-class TestBlobDeleteList(MongoIntegrationBaseTestCase):
+class TestBlobDeleteList(IntegrationBaseTestCase):
     """TestBlobDeleteList"""
 
     fixture = fixture_blob
@@ -606,7 +606,7 @@ class TestBlobDeleteList(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
-class TestBlobAssign(MongoIntegrationBaseTestCase):
+class TestBlobAssign(IntegrationBaseTestCase):
     """TestBlobAssign"""
 
     fixture = fixture_blob_workspace
@@ -756,7 +756,7 @@ class TestBlobAssign(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
-class TestBlobChangeOwner(MongoIntegrationBaseTestCase):
+class TestBlobChangeOwner(IntegrationBaseTestCase):
     """TestBlobChangeOwner"""
 
     fixture = fixture_blob_workspace

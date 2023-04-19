@@ -15,10 +15,10 @@ from core_main_app.settings import DATA_SORTING_FIELDS
 from core_main_app.system import api as system_api
 from core_main_app.utils.datetime import datetime_now
 from core_main_app.utils.integration_tests.integration_base_test_case import (
-    MongoIntegrationBaseTestCase,
+    IntegrationBaseTestCase,
 )
 from core_main_app.utils.integration_tests.integration_base_transaction_test_case import (
-    MongoIntegrationTransactionTestCase,
+    IntegrationTransactionTestCase,
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from tests.components.data.fixtures.fixtures import (
@@ -33,7 +33,7 @@ fixture_data = DataFixtures()
 access_control_data_fixture = AccessControlDataFixture()
 
 
-class TestDataGetAll(MongoIntegrationBaseTestCase):
+class TestDataGetAll(IntegrationBaseTestCase):
     """TestDataGetAll"""
 
     fixture = access_control_data_fixture
@@ -164,7 +164,7 @@ class TestDataGetAll(MongoIntegrationBaseTestCase):
         )
 
 
-class TestDataGetAllExcept(MongoIntegrationBaseTestCase):
+class TestDataGetAllExcept(IntegrationBaseTestCase):
     """TestDataGetAllExcept"""
 
     fixture = access_control_data_fixture
@@ -369,7 +369,7 @@ class TestDataGetAllExcept(MongoIntegrationBaseTestCase):
         )
 
 
-class TestDataGetById(MongoIntegrationBaseTestCase):
+class TestDataGetById(IntegrationBaseTestCase):
     """TestDataGetById"""
 
     fixture = fixture_data
@@ -396,7 +396,7 @@ class TestDataGetById(MongoIntegrationBaseTestCase):
         self.assertEqual(result, self.fixture.data_1)
 
 
-class TestDataGetAllByUserId(MongoIntegrationBaseTestCase):
+class TestDataGetAllByUserId(IntegrationBaseTestCase):
     """TestDataGetAllByUserId"""
 
     fixture = access_control_data_fixture
@@ -547,7 +547,7 @@ class TestDataGetAllByUserId(MongoIntegrationBaseTestCase):
         )
 
 
-class TestDataGetAllExceptUserId(MongoIntegrationBaseTestCase):
+class TestDataGetAllExceptUserId(IntegrationBaseTestCase):
     """TestDataGetAllExceptUserId"""
 
     fixture = access_control_data_fixture
@@ -699,7 +699,7 @@ class TestDataGetAllExceptUserId(MongoIntegrationBaseTestCase):
         )
 
 
-class TestExecuteQuery(MongoIntegrationTransactionTestCase):
+class TestExecuteQuery(IntegrationTransactionTestCase):
     """TestExecuteQuery"""
 
     fixture = access_control_data_fixture
@@ -819,7 +819,7 @@ class TestExecuteQuery(MongoIntegrationTransactionTestCase):
         )
 
 
-class TestGetAllByWorkspace(MongoIntegrationBaseTestCase):
+class TestGetAllByWorkspace(IntegrationBaseTestCase):
     """TestGetAllByWorkspace"""
 
     fixture = access_control_data_fixture
@@ -943,7 +943,7 @@ class TestGetAllByWorkspace(MongoIntegrationBaseTestCase):
         )
 
 
-class TestGetByIdList(MongoIntegrationBaseTestCase):
+class TestGetByIdList(IntegrationBaseTestCase):
     """TestGetByIdList"""
 
     fixture = access_control_data_fixture
@@ -1018,7 +1018,7 @@ class TestGetByIdList(MongoIntegrationBaseTestCase):
         self.assertEqual(len(result), 0)
 
 
-class TestDataMigration(MongoIntegrationTransactionTestCase):
+class TestDataMigration(IntegrationTransactionTestCase):
     """TestDataMigration"""
 
     fixture = fixture_data_template

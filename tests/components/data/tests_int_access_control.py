@@ -18,7 +18,7 @@ from core_main_app.commons.exceptions import QueryError
 from core_main_app.components.data import api as data_api
 from core_main_app.components.data.models import Data
 from core_main_app.utils.integration_tests.integration_base_test_case import (
-    MongoIntegrationBaseTestCase,
+    IntegrationBaseTestCase,
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import create_mock_request
@@ -30,7 +30,7 @@ fixture_data_numeric = AccessControlDataNumericFixture()
 fixture_data_none = AccessControlDataNoneFixture()
 
 
-class TestDataGetById(MongoIntegrationBaseTestCase):
+class TestDataGetById(IntegrationBaseTestCase):
     """TestDataGetById"""
 
     fixture = fixture_data
@@ -130,7 +130,7 @@ class TestDataGetById(MongoIntegrationBaseTestCase):
             data_api.get_by_id(data_id, mock_user)
 
 
-class TestDataGetByIdList(MongoIntegrationBaseTestCase):
+class TestDataGetByIdList(IntegrationBaseTestCase):
     """TestDataGetByIdList"""
 
     fixture = fixture_data
@@ -293,7 +293,7 @@ class TestDataGetByIdList(MongoIntegrationBaseTestCase):
             data_api.get_by_id_list([data_id], mock_user)
 
 
-class TestDataGetAll(MongoIntegrationBaseTestCase):
+class TestDataGetAll(IntegrationBaseTestCase):
     """TestDataGetAll"""
 
     fixture = fixture_data
@@ -319,7 +319,7 @@ class TestDataGetAll(MongoIntegrationBaseTestCase):
             data_api.get_all(mock_user)
 
 
-class TestDataGetAllByUser(MongoIntegrationBaseTestCase):
+class TestDataGetAllByUser(IntegrationBaseTestCase):
     """TestDataGetAllByUser"""
 
     fixture = fixture_data
@@ -394,7 +394,7 @@ class TestDataGetAllByUser(MongoIntegrationBaseTestCase):
         self.assertTrue(data.user_id == "1" for data in data_list)
 
 
-class TestDataGetAllExceptUser(MongoIntegrationBaseTestCase):
+class TestDataGetAllExceptUser(IntegrationBaseTestCase):
     """TestDataGetAllExceptUser"""
 
     # NOTE: Will always fail when private data are present
@@ -454,7 +454,7 @@ class TestDataGetAllExceptUser(MongoIntegrationBaseTestCase):
         self.assertTrue(data.user_id != mock_user.id for data in data_list)
 
 
-class TestDataUpsert(MongoIntegrationBaseTestCase):
+class TestDataUpsert(IntegrationBaseTestCase):
     """TestDataUpsert"""
 
     fixture = fixture_data
@@ -626,7 +626,7 @@ class TestDataUpsert(MongoIntegrationBaseTestCase):
         data_api.upsert(fixture_data.data_1, mock_request)
 
 
-class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
+class TestDataExecuteQuery(IntegrationBaseTestCase):
     """TestDataExecuteQuery"""
 
     fixture = fixture_data
@@ -948,7 +948,7 @@ class TestDataExecuteQuery(MongoIntegrationBaseTestCase):
             )
 
 
-class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
+class TestDataExecuteRawQuery(IntegrationBaseTestCase):
     """TestDataExecuteRawQuery"""
 
     fixture = fixture_data2
@@ -1867,7 +1867,7 @@ class TestDataExecuteRawQuery(MongoIntegrationBaseTestCase):
             )
 
 
-class TestDataExecuteNoneQuery(MongoIntegrationBaseTestCase):
+class TestDataExecuteNoneQuery(IntegrationBaseTestCase):
     """TestDataExecuteNoneQuery"""
 
     fixture = fixture_data_none
@@ -1913,7 +1913,7 @@ class TestDataExecuteNoneQuery(MongoIntegrationBaseTestCase):
         self.assertEqual(data_list.count(), 0)
 
 
-class TestDataExecuteFullTextQuery(MongoIntegrationBaseTestCase):
+class TestDataExecuteFullTextQuery(IntegrationBaseTestCase):
     """TestDataExecuteFullTextQuery"""
 
     fixture = fixture_data_full_text
@@ -2087,7 +2087,7 @@ class TestDataExecuteFullTextQuery(MongoIntegrationBaseTestCase):
             data_api.execute_json_query(query, mock_user)
 
 
-class TestDataDelete(MongoIntegrationBaseTestCase):
+class TestDataDelete(IntegrationBaseTestCase):
     """TestDataDelete"""
 
     fixture = fixture_data
@@ -2232,7 +2232,7 @@ class TestDataDelete(MongoIntegrationBaseTestCase):
             )
 
 
-class TestDataChangeOwner(MongoIntegrationBaseTestCase):
+class TestDataChangeOwner(IntegrationBaseTestCase):
     """TestDataChangeOwner"""
 
     fixture = fixture_data
@@ -2301,7 +2301,7 @@ class TestDataChangeOwner(MongoIntegrationBaseTestCase):
         )
 
 
-class TestDataExecuteNumericQuery(MongoIntegrationBaseTestCase):
+class TestDataExecuteNumericQuery(IntegrationBaseTestCase):
     """TestDataExecuteNumericQuery"""
 
     fixture = fixture_data_numeric

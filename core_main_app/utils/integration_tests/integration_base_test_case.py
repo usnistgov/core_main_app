@@ -8,8 +8,7 @@ MOCK_DATABASE_NAME = "db_mock"
 MOCK_DATABASE_HOST = "mongomock://localhost"
 
 
-# FIXME: Remove Mongo from name
-class MongoIntegrationBaseTestCase(TestCase):
+class IntegrationBaseTestCase(TestCase):
     """Represent the Integration base test case
     The integration tests must inherit of this class
     """

@@ -11,7 +11,7 @@ from core_main_app.components.blob import api as blob_api
 from core_main_app.components.data import api as data_api
 from core_main_app.settings import MAX_DOCUMENT_EDITING_SIZE
 from core_main_app.utils.integration_tests.integration_base_test_case import (
-    MongoIntegrationBaseTestCase,
+    IntegrationBaseTestCase,
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.views.common.views import (
@@ -37,7 +37,7 @@ from core_main_app.views.user.views import manage_template_versions
 from tests.test_settings import LOGIN_URL
 
 
-class TestViewData(MongoIntegrationBaseTestCase):
+class TestViewData(IntegrationBaseTestCase):
     """TestViewData"""
 
     def setUp(self):
@@ -117,7 +117,7 @@ class TestViewData(MongoIntegrationBaseTestCase):
         self.assertTrue("Error" in response.content.decode())
 
 
-class TestManageTemplateVersions(MongoIntegrationBaseTestCase):
+class TestManageTemplateVersions(IntegrationBaseTestCase):
     """TestManageTemplateVersions"""
 
     def setUp(self):
@@ -145,7 +145,7 @@ class TestManageTemplateVersions(MongoIntegrationBaseTestCase):
         self.assertTrue(response.url.startswith(LOGIN_URL))
 
 
-class TestTemplateXSLRenderingView(MongoIntegrationBaseTestCase):
+class TestTemplateXSLRenderingView(IntegrationBaseTestCase):
     """TestTemplateXSLRenderingView"""
 
     def setUp(self):
@@ -173,7 +173,7 @@ class TestTemplateXSLRenderingView(MongoIntegrationBaseTestCase):
         self.assertTrue(response.url.startswith(LOGIN_URL))
 
 
-class TestAssignDataView(MongoIntegrationBaseTestCase):
+class TestAssignDataView(IntegrationBaseTestCase):
     """TestAssignDataView"""
 
     def setUp(self):
@@ -252,7 +252,7 @@ class TestAssignDataView(MongoIntegrationBaseTestCase):
         self.assertTrue(response.url.startswith(LOGIN_URL))
 
 
-class TestAssignBlobView(MongoIntegrationBaseTestCase):
+class TestAssignBlobView(IntegrationBaseTestCase):
     """TestAssignBlobView"""
 
     def setUp(self):
@@ -331,7 +331,7 @@ class TestAssignBlobView(MongoIntegrationBaseTestCase):
         self.assertTrue(response.url.startswith(LOGIN_URL))
 
 
-class TestChangeDataDisplayView(MongoIntegrationBaseTestCase):
+class TestChangeDataDisplayView(IntegrationBaseTestCase):
     """TestChangeDataDisplayView"""
 
     def setUp(self):
@@ -434,7 +434,7 @@ class TestChangeDataDisplayView(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class TestEditRights(MongoIntegrationBaseTestCase):
+class TestEditRights(IntegrationBaseTestCase):
     """TestEditRights"""
 
     def setUp(self):
@@ -462,7 +462,7 @@ class TestEditRights(MongoIntegrationBaseTestCase):
         self.assertTrue(response.url.startswith(LOGIN_URL))
 
 
-class TestLoadFormChangeWorkspace(MongoIntegrationBaseTestCase):
+class TestLoadFormChangeWorkspace(IntegrationBaseTestCase):
     """TestLoadFormChangeWorkspace"""
 
     def setUp(self):
@@ -491,7 +491,7 @@ class TestLoadFormChangeWorkspace(MongoIntegrationBaseTestCase):
         self.assertTrue(response.url.startswith(LOGIN_URL))
 
 
-class TestLoadAddUserForm(MongoIntegrationBaseTestCase):
+class TestLoadAddUserForm(IntegrationBaseTestCase):
     """TestLoadAddUserForm"""
 
     def setUp(self):
@@ -519,7 +519,7 @@ class TestLoadAddUserForm(MongoIntegrationBaseTestCase):
         self.assertTrue(response.url.startswith(LOGIN_URL))
 
 
-class TestAddUserToWorkspace(MongoIntegrationBaseTestCase):
+class TestAddUserToWorkspace(IntegrationBaseTestCase):
     """TestAddUserToWorkspace"""
 
     def setUp(self):
@@ -547,7 +547,7 @@ class TestAddUserToWorkspace(MongoIntegrationBaseTestCase):
         self.assertTrue(response.url.startswith(LOGIN_URL))
 
 
-class TestSwitchRight(MongoIntegrationBaseTestCase):
+class TestSwitchRight(IntegrationBaseTestCase):
     """TestSwitchRight"""
 
     def setUp(self):
@@ -575,7 +575,7 @@ class TestSwitchRight(MongoIntegrationBaseTestCase):
         self.assertTrue(response.url.startswith(LOGIN_URL))
 
 
-class TestRemoveRights(MongoIntegrationBaseTestCase):
+class TestRemoveRights(IntegrationBaseTestCase):
     """TestRemoveRights"""
 
     def setUp(self):
@@ -603,7 +603,7 @@ class TestRemoveRights(MongoIntegrationBaseTestCase):
         self.assertTrue(response.url.startswith(LOGIN_URL))
 
 
-class TestAddGroupForm(MongoIntegrationBaseTestCase):
+class TestAddGroupForm(IntegrationBaseTestCase):
     """TestAddGroupForm"""
 
     def setUp(self):
@@ -631,7 +631,7 @@ class TestAddGroupForm(MongoIntegrationBaseTestCase):
         self.assertTrue(response.url.startswith(LOGIN_URL))
 
 
-class TestAddGroupRightToWorkspace(MongoIntegrationBaseTestCase):
+class TestAddGroupRightToWorkspace(IntegrationBaseTestCase):
     """TestAddGroupRightToWorkspace"""
 
     def setUp(self):
@@ -659,7 +659,7 @@ class TestAddGroupRightToWorkspace(MongoIntegrationBaseTestCase):
         self.assertTrue(response.url.startswith(LOGIN_URL))
 
 
-class TestAbstractEditorView(MongoIntegrationBaseTestCase):
+class TestAbstractEditorView(IntegrationBaseTestCase):
     """Test Get XML Text Editor View"""
 
     def setUp(self):
@@ -703,7 +703,7 @@ class TestAbstractEditorView(MongoIntegrationBaseTestCase):
             AbstractEditorView.save(self)
 
 
-class TestDataContentEditorView(MongoIntegrationBaseTestCase):
+class TestDataContentEditorView(IntegrationBaseTestCase):
     """Test Post Data Content Editor View"""
 
     def setUp(self):
@@ -934,7 +934,7 @@ class TestDataContentEditorView(MongoIntegrationBaseTestCase):
         )
 
 
-class TestXSDTextEditorView(MongoIntegrationBaseTestCase):
+class TestXSDTextEditorView(IntegrationBaseTestCase):
     """Test Post XSD Text Editor View"""
 
     def setUp(self):

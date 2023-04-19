@@ -8,13 +8,13 @@ from tests.components.template.fixtures.fixtures import (
 
 from core_main_app.rest.template import views as template_rest_views
 from core_main_app.utils.integration_tests.integration_base_test_case import (
-    MongoIntegrationBaseTestCase,
+    IntegrationBaseTestCase,
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
 
 
-class TestTemplateDownload(MongoIntegrationBaseTestCase):
+class TestTemplateDownload(IntegrationBaseTestCase):
     fixture = AccessControlTemplateFixture()
 
     def setUp(self):

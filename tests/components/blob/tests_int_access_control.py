@@ -11,14 +11,14 @@ from core_main_app.commons import exceptions
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.blob.models import Blob
 from core_main_app.utils.integration_tests.integration_base_test_case import (
-    MongoIntegrationBaseTestCase,
+    IntegrationBaseTestCase,
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 
 fixture_blob = AccessControlBlobFixture()
 
 
-class TestBlobGetById(MongoIntegrationBaseTestCase):
+class TestBlobGetById(IntegrationBaseTestCase):
     """TestBlobGetById"""
 
     fixture = fixture_blob
@@ -85,7 +85,7 @@ class TestBlobGetById(MongoIntegrationBaseTestCase):
             blob_api.get_by_id(blob_id, mock_user)
 
 
-class TestBlobGetAll(MongoIntegrationBaseTestCase):
+class TestBlobGetAll(IntegrationBaseTestCase):
     """TestBlobGetAll"""
 
     fixture = fixture_blob
@@ -111,7 +111,7 @@ class TestBlobGetAll(MongoIntegrationBaseTestCase):
             blob_api.get_all(mock_user)
 
 
-class TestBlobGetAllByUser(MongoIntegrationBaseTestCase):
+class TestBlobGetAllByUser(IntegrationBaseTestCase):
     """TestBlobGetAllByUser"""
 
     fixture = fixture_blob
@@ -149,7 +149,7 @@ class TestBlobGetAllByUser(MongoIntegrationBaseTestCase):
         self.assertTrue(blob.user_id == "1" for blob in blob_list)
 
 
-class TestBlobGetAllByWorkspace(MongoIntegrationBaseTestCase):
+class TestBlobGetAllByWorkspace(IntegrationBaseTestCase):
     """TestBlobGetAllByWorkspace"""
 
     fixture = fixture_blob
@@ -245,7 +245,7 @@ class TestBlobGetAllByWorkspace(MongoIntegrationBaseTestCase):
         self.assertTrue(blob.user_id == mock_user.id for blob in blob_list)
 
 
-class TestBlobDelete(MongoIntegrationBaseTestCase):
+class TestBlobDelete(IntegrationBaseTestCase):
     """TestBlobDelete"""
 
     fixture = fixture_blob
@@ -389,7 +389,7 @@ class TestBlobDelete(MongoIntegrationBaseTestCase):
             )
 
 
-class TestBlobChangeOwner(MongoIntegrationBaseTestCase):
+class TestBlobChangeOwner(IntegrationBaseTestCase):
     """TestBlobChangeOwner"""
 
     fixture = fixture_blob
@@ -458,7 +458,7 @@ class TestBlobChangeOwner(MongoIntegrationBaseTestCase):
         )
 
 
-class TestBlobInsert(MongoIntegrationBaseTestCase):
+class TestBlobInsert(IntegrationBaseTestCase):
     """TestBlobInsert"""
 
     def setUp(self):
@@ -534,7 +534,7 @@ class TestBlobInsert(MongoIntegrationBaseTestCase):
             )
 
 
-class TestBlobAssign(MongoIntegrationBaseTestCase):
+class TestBlobAssign(IntegrationBaseTestCase):
     """TestBlobAssign"""
 
     fixture = fixture_blob

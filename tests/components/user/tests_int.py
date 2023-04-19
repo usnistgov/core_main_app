@@ -5,11 +5,11 @@ from tests.components.user.fixtures.fixtures import UserFixtures
 from django.contrib.auth.models import User
 from core_main_app.components.user import api as user_api
 from core_main_app.utils.integration_tests.integration_base_transaction_test_case import (
-    MongoIntegrationTransactionTestCase,
+    IntegrationTransactionTestCase,
 )
 
 
-class TestUserGetActiveUsers(MongoIntegrationTransactionTestCase):
+class TestUserGetActiveUsers(IntegrationTransactionTestCase):
     """Test User Get Active Users"""
 
     def test_get_active_users_returns_empty_list(self):
@@ -36,7 +36,7 @@ class TestUserGetActiveUsers(MongoIntegrationTransactionTestCase):
         self.assertTrue(user.is_active() for user in result)
 
 
-class TestUserGetUserByUsername(MongoIntegrationTransactionTestCase):
+class TestUserGetUserByUsername(IntegrationTransactionTestCase):
     """Test User Get User By Username"""
 
     def test_get_user_by_username_raises_error_when_does_not_exist(self):
@@ -64,7 +64,7 @@ class TestUserGetUserByUsername(MongoIntegrationTransactionTestCase):
         self.assertEqual(result.username, user.username)
 
 
-class TestUserCreateAndSaveUser(MongoIntegrationTransactionTestCase):
+class TestUserCreateAndSaveUser(IntegrationTransactionTestCase):
     """Test User Create And Save User"""
 
     def test_create_and_save_user_creates_user(self):
@@ -83,7 +83,7 @@ class TestUserCreateAndSaveUser(MongoIntegrationTransactionTestCase):
         self.assertEqual(result.username, "username")
 
 
-class TestUserUpsert(MongoIntegrationTransactionTestCase):
+class TestUserUpsert(IntegrationTransactionTestCase):
     """Test User Upsert"""
 
     def test_upsert_user_creates_user(self):
@@ -117,7 +117,7 @@ class TestUserUpsert(MongoIntegrationTransactionTestCase):
         self.assertEqual(result.username, "new_username")
 
 
-class TestUserGetAllUsersExceptList(MongoIntegrationTransactionTestCase):
+class TestUserGetAllUsersExceptList(IntegrationTransactionTestCase):
     """Test User Get All Users Except List"""
 
     def test_get_all_users_except_list_returns_empty_list(self):
@@ -153,7 +153,7 @@ class TestUserGetAllUsersExceptList(MongoIntegrationTransactionTestCase):
         self.assertIn(user3, result)
 
 
-class TestUserGetAllUsersExceptListId(MongoIntegrationTransactionTestCase):
+class TestUserGetAllUsersExceptListId(IntegrationTransactionTestCase):
     """Test User Get All Users Except List Id"""
 
     def test_get_all_users_except_list_id_returns_empty_list(self):
@@ -189,7 +189,7 @@ class TestUserGetAllUsersExceptListId(MongoIntegrationTransactionTestCase):
         self.assertIn(user3, result)
 
 
-class TestUserGetAllUsersByListId(MongoIntegrationTransactionTestCase):
+class TestUserGetAllUsersByListId(IntegrationTransactionTestCase):
     """Test User Get All Users By List Id"""
 
     def test_get_all_users_by_list_id_returns_empty_list(self):
@@ -237,7 +237,7 @@ class TestUserGetAllUsersByListId(MongoIntegrationTransactionTestCase):
         self.assertNotIn(user3, result)
 
 
-class TestUserGetIdUsernameDict(MongoIntegrationTransactionTestCase):
+class TestUserGetIdUsernameDict(IntegrationTransactionTestCase):
     """Test User Get Id Username Dict"""
 
     def test_get_id_username_dict_returns_empty_list(self):

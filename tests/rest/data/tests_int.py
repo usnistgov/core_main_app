@@ -17,10 +17,10 @@ from core_main_app.components.workspace import api as workspace_api
 from core_main_app.components.workspace.models import Workspace
 from core_main_app.rest.data import views as data_rest_views
 from core_main_app.utils.integration_tests.integration_base_test_case import (
-    MongoIntegrationBaseTestCase,
+    IntegrationBaseTestCase,
 )
 from core_main_app.utils.integration_tests.integration_base_transaction_test_case import (
-    MongoIntegrationTransactionTestCase,
+    IntegrationTransactionTestCase,
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
@@ -30,7 +30,7 @@ fixture_data_query = QueryDataFixtures()
 fixture_data_workspace = AccessControlDataFixture()
 
 
-class TestDataListByWorkspace(MongoIntegrationBaseTestCase):
+class TestDataListByWorkspace(IntegrationBaseTestCase):
     """Test Data List By Workspace"""
 
     fixture = fixture_data_workspace
@@ -113,7 +113,7 @@ class TestDataListByWorkspace(MongoIntegrationBaseTestCase):
         self.assertEqual(len(response.data), 2)
 
 
-class TestDataList(MongoIntegrationBaseTestCase):
+class TestDataList(IntegrationBaseTestCase):
     """TestDataList"""
 
     fixture = fixture_data
@@ -318,7 +318,7 @@ class TestDataList(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-class TestDataDetail(MongoIntegrationBaseTestCase):
+class TestDataDetail(IntegrationBaseTestCase):
     """Test Data Detail"""
 
     fixture = fixture_data
@@ -481,7 +481,7 @@ class TestDataDetail(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-class TestDataDownload(MongoIntegrationBaseTestCase):
+class TestDataDownload(IntegrationBaseTestCase):
     """TestDataDownload"""
 
     fixture = fixture_data
@@ -575,7 +575,7 @@ class TestDataDownload(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
+class TestExecuteLocalQueryView(IntegrationBaseTestCase):
     """TestExecuteLocalQueryView"""
 
     fixture = fixture_data_query
@@ -880,9 +880,7 @@ class TestExecuteLocalQueryView(MongoIntegrationBaseTestCase):
         self.assertEqual(len(response.data), 1)
 
 
-class TestExecuteLocalQueryViewWorkspaceCase(
-    MongoIntegrationTransactionTestCase
-):
+class TestExecuteLocalQueryViewWorkspaceCase(IntegrationTransactionTestCase):
     """TestExecuteLocalQueryViewWorkspaceCase"""
 
     fixture = fixture_data_workspace
@@ -1270,7 +1268,7 @@ class TestExecuteLocalQueryViewWorkspaceCase(
         self.assertEqual(len(response.data), 0)
 
 
-class TestDataAssign(MongoIntegrationBaseTestCase):
+class TestDataAssign(IntegrationBaseTestCase):
     """TestDataAssign"""
 
     fixture = fixture_data_workspace
@@ -1420,7 +1418,7 @@ class TestDataAssign(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
-class TestDataChangeOwner(MongoIntegrationBaseTestCase):
+class TestDataChangeOwner(IntegrationBaseTestCase):
     """TestDataChangeOwner"""
 
     fixture = fixture_data_workspace
@@ -1526,7 +1524,7 @@ class TestDataChangeOwner(MongoIntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
-class TestDataPermissions(MongoIntegrationTransactionTestCase):
+class TestDataPermissions(IntegrationTransactionTestCase):
     """TestDataPermissions"""
 
     fixture = fixture_data_workspace

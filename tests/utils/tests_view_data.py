@@ -11,7 +11,7 @@ from tests.components.template_xsl_rendering.fixtures.fixtures import (
     TemplateXslRenderingFixtures,
 )
 from core_main_app.utils.integration_tests.integration_base_test_case import (
-    MongoIntegrationBaseTestCase,
+    IntegrationBaseTestCase,
 )
 
 fixture_template_rendering = TemplateXslRenderingFixtures()
@@ -102,7 +102,7 @@ class TestGetField(TestCase):
         self.assertEqual(data_title, None)
 
 
-class TestXsltSelector(MongoIntegrationBaseTestCase):
+class TestXsltSelector(IntegrationBaseTestCase):
     """Test raw_xml_to_dict"""
 
     fixture = fixture_template_rendering

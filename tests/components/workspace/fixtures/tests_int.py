@@ -5,13 +5,13 @@ from tests.components.workspace.fixtures.fixtures import WorkspaceFixtures
 
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.utils.integration_tests.integration_base_transaction_test_case import (
-    MongoIntegrationTransactionTestCase,
+    IntegrationTransactionTestCase,
 )
 
 TITLE = "title"
 
 
-class TestWorkspaceFixtures(MongoIntegrationTransactionTestCase):
+class TestWorkspaceFixtures(IntegrationTransactionTestCase):
     """Test Workspace fixtures"""
 
     def test_create_workspace(self):

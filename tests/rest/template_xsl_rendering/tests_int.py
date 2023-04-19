@@ -8,7 +8,7 @@ from tests.components.template_xsl_rendering.fixtures.fixtures import (
 
 from core_main_app.rest.template_xsl_rendering import views
 from core_main_app.utils.integration_tests.integration_base_test_case import (
-    MongoIntegrationBaseTestCase,
+    IntegrationBaseTestCase,
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
@@ -16,7 +16,7 @@ from core_main_app.utils.tests_tools.RequestMock import RequestMock
 fixture_template_xsl_rendering = TemplateXslRenderingFixtures()
 
 
-class TestTemplateXslRenderingAddDetailXslt(MongoIntegrationBaseTestCase):
+class TestTemplateXslRenderingAddDetailXslt(IntegrationBaseTestCase):
     """TestTemplateXslRenderingAddDetailXslt"""
 
     fixture = fixture_template_xsl_rendering
@@ -117,9 +117,7 @@ class TestTemplateXslRenderingAddDetailXslt(MongoIntegrationBaseTestCase):
         )
 
 
-class TestTemplateXslRenderingSetDefaultDetailXslt(
-    MongoIntegrationBaseTestCase
-):
+class TestTemplateXslRenderingSetDefaultDetailXslt(IntegrationBaseTestCase):
     """TestTemplateXslRenderingSetDefaultDetailXslt"""
 
     fixture = fixture_template_xsl_rendering
@@ -192,7 +190,7 @@ class TestTemplateXslRenderingSetDefaultDetailXslt(
         )
 
 
-class TestTemplateXslRenderingRemoveDetailXslt(MongoIntegrationBaseTestCase):
+class TestTemplateXslRenderingRemoveDetailXslt(IntegrationBaseTestCase):
     """TestTemplateXslRenderingRemoveDetailXslt"""
 
     fixture = fixture_template_xsl_rendering
@@ -330,7 +328,7 @@ class TestTemplateXslRenderingRemoveDetailXslt(MongoIntegrationBaseTestCase):
         )
 
 
-class TestTemplateXslRenderingSetListDetailXslt(MongoIntegrationBaseTestCase):
+class TestTemplateXslRenderingSetListDetailXslt(IntegrationBaseTestCase):
     """TestTemplateXslRenderingSetListDetailXslt"""
 
     fixture = fixture_template_xsl_rendering

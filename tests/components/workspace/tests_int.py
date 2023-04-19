@@ -8,13 +8,13 @@ from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.utils.integration_tests.integration_base_transaction_test_case import (
-    MongoIntegrationTransactionTestCase,
+    IntegrationTransactionTestCase,
 )
 
 TITLE_1 = "title 1"
 
 
-class TestCreateWorkspace(MongoIntegrationTransactionTestCase):
+class TestCreateWorkspace(IntegrationTransactionTestCase):
     """TestCreateWorkspace"""
 
     def test_create_one_workspace(self):
@@ -86,7 +86,7 @@ class TestCreateWorkspace(MongoIntegrationTransactionTestCase):
         self.assertIsNone(workspace.owner)
 
 
-class TestIsWorkspaceGlobal(MongoIntegrationTransactionTestCase):
+class TestIsWorkspaceGlobal(IntegrationTransactionTestCase):
     """Test Is Workspace Global"""
 
     def test_is_workspace_global_true(self):
@@ -116,7 +116,7 @@ class TestIsWorkspaceGlobal(MongoIntegrationTransactionTestCase):
         self.assertFalse(result)
 
 
-class TestGetGlobalWorkspace(MongoIntegrationTransactionTestCase):
+class TestGetGlobalWorkspace(IntegrationTransactionTestCase):
     """Test Get Global Workspace"""
 
     def test_get_global_workspace(self):
@@ -159,7 +159,7 @@ class TestGetGlobalWorkspace(MongoIntegrationTransactionTestCase):
             workspace_api.get_global_workspace()
 
 
-class TestCheckIfWorkspaceCanBeChanged(MongoIntegrationTransactionTestCase):
+class TestCheckIfWorkspaceCanBeChanged(IntegrationTransactionTestCase):
     """Test Check If Workspace Can Be Changed"""
 
     def test_workspace_can_be_changed_return_true_if_workspace_is_none_and_allow_public_is_false(

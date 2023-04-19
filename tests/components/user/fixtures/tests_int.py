@@ -5,11 +5,11 @@ from tests.components.user.fixtures.fixtures import UserFixtures
 
 from core_main_app.components.user import api as user_api
 from core_main_app.utils.integration_tests.integration_base_transaction_test_case import (
-    MongoIntegrationTransactionTestCase,
+    IntegrationTransactionTestCase,
 )
 
 
-class TestUserFixtures(MongoIntegrationTransactionTestCase):
+class TestUserFixtures(IntegrationTransactionTestCase):
     """Test User fixtures"""
 
     def test_create_user(self):

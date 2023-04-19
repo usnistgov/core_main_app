@@ -14,13 +14,13 @@ from core_main_app.components.template_xsl_rendering import (
     api as template_xsl_rendering_api,
 )
 from core_main_app.utils.integration_tests.integration_base_transaction_test_case import (
-    MongoIntegrationTransactionTestCase,
+    IntegrationTransactionTestCase,
 )
 
 fixture_template_rendering = TemplateXslRenderingFixtures()
 
 
-class TestTemplateXslRenderingAddOrDelete(MongoIntegrationTransactionTestCase):
+class TestTemplateXslRenderingAddOrDelete(IntegrationTransactionTestCase):
     """Test Template Xsl Rendering Add Or Delete"""
 
     fixture = fixture_template_rendering
@@ -155,9 +155,7 @@ class TestTemplateXslRenderingAddOrDelete(MongoIntegrationTransactionTestCase):
         )
 
 
-class TestTemplateXslRenderingAddDetailXslt(
-    MongoIntegrationTransactionTestCase
-):
+class TestTemplateXslRenderingAddDetailXslt(IntegrationTransactionTestCase):
     """Test Template Xsl Rendering Add Detail Xslt"""
 
     fixture = fixture_template_rendering
@@ -202,9 +200,7 @@ class TestTemplateXslRenderingAddDetailXslt(
         )
 
 
-class TestTemplateXslRenderingDeleteDetailXslt(
-    MongoIntegrationTransactionTestCase
-):
+class TestTemplateXslRenderingDeleteDetailXslt(IntegrationTransactionTestCase):
     """Test Template Xsl Rendering Delete Detail Xslt"""
 
     fixture = fixture_template_rendering
@@ -252,7 +248,7 @@ class TestTemplateXslRenderingDeleteDetailXslt(
 
 
 class TestTemplateXslRenderingSetDefaultDetailXslt(
-    MongoIntegrationTransactionTestCase
+    IntegrationTransactionTestCase
 ):
     """Test Template Xsl Rendering Set Default Detail Xslt"""
 
