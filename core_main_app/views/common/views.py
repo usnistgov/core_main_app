@@ -707,7 +707,7 @@ class XmlEditor(AbstractEditorView, metaclass=ABCMeta):
         template = template_api.get_by_id(template_id, self.request)
         # Create temp data structure
         curate_data_structure = CurateDataStructure(
-            user=self.request.user.id,
+            user=str(self.request.user.id),
             template=template,
             name="text_editor_tmp_" + str(datetime.now()),
         )
