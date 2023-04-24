@@ -23,6 +23,10 @@
     display: inline-block;
 }
 
+pre code.hljs,code.hljs{
+ padding:0px;
+}
+
 
 
 

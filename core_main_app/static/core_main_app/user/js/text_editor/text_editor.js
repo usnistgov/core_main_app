@@ -233,6 +233,8 @@ let generate = function()
     }).always(function(data) {
         // get old button icon
         hideSpinner($(".generate > i"), icon)
+        // setup line numbers
+        refreshLineNumbers();
     });
 };
 
@@ -250,9 +252,9 @@ let createDataModal = function(){
 * Refresh Line Numbers
 */
 let refreshLineNumbers = function(){
-    if( lineNumbers != $(".input").text().split('\n').length - 1){
+    if( lineNumbers != $(".input").text().split('\n').length){
         var htmlLineNumber = ""
-        lineNumbers = $(".input").text().split('\n').length - 1
+        lineNumbers = $(".input").text().split('\n').length
         for (i = 1;  i < lineNumbers ; i++){
             htmlLineNumber += "<div>"+i+"</div>"
         }
