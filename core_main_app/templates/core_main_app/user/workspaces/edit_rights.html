@@ -21,8 +21,8 @@
 {% block box_body %}
 <br/>
     <!--FIXME: put back the tab -->
+    <h4>Users:</h4>
     {% if data.user_data %}
-        Users
         {% include data.template with objects=data.user_data group="user" %}
     {% else %}
     <div class="empty-table">
@@ -30,8 +30,8 @@
     </div>
     {% endif %}
 <br/>
+    <h4>Groups:</h4>
     {% if data.group_data %}
-        Groups
         {% include data.template with objects=data.group_data group="group" %}
     {%else%}
       <div class="empty-table">

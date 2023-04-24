@@ -49,3 +49,8 @@ input:checked + .slider:before {
   -ms-transform: translateX(26px);
   transform: translateX(26px);
 }
+
+.row > * {
+  padding: 0;
+  margin: 0;
+}

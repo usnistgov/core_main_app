@@ -10,19 +10,34 @@
     </div>
 </div>
 <div id="group-rights">
-    Select all groups you want to give rights to the workspace:
-    <form id="add-group-form">
+    <p class="my-3">
+        Select all groups you want to give rights to the workspace:
+    </p>
+    <form id="add-group-form" class="p-2 my-3">
     </form>
     <div id="list-rights">
-        <label class="switch">
-            <input type="checkbox" id="read_group">
-            <span class="slider"></span>
-        </label> Read
-        <br/>
-        <label class="switch">
-            <input type="checkbox" id="write_group">
-            <span class="slider"></span>
-        </label> Write
+        <div class="row m-2">
+            <div class="col-sm-1 mx-1">
+                <label class="switch">
+                    <input type="checkbox" id="read_group">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="col">
+                Read
+            </div>
+        </div>
+        <div class="row m-2">
+            <div class="col-sm-1 mx-1">
+                <label class="switch">
+                    <input type="checkbox" id="write_group">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="col">
+                Write
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
