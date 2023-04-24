@@ -150,7 +150,7 @@ Django Simple History allows keeping track of changes made to an object stored i
 First, install and configure the package. See the
 `django-simple-history <https://django-simple-history.readthedocs.io/en/latest/quick_start.html>`_ documentation.
 
-Then, set the `DJANGO_HISTORY_MODELS` setting with a list of models to track.
+Then, set the `DJANGO_SIMPLE_HISTORY_MODELS` setting with a list of models to track.
 At the moment, this feature is only available for the `Data` model.
 
 .. code:: python

@@ -654,7 +654,7 @@ Miscellaneous
 
   Version of the bootstrap library.
 
-* ``DJANGO_HISTORY_MODELS``
+* ``DJANGO_SIMPLE_HISTORY_MODELS``
 
   Default: ``None``
 

@@ -14,7 +14,7 @@ def get_base_model_admin_class(model):
 
     """
     django_simple_history_models = getattr(
-        settings, "DJANGO_HISTORY_MODELS", None
+        settings, "DJANGO_SIMPLE_HISTORY_MODELS", None
     )
     if django_simple_history_models and isinstance(
         django_simple_history_models, list
