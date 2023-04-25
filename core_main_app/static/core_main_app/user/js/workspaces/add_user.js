@@ -3,8 +3,10 @@
  * AJAX call
  */
 load_form_add_user = function() {
-    $("#add-user-modal").modal("show");
+    $("#banner_rights_errors").hide();
+    $("#user-rights").show()
     $('#add-user-yes').show();
+    $("#add-user-modal").modal("show");
 
     $.ajax({
         url : editUserRightFormsUrl,
@@ -14,12 +16,12 @@ load_form_add_user = function() {
             workspace_id: workspace_id
         },
 		success: function(data){
-            $("#banner_rights_errors").hide();
             $("#add-user-form").html(data.form);
 	    },
         error:function(data){
             $("#form_edit_rights_errors").html(data.responseText);
             $("#banner_rights_errors").show(500);
+            $("#user-rights").hide();
             $('#add-user-yes').hide();
         }
     });

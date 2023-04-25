@@ -117,7 +117,7 @@ def load_add_user_form(request):
 
         if len(users_with_no_access) == 0:
             return HttpResponseBadRequest(
-                "There is no users that can be added."
+                "There are no users that can be added."
             )
 
         form = UserRightForm(users_with_no_access)
@@ -398,7 +398,7 @@ def load_add_group_form(request):
             )
         if len(groups_with_no_access) == 0:
             return HttpResponseBadRequest(
-                "There is no groups that can be added."
+                "There are no groups that can be added."
             )
 
         form = GroupRightForm(groups_with_no_access)

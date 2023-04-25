@@ -3,8 +3,10 @@
  * AJAX call
  */
 load_form_add_group = function() {
-    $("#add-group-modal").modal("show");
+    $("#banner_group_rights_errors").hide();
+    $('#group-rights').show();
     $('#add-group-yes').show();
+    $("#add-group-modal").modal("show");
 
     $.ajax({
         url : editGroupRightFormsUrl,
@@ -14,12 +16,12 @@ load_form_add_group = function() {
             workspace_id: workspace_id
         },
 		success: function(data){
-            $("#banner_rights_errors").hide();
             $("#add-group-form").html(data.form);
 	    },
         error:function(data){
             $("#form_edit_group_rights_errors").html(data.responseText);
             $("#banner_group_rights_errors").show(500);
+            $('#group-rights').hide();
             $('#add-group-yes').hide();
         }
     });
