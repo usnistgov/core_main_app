@@ -986,9 +986,7 @@ class DataPermissions(APIView):
         try:
             # Get object
             data_object = self.get_object(request, id)
-
-            if not request.user.is_superuser:
-                check_can_write(data_object, request.user)
+            check_can_write(data_object, request.user)
             return True
         except AccessControlError:
             return False

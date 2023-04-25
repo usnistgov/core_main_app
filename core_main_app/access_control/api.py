@@ -94,6 +94,9 @@ def check_can_write(document, user):
     if user is None or user.is_anonymous:
         raise AccessControlError("Unable to write if not authenticated.")
 
+    if user.is_superuser:
+        return
+
     # TODO: data will inherit of workspace rights, which means a owner can't edit
     #  or delete a data if data in wkp that doesn't give hin write rights
     if hasattr(document, "workspace") and document.workspace is not None:
@@ -291,9 +294,6 @@ def can_write(func, document, user):
     Returns:
 
     """
-    if user.is_superuser:
-        return func(document, user)
-
     check_can_write(document, user)
     return func(document, user)
 
@@ -309,9 +309,6 @@ def can_request_write(func, document, request):
     Returns:
 
     """
-    if request.user.is_superuser:
-        return func(document, request)
-
     check_can_write(document, request.user)
     return func(document, request)
 
