@@ -1,6 +1,6 @@
 $.notify.addStyle(
     'default', {
-        html: "<div><i class='fas fa-info-circle'/> <span data-notify-text/></div>",
+        html: "<div><i class='fas fa-info-circle'></i>&nbsp;<span data-notify-text></span></div>",
         classes: {
 			base: {
 				"padding": "8px 15px",
@@ -16,11 +16,11 @@ $.notify.addStyle(
 
 $.notify.addStyle(
     'success', {
-        html: "<div><i class='fas fa-check-circle'/> <span data-notify-text/></div>",
+        html: "<div><i class='fas fa-check-circle'></i>&nbsp;<span data-notify-text></span></div>",
         classes: {
 			base: {
 				"padding": "8px 15px",
-				"font-size": "1.1em",
+				"font-size": "1.2em",
 				"color": "#468847",
 				"background-color": "#DFF0D8",
 				"border": "1px solid #D6E9C6",
@@ -32,7 +32,7 @@ $.notify.addStyle(
 
 $.notify.addStyle(
     'info', {
-        html: "<div><i class='fas fa-info-circle'/> <span data-notify-text/></div>",
+        html: "<div><i class='fas fa-info-circle'></i>&nbsp;<span data-notify-text></span></div>",
         classes: {
 			base: {
 				"padding": "8px 15px",
@@ -48,7 +48,7 @@ $.notify.addStyle(
 
 $.notify.addStyle(
     'warning', {
-        html: "<div><i class='fas fa-exclamation-triangle'/> <span data-notify-text/></div>",
+        html: "<div><i class='fas fa-exclamation-triangle'></i>&nbsp;<span data-notify-text></span></div>",
         classes: {
 			base: {
 				"padding": "8px 15px",
@@ -64,7 +64,7 @@ $.notify.addStyle(
 
 $.notify.addStyle(
     'error', {
-        html: "<div><i class='fas fa-exclamation-circle'/> <span data-notify-text/></div>",
+        html: "<div><i class='fas fa-exclamation-circle'></i>&nbsp;<span data-notify-text></span></div>",
         classes: {
 			base: {
 				"padding": "8px 15px",
