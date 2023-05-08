@@ -10,6 +10,9 @@ from tests.components.blob.fixtures.fixtures import (
     BlobFixtures,
     AccessControlBlobFixture,
 )
+from tests.components.data.fixtures.fixtures import (
+    AccessControlBlobWithMetadataFixture,
+)
 
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.workspace.models import Workspace
@@ -23,6 +26,7 @@ from core_main_app.utils.tests_tools.RequestMock import RequestMock
 RESOURCES_PATH = join(dirname(abspath(__file__)), "data")
 fixture_blob = BlobFixtures()
 fixture_blob_workspace = AccessControlBlobFixture()
+fixture_blob_metadata = AccessControlBlobWithMetadataFixture()
 
 
 class TestBlobListAdmin(IntegrationBaseTestCase):
@@ -860,3 +864,277 @@ class TestBlobChangeOwner(IntegrationBaseTestCase):
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class TestBlobAddMetadata(IntegrationBaseTestCase):
+    """TestBlobAddMetadata"""
+
+    fixture = fixture_blob_metadata
+
+    def test_add_metadata_authorized_returns_http_200(
+        self,
+    ):
+        """test_add_metadata_authorized_returns_http_200
+
+        Args:
+
+        Returns:
+
+        """
+        # Arrange
+        blob = self.fixture.blob_1
+        mock_user = create_mock_user("1")
+
+        # Act
+        response = RequestMock.do_request_post(
+            views.BlobMetadata.as_view(),
+            mock_user,
+            param={"pk": blob.id, "metadata_id": self.fixture.data_4.id},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch("core_main_app.components.blob.api.add_metadata")
+    def test_add_metadata_with_errors_returns_http_500(self, add_metadata):
+        """test_add_metadata_with_errors_returns_http_500
+
+        Args:
+
+        Returns:
+
+        """
+        # Arrange
+        blob = self.fixture.blob_1
+        mock_user = create_mock_user("1")
+        add_metadata.side_effect = Exception()
+
+        # Act
+        response = RequestMock.do_request_post(
+            views.BlobMetadata.as_view(),
+            mock_user,
+            param={"pk": blob.id, "metadata_id": self.fixture.data_4.id},
+        )
+
+        # Assert
+        self.assertEqual(
+            response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_add_metadata_unauthorized_returns_http_403(
+        self,
+        get_all_workspaces_with_read_access_by_user,
+        get_all_workspaces_with_write_access_by_user,
+    ):
+        """test_add_metadata_unauthorized_returns_http_403
+
+        Args:
+
+        Returns:
+
+        """
+        # Arrange
+        blob = self.fixture.blob_3
+        mock_user = create_mock_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        get_all_workspaces_with_write_access_by_user.return_value = []
+
+        # Act
+        response = RequestMock.do_request_post(
+            views.BlobMetadata.as_view(),
+            mock_user,
+            param={"pk": blob.id, "metadata_id": self.fixture.data_4.id},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_add_metadata_wrong_blob_id_returns_http_404(
+        self,
+    ):
+        """test_add_metadata_wrong_blob_id_returns_http_404
+
+        Args:
+
+        Returns:
+
+        """
+        # Arrange
+        mock_user = create_mock_user("1")
+
+        # Act
+        response = RequestMock.do_request_post(
+            views.BlobMetadata.as_view(),
+            mock_user,
+            param={"pk": "1234", "metadata_id": self.fixture.data_4.id},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_add_metadata_wrong_data_id_returns_http_404(
+        self,
+    ):
+        """test_add_metadata_wrong_data_id_returns_http_404
+
+        Args:
+
+        Returns:
+
+        """
+        # Arrange
+        blob = self.fixture.blob_1
+        mock_user = create_mock_user("1")
+        # Act
+        response = RequestMock.do_request_post(
+            views.BlobMetadata.as_view(),
+            mock_user,
+            param={"pk": blob.id, "metadata_id": "1234"},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class TestBlobRemoveMetadata(IntegrationBaseTestCase):
+    """TestBlobRemoveMetadata"""
+
+    fixture = fixture_blob_metadata
+
+    def test_remove_metadata_authorized_returns_http_200(
+        self,
+    ):
+        """test_remove_metadata_authorized_returns_http_200
+
+        Args:
+
+        Returns:
+
+        """
+        # Arrange
+        blob = self.fixture.blob_1
+        mock_user = create_mock_user("1")
+
+        # Act
+        response = RequestMock.do_request_delete(
+            views.BlobMetadata.as_view(),
+            mock_user,
+            param={"pk": blob.id, "metadata_id": self.fixture.data_1.id},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch("core_main_app.components.blob.api.remove_metadata")
+    def test_remove_metadata_with_errors_returns_http_500(
+        self, remove_metadata
+    ):
+        """test_remove_metadata_with_errors_returns_http_500
+
+        Args:
+
+        Returns:
+
+        """
+        # Arrange
+        blob = self.fixture.blob_1
+        mock_user = create_mock_user("1")
+        remove_metadata.side_effect = Exception()
+
+        # Act
+        response = RequestMock.do_request_delete(
+            views.BlobMetadata.as_view(),
+            mock_user,
+            param={"pk": blob.id, "metadata_id": self.fixture.data_1.id},
+        )
+
+        # Assert
+        self.assertEqual(
+            response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_remove_metadata_unauthorized_returns_http_403(
+        self,
+        get_all_workspaces_with_read_access_by_user,
+        get_all_workspaces_with_write_access_by_user,
+    ):
+        """test_remove_metadata_unauthorized_returns_http_403
+
+        Args:
+
+        Returns:
+
+        """
+        # Arrange
+        blob = self.fixture.blob_3
+        mock_user = create_mock_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        get_all_workspaces_with_write_access_by_user.return_value = []
+
+        # Act
+        response = RequestMock.do_request_delete(
+            views.BlobMetadata.as_view(),
+            mock_user,
+            param={"pk": blob.id, "metadata_id": self.fixture.data_32.id},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_remove_metadata_wrong_blob_id_returns_http_404(
+        self,
+    ):
+        """test_remove_metadata_wrong_blob_id_returns_http_404
+
+        Args:
+
+        Returns:
+
+        """
+        # Arrange
+        mock_user = create_mock_user("1")
+
+        # Act
+        response = RequestMock.do_request_delete(
+            views.BlobMetadata.as_view(),
+            mock_user,
+            param={"pk": "1234", "metadata_id": self.fixture.data_1.id},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_remove_metadata_wrong_data_id_returns_http_404(
+        self,
+    ):
+        """test_remove_metadata_wrong_data_id_returns_http_404
+
+        Args:
+
+        Returns:
+
+        """
+        # Arrange
+        blob = self.fixture.blob_1
+        mock_user = create_mock_user("1")
+        # Act
+        response = RequestMock.do_request_delete(
+            views.BlobMetadata.as_view(),
+            mock_user,
+            param={"pk": blob.id, "metadata_id": "1234"},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

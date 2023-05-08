@@ -1,11 +1,15 @@
 """ Blob model
 """
+from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import RegexValidator
 from django.db import models
 
 from core_main_app.commons import exceptions
 from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
+from core_main_app.components.blob.access_control import (
+    filter_accessible_metadata,
+)
 from core_main_app.components.workspace.models import Workspace
 from core_main_app.settings import CHECKSUM_ALGORITHM
 from core_main_app.utils.checksum import compute_checksum
@@ -44,6 +48,27 @@ class Blob(models.Model):
     )
 
     creation_date = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def owner_name(self):
+        """Get owner name
+
+        Returns:
+
+        """
+        return User.objects.get(pk=self.user_id).username
+
+    def metadata(self, user):
+        """Get blob metadata
+
+        Args:
+            user:
+
+        Returns:
+
+        """
+        # Access _metadata with ACL check
+        return filter_accessible_metadata(self._metadata.all(), user)
 
     @staticmethod
     def get_by_id(blob_id):

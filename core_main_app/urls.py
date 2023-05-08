@@ -35,6 +35,16 @@ urlpatterns = [
         name="core_main_app_data_detail",
     ),
     re_path(
+        r"^blob/(?P<pk>[\w-]+)/metadata",
+        login_required(common_views.ManageBlobMetadata.as_view()),
+        name="core_main_app_blob_metadata",
+    ),
+    re_path(
+        r"^blob",
+        common_views.ViewBlob.as_view(),
+        name="core_main_app_blob_detail",
+    ),
+    re_path(
         r"^xml-editor/data",
         login_required(
             common_views.DataContentEditor.as_view(),
@@ -104,6 +114,21 @@ urlpatterns = [
         r"^add-group-form",
         user_ajax.load_add_group_form,
         name="core_main_edit_rights_groups_form",
+    ),
+    re_path(
+        r"^add-metadata-form",
+        user_ajax.load_blob_metadata_form,
+        name="core_main_blob_metadata_form",
+    ),
+    re_path(
+        r"^add-metadata-to-blob",
+        user_ajax.add_metadata_to_blob,
+        name="core_main_blob_add_metadata",
+    ),
+    re_path(
+        r"^remove-metadata-from-blob",
+        user_ajax.remove_metadata_from_blob,
+        name="core_main_blob_remove_metadata",
     ),
     re_path(
         r"^add-group-right-to-workspace",

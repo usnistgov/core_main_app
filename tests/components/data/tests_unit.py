@@ -4,7 +4,10 @@ from collections import OrderedDict
 from unittest.case import TestCase
 from unittest.mock import patch
 
+from django.core.files.uploadedfile import SimpleUploadedFile
+
 from core_main_app.commons import exceptions
+from core_main_app.components.blob.models import Blob
 from core_main_app.components.data import api as data_api
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
@@ -827,6 +830,53 @@ class TestTimes(TestCase):
         self.assertEqual(data.creation_date, original_date)
 
 
+class TestDataBlob(TestCase):
+    """TestDataBlob"""
+
+    def test_data_blob_none_return_none(
+        self,
+    ):
+        """test_data_blob_none_return_none
+
+        Returns:
+
+        """
+        # Arrange
+        data = _create_data(
+            _get_template(),
+            user_id="2",
+            title="new_title",
+            content="<tag></tag>",
+        )
+        user = create_mock_user("2")
+        # Act
+        blob = data.blob(user=user)
+        # Assert
+        self.assertIsNone(blob)
+
+    def test_data_blob_return_blob(
+        self,
+    ):
+        """test_data_blob_return_blob
+
+        Returns:
+
+        """
+        # Arrange
+        data = _create_data(
+            template=_get_template(),
+            user_id="2",
+            title="new_title",
+            content="<tag></tag>",
+            blob=_create_blob(user_id="2"),
+        )
+        user = create_mock_user("2")
+        # Act
+        blob = data.blob(user=user)
+        # Assert
+        self.assertIsNotNone(blob)
+
+
 def _get_template():
     """_get_template
 
@@ -843,7 +893,7 @@ def _get_template():
     return template
 
 
-def _create_data(template, user_id, title, content, data_id=None):
+def _create_data(template, user_id, title, content, data_id=None, blob=None):
     """_create_data
 
     Args:
@@ -852,10 +902,29 @@ def _create_data(template, user_id, title, content, data_id=None):
         title:
         content:
         data_id:
+        blob:
 
     Returns:
 
     """
-    data = Data(template=template, user_id=user_id, title=title, id=data_id)
+    data = Data(
+        template=template, user_id=user_id, title=title, id=data_id, _blob=blob
+    )
     data.xml_content = content
     return data
+
+
+def _create_blob(user_id, filename="test", content=b"test"):
+    """_create_blob
+
+    Returns:
+
+    """
+    return Blob(
+        filename=filename,
+        user_id=user_id,
+        blob=SimpleUploadedFile(
+            name=filename,
+            content=content,
+        ),
+    )

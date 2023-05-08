@@ -46,6 +46,7 @@ from core_main_app.utils.rendering import admin_render, render
 from core_main_app.utils.view_builders import data as data_view_builder
 from core_main_app.views.admin.forms import TemplateXsltRenderingForm
 from xml_utils.xsd_tree.xsd_tree import XSDTree
+from core_main_app.components.blob import api as blob_api
 
 
 class CommonView(View, metaclass=ABCMeta):
@@ -1027,3 +1028,150 @@ class XSDEditor(AbstractEditorView):
             return HttpResponseBadRequest(html_escape(str(dne)))
         except Exception as e:
             return HttpResponseBadRequest(html_escape(str(e)))
+
+
+class ViewBlob(CommonView):
+    """
+    View blob.
+    """
+
+    template = "core_main_app/user/blob/detail.html"
+
+    def get(self, request, *args, **kwargs):
+        """get
+
+        Args:
+            request:
+
+        Returns:
+        """
+        blob_id = request.GET["id"]
+
+        try:
+            # Get blob
+            blob_object = blob_api.get_by_id(blob_id, request.user)
+            try:
+                acl_api.check_can_write(blob_object, request.user)
+                can_write = True
+            except AccessControlError:
+                can_write = False
+            # Init context
+            context = {"blob": blob_object, "can_write": can_write}
+            # Init assets
+            assets = {
+                "js": [
+                    {
+                        "path": "core_main_app/user/js/blob/detail.js",
+                        "is_raw": False,
+                    }
+                ],
+                "css": [],
+            }
+
+            context.update({"page_title": "View File"})
+
+            return self.common_render(
+                request,
+                self.template,
+                assets=assets,
+                context=context,
+            )
+        except exceptions.DoesNotExist:
+            error_message = "Blob not found"
+            status_code = 404
+        except AccessControlError:
+            error_message = "Access Forbidden"
+            status_code = 403
+        except Exception as e:
+            error_message = str(e)
+            status_code = 400
+
+        return self.common_render(
+            request,
+            "core_main_app/common/commons/error.html",
+            context={
+                "error": "Unable to access the requested file"
+                + f": {error_message}.",
+                "status_code": status_code,
+                "page_title": "Error",
+            },
+        )
+
+
+class ManageBlobMetadata(CommonView):
+    """
+    Manage blob metadata.
+    """
+
+    template = "core_main_app/user/blob/blob_metadata.html"
+
+    def get(self, request, pk, *args, **kwargs):
+        """get
+
+        Args:
+            request:
+            pk:
+
+        Returns:
+        """
+
+        try:
+            # Get blob
+            blob_object = blob_api.get_by_id(pk, request.user)
+            try:
+                acl_api.check_can_write(blob_object, request.user)
+                can_write = True
+            except AccessControlError:
+                can_write = False
+            # Init context
+            context = {"blob": blob_object, "can_write": can_write}
+            # Init modals
+            modals = [
+                "core_main_app/user/blob/list/modals/add_metadata.html",
+            ]
+            # Init assets
+            assets = {
+                "js": [
+                    {
+                        "path": "core_main_app/user/js/blob/detail.js",
+                        "is_raw": False,
+                    },
+                    {
+                        "path": "core_main_app/user/js/blob/blob_metadata.js",
+                        "is_raw": False,
+                    },
+                ],
+                "css": [
+                    "core_main_app/common/css/select.css",
+                ],
+            }
+
+            context.update({"page_title": "File Metadata"})
+
+            return self.common_render(
+                request,
+                self.template,
+                modals=modals,
+                assets=assets,
+                context=context,
+            )
+        except exceptions.DoesNotExist:
+            error_message = "Blob not found"
+            status_code = 404
+        except AccessControlError:
+            error_message = "Access Forbidden"
+            status_code = 403
+        except Exception as e:
+            error_message = str(e)
+            status_code = 400
+
+        return self.common_render(
+            request,
+            "core_main_app/common/commons/error.html",
+            context={
+                "error": "Unable to access the requested file "
+                + f": {error_message}.",
+                "status_code": status_code,
+                "page_title": "Error",
+            },
+        )

@@ -5,6 +5,9 @@ from unittest.mock import patch
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from tests.components.blob.fixtures.fixtures import AccessControlBlobFixture
+from tests.components.data.fixtures.fixtures import (
+    AccessControlBlobWithMetadataFixture,
+)
 
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
@@ -16,6 +19,7 @@ from core_main_app.utils.integration_tests.integration_base_test_case import (
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 
 fixture_blob = AccessControlBlobFixture()
+fixture_blob_metadata = AccessControlBlobWithMetadataFixture()
 
 
 class TestBlobGetById(IntegrationBaseTestCase):
@@ -675,6 +679,577 @@ class TestBlobAssign(IntegrationBaseTestCase):
             fixture_blob.workspace_1,
             user,
         )
+
+
+class TestBlobMetadata(IntegrationBaseTestCase):
+    """TestBlobMetadata"""
+
+    fixture = fixture_blob_metadata
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_blob_metadata_as_owner_returns_metadata(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_blob_metadata_as_owner_returns_metadata
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_1
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        metadata = blob.metadata(mock_user)
+        self.assertEqual(metadata, [self.fixture.data_1])
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_blob_metadata_private_metadata_as_other_user_returns_nothing(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_blob_metadata_private_metadata_as_other_user_raises_acl_error
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_1
+        mock_user = create_mock_user(2)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        metadata = blob.metadata(mock_user)
+        self.assertTrue(len(metadata) == 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_blob_metadata_as_other_user_without_access_returns_nothing(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_blob_metadata_private_metadata_as_other_user_raises_acl_error
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_2
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        metadata = blob.metadata(mock_user)
+        self.assertTrue(len(metadata) == 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_blob_metadata_other_user_metadata_in_workspace_with_access_returns_metadata(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_blob_metadata_other_user_metadata_in_workspace_with_access_returns_metadata
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_2
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            self.fixture.workspace_1
+        ]
+        metadata = blob.metadata(mock_user)
+        self.assertEqual(metadata, [self.fixture.data_2])
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_blob_metadata_other_user_metadata_in_workspace_without_access_does_not_return_metadata(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_blob_metadata_other_user_metadata_in_workspace_without_access_does_not_return_metadata
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_2
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        metadata = blob.metadata(mock_user)
+        self.assertTrue(len(metadata) == 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_blob_metadata_other_user_metadata_returns_only_accessible_metadata(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_blob_metadata_other_user_metadata_returns_only_accessible_metadata
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_3
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            self.fixture.workspace_1
+        ]
+        metadata = blob.metadata(mock_user)
+        self.assertEqual(metadata, [self.fixture.data_31])
+
+
+class TestAddMetadata(IntegrationBaseTestCase):
+    """TestAddMetadata"""
+
+    fixture = fixture_blob_metadata
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_add_metadata_cannot_write_blob_raises_error(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        """test_add_metadata_cannot_write_blob_raises_error
+
+        Args:
+            get_all_workspaces_with_write_access_by_user:
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_2
+        data = self.fixture.data_4
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_write_access_by_user.return_value = []
+
+        with self.assertRaises(AccessControlError):
+            blob_api.add_metadata(blob, data, mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_add_metadata_cannot_write_data_raises_error(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        """test_add_metadata_cannot_write_data_raises_error
+
+        Args:
+            get_all_workspaces_with_write_access_by_user:
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_2
+        data = self.fixture.data_4
+        mock_user = create_mock_user(2)
+        get_all_workspaces_with_write_access_by_user.return_value = []
+
+        with self.assertRaises(AccessControlError):
+            blob_api.add_metadata(blob, data, mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_add_metadata_own_blob_and_own_data_ok(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        """test_add_metadata_own_blob_and_own_data_ok
+
+        Args:
+            get_all_workspaces_with_write_access_by_user:
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_1
+        data = self.fixture.data_4
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_write_access_by_user.return_value = []
+
+        blob_api.add_metadata(blob, data, mock_user)
+        self.assertEqual(data._blob, blob)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_add_metadata_own_blob_and_accessible_data_ok(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        """test_add_metadata_own_blob_and_accessible_data_ok
+
+        Args:
+            get_all_workspaces_with_write_access_by_user:
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_1
+        data = self.fixture.data_2
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_write_access_by_user.return_value = []
+
+        with self.assertRaises(AccessControlError):
+            blob_api.add_metadata(blob, data, mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_add_metadata_can_write_blob_and_own_data_ok(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        """test_add_metadata_can_write_blob_and_own_data_ok
+
+        Args:
+            get_all_workspaces_with_write_access_by_user:
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_2
+        data = self.fixture.data_4
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_write_access_by_user.return_value = [
+            self.fixture.workspace_1
+        ]
+
+        blob_api.add_metadata(blob, data, mock_user)
+        self.assertEqual(data._blob, blob)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_add_metadata_can_write_blob_and_can_write_data_ok(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        """test_add_metadata_can_write_blob_and_can_write_data_ok
+
+        Args:
+            get_all_workspaces_with_write_access_by_user:
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_2
+        data = self.fixture.data_4
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_write_access_by_user.return_value = [
+            self.fixture.workspace_1
+        ]
+
+        blob_api.add_metadata(blob, data, mock_user)
+        self.assertEqual(data._blob, blob)
+
+
+class TestAddMetadataList(IntegrationBaseTestCase):
+    """TestAddMetadataList"""
+
+    fixture = fixture_blob_metadata
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_add_metadata_list_cannot_write_blob_raises_error(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        """test_add_metadata_list_cannot_write_blob_raises_error
+
+        Args:
+            get_all_workspaces_with_write_access_by_user:
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_2
+        data = self.fixture.data_4
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_write_access_by_user.return_value = []
+
+        with self.assertRaises(AccessControlError):
+            blob_api.add_metadata_list(blob, [data], mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_add_metadata_list_cannot_write_data_raises_error(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        """test_add_metadata_list_cannot_write_data_raises_error
+
+        Args:
+            get_all_workspaces_with_write_access_by_user:
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_2
+        data = self.fixture.data_4
+        mock_user = create_mock_user(2)
+        get_all_workspaces_with_write_access_by_user.return_value = []
+
+        with self.assertRaises(AccessControlError):
+            blob_api.add_metadata_list(blob, [data], mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_add_metadata_list_own_blob_and_own_data_ok(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        """test_add_metadata_list_own_blob_and_own_data_ok
+
+        Args:
+            get_all_workspaces_with_write_access_by_user:
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_1
+        data = self.fixture.data_4
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_write_access_by_user.return_value = []
+
+        blob_api.add_metadata_list(blob, [data], mock_user)
+        self.assertEqual(data._blob, blob)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_add_metadata_list_own_blob_and_accessible_data_ok(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        """test_add_metadata_list_own_blob_and_accessible_data_ok
+
+        Args:
+            get_all_workspaces_with_write_access_by_user:
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_1
+        data = self.fixture.data_2
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_write_access_by_user.return_value = []
+
+        with self.assertRaises(AccessControlError):
+            blob_api.add_metadata_list(blob, [data], mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_add_metadata_list_can_write_blob_and_own_data_ok(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        """test_add_metadata_list_can_write_blob_and_own_data_ok
+
+        Args:
+            get_all_workspaces_with_write_access_by_user:
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_2
+        data = self.fixture.data_4
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_write_access_by_user.return_value = [
+            self.fixture.workspace_1
+        ]
+
+        blob_api.add_metadata_list(blob, [data], mock_user)
+        self.assertEqual(data._blob, blob)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_add_metadata_list_can_write_blob_and_can_write_data_ok(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        """test_add_metadata_list_can_write_blob_and_can_write_data_ok
+
+        Args:
+            get_all_workspaces_with_write_access_by_user:
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_2
+        data = self.fixture.data_4
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_write_access_by_user.return_value = [
+            self.fixture.workspace_1
+        ]
+
+        blob_api.add_metadata_list(blob, [data], mock_user)
+        self.assertEqual(data._blob, blob)
+
+
+class TestRemoveMetadata(IntegrationBaseTestCase):
+    """TestRemoveMetadata"""
+
+    fixture = fixture_blob_metadata
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_remove_metadata_not_linked_to_blob_raises_error(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        """test_remove_metadata_not_linked_to_blob_raises_error
+
+        Args:
+            get_all_workspaces_with_write_access_by_user:
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_1
+        data = self.fixture.data_4
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_write_access_by_user.return_value = []
+
+        with self.assertRaises(Exception):
+            blob_api.remove_metadata(blob, data, mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_remove_metadata_cannot_write_blob_raises_error(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        """test_remove_metadata_cannot_write_blob_raises_error
+
+        Args:
+            get_all_workspaces_with_write_access_by_user:
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_2
+        data = self.fixture.data_2
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_write_access_by_user.return_value = []
+
+        with self.assertRaises(AccessControlError):
+            blob_api.remove_metadata(blob, data, mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_remove_metadata_cannot_write_data_raises_error(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        """test_remove_metadata_cannot_write_data_raises_error
+
+        Args:
+            get_all_workspaces_with_write_access_by_user:
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_2
+        data = self.fixture.data_4
+        mock_user = create_mock_user(2)
+        get_all_workspaces_with_write_access_by_user.return_value = []
+
+        with self.assertRaises(AccessControlError):
+            blob_api.remove_metadata(blob, data, mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_remove_metadata_own_blob_and_own_data_ok(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        """test_remove_metadata_own_blob_and_own_data_ok
+
+        Args:
+            get_all_workspaces_with_write_access_by_user:
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_1
+        data = self.fixture.data_1
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_write_access_by_user.return_value = []
+
+        blob_api.remove_metadata(blob, data, mock_user)
+        self.assertEqual(blob._metadata.count(), 0)
+        self.assertEqual(data._blob, None)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_remove_metadata_own_blob_and_accessible_data_ok(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        """test_remove_metadata_own_blob_and_accessible_data_ok
+
+        Args:
+            get_all_workspaces_with_write_access_by_user:
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_1
+        data = self.fixture.data_2
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_write_access_by_user.return_value = []
+
+        with self.assertRaises(AccessControlError):
+            blob_api.remove_metadata(blob, data, mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_remove_metadata_can_write_blob_and_can_write_data_ok(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        """test_remove_metadata_can_write_blob_and_can_write_data_ok
+
+        Args:
+            get_all_workspaces_with_write_access_by_user:
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_3
+        data = self.fixture.data_31
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_write_access_by_user.return_value = [
+            self.fixture.workspace_1
+        ]
+
+        blob_api.remove_metadata(blob, data, mock_user)
+        self.assertEqual(blob._metadata.count(), 1)
+        self.assertEqual(data._blob, None)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_write_access_by_user"
+    )
+    def test_remove_metadata_can_write_blob_and_cannot_write_data_raises_error(
+        self, get_all_workspaces_with_write_access_by_user
+    ):
+        """test_remove_metadata_can_write_blob_and_can_write_data_ok
+
+        Args:
+            get_all_workspaces_with_write_access_by_user:
+
+        Returns:
+
+        """
+        blob = self.fixture.blob_3
+        data = self.fixture.data_32
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_write_access_by_user.return_value = [
+            self.fixture.workspace_1
+        ]
+
+        with self.assertRaises(AccessControlError):
+            blob_api.remove_metadata(blob, data, mock_user)
 
 
 def _create_user(user_id, is_superuser=False):

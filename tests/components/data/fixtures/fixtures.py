@@ -2,6 +2,7 @@
 """
 from django.core.files.uploadedfile import SimpleUploadedFile
 
+from core_main_app.components.blob.models import Blob
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
 from core_main_app.components.workspace import api as workspace_api
@@ -839,3 +840,167 @@ class DataMigrationFixture(FixtureInterface):
         )
 
         self.xsl_transformation.save()
+
+
+class AccessControlBlobWithMetadataFixture(FixtureInterface):
+    """Access Control Blob with Metadata Fixture
+    blob1 (user: 1, wksp: None)
+        |-data1 (user: 1, wksp: None)
+
+    blob2 (user: 2, wksp: 1)
+        |-data2 (user: 2, wksp: 1)
+
+    blob3 (user: 3, wksp: 1)
+        |-data31 (user: 3, wksp: 1)
+        |-data32 (user: 3, wksp: None)
+
+    data4 (user: 1, wksp: None)
+    """
+
+    template = None
+    workspace_1 = None
+    data_collection = None
+    blob_collection = None
+
+    data_1 = None
+    data_2 = None
+    data_31 = None
+    data_32 = None
+    data_4 = None
+
+    blob_1 = None
+    blob_2 = None
+    blob_3 = None
+
+    def insert_data(self):
+        """Insert a set of Data.
+
+        Returns:
+
+        """
+        # Make a connexion with a mock database
+        self.generate_template()
+        self.generate_workspace()
+        self.generate_blob_collection()
+        self.generate_data_collection()
+
+    def generate_data_collection(self):
+        """Generate a Data collection.
+
+        Returns:
+
+        """
+
+        xml_content = "<root><element>value2</element></root>"
+        content = {"root": {"element": "value2"}}
+
+        self.data_1 = Data(
+            template=self.template,
+            title="Data 1",
+            user_id="1",
+            _blob=self.blob_1,
+            xml_content="<root></root>",
+        )
+        self.data_1.save()
+        self.data_2 = Data(
+            template=self.template,
+            title="Data 2",
+            user_id="2",
+            _blob=self.blob_2,
+            workspace=self.workspace_1,
+            xml_content="<root></root>",
+        )
+        self.data_2.save()
+        self.data_31 = Data(
+            template=self.template,
+            title="Data 3_1",
+            user_id="3",
+            workspace=self.workspace_1,
+            xml_content=xml_content,
+            dict_content=content,
+            _blob=self.blob_3,
+        )
+        self.data_31.save()
+        self.data_32 = Data(
+            template=self.template,
+            title="Data 3_2",
+            user_id="3",
+            xml_content="<root></root>",
+            _blob=self.blob_3,
+        )
+        self.data_32.save()
+        self.data_4 = Data(
+            template=self.template,
+            title="Data 4",
+            user_id="1",
+            xml_content="<root></root>",
+        )
+        self.data_4.save()
+
+        self.data_collection = [
+            self.data_1,
+            self.data_2,
+            self.data_31,
+            self.data_32,
+            self.data_4,
+        ]
+
+    def generate_template(self):
+        """Generate an unique Template.
+
+        Returns:
+
+        """
+        self.template = Template()
+        xsd = (
+            '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">'
+            '<xs:element name="tag"></xs:element></xs:schema>'
+        )
+        self.template.content = xsd
+        self.template.hash = ""
+        self.template.filename = "filename"
+        self.template.save()
+
+    def generate_workspace(self):
+        """Generate the workspaces.
+
+        Returns:
+
+        """
+        self.workspace_1 = Workspace(
+            title="Workspace 1", owner="1", read_perm_id="1", write_perm_id="1"
+        )
+        self.workspace_1.save()
+
+    def generate_blob_collection(self):
+        """Generate a Blob collection.
+
+        Returns:
+
+            user 1 -> blob1, blob2
+            user 2 -> blob3
+
+        """
+
+        self.blob_1 = Blob(
+            filename="blob1",
+            user_id="1",
+            blob=SimpleUploadedFile("blob.txt", b"blob"),
+        )
+        self.blob_1.save()
+        self.blob_2 = Blob(
+            filename="blob2",
+            user_id="2",
+            workspace=self.workspace_1,
+            blob=SimpleUploadedFile("blob.txt", b"blob"),
+        )
+        self.blob_2.save()
+        self.blob_3 = Blob(
+            filename="blob3",
+            user_id="3",
+            workspace=self.workspace_1,
+            blob=SimpleUploadedFile("blob.txt", b"blob"),
+        )
+        self.blob_3.save()
+
+        self.blob_collection = [self.blob_1, self.blob_2, self.blob_3]

@@ -7,6 +7,7 @@ from core_main_app.access_control.api import (
     check_can_read_list,
     can_write_in_workspace,
     _check_anonymous_access,
+    _check_can_read,
 )
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.permissions import rights as rights
@@ -196,3 +197,23 @@ def can_write_data_workspace(func, data, workspace, user):
     return can_write_in_workspace(
         func, data, workspace, user, rights.PUBLISH_DATA
     )
+
+
+def can_read_blob(func, data, user):
+    """Can read from object id.
+
+    Args:
+        func:
+        data:
+        user:
+
+    Returns:
+
+    """
+    if user.is_superuser:
+        return func(data, user)
+
+    if data._blob is not None:
+        _check_can_read(data._blob, user)
+
+    return func(data, user)

@@ -3,6 +3,7 @@
 from django import forms
 
 from core_main_app.commons.exceptions import DoesNotExist
+from core_main_app.components.data import api as data_api
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.utils.labels import get_data_label
@@ -170,3 +171,41 @@ class ChangeWorkspaceForm(forms.Form):
         super().__init__()
         self.fields["workspaces"].choices = []
         self.fields["workspaces"].choices = self.WORKSPACES_OPTIONS
+
+
+class BlobMetadataForm(forms.Form):
+    """
+    Form blob metadata.
+    """
+
+    metadata = forms.MultipleChoiceField(
+        label="",
+        required=True,
+        widget=forms.CheckboxSelectMultiple(
+            attrs={"class": "multiple-columns"}
+        ),
+    )
+
+    def __init__(self, user, blob):
+        # Init user data
+        self.user_data = []
+        # Get user data
+        user_data = data_api.get_all_by_user(user)
+
+        # Build data list
+        for data in user_data:
+            # If data not already associated with blob
+            if data not in blob.metadata(user):
+                self.user_data.append((data.id, data.title))
+
+        super().__init__()
+        self.fields["metadata"].choices = []
+        self.fields["metadata"].choices = self.user_data
+
+
+class BlobFileForm(forms.Form):
+    """
+    Form blob file.
+    """
+
+    file = forms.FileField(label="")

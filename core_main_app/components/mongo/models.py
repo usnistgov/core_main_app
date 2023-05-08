@@ -107,6 +107,30 @@ try:
                 return Template.get_by_id(self._template_id)
 
             @property
+            def _blob(self):
+                """Return blob object
+
+                Returns:
+
+                """
+                try:
+                    return Data.get_by_id(self.data_id)._blob
+                except Exception:
+                    logger.error("Unable to get MongoData._blob")
+                    return None
+
+            def blob(self, user):
+                """Return blob object
+
+                Args:
+                    user:
+
+                Returns:
+
+                """
+                return Data.get_by_id(self.data_id).blob(user)
+
+            @property
             def template_id(self):
                 """Return template id
 

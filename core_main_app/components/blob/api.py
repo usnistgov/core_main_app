@@ -1,17 +1,21 @@
 """ BLOB API
 """
-from core_main_app.access_control.api import can_change_owner
+from core_main_app.access_control.api import (
+    can_change_owner,
+    can_write,
+)
 from core_main_app.access_control.api import (
     has_perm_administration,
     can_read_or_write_in_workspace,
     can_read_id,
-    can_write,
 )
 from core_main_app.access_control.decorators import access_control
 from core_main_app.commons import exceptions
 from core_main_app.components.blob.access_control import (
     can_write_blob_workspace,
     can_write_blob,
+    can_write_metadata,
+    can_write_metadata_list,
 )
 from core_main_app.components.blob.models import Blob
 
@@ -22,6 +26,7 @@ def insert(blob, user):
 
     Args:
         blob:
+        user:
 
     Returns:
 
@@ -63,6 +68,7 @@ def delete(blob, user):
 
     Args:
         blob:
+        user:
 
     Returns:
 
@@ -77,6 +83,7 @@ def get_by_id(blob_id, user):
 
     Args:
         blob_id:
+        user:
 
     Returns:
 
@@ -116,6 +123,7 @@ def get_all_by_workspace(workspace, user):
 
     Args:
         workspace:
+        user:
 
     Returns:
 
@@ -146,3 +154,54 @@ def get_none():
 
     """
     return Blob.get_none()
+
+
+@access_control(can_write_metadata)
+def add_metadata(blob, metadata, user):
+    """Add metadata to blob
+
+    Args:
+        blob:
+        metadata:
+        user:
+
+    Returns:
+
+    """
+    blob._metadata.add(metadata)
+    blob.save()
+
+
+@access_control(can_write_metadata_list)
+def add_metadata_list(blob, metadata_list, user):
+    """Add list of metadata to blob
+
+    Args:
+        blob:
+        metadata_list:
+        user:
+
+    Returns:
+
+    """
+    for metadata in metadata_list:
+        blob._metadata.add(metadata)
+    blob.save()
+
+
+@access_control(can_write_metadata)
+def remove_metadata(blob, metadata, user):
+    """Remove metadata from blob
+
+    Args:
+        blob:
+        metadata:
+        user:
+
+    Returns:
+
+    """
+    blob._metadata.remove(metadata)
+    blob.save()
+    metadata._blob = None
+    metadata.save()

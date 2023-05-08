@@ -4,6 +4,7 @@
 from django import template
 
 from core_main_app import settings
+from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.utils.urls import get_blob_download_regex
 
 register = template.Library()
@@ -40,3 +41,35 @@ def render_blob_links_in_span(*args, **kwargs):
         xml_string = xml_string.replace(url, blob_html_pattern.format(url))
 
     return xml_string
+
+
+@register.filter(name="blob_metadata")
+def blob_metadata(blob, user):
+    """Get blob metadata
+    Args:
+        blob: blob
+        user: user
+
+    Returns:
+
+    """
+    try:
+        return blob.metadata(user)
+    except AccessControlError:
+        return None
+
+
+@register.filter(name="data_blob")
+def data_blob(data, user):
+    """Get blob attached to data
+    Args:
+        data: data
+        user: user
+
+    Returns:
+
+    """
+    try:
+        return data.blob(user)
+    except AccessControlError:
+        return None

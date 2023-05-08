@@ -3,10 +3,17 @@
 from unittest.mock import patch
 
 from django.contrib.auth.models import AnonymousUser
+from django.contrib.messages.middleware import MessageMiddleware
 from django.contrib.messages.storage.fallback import FallbackStorage
+from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory
+from tests.components.data.fixtures.fixtures import (
+    AccessControlBlobWithMetadataFixture,
+)
 from tests.views.fixtures import AccessControlDataFixture
-
+from django.http import QueryDict
+from core_main_app.access_control.exceptions import AccessControlError
+from core_main_app.commons.exceptions import ModelError
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.data import api as data_api
 from core_main_app.settings import MAX_DOCUMENT_EDITING_SIZE
@@ -21,6 +28,8 @@ from core_main_app.views.common.views import (
     DataContentEditor,
     XSDEditor,
     AbstractEditorView,
+    ViewBlob,
+    ManageBlobMetadata,
 )
 from core_main_app.views.user.ajax import (
     AssignView,
@@ -32,6 +41,9 @@ from core_main_app.views.user.ajax import (
     remove_user_or_group_rights,
     load_add_group_form,
     add_group_right_to_workspace,
+    load_blob_metadata_form,
+    add_metadata_to_blob,
+    remove_metadata_from_blob,
 )
 from core_main_app.views.user.views import manage_template_versions
 from tests.test_settings import LOGIN_URL
@@ -1124,3 +1136,549 @@ class TestXSDTextEditorView(IntegrationBaseTestCase):
         request.user = self.user1
         response = XSDEditor.as_view()(request)
         self.assertEqual(response.status_code, 400)
+
+
+class TestViewBlob(IntegrationBaseTestCase):
+    """TestViewBlob"""
+
+    def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
+        self.factory = RequestFactory()
+        self.user1 = create_mock_user(user_id="1")
+        self.user2 = create_mock_user(user_id="2")
+        self.anonymous = AnonymousUser()
+        self.fixture = AccessControlBlobWithMetadataFixture()
+        self.fixture.insert_data()
+
+    def test_a_user_can_access_a_blob_if_owner(self):
+        """test_a_user_can_access_a_blob_if_owner
+
+        Returns:
+
+        """
+        request = self.factory.get("core_main_app_blob_detail")
+        request.user = self.user1
+        request.GET = {"id": str(self.fixture.blob_1.id)}
+        response = ViewBlob.as_view()(request)
+        self.assertTrue(
+            self.fixture.blob_1.filename in response.content.decode()
+        )
+        self.assertTrue("Manage Metadata" in response.content.decode())
+
+    def test_a_user_access_a_blob_with_wrong_id_returns_error(self):
+        """test_a_user_access_a_blob_with_wrong_id_returns_error
+
+        Returns:
+
+        """
+        request = self.factory.get("core_main_app_blob_detail")
+        request.user = self.user1
+        request.GET = {"id": "1234"}
+        response = ViewBlob.as_view()(request)
+        self.assertTrue("Error 404" in response.content.decode())
+
+    @patch("core_main_app.components.blob.api.get_by_id")
+    def test_a_user_access_a_blob_with_exception_returns_error(
+        self, mock_get_by_id
+    ):
+        """test_a_user_access_a_blob_with_exception_returns_error
+
+        Returns:
+
+        """
+        request = self.factory.get("core_main_app_blob_detail")
+        request.user = self.user1
+        request.GET = {"id": str(self.fixture.blob_1.id)}
+        mock_get_by_id.side_effect = Exception()
+        response = ViewBlob.as_view()(request)
+        self.assertTrue("Error 400" in response.content.decode())
+
+    @patch("core_main_app.access_control.api.check_can_write")
+    def test_a_user_can_not_manage_metadata_if_no_write_perm(
+        self, mock_check_can_write
+    ):
+        """test_a_user_can_not_manage_metadata_if_no_write_perm
+
+        Returns:
+
+        """
+        request = self.factory.get("core_main_app_blob_detail")
+        request.user = self.user2
+        mock_check_can_write.side_effect = AccessControlError("Forbidden")
+        request.GET = {"id": str(self.fixture.blob_2.id)}
+        response = ViewBlob.as_view()(request)
+        self.assertTrue("Error" not in response.content.decode())
+        self.assertTrue("Manage Metadata" not in response.content.decode())
+
+    def test_an_anonymous_user_can_not_access_a_blob_that_is_not_in_a_workspace(
+        self,
+    ):
+        """test_an_anonymous_user_can_not_access_a_blob_that_is_not_in_a_workspace
+
+        Returns:
+
+        """
+        request = self.factory.get("core_main_app_blob_detail")
+        request.user = self.anonymous
+        request.GET = {"id": str(self.fixture.blob_1.id)}
+        response = ViewBlob.as_view()(request)
+        self.assertTrue(
+            self.fixture.blob_1.filename not in response.content.decode()
+        )
+        self.assertTrue("Error 403" in response.content.decode())
+
+    def test_an_anonymous_user_can_not_access_a_blob_that_is_in_a_private_workspace(
+        self,
+    ):
+        """test_an_anonymous_user_can_not_access_a_blob_that_is_in_a_private_workspace
+
+        Returns:
+
+        """
+        request = self.factory.get("core_main_app_blob_detail")
+        request.user = self.anonymous
+        request.GET = {"id": str(self.fixture.blob_2.id)}
+        response = ViewBlob.as_view()(request)
+        self.assertTrue(
+            self.fixture.blob_1.filename not in response.content.decode()
+        )
+        self.assertTrue("Error 403" in response.content.decode())
+
+
+class TestManageBlobMetadata(IntegrationBaseTestCase):
+    """TestManageBlobMetadata"""
+
+    def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
+        self.factory = RequestFactory()
+        self.user1 = create_mock_user(user_id="1")
+        self.user2 = create_mock_user(user_id="2")
+        self.anonymous = AnonymousUser()
+        self.fixture = AccessControlBlobWithMetadataFixture()
+        self.fixture.insert_data()
+
+    def test_a_user_can_access_blob_metadata_if_owner(self):
+        """test_a_user_can_access_blob_metadata_if_owner
+
+        Returns:
+
+        """
+        request = self.factory.get("core_main_app_blob_metadata")
+        request.user = self.user1
+        response = ManageBlobMetadata.as_view()(
+            request, str(self.fixture.blob_1.id)
+        )
+        self.assertTrue(
+            self.fixture.blob_1.filename in response.content.decode()
+        )
+
+    def test_a_user_manage_metadata_with_wrong_id_returns_error(self):
+        """test_a_user_manage_metadata_with_wrong_id_returns_error
+
+        Returns:
+
+        """
+        request = self.factory.get("core_main_app_blob_metadata")
+        request.user = self.user1
+        response = ManageBlobMetadata.as_view()(request, "1234")
+        self.assertTrue("Error 404" in response.content.decode())
+
+    @patch("core_main_app.components.blob.api.get_by_id")
+    def test_a_user_manage_metadata_with_exception_returns_error(
+        self, mock_get_by_id
+    ):
+        """test_a_user_manage_metadata_with_exception_returns_error
+
+        Returns:
+
+        """
+        request = self.factory.get("core_main_app_blob_metadata")
+        request.user = self.user1
+        mock_get_by_id.side_effect = Exception()
+        response = ManageBlobMetadata.as_view()(
+            request, str(self.fixture.blob_1.id)
+        )
+        self.assertTrue("Error 400" in response.content.decode())
+
+    @patch("core_main_app.access_control.api.check_can_write")
+    def test_a_user_can_not_manage_metadata_if_no_write_perm(
+        self, mock_check_can_write
+    ):
+        """test_a_user_can_not_manage_metadata_if_no_write_perm
+
+        Returns:
+
+        """
+        request = self.factory.get("core_main_app_blob_metadata")
+        request.user = self.user2
+        mock_check_can_write.side_effect = AccessControlError("Forbidden")
+        response = ManageBlobMetadata.as_view()(
+            request, str(self.fixture.blob_2.id)
+        )
+        self.assertTrue("Error" not in response.content.decode())
+
+    def test_an_anonymous_user_can_not_access_blob_metadata_if_blob_not_in_a_workspace(
+        self,
+    ):
+        """test_an_anonymous_user_can_not_access_blob_metadata_if_blob_not_in_a_workspace
+
+        Returns:
+
+        """
+        request = self.factory.get("core_main_app_blob_metadata")
+        request.user = self.anonymous
+        response = ManageBlobMetadata.as_view()(
+            request, str(self.fixture.blob_1.id)
+        )
+        self.assertTrue(
+            self.fixture.blob_1.filename not in response.content.decode()
+        )
+        self.assertTrue("Error 403" in response.content.decode())
+
+    def test_an_anonymous_user_can_not_access_blob_that_is_in_a_private_workspace(
+        self,
+    ):
+        """test_an_anonymous_user_can_not_access_blob_that_is_in_a_private_workspace
+
+        Returns:
+
+        """
+        request = self.factory.get("core_main_app_blob_metadata")
+        request.user = self.anonymous
+        response = ManageBlobMetadata.as_view()(
+            request, str(self.fixture.blob_2.id)
+        )
+        self.assertTrue(
+            self.fixture.blob_1.filename not in response.content.decode()
+        )
+        self.assertTrue("Error 403" in response.content.decode())
+
+
+class TestLoadBlobMetadataForm(IntegrationBaseTestCase):
+    """TestLoadBlobMetadataForm"""
+
+    def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
+        self.factory = RequestFactory()
+        self.user1 = create_mock_user(user_id="1")
+        self.anonymous = AnonymousUser()
+        self.fixture = AccessControlBlobWithMetadataFixture()
+        self.fixture.insert_data()
+
+    def test_an_anonymous_user_can_not_load_blob_metadata_form(self):
+        """test_an_anonymous_user_can_not_load_blob_metadata_form
+
+        Returns:
+
+        """
+        request = self.factory.get("core_main_blob_metadata_form")
+        request.user = self.anonymous
+        request.GET = {"id": str(self.fixture.blob_1)}
+        response = load_blob_metadata_form(request)
+        self.assertEqual(response.status_code, 302)
+
+    @patch("core_main_app.components.data.api.get_all_by_user")
+    def test_user_can_load_blob_metadata_form(self, mock_get_all_by_user):
+        """test_user_can_load_blob_metadata_form
+
+        Returns:
+
+        """
+        request = self.factory.get("core_main_blob_metadata_form")
+        request.user = self.user1
+        request.GET = {"blob_id": str(self.fixture.blob_1.id)}
+        mock_get_all_by_user.return_value = []
+        response = load_blob_metadata_form(request)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue("form" in response.content.decode())
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    @patch("core_main_app.components.data.api.get_all_by_user")
+    def test_user_can_load_blob_metadata_form_with_list_of_data(
+        self, mock_get_all_by_user, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_user_can_load_blob_metadata_form_with_list_of_data
+
+        Returns:
+
+        """
+        request = self.factory.get("core_main_blob_metadata_form")
+        request.user = self.user1
+        request.GET = {"blob_id": str(self.fixture.blob_1.id)}
+        mock_get_all_by_user.return_value = [self.fixture.data_4]
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            self.fixture.workspace_1
+        ]
+        response = load_blob_metadata_form(request)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue("form" in response.content.decode())
+        self.assertTrue(self.fixture.data_4.title in response.content.decode())
+
+    @patch("core_main_app.components.blob.api.get_by_id")
+    def test_user_can_load_blob_metadata_form_with_model_error(
+        self, mock_get_by_id
+    ):
+        """test_user_can_load_blob_metadata_form_with_model_error
+
+        Returns:
+
+        """
+        request = self.factory.get("core_main_blob_metadata_form")
+        request.user = self.user1
+        request.GET = {"blob_id": str(self.fixture.blob_1.id)}
+        mock_get_by_id.side_effect = ModelError("Error")
+        response = load_blob_metadata_form(request)
+        self.assertEqual(response.status_code, 400)
+
+    @patch("core_main_app.components.blob.api.get_by_id")
+    def test_user_can_load_blob_metadata_form_with_exception(
+        self, mock_get_by_id
+    ):
+        """test_user_can_load_blob_metadata_form_with_exception
+
+        Returns:
+
+        """
+        request = self.factory.get("core_main_blob_metadata_form")
+        request.user = self.user1
+        request.GET = {"blob_id": str(self.fixture.blob_1.id)}
+        mock_get_by_id.side_effect = Exception("Error")
+        response = load_blob_metadata_form(request)
+        self.assertEqual(response.status_code, 400)
+
+
+class TestAddMetadataToBlob(IntegrationBaseTestCase):
+    """TestAddMetadataToBlob"""
+
+    def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
+        self.factory = RequestFactory()
+        self.user1 = create_mock_user(user_id="1")
+        self.anonymous = AnonymousUser()
+        self.fixture = AccessControlBlobWithMetadataFixture()
+        self.fixture.insert_data()
+
+    def test_an_anonymous_user_can_not_add_metadata_to_blob(self):
+        """test_an_anonymous_user_can_not_add_metadata_to_blob
+
+        Returns:
+
+        """
+        request = self.factory.post("core_main_blob_add_metadata")
+        request.user = self.anonymous
+        request.POST = {"id": str(self.fixture.blob_1)}
+        response = add_metadata_to_blob(request)
+        self.assertEqual(response.status_code, 302)
+
+    def test_user_add_metadata_to_blob(self):
+        """test_user_add_metadata_to_blob
+
+        Returns:
+
+        """
+        request = self.factory.post("core_main_blob_metadata_form")
+        request.user = self.user1
+        request.POST = QueryDict("").copy()
+        request.POST.update({"blob_id": str(self.fixture.blob_1.id)})
+        # Add middlewares
+        middleware = SessionMiddleware()
+        middleware.process_request(request)
+        middleware = MessageMiddleware()
+        middleware.process_request(request)
+        request.session.save()
+        response = add_metadata_to_blob(request)
+        self.assertEqual(response.status_code, 200)
+
+    def test_user_add_metadata_to_blob_with_list_of_ids(self):
+        """test_user_add_metadata_to_blob
+
+        Returns:
+
+        """
+        request = self.factory.post("core_main_blob_metadata_form")
+        request.user = self.user1
+        request.POST = QueryDict("").copy()
+        request.POST.update({"blob_id": str(self.fixture.blob_1.id)})
+        request.POST.update({"metadata_id[]": str(self.fixture.data_4.id)})
+        # Add middlewares
+        middleware = SessionMiddleware()
+        middleware.process_request(request)
+        middleware = MessageMiddleware()
+        middleware.process_request(request)
+        request.session.save()
+        response = add_metadata_to_blob(request)
+        self.assertEqual(response.status_code, 200)
+
+    @patch("core_main_app.components.blob.api.get_by_id")
+    def test_user_can_not_add_metadata_to_blob_with_model_error(
+        self, mock_get_by_id
+    ):
+        """test_user_can_not_add_metadata_to_blob_with_model_error
+
+        Returns:
+
+        """
+        request = self.factory.post("core_main_blob_add_metadata")
+        request.user = self.user1
+        request.POST = QueryDict("").copy()
+        request.POST.update({"blob_id": str(self.fixture.blob_1.id)})
+        mock_get_by_id.side_effect = ModelError("Error")
+        response = add_metadata_to_blob(request)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content, b"Blob not found.")
+
+    @patch("core_main_app.components.blob.api.get_by_id")
+    def test_user_can_not_add_metadata_to_blob_with_acl_error(
+        self, mock_get_by_id
+    ):
+        """test_user_can_not_add_metadata_to_blob_with_model_error
+
+        Returns:
+
+        """
+        request = self.factory.post("core_main_blob_add_metadata")
+        request.user = self.user1
+        request.POST = QueryDict("").copy()
+        request.POST.update({"blob_id": str(self.fixture.blob_1.id)})
+        mock_get_by_id.side_effect = AccessControlError("Error")
+        response = add_metadata_to_blob(request)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content, b"Permission denied.")
+
+    @patch("core_main_app.components.blob.api.get_by_id")
+    def test_user_can_not_add_metadata_to_blob_with_model_exception(
+        self, mock_get_by_id
+    ):
+        """test_user_can_not_add_metadata_to_blob_with_model_exception
+
+        Returns:
+
+        """
+        request = self.factory.post("core_main_blob_add_metadata")
+        request.user = self.user1
+        request.POST = QueryDict("").copy()
+        request.POST.update({"blob_id": str(self.fixture.blob_1.id)})
+        mock_get_by_id.side_effect = Exception("Error")
+        response = add_metadata_to_blob(request)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content, b"An unexpected error occurred.")
+
+
+class TestRemoveMetadataFromBlob(IntegrationBaseTestCase):
+    """TestRemoveMetadataFromBlob"""
+
+    def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
+        self.factory = RequestFactory()
+        self.user1 = create_mock_user(user_id="1")
+        self.anonymous = AnonymousUser()
+        self.fixture = AccessControlBlobWithMetadataFixture()
+        self.fixture.insert_data()
+
+    def test_an_anonymous_user_can_not_remove_metadata_from_blob(self):
+        """test_an_anonymous_user_can_not_remove_metadata_from_blob
+
+        Returns:
+
+        """
+        request = self.factory.post("core_main_blob_remove_metadata")
+        request.user = self.anonymous
+        request.POST = {"id": str(self.fixture.blob_1)}
+        response = remove_metadata_from_blob(request)
+        self.assertEqual(response.status_code, 302)
+
+    def test_user_remove_metadata_from_blob(self):
+        """test_user_remove_metadata_from_blob
+
+        Returns:
+
+        """
+        request = self.factory.post("core_main_blob_remove_metadata")
+        request.user = self.user1
+        request.POST = QueryDict("").copy()
+        request.POST.update({"blob_id": str(self.fixture.blob_1.id)})
+        request.POST.update({"metadata_id": str(self.fixture.data_1.id)})
+        # Add middlewares
+        middleware = SessionMiddleware()
+        middleware.process_request(request)
+        middleware = MessageMiddleware()
+        middleware.process_request(request)
+        request.session.save()
+        response = remove_metadata_from_blob(request)
+        self.assertEqual(response.status_code, 200)
+
+    @patch("core_main_app.components.blob.api.get_by_id")
+    def test_user_can_not_remove_metadata_to_blob_with_model_error(
+        self, mock_get_by_id
+    ):
+        """test_user_can_not_remove_metadata_to_blob_with_model_error
+
+        Returns:
+
+        """
+        request = self.factory.post("core_main_blob_remove_metadata")
+        request.user = self.user1
+        request.POST = QueryDict("").copy()
+        request.POST.update({"blob_id": str(self.fixture.blob_1.id)})
+        mock_get_by_id.side_effect = ModelError("Error")
+        response = remove_metadata_from_blob(request)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content, b"Blob not found.")
+
+    @patch("core_main_app.components.blob.api.get_by_id")
+    def test_user_can_not_remove_metadata_to_blob_with_acl_error(
+        self, mock_get_by_id
+    ):
+        """test_user_can_not_remove_metadata_to_blob_with_acl_error
+
+        Returns:
+
+        """
+        request = self.factory.post("core_main_blob_remove_metadata")
+        request.user = self.user1
+        request.POST = QueryDict("").copy()
+        request.POST.update({"blob_id": str(self.fixture.blob_1.id)})
+        mock_get_by_id.side_effect = AccessControlError("Error")
+        response = remove_metadata_from_blob(request)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content, b"Permission denied.")
+
+    @patch("core_main_app.components.blob.api.get_by_id")
+    def test_user_can_not_remove_metadata_to_blob_with_model_exception(
+        self, mock_get_by_id
+    ):
+        """test_user_can_not_remove_metadata_to_blob_with_model_exception
+
+        Returns:
+
+        """
+        request = self.factory.post("core_main_blob_remove_metadata")
+        request.user = self.user1
+        request.POST = QueryDict("").copy()
+        request.POST.update({"blob_id": str(self.fixture.blob_1.id)})
+        mock_get_by_id.side_effect = Exception("Error")
+        response = remove_metadata_from_blob(request)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content, b"An unexpected error occurred.")

@@ -1,0 +1,16 @@
+{% load blob_tags %}
+
+<div>
+    <button id="btn-previous-page" type="button" class="btn btn-secondary mb-2 float-right">
+        <i class="fas fa-arrow-left"></i> Back to previous
+    </button>
+    {% if data.can_write %}
+    <a class="btn btn-secondary edit mr-1 float-right" href="{% url 'core_main_app_blob_metadata' data.blob.id %}">
+        <i class="fas fa-list"></i>
+        Manage Metadata
+    </a>
+    {% endif %}
+    <a class="btn btn-secondary download mr-1 float-right" href="{% url 'core_main_app_rest_blob_download' data.blob.id %}">
+        <i class="fas fa-download"></i> Download
+    </a>
+</div>

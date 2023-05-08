@@ -7,10 +7,13 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.models import Q
 
+from core_main_app.access_control.decorators import access_control
 from core_main_app.commons import exceptions
 from core_main_app.components.abstract_data.models import AbstractData
+from core_main_app.components.data.access_control import can_read_blob
 from core_main_app.components.template.models import Template
 from core_main_app.components.workspace.models import Workspace
+from core_main_app.components.blob.models import Blob
 
 
 # TODO: Create publication workflow manager
@@ -26,6 +29,13 @@ class Data(AbstractData):
     user_id = models.CharField(blank=False, max_length=200)
     workspace = models.ForeignKey(
         Workspace, blank=True, on_delete=models.SET_NULL, null=True
+    )
+    _blob = models.ForeignKey(
+        Blob,
+        on_delete=models.SET_NULL,
+        null=True,
+        default=None,
+        related_name="_metadata",
     )
 
     class Meta:
@@ -53,6 +63,18 @@ class Data(AbstractData):
 
         """
         return User.objects.get(pk=self.user_id).username
+
+    @access_control(can_read_blob)
+    def blob(self, user):
+        """
+
+        Args:
+            user:
+
+        Returns:
+
+        """
+        return self._blob
 
     def get_dict_content(self):
         """Get dict_content from object or from MongoDB

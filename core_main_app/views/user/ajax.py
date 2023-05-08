@@ -2,6 +2,7 @@
 """
 import json
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import (
     HttpResponse,
@@ -13,12 +14,14 @@ from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.views.generic import View
 
+from core_main_app.access_control.api import check_can_write
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
 from core_main_app.commons.exceptions import DoesNotExist, ModelError
+from core_main_app.components.blob import api as blob_api
 from core_main_app.components.data import api as data_api
-from core_main_app.components.template import api as template_api
 from core_main_app.components.group import api as group_api
+from core_main_app.components.template import api as template_api
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.templatetags.xsl_transform_tag import (
@@ -29,8 +32,8 @@ from core_main_app.views.user.forms import (
     ChangeWorkspaceForm,
     UserRightForm,
     GroupRightForm,
+    BlobMetadataForm,
 )
-
 
 GROUP = "group"
 USER = "user"
@@ -556,3 +559,107 @@ def change_data_display(request):
         return HttpResponseForbidden("Access Forbidden")
     except Exception:
         return HttpResponseBadRequest("Unexpected error")
+
+
+@login_required
+def load_blob_metadata_form(request):
+    """Load the form to add metadata files to a blob.
+
+    Args:
+        request:
+
+    Returns:
+    """
+    blob_id = request.GET.get("blob_id", None)
+
+    try:
+        blob_object = blob_api.get_by_id(str(blob_id), request.user)
+        form = BlobMetadataForm(user=request.user, blob=blob_object)
+    except exceptions.ModelError:
+        return HttpResponseBadRequest("Blob not found.")
+    except Exception:
+        return HttpResponseBadRequest("An unexpected error occurred.")
+
+    context = {"add_metadata_form": form}
+
+    return HttpResponse(
+        json.dumps(
+            {
+                "form": loader.render_to_string(
+                    "core_main_app/user/blob/list/modals/add_metadata_form.html",
+                    context,
+                )
+            }
+        ),
+        "application/javascript",
+    )
+
+
+@login_required
+def add_metadata_to_blob(request):
+    """Add metadata files to a blob.
+
+    Args:
+        request:
+
+    Returns:
+    """
+    blob_id = request.POST.get("blob_id", None)
+    metadata_id_list = request.POST.getlist("metadata_id[]", [])
+
+    try:
+        blob_object = blob_api.get_by_id(str(blob_id), request.user)
+        check_can_write(blob_object, request.user)
+        blob_api.add_metadata_list(
+            blob_object,
+            [
+                data_api.get_by_id(metadata_id, request.user)
+                for metadata_id in metadata_id_list
+            ],
+            request.user,
+        )
+    except exceptions.ModelError:
+        return HttpResponseBadRequest("Blob not found.")
+    except AccessControlError:
+        return HttpResponseBadRequest("Permission denied.")
+    except Exception:
+        return HttpResponseBadRequest("An unexpected error occurred.")
+
+    messages.add_message(
+        request,
+        messages.SUCCESS,
+        "Metadata updated.",
+    )
+    return HttpResponse(json.dumps({}), "application/javascript")
+
+
+@login_required
+def remove_metadata_from_blob(request):
+    """Remove metadata file from blob.
+
+    Args:
+        request:
+
+    Returns:
+    """
+    blob_id = request.POST.get("blob_id", None)
+    metadata_id = request.POST.get("metadata_id", None)
+
+    try:
+        blob_object = blob_api.get_by_id(str(blob_id), request.user)
+        check_can_write(blob_object, request.user)
+        metadata = data_api.get_by_id(metadata_id, request.user)
+        blob_api.remove_metadata(blob_object, metadata, request.user)
+    except exceptions.ModelError:
+        return HttpResponseBadRequest("Blob not found.")
+    except AccessControlError:
+        return HttpResponseBadRequest("Permission denied.")
+    except Exception:
+        return HttpResponseBadRequest("An unexpected error occurred.")
+
+    messages.add_message(
+        request,
+        messages.INFO,
+        "Metadata successfully removed.",
+    )
+    return HttpResponse(json.dumps({}), "application/javascript")

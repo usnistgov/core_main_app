@@ -192,6 +192,11 @@ urlpatterns = [
         name="core_main_app_rest_blob_delete_list",
     ),
     re_path(
+        r"^blob/(?P<pk>\w+)/metadata/(?P<metadata_id>\w+)/$",
+        blob_views.BlobMetadata.as_view(),
+        name="core_main_app_rest_blob_add_metadata",
+    ),
+    re_path(
         r"^blob/(?P<pk>\w+)/$",
         blob_views.BlobDetail.as_view(),
         name="core_main_app_rest_blob_detail",

@@ -11,6 +11,7 @@ from tests.components.data.fixtures.fixtures import (
     AccessControlDataFullTextSearchFixture,
     AccessControlDataNumericFixture,
     AccessControlDataNoneFixture,
+    AccessControlBlobWithMetadataFixture,
 )
 
 from core_main_app.access_control.exceptions import AccessControlError
@@ -28,6 +29,7 @@ fixture_data2 = AccessControlDataFixture2()
 fixture_data_full_text = AccessControlDataFullTextSearchFixture()
 fixture_data_numeric = AccessControlDataNumericFixture()
 fixture_data_none = AccessControlDataNoneFixture()
+fixture_blob_metadata = AccessControlBlobWithMetadataFixture()
 
 
 class TestDataGetById(IntegrationBaseTestCase):
@@ -2481,6 +2483,109 @@ class TestDataExecuteNumericQuery(IntegrationBaseTestCase):
                 data_api.execute_json_query(
                     {"dict_content.root.element": {operator: value}}, mock_user
                 )
+
+
+class TestDataBlob(IntegrationBaseTestCase):
+    """TestDataBlob"""
+
+    fixture = fixture_blob_metadata
+
+    def test_data_blob_as_anonymous_raises_acl_error(self):
+        """test_data_blob_as_anonymous_raises_acl_error
+
+        Args:
+
+        Returns:
+
+        """
+        data = self.fixture.data_1
+        mock_user = create_mock_user(2, is_anonymous=True)
+        with self.assertRaises(AccessControlError):
+            data.blob(mock_user)
+
+    def test_data_blob_as_superuser_returns_blob(
+        self,
+    ):
+        """test_data_blob_as_superuser_returns_blob
+
+        Args:
+
+        Returns:
+
+        """
+        data = self.fixture.data_1
+        mock_user = create_mock_user(5, is_superuser=True)
+        blob = data.blob(mock_user)
+        self.assertEqual(blob, self.fixture.blob_1)
+
+    def test_data_blob_as_owner_returns_blob(self):
+        """test_data_blob_as_owner_returns_blob
+
+        Args:
+
+        Returns:
+
+        """
+        data = self.fixture.data_1
+        mock_user = create_mock_user(1)
+        blob = data.blob(mock_user)
+        self.assertEqual(blob, self.fixture.blob_1)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_data_private_blob_as_other_user_raises_acl_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_data_private_blob_as_other_user_raises_acl_error
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        data = self.fixture.data_1
+        mock_user = create_mock_user(2)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        with self.assertRaises(AccessControlError):
+            data.blob(mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_data_other_user_blob_in_workspace_with_access_returns_blob(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_data_other_user_blob_in_workspace_with_access_returns_blob
+
+        Returns:
+
+        """
+        data = self.fixture.data_2
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            self.fixture.workspace_1
+        ]
+        blob = data.blob(mock_user)
+        self.assertEqual(blob, self.fixture.blob_2)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_data_other_user_blob_in_workspace_without_access_raises_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_data_other_user_blob_in_workspace_without_access_raises_error
+
+        Returns:
+
+        """
+        data = self.fixture.data_2
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        with self.assertRaises(AccessControlError):
+            data.blob(mock_user)
 
 
 def _create_data(user_id, workspace):

@@ -1,6 +1,7 @@
 """ Url router for the main application
 """
 from django.conf.urls import include
+from django.contrib.auth.decorators import login_required
 from django.urls import re_path
 
 from core_main_app.components.blob import api as blob_api
@@ -20,6 +21,16 @@ urlpatterns = [
         r"^data",
         common_views.ViewData.as_view(),
         name="core_main_app_data_detail",
+    ),
+    re_path(
+        r"^blob",
+        common_views.ViewBlob.as_view(),
+        name="core_main_app_blob_detail",
+    ),
+    re_path(
+        r"^blob/(?P<pk>[\w-]+)/metadata",
+        login_required(common_views.ManageBlobMetadata.as_view()),
+        name="core_main_app_blob_metadata",
     ),
     re_path(
         r"^template/versions/(?P<version_manager_id>\w+)",
@@ -98,5 +109,20 @@ urlpatterns = [
         r"^redirect-record",
         user_ajax.change_data_display,
         name="core_dashboard_records",
+    ),
+    re_path(
+        r"^add-metadata-form",
+        user_ajax.load_blob_metadata_form,
+        name="core_main_blob_metadata_form",
+    ),
+    re_path(
+        r"^add-metadata-to-blob",
+        user_ajax.add_metadata_to_blob,
+        name="core_main_blob_add_metadata",
+    ),
+    re_path(
+        r"^remove-metadata-from-blob",
+        user_ajax.remove_metadata_from_blob,
+        name="core_main_blob_remove_metadata",
     ),
 ]

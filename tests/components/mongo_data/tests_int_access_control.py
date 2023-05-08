@@ -2110,3 +2110,171 @@ class TestAggregateData(MongoDBIntegrationBaseTestCase):
         mock_user = create_mock_user(None, is_anonymous=True)
         with self.assertRaises(AccessControlError):
             mongo_data_api.aggregate({}, user=mock_user)
+
+
+class TestDataBlob(MongoDBIntegrationBaseTestCase):
+    """TestDataBlob"""
+
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    def setUp(self):
+        """Insert needed data.
+
+        Returns:
+
+        """
+        from core_main_app.components.mongo.models import (  # noqa: keep import to init signals
+            MongoData,
+        )
+        from tests.components.data.fixtures.fixtures import (
+            AccessControlBlobWithMetadataFixture,
+        )
+
+        # Mongo indexing is not initialized by default
+        init_mongo_indexing()
+
+        # fixture needs to initialized with settings.MONGODB_INDEXING=True otherwise MongoData does not exist
+        self.fixture = AccessControlBlobWithMetadataFixture()
+        self.fixture.insert_data()
+
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    @tag("mongodb")
+    def test_data_blob_as_owner_returns_blob(
+        self,
+    ):
+        """test_data_blob_as_owner_returns_blob
+
+        Args:
+            :
+
+        Returns:
+
+        """
+        from core_main_app.components.mongo.models import (
+            MongoData,
+        )
+
+        mock_user = create_mock_user("1")
+        mongo_data_1 = MongoData.objects.get(data_id=self.fixture.data_1.id)
+        blob = mongo_data_1.blob(mock_user)
+        self.assertEqual(blob, self.fixture.blob_1)
+
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    @tag("mongodb")
+    def test_data_blob_as_anonymous_raises_acl_error(self):
+        """test_data_blob_as_anonymous_raises_acl_error
+
+        Args:
+
+        Returns:
+
+        """
+        from core_main_app.components.mongo.models import (
+            MongoData,
+        )
+
+        mock_user = create_mock_user("2", is_anonymous=True)
+        mongo_data_1 = MongoData.objects.get(data_id=self.fixture.data_1.id)
+        with self.assertRaises(AccessControlError):
+            mongo_data_1.blob(mock_user)
+
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    @tag("mongodb")
+    def test_data_blob_as_superuser_returns_blob(
+        self,
+    ):
+        """test_data_blob_as_superuser_returns_blob
+
+        Args:
+
+        Returns:
+
+        """
+        from core_main_app.components.mongo.models import (
+            MongoData,
+        )
+
+        mock_user = create_mock_user("2", is_superuser=True)
+        mongo_data_1 = MongoData.objects.get(data_id=self.fixture.data_1.id)
+        blob = mongo_data_1.blob(mock_user)
+        self.assertEqual(blob, self.fixture.blob_1)
+
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    @tag("mongodb")
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_data_private_blob_as_other_user_raises_acl_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_data_private_blob_as_other_user_raises_acl_error
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        from core_main_app.components.mongo.models import (
+            MongoData,
+        )
+
+        data = MongoData.objects.get(data_id=self.fixture.data_1.id)
+        mock_user = create_mock_user(2)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        with self.assertRaises(AccessControlError):
+            data.blob(mock_user)
+
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    @tag("mongodb")
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_data_other_user_blob_in_workspace_with_access_returns_blob(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_data_other_user_blob_in_workspace_with_access_returns_blob
+
+        Returns:
+
+        """
+        from core_main_app.components.mongo.models import (
+            MongoData,
+        )
+
+        data = MongoData.objects.get(data_id=self.fixture.data_2.id)
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            self.fixture.workspace_1
+        ]
+        blob = data.blob(mock_user)
+        self.assertEqual(blob, self.fixture.blob_2)
+
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    @tag("mongodb")
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_data_other_user_blob_in_workspace_without_access_raises_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_data_other_user_blob_in_workspace_without_access_raises_error
+
+        Returns:
+
+        """
+        from core_main_app.components.mongo.models import (
+            MongoData,
+        )
+
+        data = MongoData.objects.get(data_id=self.fixture.data_2.id)
+        mock_user = create_mock_user(1)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        with self.assertRaises(AccessControlError):
+            data.blob(mock_user)

@@ -16,6 +16,7 @@ from rest_framework.views import APIView
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
 from core_main_app.components.blob import api as blob_api
+from core_main_app.components.data import api as data_api
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.rest.blob.serializers import (
@@ -612,6 +613,126 @@ class BlobChangeOwner(APIView):
         except AccessControlError as ace:
             content = {"message": str(ace)}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
+        except Exception as api_exception:
+            content = {"message": str(api_exception)}
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class BlobMetadata(APIView):
+    """Blob Metadata"""
+
+    permission_classes = (IsAuthenticated,)
+
+    def get_blob(self, request, pk):
+        """Get Blob from db
+
+        Args:
+
+            request: HTTP request
+            pk: ObjectId
+
+        Returns:
+
+            Blob
+        """
+        try:
+            return blob_api.get_by_id(pk, request.user)
+        except exceptions.DoesNotExist:
+            raise Http404
+
+    def get_metatada(self, request, metadata_id):
+        """Get Data from db
+
+        Args:
+
+            request: HTTP request
+            metadata_id: ObjectId
+
+        Returns:
+
+            Blob
+        """
+        try:
+            return data_api.get_by_id(metadata_id, request.user)
+        except exceptions.DoesNotExist:
+            raise Http404
+
+    def post(self, request, pk, metadata_id):
+        """Add Metadata to Blob
+
+        Args:
+
+            request: HTTP request
+            pk: Blob id
+            metadata_id: Data id
+
+        Returns:
+
+            - code: 200
+              content:
+            - code: 403
+              content: Authentication error
+            - code: 404
+              content: Object was not found
+            - code: 500
+              content: Internal server error
+        """
+        try:
+            # Get objects
+            blob_object = self.get_blob(request, pk)
+            metadata_object = self.get_metatada(request, metadata_id)
+            # Update
+            blob_api.add_metadata(blob_object, metadata_object, request.user)
+            return Response()
+        except AccessControlError as exception:
+            content = {"message": str(exception)}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
+        except Http404:
+            content = {"message": "Blob not found."}
+            return Response(content, status=status.HTTP_404_NOT_FOUND)
+        except Exception as api_exception:
+            content = {"message": str(api_exception)}
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+    def delete(self, request, pk, metadata_id):
+        """Remove Metadata from Blob
+
+        Args:
+
+            request: HTTP request
+            pk: Blob id
+            metadata_id: Data id
+
+        Returns:
+
+            - code: 200
+              content:
+            - code: 403
+              content: Authentication error
+            - code: 404
+              content: Object was not found
+            - code: 500
+              content: Internal server error
+        """
+        try:
+            # Get objects
+            blob_object = self.get_blob(request, pk)
+            metadata_object = self.get_metatada(request, metadata_id)
+            # Update
+            blob_api.remove_metadata(
+                blob_object, metadata_object, request.user
+            )
+            return Response()
+        except AccessControlError as exception:
+            content = {"message": str(exception)}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
+        except Http404:
+            content = {"message": "Blob not found."}
+            return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
             return Response(

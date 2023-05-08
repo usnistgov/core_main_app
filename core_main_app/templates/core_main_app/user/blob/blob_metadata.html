@@ -1,0 +1,61 @@
+{% load blob_tags %}
+
+<div class="row">
+    <div class="col-md-12">
+        {% include 'core_main_app/common/blob/tools_metadata.html'%}
+        <div class="col-xs-6" id="data-title">
+            <h2>{{ data.blob.filename }}</h2>
+        </div>
+    </div>
+</div>
+
+
+<table class="table table-bordered table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Metadata file</th>
+            <th>Creation date</th>
+            <th>Workspace</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for metadata in data.blob|blob_metadata:request.user %}
+        <tr class="{{ rowcolors }}" objectid="{{metadata.id}}">
+            <td>
+                <a class="blob-link" href="{% url 'core_main_app_data_detail'%}?id={{metadata.id}}">
+                    {{ metadata.title }}
+                </a>
+            </td>
+            <td>{{ metadata.creation_date }}</td>
+            <td>
+                {% if metadata.workspace %}
+                    {{ metadata.workspace.title }}
+                {% else %}
+                    None
+                {% endif %}
+            </td>
+            <td>
+                <a class="btn btn-secondary" href="{% url 'core_main_app_rest_data_download' metadata.id %}">
+                    <i class="fas fa-list"></i> Download
+                </a>
+                {% if data.share_pid_button %}
+                    {% include 'core_linked_records_app/user/sharing/data_detail/button_inline.html' %}
+                {% endif %}
+                {% if data.can_write %}
+                <button class="btn btn-danger remove-metadata-btn" objectid="{{ metadata.id }}">
+                    <i class="fas fa-xmark"></i> Remove
+                </button>
+                {% endif %}
+            </td>
+        </tr>
+    {% empty%}
+    <tr>
+        <td colspan="4" style="text-align:center;">
+            No metadata files attached, or user not authorized to see them.
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<div class="hidden" id="blob_id">{{ data.blob.id }}</div>

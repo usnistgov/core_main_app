@@ -16,6 +16,7 @@ from core_main_app.rest.blob.serializers import (
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
+from core_main_app.components.data import api as data_api
 
 
 class TestBlobListAdminGetPermissions(SimpleTestCase):
@@ -267,6 +268,232 @@ class TestBlobDetailGetPermissions(SimpleTestCase):
 
         response = RequestMock.do_request_get(
             blob_rest_views.BlobDetail.as_view(), mock_user, param={"pk": "0"}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestBlobAddMetadataPermissions(SimpleTestCase):
+    """TestBlobDetailGetPermissions"""
+
+    @patch.object(BlobSerializer, "data")
+    @patch.object(blob_api, "add_metadata")
+    @patch.object(blob_api, "get_by_id")
+    @patch.object(data_api, "get_by_id")
+    def test_anonymous_returns_http_403(
+        self,
+        mock_data_api_get_by_id,
+        mock_blob_api_get_by_id,
+        mock_blob_api_add_metadata,
+        mock_blob_serializer_data,
+    ):
+        """test_anonymous_returns_http_200
+
+        Args:
+            mock_data_api_get_by_id:
+            mock_blob_api_get_by_id:
+            mock_blob_api_add_metadata:
+            mock_blob_serializer_data:
+
+        Returns:
+
+        """
+        mock_data_api_get_by_id.return_value = []
+        mock_blob_api_get_by_id.return_value = []
+        mock_blob_api_add_metadata.return_value = None
+        mock_blob_serializer_data.return_value = []
+
+        response = RequestMock.do_request_post(
+            blob_rest_views.BlobMetadata.as_view(),
+            None,
+            param={"pk": "1", "metadata_id": "1"},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch.object(BlobSerializer, "data")
+    @patch.object(blob_api, "add_metadata")
+    @patch.object(blob_api, "get_by_id")
+    @patch.object(data_api, "get_by_id")
+    def test_authenticated_returns_http_200(
+        self,
+        mock_data_api_get_by_id,
+        mock_blob_api_get_by_id,
+        mock_blob_api_add_metadata,
+        mock_blob_serializer_data,
+    ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            mock_data_api_get_by_id:
+            mock_blob_api_get_by_id:
+            mock_blob_api_add_metadata:
+            mock_blob_serializer_data:
+
+        Returns:
+
+        """
+        mock_data_api_get_by_id.return_value = []
+        mock_blob_api_get_by_id.return_value = []
+        mock_blob_api_add_metadata.return_value = []
+        mock_blob_serializer_data.return_value = []
+
+        mock_user = create_mock_user("1")
+
+        response = RequestMock.do_request_post(
+            blob_rest_views.BlobMetadata.as_view(),
+            mock_user,
+            param={"pk": "1", "metadata_id": "1"},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(BlobSerializer, "data")
+    @patch.object(blob_api, "add_metadata")
+    @patch.object(blob_api, "get_by_id")
+    @patch.object(data_api, "get_by_id")
+    def test_staff_returns_http_200(
+        self,
+        mock_data_api_get_by_id,
+        mock_blob_api_get_by_id,
+        mock_blob_api_add_metadata,
+        mock_blob_serializer_data,
+    ):
+        """test_staff_returns_http_200
+
+        Args:
+            mock_data_api_get_by_id:
+            mock_blob_api_get_by_id:
+            mock_blob_api_add_metadata:
+            mock_blob_serializer_data:
+
+        Returns:
+
+        """
+        mock_data_api_get_by_id.return_value = []
+        mock_blob_api_get_by_id.return_value = []
+        mock_blob_api_add_metadata.return_value = []
+        mock_blob_serializer_data.return_value = []
+
+        mock_user = create_mock_user("1", is_staff=True)
+
+        response = RequestMock.do_request_post(
+            blob_rest_views.BlobMetadata.as_view(),
+            mock_user,
+            param={"pk": "1", "metadata_id": "1"},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestBlobRemoveMetadataPermissions(SimpleTestCase):
+    """TestBlobRemoveMetadataPermissions"""
+
+    @patch.object(BlobSerializer, "data")
+    @patch.object(blob_api, "remove_metadata")
+    @patch.object(blob_api, "get_by_id")
+    @patch.object(data_api, "get_by_id")
+    def test_anonymous_returns_http_403(
+        self,
+        mock_data_api_get_by_id,
+        mock_blob_api_get_by_id,
+        mock_blob_api_remove_metadata,
+        mock_blob_serializer_data,
+    ):
+        """test_anonymous_returns_http_200
+
+        Args:
+            mock_data_api_get_by_id:
+            mock_blob_api_get_by_id:
+            mock_blob_api_remove_metadata:
+            mock_blob_serializer_data:
+
+        Returns:
+
+        """
+        mock_data_api_get_by_id.return_value = []
+        mock_blob_api_get_by_id.return_value = []
+        mock_blob_api_remove_metadata.return_value = None
+        mock_blob_serializer_data.return_value = []
+
+        response = RequestMock.do_request_delete(
+            blob_rest_views.BlobMetadata.as_view(),
+            None,
+            param={"pk": "1", "metadata_id": "1"},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch.object(BlobSerializer, "data")
+    @patch.object(blob_api, "remove_metadata")
+    @patch.object(blob_api, "get_by_id")
+    @patch.object(data_api, "get_by_id")
+    def test_authenticated_returns_http_200(
+        self,
+        mock_data_api_get_by_id,
+        mock_blob_api_get_by_id,
+        mock_blob_api_remove_metadata,
+        mock_blob_serializer_data,
+    ):
+        """test_authenticated_returns_http_200
+
+        Args:
+            mock_data_api_get_by_id:
+            mock_blob_api_get_by_id:
+            mock_blob_api_remove_metadata:
+            mock_blob_serializer_data:
+
+        Returns:
+
+        """
+        mock_data_api_get_by_id.return_value = []
+        mock_blob_api_get_by_id.return_value = []
+        mock_blob_api_remove_metadata.return_value = []
+        mock_blob_serializer_data.return_value = []
+
+        mock_user = create_mock_user("1")
+
+        response = RequestMock.do_request_delete(
+            blob_rest_views.BlobMetadata.as_view(),
+            mock_user,
+            param={"pk": "1", "metadata_id": "1"},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(BlobSerializer, "data")
+    @patch.object(blob_api, "remove_metadata")
+    @patch.object(blob_api, "get_by_id")
+    @patch.object(data_api, "get_by_id")
+    def test_staff_returns_http_200(
+        self,
+        mock_data_api_get_by_id,
+        mock_blob_api_get_by_id,
+        mock_blob_api_remove_metadata,
+        mock_blob_serializer_data,
+    ):
+        """test_staff_returns_http_200
+
+        Args:
+            mock_data_api_get_by_id:
+            mock_blob_api_get_by_id:
+            mock_blob_api_remove_metadata:
+            mock_blob_serializer_data:
+
+        Returns:
+
+        """
+        mock_data_api_get_by_id.return_value = []
+        mock_blob_api_get_by_id.return_value = []
+        mock_blob_api_remove_metadata.return_value = []
+        mock_blob_serializer_data.return_value = []
+
+        mock_user = create_mock_user("1", is_staff=True)
+
+        response = RequestMock.do_request_delete(
+            blob_rest_views.BlobMetadata.as_view(),
+            mock_user,
+            param={"pk": "1", "metadata_id": "1"},
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
