@@ -5,7 +5,7 @@ This document lists all the available settings for CDCS core applications.
 Additional settings can be used to configure other Django packages used in the CDCS, such as:
 
 - `Django Settings <https://docs.djangoproject.com/en/3.2/ref/settings/>`_,
-- 3rd party packages settings (`DRF <https://www.django-rest-framework.org/api-guide/settings/>`_, `django-defender <https://django-defender.readthedocs.io/en/latest/#customizing-django-defender>`_, `Swagger <https://drf-yasg.readthedocs.io/en/stable/settings.html>`_,...)
+- 3rd party packages settings (`DRF <https://www.django-rest-framework.org/api-guide/settings/>`_, `django-defender <https://django-defender.readthedocs.io/en/latest/#customizing-django-defender>`_,...)
 
 Server Configuration
 --------------------
@@ -21,6 +21,12 @@ Server Configuration
   Default: ``"Local"``
 
   Name of the local CDCS instance.
+
+* ``PROJECT_VERSION``
+
+  Default: ``"0.0.0"``
+
+  Version number of the project.
 
 
 Databases

@@ -3,8 +3,7 @@
 from django.conf.urls import include
 from django.contrib.auth.decorators import login_required
 from django.urls import re_path
-from drf_yasg import openapi
-from drf_yasg.views import get_schema_view
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.data import api as data_api
@@ -16,15 +15,14 @@ from core_main_app.views.common import (
 )
 from core_main_app.views.user import views as user_views, ajax as user_ajax
 
-SchemaView = get_schema_view(
-    openapi.Info(
-        title="REST API",
-        default_version="v1",
-    ),
-)
-
 urlpatterns = [
     re_path(r"^$", user_views.homepage, name="core_main_app_homepage"),
+    re_path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    re_path(
+        "docs/api/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger_view",
+    ),
     re_path(
         r"^locked",
         common_views.defender_error_page,
@@ -111,11 +109,6 @@ urlpatterns = [
         r"^add-group-right-to-workspace",
         user_ajax.add_group_right_to_workspace,
         name="core_main_add_group_right_to_workspace",
-    ),
-    re_path(
-        r"^docs/api$",
-        SchemaView.with_ui("swagger", cache_timeout=0),
-        name="swagger_view",
     ),
     re_path(r"^tz_detect/", include("tz_detect.urls")),
     re_path(

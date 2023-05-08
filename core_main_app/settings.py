@@ -15,6 +15,10 @@ CUSTOM_NAME = getattr(settings, "CUSTOM_NAME", "Local")
 """ :py:class:`str`: Name of the local instance
 """
 
+PROJECT_VERSION = getattr(settings, "PROJECT_VERSION", "3.4.0")
+""" :py:class:`str`: Project version number.
+"""
+
 BOOTSTRAP_VERSION = getattr(settings, "BOOTSTRAP_VERSION", "4.6.2")
 """ :py:class:`str`: Version of the boostrap library.
 """

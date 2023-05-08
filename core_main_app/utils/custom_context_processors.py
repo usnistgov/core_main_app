@@ -54,4 +54,7 @@ def domain_context_processor(request):
         if hasattr(settings, "BOOTSTRAP_VERSION")
         and settings.BOOTSTRAP_VERSION in ["4.6.2", "5.1.3"]
         else "4.6.2",
+        "PROJECT_VERSION": settings.PROJECT_VERSION
+        if hasattr(settings, "PROJECT_VERSION")
+        else "0.0.0",
     }
