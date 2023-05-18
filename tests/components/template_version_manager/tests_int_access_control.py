@@ -4,6 +4,7 @@
 from django.test import override_settings
 
 from core_main_app.access_control.exceptions import AccessControlError
+from core_main_app.commons import exceptions
 from core_main_app.components.template_version_manager import (
     api as template_vm_api,
 )
@@ -1237,7 +1238,6 @@ class TestUpdateTemplatesOrdering(IntegrationBaseTestCase):
         self.anonymous_user = create_mock_user(user_id=None, is_anonymous=True)
         self.user1 = create_mock_user(user_id="1")
         self.user2 = create_mock_user(user_id="2")
-        self.staff_user1 = create_mock_user(user_id="1", is_staff=True)
         self.superuser1 = create_mock_user(user_id="1", is_superuser=True)
         self.fixture.insert_data()
 
@@ -1251,12 +1251,13 @@ class TestUpdateTemplatesOrdering(IntegrationBaseTestCase):
         """
 
         # Arrange
-        list_templates_ordering = [self.fixture.tvm2, self.fixture.tvm1]
+        list_templates_ordering = [self.fixture.tvm2.id, self.fixture.tvm1.id]
 
         # Act # Assert
         with self.assertRaises(AccessControlError):
-            template_vm_api.update_templates_ordering(
-                list_templates_ordering, user=self.anonymous_user
+            template_vm_api.update_template_ids_ordering(
+                list_templates_ordering,
+                create_mock_request(user=self.anonymous_user),
             )
 
     def test_update_global_templates_ordering_as_anonymous_raises_access_control_error(
@@ -1269,13 +1270,14 @@ class TestUpdateTemplatesOrdering(IntegrationBaseTestCase):
         """
         # Arrange
         list_templates_ordering = [
-            self.fixture.global_tvm2,
-            self.fixture.global_tvm1,
+            self.fixture.global_tvm2.id,
+            self.fixture.global_tvm1.id,
         ]
         # Act # Assert
         with self.assertRaises(AccessControlError):
-            template_vm_api.update_templates_ordering(
-                list_templates_ordering, user=self.anonymous_user
+            template_vm_api.update_template_ids_ordering(
+                list_templates_ordering,
+                create_mock_request(user=self.anonymous_user),
             )
 
     def test_update_own_templates_ordering_as_user_saves(self):
@@ -1285,10 +1287,10 @@ class TestUpdateTemplatesOrdering(IntegrationBaseTestCase):
 
         """
         # Arrange
-        list_templates_ordering = [self.fixture.tvm2, self.fixture.tvm1]
+        list_templates_ordering = [self.fixture.tvm2.id, self.fixture.tvm1.id]
         # Act
-        template_vm_api.update_templates_ordering(
-            list_templates_ordering, user=self.user1
+        template_vm_api.update_template_ids_ordering(
+            list_templates_ordering, create_mock_request(user=self.user1)
         )
 
     def test_update_other_users_template_ordering_as_user_raises_access_control_error(
@@ -1300,11 +1302,11 @@ class TestUpdateTemplatesOrdering(IntegrationBaseTestCase):
 
         """
         # Arrange
-        list_templates_ordering = [self.fixture.tvm2, self.fixture.tvm1]
+        list_templates_ordering = [self.fixture.tvm2.id, self.fixture.tvm1.id]
         # Act # Assert
         with self.assertRaises(AccessControlError):
-            template_vm_api.update_templates_ordering(
-                list_templates_ordering, user=self.user2
+            template_vm_api.update_template_ids_ordering(
+                list_templates_ordering, create_mock_request(user=self.user2)
             )
 
     def test_update_global_templates_ordering_as_user_raises_access_control_error(
@@ -1317,43 +1319,14 @@ class TestUpdateTemplatesOrdering(IntegrationBaseTestCase):
         """
         # Arrange
         list_templates_ordering = [
-            self.fixture.global_tvm2,
-            self.fixture.global_tvm1,
+            self.fixture.global_tvm2.id,
+            self.fixture.global_tvm1.id,
         ]
         # Act # Assert
         with self.assertRaises(AccessControlError):
-            template_vm_api.update_templates_ordering(
-                list_templates_ordering, user=self.user1
+            template_vm_api.update_template_ids_ordering(
+                list_templates_ordering, create_mock_request(user=self.user1)
             )
-
-    def test_update_other_users_template_ordering_as_staff_saves(self):
-        """test update other users template ordering as staff saves
-
-        Returns:
-
-        """
-        # Arrange
-        list_templates_ordering = [self.fixture.tvm2, self.fixture.tvm1]
-        # Act
-        template_vm_api.update_templates_ordering(
-            list_templates_ordering, user=self.staff_user1
-        )
-
-    def test_update_global_template_ordering_as_staff_saves(self):
-        """test update other users template ordering as staff saves
-
-        Returns:
-
-        """
-        # Arrange
-        list_templates_ordering = [
-            self.fixture.global_tvm2,
-            self.fixture.global_tvm1,
-        ]
-        # Act
-        template_vm_api.update_templates_ordering(
-            list_templates_ordering, user=self.staff_user1
-        )
 
     def test_update_other_users_template_ordering_as_superuser_saves(self):
         """test update other users template ordering as superuser saves
@@ -1362,10 +1335,10 @@ class TestUpdateTemplatesOrdering(IntegrationBaseTestCase):
 
         """
         # Arrange
-        list_templates_ordering = [self.fixture.tvm2, self.fixture.tvm1]
+        list_templates_ordering = [self.fixture.tvm2.id, self.fixture.tvm1.id]
         # Act
-        template_vm_api.update_templates_ordering(
-            list_templates_ordering, user=self.superuser1
+        template_vm_api.update_template_ids_ordering(
+            list_templates_ordering, create_mock_request(user=self.superuser1)
         )
 
     def test_update_global_template_ordering_as_superuser_saves(self):
@@ -1376,12 +1349,12 @@ class TestUpdateTemplatesOrdering(IntegrationBaseTestCase):
         """
         # Arrange
         list_templates_ordering = [
-            self.fixture.global_tvm2,
-            self.fixture.global_tvm1,
+            self.fixture.global_tvm2.id,
+            self.fixture.global_tvm1.id,
         ]
         # Act
-        template_vm_api.update_templates_ordering(
-            list_templates_ordering, user=self.superuser1
+        template_vm_api.update_template_ids_ordering(
+            list_templates_ordering, create_mock_request(user=self.superuser1)
         )
 
 
@@ -1409,27 +1382,27 @@ class TestAccessControlCanWriteList(IntegrationBaseTestCase):
         """test_access_control_can_write_list_as_anonymous_raises_access_control_error"""
 
         # Arrange
-        template_vm_list = [self.fixture.tvm2, self.fixture.tvm1]
+        template_vm_list = [self.fixture.tvm2.id, self.fixture.tvm1.id]
 
         # Act # Assert
         with self.assertRaises(AccessControlError):
             access_control.can_write_list(
-                template_vm_api.update_templates_ordering,
+                template_vm_api.update_template_ids_ordering,
                 template_vm_list,
-                self.anonymous_user,
+                create_mock_request(user=self.anonymous_user),
             )
 
     def test_access_control_can_write_list_as_owner_returns_function(self):
         """test_access_control_can_write_list_as_owner_returns_function"""
 
         # Arrange
-        template_vm_list = [self.fixture.tvm2, self.fixture.tvm1]
+        template_vm_list = [self.fixture.tvm2.id, self.fixture.tvm1.id]
 
         # Act
         access_control.can_write_list(
-            template_vm_api.update_templates_ordering,
+            template_vm_api.update_template_ids_ordering,
             template_vm_list,
-            self.user1,
+            create_mock_request(user=self.user1),
         )
 
     def test_access_control_can_write_list_user_templates_as_user_raises_access_control_error(
@@ -1437,14 +1410,14 @@ class TestAccessControlCanWriteList(IntegrationBaseTestCase):
     ):
         """test_access_control_can_write_list_user_templates_as_user_raises_access_control_error"""
         # Arrange
-        template_vm_list = [self.fixture.tvm2, self.fixture.tvm1]
+        template_vm_list = [self.fixture.tvm2.id, self.fixture.tvm1.id]
 
         # Act # Assert
         with self.assertRaises(AccessControlError):
             access_control.can_write_list(
-                template_vm_api.update_templates_ordering,
+                template_vm_api.update_template_ids_ordering,
                 template_vm_list,
-                self.user2,
+                create_mock_request(user=self.user2),
             )
 
     def test_access_control_can_write_list_global_templates_as_user_raises_access_control_error(
@@ -1452,14 +1425,17 @@ class TestAccessControlCanWriteList(IntegrationBaseTestCase):
     ):
         """test_access_control_can_write_list_global_templates_as_user_raises_access_control_error"""
         # Arrange
-        template_vm_list = [self.fixture.global_tvm2, self.fixture.global_tvm1]
+        template_vm_list = [
+            self.fixture.global_tvm2.id,
+            self.fixture.global_tvm1.id,
+        ]
 
         # Act # Assert
         with self.assertRaises(AccessControlError):
             access_control.can_write_list(
-                template_vm_api.update_templates_ordering,
+                template_vm_api.update_template_ids_ordering,
                 template_vm_list,
-                self.user2,
+                create_mock_request(user=self.user2),
             )
 
     def test_access_control_can_write_list_user_templates_as_staff_raises_access_control_error(
@@ -1468,14 +1444,14 @@ class TestAccessControlCanWriteList(IntegrationBaseTestCase):
         """test_access_control_can_write_list_user_templates_as_staff_raises_access_control_error"""
 
         # Arrange
-        template_vm_list = [self.fixture.tvm2, self.fixture.tvm1]
+        template_vm_list = [self.fixture.tvm2.id, self.fixture.tvm1.id]
 
         # Act
         with self.assertRaises(AccessControlError):
             access_control.can_write_list(
-                template_vm_api.update_templates_ordering,
+                template_vm_api.update_template_ids_ordering,
                 template_vm_list,
-                self.staff_user1,
+                create_mock_request(user=self.staff_user1),
             )
 
     def test_access_control_can_write_list_global_templates_as_staff_returns_function(
@@ -1484,26 +1460,29 @@ class TestAccessControlCanWriteList(IntegrationBaseTestCase):
         """test_access_control_can_write_list_global_templates_as_staff_returns_functiong"""
 
         # Arrange
-        template_vm_list = [self.fixture.global_tvm1, self.fixture.global_tvm2]
+        template_vm_list = [
+            self.fixture.global_tvm1.id,
+            self.fixture.global_tvm2.id,
+        ]
 
         # Act
         access_control.can_write_list(
-            template_vm_api.update_templates_ordering,
+            template_vm_api.update_template_ids_ordering,
             template_vm_list,
-            self.staff_user1,
+            create_mock_request(user=self.staff_user1),
         )
 
     def test_access_control_can_write_list_as_superuser_returns_function(self):
         """test_access_control_can_write_list_as_superuser_returns_function"""
 
         # Arrange
-        template_vm_list = [self.fixture.global_tvm2, self.fixture.tvm1]
+        template_vm_list = [self.fixture.global_tvm2.id, self.fixture.tvm1.id]
 
         # Act
         access_control.can_write_list(
-            template_vm_api.update_templates_ordering,
+            template_vm_api.update_template_ids_ordering,
             template_vm_list,
-            self.superuser1,
+            create_mock_request(user=self.superuser1),
         )
 
 
@@ -1525,12 +1504,12 @@ class TestTemplateVersionManagerSortByIdList(IntegrationBaseTestCase):
         self.superuser1 = create_mock_user(user_id="1", is_superuser=True)
         self.fixture.insert_data()
 
-    def test_sort_by_id_list_user_templates_as_anonymous_raises_access_control_error(
+    def test_get_template_version_managers_sorted_by_id_list_user_templates_as_anonymous_raises_access_control_error(
         self,
     ):
-        """test sort by id list user templates as anonymous raises access control error
+        """test_get_template_version_managers_sorted_by_id_list_user_templates_as_anonymous_raises_access_control_error
 
-        Returns:x
+        Returns:
 
         """
 
@@ -1539,15 +1518,15 @@ class TestTemplateVersionManagerSortByIdList(IntegrationBaseTestCase):
 
         # Act # Assert
         with self.assertRaises(AccessControlError):
-            template_vm_api.sort_by_id_list(
+            template_vm_api.get_template_version_managers_sorted_by_id_list(
                 list_templates_ordering,
                 create_mock_request(user=self.anonymous_user),
             )
 
-    def test_sort_by_id_list_global_templates_as_anonymous_raises_access_control_error(
+    def test_get_template_version_managers_sorted_by_id_list_global_templates_as_anonymous_raises_access_control_error(
         self,
     ):
-        """test sort by id list global templates as anonymous raises access control error
+        """test_get_template_version_managers_sorted_by_id_list_global_templates_as_anonymous_raises_access_control_error
 
         Returns:
 
@@ -1559,13 +1538,15 @@ class TestTemplateVersionManagerSortByIdList(IntegrationBaseTestCase):
         ]
         # Act # Assert
         with self.assertRaises(AccessControlError):
-            template_vm_api.sort_by_id_list(
+            template_vm_api.get_template_version_managers_sorted_by_id_list(
                 list_templates_ordering,
                 create_mock_request(user=self.anonymous_user),
             )
 
-    def test_sort_by_id_list_own_templates_as_user_returns_templates(self):
-        """test sort by id list own templates as user returns templates
+    def test_get_template_version_managers_sorted_by_id_list_own_templates_as_user_returns_templates(
+        self,
+    ):
+        """test_get_template_version_managers_sorted_by_id_list_own_templates_as_user_returns_templates
 
         Returns:
 
@@ -1573,16 +1554,18 @@ class TestTemplateVersionManagerSortByIdList(IntegrationBaseTestCase):
         # Arrange
         list_templates_ordering = [self.fixture.tvm2.id, self.fixture.tvm1.id]
         # Act
-        result = template_vm_api.sort_by_id_list(
-            list_templates_ordering, create_mock_request(user=self.user1)
+        result = (
+            template_vm_api.get_template_version_managers_sorted_by_id_list(
+                list_templates_ordering, create_mock_request(user=self.user1)
+            )
         )
 
         self.assertEqual(len(result), 2)
 
-    def test_sort_by_id_list_others_templates_raises_access_control_error(
+    def test_get_template_version_managers_sorted_by_id_list_others_templates_raises_access_control_error(
         self,
     ):
-        """test sort by id list others templates raises access control error
+        """test_get_template_version_managers_sorted_by_id_list_others_templates_raises_access_control_error
 
         Returns:
 
@@ -1591,14 +1574,14 @@ class TestTemplateVersionManagerSortByIdList(IntegrationBaseTestCase):
         list_templates_ordering = [self.fixture.tvm2.id, self.fixture.tvm1.id]
         # Act # Assert
         with self.assertRaises(AccessControlError):
-            template_vm_api.sort_by_id_list(
+            template_vm_api.get_template_version_managers_sorted_by_id_list(
                 list_templates_ordering, create_mock_request(user=self.user2)
             )
 
-    def test_sort_by_id_list_global_templates_as_user_returns_templates(
+    def test_get_template_version_managers_sorted_by_id_list_global_templates_as_user_returns_templates(
         self,
     ):
-        """test sort by id list others templates as user returns templates
+        """test_get_template_version_managers_sorted_by_id_list_global_templates_as_user_returns_templates
 
         Returns:
 
@@ -1609,16 +1592,18 @@ class TestTemplateVersionManagerSortByIdList(IntegrationBaseTestCase):
             self.fixture.global_tvm1.id,
         ]
         # Act
-        result = template_vm_api.sort_by_id_list(
-            list_templates_ordering, create_mock_request(user=self.user1)
+        result = (
+            template_vm_api.get_template_version_managers_sorted_by_id_list(
+                list_templates_ordering, create_mock_request(user=self.user1)
+            )
         )
         # Assert
         self.assertEqual(len(result), 2)
 
-    def test_sort_by_id_list_users_templates_as_superuser_returns_templates(
+    def test_get_template_version_managers_sorted_by_id_list_users_templates_as_superuser_returns_templates(
         self,
     ):
-        """test sort by id list users templates as superuser saves returns templates
+        """test_get_template_version_managers_sorted_by_id_list_users_templates_as_superuser_returns_templates
 
         Returns:
 
@@ -1626,17 +1611,20 @@ class TestTemplateVersionManagerSortByIdList(IntegrationBaseTestCase):
         # Arrange
         list_templates_ordering = [self.fixture.tvm2.id, self.fixture.tvm1.id]
         # Act
-        result = template_vm_api.sort_by_id_list(
-            list_templates_ordering, create_mock_request(user=self.superuser1)
+        result = (
+            template_vm_api.get_template_version_managers_sorted_by_id_list(
+                list_templates_ordering,
+                create_mock_request(user=self.superuser1),
+            )
         )
 
         # Assert
         self.assertEqual(len(result), 2)
 
-    def test_sort_by_id_list_global_templates_as_superuser_returns_templates(
+    def test_get_template_version_managers_sorted_by_id_list_global_templates_as_superuser_returns_templates(
         self,
     ):
-        """test sort by id list users templates as superuser saves returns templates
+        """test_get_template_version_managers_sorted_by_id_list_global_templates_as_superuser_returns_templates
 
         Returns:
 
@@ -1647,8 +1635,30 @@ class TestTemplateVersionManagerSortByIdList(IntegrationBaseTestCase):
             self.fixture.global_tvm1.id,
         ]
         # Act
-        result = template_vm_api.sort_by_id_list(
-            list_templates_ordering, create_mock_request(user=self.superuser1)
+        result = (
+            template_vm_api.get_template_version_managers_sorted_by_id_list(
+                list_templates_ordering,
+                create_mock_request(user=self.superuser1),
+            )
         )
         # Assert
         self.assertEqual(len(result), 2)
+
+    def test_get_template_version_managers_sorted_by_id_list_as_user_raises_dne_error(
+        self,
+    ):
+        """test_get_template_version_managers_sorted_by_id_list_as_user_raises_dne_error
+
+        Returns:
+
+        """
+        # Arrange
+        list_templates_ordering = [
+            -1,
+            self.fixture.global_tvm1.id,
+        ]
+        # Act # Assert
+        with self.assertRaises(exceptions.DoesNotExist):
+            template_vm_api.get_template_version_managers_sorted_by_id_list(
+                list_templates_ordering, create_mock_request(user=self.user1)
+            )

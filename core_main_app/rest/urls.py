@@ -37,9 +37,14 @@ urlpatterns = [
         name="core_main_app_rest_template_version_manager_user_list",
     ),
     re_path(
-        r"^template-version-manager/ordering/$",
-        template_version_manager_views.TemplateVersionManagerOrdering.as_view(),
-        name="core_main_app_rest_template_version_manager_ordering",
+        r"^template-version-manager/global/ordering/$",
+        template_version_manager_views.GlobalTemplateVersionManagerOrdering.as_view(),
+        name="core_main_app_rest_global_template_version_manager_ordering",
+    ),
+    re_path(
+        r"^template-version-manager/user/ordering/$",
+        template_version_manager_views.UserTemplateVersionManagerOrdering.as_view(),
+        name="core_main_app_rest_user_template_version_manager_ordering",
     ),
     re_path(
         r"^template-version-manager/(?P<pk>\w+)/$",

@@ -90,3 +90,15 @@ class CreateTemplateSerializer(TemplateSerializer):
         raise NotImplementedError(
             "Template Version Manager should only be updated using specialized APIs."
         )
+
+
+class TemplateVersionManagerOrderingSerializer(ModelSerializer):
+    """
+    Template Version Manager Ordering serializer
+    """
+
+    class Meta:
+        """Meta"""
+
+        model = TemplateVersionManager
+        fields = ["title", "display_rank", "id"]

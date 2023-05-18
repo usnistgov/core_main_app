@@ -1317,13 +1317,67 @@ class TestRestoreTemplateVersionManager(IntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
-class TemplateVersionManagerOrdering(IntegrationBaseTestCase):
-    """TemplateVersionManagerOrdering"""
+class UserTemplateVersionManagerOrdering(IntegrationBaseTestCase):
+    """User Template Version Manager Ordering"""
 
     fixture = fixture_template_vm_ordering
 
-    def test_patch_as_owner_returns_http_200(self):
-        """test_patch_as_owner_returns_http_200
+    def test_get_as_owner_returns_all_user_template_version_managers(self):
+        """test_get_as_owner_returns_all_user_template_version_managers
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user("1")
+        # Act
+        response = RequestMock.do_request_get(
+            views.UserTemplateVersionManagerOrdering.as_view(),
+            user,
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+
+    def test_get_as_owner_returns_empty_list(self):
+        """test_get_as_owner_returns_empty_list
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user("2")
+        # Act
+        response = RequestMock.do_request_get(
+            views.UserTemplateVersionManagerOrdering.as_view(),
+            user,
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
+
+    def test_get_as_superuser_returns_all_user_template_version_managers(self):
+        """test_get_as_superuser_returns_all_user_template_version_managers
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user("1", is_staff=True, is_superuser=True)
+        # Act
+        response = RequestMock.do_request_get(
+            views.UserTemplateVersionManagerOrdering.as_view(),
+            user,
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+
+    def test_patch_as_owner_updates_template_version_manager_ordering(self):
+        """test_patch_as_owner_updates_template_version_manager_ordering
 
         Returns:
 
@@ -1332,18 +1386,92 @@ class TemplateVersionManagerOrdering(IntegrationBaseTestCase):
         user = create_mock_user("1")
         # Act
         response = RequestMock.do_request_patch(
-            views.TemplateVersionManagerOrdering.as_view(),
+            views.UserTemplateVersionManagerOrdering.as_view(),
             user,
             data={
                 "template_list": [self.fixture.tvm2.id, self.fixture.tvm1.id]
             },
         )
+        template_list = RequestMock.do_request_get(
+            views.UserTemplateVersionManagerOrdering.as_view(), user
+        ).data
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(template_list[0]["display_rank"], 1)
+        self.assertEqual(template_list[0]["id"], self.fixture.tvm2.id)
+        self.assertEqual(template_list[1]["display_rank"], 2)
+        self.assertEqual(template_list[1]["id"], self.fixture.tvm1.id)
 
-    def test_patch_as_user_returns_http_403(self):
-        """test_patch_as_user_returns_http_403
+    def test_patch_wrong_ids_returns_http_404(self):
+        """test_patch_wrong_ids_returns_http_404
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user("1")
+        # Act
+        response = RequestMock.do_request_patch(
+            views.UserTemplateVersionManagerOrdering.as_view(),
+            user,
+            data={
+                "template_list": [
+                    self.fixture.tvm2.id,
+                    -1,
+                    self.fixture.tvm1.id,
+                ]
+            },
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_patch_inaccessible_id_returns_http_403(self):
+        """test_patch_wrong_ids_returns_http_404
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user("1")
+        # Act
+        response = RequestMock.do_request_patch(
+            views.UserTemplateVersionManagerOrdering.as_view(),
+            user,
+            data={
+                "template_list": [
+                    self.fixture.tvm2.id,
+                    self.fixture.global_tvm2.id,
+                ]
+            },
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_patch_duplicate_ids_returns_http_400(self):
+        """test_patch_duplicate_ids_returns_http_400
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user("1")
+        # Act
+        response = RequestMock.do_request_patch(
+            views.UserTemplateVersionManagerOrdering.as_view(),
+            user,
+            data={
+                "template_list": [self.fixture.tvm2.id, self.fixture.tvm2.id]
+            },
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_patch_others_template_version_manager_returns_http_403(self):
+        """test_patch_returns_updates_template_version_manager_order
 
         Returns:
 
@@ -1352,7 +1480,7 @@ class TemplateVersionManagerOrdering(IntegrationBaseTestCase):
         user = create_mock_user("2")
         # Act
         response = RequestMock.do_request_patch(
-            views.TemplateVersionManagerOrdering.as_view(),
+            views.UserTemplateVersionManagerOrdering.as_view(),
             user,
             data={
                 "template_list": [self.fixture.tvm2.id, self.fixture.tvm1.id]
@@ -1362,18 +1490,79 @@ class TemplateVersionManagerOrdering(IntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_patch_global_as_superuser_returns_http_200(self):
-        """test_patch_as_superuser_returns_http_200
+    def test_patch_without_param__returns_http_500(self):
+        """test_patch_returns_updates_template_version_manager_order
 
         Returns:
 
         """
         # Arrange
-        user = create_mock_user("1", is_superuser=True)
-
+        user = create_mock_user("2")
         # Act
         response = RequestMock.do_request_patch(
-            views.TemplateVersionManagerOrdering.as_view(),
+            views.UserTemplateVersionManagerOrdering.as_view(),
+            user,
+        )
+
+        # Assert
+        self.assertEqual(
+            response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+
+class GlobalTemplateVersionManagerOrdering(IntegrationBaseTestCase):
+    """Global Template Version Manager Ordering"""
+
+    fixture = fixture_template_vm_ordering
+
+    def test_get_as_user_returns_http_403(self):
+        """test_get_as_user_returns_all_global_template_version_managers
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user("1")
+        # Act
+        response = RequestMock.do_request_get(
+            views.GlobalTemplateVersionManagerOrdering.as_view(),
+            user,
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_get_as_superuser_returns_all_global_template_version_managers(
+        self,
+    ):
+        """test_get_as_superuser_returns_all_global_template_version_managers
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user("1", is_staff=True, is_superuser=True)
+        # Act
+        response = RequestMock.do_request_get(
+            views.GlobalTemplateVersionManagerOrdering.as_view(),
+            user,
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+
+    def test_patch_as_user_returns_error_403(self):
+        """test_patch_as_user_returns_error_403
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user("1")
+        # Act
+        response = RequestMock.do_request_patch(
+            views.GlobalTemplateVersionManagerOrdering.as_view(),
             user,
             data={
                 "template_list": [
@@ -1384,7 +1573,85 @@ class TemplateVersionManagerOrdering(IntegrationBaseTestCase):
         )
 
         # Assert
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_patch_as_superuser_updates_template_version_manager_ordering(
+        self,
+    ):
+        """test_patch_as_superuser_updates_template_version_manager_ordering
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user("1", is_staff=True, is_superuser=True)
+        # Act
+        response = RequestMock.do_request_patch(
+            views.GlobalTemplateVersionManagerOrdering.as_view(),
+            user,
+            data={
+                "template_list": [
+                    self.fixture.global_tvm2.id,
+                    self.fixture.global_tvm1.id,
+                ]
+            },
+        )
+        template_list = RequestMock.do_request_get(
+            views.GlobalTemplateVersionManagerOrdering.as_view(), user
+        ).data
+        # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(template_list[0]["display_rank"], 1)
+        self.assertEqual(template_list[0]["id"], self.fixture.global_tvm2.id)
+        self.assertEqual(template_list[1]["display_rank"], 2)
+        self.assertEqual(template_list[1]["id"], self.fixture.global_tvm1.id)
+
+    def test_patch_wrong_ids_returns_http_404(self):
+        """test_patch_wrong_ids_returns_http_404
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user("1", is_staff=True, is_superuser=True)
+        # Act
+        response = RequestMock.do_request_patch(
+            views.GlobalTemplateVersionManagerOrdering.as_view(),
+            user,
+            data={
+                "template_list": [
+                    self.fixture.global_tvm2.id,
+                    -1,
+                    self.fixture.global_tvm1.id,
+                ]
+            },
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_patch_duplicate_ids_returns_http_400(self):
+        """test_patch_duplicate_ids_returns_http_400
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user("1", is_staff=True, is_superuser=True)
+        # Act
+        response = RequestMock.do_request_patch(
+            views.GlobalTemplateVersionManagerOrdering.as_view(),
+            user,
+            data={
+                "template_list": [
+                    self.fixture.global_tvm2.id,
+                    self.fixture.global_tvm2.id,
+                ]
+            },
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class TestTemplateVersionManagerList(IntegrationBaseTestCase):

@@ -10,6 +10,9 @@ from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
 )
 from core_main_app.rest.template_version_manager import views
+from core_main_app.rest.template_version_manager.abstract_views import (
+    AbstractOrderingTemplateVersionManager,
+)
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
 
@@ -139,3 +142,42 @@ class TestTemplateVersionManagerDetail(SimpleTestCase):
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class TestAbstractOrderingTemplateVersionManager(SimpleTestCase):
+    """Test Abstract Ordering Template Version Manager"""
+
+    def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
+        super().setUp()
+
+    @patch.multiple(
+        AbstractOrderingTemplateVersionManager, __abstractmethods__=set()
+    )
+    def test_get_abstract_ordering_template_version_manager_returns_error_500(
+        self,
+    ):
+        """test_get_abstract_ordering_template_version_manager_returns_error_500
+
+        Args:
+
+
+        Returns:
+
+        """
+        # Arrange
+        mock_user = create_mock_user("1")
+
+        # Mock
+        response = RequestMock.do_request_get(
+            views.AbstractOrderingTemplateVersionManager.as_view(), mock_user
+        )
+
+        # Assert
+        self.assertEqual(
+            response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

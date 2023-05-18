@@ -5,6 +5,9 @@ from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
 )
+from core_main_app.components.template_version_manager import (
+    api as template_version_manager_api,
+)
 from core_main_app.utils.requests_utils.access_control import (
     get_request_from_args,
 )
@@ -51,26 +54,34 @@ def can_write(func, *args, **kwargs):
     )
 
 
-def can_write_list(func, template_version_manager_list, user):
+def can_write_list(func, template_version_manager_list_ids, request):
     """Can write template version manager list.
 
     Args:
         func:
-        template_version_manager_list:
-        user:
+        template_version_manager_list_ids:
+        request:
 
     Returns:
 
     """
     # super user
+    user = request.user
     if user.is_superuser:
-        return func(template_version_manager_list, user)
+        return func(template_version_manager_list_ids, request)
 
     # anonymous can not write
     if user.is_anonymous:
         raise AccessControlError(
             "Template VM: The user doesn't have enough rights."
         )
+    # get template version manager list
+    template_version_manager_list = (
+        template_version_manager_api.get_by_id_list(
+            template_version_manager_list_ids, request
+        )
+    )
+
     for template_version_manager in template_version_manager_list:
         # user is set
         if template_version_manager.user:
@@ -85,4 +96,4 @@ def can_write_list(func, template_version_manager_list, user):
                     "Template VM: The user doesn't have enough rights."
                 )
 
-    return func(template_version_manager_list, user)
+    return func(template_version_manager_list_ids, request)

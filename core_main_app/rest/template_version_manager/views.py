@@ -18,13 +18,13 @@ from core_main_app.rest.template_version_manager.abstract_views import (
     AbstractStatusTemplateVersion,
     AbstractStatusTemplateVersionManager,
     AbstractTemplateVersionManagerDetail,
+    AbstractOrderingTemplateVersionManager,
 )
 from core_main_app.rest.template_version_manager.serializers import (
     TemplateVersionManagerSerializer,
     CreateTemplateSerializer,
 )
 from core_main_app.utils.decorators import api_staff_member_required
-from core_main_app.access_control.exceptions import AccessControlError
 
 
 class GlobalTemplateVersionManagerList(AbstractTemplateVersionManagerList):
@@ -399,49 +399,38 @@ class RestoreTemplateVersionManager(AbstractStatusTemplateVersionManager):
         )
 
 
-class TemplateVersionManagerOrdering(APIView):
-    """Update templates ordering"""
+class GlobalTemplateVersionManagerOrdering(
+    AbstractOrderingTemplateVersionManager
+):
+    permission_classes = (IsAdminUser,)
+    """Get Global TemplateVersionManager ordering"""
 
-    permission_classes = (IsAuthenticated,)
-
-    def patch(self, request):
-        """Update templates ordering
+    def get_objects(self):
+        """Get TemplateVersionManager list from db
 
         Args:
-            request:
 
         Returns:
-
-            - code: 200
-              content: None
-            - code: 403
-              content: Authentication error
-            - code: 404
-              content: Object was not found
-            - code: 500
-              content: Internal server error
+            TemplateVersionManager list
         """
-        try:
-            # get list ids
-            template_ids = request.data.get("template_list", [])
+        return template_version_manager_api.get_global_version_managers(
+            request=self.request
+        )
 
-            # get template list
-            template_list = template_version_manager_api.sort_by_id_list(
-                template_ids, request
-            )
 
-            # update template ordering
-            template_version_manager_api.update_templates_ordering(
-                template_list, user=self.request.user
-            )
+class UserTemplateVersionManagerOrdering(
+    AbstractOrderingTemplateVersionManager
+):
+    """Get User TemplateVersionManager ordering"""
 
-            # return response
-            return Response({}, status=status.HTTP_200_OK)
-        except AccessControlError as ace:
-            content = {"message": str(ace)}
-            return Response(content, status=status.HTTP_403_FORBIDDEN)
-        except Exception as api_exception:
-            content = {"message": str(api_exception)}
-            return Response(
-                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+    def get_objects(self):
+        """Get TemplateVersionManager list from db
+
+        Args:
+
+        Returns:
+            TemplateVersionManager list
+        """
+        return template_version_manager_api.get_all_by_user_id(
+            request=self.request
+        )

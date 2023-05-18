@@ -3,6 +3,7 @@ Template Version Manager API
 """
 from core_main_app.access_control.api import is_superuser
 from core_main_app.access_control.decorators import access_control
+from core_main_app.commons import exceptions
 from core_main_app.components.template import api as template_api
 from core_main_app.components.template.access_control import (
     can_read,
@@ -210,8 +211,8 @@ def get_active_global_version_manager_by_title(version_manager_title, request):
 
 
 @access_control(can_read_list)
-def sort_by_id_list(list_id, request):
-    """sort a version managers with the given id list.
+def get_template_version_managers_sorted_by_id_list(list_id, request):
+    """get a template version managers sorted with the given id list.
 
     Args:
         list_id:
@@ -220,24 +221,34 @@ def sort_by_id_list(list_id, request):
     Returns:
 
     """
+
     tvm_list = dict(
         [(tvm.id, tvm) for tvm in get_by_id_list(list_id, request)]
     )
+    # Check if all templates have been found
+    if len(list_id) > len(tvm_list):
+        raise exceptions.DoesNotExist(
+            "One or more templates could not be found"
+        )
 
     return [tvm_list[int(id)] for id in list_id]
 
 
 @access_control(can_write_list)
-def update_templates_ordering(template_version_manager_list, user):
+def update_template_ids_ordering(list_id, request):
     """Update templates ordering.
 
     Args:
-        template_version_manager_list:
-        user:
+        list_id:
+        request:
 
     Returns:
 
     """
+
+    template_version_manager_list = (
+        get_template_version_managers_sorted_by_id_list(list_id, request)
+    )
 
     for counter, template_version_manager in enumerate(
         template_version_manager_list, 1

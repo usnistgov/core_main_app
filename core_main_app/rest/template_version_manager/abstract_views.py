@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions as exceptions
@@ -19,6 +20,7 @@ from core_main_app.components.template_version_manager import (
 from core_main_app.rest.template_version_manager.serializers import (
     TemplateVersionManagerSerializer,
     CreateTemplateSerializer,
+    TemplateVersionManagerOrderingSerializer,
 )
 from core_main_app.utils.boolean import to_bool
 from core_main_app.utils.decorators import api_staff_member_required
@@ -318,3 +320,92 @@ class AbstractTemplateList(APIView, metaclass=ABCMeta):
     def get_user(self):
         """Retrieve a user"""
         raise NotImplementedError("get_user method is not implemented.")
+
+
+class AbstractOrderingTemplateVersionManager(APIView, metaclass=ABCMeta):
+    """Set template version manager rank"""
+
+    serializer = TemplateVersionManagerOrderingSerializer
+    permission_classes = (IsAuthenticated,)
+
+    @abstractmethod
+    def get_objects(self):
+        """get template version manager list."""
+        raise NotImplementedError("get_objects method is not implemented.")
+
+    def get(self, request):
+        """Get template version managers
+
+        Args:
+
+            request: HTTP request
+
+        Returns:
+
+            - code: 200
+              content: List of template version manager
+            - code: 403
+              content: Access control error
+            - code: 404
+              content: template(s) Not found
+            - code: 500
+              content: Internal server error
+        """
+        try:
+            object_list = self.get_objects()
+
+            # Serialize object
+            serializer = self.serializer(object_list, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as api_exception:
+            content = {"message": str(api_exception)}
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+    def patch(self, request):
+        """Update templates ordering
+
+        Args:
+            request:
+
+        Returns:
+
+            - code: 200
+              content: None
+            - code: 403
+              content: Authentication error
+            - code: 404
+              content: Object was not found
+            - code: 500
+              content: Internal server error
+        """
+        try:
+            # get list ids
+            template_ids = request.data.get("template_list", [])
+
+            # check duplicate ids
+            if len(template_ids) != len(set(template_ids)):
+                content = {
+                    "message": "Action not processed due to duplicate ids."
+                }
+                return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
+            # update template ordering
+            template_version_manager_api.update_template_ids_ordering(
+                template_ids, request
+            )
+            # return response
+            return Response({}, status=status.HTTP_200_OK)
+
+        except AccessControlError as ace:
+            content = {"message": str(ace)}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
+        except exceptions.DoesNotExist as dne:
+            content = {"message": str(dne)}
+            return Response(content, status=status.HTTP_404_NOT_FOUND)
+        except Exception as api_exception:
+            content = {"message": str(api_exception)}
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

@@ -16,13 +16,14 @@ function dragover(){
 
   // disable save ordering button
   $(".save-order").prop("disabled",false);
+  $(".save-order-global").prop("disabled",false);
 }
 
 
 /**
  * AJAX, to save template ordering
  */
-var saveTemplateOrdering = function()
+var saveTemplateOrdering = function(event, url)
 {
    // get template ids
    let queryData = {}
@@ -31,7 +32,7 @@ var saveTemplateOrdering = function()
    }).get();
 
    $.ajax({
-        url : saveTemplateOrderingUrl,
+        url : url,
         type: "patch",
         contentType: "application/json",
         data: JSON.stringify(queryData),
@@ -39,13 +40,16 @@ var saveTemplateOrdering = function()
         success : function(data) {
              location.reload();
              $(".save-order").prop("disabled",true);
+             $(".save-order-global").prop("disabled",true);
         },
         error: function(data){
-            console.log("Error")
+            $(".error-container").show();
+            $("#error-text").html("Impossible to change template order: "+ data.responseText);
         }
     });
 };
 
 $(document).ready(function() {
-    $('.save-order').on('click', saveTemplateOrdering);
+    $('.save-order').on('click', e=>saveTemplateOrdering(e, saveUserTemplateOrderingUrl));
+    $('.save-order-global').on('click', e=>saveTemplateOrdering(e, saveGlobalTemplateOrderingUrl));
 });
