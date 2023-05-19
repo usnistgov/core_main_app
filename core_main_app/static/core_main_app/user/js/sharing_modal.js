@@ -9,7 +9,11 @@ copyLink = function(link){
     link.prop('disabled', false);
     link.focus();
     link.select();
-    document.execCommand('copy');
+    navigator.clipboard.writeText(link.val()).then(function() {
+        $.notify("URL copied to clipboard successfully!", { style: "success" });
+    }, function() {
+        $.notify("A problem has occurred while copying the Url.", { style: "danger" });
+    });
     link.prop('disabled', true);
 };
 
