@@ -2,8 +2,6 @@
 """
 from django.conf.urls import include
 from django.urls import re_path
-from drf_yasg import openapi
-from drf_yasg.views import get_schema_view
 
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.data import api as data_api
@@ -13,13 +11,6 @@ from core_main_app.views.common import (
     views as common_views,
 )
 from core_main_app.views.user import views as user_views, ajax as user_ajax
-
-get_schema_view(
-    openapi.Info(
-        title="REST API",
-        default_version="v1",
-    ),
-)
 
 urlpatterns = [
     re_path(r"^$", user_views.homepage, name="core_main_app_homepage"),
