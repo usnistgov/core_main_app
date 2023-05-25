@@ -96,7 +96,7 @@ let format = function()
         },
         dataType: "json",
 		success: function(data){
-		    $.notify("Document formatted successfully", { style: "success" });
+		    $.notify("Document formatted successfully", "success");
 		    html = hljs.highlightAuto(data).value
 		    $(".input").html("<pre class=\"content-highlight m-1\">"+ html +"</pre>")
 	    },
@@ -131,7 +131,7 @@ var validate = function()
         },
         dataType: "json",
 		success: function(data){
-		   $.notify("Content validated with success", { style: "success" });
+		   $.notify("Content validated with success", "success");
 	    },
         error:function(data){
            jqError.html('<i class="fas fa-exclamation-triangle"></i> '+ data.responseText);
@@ -162,7 +162,7 @@ var refresh = function()
             dataType:"json",
             type: "post",
             success: function(data){
-                $.notify("Content refreshed with success", { style: "success" });
+                $.notify("Content refreshed with success", "success");
                 $(".tree").html(data.template)
 
             },
@@ -221,7 +221,7 @@ let generate = function()
         },
         dataType: "json",
 		success: function(data){
-		    $.notify("Document generated successfully", { style: "success" });
+		    $.notify("Document generated successfully", "success");
 		    html = hljs.highlightAuto(data).value
 		    $(".input").html("<pre class=\"content-highlight m-1\">"+ html +"</pre>")
 	    },

@@ -46,4 +46,3 @@ this package (`requirements.*` files) and their dependencies.
 | highlight             | BSD License                                             |
 | jQuery                | MIT License                                             |
 | jQueryUI              | MIT License                                             |
-| notify                | MIT License                                             |

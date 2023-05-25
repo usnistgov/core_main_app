@@ -1,0 +1,74 @@
+.toast-container {
+    z-index: 1500;
+    position: absolute;
+    top: 2.5rem;
+    right: 1rem;
+
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+}
+.toast {
+    opacity: 1;
+    border-radius: 0.25rem;
+    max-width: 100%;
+    font-size: 1.2rem;
+
+    flex-basis: fit-content;
+    width: fit-content;
+}
+.toast > .toast-body {
+    display: flex;
+    flex-direction: row;
+}
+.toast > .toast-body > .toast-text {
+    width: 100%;
+}
+.toast > .toast-body > button > .close {
+    opacity: 1;
+}
+.toast-info {
+    color: darkblue;
+    border-color: darkblue;
+    background-color: #d8e8f8;
+}
+.toast-info > .toast-body > button > .close {
+    opacity: 1;
+    color: darkblue;
+}
+.toast-success {
+    color: green;
+    border-color: green;
+    background-color: #d8f8d8;
+}
+.toast-success > .toast-body > button > .close {
+    opacity: 1;
+    color: green;
+}
+.toast-warning {
+    color: darkorange;
+    border-color: darkorange;
+    background-color: #f8f8e8;
+}
+.toast-warning > .toast-body > button > .close {
+    opacity: 1;
+    color: darkorange;
+}
+.toast-danger {
+    color: red;
+    border-color: red;
+    background-color: #efdfdf;
+}
+.toast-danger > .toast-body > button > .close {
+    opacity: 1;
+    color: red;
+}
+.toast-default {
+    color: #555;
+    border-color: #555;
+    background-color: #f8f8f8;
+}
+.toast-default > .toast-body > button > .close {
+    opacity: 1;
+    color: #555;
+}

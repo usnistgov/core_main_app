@@ -18,7 +18,7 @@ set_current_version = function(objectID){
             location.reload();
         },
         error:function(data){
-            $.notify(data.responseJSON["message"]);
+            $.notify(data.responseJSON["message"], "danger");
         }
     });
 };

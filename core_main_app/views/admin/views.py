@@ -680,7 +680,7 @@ class WebPageView(View):
 
             self.api.upsert(page)
             messages.add_message(
-                request, messages.INFO, "Information saved with success."
+                request, messages.SUCCESS, "Information saved with success."
             )
 
             return redirect(reverse(self.post_redirect))
