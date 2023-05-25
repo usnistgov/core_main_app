@@ -57,7 +57,9 @@ class Template(Version):
     )
     hash = models.CharField(max_length=200)
     _display_name = models.CharField(blank=True, max_length=200)
-    dependencies = models.ManyToManyField("self", blank=True, default=[])
+    dependencies = models.ManyToManyField(
+        "self", blank=True, default=[], symmetrical=False
+    )
     creation_date = models.DateTimeField(auto_now_add=True)
     _cls = models.CharField(default="Template", max_length=200)
     _content = None
