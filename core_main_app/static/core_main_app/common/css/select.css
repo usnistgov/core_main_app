@@ -10,19 +10,13 @@
   list-style: none;
 }
 
-#form-associated-template-content,
-#form-add-xslt-content,
-#add-user-form,
-#add-group-form{
+.multiple-select-form{
     height :200px;
     overflow-y: scroll;
 
 }
 
-#form-associated-template-content:hover,
-#form-add-xslt-content:hover,
-#add-user-form:hover,
-#add-group-form:hover{
+.multiple-select-form:hover{
     border-radius: 10px;
     border: 1px solid #d0d0d0;
 }
