@@ -112,17 +112,22 @@ urlpatterns = [
     ),
     re_path(
         r"^add-metadata-form",
-        user_ajax.load_blob_metadata_form,
+        user_ajax.LoadBlobMetadataForm.as_view(),
         name="core_main_blob_metadata_form",
     ),
     re_path(
         r"^add-metadata-to-blob",
-        user_ajax.add_metadata_to_blob,
+        user_ajax.AddMetadataToBlob.as_view(),
         name="core_main_blob_add_metadata",
     ),
     re_path(
         r"^remove-metadata-from-blob",
-        user_ajax.remove_metadata_from_blob,
+        user_ajax.RemoveMetadataFromBlob.as_view(),
         name="core_main_blob_remove_metadata",
+    ),
+    re_path(
+        r"^upload-file",
+        user_ajax.UploadFile.as_view(),
+        name="core_main_upload_file",
     ),
 ]

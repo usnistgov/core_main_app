@@ -6,12 +6,14 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.messages.middleware import MessageMiddleware
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.contrib.sessions.middleware import SessionMiddleware
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.http import QueryDict
 from django.test import RequestFactory
 from tests.components.data.fixtures.fixtures import (
     AccessControlBlobWithMetadataFixture,
 )
 from tests.views.fixtures import AccessControlDataFixture
-from django.http import QueryDict
+
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons.exceptions import ModelError
 from core_main_app.components.blob import api as blob_api
@@ -41,9 +43,10 @@ from core_main_app.views.user.ajax import (
     remove_user_or_group_rights,
     load_add_group_form,
     add_group_right_to_workspace,
-    load_blob_metadata_form,
-    add_metadata_to_blob,
-    remove_metadata_from_blob,
+    UploadFile,
+    RemoveMetadataFromBlob,
+    AddMetadataToBlob,
+    LoadBlobMetadataForm,
 )
 from core_main_app.views.user.views import manage_template_versions
 from tests.test_settings import LOGIN_URL
@@ -1386,7 +1389,7 @@ class TestLoadBlobMetadataForm(IntegrationBaseTestCase):
         request = self.factory.get("core_main_blob_metadata_form")
         request.user = self.anonymous
         request.GET = {"id": str(self.fixture.blob_1)}
-        response = load_blob_metadata_form(request)
+        response = LoadBlobMetadataForm.as_view()(request)
         self.assertEqual(response.status_code, 302)
 
     @patch("core_main_app.components.data.api.get_all_by_user")
@@ -1400,7 +1403,7 @@ class TestLoadBlobMetadataForm(IntegrationBaseTestCase):
         request.user = self.user1
         request.GET = {"blob_id": str(self.fixture.blob_1.id)}
         mock_get_all_by_user.return_value = []
-        response = load_blob_metadata_form(request)
+        response = LoadBlobMetadataForm.as_view()(request)
         self.assertEqual(response.status_code, 200)
         self.assertTrue("form" in response.content.decode())
 
@@ -1423,7 +1426,7 @@ class TestLoadBlobMetadataForm(IntegrationBaseTestCase):
         get_all_workspaces_with_read_access_by_user.return_value = [
             self.fixture.workspace_1
         ]
-        response = load_blob_metadata_form(request)
+        response = LoadBlobMetadataForm.as_view()(request)
         self.assertEqual(response.status_code, 200)
         self.assertTrue("form" in response.content.decode())
         self.assertTrue(self.fixture.data_4.title in response.content.decode())
@@ -1441,7 +1444,7 @@ class TestLoadBlobMetadataForm(IntegrationBaseTestCase):
         request.user = self.user1
         request.GET = {"blob_id": str(self.fixture.blob_1.id)}
         mock_get_by_id.side_effect = ModelError("Error")
-        response = load_blob_metadata_form(request)
+        response = LoadBlobMetadataForm.as_view()(request)
         self.assertEqual(response.status_code, 400)
 
     @patch("core_main_app.components.blob.api.get_by_id")
@@ -1457,7 +1460,7 @@ class TestLoadBlobMetadataForm(IntegrationBaseTestCase):
         request.user = self.user1
         request.GET = {"blob_id": str(self.fixture.blob_1.id)}
         mock_get_by_id.side_effect = Exception("Error")
-        response = load_blob_metadata_form(request)
+        response = LoadBlobMetadataForm.as_view()(request)
         self.assertEqual(response.status_code, 400)
 
 
@@ -1485,7 +1488,7 @@ class TestAddMetadataToBlob(IntegrationBaseTestCase):
         request = self.factory.post("core_main_blob_add_metadata")
         request.user = self.anonymous
         request.POST = {"id": str(self.fixture.blob_1)}
-        response = add_metadata_to_blob(request)
+        response = AddMetadataToBlob.as_view()(request)
         self.assertEqual(response.status_code, 302)
 
     def test_user_add_metadata_to_blob(self):
@@ -1504,7 +1507,7 @@ class TestAddMetadataToBlob(IntegrationBaseTestCase):
         middleware = MessageMiddleware()
         middleware.process_request(request)
         request.session.save()
-        response = add_metadata_to_blob(request)
+        response = AddMetadataToBlob.as_view()(request)
         self.assertEqual(response.status_code, 200)
 
     def test_user_add_metadata_to_blob_with_list_of_ids(self):
@@ -1524,7 +1527,7 @@ class TestAddMetadataToBlob(IntegrationBaseTestCase):
         middleware = MessageMiddleware()
         middleware.process_request(request)
         request.session.save()
-        response = add_metadata_to_blob(request)
+        response = AddMetadataToBlob.as_view()(request)
         self.assertEqual(response.status_code, 200)
 
     @patch("core_main_app.components.blob.api.get_by_id")
@@ -1541,7 +1544,7 @@ class TestAddMetadataToBlob(IntegrationBaseTestCase):
         request.POST = QueryDict("").copy()
         request.POST.update({"blob_id": str(self.fixture.blob_1.id)})
         mock_get_by_id.side_effect = ModelError("Error")
-        response = add_metadata_to_blob(request)
+        response = AddMetadataToBlob.as_view()(request)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content, b"Blob not found.")
 
@@ -1559,7 +1562,7 @@ class TestAddMetadataToBlob(IntegrationBaseTestCase):
         request.POST = QueryDict("").copy()
         request.POST.update({"blob_id": str(self.fixture.blob_1.id)})
         mock_get_by_id.side_effect = AccessControlError("Error")
-        response = add_metadata_to_blob(request)
+        response = AddMetadataToBlob.as_view()(request)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content, b"Permission denied.")
 
@@ -1577,7 +1580,7 @@ class TestAddMetadataToBlob(IntegrationBaseTestCase):
         request.POST = QueryDict("").copy()
         request.POST.update({"blob_id": str(self.fixture.blob_1.id)})
         mock_get_by_id.side_effect = Exception("Error")
-        response = add_metadata_to_blob(request)
+        response = AddMetadataToBlob.as_view()(request)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content, b"An unexpected error occurred.")
 
@@ -1606,7 +1609,7 @@ class TestRemoveMetadataFromBlob(IntegrationBaseTestCase):
         request = self.factory.post("core_main_blob_remove_metadata")
         request.user = self.anonymous
         request.POST = {"id": str(self.fixture.blob_1)}
-        response = remove_metadata_from_blob(request)
+        response = RemoveMetadataFromBlob.as_view()(request)
         self.assertEqual(response.status_code, 302)
 
     def test_user_remove_metadata_from_blob(self):
@@ -1626,7 +1629,7 @@ class TestRemoveMetadataFromBlob(IntegrationBaseTestCase):
         middleware = MessageMiddleware()
         middleware.process_request(request)
         request.session.save()
-        response = remove_metadata_from_blob(request)
+        response = RemoveMetadataFromBlob.as_view()(request)
         self.assertEqual(response.status_code, 200)
 
     @patch("core_main_app.components.blob.api.get_by_id")
@@ -1643,7 +1646,7 @@ class TestRemoveMetadataFromBlob(IntegrationBaseTestCase):
         request.POST = QueryDict("").copy()
         request.POST.update({"blob_id": str(self.fixture.blob_1.id)})
         mock_get_by_id.side_effect = ModelError("Error")
-        response = remove_metadata_from_blob(request)
+        response = RemoveMetadataFromBlob.as_view()(request)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content, b"Blob not found.")
 
@@ -1661,7 +1664,7 @@ class TestRemoveMetadataFromBlob(IntegrationBaseTestCase):
         request.POST = QueryDict("").copy()
         request.POST.update({"blob_id": str(self.fixture.blob_1.id)})
         mock_get_by_id.side_effect = AccessControlError("Error")
-        response = remove_metadata_from_blob(request)
+        response = RemoveMetadataFromBlob.as_view()(request)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content, b"Permission denied.")
 
@@ -1679,6 +1682,71 @@ class TestRemoveMetadataFromBlob(IntegrationBaseTestCase):
         request.POST = QueryDict("").copy()
         request.POST.update({"blob_id": str(self.fixture.blob_1.id)})
         mock_get_by_id.side_effect = Exception("Error")
-        response = remove_metadata_from_blob(request)
+        response = RemoveMetadataFromBlob.as_view()(request)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content, b"An unexpected error occurred.")
+
+
+class TestUploadFile(IntegrationBaseTestCase):
+    """TestUploadFile"""
+
+    def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
+        self.factory = RequestFactory()
+        self.user1 = create_mock_user(user_id="1")
+        self.anonymous = AnonymousUser()
+        self.fixture = AccessControlBlobWithMetadataFixture()
+        self.fixture.insert_data()
+        self.file = SimpleUploadedFile(name="test.txt", content=b"test")
+
+    def test_an_anonymous_user_can_not_upload_file(self):
+        """test_an_anonymous_user_can_not_upload_file
+
+        Returns:
+
+        """
+        request = self.factory.post("core_main_upload_file")
+        request.user = self.anonymous
+        request.FILES["file"] = self.file
+        response = UploadFile.as_view()(request)
+        self.assertEqual(response.status_code, 302)
+
+    def test_user_can_upload_file(self):
+        """test_user_can_upload_file
+
+        Returns:
+
+        """
+        request = self.factory.post("core_main_upload_file")
+        request.user = self.user1
+        request.FILES["file"] = self.file
+        # Add middlewares
+        middleware = SessionMiddleware()
+        middleware.process_request(request)
+        middleware = MessageMiddleware()
+        middleware.process_request(request)
+        response = UploadFile.as_view()(request)
+        self.assertEqual(response.status_code, 200)
+
+    @patch("core_main_app.components.blob.api.insert")
+    def test_user_can_not_upload_file_with_error(self, mock_insert):
+        """test_user_can_not_upload_file_with_error
+
+        Returns:
+
+        """
+        request = self.factory.post("core_main_upload_file")
+        request.user = self.user1
+        request.FILES["file"] = self.file
+        mock_insert.side_effect = Exception()
+        # Add middlewares
+        middleware = SessionMiddleware()
+        middleware.process_request(request)
+        middleware = MessageMiddleware()
+        middleware.process_request(request)
+        response = UploadFile.as_view()(request)
+        self.assertEqual(response.status_code, 400)
