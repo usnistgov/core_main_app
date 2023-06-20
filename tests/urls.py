@@ -99,7 +99,6 @@ urlpatterns = [
         user_ajax.add_group_right_to_workspace,
         name="core_main_add_group_right_to_workspace",
     ),
-    re_path(r"^tz_detect/", include("tz_detect.urls")),
     re_path(
         r"^change-data-display",
         user_ajax.change_data_display,

@@ -22,7 +22,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # Extra apps
     "defender",
-    "tz_detect",
     "menu",
     # Local apps
     "core_main_app",
@@ -59,7 +58,6 @@ MIDDLEWARE = (
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "tz_detect.middleware.TimezoneMiddleware",
 )
 
 TEMPLATES = [

@@ -43,25 +43,15 @@ Configuration
 Edit the setting.py file
 ------------------------
 
-Add the ``"core_main_app"`` and ``"tz_detect"`` under ``INSTALLED_APPS`` as
+Add the ``"core_main_app"`` under ``INSTALLED_APPS`` as
 such:
 
 .. code:: python
 
     INSTALLED_APPS = [
         ...
-        "tz_detect",
         "core_main_app",
     ]
-
-Add the middleware required by ``tz_detect``:
-
-.. code:: python
-
-    MIDDLEWARE = (
-        ...
-        'tz_detect.middleware.TimezoneMiddleware',
-    )
 
 
 Edit the urls.py file

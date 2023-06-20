@@ -140,7 +140,6 @@ urlpatterns = [
         user_ajax.add_group_right_to_workspace,
         name="core_main_add_group_right_to_workspace",
     ),
-    re_path(r"^tz_detect/", include("tz_detect.urls")),
     re_path(
         r"^password_reset/$",
         user_views.custom_reset_password,
