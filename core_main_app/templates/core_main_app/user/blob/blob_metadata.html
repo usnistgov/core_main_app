@@ -1,4 +1,5 @@
 {% load blob_tags %}
+{% load tz %}
 
 <div class="row">
     <div class="col-md-12">
@@ -27,7 +28,7 @@
                     {{ metadata.title }}
                 </a>
             </td>
-            <td>{{ metadata.creation_date }}</td>
+            <td>{{ metadata.creation_date|localtime }}</td>
             <td>
                 {% if metadata.workspace %}
                     {{ metadata.workspace.title }}

@@ -129,4 +129,9 @@ urlpatterns = [
         user_ajax.UploadFile.as_view(),
         name="core_main_upload_file",
     ),
+    re_path(
+        r"^set-timezone",
+        user_views.set_timezone,
+        name="core_main_set_timezone",
+    ),
 ]

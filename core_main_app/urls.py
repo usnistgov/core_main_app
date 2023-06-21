@@ -165,6 +165,11 @@ urlpatterns = [
         user_ajax.change_data_display,
         name="core_main_add_change_data_display",
     ),
+    re_path(
+        r"^set-timezone",
+        user_views.set_timezone,
+        name="core_main_set_timezone",
+    ),
 ]
 
 urlpatterns.extend(get_auth_urls())

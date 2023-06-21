@@ -1,5 +1,6 @@
 {% extends 'core_main_app/_render/admin/theme/tools/box.html' %}
 {% load timestamptags %}
+{% load tz %}
 
 {% block box_title %}Disabled versions{% endblock %}
 
@@ -17,7 +18,7 @@
             <td>{{ version.index }}</td>
             <td style='font-weight:bold;color:red'>Disabled</td>
             <td>
-                {{ version.creation_date }}
+                {{ version.creation_date|localtime }}
             </td>
 
             <td>

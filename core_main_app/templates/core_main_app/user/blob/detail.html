@@ -1,5 +1,6 @@
 {% load xsl_transform_tag %}
 {% load blob_tags %}
+{% load tz %}
 
 <div class="row">
     <div class="col-md-12">
@@ -10,7 +11,7 @@
     </div>
 </div>
 
-<b>Created on: </b> {{data.blob.creation_date}} <br/>
+<b>Created on: </b> {{data.blob.creation_date|localtime}} <br/>
 <b>Author:</b> {{ data.blob.owner_name}}
 
 

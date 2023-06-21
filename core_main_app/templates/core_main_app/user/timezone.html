@@ -1,0 +1,20 @@
+{% load tz %}
+{% if request.user.is_authenticated %}
+{% get_current_timezone as TIME_ZONE %}
+<form action="{% url 'core_main_set_timezone' %}" method="POST">
+    {% csrf_token %}
+    <div class="form-inline">
+        <div class="form-group mb-2">
+        <label for="timezone">Time zone:</label>
+        </div>
+        <div class="form-group mx-sm-3 mb-2">
+        <select name="timezone" class="form-control">
+            {% for tz in data.timezones %}
+            <option value="{{ tz }}"{% if tz == TIME_ZONE %} selected{% endif %}>{{ tz }}</option>
+            {% endfor %}
+        </select>
+        </div>
+        <input type="submit" value="Set" class="btn btn-primary mb-2"/>
+    </div>
+</form>
+{% endif %}

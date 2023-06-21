@@ -2,10 +2,12 @@
 """
 from unittest.mock import patch, MagicMock
 
+from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, SimpleTestCase, override_settings
 
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.views.common.views import DataContentEditor
+from core_main_app.views.user.views import set_timezone
 
 
 class TestXmlEditorGenerateView(SimpleTestCase):
@@ -124,3 +126,52 @@ class TestXmlEditorGenerateView(SimpleTestCase):
             response.content,
             b"The Curate App needs to be installed to use this feature.",
         )
+
+
+class TestSetTimezone(SimpleTestCase):
+    """TestSetTimezone"""
+
+    def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
+        self.factory = RequestFactory()
+        self.user1 = create_mock_user(user_id="1")
+
+    def test_get_returns_form(
+        self,
+    ):
+        """test_get_returns_form
+
+        Returns:
+
+        """
+        # Arrange
+        request = self.factory.get("core_main_set_timezone")
+        request.user = self.user1
+
+        # Act
+        response = set_timezone(request)
+
+        # Assert
+        self.assertTrue("form" in response.content.decode())
+
+    def test_post_returns_form(
+        self,
+    ):
+        # Arrange
+        new_timezone = "new timezone"
+        request = self.factory.post("core_main_set_timezone")
+        request.POST = {"timezone": new_timezone}
+        request.user = self.user1
+        # Add middlewares
+        middleware = SessionMiddleware()
+        middleware.process_request(request)
+
+        # Act
+        set_timezone(request)
+
+        # Assert
+        self.assertEqual(request.session["django_timezone"], new_timezone)

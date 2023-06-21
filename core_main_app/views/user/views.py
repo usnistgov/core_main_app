@@ -24,6 +24,7 @@ from core_main_app.settings import (
 from core_main_app.utils.markdown_parser import parse
 from core_main_app.utils.rendering import render
 from core_main_app.views.user.forms import LoginForm
+from pytz import common_timezones as pytz_common_timezones
 
 if "defender" in INSTALLED_APPS:
     from defender.decorators import watch_login
@@ -514,3 +515,24 @@ def saml2_failure(request, exception=None, status=403, **kwargs):
             "page_title": "Error",
         },
     )
+
+
+@login_required
+def set_timezone(request):
+    """Set timezone in session
+
+    Args:
+        request:
+
+    Returns:
+
+    """
+    if request.method == "POST":
+        request.session["django_timezone"] = request.POST["timezone"]
+        return redirect("/")
+    else:
+        return render(
+            request,
+            "core_main_app/user/timezone.html",
+            context={"timezones": pytz_common_timezones},
+        )

@@ -1,5 +1,6 @@
 {% extends 'core_main_app/_render/admin/theme/tools/box.html' %}
 {% load timestamptags %}
+{% load tz %}
 
 {% block box_title %}Available versions{% endblock %}
 
@@ -40,7 +41,7 @@
                {% endif %}
 
                <td>
-                    {{ version.creation_date }}
+                    {{ version.creation_date|localtime }}
                </td>
                <td>
                    {% block box_actions %}

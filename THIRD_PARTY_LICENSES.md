@@ -12,7 +12,6 @@ this package (`requirements.*` files) and their dependencies.
 | Django                 | BSD License                                             |
 | django-celery-beat     | BSD License                                             |
 | django-defender        | Apache Software License                                 |
-| django-tz-detect       | MIT License                                             | 
 | djangorestframework    | BSD License                                             |
 | django-simple-menu     | BSD License                                             |
 | django-simple-history  | BSD License                                             |
