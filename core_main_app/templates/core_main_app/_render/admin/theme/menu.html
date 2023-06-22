@@ -15,14 +15,14 @@
                             <span>{{ child.title }}</span>
                             {% if child.external %}
                             <span class="pull-right-container">
-                                <span class="float-right">
+                                <span class="{% if BOOTSTRAP_VERSION == "4.6.2" %}float-right{% elif BOOTSTRAP_VERSION == "5.1.3" %}float-end{% endif %}">
                                     <i class="fas fa-external-link"></i>
                                 </span>
                             </span>
                             {% endif %}
                             {% if child.item_count_url %}
                             <span class="item_count pull-right-container">
-                                <span class="label label-default float-right badge badge-light hidden" id="{% url child.item_count_url %}">
+                                <span class="label label-default {% if BOOTSTRAP_VERSION == "4.6.2" %}float-right{% elif BOOTSTRAP_VERSION == "5.1.3" %}float-end{% endif %} badge badge-light hidden" id="{% url child.item_count_url %}">
                                     N/A
                                 </span>
                             </span>
@@ -39,14 +39,14 @@
                             </span>
                             {% if item.external %}
                             <span class="pull-right-container">
-                                <span class="float-right">
+                                <span class="{% if BOOTSTRAP_VERSION == "4.6.2" %}float-right{% elif BOOTSTRAP_VERSION == "5.1.3" %}float-end{% endif %}">
                                     <i class="fas fa-external-link"></i>
                                 </span>
                             </span>
                             {% endif %}
                             {% if item.item_count_url %}
                             <span class="item_count pull-right-container">
-                                <span class="label label-default float-right badge badge-light" id="{% url item.item_count_url %}">
+                                <span class="label label-default {% if BOOTSTRAP_VERSION == "4.6.2" %}float-right{% elif BOOTSTRAP_VERSION == "5.1.3" %}float-end{% endif %} badge badge-light" id="{% url item.item_count_url %}">
                                         N/A
                                 </span>
                             </span>

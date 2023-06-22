@@ -11,6 +11,8 @@
 {% endblock %}
 
 {% block modal_footer %}
-<button class="btn btn-secondary pull-left" data-dismiss="modal"><i class="fas fa-times"></i> No</button>
+<button class="btn btn-secondary pull-left" {% if BOOTSTRAP_VERSION == "4.6.2" %}data-dismiss{% elif BOOTSTRAP_VERSION == "5.1.3" %}data-bs-dismiss{% endif %}="modal">
+    <i class="fas fa-times"></i> No
+</button>
 <button id="disable-version-yes" class="btn btn-danger"><i class="fas fa-check"></i> Yes</button>
 {% endblock %}

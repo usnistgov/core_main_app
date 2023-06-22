@@ -9,7 +9,12 @@
 {% block box_body %}
 <div id="error-div" style="display: none;">
     <div class="alert alert-danger alert-dismissable">
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <a href="#" {% if BOOTSTRAP_VERSION == "4.6.2" %}
+                class="close" data-dismiss="alert"
+            {% elif BOOTSTRAP_VERSION == "5.1.3"%}
+                class="btn-close" data-bs-dismiss="alert"
+            {% endif %}
+        aria-label="close">&times;</a>
         <strong>{{ data.errors }}</strong>
     </div>
 </div>
@@ -22,7 +27,7 @@
     <button class="btn btn-secondary pull-left">
         <i class="fas fa-times"></i> Cancel
     </button>
-    <button type="submit" class="btn btn-primary float-right">
+    <button type="submit" class="btn btn-primary {% if BOOTSTRAP_VERSION == "4.6.2" %}float-right{% elif BOOTSTRAP_VERSION == "5.1.3" %}float-end{% endif %}">
       <i class="fas fa-save"></i> Save
     </button>
 </form>

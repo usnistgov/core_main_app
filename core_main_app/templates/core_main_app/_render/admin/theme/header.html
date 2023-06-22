@@ -8,7 +8,7 @@
   <!-- Navbar Left Menu -->
     <ul class="nav navbar-nav">
       <li class="nav-item">
-        <a href="#" class="fas fa-bars nav-link" data-toggle="offcanvas" role="button">
+        <a href="#" class="fas fa-bars nav-link" {% if BOOTSTRAP_VERSION == "4.6.2" %}data-toggle{% elif BOOTSTRAP_VERSION == "5.1.3" %}data-bs-toggle{% endif %}="offcanvas" role="button">
           <span class="sr-only">Toggle navigation</span>
         </a>
       </li>
@@ -19,7 +19,7 @@
 
 
   <!-- Navbar Right Menu -->
-    <ul class="nav navbar-nav ml-auto navbar-custom-menu">
+    <ul class="nav navbar-nav {% if BOOTSTRAP_VERSION == "4.6.2" %}ml-auto{% elif BOOTSTRAP_VERSION == "5.1.3" %}ms-auto{% endif %} navbar-custom-menu">
       <li class="nav-item">
         <a class="nav-link" href="{% url 'core_main_app_homepage' %}"><i class="fas fa-chevron-left"></i> Go to the website</a>
       </li>

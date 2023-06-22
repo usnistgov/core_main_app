@@ -45,7 +45,7 @@
                     </div>
                     {% endif %}
                     <div class="col-3">
-                        <button type="submit" class="btn btn-lg btn-primary float-right">
+                        <button type="submit" class="btn btn-lg btn-primary {% if BOOTSTRAP_VERSION == "4.6.2" %}float-right{% elif BOOTSTRAP_VERSION == "5.1.3" %}float-end{% endif %}">
                             <i class="fas fa-sign-in-alt"></i> Login
                         </button>
                     </div>

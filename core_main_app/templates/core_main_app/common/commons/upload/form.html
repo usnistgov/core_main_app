@@ -7,7 +7,7 @@
 <form id="form_start" action='{{data.url}}' method="post" enctype=multipart/form-data>
     {% csrf_token %}
     {{ data.upload_form }}
-    <input type="submit" class="btn btn-secondary float-right" value="Upload"/>
+    <input type="submit" class="btn btn-secondary {% if BOOTSTRAP_VERSION == "4.6.2" %}float-right{% elif BOOTSTRAP_VERSION == "5.1.3" %}float-end{% endif %}" value="Upload"/>
 </form>
 
 {% block upload_addons %}{% endblock %}

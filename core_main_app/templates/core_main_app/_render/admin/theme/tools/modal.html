@@ -3,9 +3,12 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">{% block modal_title %}{% endblock %}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+
+          <button type="button" {% if BOOTSTRAP_VERSION == "4.6.2" %}class="close" data-dismiss="modal"{% elif BOOTSTRAP_VERSION == "5.1.3" %} class="btn-close" data-bs-dismiss="modal" {% endif %} aria-label="Close">
+            {% if BOOTSTRAP_VERSION == "4.6.2" %} <span aria-hidden="true">&times;</span> {% endif %}
+          </button>
+
+
       </div>
       <div class="modal-body">
         {% block modal_body %}{% endblock %}

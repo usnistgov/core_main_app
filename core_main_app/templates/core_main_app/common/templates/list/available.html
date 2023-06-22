@@ -3,7 +3,7 @@
 {% block box_title %}Available{% endblock %}
 
 {% block box_tools %}
-    <a href="{% url 'core-admin:core_main_app_upload_template'%}" class="float-right btn btn-secondary">
+    <a href="{% url 'core-admin:core_main_app_upload_template'%}" class="{% if BOOTSTRAP_VERSION == "4.6.2" %}float-right{% elif BOOTSTRAP_VERSION == "5.1.3" %}float-end{% endif %} btn btn-secondary">
         <i class="fas fa-upload"></i> Upload {{ data.object_name }}
     </a>
 {% endblock %}
