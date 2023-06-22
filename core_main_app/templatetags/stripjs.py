@@ -4,7 +4,7 @@ import re
 
 from django import template
 from django.template.defaultfilters import stringfilter
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.safestring import mark_safe
 
 register = template.Library()
@@ -24,7 +24,7 @@ def stripjs(value):
     stripped = re.sub(
         r"<script(?:\s[^>]*)?(>(?:.(?!/script>))*</script>|/>)",
         "",
-        force_text(value),
+        force_str(value),
         flags=re.S,
     )
     return mark_safe(stripped)

@@ -29,7 +29,8 @@ class TestTimezoneMiddleware(SimpleTestCase):
         new_timezone = "UTC"
         request = self.factory.post("core_main_set_timezone")
         # Add middlewares
-        middleware = SessionMiddleware()
+        mock_get_response = MagicMock()
+        middleware = SessionMiddleware(mock_get_response)
         middleware.process_request(request)
         request.session["django_timezone"] = new_timezone
 
@@ -51,7 +52,8 @@ class TestTimezoneMiddleware(SimpleTestCase):
         get_response = MagicMock()
         request = self.factory.post("core_main_set_timezone")
         # Add middlewares
-        middleware = SessionMiddleware()
+        mock_get_response = MagicMock()
+        middleware = SessionMiddleware(mock_get_response)
         middleware.process_request(request)
 
         # Act

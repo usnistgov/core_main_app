@@ -13,6 +13,9 @@ from core_main_app.rest.template_version_manager import views
 from core_main_app.rest.template_version_manager.abstract_views import (
     AbstractOrderingTemplateVersionManager,
 )
+from core_main_app.rest.template_version_manager.serializers import (
+    TemplateVersionManagerSerializer,
+)
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
 
@@ -97,10 +100,14 @@ class TestTemplateVersionManagerDetail(SimpleTestCase):
         super().setUp()
 
     @patch.object(TemplateVersionManager, "get_by_id")
-    def test_get_returns_http_200_when_data_exists(self, mock_get_by_id):
+    @patch.object(TemplateVersionManagerSerializer, "data")
+    def test_get_returns_http_200_when_data_exists(
+        self, mock_tvm_serializer_data, mock_get_by_id
+    ):
         """test_get_returns_http_200_when_data_exists
 
         Args:
+            mock_tvm_serializer_data:
             mock_get_by_id:
 
         Returns:

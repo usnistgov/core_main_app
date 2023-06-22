@@ -1,6 +1,6 @@
 """ Test access to views
 """
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.messages.middleware import MessageMiddleware
@@ -1502,9 +1502,10 @@ class TestAddMetadataToBlob(IntegrationBaseTestCase):
         request.POST = QueryDict("").copy()
         request.POST.update({"blob_id": str(self.fixture.blob_1.id)})
         # Add middlewares
-        middleware = SessionMiddleware()
+        mock_get_response = MagicMock()
+        middleware = SessionMiddleware(mock_get_response)
         middleware.process_request(request)
-        middleware = MessageMiddleware()
+        middleware = MessageMiddleware(mock_get_response)
         middleware.process_request(request)
         request.session.save()
         response = AddMetadataToBlob.as_view()(request)
@@ -1522,9 +1523,10 @@ class TestAddMetadataToBlob(IntegrationBaseTestCase):
         request.POST.update({"blob_id": str(self.fixture.blob_1.id)})
         request.POST.update({"metadata_id[]": str(self.fixture.data_4.id)})
         # Add middlewares
-        middleware = SessionMiddleware()
+        mock_get_response = MagicMock()
+        middleware = SessionMiddleware(mock_get_response)
         middleware.process_request(request)
-        middleware = MessageMiddleware()
+        middleware = MessageMiddleware(mock_get_response)
         middleware.process_request(request)
         request.session.save()
         response = AddMetadataToBlob.as_view()(request)
@@ -1624,9 +1626,10 @@ class TestRemoveMetadataFromBlob(IntegrationBaseTestCase):
         request.POST.update({"blob_id": str(self.fixture.blob_1.id)})
         request.POST.update({"metadata_id": str(self.fixture.data_1.id)})
         # Add middlewares
-        middleware = SessionMiddleware()
+        mock_get_response = MagicMock()
+        middleware = SessionMiddleware(mock_get_response)
         middleware.process_request(request)
-        middleware = MessageMiddleware()
+        middleware = MessageMiddleware(mock_get_response)
         middleware.process_request(request)
         request.session.save()
         response = RemoveMetadataFromBlob.as_view()(request)
@@ -1724,10 +1727,11 @@ class TestUploadFile(IntegrationBaseTestCase):
         request = self.factory.post("core_main_upload_file")
         request.user = self.user1
         request.FILES["file"] = self.file
+        mock_get_response = MagicMock()
         # Add middlewares
-        middleware = SessionMiddleware()
+        middleware = SessionMiddleware(mock_get_response)
         middleware.process_request(request)
-        middleware = MessageMiddleware()
+        middleware = MessageMiddleware(mock_get_response)
         middleware.process_request(request)
         response = UploadFile.as_view()(request)
         self.assertEqual(response.status_code, 200)
@@ -1744,9 +1748,10 @@ class TestUploadFile(IntegrationBaseTestCase):
         request.FILES["file"] = self.file
         mock_insert.side_effect = Exception()
         # Add middlewares
-        middleware = SessionMiddleware()
+        mock_get_response = MagicMock()
+        middleware = SessionMiddleware(mock_get_response)
         middleware.process_request(request)
-        middleware = MessageMiddleware()
+        middleware = MessageMiddleware(mock_get_response)
         middleware.process_request(request)
         response = UploadFile.as_view()(request)
         self.assertEqual(response.status_code, 400)
@@ -1761,9 +1766,10 @@ class TestUploadFile(IntegrationBaseTestCase):
         request.user = self.user1
         request.FILES["file"] = 123
         # Add middlewares
-        middleware = SessionMiddleware()
+        mock_get_response = MagicMock()
+        middleware = SessionMiddleware(mock_get_response)
         middleware.process_request(request)
-        middleware = MessageMiddleware()
+        middleware = MessageMiddleware(mock_get_response)
         middleware.process_request(request)
         response = UploadFile.as_view()(request)
         self.assertEqual(response.status_code, 400)

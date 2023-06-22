@@ -71,6 +71,7 @@ class TestBlobMetadata(TestCase):
         """
         # Arrange
         blob = _create_blob(user_id="2")
+        blob.save()
         user = create_mock_user("2", is_superuser=True)
         # Act
         metadata = blob.metadata(user=user)

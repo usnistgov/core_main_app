@@ -5,9 +5,9 @@ import re
 
 from django.core.exceptions import ValidationError
 from django.utils.deconstruct import deconstructible
-from django.utils.encoding import force_text
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import ungettext
+from django.utils.encoding import force_str
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ngettext
 
 
 @deconstructible
@@ -23,7 +23,7 @@ class BlankSpacesValidator:
         Returns:
 
         """
-        value = force_text(value)
+        value = force_str(value)
         if len(value.strip()) == 0:
             raise ValidationError(
                 _("This field should not be empty."),
@@ -90,7 +90,7 @@ class UpperCaseLetterCountValidator:
     def get_help_text(self):
         """Returns this validator's error message."""
         msg = (
-            ungettext(
+            ngettext(
                 "Your password must contain %d or more uppercase letter.",
                 "Your password must contain %d or more uppercase letters.",
                 self.get_min_count(),
@@ -137,7 +137,7 @@ class LowerCaseLetterCountValidator:
     def get_help_text(self):
         """Returns this validator's error message."""
         msg = (
-            ungettext(
+            ngettext(
                 "Your password must contain %d or more lowercase letter.",
                 "Your password must contain %d or more lowercase letters.",
                 self.get_min_count(),
@@ -184,7 +184,7 @@ class AlphabeticCharCountValidator:
     def get_help_text(self):
         """Returns this validator's error message."""
         msg = (
-            ungettext(
+            ngettext(
                 "Your password must contain %d or more alphabetic letter.",
                 "Your password must contain %d or more alphabetic letters.",
                 self.get_min_count(),
@@ -246,7 +246,7 @@ class MaxOccurrenceCountValidator:
     def get_help_text(self):
         """Returns this validator's error message."""
         msg = (
-            ungettext(
+            ngettext(
                 "Your password must contain less than %d occurrences of the same letter.",
                 "Your password must contain less than %d occurrences of the same letter.",
                 self.get_max_count(),
@@ -293,7 +293,7 @@ class NonAlphanumericCountValidator:
     def get_help_text(self):
         """Returns this validator's error message."""
         msg = (
-            ungettext(
+            ngettext(
                 "Your password must contain %d or more Non-Alphanumeric character.",
                 "Your password must contain %d or more Non-Alphanumeric characters.",
                 self.get_min_count(),
@@ -340,7 +340,7 @@ class DigitsCountValidator:
     def get_help_text(self):
         """Returns this validator's error message."""
         msg = (
-            ungettext(
+            ngettext(
                 "Your password must contain %d or more digit.",
                 "Your password must contain %d or more digits.",
                 self.get_min_count(),

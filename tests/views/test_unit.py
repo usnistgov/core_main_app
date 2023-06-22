@@ -171,7 +171,8 @@ class TestSetTimezone(SimpleTestCase):
         request.POST = {"timezone": new_timezone}
         request.user = self.user1
         # Add middlewares
-        middleware = SessionMiddleware()
+        mock_get_response = MagicMock()
+        middleware = SessionMiddleware(mock_get_response)
         middleware.process_request(request)
 
         # Act

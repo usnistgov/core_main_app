@@ -11,11 +11,31 @@ from core_main_app.commons.validators import (
     MaxOccurrenceCountValidator,
     NonAlphanumericCountValidator,
     DigitsCountValidator,
+    BlankSpacesValidator,
 )
 
 
 class TestValidators(unittest.TestCase):
     """Test Validators"""
+
+    def test_blank_spaces_validator_should_pass(self):
+        """Test blank spaces case validator should pass
+
+        Returns:
+
+        """
+        blank_spaces_validator = BlankSpacesValidator()
+        blank_spaces_validator("PasswordTest")
+
+    def test_blank_spaces_validator_should_fail(self):
+        """Test blank spaces case validator should fail
+
+        Returns:
+
+        """
+        blank_spaces_validator = BlankSpacesValidator()
+        with self.assertRaises(ValidationError):
+            blank_spaces_validator(" ")
 
     def test_upper_case_validator_should_pass(self):
         """Test upper case validator should pass
