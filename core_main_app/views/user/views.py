@@ -1,32 +1,24 @@
 """ Core main app user views
 """
 from django.conf import settings
-from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib import auth as django_auth
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
-from django.contrib.auth.tokens import default_token_generator
 from django.contrib.staticfiles import finders
-from django.http.response import HttpResponse, HttpResponseRedirect
-from django.shortcuts import redirect, resolve_url
+from django.http.response import HttpResponse
+from django.shortcuts import redirect
 from django.urls import reverse
-from django.utils.encoding import force_text
-from django.utils.http import urlsafe_base64_decode
+from pytz import common_timezones as pytz_common_timezones
 from rest_framework.status import HTTP_405_METHOD_NOT_ALLOWED
 
 from core_main_app.components.template_version_manager import (
     api as template_version_manager_api,
 )
 from core_main_app.components.web_page_login import api as web_page_login_api
-from core_main_app.settings import (
-    INSTALLED_APPS,
-    PASSWORD_RESET_DOMAIN_OVERRIDE,
-)
 from core_main_app.utils.markdown_parser import parse
 from core_main_app.utils.rendering import render
 from core_main_app.views.user.forms import LoginForm
-from pytz import common_timezones as pytz_common_timezones
 
-if "defender" in INSTALLED_APPS:
+if "defender" in settings.INSTALLED_APPS:
     from defender.decorators import watch_login
 
     @watch_login()
@@ -51,7 +43,7 @@ def custom_login(request):
     Returns:
 
     """
-    if "defender" in INSTALLED_APPS:
+    if "defender" in settings.INSTALLED_APPS:
         return defender_custom_login(request)
     else:
         return default_custom_login(request)
@@ -72,43 +64,49 @@ def default_custom_login(request):
 
         return redirect(reverse("core_main_app_homepage"))
 
+    context = {
+        "page_title": "Login",
+        "with_website_features": "core_website_app" in settings.INSTALLED_APPS,
+        "ENABLE_SAML2_SSO_AUTH": settings.ENABLE_SAML2_SSO_AUTH,
+    }
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
         next_page = request.POST["next_page"]
 
         try:
-            user = authenticate(username=username, password=password)
-
+            user = django_auth.authenticate(
+                username=username, password=password
+            )
             if not user.is_active:
-                return render(
-                    request,
-                    "core_main_app/user/login/main.html",
-                    context={
+                context.update(
+                    {
                         "login_form": LoginForm(
                             initial={"next_page": next_page}
                         ),
                         "login_locked": True,
-                        "with_website_features": "core_website_app"
-                        in INSTALLED_APPS,
-                        "page_title": "Login",
-                    },
+                    }
+                )
+                return render(
+                    request,
+                    "core_main_app/user/login/main.html",
+                    context=context,
                 )
 
-            login(request, user)
+            django_auth.login(request, user)
 
             return _login_redirect(next_page)
         except Exception:
+            context.update(
+                {
+                    "login_form": LoginForm(initial={"next_page": next_page}),
+                    "login_error": True,
+                }
+            )
             return render(
                 request,
                 "core_main_app/user/login/main.html",
-                context={
-                    "login_form": LoginForm(initial={"next_page": next_page}),
-                    "login_error": True,
-                    "with_website_features": "core_website_app"
-                    in INSTALLED_APPS,
-                    "page_title": "Login",
-                },
+                context=context,
             )
     elif request.method == "GET":
         if request.user.is_authenticated:
@@ -119,10 +117,9 @@ def default_custom_login(request):
             next_page = request.GET["next"]
 
         # build the context
-        context = {
-            "login_form": LoginForm(initial={"next_page": next_page}),
-            "with_website_features": "core_website_app" in INSTALLED_APPS,
-        }
+        context.update(
+            {"login_form": LoginForm(initial={"next_page": next_page})}
+        )
         assets = {"css": ["core_main_app/user/css/login.css"]}
 
         # get the web page login if exist
@@ -145,9 +142,6 @@ def default_custom_login(request):
             )
             modals = ["core_main_app/user/login/modals/login_message.html"]
 
-            # Set page title
-            context.update({"page_title": "Login"})
-
             # render the page with context, assets and modals
             return render(
                 request,
@@ -156,9 +150,6 @@ def default_custom_login(request):
                 assets=assets,
                 modals=modals,
             )
-
-        # Set page title
-        context.update({"page_title": "Login"})
 
         # render the page with context, assets
         return render(
@@ -179,7 +170,7 @@ def custom_logout(request):
 
     Returns:
     """
-    logout(request)
+    django_auth.logout(request)
     return redirect(reverse("core_main_app_homepage"))
 
 
@@ -306,204 +297,6 @@ def get_context_manage_template_versions(
     return context
 
 
-def custom_reset_password(
-    request,
-    template_name="core_main_app/user/registration/password_reset_form.html",
-    email_template_name="core_main_app/user/registration/password_reset_email.html",
-    subject_template_name="core_main_app/user/registration/password_reset_subject.txt",
-    password_reset_form=PasswordResetForm,
-    token_generator=default_token_generator,
-    post_reset_redirect=None,
-    from_email=None,
-    extra_context=None,
-    html_email_template_name=None,
-    extra_email_context=None,
-):
-    """Custom reset password page.
-
-    Args:
-        request:
-        template_name:
-        email_template_name:
-        subject_template_name:
-        password_reset_form:
-        token_generator:
-        post_reset_redirect:
-        from_email:
-        extra_context:
-        html_email_template_name:
-        extra_email_context:
-
-    Returns:
-
-    """
-
-    if post_reset_redirect is None:
-        post_reset_redirect = reverse("password_reset_done")
-    else:
-        post_reset_redirect = resolve_url(post_reset_redirect)
-    if request.method == "POST":
-        form = password_reset_form(request.POST)
-        if form.is_valid():
-            opts = {
-                "use_https": request.is_secure(),
-                "token_generator": token_generator,
-                "from_email": from_email,
-                "email_template_name": email_template_name,
-                "subject_template_name": subject_template_name,
-                "request": request,
-                "html_email_template_name": html_email_template_name,
-                "extra_email_context": extra_email_context,
-                "domain_override": PASSWORD_RESET_DOMAIN_OVERRIDE,
-            }
-            form.save(**opts)
-            return HttpResponseRedirect(post_reset_redirect)
-    else:
-        form = password_reset_form()
-    context = {
-        "form": form,
-        "title": "Password reset",
-    }
-    if extra_context is not None:
-        context.update(extra_context)
-
-    # Set page title
-    context.update({"page_title": "Reset Password"})
-
-    return render(request, template_name, context=context)
-
-
-def custom_password_reset_done(
-    request,
-    template_name="core_main_app/user/registration/password_reset_done.html",
-    extra_context=None,
-):
-    """Custom password reset done page.
-
-    Args:
-        request:
-        template_name:
-        extra_context:
-
-    Returns:
-
-    """
-
-    context = {
-        "title": "Password reset sent",
-    }
-
-    assets = {"css": ["core_main_app/user/css/registration.css"]}
-
-    if extra_context is not None:
-        context.update(extra_context)
-
-    # Set page title
-    context.update({"page_title": "Reset Password"})
-
-    return render(request, template_name, assets=assets, context=context)
-
-
-def custom_password_reset_confirm(
-    request,
-    uidb64=None,
-    token=None,
-    template_name="core_main_app/user/registration/password_reset_confirm.html",
-    token_generator=default_token_generator,
-    set_password_form=SetPasswordForm,
-    post_reset_redirect=None,
-    extra_context=None,
-):
-    """View that checks the hash in a password reset link and presents a
-    form for entering a new password.
-
-    Args:
-        request:
-        uidb64:
-        token:
-        template_name:
-        token_generator:
-        set_password_form:
-        post_reset_redirect:
-        extra_context:
-
-    Returns:
-
-    """
-
-    user_model = get_user_model()
-
-    assert uidb64 is not None and token is not None  # checked by URLconf
-    if post_reset_redirect is None:
-        post_reset_redirect = reverse("password_reset_complete")
-    else:
-        post_reset_redirect = resolve_url(post_reset_redirect)
-    try:
-        # urlsafe_base64_decode() decodes to bytestring on Python 3
-        uid = force_text(urlsafe_base64_decode(uidb64))
-        user = user_model._default_manager.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, user_model.DoesNotExist):
-        user = None
-
-    if user is not None and token_generator.check_token(user, token):
-        validlink = True
-        title = "Enter new password"
-        if request.method == "POST":
-            form = set_password_form(user, request.POST)
-            if form.is_valid():
-                form.save()
-                return HttpResponseRedirect(post_reset_redirect)
-        else:
-            form = set_password_form(user)
-    else:
-        validlink = False
-        form = None
-        title = "Password reset unsuccessful"
-    context = {
-        "form": form,
-        "title": title,
-        "validlink": validlink,
-    }
-    if extra_context is not None:
-        context.update(extra_context)
-
-    # Set page title
-    context.update({"page_title": "Reset Password"})
-
-    return render(request, template_name, context=context)
-
-
-def custom_password_reset_complete(
-    request,
-    template_name="core_main_app/user/registration/password_reset_complete.html",
-    extra_context=None,
-):
-    """Custom password reset complete page.
-
-    Args:
-        request:
-        template_name:
-        extra_context:
-
-    Returns:
-
-    """
-    context = {
-        "login_url": resolve_url(settings.LOGIN_URL),
-        "title": "Password reset complete",
-    }
-
-    assets = {"css": ["core_main_app/user/css/registration.css"]}
-
-    if extra_context is not None:
-        context.update(extra_context)
-
-    # Set page title
-    context.update({"page_title": "Reset Password"})
-
-    return render(request, template_name, context=context, assets=assets)
-
-
 def saml2_failure(request, exception=None, status=403, **kwargs):
     """Renders a simple template with an error message."""
 
@@ -511,7 +304,8 @@ def saml2_failure(request, exception=None, status=403, **kwargs):
         request,
         "core_main_app/user/login/saml2_error.html",
         context={
-            "with_website_features": "core_website_app" in INSTALLED_APPS,
+            "with_website_features": "core_website_app"
+            in settings.INSTALLED_APPS,
             "page_title": "Error",
         },
     )

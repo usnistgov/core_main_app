@@ -71,6 +71,7 @@ def get_auth_urls():
         )
     else:
         from core_main_app.views.user import views as user_views
+        from django.contrib.auth import views as auth_views
 
         urlpatterns.append(
             re_path(
@@ -84,6 +85,48 @@ def get_auth_urls():
                 r"^logout",
                 user_views.custom_logout,
                 name="core_main_app_logout",
+            )
+        )
+        urlpatterns.append(
+            re_path(
+                "password_change/$",
+                auth_views.PasswordChangeView.as_view(),
+                name="password_change",
+            )
+        )
+        urlpatterns.append(
+            re_path(
+                "password_change/done/$",
+                auth_views.PasswordChangeDoneView.as_view(),
+                name="password_change_done",
+            )
+        )
+        urlpatterns.append(
+            re_path(
+                "password_reset/$",
+                auth_views.PasswordResetView.as_view(),
+                name="password_reset",
+            )
+        )
+        urlpatterns.append(
+            re_path(
+                "password_reset/done/$",
+                auth_views.PasswordResetDoneView.as_view(),
+                name="password_reset_done",
+            )
+        )
+        urlpatterns.append(
+            re_path(
+                r"^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$",
+                auth_views.PasswordResetConfirmView.as_view(),
+                name="password_reset_confirm",
+            )
+        )
+        urlpatterns.append(
+            re_path(
+                r"^reset/done/$",
+                auth_views.PasswordResetCompleteView.as_view(),
+                name="password_reset_complete",
             )
         )
     return urlpatterns

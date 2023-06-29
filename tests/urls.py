@@ -1,6 +1,7 @@
 """ Url router for the main application
 """
 from django.conf.urls import include
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.urls import re_path
 
@@ -133,5 +134,10 @@ urlpatterns = [
         r"^set-timezone",
         user_views.set_timezone,
         name="core_main_set_timezone",
+    ),
+    re_path(
+        "password_reset/$",
+        auth_views.PasswordResetView.as_view(),
+        name="password_reset",
     ),
 ]
