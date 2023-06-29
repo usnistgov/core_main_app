@@ -1,9 +1,11 @@
 <div>
-    <button id="btn-previous-page" type="button" class="btn btn-secondary mb-2 float-right">
+    <button id="btn-previous-page" type="button" class="btn btn-secondary mb-2 {% if BOOTSTRAP_VERSION == "4.6.2" %}float-right{% elif BOOTSTRAP_VERSION == "5.1.3" %}float-end{% endif %}">
         <i class="fas fa-arrow-left"></i> Back to previous
     </button>
     {% if data.can_write %}
-    <a class="btn btn-secondary mr-1 float-right add-metadata-btn">
+    <a class="btn btn-secondary
+            {% if BOOTSTRAP_VERSION == "4.6.2" %}mr-1{% elif BOOTSTRAP_VERSION == "5.1.3" %}me-1{% endif %}
+            {% if BOOTSTRAP_VERSION == "4.6.2" %}float-right{% elif BOOTSTRAP_VERSION == "5.1.3" %}float-end{% endif %} add-metadata-btn">
         <i class="fas fa-plus"></i>
         Add Metadata
     </a>
