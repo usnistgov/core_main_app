@@ -34,6 +34,7 @@ class Data(AbstractData):
         Blob,
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
         default=None,
         related_name="_metadata",
     )
