@@ -33,19 +33,19 @@
 
             <div class="form-group">
                 <div class="row">
-                    {% if data.with_website_features %}
                     <div class="col-9">
+                    {% if data.with_website_features %}
                         <a class="btn btn-secondary btn-lg request account"
                            href="{% url 'core_website_app_account_request' %}">
                             <i class="fas fa-user-plus"></i> Request an Account
                         </a>
-                    </div>
                     {% endif %}
                     {% if not data.ENABLE_SAML2_SSO_AUTH %}
                         <a class="btn btn-secondary btn-lg" href="{% url 'password_reset' %}">
                             <i class="fas fa-lock" aria-hidden="true"></i> Forgot password
                         </a>
                     {% endif %}
+                    </div>
                     <div class="col-3">
                         <button type="submit" class="btn btn-lg btn-primary {% if BOOTSTRAP_VERSION == "4.6.2" %}float-right{% elif BOOTSTRAP_VERSION == "5.1.3" %}float-end{% endif %}">
                             <i class="fas fa-sign-in-alt"></i> Login
