@@ -1297,3 +1297,141 @@ class TestDataMigrationPermission(SimpleTestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestGetTaskProgressPermission(SimpleTestCase):
+    """TestGetTaskProgressPermission"""
+
+    def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
+        self.task_id = "123"
+
+    def test_anonymous_get_task_progress_returns_http_403(self):
+        """test_anonymous_get_task_progress_returns_http_403
+
+        Returns:
+
+        """
+        # Arrange
+        mock_user = create_mock_user(1, is_anonymous=True)
+
+        # Act
+        response = RequestMock.do_request_get(
+            data_rest_views.GetTaskProgress.as_view(),
+            mock_user,
+            param={"task_id": self.task_id},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_user_get_task_progress_returns_http_403(self):
+        """test_user_get_task_progress_returns_http_403
+
+        Returns:
+
+        """
+        # Arrange
+        mock_user = create_mock_user(1)
+
+        # Act
+        response = RequestMock.do_request_get(
+            data_rest_views.GetTaskProgress.as_view(),
+            mock_user,
+            param={"task_id": self.task_id},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch("core_main_app.components.data.tasks.get_task_progress")
+    def test_admin_get_task_progress_returns_http_200(
+        self, mock_get_task_progress
+    ):
+        """test_admin_get_task_progress_returns_http_200
+
+        Returns:
+
+        """
+        # Arrange
+        mock_user = create_mock_user(1, is_staff=True)
+
+        # Act
+        response = RequestMock.do_request_get(
+            data_rest_views.GetTaskProgress.as_view(),
+            mock_user,
+            param={"task_id": self.task_id},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestGetTaskResultPermission(SimpleTestCase):
+    """TestGetTaskResultPermission"""
+
+    def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
+        self.task_id = "123"
+
+    def test_anonymous_get_task_result_returns_http_403(self):
+        """test_anonymous_get_task_result_returns_http_403
+
+        Returns:
+
+        """
+        # Arrange
+        mock_user = create_mock_user(None, is_anonymous=True)
+
+        # Act
+        response = RequestMock.do_request_get(
+            data_rest_views.GetTaskResult.as_view(),
+            mock_user,
+            param={"task_id": self.task_id},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_user_get_task_result_returns_http_403(self):
+        """test_user_get_task_result_returns_http_403
+
+        Returns:
+
+        """
+        # Arrange
+        mock_user = create_mock_user(1)
+
+        # Act
+        response = RequestMock.do_request_get(
+            data_rest_views.GetTaskResult.as_view(),
+            mock_user,
+            param={"task_id": self.task_id},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch("core_main_app.components.data.tasks.get_task_result")
+    def test_admin_get_task_result_returns_http_200(
+        self, mock_get_task_result
+    ):
+        """test_admin_get_task_result_returns_http_200
+
+        Returns:
+
+        """
+        # Arrange
+        mock_user = create_mock_user(1, is_staff=True)
+
+        # Act
+        response = RequestMock.do_request_get(
+            data_rest_views.GetTaskResult.as_view(),
+            mock_user,
+            param={"task_id": self.task_id},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

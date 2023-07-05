@@ -9,10 +9,10 @@ from django.http import Http404
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAdminUser
 from rest_framework.permissions import (
     IsAuthenticated,
     IsAuthenticatedOrReadOnly,
+    IsAdminUser,
 )
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -24,10 +24,7 @@ from core_main_app.commons.exceptions import XMLError
 from core_main_app.components.data import api as data_api
 from core_main_app.components.data.api import check_xml_file_is_valid
 from core_main_app.components.data.models import Data
-from core_main_app.components.data.tasks import (
-    get_task_progress,
-    get_task_result,
-)
+from core_main_app.components.data import tasks as data_tasks
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.rest.data.abstract_views import (
@@ -1064,40 +1061,48 @@ class Migration(AbstractMigrationView):
         return super().post(request=request, template_id=pk, migrate=True)
 
 
-@api_view(["GET"])
-def get_progress(request, task_id):
-    """Get the progress of the migration / validation async task
+class GetTaskProgress(APIView):
+    """Get the progress of the migration / validation async task"""
 
-    Args:
-        request:
-        task_id:
+    permission_classes = (IsAdminUser,)
 
-    Return:
-        {
-            'state': PENDING | PROGRESS | SUCCESS,
-            'details': result (for SUCCESS) | null (for PENDING) | { PROGRESS info }
-        }
-    """
-    result = get_task_progress(task_id)
-    return Response(result, content_type="application/json")
+    def get(self, request, task_id):
+        """Get the progress of the migration / validation async task
+
+        Args:
+            request:
+            task_id:
+
+        Return:
+            {
+                'state': PENDING | PROGRESS | SUCCESS,
+                'details': result (for SUCCESS) | null (for PENDING) | { PROGRESS info }
+            }
+        """
+        result = data_tasks.get_task_progress(task_id)
+        return Response(result, content_type="application/json")
 
 
-@api_view(["GET"])
-def get_result(request, task_id):
-    """Get the result of the migration / validation async task
+class GetTaskResult(APIView):
+    """Get the result of the migration / validation async task"""
 
-    Args:
-        request:
-        task_id:
+    permission_classes = (IsAdminUser,)
 
-    Return:
-        {
-                "valid": ["data_id_1", "data_id_2" ...],
-                "wrong": ["data_id_3", "data_id_4" ...]
-        }
-    """
-    result = get_task_result(task_id)
-    return Response(result, content_type="application/json")
+    def get(self, request, task_id):
+        """Get the result of the migration / validation async task
+
+        Args:
+            request:
+            task_id:
+
+        Return:
+            {
+                    "valid": ["data_id_1", "data_id_2" ...],
+                    "wrong": ["data_id_3", "data_id_4" ...]
+            }
+        """
+        result = data_tasks.get_task_result(task_id)
+        return Response(result, content_type="application/json")
 
 
 class BulkUploadFolder(APIView):

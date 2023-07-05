@@ -173,12 +173,12 @@ urlpatterns = [
     ),
     re_path(
         r"^data/migration/task/(?P<task_id>[\w-]+)/progress/$",
-        data_views.get_progress,
+        data_views.GetTaskProgress.as_view(),
         name="core_main_app_rest_data_migration_task_progress",
     ),
     re_path(
         r"^data/migration/task/(?P<task_id>[\w-]+)/result/$",
-        data_views.get_result,
+        data_views.GetTaskResult.as_view(),
         name="core_main_app_rest_data_migration_task_result",
     ),
     re_path(
