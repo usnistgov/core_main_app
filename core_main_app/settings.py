@@ -15,7 +15,7 @@ CUSTOM_NAME = getattr(settings, "CUSTOM_NAME", "Local")
 """ :py:class:`str`: Name of the local instance
 """
 
-PROJECT_VERSION = getattr(settings, "PROJECT_VERSION", "3.4.0")
+PROJECT_VERSION = getattr(settings, "PROJECT_VERSION", "0.0.0")
 """ :py:class:`str`: Project version number.
 """
 
