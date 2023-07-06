@@ -19,7 +19,7 @@ PROJECT_VERSION = getattr(settings, "PROJECT_VERSION", "0.0.0")
 """ :py:class:`str`: Project version number.
 """
 
-BOOTSTRAP_VERSION = getattr(settings, "BOOTSTRAP_VERSION", "4.6.2")
+BOOTSTRAP_VERSION = getattr(settings, "BOOTSTRAP_VERSION", "5.1.3")
 """ :py:class:`str`: Version of the boostrap library.
 """
 
