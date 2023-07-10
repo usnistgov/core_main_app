@@ -5,6 +5,9 @@
 load_form_change_workspace = function() {
     $("#assign-workspace-modal").modal("show");
     var $recordRow = $(this).parent().parent();
+
+    // Get parent if btn in dropdown  (object id undefined)
+    if (!$recordRow.attr("objectid")) $recordRow = $recordRow.parent()
     $('.'+functional_object+'-id').val($recordRow.attr("objectid"));
 
     $.ajax({
