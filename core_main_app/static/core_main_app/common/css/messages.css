@@ -11,6 +11,7 @@
 .toast {
     opacity: 1;
     border-radius: 0.25rem;
+    border-style: none;
     max-width: 100%;
     font-size: 1.2rem;
 
@@ -33,47 +34,42 @@
     opacity: 1;
 }
 .toast-info {
-    color: darkblue;
-    border-color: darkblue;
-    background-color: #d8e8f8;
+    color: #3a87ad;
+    background-color: #d9edf7;
 }
 .toast-info > .toast-body > button {
     opacity: 1;
-    color: darkblue;
+    color: #3a87ad;
 }
 .toast-success {
-    color: green;
-    border-color: green;
-    background-color: #d8f8d8;
+    color: #468846;
+    background-color: #dff0d8;
 }
 .toast-success > .toast-body > button {
     opacity: 1;
-    color: green;
+    color: #468846;
 }
 .toast-warning {
-    color: darkorange;
-    border-color: darkorange;
-    background-color: #f8f8e8;
+    color: #c09853;
+    background-color: #fcf8e3;
 }
 .toast-warning > .toast-body > button {
     opacity: 1;
-    color: darkorange;
+    color: #c09853;
 }
 .toast-danger {
-    color: red;
-    border-color: red;
-    background-color: #efdfdf;
+    color: #b94a48;
+    background-color: #f2dede;
 }
 .toast-danger > .toast-body > button {
     opacity: 1;
-    color: red;
+    color: #b94a48;
 }
 .toast-default {
-    color: #555;
-    border-color: #555;
-    background-color: #f8f8f8;
+    color: #666;
+    background-color: #f6f6f6;
 }
 .toast-default > .toast-body > button {
     opacity: 1;
-    color: #555;
+    color: #666;
 }
