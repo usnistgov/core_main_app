@@ -1025,6 +1025,29 @@ class TestGlobalTemplateVersionManagerOrderingListGetPermission(
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    @patch.object(template_version_manager_api, "get_global_version_managers")
+    def test_superuser_returns_http_200(
+        self, template_version_manager_get_all
+    ):
+        """test_superuser_returns_http_200
+
+        Args:
+            template_version_manager_get_all:
+
+        Returns:
+
+        """
+        template_version_manager_get_all.return_value = {}
+
+        mock_user = create_mock_user("1", is_staff=True, is_superuser=True)
+
+        response = RequestMock.do_request_get(
+            template_version_manager_views.GlobalTemplateVersionManagerOrdering.as_view(),
+            mock_user,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
 
 class TestGlobalTemplateVersionManagerOrderingPatchPermission(SimpleTestCase):
     """Test Template Version Manager Ordering Patch Permission"""
@@ -1067,7 +1090,7 @@ class TestGlobalTemplateVersionManagerOrderingPatchPermission(SimpleTestCase):
         "core_main_app.components.template_version_manager.api.get_global_version_managers"
     )
     @patch(
-        "core_main_app.components.template_version_manager.api.update_template_ids_ordering"
+        "core_main_app.components.template_version_manager.api.update_global_template_ordering"
     )
     def test_staff_returns_http_200(
         self,
@@ -1084,6 +1107,37 @@ class TestGlobalTemplateVersionManagerOrderingPatchPermission(SimpleTestCase):
 
         """
         mock_user = create_mock_user("1", is_staff=True)
+        mock_get_global_version_managers.return_value = []
+        mock_update_templates_ordering.return_value = []
+        response = RequestMock.do_request_patch(
+            template_version_manager_views.GlobalTemplateVersionManagerOrdering.as_view(),
+            mock_user,
+            data={"template_list": []},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch(
+        "core_main_app.components.template_version_manager.api.get_global_version_managers"
+    )
+    @patch(
+        "core_main_app.components.template_version_manager.api.update_global_template_ordering"
+    )
+    def test_superuser_returns_http_200(
+        self,
+        mock_get_global_version_managers,
+        mock_update_templates_ordering,
+    ):
+        """test_superuser_returns_http_200
+
+        Args:
+            mock_get_global_version_managers:
+            mock_update_templates_ordering:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("1", is_staff=True, is_superuser=True)
         mock_get_global_version_managers.return_value = []
         mock_update_templates_ordering.return_value = []
         response = RequestMock.do_request_patch(
@@ -1158,6 +1212,29 @@ class TestUserTemplateVersionManagerOrderingListGetPermission(SimpleTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    @patch.object(template_version_manager_api, "get_all_by_user_id")
+    def test_superuser_returns_http_200(
+        self, template_version_manager_get_all
+    ):
+        """test_superuser_returns_http_200
+
+        Args:
+            template_version_manager_get_all:
+
+        Returns:
+
+        """
+        template_version_manager_get_all.return_value = {}
+
+        mock_user = create_mock_user("1", is_staff=True, is_superuser=True)
+
+        response = RequestMock.do_request_get(
+            template_version_manager_views.UserTemplateVersionManagerOrdering.as_view(),
+            mock_user,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
 
 class TestUserTemplateVersionManagerOrderingPatchPermission(SimpleTestCase):
     """Test Template Version Manager Ordering Patch Permission"""
@@ -1178,7 +1255,7 @@ class TestUserTemplateVersionManagerOrderingPatchPermission(SimpleTestCase):
         "core_main_app.components.template_version_manager.api.get_all_by_user_id"
     )
     @patch(
-        "core_main_app.components.template_version_manager.api.update_template_ids_ordering"
+        "core_main_app.components.template_version_manager.api.update_user_template_ordering"
     )
     def test_authenticated_returns_http_200(
         self,
@@ -1209,12 +1286,14 @@ class TestUserTemplateVersionManagerOrderingPatchPermission(SimpleTestCase):
         "core_main_app.components.template_version_manager.api.get_by_id_list"
     )
     @patch(
-        "core_main_app.components.template_version_manager.api.update_template_ids_ordering"
+        "core_main_app.components.template_version_manager.api.update_user_template_ordering"
     )
+    @patch.object(template_version_manager_api, "get_all_by_user_id")
     def test_staff_returns_http_200(
         self,
-        mock_get_all_by_user_id,
+        mock_get_by_user_id,
         mock_update_templates_ordering,
+        mock_get_all_by_user_id,
     ):
         """test_staff_returns_http_200
 
@@ -1227,6 +1306,41 @@ class TestUserTemplateVersionManagerOrderingPatchPermission(SimpleTestCase):
         """
         mock_user = create_mock_user("1", is_staff=True)
         mock_get_all_by_user_id.return_value = []
+        mock_get_by_user_id.return_value = []
+        mock_update_templates_ordering.return_value = []
+        response = RequestMock.do_request_patch(
+            template_version_manager_views.UserTemplateVersionManagerOrdering.as_view(),
+            mock_user,
+            data={"template_list": []},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch(
+        "core_main_app.components.template_version_manager.api.get_by_id_list"
+    )
+    @patch(
+        "core_main_app.components.template_version_manager.api.update_user_template_ordering"
+    )
+    @patch.object(template_version_manager_api, "get_all_by_user_id")
+    def test_superuser_returns_http_200(
+        self,
+        mock_get_by_user_id,
+        mock_update_templates_ordering,
+        mock_get_all_by_user_id,
+    ):
+        """test_superuser_returns_http_200
+
+        Args:
+            mock_get_all_by_user_id:
+            mock_update_templates_ordering:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("1", is_superuser=True)
+        mock_get_all_by_user_id.return_value = []
+        mock_get_by_user_id.return_value = []
         mock_update_templates_ordering.return_value = []
         response = RequestMock.do_request_patch(
             template_version_manager_views.UserTemplateVersionManagerOrdering.as_view(),

@@ -333,6 +333,17 @@ class AbstractOrderingTemplateVersionManager(APIView, metaclass=ABCMeta):
         """get template version manager list."""
         raise NotImplementedError("get_objects method is not implemented.")
 
+    @abstractmethod
+    def update_ordering(self, list_ids):
+        """update TemplateVersionManager ordering
+
+        Args:
+            list_ids:
+        Returns:
+
+        """
+        raise NotImplementedError("update_ordering method is not implemented.")
+
     def get(self, request):
         """Get template version managers
 
@@ -366,6 +377,15 @@ class AbstractOrderingTemplateVersionManager(APIView, metaclass=ABCMeta):
     def patch(self, request):
         """Update templates ordering
 
+        Parameters:
+            {
+                "template_list": [
+                                    template_id_1,
+                                    template_id_2,
+                                    template_id_3,
+                                ]
+            }
+
         Args:
             request:
 
@@ -392,11 +412,13 @@ class AbstractOrderingTemplateVersionManager(APIView, metaclass=ABCMeta):
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
             # update template ordering
-            template_version_manager_api.update_template_ids_ordering(
-                template_ids, request
-            )
+            self.update_ordering(template_ids)
+
+            # Serialize objects
+            serializer = self.serializer(self.get_objects(), many=True)
+
             # return response
-            return Response({}, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         except AccessControlError as ace:
             content = {"message": str(ace)}

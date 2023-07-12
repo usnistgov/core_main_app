@@ -1392,16 +1392,12 @@ class UserTemplateVersionManagerOrdering(IntegrationBaseTestCase):
                 "template_list": [self.fixture.tvm2.id, self.fixture.tvm1.id]
             },
         )
-        template_list = RequestMock.do_request_get(
-            views.UserTemplateVersionManagerOrdering.as_view(), user
-        ).data
-
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(template_list[0]["display_rank"], 1)
-        self.assertEqual(template_list[0]["id"], self.fixture.tvm2.id)
-        self.assertEqual(template_list[1]["display_rank"], 2)
-        self.assertEqual(template_list[1]["id"], self.fixture.tvm1.id)
+        self.assertEqual(response.data[0]["display_rank"], 1)
+        self.assertEqual(response.data[0]["id"], self.fixture.tvm2.id)
+        self.assertEqual(response.data[1]["display_rank"], 2)
+        self.assertEqual(response.data[1]["id"], self.fixture.tvm1.id)
 
     def test_patch_wrong_ids_returns_http_404(self):
         """test_patch_wrong_ids_returns_http_404
@@ -1596,15 +1592,13 @@ class GlobalTemplateVersionManagerOrdering(IntegrationBaseTestCase):
                 ]
             },
         )
-        template_list = RequestMock.do_request_get(
-            views.GlobalTemplateVersionManagerOrdering.as_view(), user
-        ).data
+
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(template_list[0]["display_rank"], 1)
-        self.assertEqual(template_list[0]["id"], self.fixture.global_tvm2.id)
-        self.assertEqual(template_list[1]["display_rank"], 2)
-        self.assertEqual(template_list[1]["id"], self.fixture.global_tvm1.id)
+        self.assertEqual(response.data[0]["display_rank"], 1)
+        self.assertEqual(response.data[0]["id"], self.fixture.global_tvm2.id)
+        self.assertEqual(response.data[1]["display_rank"], 2)
+        self.assertEqual(response.data[1]["id"], self.fixture.global_tvm1.id)
 
     def test_patch_wrong_ids_returns_http_404(self):
         """test_patch_wrong_ids_returns_http_404

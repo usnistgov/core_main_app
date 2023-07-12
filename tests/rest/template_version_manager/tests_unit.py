@@ -158,10 +158,10 @@ class TestAbstractOrderingTemplateVersionManager(SimpleTestCase):
     @patch.multiple(
         AbstractOrderingTemplateVersionManager, __abstractmethods__=set()
     )
-    def test_get_abstract_ordering_template_version_manager_returns_error_500(
+    def test_get_abstract_ordering_returns_error_500_if_method_is_not_implemented(
         self,
     ):
-        """test_get_abstract_ordering_template_version_manager_returns_error_500
+        """test_get_abstract_ordering_returns_error_500_if_method_is_not_implemented
 
         Args:
 
@@ -175,6 +175,35 @@ class TestAbstractOrderingTemplateVersionManager(SimpleTestCase):
         # Mock
         response = RequestMock.do_request_get(
             views.AbstractOrderingTemplateVersionManager.as_view(), mock_user
+        )
+
+        # Assert
+        self.assertEqual(
+            response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+    @patch.multiple(
+        AbstractOrderingTemplateVersionManager, __abstractmethods__=set()
+    )
+    def test_patch_abstract_ordering_returns_error_500_if_method_is_not_implemented(
+        self,
+    ):
+        """test_patch_abstract_ordering_returns_error_500_if_method_is_not_implemented
+
+        Args:
+
+
+        Returns:
+
+        """
+        # Arrange
+        mock_user = create_mock_user("1")
+
+        # Mock
+        response = RequestMock.do_request_patch(
+            views.AbstractOrderingTemplateVersionManager.as_view(),
+            mock_user,
+            data={"template_list": []},
         )
 
         # Assert

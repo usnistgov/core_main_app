@@ -1,6 +1,8 @@
 """
 Template Version Manager API
 """
+from core_main_app.access_control.exceptions import AccessControlError
+
 from core_main_app.access_control.api import is_superuser
 from core_main_app.access_control.decorators import access_control
 from core_main_app.commons import exceptions
@@ -210,13 +212,12 @@ def get_active_global_version_manager_by_title(version_manager_title, request):
     )
 
 
-@access_control(can_read_list)
-def get_template_version_managers_sorted_by_id_list(list_id, request):
-    """get a template version managers sorted with the given id list.
+def _update_template_version_manager_ordering(list_id, request):
+    """Update template version manager ordering.
 
     Args:
         list_id:
-        request
+        request:
 
     Returns:
 
@@ -230,12 +231,19 @@ def get_template_version_managers_sorted_by_id_list(list_id, request):
         raise exceptions.DoesNotExist(
             "One or more templates could not be found"
         )
+    template_version_manager_sorted_by_id_list = [
+        tvm_list[int(id)] for id in list_id
+    ]
 
-    return [tvm_list[int(id)] for id in list_id]
+    for counter, template_version_manager in enumerate(
+        template_version_manager_sorted_by_id_list, 1
+    ):
+        template_version_manager.display_rank = counter
+        template_version_manager.save()
 
 
 @access_control(can_write_list)
-def update_template_ids_ordering(list_id, request):
+def update_user_template_ordering(list_id, request):
     """Update templates ordering.
 
     Args:
@@ -245,13 +253,29 @@ def update_template_ids_ordering(list_id, request):
     Returns:
 
     """
-
-    template_version_manager_list = (
-        get_template_version_managers_sorted_by_id_list(list_id, request)
-    )
-
-    for counter, template_version_manager in enumerate(
-        template_version_manager_list, 1
+    if any(
+        tvm.user is None or tvm.user != str(request.user.id)
+        for tvm in get_by_id_list(list_id, request)
     ):
-        template_version_manager.display_rank = counter
-        template_version_manager.save()
+        raise AccessControlError(
+            "You don't have the rights to perform this action."
+        )
+    _update_template_version_manager_ordering(list_id, request)
+
+
+@access_control(is_superuser)
+def update_global_template_ordering(list_id, request):
+    """Update templates ordering.
+
+    Args:
+        list_id:
+        request:
+
+    Returns:
+
+    """
+    if any(tvm.user is not None for tvm in get_by_id_list(list_id, request)):
+        raise AccessControlError(
+            "You don't have the rights to perform this action."
+        )
+    _update_template_version_manager_ordering(list_id, request)

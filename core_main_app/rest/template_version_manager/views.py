@@ -417,6 +417,18 @@ class GlobalTemplateVersionManagerOrdering(
             request=self.request
         )
 
+    def update_ordering(self, list_ids):
+        """update global TemplateVersionManager ordering
+
+        Args:
+            list_ids:
+        Returns:
+
+        """
+        template_version_manager_api.update_global_template_ordering(
+            list_ids, request=self.request
+        )
+
 
 class UserTemplateVersionManagerOrdering(
     AbstractOrderingTemplateVersionManager
@@ -433,4 +445,16 @@ class UserTemplateVersionManagerOrdering(
         """
         return template_version_manager_api.get_all_by_user_id(
             request=self.request
+        )
+
+    def update_ordering(self, list_ids):
+        """update user TemplateVersionManager ordering
+
+        Args:
+            list_ids:
+        Returns:
+
+        """
+        template_version_manager_api.update_user_template_ordering(
+            list_ids, request=self.request
         )

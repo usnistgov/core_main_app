@@ -5,7 +5,7 @@ import logging
 from django.contrib.auth.models import User
 
 from core_main_app.access_control.exceptions import AccessControlError
-from core_main_app.commons.exceptions import ApiError
+from core_main_app.commons.exceptions import ApiError, DoesNotExist
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.permissions import api as permissions_api, rights as rights
 from django.conf import settings
@@ -73,6 +73,8 @@ def is_superuser(func, *args, **kwargs):
 
     except ApiError as api_error_exception:
         raise api_error_exception
+    except DoesNotExist as dne_exception:
+        raise dne_exception
     except Exception as exception:
         logger.warning(
             f"has_perm_administration threw an exception: {str(exception)}"
