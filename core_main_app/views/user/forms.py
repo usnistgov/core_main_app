@@ -1,6 +1,7 @@
 """ Form needed for the user part of everything
 """
 from django import forms
+from django.conf import settings
 
 from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.data import api as data_api
@@ -98,7 +99,7 @@ class ChangeWorkspaceForm(forms.Form):
     workspaces = forms.ChoiceField(
         label="",
         required=True,
-        widget=forms.Select(attrs={"class": "form-control"}),
+        widget=forms.Select(),
     )
     WORKSPACES_OPTIONS = []
 
@@ -171,6 +172,11 @@ class ChangeWorkspaceForm(forms.Form):
         super().__init__()
         self.fields["workspaces"].choices = []
         self.fields["workspaces"].choices = self.WORKSPACES_OPTIONS
+
+        if settings.BOOTSTRAP_VERSION == "4.6.2":
+            self.fields["workspaces"].widget.attrs["class"] = "form-control"
+        elif settings.BOOTSTRAP_VERSION == "5.1.3":
+            self.fields["workspaces"].widget.attrs["class"] = "form-select"
 
 
 class BlobMetadataForm(forms.Form):

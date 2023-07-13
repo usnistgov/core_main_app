@@ -1,6 +1,7 @@
 """Forms for admin views
 """
 from django import forms
+from django.conf import settings
 from django.forms import ModelForm
 
 from core_main_app.commons.validators import ExtensionValidator
@@ -125,7 +126,7 @@ class TemplateXsltRenderingForm(forms.Form):
         label="Set XSLT to render a list of data",
         empty_label="(No XSLT)",
         required=False,
-        widget=forms.Select(attrs={"class": "form-control"}),
+        widget=forms.Select(),
         queryset=xsl_transformation_api.get_all(),
     )
 
@@ -139,13 +140,23 @@ class TemplateXsltRenderingForm(forms.Form):
         label="Default rendering",
         empty_label="(No XSLT)",
         required=False,
-        widget=forms.Select(attrs={"class": "form-control"}),
+        widget=forms.Select(),
         queryset=xsl_transformation_api.get_all(),
     )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["list_detail_xslt"].choices = _get_xsl_transformation()
+        if settings.BOOTSTRAP_VERSION == "4.6.2":
+            self.fields["list_xslt"].widget.attrs["class"] = "form-control"
+            self.fields["default_detail_xslt"].widget.attrs[
+                "class"
+            ] = "form-control"
+        elif settings.BOOTSTRAP_VERSION == "5.1.3":
+            self.fields["list_xslt"].widget.attrs["class"] = "form-select"
+            self.fields["default_detail_xslt"].widget.attrs[
+                "class"
+            ] = "form-select"
 
 
 class TextAreaForm(forms.Form):
