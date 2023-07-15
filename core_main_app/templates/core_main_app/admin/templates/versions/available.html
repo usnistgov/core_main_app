@@ -10,7 +10,9 @@
     <!-- If no user is linked to the version manager, it means that we come from the global template list -->
     {% url 'core-admin:core_main_app_templates' as template_list_url %}
     <a href="{% url 'core-admin:core_main_app_upload_template_version' data.version_manager.id %}"
-       class="{% if BOOTSTRAP_VERSION == "4.6.2" %}float-right{% elif BOOTSTRAP_VERSION == "5.1.3" %}float-end{% endif %} btn btn-secondary">
+       class="{% if BOOTSTRAP_VERSION == "4.6.2" %}float-right{% elif BOOTSTRAP_VERSION == "5.1.3" %}float-end{% endif %}
+              {% if BOOTSTRAP_VERSION == "4.6.2" %}ml-1{% elif BOOTSTRAP_VERSION == "5.1.3"%}ms-1{% endif %}
+              btn btn-secondary">
         <i class="fas fa-upload"></i> Upload New Version
     </a>
 {% else %}
