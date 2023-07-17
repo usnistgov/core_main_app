@@ -214,4 +214,9 @@ class BlobFileForm(forms.Form):
     Form blob file.
     """
 
-    file = forms.FileField(label="")
+    file = forms.FileField(
+        label="",
+        widget=forms.FileInput(
+            attrs={"class": "form-control form-control-lg"}
+        ),
+    )

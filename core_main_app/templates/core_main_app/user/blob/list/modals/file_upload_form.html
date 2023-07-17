@@ -1,8 +1,6 @@
 <form id="file-upload-form" method="post">
     {% csrf_token %}
     <div class="input-group">
-        <div class="custom-file">
-            {{ data.file_upload_form }}
-        </div>
+        {{ data.file_upload_form }}
     </div>
 </form>
