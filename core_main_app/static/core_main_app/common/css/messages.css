@@ -1,6 +1,6 @@
 .toast-container {
     z-index: 1500;
-    position: absolute;
+    position: fixed;
     top: 2.5rem;
     right: 1rem;
 
