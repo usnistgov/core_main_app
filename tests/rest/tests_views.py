@@ -4,6 +4,7 @@ from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
 from django.test import override_settings, tag
+from importlib_metadata import PackageNotFoundError
 
 from core_main_app.rest.views import CoreSettings
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
@@ -136,7 +137,7 @@ class TestCoreSetting(TestCase):
         """
         # Arrange
         mock_user = create_mock_user("1")
-        version.side_effect = ImportError()
+        version.side_effect = PackageNotFoundError()
 
         # Act
         response = RequestMock.do_request_get(

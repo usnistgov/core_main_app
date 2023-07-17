@@ -1,17 +1,18 @@
 """ Rest views
 """
+import importlib_metadata
 from django.conf import settings
 from django.db import connection
-from importlib_metadata import version, PackageNotFoundError
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from core_main_app.utils.databases.mongo import MONGO_CLIENT
+
 from core_main_app.utils.databases.backend import (
     uses_postgresql_backend,
     uses_sqlite3_backend,
 )
+from core_main_app.utils.databases.mongo import MONGO_CLIENT
 
 
 class CoreSettings(APIView):
@@ -36,8 +37,8 @@ class CoreSettings(APIView):
         try:
             # Get version of core main application
             try:
-                core_version = version("core_main_app")
-            except PackageNotFoundError:
+                core_version = importlib_metadata.version("core_main_app")
+            except importlib_metadata.PackageNotFoundError:
                 core_version = None
 
             # Get version of MongoDB server
