@@ -1750,3 +1750,20 @@ class TestUploadFile(IntegrationBaseTestCase):
         middleware.process_request(request)
         response = UploadFile.as_view()(request)
         self.assertEqual(response.status_code, 400)
+
+    def test_user_can_not_upload_file_with_invalid_form(self):
+        """test_user_can_not_upload_file_with_invalid_form
+
+        Returns:
+
+        """
+        request = self.factory.post("core_main_upload_file")
+        request.user = self.user1
+        request.FILES["file"] = 123
+        # Add middlewares
+        middleware = SessionMiddleware()
+        middleware.process_request(request)
+        middleware = MessageMiddleware()
+        middleware.process_request(request)
+        response = UploadFile.as_view()(request)
+        self.assertEqual(response.status_code, 400)

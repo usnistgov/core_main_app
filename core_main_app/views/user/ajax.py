@@ -707,6 +707,10 @@ class UploadFile(View):
                     "File successfully uploaded.",
                 )
                 return HttpResponse(json.dumps({}))
+            else:
+                return HttpResponseBadRequest(
+                    json.dumps({"message": str(form.errors.as_text())})
+                )
         except Exception:
             messages.add_message(
                 request,
@@ -714,4 +718,4 @@ class UploadFile(View):
                 "An error occurred during file upload.",
             )
 
-        return HttpResponseBadRequest(json.dumps({}))
+            return HttpResponseBadRequest(json.dumps({}))
