@@ -5,6 +5,10 @@
 var showSpinner = function($btnID) {
      // Show loading spinner
      $btnID.attr('class','fas fa-spinner fa-pulse');
+     var dropdown = $("#dropdownActions");
+     if (dropdown){
+           $(dropdown).find( "i" ).attr("class","fas fa-spinner fa-pulse");
+     }
 }
 
 /**
@@ -13,6 +17,10 @@ var showSpinner = function($btnID) {
 var hideSpinner = function($btnID,icon) {
     // show old btn icon
     $btnID.attr('class',icon)
+    var dropdown = $("#dropdownActions");
+    if (dropdown){
+         $(dropdown).find( "i" ).attr('class',"fas fa-sliders")
+    }
 }
 
 
