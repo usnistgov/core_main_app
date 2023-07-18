@@ -377,17 +377,20 @@ class AbstractOrderingTemplateVersionManager(APIView, metaclass=ABCMeta):
     def patch(self, request):
         """Update templates ordering
 
+
         Parameters:
+
             {
-                "template_list": [
-                                    template_id_1,
-                                    template_id_2,
-                                    template_id_3,
-                                ]
+                "template_list" : [template_version_manager1_id, template_version_manager2_id]
             }
 
+        Example:
+
+            "template_list": [2, 19, 3, 1]
+
         Args:
-            request:
+
+            request: HTTP request
 
         Returns:
 
