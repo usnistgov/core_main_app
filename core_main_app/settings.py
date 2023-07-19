@@ -250,7 +250,9 @@ GA_TRACKING_ID = getattr(settings, "GA_TRACKING_ID", None)
 """ :py:class:`str`: Google Analytics tracking ID. Adds gtag to user pages if set.
 """
 
-MAX_DOCUMENT_EDITING_SIZE = 128 * 1024
+MAX_DOCUMENT_EDITING_SIZE = getattr(
+    settings, "MAX_DOCUMENT_EDITING_SIZE", 128 * 1024
+)
 """ :py:class:`int`: Maximum byte size allowed for document editing.
 """
 
