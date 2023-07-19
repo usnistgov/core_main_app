@@ -6,3 +6,7 @@ input[disabled] {
         background-color: #efefef !important;
         opacity: 0.8;
 }
+
+input{
+    padding-left: 0.25em !important;
+}
