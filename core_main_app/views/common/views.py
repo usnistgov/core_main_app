@@ -885,7 +885,7 @@ class DataContentEditor(XmlEditor):
             messages.add_message(
                 self.request,
                 messages.SUCCESS,
-                get_data_label() + " saved with success.",
+                get_data_label().capitalize() + " saved with success.",
             )
             return HttpResponse(
                 json.dumps({"url": reverse(self.save_redirect)}),
