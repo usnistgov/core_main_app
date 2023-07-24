@@ -12,3 +12,5 @@ MARKDOWN_ERRORS = [
 UNKNOWN_ERROR = "An unknown error occurred, please contact your administrator for more information."
 
 DATA_JSON_FIELD = "dict_content"
+
+AVAILABLE_BOOTSTRAP_VERSIONS = ["4.6.2", "5.1.3", "5.3.1"]

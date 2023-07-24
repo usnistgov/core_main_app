@@ -147,12 +147,12 @@ class TemplateXsltRenderingForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["list_detail_xslt"].choices = _get_xsl_transformation()
-        if settings.BOOTSTRAP_VERSION == "4.6.2":
+        if settings.BOOTSTRAP_VERSION.startswith("4"):
             self.fields["list_xslt"].widget.attrs["class"] = "form-control"
             self.fields["default_detail_xslt"].widget.attrs[
                 "class"
             ] = "form-control"
-        elif settings.BOOTSTRAP_VERSION == "5.1.3":
+        elif settings.BOOTSTRAP_VERSION.startswith("5"):
             self.fields["list_xslt"].widget.attrs["class"] = "form-select"
             self.fields["default_detail_xslt"].widget.attrs[
                 "class"

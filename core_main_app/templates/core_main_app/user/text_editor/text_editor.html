@@ -40,21 +40,21 @@
 </div>
 
 
-<div class="{% if BOOTSTRAP_VERSION == "4.6.2" %}float-right{% elif BOOTSTRAP_VERSION == "5.1.3" %}float-end{% endif %} m-2">
+<div class="{% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %} m-2">
         {% if data.type == 'XML' %}
-            <select class="selectpicker {% if BOOTSTRAP_VERSION == "4.6.2" %}form-control{% elif BOOTSTRAP_VERSION == "5.1.3" %}form-select{% endif %}" style="width:100px; display:inline-block" id="xslt-selector" hidden>
+            <select class="selectpicker {% if BOOTSTRAP_VERSION|first == "4" %}form-control{% elif BOOTSTRAP_VERSION|first == "5"  %}form-select{% endif %}" style="width:100px; display:inline-block" id="xslt-selector" hidden>
                            {% if not data.template_xsl_rendering.default_detail_xslt %}  <option value={{None}}>Default</option>{% endif %}
                            {% for xslt in data.template_xsl_rendering.list_detail_xslt.all %}
                                 <option value="{{xslt.id}}" {% if xslt.id == xslt_id %} selected {% endif %}>{{xslt.name}} {% if xslt == template_xsl_rendering.default_detail_xslt %} (default) {% endif %}</option>
                            {% endfor %}
             </select>
-            <button class="btn btn-secondary refresh {% if BOOTSTRAP_VERSION == "4.6.2" %}mr-auto{% elif BOOTSTRAP_VERSION == "5.1.3" %}me-auto{% endif %}" hidden><i class="fas fa-sync" ></i> Refresh  </button>
-            <button class="btn btn-secondary display {% if BOOTSTRAP_VERSION == "4.6.2" %}mr-auto{% elif BOOTSTRAP_VERSION == "5.1.3" %}me-auto{% endif %}"><i class="fas fa-eye" ></i> Display  </button>
-            <button class="btn btn-secondary generate {% if BOOTSTRAP_VERSION == "4.6.2" %}mr-auto{% elif BOOTSTRAP_VERSION == "5.1.3" %}me-auto{% endif %}"><i class="fas fa-cogs" ></i> Generate </button>
+            <button class="btn btn-secondary refresh {% if BOOTSTRAP_VERSION|first == "4" %}mr-auto{% elif BOOTSTRAP_VERSION|first == "5"  %}me-auto{% endif %}" hidden><i class="fas fa-sync" ></i> Refresh  </button>
+            <button class="btn btn-secondary display {% if BOOTSTRAP_VERSION|first == "4" %}mr-auto{% elif BOOTSTRAP_VERSION|first == "5"  %}me-auto{% endif %}"><i class="fas fa-eye" ></i> Display  </button>
+            <button class="btn btn-secondary generate {% if BOOTSTRAP_VERSION|first == "4" %}mr-auto{% elif BOOTSTRAP_VERSION|first == "5"  %}me-auto{% endif %}"><i class="fas fa-cogs" ></i> Generate </button>
         {% endif %}
-    	<button class="btn btn-secondary format {% if BOOTSTRAP_VERSION == "4.6.2" %}mr-auto{% elif BOOTSTRAP_VERSION == "5.1.3" %}me-auto{% endif %}"><i class="fas fa-paint-brush"></i> Format </button>
+    	<button class="btn btn-secondary format {% if BOOTSTRAP_VERSION|first == "4" %}mr-auto{% elif BOOTSTRAP_VERSION|first == "5"  %}me-auto{% endif %}"><i class="fas fa-paint-brush"></i> Format </button>
         <button class="btn btn-secondary validate"><i class="fas fa-check"></i> Validate </button>
-        <button class="btn btn-primary save {% if BOOTSTRAP_VERSION == "4.6.2" %}mr-auto{% elif BOOTSTRAP_VERSION == "5.1.3" %}me-auto{% endif %}"><i class="fas fa-save"></i> Save </button>
+        <button class="btn btn-primary save {% if BOOTSTRAP_VERSION|first == "4" %}mr-auto{% elif BOOTSTRAP_VERSION|first == "5"  %}me-auto{% endif %}"><i class="fas fa-save"></i> Save </button>
 
 
 </div>

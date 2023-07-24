@@ -1,6 +1,7 @@
 """Custom context processor
 """
 from django.conf import settings
+from core_main_app.commons.constants import AVAILABLE_BOOTSTRAP_VERSIONS
 
 
 def domain_context_processor(request):
@@ -52,7 +53,7 @@ def domain_context_processor(request):
         else "",
         "BOOTSTRAP_VERSION": settings.BOOTSTRAP_VERSION
         if hasattr(settings, "BOOTSTRAP_VERSION")
-        and settings.BOOTSTRAP_VERSION in ["4.6.2", "5.1.3"]
+        and settings.BOOTSTRAP_VERSION in AVAILABLE_BOOTSTRAP_VERSIONS
         else "4.6.2",
         "PROJECT_VERSION": settings.PROJECT_VERSION
         if hasattr(settings, "PROJECT_VERSION")

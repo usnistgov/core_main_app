@@ -17,6 +17,8 @@ Before making any changes, ensure that you have identified the version of Bootst
 +---------------------+----------------------+
 |       core 2.4      |    4.6.2 / 5.1.3     |
 +---------------------+----------------------+
+|       core 2.5      |    4.x / 5.x         |
++---------------------+----------------------+
 
 
 
@@ -29,10 +31,10 @@ Conditional checks were added to some HTML tags in order to differentiate betwee
 
 .. code-block:: html
 
-   {% if BOOTSTRAP_VERSION == "4.6.2" %}
+   {% if BOOTSTRAP_VERSION|first == "4"  %}
     Use Bootstrap old classes/attributes
 
-   {% elif BOOTSTRAP_VERSION == "5.1.3" %}
+   {% elif BOOTSTRAP_VERSION|first == "5"  %}
     Use Bootstrap new classes/attributes
 
    {% endif %}
@@ -64,7 +66,7 @@ Example:
     .. code-block:: html
 
         <button type="submit"
-        {% if BOOTSTRAP_VERSION == "4.6.2" %}data-dismiss{% elif BOOTSTRAP_VERSION == "5.1.3" %}data-bs-dismiss{% endif %}="modal"/>
+        {% if BOOTSTRAP_VERSION|first == "4"  %}data-dismiss{% elif BOOTSTRAP_VERSION|first == "5"  %}data-bs-dismiss{% endif %}="modal"/>
 
 
 
@@ -111,6 +113,6 @@ Example:
 
     .. code-block:: html
 
-        <div class="{% if BOOTSTRAP_VERSION == "4.6.2" %}float-right{% elif BOOTSTRAP_VERSION == "5.1.3" %}float-end{% endif %}"
+        <div class="{% if BOOTSTRAP_VERSION|first == "4"  %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %}"
             ...
         </div>

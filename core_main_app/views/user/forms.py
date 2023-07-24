@@ -173,9 +173,9 @@ class ChangeWorkspaceForm(forms.Form):
         self.fields["workspaces"].choices = []
         self.fields["workspaces"].choices = self.WORKSPACES_OPTIONS
 
-        if settings.BOOTSTRAP_VERSION == "4.6.2":
+        if settings.BOOTSTRAP_VERSION.startswith("4"):
             self.fields["workspaces"].widget.attrs["class"] = "form-control"
-        elif settings.BOOTSTRAP_VERSION == "5.1.3":
+        elif settings.BOOTSTRAP_VERSION.startswith("5"):
             self.fields["workspaces"].widget.attrs["class"] = "form-select"
 
 

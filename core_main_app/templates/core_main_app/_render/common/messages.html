@@ -10,23 +10,23 @@
 <div class="toast toast-template">
   <div class="toast-body">
       <span class="toast-icon
-            {% if BOOTSTRAP_VERSION == "4.6.2" %}mr-2
-            {% elif BOOTSTRAP_VERSION == "5.1.3" %}me-2{% endif %}">
+            {% if BOOTSTRAP_VERSION|first == "4" %}mr-2
+            {% elif BOOTSTRAP_VERSION|first == "5"  %}me-2{% endif %}">
           <i class="fas"></i>
       </span>
       <span class="toast-text
-            {% if BOOTSTRAP_VERSION == "4.6.2" %}ml-1
-            {% elif BOOTSTRAP_VERSION == "5.1.3" %}ms-1{% endif %}
-            {% if BOOTSTRAP_VERSION == "4.6.2" %}mr-1
-            {% elif BOOTSTRAP_VERSION == "5.1.3" %}me-1{% endif %}">
+            {% if BOOTSTRAP_VERSION|first == "4" %}ml-1
+            {% elif BOOTSTRAP_VERSION|first == "5"  %}ms-1{% endif %}
+            {% if BOOTSTRAP_VERSION|first == "4" %}mr-1
+            {% elif BOOTSTRAP_VERSION|first == "5"  %}me-1{% endif %}">
       </span>
       <button type="button"
-              class="{% if BOOTSTRAP_VERSION == "4.6.2" %}ml-2
-                    {% elif BOOTSTRAP_VERSION == "5.1.3" %}ms-2{% endif %}
-                    {% if BOOTSTRAP_VERSION == "4.6.2" %}close
-                    {% elif BOOTSTRAP_VERSION == "5.1.3" %}btn-close{% endif %}"
-              {% if BOOTSTRAP_VERSION == "4.6.2" %}data-dismiss="toast"
-              {% elif BOOTSTRAP_VERSION == "5.1.3" %}data-bs-dismiss="toast"{% endif %}
+              class="{% if BOOTSTRAP_VERSION|first == "4" %}ml-2
+                    {% elif BOOTSTRAP_VERSION|first == "5"  %}ms-2{% endif %}
+                    {% if BOOTSTRAP_VERSION|first == "4" %}close
+                    {% elif BOOTSTRAP_VERSION|first == "5"  %}btn-close{% endif %}"
+              {% if BOOTSTRAP_VERSION|first == "4" %}data-dismiss="toast"
+              {% elif BOOTSTRAP_VERSION|first == "5"  %}data-bs-dismiss="toast"{% endif %}
               aria-label="Close">
           <i class="fas fa-times"></i>
     </button>
