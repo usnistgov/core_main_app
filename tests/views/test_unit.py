@@ -2,11 +2,14 @@
 """
 from unittest.mock import patch, MagicMock
 
+from core_main_app.components.template.models import Template
+
+from core_main_app.components.data.models import Data
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, SimpleTestCase, override_settings
-
+from core_main_app.utils import xml
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
-from core_main_app.views.common.views import DataContentEditor
+from core_main_app.views.common.views import DataContentEditor, XmlEditor
 from core_main_app.views.user.views import (
     set_timezone,
     custom_login,
@@ -357,3 +360,43 @@ class TestCustomLogout(SimpleTestCase):
 
         # Assert
         self.assertTrue(response.status_code, 302)
+
+
+class TestXmlEditor(SimpleTestCase):
+    """Test Xml Editor"""
+
+    @patch.multiple(XmlEditor, __abstractmethods__=set())
+    @patch.object(xml, "format_content_xml")
+    def test_get_context_calls_format_content_xml_when_content_is_not_empty(
+        self, mock_format_content_xml
+    ):
+        """test_get_context_calls_format_content_xml_when_content_is_not_empty
+
+        Returns:
+
+        """
+        # Arrange
+        data = Data(template=Template())
+
+        # Act
+        XmlEditor().get_context(data, "title1", "<root>test</root>")
+
+        # Assert
+        mock_format_content_xml.assert_called()
+
+    @patch.multiple(XmlEditor, __abstractmethods__=set())
+    @patch.object(xml, "format_content_xml")
+    def test_get_context_with_empty_content(self, mock_format_content_xml):
+        """test_get_context_with_empty_content
+
+        Returns:
+
+        """
+        # Arrange
+        data = Data(template=Template())
+
+        # Act
+        XmlEditor().get_context(data, "title1", "")
+
+        # Assert
+        mock_format_content_xml.assert_not_called()

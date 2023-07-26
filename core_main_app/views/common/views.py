@@ -782,6 +782,10 @@ class XmlEditor(AbstractEditorView, metaclass=ABCMeta):
 
         Returns:
         """
+        # format before build context
+        if xml_content != "":
+            xml_content = main_xml_utils.format_content_xml(xml_content)
+
         # get assets
         context = super()._get_context(
             document.id, document_name, "XML", xml_content
