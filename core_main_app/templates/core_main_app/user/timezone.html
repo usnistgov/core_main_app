@@ -1,6 +1,6 @@
 {% load tz %}
 {% if request.user.is_authenticated %}
-{% get_current_timezone as TIME_ZONE %}
+
 <form action="{% url 'core_main_set_timezone' %}" class="row g-3" method="POST">
     {% csrf_token %}
     <div class="col-auto">
@@ -9,7 +9,7 @@
     <div class="col-md-4">
         <select name="timezone" class="{% if BOOTSTRAP_VERSION|first == "4" %}form-control{% elif BOOTSTRAP_VERSION|first == "5"  %}form-select{% endif %}">
             {% for tz in data.timezones %}
-            <option value="{{ tz }}"{% if tz == TIME_ZONE %} selected{% endif %}>{{ tz }}</option>
+            <option value="{{ tz }}"{% if tz == data.timezone %} selected{% endif %}>{{ tz }}</option>
             {% endfor %}
         </select>
     </div >

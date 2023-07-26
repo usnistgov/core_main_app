@@ -7,12 +7,19 @@ from django.contrib.staticfiles import finders
 from django.http.response import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.utils import timezone
 from pytz import common_timezones as pytz_common_timezones
 from rest_framework.status import HTTP_405_METHOD_NOT_ALLOWED
 
+from core_main_app.access_control.exceptions import AccessControlError
+from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.template_version_manager import (
     api as template_version_manager_api,
 )
+from core_main_app.components.user_preferences import (
+    api as user_preferences_api,
+)
+from core_main_app.components.user_preferences.models import UserPreferences
 from core_main_app.components.web_page_login import api as web_page_login_api
 from core_main_app.utils.markdown_parser import parse
 from core_main_app.utils.rendering import render
@@ -321,12 +328,59 @@ def set_timezone(request):
     Returns:
 
     """
-    if request.method == "POST":
-        request.session["django_timezone"] = request.POST["timezone"]
-        return redirect("/")
-    else:
-        return render(
-            request,
-            "core_main_app/user/timezone.html",
-            context={"timezones": pytz_common_timezones},
-        )
+    try:
+        if request.method == "POST":
+            user_preferences = _get_preferences(request.user)
+            if not user_preferences:
+                user_preferences = UserPreferences(
+                    user_id=str(request.user.id)
+                )
+            user_preferences_api.upsert(user_preferences, request.user)
+            user_preferences.timezone = request.POST["timezone"]
+            request.session["django_timezone"] = user_preferences.timezone
+            return redirect("/")
+        else:
+            user_preferences = _get_preferences(request.user)
+            user_timezone = (
+                user_preferences.timezone
+                if user_preferences and user_preferences.timezone
+                else timezone.get_current_timezone().zone
+            )
+            return render(
+                request,
+                "core_main_app/user/timezone.html",
+                context={
+                    "timezones": pytz_common_timezones,
+                    "timezone": user_timezone,
+                },
+            )
+    except AccessControlError:
+        error_message = "Access Forbidden"
+        status_code = 403
+    except Exception as exception:
+        error_message = f"An error occurred: {str(exception)}"
+        status_code = 400
+
+    return render(
+        request,
+        "core_main_app/common/commons/error.html",
+        context={
+            "error": error_message,
+            "status_code": status_code,
+            "page_title": "Error",
+        },
+    )
+
+
+def _get_preferences(user):
+    """Get User Preferences
+
+    Args:
+        user: User
+
+    Return:
+    """
+    try:
+        return user_preferences_api.get_by_user(user)
+    except DoesNotExist:
+        return None

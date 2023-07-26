@@ -28,6 +28,10 @@ from core_main_app.components.template_xsl_rendering.admin_site import (
 from core_main_app.components.template_xsl_rendering.models import (
     TemplateXslRendering,
 )
+from core_main_app.components.user_preferences.admin_site import (
+    CustomUserPreferencesAdmin,
+)
+from core_main_app.components.user_preferences.models import UserPreferences
 from core_main_app.components.web_page_login import api as login_page_api
 from core_main_app.components.workspace.admin_site import CustomWorkspaceAdmin
 from core_main_app.components.workspace.models import Workspace
@@ -159,6 +163,7 @@ admin.site.register(Template, CustomTemplateAdmin)
 admin.site.register(XslTransformation, CustomXslTransformationAdmin)
 admin.site.register(TemplateXslRendering, CustomTemplateXslRenderingAdmin)
 admin.site.register(DatabaseLockObject, CustomDatabaseLockAdmin)
+admin.site.register(UserPreferences, CustomUserPreferencesAdmin)
 
 
 class CoreAdminSite(AdminSite):
