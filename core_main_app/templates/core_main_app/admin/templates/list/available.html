@@ -48,7 +48,7 @@ on the website, then click on "Save ordering" when done.
     {% endfor %}
 
 </table>
-<button  class="btn btn-success mt-3 {% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %} save-order-global"  disabled>
+<button  class="btn btn-primary mt-3 {% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %} save-order-global"  disabled>
         <i class="fas fa-save"></i> Save ordering
 </button>
 {% endblock %}
