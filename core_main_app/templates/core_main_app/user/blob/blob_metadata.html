@@ -43,16 +43,16 @@
             </td>
             <td>
                 <a class="btn btn-secondary" href="{% url 'core_main_app_rest_data_download' metadata.id %}">
-                    <i class="fas fa-list"></i> Download
+                    <i class="fas fa-download"></i> Download
                 </a>
                 {% if data.share_pid_button %}
                     {% include 'core_linked_records_app/user/sharing/data_detail/button_inline.html' %}
                 {% endif %}
                 {% if data.can_write %}
                 <button class="btn btn-danger remove-metadata-btn" objectid="{{ metadata.id }}">
-                    <i class="fas fa-xmark"></i> Remove
+                    <i class="fas fa-trash"></i> Remove
                 </button>
-                {% endif %}
+                {% endif %}  
             </td>
         </tr>
     {% empty%}
