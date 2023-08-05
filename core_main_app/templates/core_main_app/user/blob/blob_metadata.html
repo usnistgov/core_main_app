@@ -9,7 +9,12 @@
         </div>
     </div>
 </div>
+{% with metadata=data.blob|blob_metadata:request.user %}
+{% if metadata|length > 0  %}
 
+<p>Total number of Metadata file: {{ metadata|length }}</p>
+{% endif %}
+{% endwith %}
 
 <table class="table table-bordered table-striped table-hover">
     <thead>
