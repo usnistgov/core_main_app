@@ -3,10 +3,10 @@
         <i class="fas fa-arrow-left"></i> Back to previous
     </button>
     {% if data.can_write %}
-    <a class="btn btn-secondary
-            {% if BOOTSTRAP_VERSION|first == "4" %}mr-1{% elif BOOTSTRAP_VERSION|first == "5"  %}me-1{% endif %}
-            {% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %} add-metadata-btn">
-        <i class="fas fa-plus"></i>
+    <a class="btn btn-success
+            {% if BOOTSTRAP_VERSION|first == "4" %}mr-1{% elif BOOTSTRAP_VERSION|first == "5" %}me-1{% endif %}
+            {% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5" %}float-end{% endif %} add-metadata-btn">
+        <i class="fas fa-plus-circle"></i>
         Add Metadata
     </a>
     {% endif %}
