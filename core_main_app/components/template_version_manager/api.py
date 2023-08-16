@@ -8,7 +8,7 @@ from core_main_app.access_control.decorators import access_control
 from core_main_app.commons import exceptions
 from core_main_app.components.template import api as template_api
 from core_main_app.components.template.access_control import (
-    can_read,
+    can_read_id,
     can_read_global,
 )
 from core_main_app.components.template_version_manager.access_control import (
@@ -28,7 +28,7 @@ from core_main_app.components.version_manager.utils import (
 )
 
 
-@access_control(can_read)
+@access_control(can_read_id)
 def get_by_id(version_manager_id, request):
     """Get a template version manager by its id.
 

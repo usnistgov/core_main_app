@@ -7,7 +7,7 @@ from core_main_app.access_control.api import (
     check_can_read_list,
     can_write_in_workspace,
     _check_anonymous_access,
-    _check_can_read,
+    check_can_read_document,
 )
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.permissions import rights as rights
@@ -214,6 +214,6 @@ def can_read_blob(func, data, user):
         return func(data, user)
 
     if data._blob is not None:
-        _check_can_read(data._blob, user)
+        check_can_read_document(data._blob, user)
 
     return func(data, user)

@@ -10,29 +10,13 @@ from core_main_app.utils.requests_utils.access_control import (
 )
 
 
-def can_read(func, document_id, request):
-    """Can read document.
+def check_can_read_template(template, user):
+    if user.is_superuser:  # No checks for superuser
+        return
 
-    Args:
-        func:
-        document_id:
-        request:
-
-    Returns:
-
-    """
-    request = get_request_from_args(document_id, request=request)
-
-    # super user
-    if request.user.is_superuser:
-        return func(document_id, request=request)
-
-    # get the document
-    document = func(document_id, request=request)
-
-    # anonymous user
-    if request.user.is_anonymous:
-        if document.user:
+    # Anonymous user
+    if user.is_anonymous:
+        if template.user:
             raise AccessControlError(
                 "Template: The user doesn't have enough rights."
             )
@@ -41,13 +25,31 @@ def can_read(func, document_id, request):
                 "Template: The user doesn't have enough rights."
             )
 
-    # user is set
-    if document.user and document.user != str(request.user.id):
+    # Registered user
+    if template.user and template.user != str(user.id):
         raise AccessControlError(
             "Template: The user doesn't have enough rights."
         )
 
-    return document
+
+def can_read_id(func, template_id, request):
+    """Can read document.
+
+    Args:
+        func:
+        template_id:
+        request:
+
+    Returns:
+
+    """
+    # Retrieve request and document from args
+    request = get_request_from_args(template_id, request=request)
+    template = func(template_id, request=request)
+
+    # Verify that user can read the template and return the object
+    check_can_read_template(template, request.user)
+    return template
 
 
 def can_read_global(func, *args, **kwargs):

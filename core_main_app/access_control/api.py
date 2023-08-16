@@ -281,7 +281,7 @@ def can_read_id(func, document_id, user):
         return func(document_id, user)
 
     document = func(document_id, user)
-    _check_can_read(document, user)
+    check_can_read_document(document, user)
     return document
 
 
@@ -391,7 +391,7 @@ def _check_anonymous_access(user):
         )
 
 
-def _check_can_read(document, user):
+def check_can_read_document(document, user):
     """Check that the user can read.
 
     Args:

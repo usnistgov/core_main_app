@@ -6,7 +6,7 @@ import logging
 from core_main_app.access_control.decorators import access_control
 from core_main_app.commons import exceptions
 from core_main_app.components.template.access_control import (
-    can_read,
+    can_read_id,
     can_write,
     get_accessible_owners,
     can_read_list,
@@ -83,7 +83,7 @@ def set_display_name(template, display_name, request):
     template.save()
 
 
-@access_control(can_read)
+@access_control(can_read_id)
 def get_by_id(template_id, request):
     """Get a template.
 
