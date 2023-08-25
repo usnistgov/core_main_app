@@ -344,7 +344,7 @@ def set_timezone(request):
             user_timezone = (
                 user_preferences.timezone
                 if user_preferences and user_preferences.timezone
-                else timezone.get_current_timezone().zone
+                else timezone.get_current_timezone().key
             )
             return render(
                 request,
