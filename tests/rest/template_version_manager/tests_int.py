@@ -535,7 +535,7 @@ class TestUserTemplateList(IntegrationBaseTestCase):
         super().setUp()
         self.data = {
             "title": "title",
-            "filename": "filename",
+            "filename": "filename.xsd",
             "content": "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
             "<xs:element name='root'/></xs:schema>",
         }
@@ -706,7 +706,7 @@ class TestGlobalTemplateList(IntegrationBaseTestCase):
         super().setUp()
         self.data = {
             "title": "title",
-            "filename": "filename",
+            "filename": "filename.xsd",
             "content": "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
             "<xs:element name='root'/></xs:schema>",
         }

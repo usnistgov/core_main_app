@@ -86,7 +86,7 @@ try:
             _template_id = mongo_fields.IntField(db_field="template")
             user_id = mongo_fields.IntField()
             _workspace_id = mongo_fields.IntField(db_field="workspace")
-            _xml_content = None
+            _content = None
 
             meta = {
                 "indexes": [
@@ -153,20 +153,18 @@ try:
                 )
 
             @property
-            def xml_content(self):
+            def content(self):
                 """Get xml content - read from data.
 
                 Returns:
 
                 """
-                if not self._xml_content:
-                    self._xml_content = Data.get_by_id(
-                        self.data_id
-                    ).xml_content
-                return self._xml_content
+                if not self._content:
+                    self._content = Data.get_by_id(self.data_id).content
+                return self._content
 
-            @xml_content.setter
-            def xml_content(self, value):
+            @content.setter
+            def content(self, value):
                 """Set xml content - to be saved as a file.
 
                 Args:
@@ -175,7 +173,17 @@ try:
                 Returns:
 
                 """
-                self._xml_content = value
+                self._content = value
+
+            @property
+            def xml_content(self):
+                """Get content - backward compatibility"""
+                return self.content
+
+            @xml_content.setter
+            def xml_content(self, value):
+                """Set content - backward compatibility"""
+                self.content = value
 
             @staticmethod
             def execute_query(query, order_by_field):
@@ -221,19 +229,25 @@ try:
                     # create new mongo data otherwise
                     mongo_data = MongoData()
                     mongo_data.mongo_id = ObjectId()
-
+                # Get template
+                data_template = data.template
                 # Initialize mongo data fields
                 mongo_data.data_id = data.id
                 mongo_data.title = data.title
-                # transform xml content into a dictionary
-                mongo_data.dict_content = xml_utils.raw_xml_to_dict(
-                    data.xml_content,
-                    postprocessor=XML_POST_PROCESSOR,
-                    force_list=XML_FORCE_LIST,
-                    list_limit=SEARCHABLE_DATA_OCCURRENCES_LIMIT,
-                )
+                if data_template.format == Template.JSON:
+                    # store python dict
+                    mongo_data.dict_content = data.content
+                elif data_template.format == Template.XSD:
+                    # transform xml content into a dictionary
+                    mongo_data.dict_content = xml_utils.raw_xml_to_dict(
+                        data.xml_content,
+                        postprocessor=XML_POST_PROCESSOR,
+                        force_list=XML_FORCE_LIST,
+                        list_limit=SEARCHABLE_DATA_OCCURRENCES_LIMIT,
+                    )
+
                 mongo_data._template_id = (
-                    data.template.id if data.template else None
+                    data_template.id if data_template else None
                 )
                 mongo_data.user_id = data.user_id if data.user_id else None
                 mongo_data._workspace_id = (

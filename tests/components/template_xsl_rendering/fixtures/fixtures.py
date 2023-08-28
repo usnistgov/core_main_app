@@ -44,15 +44,15 @@ class TemplateXslRenderingFixtures(FixtureInterface):
 
         """
         self.template_1 = Template(
-            filename="template_1.xsd", content="content1", hash="hash1"
+            filename="template_1.xsd", content="content1", _hash="hash1"
         )
         self.template_1.save()
         self.template_2 = Template(
-            filename="template_2.xsd", content="content2", hash="hash2"
+            filename="template_2.xsd", content="content2", _hash="hash2"
         )
         self.template_2.save()
         self.template_3 = Template(
-            filename="template_3.xsd", content="content3", hash="hash3"
+            filename="template_3.xsd", content="content3", _hash="hash3"
         )
         self.template_3.save()
         self.template_xsl_rendering_1 = TemplateXslRendering(

@@ -3,14 +3,15 @@
 from unittest.case import TestCase
 from unittest.mock import patch
 
-from core_main_app.utils.tests_tools.MockUser import create_mock_user
+from django.test import override_settings
 
 from core_main_app.components.workspace.models import Workspace
-
+from core_main_app.utils.tests_tools.MockUser import create_mock_user
+from core_main_app.views.admin.forms import (
+    TemplateXsltRenderingForm,
+    UploadTemplateForm,
+)
 from core_main_app.views.user.forms import ChangeWorkspaceForm
-
-from core_main_app.views.admin.forms import TemplateXsltRenderingForm
-from django.test import override_settings
 
 
 class TestTemplateXsltRenderingForm(TestCase):
@@ -102,4 +103,20 @@ class TestChangeWorkspaceForm(TestCase):
         form = ChangeWorkspaceForm(data)
         self.assertEquals(
             form.fields["workspaces"].widget.attrs["class"], "form-select"
+        )
+
+
+class TestUploadTemplateForm(TestCase):
+    def test_upload_form_sets_extension_validators(
+        self,
+    ):
+        """test_upload_form_sets_extension_validators
+
+        Returns:
+
+        """
+        form = UploadTemplateForm()
+        self.assertEquals(
+            form.fields["upload_file"].validators[0].valid_extensions,
+            ".json,.xsd",
         )

@@ -119,6 +119,18 @@ class XSDError(BaseCoreException):
         super().__init__(message)
 
 
+class JSONError(BaseCoreException):
+    """Exception raised by the JSON validation."""
+
+    def __init__(self, message):
+        """Initialize exception
+
+        Args:
+            message:
+        """
+        super().__init__(message)
+
+
 class LockError(BaseCoreException):
     """Exception raised when an object is locked."""
 

@@ -47,6 +47,7 @@
                </td>
                <td>
                    {% block box_actions %}
+                        {% if version.format == 'XSD' %}
                         <a class="btn btn-secondary results-xslt"
                             href="{% url 'core-admin:core_main_app_template_xslt' version.object %}">
                             <i class="fas fa-file-code"></i> XSLT
@@ -56,6 +57,7 @@
                                 href="{% url data.module_url version.object %}">
                                 <i class="fas fa-cubes"></i> Modules
                             </a>
+                       {% endif %}
                        {% endif %}
                         <a class="btn btn-secondary download"
                            href="{% url 'core_main_app_rest_template_download' version.object %}">

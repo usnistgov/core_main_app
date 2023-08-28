@@ -17,6 +17,7 @@ on the website, then click on "Save ordering" when done.
     <tr>
         <th>Display order</th>
         <th width="35%">{{ data.object_name }}</th>
+        <th>Format</th>
         <th>Actions</th>
     </tr>
 
@@ -25,6 +26,7 @@ on the website, then click on "Save ordering" when done.
 
             <td>{% if object.display_rank %} {{object.display_rank}} {%else %} - {% endif %} </td>
             <td>{{ object.title }}</td>
+            <td>{{ object.current_version.format }}</td>
             <td>
                 {% block box_actions %}
                 <a class="btn btn-secondary"

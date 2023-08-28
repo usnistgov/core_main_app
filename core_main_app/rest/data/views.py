@@ -20,11 +20,15 @@ from rest_framework.views import APIView
 from core_main_app.access_control.api import check_can_write
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
-from core_main_app.commons.exceptions import XMLError
+from core_main_app.commons.constants import (
+    DATA_FILE_EXTENSION_FOR_TEMPLATE_FORMAT,
+)
+from core_main_app.commons.exceptions import XMLError, DoesNotExist
 from core_main_app.components.data import api as data_api
-from core_main_app.components.data.api import check_xml_file_is_valid
-from core_main_app.components.data.models import Data
 from core_main_app.components.data import tasks as data_tasks
+from core_main_app.components.data.models import Data
+from core_main_app.components.template import api as template_api
+from core_main_app.components.template.models import Template
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.rest.data.abstract_views import (
@@ -45,7 +49,12 @@ from core_main_app.utils.databases.mongo.pymongo_database import (
     get_full_text_query,
 )
 from core_main_app.utils.datetime import datetime_now
-from core_main_app.utils.file import get_file_http_response
+from core_main_app.utils.file import (
+    get_file_http_response,
+    get_data_file_content_type_for_template_format,
+    get_data_file_extension_for_template_format,
+)
+from core_main_app.utils.json_utils import format_content_json
 from core_main_app.utils.pagination.rest_framework_paginator.pagination import (
     StandardResultsSetPagination,
 )
@@ -133,7 +142,7 @@ class DataList(APIView):
                 "title": "document_title",
                 "template": "template_id",
                 "workspace": "workspace_id",
-                "xml_content": "document_content"
+                "content": "document_content"
             }
 
         Args:
@@ -363,7 +372,7 @@ class DataDetail(APIView):
 
             {
                 "title": "new_title",
-                "xml_content": "new_xml_content"
+                "content": "new_xml_content"
             }
 
         Args:
@@ -543,17 +552,34 @@ class DataDownload(APIView):
             data_object = self.get_object(request, pk)
 
             # get xml content
-            xml_content = data_object.xml_content
+            data_content = data_object.content
 
             # get format bool
-            format = request.query_params.get("pretty_print", False)
+            pretty_print = request.query_params.get("pretty_print", False)
 
             # format content
-            if to_bool(format):
-                xml_content = format_content_xml(xml_content)
+            if to_bool(pretty_print):
+                # format XML
+                if data_object.template.format == Template.XSD:
+                    data_content = format_content_xml(data_content)
+                # format JSON
+                elif data_object.template.format == Template.JSON:
+                    data_content = format_content_json(data_content)
+                else:
+                    content = {"message": "Unsupported format."}
+                    return Response(
+                        content, status=status.HTTP_400_BAD_REQUEST
+                    )
 
             return get_file_http_response(
-                xml_content, data_object.title, "text/xml", "xml"
+                data_content,
+                data_object.title,
+                content_type=get_data_file_content_type_for_template_format(
+                    data_object.template.format
+                ),
+                extension=get_data_file_extension_for_template_format(
+                    data_object.template.format
+                ),
             )
         except Http404:
             content = {"message": "Data not found."}
@@ -1149,7 +1175,7 @@ class BulkUploadFolder(APIView):
                 "template": integer,
                 "workspace": integer,
                 "batch_size": integer,
-                "validate_xml": true|false,
+                "validate": true|false,
                 "clean_title": true|false
             }
 
@@ -1159,7 +1185,7 @@ class BulkUploadFolder(APIView):
                 "template": 1,
                 "workspace": 1,
                 "batch_size": 10,
-                "validate_xml": false
+                "validate": false
             }
 
         Args:
@@ -1172,8 +1198,15 @@ class BulkUploadFolder(APIView):
             template_id = request.data["template"]
             workspace = request.data["workspace"]
             batch_size = request.data.get("batch_size", 10)
-            validate_xml = request.data.get("validate_xml", True)
+            validate = request.data.get("validate", True)
+            validate_xml = request.data.get("validate_xml", None)
             clean_title = request.data.get("clean_title", True)
+
+            # Backward compatibility
+            validate = validate_xml if validate_xml is not None else validate
+
+            # Get Template
+            template = template_api.get_by_id(template_id)
 
             data_list = []
 
@@ -1181,7 +1214,7 @@ class BulkUploadFolder(APIView):
                 content = {"message": "Folder not found."}
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
-            for xml_data in os.listdir(
+            for data_file in os.listdir(
                 os.path.join(settings.MEDIA_ROOT, folder)
             ):
                 try:
@@ -1198,30 +1231,52 @@ class BulkUploadFolder(APIView):
                     )
                     # Set title
                     instance.title = (
-                        xml_data.replace("_", " ").replace(".xml", "")
+                        data_file.replace("_", " ")
+                        .replace(
+                            DATA_FILE_EXTENSION_FOR_TEMPLATE_FORMAT[
+                                Template.XSD
+                            ],
+                            "",
+                        )
+                        .replace(
+                            DATA_FILE_EXTENSION_FOR_TEMPLATE_FORMAT[
+                                Template.JSON
+                            ],
+                            "",
+                        )
                         if clean_title
-                        else xml_data
+                        else data_file
                     )
-                    # Set XML file
-                    instance.xml_file.name = os.path.join(folder, xml_data)
-                    # Validate XML
-                    if validate_xml:
-                        check_xml_file_is_valid(instance, request=request)
+                    # Set file
+                    instance.file.name = os.path.join(folder, data_file)
+                    # Validate file
+                    if validate:
+                        if template.format == Template.XSD:
+                            data_api.check_xml_file_is_valid(
+                                instance, request=request
+                            )
+                        elif template.format == Template.JSON:
+                            data_api.check_json_file_is_valid(instance)
                     # Convert to JSON
                     with open(
-                        os.path.join(settings.MEDIA_ROOT, folder, xml_data),
+                        os.path.join(settings.MEDIA_ROOT, folder, data_file),
                         "rb",
-                    ) as xml_file:
-                        instance.dict_content = main_xml_utils.raw_xml_to_dict(
-                            xml_file,
-                            postprocessor=XML_POST_PROCESSOR,
-                            force_list=XML_FORCE_LIST,
-                        )
+                    ) as _file:
+                        if template.format == Template.XSD:
+                            instance.dict_content = (
+                                main_xml_utils.raw_xml_to_dict(
+                                    _file,
+                                    postprocessor=XML_POST_PROCESSOR,
+                                    force_list=XML_FORCE_LIST,
+                                )
+                            )
+                        elif template.format == Template.JSON:
+                            instance.dict_content = json.loads(_file.read())
                     # Add data to list
                     data_list.append(instance)
                 except Exception as exception:
                     logger.error(
-                        f"ERROR: Unable to insert {xml_data}: {str(exception)}"
+                        f"ERROR: Unable to insert {data_file}: {str(exception)}"
                     )
                 # If data list reaches batch size
                 if len(data_list) == batch_size:
@@ -1237,6 +1292,9 @@ class BulkUploadFolder(APIView):
             }
             return Response(content, status=status.HTTP_200_OK)
 
+        except DoesNotExist:
+            content = {"message": "Template not found."}
+            return Response(content, status=status.HTTP_404_NOT_FOUND)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
             return Response(

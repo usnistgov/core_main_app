@@ -6,6 +6,10 @@ from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.access_control.api import is_superuser
 from core_main_app.access_control.decorators import access_control
 from core_main_app.commons import exceptions
+from core_main_app.commons.constants import (
+    TEMPLATE_FILE_EXTENSION_FOR_TEMPLATE_FORMAT,
+)
+from core_main_app.commons.exceptions import CoreError
 from core_main_app.components.template import api as template_api
 from core_main_app.components.template.access_control import (
     can_read_id,
@@ -26,6 +30,7 @@ from core_main_app.components.version_manager.utils import (
     get_latest_version_name,
     get_version_name,
 )
+from core_main_app.utils.file import get_file_extension
 
 
 @access_control(can_read_id)
@@ -54,6 +59,8 @@ def insert(template_version_manager, template, request):
     Returns:
 
     """
+    # check if new version has same format as other versions
+    _check_new_version_format(template_version_manager, template)
     # save the template in database
     template_api.upsert(template, request=request)
     try:
@@ -279,3 +286,23 @@ def update_global_template_ordering(list_id, request):
             "You don't have the rights to perform this action."
         )
     _update_template_version_manager_ordering(list_id, request)
+
+
+def _check_new_version_format(template_version_manager, template):
+    """Check if new version has same format as other versions
+
+    Args:
+        template_version_manager:
+        template:
+
+    Returns:
+
+    """
+    if (
+        template_version_manager.id
+        and TEMPLATE_FILE_EXTENSION_FOR_TEMPLATE_FORMAT[
+            template_version_manager.current_version.format
+        ]
+        != get_file_extension(template.filename)
+    ):
+        raise CoreError("Versions of a template should have the same format")

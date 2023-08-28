@@ -11,6 +11,7 @@ from core_main_app.access_control.api import (
 )
 from core_main_app.access_control.decorators import access_control
 from core_main_app.commons import exceptions as exceptions
+from core_main_app.commons.exceptions import JSONError
 from core_main_app.components.data import (
     access_control as data_api_access_control,
 )
@@ -19,9 +20,11 @@ from core_main_app.components.data.tasks import (
     async_migration_task,
     async_template_migration_task,
 )
+from core_main_app.components.template.models import Template
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.settings import DATA_SORTING_FIELDS
 from core_main_app.utils.datetime import datetime_now
+from core_main_app.utils.json_utils import validate_json_data
 from core_main_app.utils.query.mongo.prepare import (
     convert_to_django,
     get_access_filters_from_query,
@@ -122,12 +125,15 @@ def upsert(data, request):
     Returns:
 
     """
-    if data.xml_content is None:
+    if data.content is None:
         raise exceptions.ApiError(
-            "Unable to save data: xml_content field is not set."
+            "Unable to save data: content field is not set."
         )
 
-    check_xml_file_is_valid(data, request=request)
+    if data.template.format == Template.XSD:
+        check_xml_file_is_valid(data, request=request)
+    elif data.template.format == Template.JSON:
+        check_json_file_is_valid(data)
     data.convert_and_save()
     return data
 
@@ -145,7 +151,7 @@ def admin_insert(data, request):
     """
     if data.xml_content is None:
         raise exceptions.ApiError(
-            "Unable to save data: xml_content field is not set."
+            "Unable to save data: content field is not set."
         )
 
     # initialize times - use values if provided, set now otherwise
@@ -188,6 +194,20 @@ def check_xml_file_is_valid(data, request=None):
     if error is not None:
         raise exceptions.XMLError(error)
 
+    return True
+
+
+def check_json_file_is_valid(data):
+    """Check if json data is valid against a given schema.
+
+    Args:
+        data:
+
+    """
+    template = data.template
+    if not isinstance(data.content, dict):
+        raise JSONError("Invalid format")
+    validate_json_data(data.content, template.content)
     return True
 
 

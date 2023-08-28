@@ -4,27 +4,11 @@ from collections import OrderedDict
 from unittest.case import TestCase
 from unittest.mock import patch
 
+from tests.components.data.tests_unit import _get_json_template, _get_template
+
 from core_main_app.components.data.models import Data
-from core_main_app.components.template.models import Template
 from core_main_app.components.workspace.models import Workspace
 from core_main_app.system import api as system_api
-
-
-def _get_template():
-    """get template
-
-    Returns:
-
-    """
-
-    template = Template()
-    template.pk = 1
-    xsd = (
-        "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
-        "<xs:element name='tag'></xs:element></xs:schema>"
-    )
-    template.content = xsd
-    return template
 
 
 def _get_workspace():
@@ -181,3 +165,76 @@ class TestSystemGetAllExcept(TestCase):
 
         result = system_api.get_all_except(["1"])
         self.assertEqual(len(result), 1)
+
+
+class TestSystemUpsert(TestCase):
+    """TestSystemUpsert"""
+
+    @patch("core_main_app.components.data.api.check_json_file_is_valid")
+    @patch("core_main_app.components.data.api.check_xml_file_is_valid")
+    @patch.object(Data, "convert_and_save")
+    def test_system_upsert_xml_data(
+        self,
+        mock_convert_and_save,
+        mock_check_xml_file_is_valid,
+        mock_check_json_file_is_valid,
+    ):
+        """test_system_upsert_xml_data
+
+        Args:
+            mock_convert_and_save:
+
+        Returns:
+
+        """
+        # Arrange
+        mock_convert_and_save.return_value = None
+        mock_check_xml_file_is_valid.return_value = None
+        mock_check_json_file_is_valid.return_value = None
+        mock_data = Data(
+            template=_get_template(),
+            user_id="1",
+            dict_content=OrderedDict(),
+            title="title",
+            content="<tag></tag>",
+        )
+        # Act
+        system_api.upsert_data(mock_data)
+        # Assert
+        self.assertTrue(mock_check_xml_file_is_valid.called)
+        self.assertFalse(mock_check_json_file_is_valid.called)
+
+    @patch("core_main_app.components.data.api.check_json_file_is_valid")
+    @patch("core_main_app.components.data.api.check_xml_file_is_valid")
+    @patch.object(Data, "convert_and_save")
+    def test_system_upsert_json_data(
+        self,
+        mock_convert_and_save,
+        mock_check_xml_file_is_valid,
+        mock_check_json_file_is_valid,
+    ):
+        """test_system_upsert_json_data
+
+        Args:
+            mock_convert_and_save:
+
+        Returns:
+
+        """
+        # Arrange
+        mock_convert_and_save.return_value = None
+        mock_check_xml_file_is_valid.return_value = None
+        mock_check_json_file_is_valid.return_value = None
+        mock_data = Data(
+            template=_get_json_template(),
+            user_id="1",
+            dict_content=OrderedDict(),
+            title="title",
+            content="{}",
+        )
+
+        # Act
+        system_api.upsert_data(mock_data)
+        # Assert
+        self.assertFalse(mock_check_xml_file_is_valid.called)
+        self.assertTrue(mock_check_json_file_is_valid.called)

@@ -24,6 +24,7 @@ from core_main_app.commons import exceptions
 from core_main_app.commons.exceptions import (
     DoesNotExist,
 )
+from core_main_app.components.blob import api as blob_api
 from core_main_app.components.data import api as data_api
 from core_main_app.components.group import api as group_api
 from core_main_app.components.lock import api as lock_api
@@ -46,7 +47,6 @@ from core_main_app.utils.rendering import admin_render, render
 from core_main_app.utils.view_builders import data as data_view_builder
 from core_main_app.views.admin.forms import TemplateXsltRenderingForm
 from xml_utils.xsd_tree.xsd_tree import XSDTree
-from core_main_app.components.blob import api as blob_api
 
 
 class CommonView(View, metaclass=ABCMeta):
@@ -882,7 +882,7 @@ class DataContentEditor(XmlEditor):
             data_id = self.request.POST["document_id"]
             data = data_api.get_by_id(data_id, self.request.user)
             # update content
-            data.xml_content = content
+            data.content = content
             # save data
             data_api.upsert(data, self.request)
             lock_api.remove_lock_on_object(data, self.request.user)

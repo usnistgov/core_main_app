@@ -2,11 +2,18 @@
 """
 import base64
 import re
+import pathlib
 from io import BytesIO
 from mimetypes import guess_type
 
 from django.http.response import HttpResponse
 
+from core_main_app.commons.constants import (
+    DATA_FILE_CONTENT_TYPE_FOR_TEMPLATE_FORMAT,
+    DATA_FILE_EXTENSION_FOR_TEMPLATE_FORMAT,
+    TEMPLATE_FILE_CONTENT_TYPE_FOR_TEMPLATE_FORMAT,
+    TEMPLATE_FILE_EXTENSION_FOR_TEMPLATE_FORMAT,
+)
 from core_main_app.commons.exceptions import CoreError
 
 
@@ -112,3 +119,75 @@ def get_byte_size_from_string(content):
 
     """
     return len(content.encode())
+
+
+def get_file_extension(filename):
+    """Return the extension from a filename
+
+    Args:
+        filename:
+
+    Returns:
+
+    """
+    return pathlib.Path(filename).suffix
+
+
+def get_data_file_content_type_for_template_format(template_format):
+    """get_data_file_content_type_for_template_format
+
+    Args:
+        template_format:
+
+    Returns:
+
+    """
+    try:
+        return DATA_FILE_CONTENT_TYPE_FOR_TEMPLATE_FORMAT[template_format]
+    except KeyError:
+        return None
+
+
+def get_data_file_extension_for_template_format(template_format):
+    """get_data_file_extension_for_template_format
+
+    Args:
+        template_format:
+
+    Returns:
+
+    """
+    try:
+        return DATA_FILE_EXTENSION_FOR_TEMPLATE_FORMAT[template_format]
+    except KeyError:
+        return ""
+
+
+def get_template_file_content_type_for_template_format(template_format):
+    """get_template_file_content_type_for_template_format
+
+    Args:
+        template_format:
+
+    Returns:
+
+    """
+    try:
+        return TEMPLATE_FILE_CONTENT_TYPE_FOR_TEMPLATE_FORMAT[template_format]
+    except KeyError:
+        return None
+
+
+def get_template_file_extension_for_template_format(template_format):
+    """get_template_file_extension_for_template_format
+
+    Args:
+        template_format:
+
+    Returns:
+
+    """
+    try:
+        return TEMPLATE_FILE_EXTENSION_FOR_TEMPLATE_FORMAT[template_format]
+    except KeyError:
+        return ""

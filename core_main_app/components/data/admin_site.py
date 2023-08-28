@@ -152,7 +152,7 @@ class CustomDataAdmin(get_base_model_admin_class("Data")):
     ]
     action_form = UpdateActionForm
     actions = [update_data_list]
-    readonly_fields = ["checksum", "xml_file"]
+    readonly_fields = ["checksum", "file"]
     exclude = ["vector_column", "dict_content"]
 
     def has_add_permission(self, request, obj=None):

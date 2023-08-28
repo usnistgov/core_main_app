@@ -1,21 +1,16 @@
 """ Abstract Data model
 """
+from abc import abstractmethod
 
-from django.conf import settings
 from django.contrib.postgres.search import SearchVectorField
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.validators import RegexValidator
 from django.db import models, IntegrityError
 
 from core_main_app.commons import exceptions
 from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
 from core_main_app.settings import (
-    SEARCHABLE_DATA_OCCURRENCES_LIMIT,
-    XML_POST_PROCESSOR,
-    XML_FORCE_LIST,
     CHECKSUM_ALGORITHM,
 )
-from core_main_app.utils import xml as xml_utils
 from core_main_app.utils.checksum import compute_checksum
 from core_main_app.utils.datetime import datetime_now
 from core_main_app.utils.storage.storage import (
@@ -39,7 +34,7 @@ class AbstractData(models.Model):
         ],
         max_length=200,
     )
-    xml_file = models.FileField(
+    file = models.FileField(
         blank=False,
         max_length=250,
         upload_to=user_directory_path,
@@ -56,7 +51,7 @@ class AbstractData(models.Model):
     last_change_date = models.DateTimeField(
         blank=True, default=None, null=True
     )
-    _xml_content = None
+    _content = None
 
     class Meta:
         """Meta"""
@@ -64,28 +59,30 @@ class AbstractData(models.Model):
         abstract = True
 
     @property
-    def xml_content(self):
-        """Get xml content - read from a saved file.
+    def content(self):
+        """Get content - read from a saved file.
 
         Returns:
 
         """
-        # private field xml_content not set yet, and reference to xml_file to read is set
-        if self._xml_content is None and self.xml_file.name:
-            # read xml file into xml_content field
-            xml_content = self.xml_file.read()
+        # private field content not set yet, and reference to file to read is set
+        if self._content is None and self.file.name:
+            # read xml file into content field
+            file_content = self.file.read()
             try:
-                self._xml_content = (
-                    xml_content.decode("utf-8") if xml_content else xml_content
+                self._content = (
+                    file_content.decode("utf-8")
+                    if file_content
+                    else file_content
                 )
             except AttributeError:
-                self._xml_content = xml_content
-        # return xml content
-        return self._xml_content
+                self._content = file_content
+        # return content
+        return self._content
 
-    @xml_content.setter
-    def xml_content(self, value):
-        """Set xml content - to be saved as a file.
+    @content.setter
+    def content(self, value):
+        """Set content - to be saved as a file.
 
         Args:
             value:
@@ -96,7 +93,17 @@ class AbstractData(models.Model):
         # update modification times
         self.last_modification_date = datetime_now()
         # update content
-        self._xml_content = value
+        self._content = value
+
+    @property
+    def xml_content(self):
+        """Get content - backward compatibility"""
+        return self.content
+
+    @xml_content.setter
+    def xml_content(self, value):
+        """Set content - backward compatibility"""
+        self.content = value
 
     def get_dict_content(self):
         """Get dict_content from object or from MongoDB
@@ -107,7 +114,7 @@ class AbstractData(models.Model):
         raise NotImplementedError("get_dict_content is not implemented")
 
     def convert_and_save(self):
-        """Save Data object and convert the xml to dict if needed.
+        """Convert data object to file (storage) and dict (indexing), then save it.
 
         Returns:
 
@@ -117,39 +124,23 @@ class AbstractData(models.Model):
 
         self.save_object()
 
+    @abstractmethod
     def convert_to_dict(self):
-        """Convert the xml contained in xml_content into a dictionary.
+        """Convert the data into a dictionary.
 
         Returns:
 
         """
-        # if data stored in mongo, don't store dict_content
-        if settings.MONGODB_INDEXING:
-            return
-        # transform xml content into a dictionary
-        self.dict_content = xml_utils.raw_xml_to_dict(
-            self.xml_content,
-            postprocessor=XML_POST_PROCESSOR,
-            force_list=XML_FORCE_LIST,
-            list_limit=SEARCHABLE_DATA_OCCURRENCES_LIMIT,
-        )
+        raise NotImplementedError("convert_to_dict is not implemented.")
 
+    @abstractmethod
     def convert_to_file(self):
-        """Convert the xml string into a file.
+        """Convert the data into a file.
 
         Returns:
 
         """
-        try:
-            xml_content = self.xml_content.encode("utf-8")
-        except UnicodeEncodeError:
-            xml_content = self.xml_content
-
-        self.xml_file = SimpleUploadedFile(
-            name=self.title,
-            content=xml_content,
-            content_type="application/xml",
-        )
+        raise NotImplementedError("convert_to_file is not implemented.")
 
     def save_object(self):
         """Custom save. Set the datetime fields and save.
@@ -167,9 +158,9 @@ class AbstractData(models.Model):
                 self.creation_date = now
                 # initialize when first saved, then only updates when content is updated
                 self.last_modification_date = now
-            if self.xml_content and CHECKSUM_ALGORITHM:
+            if self.content and CHECKSUM_ALGORITHM:
                 self.checksum = compute_checksum(
-                    self.xml_content.encode(), CHECKSUM_ALGORITHM
+                    str(self.content).encode(), CHECKSUM_ALGORITHM
                 )
             self.save()
         except IntegrityError as exception:

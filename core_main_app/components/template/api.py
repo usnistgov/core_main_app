@@ -5,6 +5,10 @@ import logging
 
 from core_main_app.access_control.decorators import access_control
 from core_main_app.commons import exceptions
+from core_main_app.commons.constants import (
+    TEMPLATE_FILE_EXTENSION_FOR_TEMPLATE_FORMAT,
+)
+from core_main_app.commons.exceptions import CoreError
 from core_main_app.components.template.access_control import (
     can_read_id,
     can_write,
@@ -12,12 +16,9 @@ from core_main_app.components.template.access_control import (
     can_read_list,
 )
 from core_main_app.components.template.models import Template
-from core_main_app.utils.xml import (
-    is_schema_valid,
-    get_hash,
-    get_template_with_server_dependencies,
-    get_local_dependencies,
-)
+from core_main_app.utils import xml as main_xml_utils
+from core_main_app.utils import json_utils as main_json_utils
+from core_main_app.utils.file import get_file_extension
 
 logger = logging.getLogger(__name__)
 
@@ -33,14 +34,34 @@ def upsert(template, request):
     Returns:
 
     """
-    # Check if schema is valid
-    is_schema_valid(template.content, request=request)
-    # Get hash for the template
-    template.hash = get_hash(template.content)
+    template_extension = get_file_extension(template.filename)
+    if (
+        template_extension
+        == TEMPLATE_FILE_EXTENSION_FOR_TEMPLATE_FORMAT[Template.XSD]
+    ):
+        # Set format
+        template.format = Template.XSD
+        # Check if schema is valid
+        main_xml_utils.is_schema_valid(template.content, request=request)
+        # Set custom XSD hash
+        template.hash = main_xml_utils.get_hash(template.content)
+    elif (
+        template_extension
+        == TEMPLATE_FILE_EXTENSION_FOR_TEMPLATE_FORMAT[Template.JSON]
+    ):
+        # Set format
+        template.format = Template.JSON
+        # Check if schema is valid
+        main_json_utils.is_schema_valid(template.content)
+    else:
+        # Raise an error if file extension not supported
+        raise CoreError("Unsupported template extension.")
+    # Save the template
     template.save_template()
-    # Register local dependencies
-    _register_local_dependencies(template, request=request)
-    # Save template
+    if template.format == Template.XSD:
+        # Register local imports/includes for XSD templates
+        _register_local_dependencies(template, request=request)
+    # Return template
     return template
 
 
@@ -58,8 +79,10 @@ def init_template_with_dependencies(template, dependencies_dict, request):
     """
     if dependencies_dict is not None:
         # update template content
-        template.content = get_template_with_server_dependencies(
-            template.content, dependencies_dict, request=request
+        template.content = (
+            main_xml_utils.get_template_with_server_dependencies(
+                template.content, dependencies_dict, request=request
+            )
         )
 
     return template
@@ -181,7 +204,9 @@ def _register_local_dependencies(template, request):
     # Clean all dependencies. Template content could have been changed.
     template.dependencies.clear()
     # Get local dependencies
-    local_dependencies = get_local_dependencies(template.content)
+    local_dependencies = main_xml_utils.get_local_dependencies(
+        template.content
+    )
     if not local_dependencies:
         return
 

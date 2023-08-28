@@ -15,6 +15,9 @@ from core_main_app.components.template_version_manager.models import (
 from core_main_app.components.version_manager.models import Version
 from core_main_app.settings import XSD_UPLOAD_DIR, CHECKSUM_ALGORITHM
 from core_main_app.utils.checksum import compute_checksum
+from core_main_app.utils.file import (
+    get_template_file_content_type_for_template_format,
+)
 from core_main_app.utils.storage.storage import core_file_storage
 from core_main_app.utils.validation.regex_validation import (
     not_empty_or_whitespaces,
@@ -25,6 +28,18 @@ class Template(Version):
     """Represents an XML schema template that defines the structure of data"""
 
     class_name = "Template"
+
+    XSD = "XSD"
+    JSON = "JSON"
+    FORMAT_CHOICES = [
+        (XSD, "XML Schema"),
+        (JSON, "JSON Schema"),
+    ]
+    format = models.CharField(
+        max_length=20,
+        choices=FORMAT_CHOICES,
+        default=XSD,
+    )
 
     version_manager = models.ForeignKey(
         TemplateVersionManager,
@@ -49,13 +64,15 @@ class Template(Version):
         upload_to=XSD_UPLOAD_DIR,
         storage=core_file_storage(model="template"),
     )
-    checksum = models.CharField(
-        max_length=512, blank=True, default=None, null=True
-    )
     user = models.CharField(
         blank=True, max_length=200, null=True, default=None
     )
-    hash = models.CharField(max_length=200)
+    # NOTE: checksum is a hash of the file using a hash algorithm defined in CHECKSUM_ALGORITHM setting
+    checksum = models.CharField(
+        max_length=512, blank=True, default=None, null=True
+    )
+    # NOTE: _hash is a custom hash (XSD: removes white spaces, comments, and order elements before hashing)
+    _hash = models.CharField(max_length=200)
     _display_name = models.CharField(blank=True, max_length=200)
     dependencies = models.ManyToManyField(
         "self", blank=True, default=[], symmetrical=False
@@ -87,6 +104,35 @@ class Template(Version):
         """
         # Set template content
         self._content = xsd_content
+
+    @property
+    def hash(self):
+        """Read template hash
+
+        Returns:
+            1) Check backward compatibility: continue returning custom XSD hash if set.
+            2) Check optional setting: return a checksum for any file formats if set,
+            3) Returns None if not set.
+
+        """
+        if self._hash:
+            return self._hash
+        elif self.checksum:
+            return self.checksum
+        return None
+
+    @hash.setter
+    def hash(self, hash_value):
+        """Set template hash
+
+        Args:
+            hash_value:
+
+        Returns:
+
+        """
+        # Set template hash
+        self._hash = hash_value
 
     @staticmethod
     def get_all(is_cls, users=None):
@@ -139,8 +185,10 @@ class Template(Version):
 
         """
         if users is not None:
-            return Template.objects.filter(Q(hash=template_hash) & users).all()
-        return Template.objects.filter(hash=template_hash).all()
+            return Template.objects.filter(
+                Q(_hash=template_hash) & users
+            ).all()
+        return Template.objects.filter(_hash=template_hash).all()
 
     @staticmethod
     def get_all_by_hash_list(template_hash_list, users):
@@ -156,9 +204,9 @@ class Template(Version):
         """
         if users is not None:
             return Template.objects.filter(
-                Q(hash__in=template_hash_list) & users
+                Q(_hash__in=template_hash_list) & users
             ).all()
-        return Template.objects.filter(hash__in=template_hash_list).all()
+        return Template.objects.filter(_hash__in=template_hash_list).all()
 
     @staticmethod
     def get_all_by_id_list(template_id_list, users=None):
@@ -213,7 +261,9 @@ class Template(Version):
                 self.file = SimpleUploadedFile(
                     name=self.filename,
                     content=self._content.encode("utf-8"),
-                    content_type="application/xml",
+                    content_type=get_template_file_content_type_for_template_format(
+                        self.format
+                    ),
                 )
             not_empty_or_whitespaces(self.filename)
             if self.content and CHECKSUM_ALGORITHM:

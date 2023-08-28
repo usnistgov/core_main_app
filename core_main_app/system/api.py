@@ -91,14 +91,19 @@ def upsert_data(data):
 
     """
     from core_main_app.components.data.api import check_xml_file_is_valid
+    from core_main_app.components.data.api import check_json_file_is_valid
 
-    if data.xml_content is None:
+    if data.content is None:
         raise exceptions.ApiError(
-            "Unable to save data: xml_content field is not set."
+            "Unable to save data: content field is not set."
         )
 
-    check_xml_file_is_valid(data)
+    if data.template.format == Template.XSD:
+        check_xml_file_is_valid(data)
+    elif data.template.format == Template.JSON:
+        check_json_file_is_valid(data)
     data.convert_and_save()
+    return data
 
 
 def get_active_global_version_manager_by_title(version_manager_title):

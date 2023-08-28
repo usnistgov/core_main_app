@@ -261,3 +261,10 @@ DJANGO_SIMPLE_HISTORY_MODELS = getattr(
 )
 """ :py:class:`list`: Track history of listed models.
 """
+
+BACKWARD_COMPATIBILITY_DATA_XML_CONTENT = getattr(
+    settings, "BACKWARD_COMPATIBILITY_DATA_XML_CONTENT", False
+)
+""" :py:class:`bool`: Set to `True` to continue using Data.xml_content (deprecated)
+    instead of Data.content in the REST API.
+"""

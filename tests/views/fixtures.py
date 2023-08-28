@@ -146,7 +146,7 @@ class AccessControlDataFixture(FixtureInterface):
         self.template.file = SimpleUploadedFile(
             "user1_template.xsd", xsd.encode("utf-8")
         )
-        self.template.filename = "filename"
+        self.template.filename = "filename.xsd"
         self.template.save()
 
     def generate_workspaces(self):

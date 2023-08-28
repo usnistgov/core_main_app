@@ -1,19 +1,32 @@
 """ Data model
 """
+import json
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import models
 from django.db.models import Q
 
 from core_main_app.access_control.decorators import access_control
 from core_main_app.commons import exceptions
+from core_main_app.commons.constants import (
+    DATA_FILE_CONTENT_TYPE_FOR_TEMPLATE_FORMAT,
+)
+from core_main_app.commons.exceptions import ModelError
 from core_main_app.components.abstract_data.models import AbstractData
 from core_main_app.components.data.access_control import can_read_blob
 from core_main_app.components.template.models import Template
 from core_main_app.components.workspace.models import Workspace
 from core_main_app.components.blob.models import Blob
+from core_main_app.settings import (
+    SEARCHABLE_DATA_OCCURRENCES_LIMIT,
+    XML_POST_PROCESSOR,
+    XML_FORCE_LIST,
+)
+from core_main_app.utils import xml as xml_utils
 
 
 # TODO: Create publication workflow manager
@@ -55,6 +68,60 @@ class Data(AbstractData):
             ),
             GinIndex(fields=["vector_column"]),
         ]
+
+    def convert_to_dict(self):
+        """Convert the xml contained in content into a dictionary.
+
+        Returns:
+
+        """
+        # if data stored in mongo, don't store dict_content
+        if settings.MONGODB_INDEXING:
+            return
+
+        # data already in json, don't convert
+        if self.template.format == Template.JSON:
+            self.dict_content = self.content
+
+        elif self.template.format == Template.XSD:
+            # transform xml content into a dictionary
+            self.dict_content = xml_utils.raw_xml_to_dict(
+                self.content,
+                postprocessor=XML_POST_PROCESSOR,
+                force_list=XML_FORCE_LIST,
+                list_limit=SEARCHABLE_DATA_OCCURRENCES_LIMIT,
+            )
+        else:
+            raise ModelError("Unrecognized file format.")
+
+    def convert_to_file(self):
+        """Convert the xml string into a file.
+
+        Returns:
+
+        """
+        # Check if known format
+        if self.template.format not in [Template.JSON, Template.XSD]:
+            raise ModelError("Unrecognized file format.")
+
+        # Set content-type
+        content_type = DATA_FILE_CONTENT_TYPE_FOR_TEMPLATE_FORMAT[
+            self.template.format
+        ]
+        # Get content
+        if self.template.format == Template.JSON:
+            content = json.dumps(self.content).encode("utf-8")
+        elif self.template.format == Template.XSD:
+            try:
+                content = self.content.encode("utf-8")
+            except UnicodeEncodeError:
+                content = self.content
+
+        self.file = SimpleUploadedFile(
+            name=self.title,
+            content=content,
+            content_type=content_type,
+        )
 
     @property
     def owner_name(self):

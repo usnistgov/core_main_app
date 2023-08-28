@@ -3,7 +3,8 @@
 from rest_framework import serializers
 from rest_framework.serializers import Serializer
 
-from core_main_app.rest.data.serializers import XMLContentField
+from core_main_app.rest.data.serializers import ContentField
+from core_main_app.settings import BACKWARD_COMPATIBILITY_DATA_XML_CONTENT
 
 
 class MongoDataSerializer(Serializer):
@@ -14,10 +15,14 @@ class MongoDataSerializer(Serializer):
     workspace = serializers.SerializerMethodField(read_only=True)
     user_id = serializers.SerializerMethodField(read_only=True)
     title = serializers.CharField(read_only=True)
-    xml_content = XMLContentField(read_only=True)
     creation_date = serializers.DateTimeField(read_only=True)
     last_modification_date = serializers.DateTimeField(read_only=True)
     last_change_date = serializers.DateTimeField(read_only=True)
+
+    if BACKWARD_COMPATIBILITY_DATA_XML_CONTENT:
+        xml_content = ContentField(read_only=True)
+    else:
+        content = ContentField(read_only=True)
 
     class Meta:
         """Meta"""
@@ -28,11 +33,15 @@ class MongoDataSerializer(Serializer):
             "workspace",
             "user_id",
             "title",
-            "xml_content",
             "creation_date",
             "last_modification_date",
             "last_change_date",
         ]
+
+        if BACKWARD_COMPATIBILITY_DATA_XML_CONTENT:
+            fields.append("xml_content")
+        else:
+            fields.append("content")
 
     def get_template(self, obj):
         """Return template id

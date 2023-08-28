@@ -1,12 +1,15 @@
 """ Unit Test Data
 """
 from collections import OrderedDict
+from time import sleep
 from unittest.case import TestCase
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from core_main_app.commons import exceptions
+from core_main_app.commons.exceptions import ModelError
+from core_main_app.components.abstract_data.models import AbstractData
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.data import api as data_api
 from core_main_app.components.data.models import Data
@@ -219,6 +222,7 @@ class TestDataUpsert(TestCase):
         # Act
         result = data_api.upsert(data, mock_request)
         creation_date = result.last_modification_date
+        sleep(0.05)
         # Assert
         data_api.upsert(data, mock_request)
         self.assertNotEqual(creation_date, data.last_modification_date)
@@ -292,6 +296,169 @@ class TestDataUpsert(TestCase):
         # Act # Assert
         with self.assertRaises(exceptions.ApiError):
             data_api.upsert(data, mock_request)
+
+    @patch("core_main_app.components.data.api.check_json_file_is_valid")
+    @patch("core_main_app.components.data.api.check_xml_file_is_valid")
+    def test_xml_data_upsert_calls_xml_validation(
+        self, mock_check_xml_file_is_valid, mock_check_json_file_is_valid
+    ):
+        """test_xml_data_upsert_calls_xml_validation
+
+        Returns:
+
+        """
+        # Arrange
+        template = MagicMock()
+        template.format = Template.XSD
+        data = MagicMock()
+        data.template = template
+        mock_user = create_mock_user(1, is_superuser=True)
+        mock_request = create_mock_request(user=mock_user)
+        # Act
+        data_api.upsert(data, mock_request)
+        # Assert
+        self.assertTrue(mock_check_xml_file_is_valid.called)
+        self.assertFalse(mock_check_json_file_is_valid.called)
+
+    @patch("core_main_app.components.data.api.check_json_file_is_valid")
+    @patch("core_main_app.components.data.api.check_xml_file_is_valid")
+    def test_json_data_upsert_calls_json_validation(
+        self, mock_check_xml_file_is_valid, mock_check_json_file_is_valid
+    ):
+        """test_json_data_upsert_calls_json_validation
+
+        Returns:
+
+        """
+        # Arrange
+        template = MagicMock()
+        template.format = Template.JSON
+        data = MagicMock()
+        data.template = template
+        mock_user = create_mock_user(1, is_superuser=True)
+        mock_request = create_mock_request(user=mock_user)
+        # Act
+        data_api.upsert(data, mock_request)
+        # Assert
+        self.assertFalse(mock_check_xml_file_is_valid.called)
+        self.assertTrue(mock_check_json_file_is_valid.called)
+
+    @patch.object(Data, "save")
+    def test_data_upsert_json_format_returns_data_with_dict_content_set(
+        self, mock_save
+    ):
+        """test_data_upsert_json_format_returns_data_with_dict_content_set
+
+        Args:
+            mock_save:
+
+        Returns:
+
+        """
+        # Arrange
+        data = _create_data(
+            _get_json_template(),
+            user_id="2",
+            title="title",
+            content={"element": "value"},
+        )
+        mock_save.return_value = data
+        mock_user = create_mock_user("2")
+        mock_request = create_mock_request(user=mock_user)
+        # Act
+        result = data_api.upsert(data, mock_request)
+        # Assert
+        self.assertTrue(isinstance(result.content, dict))
+
+    @patch("core_main_app.components.data.models.Data.convert_to_file")
+    def test_data_upsert_unknown_format_convert_to_file_raises_model_error(
+        self, mock_convert_to_file
+    ):
+        """test_data_upsert_unknown_format_convert_to_file_raises_model_error
+
+        Args:
+
+        Returns:
+
+        """
+        # Arrange
+        data = _create_data(
+            _get_json_template(),
+            user_id="2",
+            title="title",
+            content={"element": "value"},
+        )
+        data.template.format = "bad"
+        mock_user = create_mock_user("2")
+        mock_request = create_mock_request(user=mock_user)
+        # Act + Assert
+        with self.assertRaises(ModelError):
+            data_api.upsert(data, mock_request)
+
+    @patch("core_main_app.components.data.models.Data.convert_to_dict")
+    def test_data_upsert_unknown_format_convert_to_dict_raises_model_error(
+        self, mock_convert_to_dict
+    ):
+        """test_data_upsert_unknown_format_convert_to_dict_raises_model_error
+
+        Args:
+
+        Returns:
+
+        """
+        # Arrange
+        data = _create_data(
+            _get_json_template(),
+            user_id="2",
+            title="title",
+            content={"element": "value"},
+        )
+        data.template.format = "bad"
+        mock_user = create_mock_user("2")
+        mock_request = create_mock_request(user=mock_user)
+        # Act + Assert
+        with self.assertRaises(ModelError):
+            data_api.upsert(data, mock_request)
+
+    @patch("django.core.files.uploadedfile.SimpleUploadedFile.__init__")
+    @patch("core_main_app.utils.xml.raw_xml_to_dict")
+    @patch.object(Data, "content")
+    @patch.object(Data, "save")
+    @patch("core_main_app.components.data.api.check_xml_file_is_valid")
+    def test_data_encoding_error_returns_data_with_content_set(
+        self,
+        mock_check_xml,
+        mock_data_save,
+        mock_data_content,
+        mock_raw_xml_to_dict,
+        mock_simple_upload_file,
+    ):
+        """test_data_encoding_error_returns_data_with_content_set
+
+        Args:
+
+        Returns:
+
+        """
+        # Arrange
+        mock_simple_upload_file.return_value = None
+        mock_content = MagicMock()
+        mock_content.encode.side_effect = UnicodeEncodeError("", "", 0, 0, "")
+        mock_data_content.return_value = mock_content
+        data = _create_data(
+            _get_template(),
+            user_id="2",
+            title="title",
+            content=mock_content,
+        )
+        # mock_check_xml.return_value = None
+
+        mock_user = create_mock_user("2")
+        mock_request = create_mock_request(user=mock_user)
+        # Act
+        result = data_api.upsert(data, mock_request)
+        # Assert
+        self.assertTrue(result.content, data.content)
 
 
 class TestAdminDataInsert(TestCase):
@@ -578,6 +745,79 @@ class TestDataCheckXmlFileIsValid(TestCase):
         self.assertEqual(result, True)
 
 
+class TestDataCheckJsonFileIsValid(TestCase):
+    """TestDataCheckJsonFileIsValid"""
+
+    def test_data_check_json_file_is_valid_raises_core_error_if_invalid_format(
+        self,
+    ):
+        """test_data_check_json_file_is_valid_raises_core_error_if_invalid_format
+
+        Returns:
+
+        """
+        # Arrange
+        template = MagicMock()
+        template.content = {}
+        data = MagicMock()
+        data.template = template
+        data.content = "test"
+        # Act # Assert
+        with self.assertRaises(exceptions.JSONError):
+            data_api.check_json_file_is_valid(data)
+
+    def test_data_check_json_file_is_valid_raises_json_error_if_failed_during_json_validation(
+        self,
+    ):
+        """test_data_check_json_file_is_valid_raises_json_error_if_failed_during_json_validation
+
+        Returns:
+
+        """
+        # Arrange
+        template = MagicMock()
+        template.content = {
+            "definitions": {},
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "$id": "http://example.com/root.json",
+            "type": "object",
+            "required": [
+                "checked",
+            ],
+            "properties": {
+                "checked": {
+                    "$id": "#/properties/checked",
+                    "type": "boolean",
+                }
+            },
+        }
+        data = MagicMock()
+        data.template = template
+        data.content = {"checked": "bad value"}
+        # Act # Assert
+        with self.assertRaises(exceptions.JSONError):
+            data_api.check_json_file_is_valid(data)
+
+    def test_data_json_xml_data_valid_return_true_if_validation_successful(
+        self,
+    ):
+        """test_data_json_xml_data_valid_return_true_if_validation_successful
+
+        Returns:
+
+        """
+        # Arrange
+        template = MagicMock()
+        template.content = {}
+        data = MagicMock()
+        data.template = template
+        data.content = {"value": 1}
+        # Act
+        result = data_api.check_json_file_is_valid(data)
+        # Assert
+        self.assertEqual(result, True)
+
+
 class TestDataGetNone(TestCase):
     """TestDataGetNone"""
 
@@ -718,7 +958,8 @@ class TestTimes(TestCase):
         data_api.upsert(data, mock_request)
         data.id = 1
         original_date = data.last_modification_date
-        data.xml_content = "<root></root>"
+        sleep(0.05)
+        data.content = "<root></root>"
         data_api.upsert(data, mock_request)
         # Assert
         self.assertIsNotNone(data.last_modification_date)
@@ -789,6 +1030,7 @@ class TestTimes(TestCase):
         data.id = 1
         original_date = data.last_change_date
         data.title = "test"
+        sleep(0.05)
         data_api.upsert(data, mock_request)
         # Assert
         self.assertIsNotNone(data.last_change_date)
@@ -877,13 +1119,81 @@ class TestDataBlob(TestCase):
         self.assertIsNotNone(blob)
 
 
+class TestDataContent(TestCase):
+    """TestDataContent"""
+
+    def test_data_content_none_returns_content(
+        self,
+    ):
+        """test_data_content_none_returns_content
+
+        Returns:
+
+        """
+        # Arrange
+        data = _create_data(
+            _get_template(), user_id="2", title="title", content=None
+        )
+        data.file = SimpleUploadedFile("test.txt", b"test")
+        # Assert
+        self.assertEqual(data.content, "test")
+
+    def test_data_content_attribute_error_returns_content(
+        self,
+    ):
+        """test_data_content_attribute_error_returns_content
+
+        Returns:
+
+        """
+        # Arrange
+        data = _create_data(
+            _get_template(), user_id="2", title="title", content=None
+        )
+        mock_file_content = MagicMock()
+        mock_file_content.read.return_value.decode.side_effect = (
+            AttributeError()
+        )
+        data.file = mock_file_content
+        # Assert
+        self.assertEqual(data.content, mock_file_content.read())
+
+
+class TestAbstractData(TestCase):
+    class MockData(AbstractData):
+        """MockData"""
+
+        pass
+
+    def test_convert_to_dict_raises_not_implemented_error(self):
+        """test_convert_to_dict_raises_not_implemented_error
+
+        Returns:
+
+        """
+        abs_data = TestAbstractData.MockData()
+        with self.assertRaises(NotImplementedError):
+            abs_data.convert_to_dict()
+
+    def test_convert_to_file_raises_not_implemented_error(self):
+        """test_convert_to_file_raises_not_implemented_error
+
+        Returns:
+
+        """
+        abs_data = TestAbstractData.MockData()
+        with self.assertRaises(NotImplementedError):
+            abs_data.convert_to_file()
+
+
 def _get_template():
-    """_get_template
+    """Get XSD template
 
     Returns:
 
     """
     template = Template()
+    template.format = Template.XSD
     template.id_field = 1
     xsd = (
         '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">'
@@ -893,8 +1203,21 @@ def _get_template():
     return template
 
 
+def _get_json_template():
+    """Get JSON template
+
+    Returns:
+
+    """
+    template = Template()
+    template.format = Template.JSON
+    template.id_field = 1
+    template.content = "{}"
+    return template
+
+
 def _create_data(template, user_id, title, content, data_id=None, blob=None):
-    """_create_data
+    """Create a data
 
     Args:
         template:
@@ -915,7 +1238,7 @@ def _create_data(template, user_id, title, content, data_id=None, blob=None):
 
 
 def _create_blob(user_id, filename="test", content=b"test"):
-    """_create_blob
+    """Create a blob
 
     Returns:
 

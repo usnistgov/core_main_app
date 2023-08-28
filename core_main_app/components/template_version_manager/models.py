@@ -5,6 +5,7 @@ Template Version Manager model
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.models import F
+
 from core_main_app.commons import exceptions
 from core_main_app.components.version_manager.models import VersionManager
 

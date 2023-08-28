@@ -4,6 +4,7 @@ from unittest.mock import patch
 
 from django.test import SimpleTestCase
 from rest_framework import status
+from tests.components.data.tests_unit import _get_template, _get_json_template
 
 import core_main_app.components.template.api as template_api
 from core_main_app.commons.exceptions import DoesNotExist
@@ -132,20 +133,61 @@ class TestTemplateDownload(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.content, expected_value)
 
+    @patch.object(template_api, "get_by_id")
+    def test_get_with_pretty_print_json_returns_formatted_template(
+        self, mock_template_api_get_by_id
+    ):
+        """test_get_with_pretty_print_json_returns_formatted_template
 
-def _get_template():
-    """_get_template
+        Args:
+            mock_template_api_get_by_id:
 
-    Args:
+        Returns:
 
-    Returns:
-    """
-    template = Template()
-    template.id = 1
-    template.filename = "test"
-    xsd = (
-        '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">'
-        '<xs:element name="tag"></xs:element></xs:schema>'
-    )
-    template.content = xsd
-    return template
+        """
+        # Arrange
+        mock_user = create_mock_user("1")
+        mock_template = _get_json_template()
+        mock_template_api_get_by_id.return_value = mock_template
+        expected_value = b"{}"
+
+        # Mock
+        response = RequestMock.do_request_get(
+            template_rest_views.TemplateDownload.as_view(),
+            mock_user,
+            param={"pk": "1"},
+            data={"pretty_print": "true"},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.content, expected_value)
+
+    @patch.object(template_api, "get_by_id")
+    def test_get_with_pretty_unknown_template_format_return_bad_response(
+        self, mock_template_api_get_by_id
+    ):
+        """test_get_with_pretty_unknown_template_format_return_bad_response
+
+        Args:
+            mock_template_api_get_by_id:
+
+        Returns:
+
+        """
+        # Arrange
+        mock_user = create_mock_user("1")
+        mock_template = _get_json_template()
+        mock_template.format = "BAD"
+        mock_template_api_get_by_id.return_value = mock_template
+
+        # Mock
+        response = RequestMock.do_request_get(
+            template_rest_views.TemplateDownload.as_view(),
+            mock_user,
+            param={"pk": "1"},
+            data={"pretty_print": "true"},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

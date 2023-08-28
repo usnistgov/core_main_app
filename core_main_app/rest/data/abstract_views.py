@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons.constants import DATA_JSON_FIELD
+from core_main_app.commons.exceptions import RestApiError
 from core_main_app.components.data import api as data_api
 from core_main_app.settings import DATA_SORTING_FIELDS
 from core_main_app.utils.query.constants import VISIBILITY_OPTION
@@ -109,13 +110,13 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
         # update the criteria with workspaces information
         if workspaces is not None and len(workspaces) > 0:
             list_workspace_ids = [
-                self.parse_id(workspace["id"]) for workspace in workspaces
+                self.parse_id(workspace) for workspace in workspaces
             ]
             query_builder.add_list_criteria("workspace", list_workspace_ids)
         # update the criteria with templates information
         if templates is not None and len(templates) > 0:
             list_template_ids = [
-                self.parse_id(template["id"]) for template in templates
+                self.parse_id(template) for template in templates
             ]
             query_builder.add_list_criteria("template", list_template_ids)
         # update the criteria with visibility information
@@ -159,7 +160,21 @@ class AbstractExecuteLocalQueryView(APIView, metaclass=ABCMeta):
         raise NotImplementedError("build_response method is not implemented.")
 
     @staticmethod
-    def parse_id(_id):
+    def parse_id(obj):
+        """Parse object id
+
+        Args:
+            obj:
+
+        Returns:
+
+        """
+        if hasattr(obj, "id"):
+            _id = obj.id
+        elif isinstance(obj, dict) and "id" in obj:
+            _id = obj["id"]
+        else:
+            raise RestApiError("Cannot find object id.")
         try:
             return int(_id)
         except (ValueError, TypeError):

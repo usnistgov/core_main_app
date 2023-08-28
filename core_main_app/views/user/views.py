@@ -288,6 +288,7 @@ def get_context_manage_template_versions(
             "index": index,
             "object": str(version.id),
             "creation_date": version.creation_date,
+            "format": version.format,
         }
 
         if str(version.id) not in version_manager.disabled_versions:

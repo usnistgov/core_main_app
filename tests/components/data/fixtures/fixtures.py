@@ -80,7 +80,7 @@ class DataFixtures(FixtureInterface):
         )
         self.template.content = xsd
         self.template.hash = ""
-        self.template.filename = "filename"
+        self.template.filename = "filename.xsd"
         self.template.save()
 
 
@@ -225,7 +225,7 @@ class AccessControlDataFixture(FixtureInterface):
         )
         self.template.content = xsd
         self.template.hash = ""
-        self.template.filename = "filename"
+        self.template.filename = "filename.xsd"
         self.template.save()
 
     def generate_workspace(self):
@@ -348,7 +348,7 @@ class AccessControlDataFixture2(FixtureInterface):
         )
         self.template.content = xsd
         self.template.hash = ""
-        self.template.filename = "filename"
+        self.template.filename = "filename.xsd"
         self.template.save()
 
     def generate_workspace(self):
@@ -460,7 +460,7 @@ class AccessControlDataFullTextSearchFixture(FixtureInterface):
         )
         self.template.content = xsd
         self.template.hash = ""
-        self.template.filename = "filename"
+        self.template.filename = "filename.xsd"
         self.template.save()
 
     def generate_workspace(self):
@@ -570,7 +570,7 @@ class AccessControlDataNumericFixture(FixtureInterface):
         )
         self.template.content = xsd
         self.template.hash = ""
-        self.template.filename = "filename"
+        self.template.filename = "filename.xsd"
         self.template.save()
 
     def generate_workspace(self):
@@ -656,7 +656,7 @@ class AccessControlDataNoneFixture(FixtureInterface):
         )
         self.template.content = xsd
         self.template.hash = ""
-        self.template.filename = "filename"
+        self.template.filename = "filename.xsd"
         self.template.save()
 
     def generate_workspace(self):
@@ -958,7 +958,7 @@ class AccessControlBlobWithMetadataFixture(FixtureInterface):
         )
         self.template.content = xsd
         self.template.hash = ""
-        self.template.filename = "filename"
+        self.template.filename = "filename.xsd"
         self.template.save()
 
     def generate_workspace(self):

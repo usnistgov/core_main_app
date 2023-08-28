@@ -7,7 +7,11 @@ from django.core import exceptions as django_exceptions
 from django.core.exceptions import ValidationError
 from django.test import override_settings
 
-from core_main_app.commons.exceptions import DoesNotExist, NotUniqueError
+from core_main_app.commons.exceptions import (
+    DoesNotExist,
+    NotUniqueError,
+    CoreError,
+)
 from core_main_app.components.template.models import Template
 from core_main_app.components.template_version_manager import (
     api as version_manager_api,
@@ -78,16 +82,21 @@ class TestTemplateVersionManagerInsert(TestCase):
     """TestTemplateVersionManagerInsert"""
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
+    @patch.object(TemplateVersionManager, "version_set")
     @patch.object(TemplateVersionManager, "save_version_manager")
     @patch("core_main_app.components.template.models.Template.save_template")
     def test_create_version_manager_returns_version_manager(
-        self, mock_save_template, mock_save_template_version_manager
+        self,
+        mock_save_template,
+        mock_save_template_version_manager,
+        mock_tvm_version_set,
     ):
         """test create version manager returns version manager
 
         Args:
             mock_save_template:
             mock_save_template_version_manager:
+            mock_tvm_version_set:
 
         Returns:
 
@@ -105,6 +114,7 @@ class TestTemplateVersionManagerInsert(TestCase):
 
         version_manager = _create_template_version_manager(title="Schema")
         mock_save_template_version_manager.return_value = version_manager
+        mock_tvm_version_set.get.return_value = template
 
         # Act
         result = version_manager_api.insert(
@@ -115,6 +125,7 @@ class TestTemplateVersionManagerInsert(TestCase):
         self.assertIsInstance(result, TemplateVersionManager)
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
+    @patch.object(TemplateVersionManager, "version_set")
     @patch("core_main_app.components.template.models.Template.delete")
     @patch("core_main_app.components.template.models.Template.save_template")
     @patch.object(TemplateVersionManager, "save_version_manager")
@@ -123,6 +134,7 @@ class TestTemplateVersionManagerInsert(TestCase):
         mock_version_manager_save,
         mock_template_save,
         mock_template_delete,
+        mock_tvm_version_set,
     ):
         """test insert manager raises api error if title already exists
 
@@ -130,6 +142,7 @@ class TestTemplateVersionManagerInsert(TestCase):
             mock_version_manager_save:
             mock_template_save:
             mock_template_delete:
+            mock_tvm_version_set:
 
         Returns:
 
@@ -147,6 +160,7 @@ class TestTemplateVersionManagerInsert(TestCase):
         mock_template_delete.return_value = None
         mock_version_manager = _create_template_version_manager(title="Schema")
         mock_version_manager_save.side_effect = NotUniqueError("")
+        mock_tvm_version_set.get.return_value = template
 
         # Act + Assert
         with self.assertRaises(NotUniqueError):
@@ -174,20 +188,25 @@ class TestTemplateVersionManagerInsert(TestCase):
         template_content = (
             "<schema xmlns='http://www.w3.org/2001/XMLSchema'></schema>"
         )
-        template = _create_template(template_filename, template_content)
+        current_template = _create_template(
+            template_filename, template_content
+        )
+        new_template = _create_template(template_filename, template_content)
 
         mock_version_manager = _create_mock_template_version_manager(
             title="Schema"
         )
+        mock_version_manager.current_version = current_template
         mock_save.side_effect = django_exceptions.ValidationError("")
 
         # Act + Assert
         with self.assertRaises(django_exceptions.ValidationError):
             version_manager_api.insert(
-                mock_version_manager, template, request=mock_request
+                mock_version_manager, new_template, request=mock_request
             )
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
+    @patch.object(TemplateVersionManager, "version_set")
     @patch("core_main_app.components.template.models.Template.delete")
     @patch.object(TemplateVersionManager, "save_version_manager")
     @patch("core_main_app.components.template.models.Template.save_template")
@@ -196,6 +215,7 @@ class TestTemplateVersionManagerInsert(TestCase):
         mock_save_template,
         mock_save_version_manager,
         mock_delete_template,
+        mock_tvm_version_set,
     ):
         """test create version manager raises exception if error in create version manager
 
@@ -203,6 +223,7 @@ class TestTemplateVersionManagerInsert(TestCase):
             mock_save_template:
             mock_save_version_manager:
             mock_delete_template:
+            mock_tvm_version_set:
 
         Returns:
 
@@ -210,7 +231,7 @@ class TestTemplateVersionManagerInsert(TestCase):
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
-        template_filename = "Schema"
+        template_filename = "schema.xsd"
         template_content = (
             "<schema xmlns='http://www.w3.org/2001/XMLSchema'></schema>"
         )
@@ -222,6 +243,7 @@ class TestTemplateVersionManagerInsert(TestCase):
             django_exceptions.ValidationError("")
         )
         mock_delete_template.return_value = None
+        mock_tvm_version_set.get.return_value = template
 
         # Act + Assert
         with self.assertRaises(django_exceptions.ValidationError):
@@ -230,6 +252,7 @@ class TestTemplateVersionManagerInsert(TestCase):
             )
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
+    @patch.object(TemplateVersionManager, "version_set")
     @patch("core_main_app.components.template.models.Template.delete")
     @patch.object(TemplateVersionManager, "save_version_manager")
     @patch("core_main_app.components.template.models.Template.save_template")
@@ -238,6 +261,7 @@ class TestTemplateVersionManagerInsert(TestCase):
         mock_save_template,
         mock_save_version_manager,
         mock_delete_template,
+        mock_tvm_version_set,
     ):
         """test create version manager raises exception if title is empty
 
@@ -245,6 +269,7 @@ class TestTemplateVersionManagerInsert(TestCase):
             mock_save_template:
             mock_save_version_manager:
             mock_delete_template:
+            mock_tvm_version_set:
 
         Returns:
 
@@ -252,7 +277,7 @@ class TestTemplateVersionManagerInsert(TestCase):
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
-        template_filename = "Schema"
+        template_filename = "schema.xsd"
         template_content = (
             "<schema xmlns='http://www.w3.org/2001/XMLSchema'></schema>"
         )
@@ -264,6 +289,7 @@ class TestTemplateVersionManagerInsert(TestCase):
             django_exceptions.ValidationError("")
         )
         mock_delete_template.return_value = None
+        mock_tvm_version_set.get.return_value = template
 
         # Act + Assert
         with self.assertRaises(django_exceptions.ValidationError):
@@ -276,18 +302,23 @@ class TestTemplateVersionManagerAddVersion(TestCase):
     """TestTemplateVersionManagerAddVersion"""
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
+    @patch.object(TemplateVersionManager, "version_set")
     @patch("core_main_app.components.template.models.Template.save")
     @patch(
         "core_main_app.components.template_version_manager.models.TemplateVersionManager.save"
     )
     def test_insert_returns_template_version(
-        self, mock_save_template_version_manager, mock_save_template
+        self,
+        mock_save_template_version_manager,
+        mock_save_template,
+        mock_tvm_version_set,
     ):
         """test insert returns template version
 
         Args:
             mock_save_template_version_manager:
             mock_save_template:
+            mock_tvm_version_set:
 
         Returns:
 
@@ -295,18 +326,22 @@ class TestTemplateVersionManagerAddVersion(TestCase):
         # Arrange
         mock_user = create_mock_user("1", is_superuser=True)
         mock_request = create_mock_request(mock_user)
-        template_filename = "Schema"
+        template_filename = "schema.xsd"
         template_content = (
             "<schema xmlns='http://www.w3.org/2001/XMLSchema'></schema>"
         )
 
-        template = _create_template(template_filename, template_content)
-        mock_save_template.return_value = template
+        current_template = _create_template(
+            template_filename, template_content
+        )
+        new_template = _create_template(template_filename, template_content)
+        mock_save_template.return_value = new_template
         version_manager = _create_template_version_manager()
         mock_save_template_version_manager.return_value = version_manager
+        mock_tvm_version_set.get.return_value = current_template
         # Act
         result = version_manager_api.insert(
-            version_manager, template, request=mock_request
+            version_manager, new_template, request=mock_request
         )
 
         # Assert
@@ -332,16 +367,57 @@ class TestTemplateVersionManagerAddVersion(TestCase):
         template_content = (
             "<schema xmlns='http://www.w3.org/2001/XMLSchema'></schema>"
         )
-        template = _create_template(template_filename, template_content)
+        current_template = _create_template(
+            template_filename, template_content
+        )
+        new_template = _create_template(template_filename, template_content)
 
         mock_save_template.side_effect = django_exceptions.ValidationError("")
 
         mock_version_manager = _create_mock_template_version_manager()
+        mock_version_manager.current_version = current_template
 
         # Act + Assert
         with self.assertRaises(ValidationError):
             version_manager_api.insert(
-                mock_version_manager, template, request=mock_request
+                mock_version_manager, new_template, request=mock_request
+            )
+
+    @override_settings(ROOT_URLCONF="core_main_app.urls")
+    @patch.object(TemplateVersionManager, "version_set")
+    @patch("core_main_app.components.template.models.Template.save")
+    def test_insert_raises_exception_if_new_version_has_different_format(
+        self, mock_save_template, mock_tvm_version_set
+    ):
+        """test_insert_raises_exception_if_new_version_has_different_format
+
+        Args:
+            mock_save_template:
+            mock_tvm_version_set:
+
+        Returns:
+
+        """
+        # Arrange
+        mock_user = create_mock_user("1", is_superuser=True)
+        mock_request = create_mock_request(mock_user)
+        template_filename = "schema.xsd"
+        template_content = (
+            "<schema xmlns='http://www.w3.org/2001/XMLSchema'></schema>"
+        )
+
+        current_template = _create_template(
+            template_filename, template_content
+        )
+        new_template = _create_template("schema.json", template_content)
+        mock_save_template.return_value = new_template
+        version_manager = _create_template_version_manager()
+        mock_tvm_version_set.get.return_value = current_template
+
+        # Act + Assert
+        with self.assertRaises(CoreError):
+            version_manager_api.insert(
+                version_manager, new_template, request=mock_request
             )
 
 
@@ -513,7 +589,7 @@ def _create_template(filename="", content=""):
     Returns:
 
     """
-    return Template(id=1, filename=filename, content=content)
+    return Template(id=1, filename=filename, content=content, format="XSD")
 
 
 def _create_template_version_manager(

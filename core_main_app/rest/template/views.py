@@ -5,13 +5,19 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core_main_app.commons.exceptions import XMLError
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions as exceptions
+from core_main_app.commons.exceptions import XMLError
 from core_main_app.components.template import api as template_api
+from core_main_app.components.template.models import Template
 from core_main_app.rest.template.serializers import TemplateSerializer
-from core_main_app.utils.file import get_file_http_response
 from core_main_app.utils.boolean import to_bool
+from core_main_app.utils.file import (
+    get_file_http_response,
+    get_template_file_content_type_for_template_format,
+    get_template_file_extension_for_template_format,
+)
+from core_main_app.utils.json_utils import format_content_json
 from core_main_app.utils.xml import format_content_xml
 
 
@@ -124,14 +130,31 @@ class TemplateDownload(APIView):
             content = template_object.content
 
             # get format bool
-            format = request.query_params.get("pretty_print", False)
+            pretty_print = request.query_params.get("pretty_print", False)
 
             # format content
-            if to_bool(format):
-                content = format_content_xml(content)
+            if to_bool(pretty_print):
+                # format XML
+                if template_object.format == Template.XSD:
+                    content = format_content_xml(content)
+                # format JSON
+                elif template_object.format == Template.JSON:
+                    content = format_content_json(content)
+                else:
+                    content = {"message": "Unsupported format."}
+                    return Response(
+                        content, status=status.HTTP_400_BAD_REQUEST
+                    )
 
             return get_file_http_response(
-                content, template_object.filename, "text/xsd", "xsd"
+                content,
+                template_object.filename,
+                content_type=get_template_file_content_type_for_template_format(
+                    template_object.format
+                ),
+                extension=get_template_file_extension_for_template_format(
+                    template_object.format
+                ),
             )
         except Http404:
             content = {"message": "Template not found."}

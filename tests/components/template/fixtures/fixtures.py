@@ -37,7 +37,7 @@ class AccessControlTemplateFixture(FixtureInterface):
         )
         self.user1_template = Template(
             content=xsd,
-            hash="user1_template_hash",
+            _hash="user1_template_hash",
             filename="user1_template.xsd",
             file=SimpleUploadedFile("user1_template.xsd", xsd.encode("utf-8")),
             user="1",
@@ -46,7 +46,7 @@ class AccessControlTemplateFixture(FixtureInterface):
         self.user1_template.save()
         self.user2_template = Template(
             content=xsd,
-            hash="user2_template_hash",
+            _hash="user2_template_hash",
             filename="user2_template.xsd",
             file=SimpleUploadedFile("user2_template.xsd", xsd.encode("utf-8")),
             user="2",
@@ -55,7 +55,7 @@ class AccessControlTemplateFixture(FixtureInterface):
         self.user2_template.save()
         self.global_template = Template(
             content=xsd,
-            hash="global_template_hash",
+            _hash="global_template_hash",
             filename="global_template.xsd",
             file=SimpleUploadedFile(
                 "global_template.xsd", xsd.encode("utf-8")

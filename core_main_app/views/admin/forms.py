@@ -4,6 +4,9 @@ from django import forms
 from django.conf import settings
 from django.forms import ModelForm
 
+from core_main_app.commons.constants import (
+    TEMPLATE_FILE_EXTENSION_FOR_TEMPLATE_FORMAT,
+)
 from core_main_app.commons.validators import ExtensionValidator
 from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
@@ -59,9 +62,17 @@ class UploadTemplateForm(UploadForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["name"].label = "Enter Template name"
-        self.fields["upload_file"].validators = [ExtensionValidator(".xsd")]
+        self.fields["upload_file"].validators = [
+            ExtensionValidator(
+                ",".join(TEMPLATE_FILE_EXTENSION_FOR_TEMPLATE_FORMAT.values())
+            )
+        ]
         self.fields["upload_file"].widget = forms.FileInput(
-            attrs={"accept": ".xsd"}
+            attrs={
+                "accept": ",".join(
+                    TEMPLATE_FILE_EXTENSION_FOR_TEMPLATE_FORMAT.values()
+                )
+            }
         )
 
 
@@ -73,8 +84,18 @@ class UploadVersionForm(forms.Form):
     xsd_file = forms.FileField(
         label="Select a file",
         required=True,
-        validators=[ExtensionValidator(".xsd")],
-        widget=forms.FileInput(attrs={"accept": ".xsd"}),
+        validators=[
+            ExtensionValidator(
+                ",".join(TEMPLATE_FILE_EXTENSION_FOR_TEMPLATE_FORMAT.values())
+            )
+        ],
+        widget=forms.FileInput(
+            attrs={
+                "accept": ",".join(
+                    TEMPLATE_FILE_EXTENSION_FOR_TEMPLATE_FORMAT.values()
+                )
+            }
+        ),
     )
 
 

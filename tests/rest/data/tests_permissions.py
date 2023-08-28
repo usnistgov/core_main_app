@@ -585,7 +585,7 @@ class TestDataDownloadGetPermissions(SimpleTestCase):
 
         """
         data_object = Mock()
-        data_object.xml_content = "<tag attr='attr_val'>tag_val</tag>"
+        data_object.content = "<tag attr='attr_val'>tag_val</tag>"
         data_object.title = "mock.xml"
 
         mock_data_api_get_by_id.return_value = data_object
@@ -607,7 +607,7 @@ class TestDataDownloadGetPermissions(SimpleTestCase):
 
         """
         data_object = Mock()
-        data_object.xml_content = "<tag attr='attr_val'>tag_val</tag>"
+        data_object.content = "<tag attr='attr_val'>tag_val</tag>"
         data_object.title = "mock.xml"
 
         mock_data_api_get_by_id.return_value = data_object
@@ -631,7 +631,7 @@ class TestDataDownloadGetPermissions(SimpleTestCase):
 
         """
         data_object = Mock()
-        data_object.xml_content = "<tag attr='attr_val'>tag_val</tag>"
+        data_object.content = "<tag attr='attr_val'>tag_val</tag>"
         data_object.title = "mock.xml"
 
         mock_data_api_get_by_id.return_value = data_object
