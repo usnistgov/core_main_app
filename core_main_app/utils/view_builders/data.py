@@ -2,7 +2,8 @@
 """
 import logging
 
-from core_main_app import settings
+from django.conf import settings as conf_settings
+
 from core_main_app.commons import exceptions
 from core_main_app.components.template_xsl_rendering import (
     api as template_xsl_rendering_api,
@@ -84,7 +85,7 @@ def build_page(
                 "core_main_app/common/modals/download-options.html"
             )
 
-        if "core_file_preview_app" in settings.INSTALLED_APPS:
+        if "core_file_preview_app" in conf_settings.INSTALLED_APPS:
             page_info["assets"]["js"].extend(
                 [
                     {
@@ -100,12 +101,12 @@ def build_page(
                 "core_file_preview_app/user/file_preview_modal.html"
             )
 
-        if "core_linked_records_app" in settings.INSTALLED_APPS:
-            from core_linked_records_app.components.pid_settings import (
-                api as pid_settings_api,
+        if "core_linked_records_app" in conf_settings.INSTALLED_APPS:
+            from core_linked_records_app.system.pid_settings import (
+                api as pid_settings_system_api,
             )
 
-            if pid_settings_api.get().auto_set_pid:
+            if pid_settings_system_api.get().auto_set_pid:
                 page_info["context"]["share_pid_button"] = True
                 page_info["assets"]["js"].extend(
                     [

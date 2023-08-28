@@ -1,17 +1,21 @@
 """ Tests View Data utils
 """
 from unittest import TestCase
+from unittest.mock import MagicMock, patch
 
-from core_main_app.components.data.models import Data
-from core_main_app.utils.view_builders.data import (
-    _get_field,
-    xslt_selector,
-)
+from django.test import override_settings
 from tests.components.template_xsl_rendering.fixtures.fixtures import (
     TemplateXslRenderingFixtures,
 )
+
+from core_main_app.components.data.models import Data
 from core_main_app.utils.integration_tests.integration_base_test_case import (
     IntegrationBaseTestCase,
+)
+from core_main_app.utils.view_builders.data import (
+    _get_field,
+    xslt_selector,
+    build_page,
 )
 
 fixture_template_rendering = TemplateXslRenderingFixtures()
@@ -165,3 +169,23 @@ class TestXsltSelector(IntegrationBaseTestCase):
         self.assertEqual(
             xsl_transformation_id, self.fixture.xsl_transformation_3.id
         )
+
+
+class TestBuildPage(TestCase):
+    @override_settings(INSTALLED_APPS=["core_linked_records_app"])
+    @patch("core_linked_records_app.system.pid_settings.api.get")
+    @patch("core_main_app.utils.view_builders.data._get_field")
+    def test_build_page_with_linked_records_app_installed_calls_api(
+        self, mock_get_field, mock_system_get_pid_settings
+    ):
+        # Arrange
+        data = MagicMock()
+        data.title = "title"
+        mock_get_field.return_value = "test"
+        mock_pid_settings = MagicMock()
+        mock_pid_settings.auto_set_pid = False
+        mock_system_get_pid_settings.return_value = mock_pid_settings
+        # Act
+        build_page(data)
+        # Assert
+        self.assertTrue(mock_system_get_pid_settings.called)
