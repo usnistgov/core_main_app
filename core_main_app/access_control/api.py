@@ -190,7 +190,7 @@ def can_read_or_write_in_workspace(func, workspace, user):
         return func(workspace, user)
 
     # check anonymous access
-    _check_anonymous_access(user)
+    check_anonymous_access(user)
 
     _check_can_read_or_write_in_workspace(workspace, user)
     return func(workspace, user)
@@ -256,7 +256,7 @@ def can_read(func, user):
         return func(user)
 
     # check anonymous access
-    _check_anonymous_access(user)
+    check_anonymous_access(user)
 
     # get list of document
     document_list = func(user)
@@ -328,7 +328,7 @@ def can_anonymous_access_public_data(func, *args, **kwargs):
     """
     user = next((arg for arg in args if isinstance(arg, User)), None)
 
-    _check_anonymous_access(user)
+    check_anonymous_access(user)
     return func(*args, **kwargs)
 
 
@@ -375,7 +375,7 @@ def _check_can_read_or_write_in_workspace(workspace, user):
         )
 
 
-def _check_anonymous_access(user):
+def check_anonymous_access(user):
     """Check anonymous access
 
     Args:
@@ -401,7 +401,7 @@ def check_can_read_document(document, user):
     Returns:
 
     """
-    _check_anonymous_access(user)
+    check_anonymous_access(user)
 
     # workspace case
     if document.user_id != str(user.id):

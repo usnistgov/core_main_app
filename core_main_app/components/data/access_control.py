@@ -6,7 +6,7 @@ from core_main_app.access_control.api import (
     has_perm_publish,
     check_can_read_list,
     can_write_in_workspace,
-    _check_anonymous_access,
+    check_anonymous_access,
     check_can_read_document,
 )
 from core_main_app.components.workspace import api as workspace_api
@@ -48,7 +48,7 @@ def can_read_list_data_id(func, list_data_id, user):
         return func(list_data_id, user)
 
     # check anonymous access
-    _check_anonymous_access(user)
+    check_anonymous_access(user)
 
     list_data = func(list_data_id, user)
     check_can_read_list(list_data, user)
@@ -78,7 +78,7 @@ def can_read_data_query(
 
     """
     # check anonymous access
-    _check_anonymous_access(user)
+    check_anonymous_access(user)
     # update the query
     query = _update_can_read_query(query, user, workspace_filter, user_filter)
     # get list of data
@@ -108,14 +108,12 @@ def can_read_aggregate_query(func, query, user):
         return func(query, user)
 
     # check anonymous access
-    _check_anonymous_access(user)
+    check_anonymous_access(user)
 
     # update the query
     query = _update_can_read_aggregate_query(query, user)
-    # get list of data
-    data = func(query, user)
 
-    return data
+    return func(query, user)
 
 
 def _update_can_read_query(
