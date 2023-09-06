@@ -1,6 +1,8 @@
 """
     Admin views
 """
+import re
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
@@ -10,11 +12,9 @@ from django.template import loader
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.html import escape as html_escape
+from django.views.debug import SafeExceptionReporterFilter
 from django.views.generic import View
 from markdown import markdown
-
-from xml_utils.commons.exceptions import HTMLError
-from xml_utils.html_tree.parser import parse_html
 
 from core_main_app.commons import constants as constants
 from core_main_app.commons import exceptions
@@ -48,6 +48,8 @@ from core_main_app.views.common.ajax import (
 )
 from core_main_app.views.common.views import read_xsd_file
 from core_main_app.views.user.views import get_context_manage_template_versions
+from xml_utils.commons.exceptions import HTMLError
+from xml_utils.html_tree.parser import parse_html
 
 
 @staff_member_required
@@ -744,3 +746,10 @@ def data_migration(request):
         assets=assets,
         context=context,
     )
+
+
+class CustomExceptionReporter(SafeExceptionReporterFilter):
+    """Custom view for Django Exception Reports"""
+
+    # hide all settings
+    hidden_settings = re.compile(r".*", flags=re.IGNORECASE)
