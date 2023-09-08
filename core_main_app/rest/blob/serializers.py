@@ -40,6 +40,7 @@ class BlobSerializer(ModelSerializer):
             "filename",
             "handle",
             "blob",
+            "workspace",
             "checksum",
             "upload_date",
         ]
@@ -48,6 +49,7 @@ class BlobSerializer(ModelSerializer):
             "user_id",
             "handle",
             "checksum",
+            "workspace",
             "upload_date",
         )
 
