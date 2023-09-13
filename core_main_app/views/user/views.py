@@ -335,8 +335,8 @@ def set_timezone(request):
                 user_preferences = UserPreferences(
                     user_id=str(request.user.id)
                 )
-            user_preferences_api.upsert(user_preferences, request.user)
             user_preferences.timezone = request.POST["timezone"]
+            user_preferences_api.upsert(user_preferences, request.user)
             request.session["django_timezone"] = user_preferences.timezone
             return redirect("/")
         else:

@@ -67,7 +67,7 @@ def can_read(func, user):
     user_preferences = func(user)
 
     # If user preferences don't belong to user
-    if user_preferences.user_id != user.id:
+    if user_preferences.user_id != str(user.id):
         raise AccessControlError(
             "The user doesn't have enough rights to access these preferences."
         )
