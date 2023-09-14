@@ -4,6 +4,7 @@ from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
 from core_main_app.access_control import utils as acl_utils
+from core_main_app.permissions import rights
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 
@@ -38,6 +39,91 @@ class TestCheckHasPerm(TestCase):
             self.mock_kwargs["permission_name"]
         )
 
+    @patch.object(acl_utils, "logger")
+    @patch.object(acl_utils, "permissions_api")
+    def test_permission_get_by_codename_exception_raises_acl_error(
+        self, mock_permissions_api, mock_logger
+    ):
+        """test_permission_get_by_codename_exception_raises_acl_error"""
+        mock_permissions_api.get_by_codename.side_effect = Exception(
+            "mock_get_by_codename_exception"
+        )
+
+        with self.assertRaises(AccessControlError):
+            acl_utils.check_has_perm(**self.mock_kwargs)
+
+        mock_logger.warning.assert_called()
+
+    @patch.object(acl_utils, "group_api")
+    @patch.object(acl_utils, "permissions_api")
+    def test_get_by_name_and_permission_is_called(
+        self, mock_permissions_api, mock_group_api
+    ):
+        """test_get_by_name_and_permission_is_called"""
+        mock_permission_object = MagicMock()
+        mock_permissions_api.get_by_codename.return_value = (
+            mock_permission_object
+        )
+        self.mock_user.is_anonymous = True
+
+        acl_utils.check_has_perm(**self.mock_kwargs)
+        mock_group_api.get_by_name_and_permission.assert_called_with(
+            name=rights.ANONYMOUS_GROUP,
+            permission_codename=self.mock_kwargs["permission_name"],
+        )
+
+    @patch.object(acl_utils, "logger")
+    @patch.object(acl_utils, "group_api")
+    @patch.object(acl_utils, "permissions_api")
+    def test_get_by_name_and_permission_exception_raises_acl_error(
+        self, mock_permissions_api, mock_group_api, mock_logger
+    ):
+        """test_get_by_name_and_permission_exception_raises_acl_error"""
+        mock_permission_object = MagicMock()
+        mock_permissions_api.get_by_codename.return_value = (
+            mock_permission_object
+        )
+        self.mock_user.is_anonymous = True
+        mock_group_api.get_by_name_and_permission.side_effect = Exception(
+            "mock_get_by_name_and_permission_exception"
+        )
+
+        with self.assertRaises(AccessControlError):
+            acl_utils.check_has_perm(**self.mock_kwargs)
+
+        mock_logger.warning.assert_called()
+
+    @patch.object(acl_utils, "group_api")
+    @patch.object(acl_utils, "permissions_api")
+    def test_anonymous_cannot_access_raise_exception(
+        self, mock_permissions_api, mock_group_api
+    ):
+        """test_anonymous_cannot_access_raise_exception"""
+        mock_permission_object = MagicMock()
+        mock_permissions_api.get_by_codename.return_value = (
+            mock_permission_object
+        )
+        mock_group_api.get_by_name_and_permission.return_value = []
+        self.mock_user.is_anonymous = True
+
+        with self.assertRaises(AccessControlError):
+            acl_utils.check_has_perm(**self.mock_kwargs)
+
+    @patch.object(acl_utils, "group_api")
+    @patch.object(acl_utils, "permissions_api")
+    def test_anonymous_can_access_returns_none(
+        self, mock_permissions_api, mock_group_api
+    ):
+        """test_anonymous_can_access_returns_none"""
+        mock_permission_object = MagicMock()
+        mock_permissions_api.get_by_codename.return_value = (
+            mock_permission_object
+        )
+        mock_group_api.get_by_name_and_permission.return_value = [MagicMock()]
+        self.mock_user.is_anonymous = True
+
+        self.assertIsNone(acl_utils.check_has_perm(**self.mock_kwargs))
+
     @patch.object(acl_utils, "permissions_api")
     def test_user_has_perm_is_called(self, mock_permissions_api):
         """test_user_has_perm_is_called"""
@@ -54,21 +140,40 @@ class TestCheckHasPerm(TestCase):
             f"{mock_permission_object.codename}"
         )
 
+    @patch.object(acl_utils, "logger")
     @patch.object(acl_utils, "permissions_api")
-    def test_user_has_perm_false_raises_exception(
+    def test_user_has_perm_exception_raises_acl_error(
+        self, mock_permissions_api, mock_logger
+    ):
+        """test_user_has_perm_exception_raises_acl_error"""
+        mock_permission_object = MagicMock()
+        mock_permissions_api.get_by_codename.return_value = (
+            mock_permission_object
+        )
+        self.mock_kwargs["user"].has_perm.side_effect = Exception(
+            "mock_user_has_perm_exception"
+        )
+
+        with self.assertRaises(AccessControlError):
+            acl_utils.check_has_perm(**self.mock_kwargs)
+
+        mock_logger.warning.assert_called()
+
+    @patch.object(acl_utils, "permissions_api")
+    def test_registered_user_has_perm_false_raises_exception(
         self, mock_permissions_api  # noqa, pylint: disable=unused-argument
     ):
-        """test_user_has_perm_false_raises_exception"""
+        """test_registered_user_has_perm_false_raises_exception"""
         self.mock_kwargs["user"].has_perm.return_value = False
 
         with self.assertRaises(AccessControlError):
             acl_utils.check_has_perm(**self.mock_kwargs)
 
     @patch.object(acl_utils, "permissions_api")
-    def test_user_has_perm_true_returns_none(
+    def test_registered_user_has_perm_true_returns_none(
         self, mock_permissions_api  # noqa, pylint: disable=unused-argument
     ):
-        """test_user_has_perm_true_returns_none"""
+        """test_registered_user_has_perm_true_returns_none"""
         self.mock_kwargs["user"].has_perm.return_value = True
 
         self.assertIsNone(acl_utils.check_has_perm(**self.mock_kwargs))

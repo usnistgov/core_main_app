@@ -3,8 +3,8 @@
 
 from django import template
 
-from core_main_app.permissions import rights as RIGHTS
-from core_main_app.components.group import api as group_api
+from core_main_app.access_control.exceptions import AccessControlError
+from core_main_app.access_control.utils import check_has_perm
 
 register = template.Library()
 
@@ -18,23 +18,11 @@ def has_perm(user, permission):
         permission:
 
     Returns:
-
+        bool: Whether the user has the permission or not.
     """
     try:
-        permission_split = permission.split(".")
-        permission_name = permission_split[1]
-
-        if user.is_anonymous:
-            # We can give directly the permission name
-            access = group_api.get_by_name_and_permission(
-                name=RIGHTS.ANONYMOUS_GROUP,
-                permission_codename=permission_name,
-            )
-        else:
-            # We need to prefix with the app name
-            access = user.has_perm(permission)
-    except Exception:
-        # If something went wrong, we ask for an empty permission to give the access if it's a superUser
-        access = user.has_perm("")
-
-    return access
+        permission_name = permission.split(".")[1]
+        check_has_perm(user, permission_name)
+        return True
+    except AccessControlError:
+        return False
