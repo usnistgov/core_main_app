@@ -404,7 +404,7 @@ def check_can_read_document(document, user):
     check_anonymous_access(user)
 
     # workspace case
-    if document.user_id != str(user.id):
+    if str(document.user_id) != str(user.id):
         # workspace is set
         if hasattr(document, "workspace") and document.workspace is not None:
             # get list of accessible workspaces
