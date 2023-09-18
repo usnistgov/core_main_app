@@ -12,6 +12,7 @@ from core_main_app.utils.json_utils import (
     _get_json_validator,
     DEFAULT_VALIDATOR,
     format_content_json,
+    is_well_formed_json,
 )
 
 
@@ -101,6 +102,38 @@ class TestFormatContentJson(TestCase):
         invalid_json_str = '{"test":}'
         with self.assertRaises(JSONError):
             format_content_json(invalid_json_str)
+
+
+class TestIsWellFormedContentJson(TestCase):
+    """TestIsWellFormedContentJson"""
+
+    def test_is_content_json_well_formed_with_dict_returns_true(self):
+        """test_is_content_json_well_formed_returns_true"""
+        json_dict = {"test": "value"}
+        expected_result = True
+        result = is_well_formed_json(json_dict)
+        self.assertEqual(result, expected_result)
+
+    def test_is_content_json_well_formed_with_str_returns_true(self):
+        """test_is_content_json_well_formed_returns_true"""
+        json_str = '{"test": "value"}'
+        expected_result = True
+        result = is_well_formed_json(json_str)
+        self.assertEqual(result, expected_result)
+
+    def test_is_content_json_well_formed_invalid_format_returns_false(self):
+        """test_is_content_json_well_formed_invalid_format_returns_false"""
+        json_dict = 10
+        expected_result = False
+        result = is_well_formed_json(json_dict)
+        self.assertEqual(result, expected_result)
+
+    def test_is_content_json_well_formed_invalid_str_returns_false(self):
+        """test_is_content_json_well_formed_invalid_str_returns_false"""
+        json_dict = "sda"
+        expected_result = False
+        result = is_well_formed_json(json_dict)
+        self.assertEqual(result, expected_result)
 
 
 def get_json_schema():

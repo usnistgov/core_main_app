@@ -1,0 +1,9 @@
+
+.display-detail{
+    height:600px;
+    overflow:scroll;
+    background-color: #fafafa;
+    border:1px solid #cdcdcd;
+    border-radius: 10px;
+}
+

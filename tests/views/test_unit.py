@@ -12,7 +12,11 @@ from core_main_app.components.template.models import Template
 from core_main_app.components.user_preferences.models import UserPreferences
 from core_main_app.utils import xml
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
-from core_main_app.views.common.views import DataContentEditor, XmlEditor
+from core_main_app.views.common.views import (
+    DataXMLEditor,
+    XmlEditor,
+    JSONEditor,
+)
 from core_main_app.views.user.views import (
     set_timezone,
     custom_login,
@@ -80,7 +84,7 @@ class TestXmlEditorGenerateView(SimpleTestCase):
         request.user = self.user1
 
         # Act
-        response = DataContentEditor.as_view()(request)
+        response = DataXMLEditor.as_view()(request)
 
         # Assert
         self.assertEqual(response.status_code, 200)
@@ -108,7 +112,7 @@ class TestXmlEditorGenerateView(SimpleTestCase):
         }
         request = self.factory.post("core_main_app_xml_text_editor_view", data)
         request.user = self.user1
-        response = DataContentEditor.as_view()(request)
+        response = DataXMLEditor.as_view()(request)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(
             response.content,
@@ -130,7 +134,7 @@ class TestXmlEditorGenerateView(SimpleTestCase):
         }
         request = self.factory.post("core_main_app_xml_text_editor_view", data)
         request.user = self.user1
-        response = DataContentEditor.as_view()(request)
+        response = DataXMLEditor.as_view()(request)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(
             response.content,
@@ -491,3 +495,28 @@ class TestXmlEditor(SimpleTestCase):
 
         # Assert
         mock_format_content_xml.assert_not_called()
+
+
+class TestJSONEditor(SimpleTestCase):
+    """Test JSON Editor"""
+
+    @patch.multiple(JSONEditor, __abstractmethods__=set())
+    def test_get_context_json_editor_returns_context(
+        self,
+    ):
+        """test_get_context_calls_format_content_json_when_content_is_not_empty
+
+        Returns:
+
+        """
+        # Arrange
+        data = Data(template=Template())
+
+        # Act
+        context = JSONEditor().get_context(
+            data, "title1", '{"name": "curator"}'
+        )
+
+        # Assert
+        self.assertEqual(context["document_name"], "Data")
+        self.assertEqual(context["template_id"], None)

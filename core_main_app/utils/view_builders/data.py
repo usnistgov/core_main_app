@@ -65,7 +65,10 @@ def build_page(
                     "is_raw": False,
                 },
             ],
-            "css": ["core_main_app/common/css/XMLTree.css"],
+            "css": [
+                "core_main_app/common/css/XMLTree.css",
+                "core_main_app/common/css/detail.css",
+            ],
         }
 
         if display_download_options:

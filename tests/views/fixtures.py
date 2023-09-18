@@ -171,3 +171,94 @@ class AccessControlDataFixture(FixtureInterface):
             is_public=True,
         )
         self.public_workspace.save()
+
+
+class JSONDataFixtures(FixtureInterface):
+    """Data structure fixtures"""
+
+    data_1 = None
+    data_2 = None
+    data_3 = None
+    data_4 = None
+
+    template = None
+    data_collection = None
+
+    def insert_data(self):
+        """Insert a set of Data.
+
+        Returns:
+
+        """
+        # Make a connexion with a mock database
+        self.generate_template()
+        self.generate_data_collection()
+
+    def generate_data_collection(self):
+        """Generate a Data collection.
+
+        Returns:
+
+        """
+        content = """
+                        {
+          "name": "John Doe",
+          "age": 30
+        }
+        """
+        self.data_1 = Data(
+            template=self.template,
+            user_id="1",
+            dict_content=None,
+            title="title_json",
+            content=content,
+        )
+        self.data_1.save()
+
+        self.data_2 = Data(
+            template=self.template,
+            user_id="1",
+            dict_content=None,
+            title="title_json",
+        )
+        self.data_2.save()
+
+        self.data_3 = Data(
+            template=self.template,
+            user_id="2",
+            dict_content=None,
+            title="title_json",
+        )
+        self.data_3.save()
+
+        self.data_collection = [
+            self.data_1,
+            self.data_2,
+            self.data_3,
+        ]
+
+    def generate_template(self):
+        """Generate an unique Template.
+
+        Returns:
+
+        """
+        content = """{
+                  "type": "object",
+                  "properties": {
+                    "name": {"type": "string"},
+                    "age": {"type": "integer"}
+                  },
+                  "required": ["name", "age"]
+                }"""
+
+        self.template = Template()
+        self.template.user = 1
+        self.template.file = SimpleUploadedFile(
+            "user2_template.json", "{}".encode("utf-8")
+        )
+        self.template.content = content
+        self.template.hash = ""
+        self.template.format = Template.JSON
+        self.template.filename = "filename2.json"
+        self.template.save()

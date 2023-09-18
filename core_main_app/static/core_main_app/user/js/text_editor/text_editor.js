@@ -5,6 +5,7 @@ let templateID = null
 let textEditorUrl = null
 let showHTML = false
 let useModal = false
+let editorType = null
 let lineNumbers = 1
 
 /**
@@ -13,21 +14,29 @@ let lineNumbers = 1
 $(document).ready(function() {
     documentID = $("#document_id").html()
     editorType = $("#editor_type").html()
+    templateID = $("#template_id").html();
+    documentName = $("#document_name").html();
     refreshLineNumbers()
     switch(editorType) {
-        case "XSD":
-            textEditorUrl = xsdTextEditorUrl
-            break;
-
-        default:
-            templateID = $("#template_id").html();
-            documentName = $("#document_name").html();
-            if (documentName == "Data") textEditorUrl = dataXmlTextEditorUrl;
+        case "JSON":
+            if (documentName == "Data") textEditorUrl = dataJSONTextEditorUrl;
             else {
-                textEditorUrl = draftXmlTextEditorUrl;
+                textEditorUrl = draftJSONTextEditorUrl;
                 $('.save-data').on('click', save);
                 useModal = true;
             }
+            break;
+        case "XML":
+            if (documentName == "Data") textEditorUrl = dataXmlTextEditorUrl;
+            else {
+                textEditorUrl = draftXMLTextEditorUrl;
+                $('.save-data').on('click', save);
+                useModal = true;
+            }
+            break;
+        case "XSD":
+            textEditorUrl = xsdTextEditorUrl
+            break;
     }
 
 
@@ -97,6 +106,7 @@ let format = function()
         dataType: "json",
 		success: function(data){
 		    $.notify("Document formatted successfully", "success");
+		    if(editorType == "JSON") data = JSON.stringify(data, null, "  ")
 		    html = hljs.highlightAuto(data).value
 		    $(".input").html("<pre class=\"content-highlight m-1\">"+ html +"</pre>")
 	    },

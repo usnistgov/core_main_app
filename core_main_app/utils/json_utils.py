@@ -31,6 +31,8 @@ def validate_json_data(data, json_schema):
     try:
         if isinstance(json_schema, str):
             json_schema = json.loads(json_schema)
+        if isinstance(data, str):
+            data = json.loads(data)
         validate(data, json_schema)
     except Exception as e:
         raise JSONError(str(e))
@@ -84,3 +86,27 @@ def format_content_json(json_content, indent=2):
         raise JSONError("Invalid format.")
     except Exception:
         raise JSONError("Content is not well formatted JSON.")
+
+
+def is_well_formed_json(json_content):
+    """True if well formatted JSON.
+
+    Args:
+        json_content:
+
+    Returns:
+
+    """
+    # is it a valid JSON document?
+    try:
+        if isinstance(json_content, str):
+            json.loads(json_content)
+        elif isinstance(json_content, dict):
+            json.dumps(json_content)
+
+        else:
+            return False
+    except Exception:
+        return False
+
+    return True

@@ -15,14 +15,16 @@ from django.http import (
 from django.http.response import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
-from django.utils.html import escape as html_escape
+from django.utils.html import escape as html_escape, escape
 from django.views.generic import View
 
 from core_main_app.access_control import api as acl_api
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
+from core_main_app.commons.constants import DATA_FORMAT_FOR_TEMPLATE_FORMAT
 from core_main_app.commons.exceptions import (
     DoesNotExist,
+    JSONError,
 )
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.data import api as data_api
@@ -30,6 +32,7 @@ from core_main_app.components.group import api as group_api
 from core_main_app.components.lock import api as lock_api
 from core_main_app.components.template import api as template_api
 from core_main_app.components.template.access_control import check_can_write
+from core_main_app.components.template.models import Template
 from core_main_app.components.template_xsl_rendering import (
     api as template_xsl_rendering_api,
 )
@@ -42,6 +45,7 @@ from core_main_app.settings import MAX_DOCUMENT_EDITING_SIZE
 from core_main_app.utils import file as main_file_utils
 from core_main_app.utils import group as group_utils
 from core_main_app.utils import xml as main_xml_utils
+from core_main_app.utils.json_utils import validate_json_data, is_schema_valid
 from core_main_app.utils.labels import get_data_label
 from core_main_app.utils.rendering import admin_render, render
 from core_main_app.utils.view_builders import data as data_view_builder
@@ -294,7 +298,7 @@ class ViewData(CommonView):
                         "path": "core_main_app/user/js/data/detail.js",
                         "is_raw": False,
                     }
-                ]
+                ],
             },
             context={
                 "error": "Unable to access the requested "
@@ -504,6 +508,49 @@ class AbstractEditorView(View, metaclass=ABCMeta):
 
     template = "core_main_app/user/text_editor/text_editor.html"
 
+    @abstractmethod
+    def _get_object(self, request):
+        """Returns object
+
+        Args:
+
+        Returns: object
+
+        """
+        raise NotImplementedError("get object is not implemented.")
+
+    @abstractmethod
+    def _check_permission(self, document, request):
+        """Returns object
+
+        Args:
+
+        Returns: object
+
+        """
+        raise NotImplementedError("check permission is not implemented.")
+
+    @abstractmethod
+    def _prepare_context(self, document):
+        """Returns object
+
+        Args:
+
+        Returns: object
+
+        """
+        raise NotImplementedError("prepare context is not implemented.")
+
+    def _check_size(self, document):
+        """Check content size
+
+        Args:
+
+        Returns:
+
+        """
+        raise NotImplementedError("prepare context is not implemented.")
+
     def _get_assets(self):
         """get assets
 
@@ -517,20 +564,27 @@ class AbstractEditorView(View, metaclass=ABCMeta):
                 },
             ],
             "css": [
-                "core_main_app/common/css/highlight.css",
                 "core_main_app/user/css/text-editor.css",
             ],
         }
         return assets
 
-    def _get_context(self, document_id, document_name, type_content, content):
+    def _get_modals(self):
+        """get assets
+
+        Return:
+        """
+
+        return []
+
+    def _get_context(self, document_id, document_title, type_content, content):
         """get context
 
         Return:
         """
         context = {
             "page_title": type_content + " Text Editor",
-            "name": document_name,
+            "name": document_title,
             "content": content,
             "type": type_content,
             "document_id": document_id,
@@ -567,9 +621,63 @@ class AbstractEditorView(View, metaclass=ABCMeta):
             # get action
             action = request.POST["action"]
             # apply action: format, validate or save
-            return getattr(self, "%s" % action)()
+            return getattr(self, "%s" % action)(request=request)
         except Exception as e:
             return HttpResponseBadRequest(html_escape(str(e)))
+
+    def get(self, request):
+        """get
+
+        Args:
+            request:
+
+        Returns:
+        """
+
+        try:
+            request = self.request
+            if "id" not in request.GET:
+                raise KeyError("document id is missing")
+            document = self._get_object(request)
+            self._check_permission(document, request)
+            self._check_size(document)
+            context = self._prepare_context(document)
+            assets = self._get_assets()
+            modals = self._get_modals()
+
+            return render(
+                request,
+                self.template,
+                assets=assets,
+                context=context,
+                modals=modals,
+            )
+
+        except AccessControlError as acl_exception:
+            error_message = str(acl_exception)
+            status_code = 403
+        except exceptions.DoesNotExist:
+            error_message = self.object_name + " not found"
+            status_code = 404
+        except Exception as e:
+            error_message = str(e)
+            status_code = 400
+        return render(
+            request,
+            "core_main_app/common/commons/error.html",
+            assets={
+                "js": [
+                    {
+                        "path": "core_main_app/user/js/data/detail.js",
+                        "is_raw": False,
+                    }
+                ]
+            },
+            context={
+                "error": error_message,
+                "status_code": status_code,
+            },
+        )
 
     @abstractmethod
     def format(self, *args, **kwargs):
@@ -610,11 +718,22 @@ class AbstractEditorView(View, metaclass=ABCMeta):
         """
         raise NotImplementedError("save method is not implemented.")
 
+    @abstractmethod
+    def generate(self, *args, **kwargs):
+        """generate content
+
+        Args:
+            args:
+            kwargs:
+
+        Returns:
+
+        """
+        raise NotImplementedError("generate method is not implemented.")
+
 
 class XmlEditor(AbstractEditorView, metaclass=ABCMeta):
     """Xml Editor"""
-
-    save_redirect = "core_dashboard_records"
 
     def format(self, *args, **kwargs):
         """Format xml content
@@ -772,12 +891,12 @@ class XmlEditor(AbstractEditorView, metaclass=ABCMeta):
         )
         return assets
 
-    def get_context(self, document, document_name, xml_content):
+    def get_context(self, document, document_title, xml_content):
         """get context
 
         Args:
             document:
-            document_name:
+            document_title:
             xml_content:
 
         Returns:
@@ -786,9 +905,12 @@ class XmlEditor(AbstractEditorView, metaclass=ABCMeta):
         if xml_content != "":
             xml_content = main_xml_utils.format_content_xml(xml_content)
 
-        # get assets
+        # get context
         context = super()._get_context(
-            document.id, document_name, "XML", xml_content
+            document.id,
+            document_title,
+            DATA_FORMAT_FOR_TEMPLATE_FORMAT[document.template.format],
+            xml_content,
         )
 
         # build xslt selector
@@ -812,63 +934,11 @@ class XmlEditor(AbstractEditorView, metaclass=ABCMeta):
         return context
 
 
-class DataContentEditor(XmlEditor):
-    """Data Content Editor View"""
+class JSONEditor(AbstractEditorView, metaclass=ABCMeta):
+    """JSON Editor"""
 
-    def get(self, request):
-        """get
-
-        Args:
-            request
-
-        Returns:
-        """
-
-        try:
-            data = data_api.get_by_id(request.GET["id"], request.user)
-            acl_api.check_can_write(data, request.user)
-            if (
-                main_file_utils.get_byte_size_from_string(data.xml_content)
-                > MAX_DOCUMENT_EDITING_SIZE
-            ):
-                raise exceptions.DocumentEditingSizeError(
-                    "The file is too large (MAX_DOCUMENT_EDITING_SIZE)."
-                )
-            lock_api.set_lock_object(data, request.user)
-            context = self.get_context(data, data.title, data.xml_content)
-            assets = self._get_assets()
-            return render(
-                request, self.template, assets=assets, context=context
-            )
-        except AccessControlError as acl_exception:
-            error_message = "Access Forbidden: " + str(acl_exception)
-            status_code = 403
-        except exceptions.DoesNotExist:
-            error_message = get_data_label() + " not found"
-            status_code = 404
-        except Exception as e:
-            error_message = str(e)
-            status_code = 400
-
-        return render(
-            request,
-            "core_main_app/common/commons/error.html",
-            assets={
-                "js": [
-                    {
-                        "path": "core_main_app/user/js/data/detail.js",
-                        "is_raw": False,
-                    }
-                ]
-            },
-            context={
-                "error": error_message,
-                "status_code": status_code,
-            },
-        )
-
-    def save(self, *args, **kwargs):
-        """Save xml content
+    def format(self, *args, **kwargs):
+        """Format json content
 
         Args:
             args:
@@ -877,22 +947,176 @@ class DataContentEditor(XmlEditor):
         Returns:
 
         """
+        content = self.request.POST["content"].strip()
+        json_object = json.loads(content)
+
+        return HttpResponse(
+            json.dumps(json_object, indent=2),
+            "application/javascript",
+        )
+
+    def validate(self, *args, **kwargs):
+        """Validate json content
+
+        Args:
+            args:
+            kwargs:
+
+        Returns:
+
+        """
+        content = self.request.POST["content"].strip()
         try:
-            content = self.request.POST["content"].strip()
-            data_id = self.request.POST["document_id"]
-            data = data_api.get_by_id(data_id, self.request.user)
+            # get template
+            template_id = self.request.POST["template_id"]
+            template = template_api.get_by_id(template_id, self.request)
+        except Exception as exception:
+            return HttpResponseBadRequest(escape(str(exception)))
+        try:
+            # validate content
+            validate_json_data(content, template.content)
+        except Exception as e:
+            raise JSONError(str(e))
+
+        return HttpResponse(
+            json.dumps("Validated successfully"),
+            "application/javascript",
+        )
+
+    def _get_assets(self):
+        """get assets
+
+        Return:
+        """
+        # get assets
+        assets = super()._get_assets()
+
+        assets["js"].append(
+            {
+                "path": "core_main_app/user/js/text_editor/data_text_editor.raw.js",
+                "is_raw": True,
+            }
+        )
+        return assets
+
+    def get_context(self, document, document_title, json_content):
+        """get context
+
+        Args:
+            document:
+            document_title:
+            json_content:
+
+        Returns:
+        """
+        # format before build context
+        json_content.strip()
+
+        # get assets
+        context = super()._get_context(
+            document.id,
+            document_title,
+            DATA_FORMAT_FOR_TEMPLATE_FORMAT[document.template.format],
+            json_content,
+        )
+
+        # add context relatives to json editor
+        context.update(
+            {
+                "document_name": document.__class__.__name__,
+                "template_id": document.template.id,
+            }
+        )
+
+        return context
+
+    def generate(self, *args, **kwargs):
+        """generate content
+
+        Args:
+            args:
+            kwargs:
+
+        Returns:
+
+        """
+        raise NotImplementedError("generate method is not implemented.")
+
+
+class DataMixin:
+    object_name = get_data_label()
+
+    def _get_object(self, request):
+        """get data
+
+        Args:
+            request:
+
+        Returns:
+
+        """
+        return data_api.get_by_id(request.GET["id"], request.user)
+
+    def _check_permission(self, data, request):
+        """check user permission
+
+        Args:
+            data:
+            request:
+
+        Returns:
+
+        """
+        acl_api.check_can_write(data, request.user)
+
+    def _check_size(self, data):
+        """check content size
+
+        Args:
+            data:
+
+        Returns:
+
+        """
+
+        if (
+            main_file_utils.get_byte_size_from_string(data.content)
+            > MAX_DOCUMENT_EDITING_SIZE
+        ):
+            raise exceptions.DocumentEditingSizeError(
+                "The file is too large (MAX_DOCUMENT_EDITING_SIZE)."
+            )
+
+    def save(self, *args, **kwargs):
+        """Save data content
+
+        Args:
+            *args:
+            **kwargs:
+
+        Returns:
+
+        """
+        try:
+            request = kwargs.get("request")
+            content = request.POST["content"].strip()
+            data_id = request.POST["document_id"]
+            data = data_api.get_by_id(data_id, request.user)
+
+            if data.template.format == Template.JSON:
+                content = json.loads(content)
             # update content
             data.content = content
             # save data
-            data_api.upsert(data, self.request)
-            lock_api.remove_lock_on_object(data, self.request.user)
+            data_api.upsert(data, request)
+            lock_api.remove_lock_on_object(data, request.user)
             messages.add_message(
-                self.request,
+                request,
                 messages.SUCCESS,
                 get_data_label().capitalize() + " saved with success.",
             )
             return HttpResponse(
-                json.dumps({"url": reverse(self.save_redirect)}),
+                json.dumps({"url": reverse("core_dashboard_records")}),
                 "application/javascript",
             )
         except AccessControlError as ace:
@@ -903,77 +1127,114 @@ class DataContentEditor(XmlEditor):
             return HttpResponseBadRequest(html_escape(str(e)))
 
 
-class XSDEditor(AbstractEditorView):
-    """XSD Editor View"""
+class TemplateMixin:
+    object_name = "Template"
 
-    def get(self, request):
-        """get
+    def _get_object(self, request):
+        """get object
 
         Args:
             request:
 
         Returns:
+
         """
+        return template_api.get_by_id(request.GET["id"], request)
 
-        try:
-            template = template_api.get_by_id(request.GET["id"], request)
-            check_can_write(template, request=request)
-            context = super()._get_context(
-                template.id, template.filename, "XSD", template.content
-            )
-            assets = super()._get_assets()
-            # add js relatives to template editor
-            assets["js"].append(
-                {
-                    "path": "core_main_app/user/js/text_editor/template_text_editor.raw.js",
-                    "is_raw": True,
-                },
-            )
-            return render(
-                request, self.template, assets=assets, context=context
-            )
-
-        except AccessControlError as acl_exception:
-            error_message = str(acl_exception)
-            status_code = 403
-        except exceptions.DoesNotExist:
-            error_message = "Template not found"
-            status_code = 404
-        except Exception as e:
-            error_message = str(e)
-            status_code = 400
-        return render(
-            request,
-            "core_main_app/common/commons/error.html",
-            assets={
-                "js": [
-                    {
-                        "path": "core_main_app/user/js/data/detail.js",
-                        "is_raw": False,
-                    }
-                ]
-            },
-            context={
-                "error": error_message,
-                "status_code": status_code,
-            },
-        )
-
-    def format(self, *args, **kwargs):
-        """Format xml content
+    def _prepare_context(self, template):
+        """prepare context
 
         Args:
-            args:
-            kwargs:
+            template:
 
         Returns:
 
         """
-        content = self.request.POST["content"].strip()
-        return HttpResponse(
-            json.dumps(main_xml_utils.format_content_xml(content)),
-            "application/javascript",
+        return self._get_context(
+            template.id, template.filename, template.format, template.content
         )
+
+    def _check_permission(self, template, request):
+        """check user permission
+
+        Args:
+            template:
+            request:
+
+        Returns:
+
+        """
+        check_can_write(template, request=request)
+
+    def _check_size(self, template):
+        """check content size
+
+        Args:
+            template:
+
+        Returns:
+
+        """
+
+        if (
+            main_file_utils.get_byte_size_from_string(template.content)
+            > MAX_DOCUMENT_EDITING_SIZE
+        ):
+            raise exceptions.DocumentEditingSizeError(
+                "The file is too large (MAX_DOCUMENT_EDITING_SIZE)."
+            )
+
+    def save(self, *args, **kwargs):
+        """Save template content
+
+        Args:
+            *args:
+            **kwargs:
+
+        Returns:
+
+        """
+        try:
+            request = kwargs.get("request")
+            content = request.POST["content"].strip()
+            template_id = request.POST["document_id"]
+            template = template_api.get_by_id(template_id, request)
+            if template.format == Template.JSON:
+                content = json.loads(content)
+            # update content
+            template.content = content
+            # save template
+            template_api.upsert(template, request=request)
+            return HttpResponse(
+                json.dumps({"url": reverse("core_main_app_homepage")}),
+                "application/javascript",
+            )
+        except AccessControlError as ace:
+            return HttpResponseForbidden(html_escape(str(ace)))
+        except DoesNotExist as dne:
+            return HttpResponseBadRequest(html_escape(str(dne)))
+        except Exception as e:
+            return HttpResponseBadRequest(html_escape(str(e)))
+
+
+class DataXMLEditor(DataMixin, XmlEditor):
+    """Data XML Editor View"""
+
+    def _prepare_context(self, data):
+        """prepare context
+
+        Args:
+            data:
+
+        Returns:
+
+        """
+        lock_api.set_lock_object(data, self.request.user)
+        return self.get_context(data, data.title, data.content)
+
+
+class TemplateXSDEditor(TemplateMixin, XmlEditor):
+    """Template XSD Editor View"""
 
     def validate(self, *args, **kwargs):
         """Validate xml content
@@ -1004,8 +1265,28 @@ class XSDEditor(AbstractEditorView):
             "application/javascript",
         )
 
-    def save(self, *args, **kwargs):
-        """Save content
+
+class DataJSONEditor(DataMixin, JSONEditor):
+    """JSON Editor View"""
+
+    def _prepare_context(self, data):
+        """prepare context
+
+        Args:
+            data:
+
+        Returns:
+
+        """
+        lock_api.set_lock_object(data, self.request.user)
+        return self.get_context(data, data.title, data.content)
+
+
+class TemplateJSONEditor(TemplateMixin, JSONEditor):
+    """Template JSON Editor View"""
+
+    def validate(self, *args, **kwargs):
+        """Validate JSON content
 
         Args:
             args:
@@ -1014,24 +1295,17 @@ class XSDEditor(AbstractEditorView):
         Returns:
 
         """
+        content = self.request.POST["content"].strip()
         try:
-            content = self.request.POST["content"].strip()
-            template_id = self.request.POST["document_id"]
-            template = template_api.get_by_id(template_id, self.request)
-            # update content
-            template.content = content
-            # save template
-            template_api.upsert(template, request=self.request)
-            return HttpResponse(
-                json.dumps("saved successfully"),
-                "application/javascript",
-            )
-        except AccessControlError as ace:
-            return HttpResponseForbidden(html_escape(str(ace)))
-        except DoesNotExist as dne:
-            return HttpResponseBadRequest(html_escape(str(dne)))
+            # validate content
+            is_schema_valid(content)
         except Exception as e:
-            return HttpResponseBadRequest(html_escape(str(e)))
+            raise JSONError(str(e))
+
+        return HttpResponse(
+            json.dumps("Validated successfully"),
+            "application/javascript",
+        )
 
 
 class ViewBlob(CommonView):

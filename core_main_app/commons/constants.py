@@ -15,6 +15,8 @@ DATA_JSON_FIELD = "dict_content"
 
 DATA_FILE_EXTENSION_FOR_TEMPLATE_FORMAT = {"JSON": ".json", "XSD": ".xml"}
 
+DATA_FORMAT_FOR_TEMPLATE_FORMAT = {"JSON": "JSON", "XSD": "XML"}
+
 DATA_FILE_CONTENT_TYPE_FOR_TEMPLATE_FORMAT = {
     "JSON": "application/json",
     "XSD": "text/xml",
