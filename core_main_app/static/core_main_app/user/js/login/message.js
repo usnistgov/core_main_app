@@ -17,16 +17,19 @@ var hide_modal = function() {
 }
 
 $(document).ready(function() {
+    const $loginModal = $("#login-modal-id");
     // set up the modal
-    $("#login-modal-id").modal({
-        show: true,
+    $loginModal.modal({
         keyboard: false,
         backdrop: 'static',
     });
-    // hide the '+' of the modal
+    // hide the 'x' of the modal
     $(".close").hide();
+    $(".btn-close").hide();
     // binding event to cancel/yes buttons
     $("#btn-login-cancel").on("click", redirect_to_home);
     $("#btn-login-yes").on("click", hide_modal);
+    // Display the modal
+    $loginModal.modal("show");
 });
 
