@@ -1,6 +1,7 @@
 """
     Serializers used throughout the Rest API
 """
+import logging
 from os.path import join
 from urllib.parse import urljoin
 
@@ -10,12 +11,14 @@ from rest_framework.fields import CharField, ModelField
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
-from core_main_app import settings
+from django.conf import settings
 from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.blob.utils import get_blob_download_uri
 from core_main_app.utils.validation.regex_validation import validate_filename
+
+logger = logging.getLogger(__name__)
 
 
 class BlobSerializer(ModelSerializer):
@@ -66,29 +69,33 @@ class BlobSerializer(ModelSerializer):
         Returns:
 
         """
-        # return pid  if assigned
         if "core_linked_records_app" not in settings.INSTALLED_APPS:
             return None
-        else:
-            from core_linked_records_app.components.blob import (
-                api as linked_blob_api,
+
+        from core_linked_records_app.system.blob import (
+            api as linked_record_blob_system_api,
+        )
+        from core_linked_records_app.settings import (
+            ID_PROVIDER_SYSTEM_NAME,
+        )
+
+        try:
+            sub_url = reverse(
+                "core_linked_records_provider_record",
+                kwargs={"provider": ID_PROVIDER_SYSTEM_NAME, "record": ""},
             )
-            from core_linked_records_app.settings import (
-                ID_PROVIDER_SYSTEM_NAME,
+            blob_pid = linked_record_blob_system_api.get_pid_for_blob(
+                str(instance.id)
             )
 
-            try:
-                sub_url = reverse(
-                    "core_linked_records_provider_record",
-                    kwargs={"provider": ID_PROVIDER_SYSTEM_NAME, "record": ""},
-                )
-                blob_pid = linked_blob_api.get_pid_for_blob(str(instance.id))
-
-                return urljoin(
-                    settings.SERVER_URI, join(sub_url, blob_pid.record_name)
-                )
-            except Exception:
-                return None
+            return urljoin(
+                settings.SERVER_URI, join(sub_url, blob_pid.record_name)
+            )
+        except Exception as exc:  # noqa, pylint: disable=broad-except
+            logger.error(
+                "An error occurred while retrieving blob PID: %s", str(exc)
+            )
+            return None
 
     def get_handle(self, instance):
         """Return handle
