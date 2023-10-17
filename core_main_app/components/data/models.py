@@ -79,12 +79,12 @@ class Data(AbstractData):
         if settings.MONGODB_INDEXING:
             return
 
-        # data already in json, don't convert
         if self.template.format == Template.JSON:
-            self.dict_content = self.content
+            # transform json string format into a dictionary.
+            self.dict_content = json.loads(self.content)
 
         elif self.template.format == Template.XSD:
-            # transform xml content into a dictionary
+            # transform xml content into a dictionary.
             self.dict_content = xml_utils.raw_xml_to_dict(
                 self.content,
                 postprocessor=XML_POST_PROCESSOR,
@@ -109,13 +109,10 @@ class Data(AbstractData):
             self.template.format
         ]
         # Get content
-        if self.template.format == Template.JSON:
-            content = json.dumps(self.content).encode("utf-8")
-        elif self.template.format == Template.XSD:
-            try:
-                content = self.content.encode("utf-8")
-            except UnicodeEncodeError:
-                content = self.content
+        try:
+            content = self.content.encode("utf-8")
+        except UnicodeEncodeError:
+            content = self.content
 
         self.file = SimpleUploadedFile(
             name=self.title,

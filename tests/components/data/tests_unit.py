@@ -1,6 +1,8 @@
 """ Unit Test Data
 """
+import json
 from collections import OrderedDict
+from json import JSONDecodeError
 from time import sleep
 from unittest.case import TestCase
 from unittest.mock import patch, MagicMock
@@ -360,7 +362,7 @@ class TestDataUpsert(TestCase):
             _get_json_template(),
             user_id="2",
             title="title",
-            content={"element": "value"},
+            content=json.dumps({"element": "value"}),
         )
         mock_save.return_value = data
         mock_user = create_mock_user("2")
@@ -368,7 +370,8 @@ class TestDataUpsert(TestCase):
         # Act
         result = data_api.upsert(data, mock_request)
         # Assert
-        self.assertTrue(isinstance(result.content, dict))
+        self.assertIsInstance(result.content, str)
+        self.assertIsInstance(result.dict_content, dict)
 
     @patch("core_main_app.components.data.models.Data.convert_to_file")
     def test_data_upsert_unknown_format_convert_to_file_raises_model_error(
@@ -748,7 +751,7 @@ class TestDataCheckXmlFileIsValid(TestCase):
 class TestDataCheckJsonFileIsValid(TestCase):
     """TestDataCheckJsonFileIsValid"""
 
-    def test_data_check_json_file_is_valid_raises_core_error_if_invalid_format(
+    def test_data_check_json_file_is_valid_raises_json_decode_error_if_invalid_format(
         self,
     ):
         """test_data_check_json_file_is_valid_raises_core_error_if_invalid_format
@@ -763,7 +766,7 @@ class TestDataCheckJsonFileIsValid(TestCase):
         data.template = template
         data.content = "test"
         # Act # Assert
-        with self.assertRaises(exceptions.JSONError):
+        with self.assertRaises(JSONDecodeError):
             data_api.check_json_file_is_valid(data)
 
     def test_data_check_json_file_is_valid_raises_json_error_if_failed_during_json_validation(
@@ -793,7 +796,7 @@ class TestDataCheckJsonFileIsValid(TestCase):
         }
         data = MagicMock()
         data.template = template
-        data.content = {"checked": "bad value"}
+        data.content = json.dumps({"checked": "bad value"})
         # Act # Assert
         with self.assertRaises(exceptions.JSONError):
             data_api.check_json_file_is_valid(data)
@@ -811,7 +814,7 @@ class TestDataCheckJsonFileIsValid(TestCase):
         template.content = {}
         data = MagicMock()
         data.template = template
-        data.content = {"value": 1}
+        data.content = json.dumps({"value": 1})
         # Act
         result = data_api.check_json_file_is_valid(data)
         # Assert

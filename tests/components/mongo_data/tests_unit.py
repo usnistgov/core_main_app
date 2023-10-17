@@ -1,5 +1,6 @@
 """ Unit test for MongoData
 """
+import json
 from unittest import TestCase
 from unittest.mock import patch
 
@@ -202,7 +203,7 @@ class TestInitMongoData(TestCase):
         # Arrange
         template = _get_json_template()
         template.save()
-        data_content = {"value": "test"}
+        data_content = json.dumps({"value": "test"})
         data = _create_data(
             data_id=1,
             template=template,

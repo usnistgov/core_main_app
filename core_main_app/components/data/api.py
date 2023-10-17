@@ -1,5 +1,7 @@
 """ Data API
 """
+import json
+
 from django.conf import settings
 
 import core_main_app.access_control.api
@@ -11,7 +13,6 @@ from core_main_app.access_control.api import (
 )
 from core_main_app.access_control.decorators import access_control
 from core_main_app.commons import exceptions as exceptions
-from core_main_app.commons.exceptions import JSONError
 from core_main_app.components.data import (
     access_control as data_api_access_control,
 )
@@ -205,9 +206,9 @@ def check_json_file_is_valid(data):
 
     """
     template = data.template
-    if not isinstance(data.content, dict):
-        raise JSONError("Invalid format")
-    validate_json_data(data.content, template.content)
+    json_content = json.loads(data.content)
+
+    validate_json_data(json_content, template.content)
     return True
 
 

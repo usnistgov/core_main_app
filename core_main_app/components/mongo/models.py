@@ -1,6 +1,6 @@
 """ Mongoengine Data model
 """
-
+import json
 import logging
 from django.conf import settings
 
@@ -236,7 +236,7 @@ try:
                 mongo_data.title = data.title
                 if data_template.format == Template.JSON:
                     # store python dict
-                    mongo_data.dict_content = data.content
+                    mongo_data.dict_content = json.loads(data.content)
                 elif data_template.format == Template.XSD:
                     # transform xml content into a dictionary
                     mongo_data.dict_content = xml_utils.raw_xml_to_dict(
