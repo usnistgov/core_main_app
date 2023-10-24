@@ -143,6 +143,6 @@ class DeleteXSLTView(DeleteObjectModalView):
     success_message = "XSLT deleted with success."
     field_for_name = "name"
 
-    def _delete(self, request, *args, **kwargs):
+    def _delete(self, form):
         # Delete treatment.
         xsl_transformation_api.delete(self.object)

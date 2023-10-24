@@ -184,32 +184,33 @@ class DeleteObjectModalView(DeleteView):
     success_url = None
     success_message = None
 
-    def delete(self, request, *args, **kwargs):
-        """Delete method.
+    def form_valid(self, form):
+        """Method is called when valid form data has been POSTed.
 
         Args:
-            request:
+            form:
 
-        Returns:
+        Return:
         """
+        # Populate self.object without committing to the database and call _delete
+        # method.
         try:
             self.object = self.get_object()
-            self._delete(request, *args, **kwargs)
+            self._delete(form)
 
             if self.success_message:
                 messages.success(self.request, self.success_message)
         except Exception as exception:
             messages.error(self.request, str(exception))
 
-        data = {"url": self.get_success_url()}
-        return JsonResponse(data)
+        return JsonResponse({"url": self.get_success_url()})
 
-    def _delete(self, request, *args, **kwargs):
+    def _delete(self, form):
         """
         Delete treatment.
         """
         # Delete treatment.
-        super().delete(request, *args, **kwargs)
+        super().form_valid(form)
 
     def _get_object_name(self):
         """
