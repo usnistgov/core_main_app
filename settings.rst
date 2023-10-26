@@ -638,7 +638,7 @@ Miscellaneous
 
 * ``SSL_CERTIFICATES_DIR``
 
-  Default: ``False``
+  Default: ``True``
 
   SSL certificates directory location.
 
