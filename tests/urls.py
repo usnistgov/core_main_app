@@ -106,11 +106,6 @@ urlpatterns = [
         name="core_main_add_change_data_display",
     ),
     re_path(
-        r"^redirect-record",
-        user_ajax.change_data_display,
-        name="core_dashboard_records",
-    ),
-    re_path(
         r"^add-metadata-form",
         user_ajax.LoadBlobMetadataForm.as_view(),
         name="core_main_blob_metadata_form",

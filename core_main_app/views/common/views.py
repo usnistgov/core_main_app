@@ -1102,9 +1102,6 @@ class DataMixin:
             content = request.POST["content"].strip()
             data_id = request.POST["document_id"]
             data = data_api.get_by_id(data_id, request.user)
-
-            if data.template.format == Template.JSON:
-                content = json.loads(content)
             # update content
             data.content = content
             # save data
@@ -1116,7 +1113,7 @@ class DataMixin:
                 get_data_label().capitalize() + " saved with success.",
             )
             return HttpResponse(
-                json.dumps({"url": reverse("core_dashboard_records")}),
+                json.dumps({"url": reverse("core_main_app_homepage")}),
                 "application/javascript",
             )
         except AccessControlError as ace:
