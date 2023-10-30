@@ -9,27 +9,29 @@ let notify = function(toastText, toastSeverity) {
     $newToast.appendTo($(".toast-container"));
     $newToastText.text(toastText);
 
-    $newToast.addClass("toast-" + toastSeverity);
-
     switch (toastSeverity) {  // Change the icon depending on the severity.
         case "info":
-            $newToastIcon.addClass("fa-question-circle")
+            $newToastIcon.addClass("fa-question-circle");
             break;
         case "success":
-            $newToastIcon.addClass("fa-check-circle")
+            $newToastIcon.addClass("fa-check-circle");
             break;
         case "warning":
-            $newToastIcon.addClass("fa-exclamation-triangle")
+            $newToastIcon.addClass("fa-exclamation-triangle");
             break;
         case "danger":
-            $newToastIcon.addClass("fa-exclamation-circle")
+        case "error":
+            // Messages with "danger" or "error" severity are parsed the same way.
+            $newToastIcon.addClass("fa-exclamation-circle");
+            toastSeverity = "danger";
             break;
         default:  // Any other values.
-            $newToastIcon.addClass("fa-question-circle")
-            $newToast.removeClass("toast-" + toastSeverity);
-            $newToast.addClass("toast-default");
+            $newToastIcon.addClass("fa-question-circle");
+            toastSeverity = "default";
             break;
     }
+
+    $newToast.addClass("toast-" + toastSeverity);
 
     // Handle all animations.
     addToast($newToast);
