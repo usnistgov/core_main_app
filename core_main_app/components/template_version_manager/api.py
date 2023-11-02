@@ -305,4 +305,6 @@ def _check_new_version_format(template_version_manager, template):
         ]
         != get_file_extension(template.filename)
     ):
-        raise CoreError("Versions of a template should have the same format")
+        raise CoreError(
+            "Versions of a template should have the same file extension."
+        )
