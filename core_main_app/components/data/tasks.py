@@ -8,6 +8,7 @@ from celery.result import AsyncResult
 
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.data import api as data_api
+from core_main_app.components.template.models import Template
 from core_main_app.components.user import api as user_api
 from core_main_app.components.xsl_transformation import (
     api as xsl_transformation_api,
@@ -65,7 +66,14 @@ def async_migration_task(data_list, xslt_id, template_id, user_id, migrate):
                     system_api.upsert_data(data)
                 else:
                     # check if the data is valid
-                    data_api.check_xml_file_is_valid(data)
+                    if data.template.format == Template.XSD:
+                        data_api.check_xml_file_is_valid(data)
+                    elif data.template.format == Template.JSON:
+                        data_api.check_json_file_is_valid(data)
+                    else:
+                        raise NotImplementedError(
+                            "Migration not available for this format"
+                        )
 
                 success.append(str(data.id))
             except Exception:
@@ -153,7 +161,15 @@ def async_template_migration_task(
                         if migrate:
                             system_api.upsert_data(data)
                         else:
-                            data_api.check_xml_file_is_valid(data)
+                            # check if the data is valid
+                            if data.template.format == Template.XSD:
+                                data_api.check_xml_file_is_valid(data)
+                            elif data.template.format == Template.JSON:
+                                data_api.check_json_file_is_valid(data)
+                            else:
+                                raise NotImplementedError(
+                                    "Migration not available for this format"
+                                )
 
                         success.append(str(data.id))
                     except Exception:
