@@ -17,6 +17,7 @@ this package (`requirements.*` files) and their dependencies.
 | django-simple-history  | BSD License                                             |
 | djangosaml2            | Apache Software License                                 |
 | drf-spectacular        | BSD License                                             |
+| jsonschema             | MIT License                                             |
 | markdown               | BSD License                                             |
 | mongoengine            | MIT License                                             |
 | python-dateutil        | Apache Software License; BSD License                    |
