@@ -4,28 +4,33 @@
 /**
  * Init controllers for the django admin permissions page
  */
-$(document).ready(function() {
-     $('select').on('mouseenter','option',displayFromRightToLeft);
-     $('select').on('mouseleave','option',displayFromLeftToRight);
+
+document.addEventListener('DOMContentLoaded', function() {
+
+        // Mouse enter event handler for the 'option' elements inside 'select'
+        document.addEventListener('mouseover', function(event) {
+            if (event.target.tagName === 'OPTION') {
+                // Move permission's label left
+                if (event.target.scrollWidth > event.target.clientWidth + 8) {
+                    // get overflow value
+                    let overflow = event.target.scrollWidth - event.target.clientWidth - 8;
+                    // get missing text percentage
+                    let textIndentPercentage = (overflow * 100) / (event.target.clientWidth - 8);
+                    event.target.style.textIndent = -textIndentPercentage + "%";
+                }
+            }
+        });
+
+        // Mouse leave event handler for the 'option' elements inside 'select'
+        document.addEventListener('mouseout', function(event) {
+            if (event.target.tagName === 'OPTION') {
+                // Move permission's label right
+                event.target.style.textIndent = "0%";
+            }
+        });
+
 });
 
-/**
- * Move permission's label right
- */
-var displayFromLeftToRight = function(e){
-    $(this).css("text-indent","0%");
-}
 
-/**
- * Move permission's label left
- */
-var displayFromRightToLeft = function(e){
-      if($(this)[0].scrollWidth>$(this).width()+8){
-            // get overflow value
-            let overflow = $(this)[0].scrollWidth - $(this).width() - 8
-            // get missing text percentage
-            let textIndentPercentage = overflow*100/($(this).width() - 8)
-            $(this).css("text-indent",-textIndentPercentage+"%");
-      }
-}
+
 
