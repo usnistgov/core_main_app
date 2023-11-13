@@ -585,6 +585,12 @@ Registry
 
     This setting is only useful when not using the persistent identifiers.
 
+* ``ALLOW_MULTIPLE_SCHEMAS``
+
+  Default: ``False``
+
+  Allow the upload of more than one schema in the registry.
+
 
 OAI-PMH
 -------
@@ -665,6 +671,15 @@ Miscellaneous
   Default: ``None``
 
   Track history of listed models. Limited to `Data` for now.
+
+* ``BACKWARD_COMPATIBILITY_DATA_XML_CONTENT``
+
+  Default: ``False``
+
+  In `core_main_app==2.6`, support for JSON Schema and Data has been implemented,
+  and the field `Data.xml_content` has been renamed `Data.content`.
+  Set to `True` to continue using `Data.xml_content` (deprecated) instead of `Data.content` in the REST API.
+
 
 Deployment
 ----------
