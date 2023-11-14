@@ -21,6 +21,7 @@ class WorkspaceList(APIView):
     """List all user Workspace, or create a new one"""
 
     permission_classes = (IsAuthenticated,)
+    serializer = WorkspaceSerializer
 
     def get(self, request):
         """Get all user workspaces
@@ -43,7 +44,7 @@ class WorkspaceList(APIView):
                 workspace_list = workspace_api.get_all_by_owner(request.user)
 
             # Serialize object
-            serializer = WorkspaceSerializer(workspace_list, many=True)
+            serializer = self.serializer(workspace_list, many=True)
 
             # Return response
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -77,7 +78,7 @@ class WorkspaceList(APIView):
         """
         try:
             # Build serializer
-            serializer = WorkspaceSerializer(data=request.data)
+            serializer = self.serializer(data=request.data)
 
             # Validate data
             serializer.is_valid(raise_exception=True)
