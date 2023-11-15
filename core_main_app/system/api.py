@@ -1,12 +1,17 @@
-""" System API allowing to perform call on Data without access control. Use this API carefully.
+""" System API allowing to perform call on Data without access control.
+Use this API carefully.
 """
 from core_main_app.commons import exceptions
+from core_main_app.commons.exceptions import CoreError
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
 from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
 )
-from core_main_app.settings import DATA_SORTING_FIELDS
+from core_main_app.settings import (
+    DATA_SORTING_FIELDS,
+    ENABLE_JSON_SCHEMA_SUPPORT,
+)
 
 
 def get_data_by_id(data_id):
@@ -100,8 +105,11 @@ def upsert_data(data):
 
     if data.template.format == Template.XSD:
         check_xml_file_is_valid(data)
-    elif data.template.format == Template.JSON:
+    elif data.template.format == Template.JSON and ENABLE_JSON_SCHEMA_SUPPORT:
         check_json_file_is_valid(data)
+    else:
+        # Raise an error if file extension not supported
+        raise CoreError("Unsupported file format.")
     data.convert_and_save()
     return data
 

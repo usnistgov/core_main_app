@@ -672,11 +672,18 @@ Miscellaneous
 
   Track history of listed models. Limited to `Data` for now.
 
-* ``BACKWARD_COMPATIBILITY_DATA_XML_CONTENT``
+* ``ENABLE_JSON_SCHEMA_SUPPORT``
 
   Default: ``False``
 
-  In `core_main_app==2.6`, support for JSON Schema and Data has been implemented,
+  From `core_main_app==2.6`, support for JSON Schema and Data has been implemented.
+  Set to `True` to enable this feature.
+
+* ``BACKWARD_COMPATIBILITY_DATA_XML_CONTENT``
+
+  Default: ``True``
+
+  From `core_main_app==2.6`, support for JSON Schema and Data has been implemented,
   and the field `Data.xml_content` has been renamed `Data.content`.
   Set to `True` to continue using `Data.xml_content` (deprecated) instead of `Data.content` in the REST API.
 

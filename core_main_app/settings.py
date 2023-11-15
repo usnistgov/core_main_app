@@ -263,8 +263,14 @@ DJANGO_SIMPLE_HISTORY_MODELS = getattr(
 """
 
 BACKWARD_COMPATIBILITY_DATA_XML_CONTENT = getattr(
-    settings, "BACKWARD_COMPATIBILITY_DATA_XML_CONTENT", False
+    settings, "BACKWARD_COMPATIBILITY_DATA_XML_CONTENT", True
 )
 """ :py:class:`bool`: Set to `True` to continue using Data.xml_content (deprecated)
     instead of Data.content in the REST API.
+"""
+
+ENABLE_JSON_SCHEMA_SUPPORT = getattr(
+    settings, "ENABLE_JSON_SCHEMA_SUPPORT", False
+)
+""" :py:class:`bool`: Set to `True` to enable JSON Schema support.
 """

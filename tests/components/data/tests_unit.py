@@ -10,7 +10,7 @@ from unittest.mock import patch, MagicMock
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from core_main_app.commons import exceptions
-from core_main_app.commons.exceptions import ModelError
+from core_main_app.commons.exceptions import CoreError
 from core_main_app.components.abstract_data.models import AbstractData
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.data import api as data_api
@@ -395,7 +395,7 @@ class TestDataUpsert(TestCase):
         mock_user = create_mock_user("2")
         mock_request = create_mock_request(user=mock_user)
         # Act + Assert
-        with self.assertRaises(ModelError):
+        with self.assertRaises(CoreError):
             data_api.upsert(data, mock_request)
 
     @patch("core_main_app.components.data.models.Data.convert_to_dict")
@@ -420,7 +420,7 @@ class TestDataUpsert(TestCase):
         mock_user = create_mock_user("2")
         mock_request = create_mock_request(user=mock_user)
         # Act + Assert
-        with self.assertRaises(ModelError):
+        with self.assertRaises(CoreError):
             data_api.upsert(data, mock_request)
 
     @patch("django.core.files.uploadedfile.SimpleUploadedFile.__init__")
@@ -666,6 +666,84 @@ class TestAdminDataInsert(TestCase):
         mock_request = create_mock_request(user=mock_user)
         # Act # Assert
         with self.assertRaises(exceptions.ApiError):
+            data_api.admin_insert(data, request=mock_request)
+
+    @patch.object(Data, "save")
+    def test_admin_insert_json_format_returns_data_with_dict_content_set(
+        self, mock_save
+    ):
+        """test_admin_insert_json_format_returns_data_with_dict_content_set
+
+        Args:
+            mock_save:
+
+        Returns:
+
+        """
+        # Arrange
+        data = _create_data(
+            _get_json_template(),
+            user_id="2",
+            title="title",
+            content=json.dumps({"element": "value"}),
+        )
+        mock_save.return_value = data
+        mock_user = create_mock_user("3", is_superuser=True)
+        mock_request = create_mock_request(user=mock_user)
+        # Act
+        result = data_api.admin_insert(data, request=mock_request)
+        # Assert
+        self.assertIsInstance(result.content, str)
+        self.assertIsInstance(result.dict_content, dict)
+
+    @patch("core_main_app.components.data.models.Data.convert_to_file")
+    def test_admin_insert_unknown_format_convert_to_file_raises_model_error(
+        self, mock_convert_to_file
+    ):
+        """test_admin_insert_unknown_format_convert_to_file_raises_model_error
+
+        Args:
+
+        Returns:
+
+        """
+        # Arrange
+        data = _create_data(
+            _get_json_template(),
+            user_id="2",
+            title="title",
+            content={"element": "value"},
+        )
+        data.template.format = "bad"
+        mock_user = create_mock_user("3", is_superuser=True)
+        mock_request = create_mock_request(user=mock_user)
+        # Act + Assert
+        with self.assertRaises(CoreError):
+            data_api.admin_insert(data, request=mock_request)
+
+    @patch("core_main_app.components.data.models.Data.convert_to_dict")
+    def test_admin_insert_unknown_format_convert_to_dict_raises_model_error(
+        self, mock_convert_to_dict
+    ):
+        """test_admin_insert_unknown_format_convert_to_dict_raises_model_error
+
+        Args:
+
+        Returns:
+
+        """
+        # Arrange
+        data = _create_data(
+            _get_json_template(),
+            user_id="2",
+            title="title",
+            content={"element": "value"},
+        )
+        data.template.format = "bad"
+        mock_user = create_mock_user("3", is_superuser=True)
+        mock_request = create_mock_request(user=mock_user)
+        # Act + Assert
+        with self.assertRaises(CoreError):
             data_api.admin_insert(data, request=mock_request)
 
 

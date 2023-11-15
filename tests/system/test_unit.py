@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 from tests.components.data.tests_unit import _get_json_template, _get_template
 
+from core_main_app.commons.exceptions import CoreError
 from core_main_app.components.data.models import Data
 from core_main_app.components.workspace.models import Workspace
 from core_main_app.system import api as system_api
@@ -238,3 +239,43 @@ class TestSystemUpsert(TestCase):
         # Assert
         self.assertFalse(mock_check_xml_file_is_valid.called)
         self.assertTrue(mock_check_json_file_is_valid.called)
+
+    @patch("core_main_app.components.data.api.check_json_file_is_valid")
+    @patch("core_main_app.components.data.api.check_xml_file_is_valid")
+    @patch.object(Data, "convert_and_save")
+    def test_system_upsert_data_with_bad_template(
+        self,
+        mock_convert_and_save,
+        mock_check_xml_file_is_valid,
+        mock_check_json_file_is_valid,
+    ):
+        """test_system_upsert_json_data
+
+        Args:
+            mock_convert_and_save:
+
+        Returns:
+
+        """
+        # Arrange
+        mock_convert_and_save.return_value = None
+        mock_check_xml_file_is_valid.return_value = None
+        mock_check_json_file_is_valid.return_value = None
+
+        bad_format_template = _get_template()
+        bad_format_template.format = "bad"
+        mock_data = Data(
+            template=bad_format_template,
+            user_id="1",
+            dict_content=OrderedDict(),
+            title="title",
+            content="{}",
+        )
+
+        # Act + Assert
+        with self.assertRaises(CoreError):
+            system_api.upsert_data(mock_data)
+
+        # Assert
+        self.assertFalse(mock_check_xml_file_is_valid.called)
+        self.assertFalse(mock_check_json_file_is_valid.called)

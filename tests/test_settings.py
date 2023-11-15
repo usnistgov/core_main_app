@@ -3,10 +3,11 @@
 
 import os
 
-from dotenv import load_dotenv
 from django.conf import settings
+from dotenv import load_dotenv
 
 # load environment variables from .env
+
 load_dotenv()
 
 SECRET_KEY = "fake-key"
@@ -105,3 +106,4 @@ DJANGO_SIMPLE_HISTORY_MODELS = []
 BOOTSTRAP_VERSION = "5.1.3"
 
 ID_PROVIDER_SYSTEM_NAME = "mock_provider"
+ENABLE_JSON_SCHEMA_SUPPORT = True

@@ -13,6 +13,7 @@ from core_main_app.access_control.api import (
 )
 from core_main_app.access_control.decorators import access_control
 from core_main_app.commons import exceptions as exceptions
+from core_main_app.commons.exceptions import CoreError
 from core_main_app.components.data import (
     access_control as data_api_access_control,
 )
@@ -23,7 +24,10 @@ from core_main_app.components.data.tasks import (
 )
 from core_main_app.components.template.models import Template
 from core_main_app.components.workspace import api as workspace_api
-from core_main_app.settings import DATA_SORTING_FIELDS
+from core_main_app.settings import (
+    DATA_SORTING_FIELDS,
+    ENABLE_JSON_SCHEMA_SUPPORT,
+)
 from core_main_app.utils.datetime import datetime_now
 from core_main_app.utils.json_utils import validate_json_data
 from core_main_app.utils.query.mongo.prepare import (
@@ -133,8 +137,11 @@ def upsert(data, request):
 
     if data.template.format == Template.XSD:
         check_xml_file_is_valid(data, request=request)
-    elif data.template.format == Template.JSON:
+    elif data.template.format == Template.JSON and ENABLE_JSON_SCHEMA_SUPPORT:
         check_json_file_is_valid(data)
+    else:
+        # Raise an error if file extension not supported
+        raise CoreError("Unsupported file format.")
     data.convert_and_save()
     return data
 
@@ -150,7 +157,7 @@ def admin_insert(data, request):
     Returns:
 
     """
-    if data.xml_content is None:
+    if data.content is None:
         raise exceptions.ApiError(
             "Unable to save data: content field is not set."
         )
@@ -165,7 +172,13 @@ def admin_insert(data, request):
         data.last_change_date = now
 
     # convert and save the data (do not call convert_and_save that will set the date fields)
-    check_xml_file_is_valid(data, request=request)
+    if data.template.format == Template.XSD:
+        check_xml_file_is_valid(data, request=request)
+    elif data.template.format == Template.JSON and ENABLE_JSON_SCHEMA_SUPPORT:
+        check_json_file_is_valid(data)
+    else:
+        # Raise an error if file extension not supported
+        raise CoreError("Unsupported file format.")
     data.convert_to_file()
     data.convert_to_dict()
     return data.save()

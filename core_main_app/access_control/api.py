@@ -2,13 +2,13 @@
 """
 import logging
 
+from django.conf import settings
 from django.contrib.auth.models import User
 
 from core_main_app.access_control.exceptions import AccessControlError
-from core_main_app.commons.exceptions import ApiError, DoesNotExist
+from core_main_app.commons.exceptions import ApiError, DoesNotExist, CoreError
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.permissions import api as permissions_api, rights as rights
-from django.conf import settings
 from core_main_app.settings import (
     CAN_SET_PUBLIC_DATA_TO_PRIVATE,
 )
@@ -75,6 +75,8 @@ def is_superuser(func, *args, **kwargs):
         raise api_error_exception
     except DoesNotExist as dne_exception:
         raise dne_exception
+    except CoreError as core_error:
+        raise core_error
     except Exception as exception:
         logger.warning(
             f"has_perm_administration threw an exception: {str(exception)}"
