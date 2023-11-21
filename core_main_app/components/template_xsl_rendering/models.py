@@ -99,7 +99,7 @@ class TemplateXslRendering(models.Model):
         """
         try:
             return TemplateXslRendering.objects.get(
-                template__hash=template_hash
+                template___hash=template_hash
             )
         except ObjectDoesNotExist as exception:
             raise exceptions.DoesNotExist(str(exception))

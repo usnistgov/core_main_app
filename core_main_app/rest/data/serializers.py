@@ -128,8 +128,12 @@ class DataWithTemplateInfoSerializer(ModelSerializer):
             "template",
             "user_id",
             "title",
-            "content",
             "creation_date",
             "last_modification_date",
             "last_change_date",
         ]
+
+        if BACKWARD_COMPATIBILITY_DATA_XML_CONTENT:
+            fields.append("xml_content")
+        else:
+            fields.append("content")
