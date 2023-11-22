@@ -225,3 +225,32 @@ To specify this backend, add the following in your settings:
 .. code:: python
 
   EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+JSON Support
+------------
+
+CDCS 2.6 adds the ability to work directly with JSON documents. A Template can now either be
+an XML Schema or a JSON schema. Uploaded data, in XML or JSON format, will be validated by a template in
+the corresponding format, by the appropriate validator.
+
+This addition has been implemented as an option and needs to be enabled to make the features appear in the system.
+The following settings have been added with the implementation of JSON support and need to be set properly to enable the
+feature.
+
+.. code:: python
+
+  ENABLE_JSON_SCHEMA_SUPPORT = True
+  BACKWARD_COMPATIBILITY_DATA_XML_CONTENT = False
+  ALLOW_MULTIPLE_SCHEMAS = True # only required for registries
+
+To enable JSON support in the CDCS, ``ENABLE_JSON_SCHEMA_SUPPORT`` should be set to ``True``. For the registry projects,
+which are limited to a single XML Schema by default, the setting ``ALLOW_MULTIPLE_SCHEMAS`` should also be set to
+``True``.
+Before CDCS 2.6, some fields of the database contained direct references to the XML format. In particular, the property
+to read the content of an XML data was called ``xml_content``. When adding support for new formats, these fields have
+been renamed to not be tied to a specific format, thus ``Data.xml_content`` was renamed ``Data.content``. The change also
+impacted REST APIs, and data upload would need to set a ``content`` field, and responses would return a ``content``
+field. For users that are not ready to migrate their scripts to the new configuration yet, a setting has been added to
+continue accepting ``xml_content`` instead of ``content`` in the REST API. It is recommended to set
+``BACKWARD_COMPATIBILITY_DATA_XML_CONTENT`` to ``False`` when ready to make the move to JSON Support and start using
+``Data.content``.
