@@ -10,38 +10,11 @@
   <title>{{ WEBSITE_SHORT_TITLE }} | Admin DashBoard</title>
 
   <link rel=icon href="{% static 'img/favicon.png' %}" sizes="16x16" type="image/png">
-  {% if BOOTSTRAP_VERSION|first == '4' %}
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
-        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-  {% elif BOOTSTRAP_VERSION|first == '5' %}
-        {% if BOOTSTRAP_VERSION == '5.1.3' %}
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-              integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-        {% elif BOOTSTRAP_VERSION == '5.3.1' %}
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
-              integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-        {% endif %}
-  <link rel="stylesheet" href="{% static 'core_main_app/common/css/bootstrap5.css' %}" />
-  {% endif %}
-  <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
-  <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
-  <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
-  <link href="{% static 'fontawesomefree/css/regular.css' %}" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="{% static 'core_main_app/libs/jquery-ui/1.12.1/jquery-ui.css' %}" />
-  <link rel="stylesheet" href="{% static 'core_main_app/libs/jquery-ui/1.12.1/jquery-ui.structure.css' %}" />
-  <link rel="stylesheet" href="{% static 'core_main_app/libs/jquery-ui/1.12.1/jquery-ui.theme.css' %}" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css"
-        integrity="sha512-o5v54Kh5PH0dgnf9ei0L+vMRsbm5fvIvnR/XkrZZjN4mqdaeH7PW66tumBoQVIaKNVrLCZiBEfHzRY4JJSMK/Q=="
-        crossorigin="anonymous">
-
+  {% include 'core_main_app/_render/common/base_css.html' %}
   <link rel="stylesheet" href="{% static 'core_main_app/admin/_theme/css/theme.css' %}">
   <link rel="stylesheet" href="{% static 'core_main_app/admin/_theme/css/additional.css' %}">
   <link rel="stylesheet" href="{% static 'core_main_app/admin/_theme/css/skins.css' %}">
 
-  <link rel="stylesheet" href="{% static 'core_main_app/common/css/word-wrap.css' %}">
-  <link rel="stylesheet" href="{% static 'core_main_app/common/css/loading-spinner.css' %}" />
-  <link rel="stylesheet" href="{% static 'core_main_app/common/css/messages.css' %}" />
-  <link rel="stylesheet" href="{% static 'core_main_app/common/css/highlight.css' %}" />
   {% block app_css %}{% endblock %}
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -78,34 +51,9 @@
 
 <!-- REQUIRED JS SCRIPTS -->
 
-
-<script src="https://code.jquery.com/jquery-3.7.0.js"
-        integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
-        crossorigin="anonymous"></script>
-<script src="{% static 'core_main_app/libs/jquery-ui/1.12.1/jquery-ui.js' %}"></script>
-{% if BOOTSTRAP_VERSION|first == '4' %}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
-        crossorigin="anonymous"></script>
-{% elif BOOTSTRAP_VERSION == '5.1.3' %}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-        crossorigin="anonymous"></script>
-{% elif BOOTSTRAP_VERSION == '5.3.1' %}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
-        crossorigin="anonymous"></script>
-{% endif %}
-<script
-  src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"
-  integrity="sha384-g4mRvs7AO0/Ol5LxcGyz4Doe21pVhGNnC3EQw5shw+z+aXDN86HqUdwXWO+Gz2zI"
-  crossorigin="anonymous"></script>
-<script>hljs.highlightAll();</script>
-<script src="{% static 'core_main_app/common/js/csrf.js' %}"></script>
-
+{% include 'core_main_app/_render/common/base_js.html' %}
 {% include 'core_main_app/_render/common/messages.html' %}
 
-<script src="{% static 'core_main_app/common/js/loading_spinner.js' %}"></script>
 <script src="{% static 'core_main_app/admin/_theme/js/app.js' %}"></script>
 <script src="{% static 'core_main_app/admin/_theme/js/menu.js' %}"></script>
 
