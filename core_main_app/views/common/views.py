@@ -1378,7 +1378,7 @@ class ManageBlobMetadata(CommonView):
     Manage blob metadata.
     """
 
-    template = "core_main_app/user/blob/blob_metadata.html"
+    template = "core_main_app/user/blob/detail_metadata.html"
 
     def get(self, request, pk, *args, **kwargs):
         """get

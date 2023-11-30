@@ -1,10 +1,12 @@
+{% load blob_tags %}
+{% load tz %}
+
 <div class="row">
     <div class="col-md-12">
-        {% include 'core_main_app/common/blob/tools_blob.html'%}
+        {% include 'core_main_app/common/blob/tools_metadata.html'%}
         <div class="col-xs-6" id="data-title">
             <h2>{{ data.blob.filename }}</h2>
         </div>
     </div>
 </div>
-
-{% include 'core_main_app/common/blob/detail_blob.html'%}
+{% include 'core_main_app/common/blob/detail_metadata.html'%}

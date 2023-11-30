@@ -1,14 +1,6 @@
 {% load blob_tags %}
 {% load tz %}
 
-<div class="row">
-    <div class="col-md-12">
-        {% include 'core_main_app/common/blob/tools_metadata.html'%}
-        <div class="col-xs-6" id="data-title">
-            <h2>{{ data.blob.filename }}</h2>
-        </div>
-    </div>
-</div>
 {% with metadata=data.blob|blob_metadata:request.user %}
 {% if metadata|length > 0  %}
 
@@ -29,7 +21,9 @@
     {% for metadata in data.blob|blob_metadata:request.user %}
         <tr class="{{ rowcolors }}" objectid="{{metadata.id}}">
             <td>
-                <a class="blob-link" href="{% url 'core_main_app_data_detail'%}?id={{metadata.id}}">
+                <a class="blob-link"
+                   href={% if come_from_admin %}  "{% url 'core-admin:core_main_app_data_detail'%}?id={{metadata.id}}"
+                        {% else %} "{% url 'core_main_app_data_detail'%}?id={{metadata.id}}"{% endif %}>
                     {{ metadata.title }}
                 </a>
             </td>

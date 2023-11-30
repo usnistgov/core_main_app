@@ -1,0 +1,12 @@
+{% extends "core_main_app/_render/admin/theme/tools/section.html" %}
+{% load static %}
+
+{% block section_title %}Blob detail{% endblock %}
+
+{% block section_content %}
+<div class="row">
+    <div class="col-md-12">
+        {% include 'core_main_app/admin/blob/detail_box.html' %}
+    </div>
+</div>
+{% endblock %}

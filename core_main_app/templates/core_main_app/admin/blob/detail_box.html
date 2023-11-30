@@ -1,0 +1,13 @@
+{% extends 'core_main_app/_render/admin/theme/tools/box.html' %}
+
+{% block box_title %}
+    {{ data.blob.filename }}
+{% endblock %}
+
+{% block box_tools %}
+    {% include 'core_main_app/common/blob/tools_blob.html' with come_from_admin='True' %}
+{% endblock %}
+
+{% block box_body %}
+    {% include 'core_main_app/common/blob/detail_blob.html' %}
+{% endblock %}

@@ -78,6 +78,26 @@ admin_urls = [
         name="core_main_app_data_detail",
     ),
     re_path(
+        r"^blob/(?P<pk>[\w-]+)/metadata",
+        staff_member_required(
+            common_views.ManageBlobMetadata.as_view(
+                administration=True,
+                template="core_main_app/admin/blob/detail_metadata.html",
+            )
+        ),
+        name="core_main_app_blob_metadata",
+    ),
+    re_path(
+        r"^blob",
+        staff_member_required(
+            common_views.ViewBlob.as_view(
+                administration=True,
+                template="core_main_app/admin/blob/detail.html",
+            )
+        ),
+        name="core_main_app_blob_detail",
+    ),
+    re_path(
         r"^templates$",
         admin_views.manage_templates,
         name="core_main_app_templates",
