@@ -5,7 +5,7 @@ let templateID = null
 let textEditorUrl = null
 let showHTML = false
 let useModal = false
-let editorType = null
+let editorFormat = null
 let lineNumbers = 1
 
 /**
@@ -13,11 +13,11 @@ let lineNumbers = 1
  */
 $(document).ready(function() {
     documentID = $("#document_id").html()
-    editorType = $("#editor_type").html()
+    editorFormat = $("#editor_format").html()
     templateID = $("#template_id").html();
     documentName = $("#document_name").html();
     refreshLineNumbers()
-    switch(editorType) {
+    switch(editorFormat) {
         case "JSON":
             if (documentName == "Data") textEditorUrl = dataJSONTextEditorUrl;
             else {
@@ -49,10 +49,24 @@ $(document).ready(function() {
         if (useModal) createDataModal();
         else save();
     });
+
+    // Synchronize line numbers with content
     $(".input").scroll(function() {
         $(".line-number").prop("scrollTop", this.scrollTop);
     });
 
+    // Event to transform pasted content to plain text
+    $('.input').on('paste', function(e) {
+        e.preventDefault();
+        // Get pasted text as plain text
+        var text = (e.originalEvent || e).clipboardData.getData('text/plain');
+        // Highlight the text
+        html = hljs.highlightAuto(text).value
+        // Insert text into the editor input
+        $(".input").html("<pre class=\"content-highlight\">"+ html +"</pre>")
+        // Synchronize line numbers with the content pasted
+        refreshLineNumbers();
+    });
 });
 
 /**
@@ -106,9 +120,9 @@ let format = function()
         dataType: "json",
 		success: function(data){
 		    $.notify("Document formatted successfully", "success");
-		    if(editorType == "JSON") data = JSON.stringify(data, null, "  ")
+		    if(editorFormat == "JSON") data = JSON.stringify(data, null, "  ")
 		    html = hljs.highlightAuto(data).value
-		    $(".input").html("<pre class=\"content-highlight m-1\">"+ html +"</pre>")
+		    $(".input").html("<pre class=\"content-highlight\">"+ html +"</pre>")
 	    },
         error:function(data){
             jqError.html('<i class="fas fa-exclamation-triangle"></i> '+ data.responseText);
@@ -191,25 +205,20 @@ var refresh = function()
  * Show/Hide html representation
  */
 let display = function(){
-    var icon = $(".display > i").attr("class");
-    // Show loading spinner
-    showSpinner($(".display > i"))
     $(".representation").attr('hidden', showHTML)
     $(".refresh").attr('hidden', showHTML)
     $("#xslt-selector").attr('hidden', showHTML)
     if (showHTML){
-       $(".input").css("width", "100%");
-       $(".display").children().attr('class','fas fa-eye');
+        $(".input").css("width", "100%");
+        $(".display").html('<i class="fas fa-eye"></i> Display');
     }
     else{
         $(".input").css("width", "45%");
         $(".test").css("width", "45%");
         $(".input").css("display", "inline-block");
-        $(".display").children().attr('class','fas fa-eye-slash');
-
+        $(".display").html('<i class="fas fa-eye-slash"></i> Hide');
     }
     showHTML = !showHTML
-    hideSpinner($(".display > i"), icon)
 }
 
 /**
@@ -233,7 +242,7 @@ let generate = function()
 		success: function(data){
 		    $.notify("Document generated successfully", "success");
 		    html = hljs.highlightAuto(data).value
-		    $(".input").html("<pre class=\"content-highlight m-1\">"+ html +"</pre>")
+		    $(".input").html("<pre class=\"content-highlight\">"+ html +"</pre>")
 	    },
         error:function(data){
             jqError.html('<i class="fas fa-exclamation-triangle"></i> '+ data.responseText);
@@ -265,10 +274,9 @@ let refreshLineNumbers = function(){
     if( lineNumbers != $(".input").text().split('\n').length){
         var htmlLineNumber = ""
         lineNumbers = $(".input").text().split('\n').length
-        for (i = 1;  i < lineNumbers ; i++){
-            htmlLineNumber += "<div>"+i+"</div>"
+        for (i = 1;  i < lineNumbers + 1; i++){
+            htmlLineNumber += "<span>"+i+"</span>"
         }
         $(".line-number").html(htmlLineNumber)
     }
-
 }

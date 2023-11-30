@@ -2,14 +2,12 @@
 .input{
     height:542px;
     overflow:scroll;
-    padding:0px
+    padding:0px;
+    display: inline-block;
 }
 
 .line-number{
     width:auto;
-    margin-left:10px;
-    padding:5px;
-    padding-top:3px;
     text-align: center;
     height:542px;
     overflow:hidden;
@@ -23,11 +21,20 @@
     display: inline-block;
 }
 
-pre code.hljs,code.hljs{
- padding:0px;
+
+.line-number span {
+    display: block;
 }
 
+[contenteditable] {
+  outline: 0px solid transparent;
+}
 
+ .row > * {
+    padding: 0px  !important;
+    font-family: "Sans Mono", "Consolas", "Courier", monospace;
+    font-size: 16px;
+}
 
 
 

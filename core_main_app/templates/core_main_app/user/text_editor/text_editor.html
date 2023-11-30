@@ -19,9 +19,9 @@
 
 <div>
     <div class="row m-1">
-        <div class="border rounded bg-light line-number"><div>1</div></div>
-        <div class="border rounded input col" contenteditable="true">
-            <pre class="content-highlight m-1"><code>{{data.content}}</code></pre>
+        <div class="border {% if BOOTSTRAP_VERSION|first == "4" %}rounded-left{% elif BOOTSTRAP_VERSION|first == "5" %}rounded-start{% endif %} bg-light line-number"></div>
+        <div class="border {% if BOOTSTRAP_VERSION|first == "4" %}rounded-right{% elif BOOTSTRAP_VERSION|first == "5" %}rounded-end{% endif %} input col" contenteditable="true">
+            <pre class="content-highlight"><code>{{data.content}}</code></pre>
         </div>
         {% if data.type == 'XML' %}
         <div class="border rounded bg-light representation " hidden>
@@ -50,16 +50,16 @@
             </select>
             <button class="btn btn-secondary refresh {% if BOOTSTRAP_VERSION|first == "4" %}mr-auto{% elif BOOTSTRAP_VERSION|first == "5"  %}me-auto{% endif %}" hidden><i class="fas fa-sync" ></i> Refresh  </button>
             <button class="btn btn-secondary display {% if BOOTSTRAP_VERSION|first == "4" %}mr-auto{% elif BOOTSTRAP_VERSION|first == "5"  %}me-auto{% endif %}"><i class="fas fa-eye" ></i> Display  </button>
-            <button class="btn btn-secondary generate {% if BOOTSTRAP_VERSION|first == "4" %}mr-auto{% elif BOOTSTRAP_VERSION|first == "5"  %}me-auto{% endif %}"><i class="fas fa-cogs" ></i> Generate </button>
+            <button class="btn btn-secondary generate {% if BOOTSTRAP_VERSION|first == "4" %}mr-auto{% elif BOOTSTRAP_VERSION|first == "5"  %}me-auto{% endif %}"><i class="fas fa-cogs " ></i> Generate </button>
         {% endif %}
-    	<button class="btn btn-secondary format {% if BOOTSTRAP_VERSION|first == "4" %}mr-auto{% elif BOOTSTRAP_VERSION|first == "5"  %}me-auto{% endif %}"><i class="fas fa-paint-brush"></i> Format </button>
-        <button class="btn btn-secondary validate"><i class="fas fa-check"></i> Validate </button>
+    	<button class="btn btn-secondary format {% if BOOTSTRAP_VERSION|first == "4" %}mr-auto{% elif BOOTSTRAP_VERSION|first == "5"  %}me-auto{% endif %}"><i class="fas fa-highlighter"></i> Format </button>
+        <button class="btn btn-secondary validate"><i class="fas fa-file-circle-check"></i> Validate </button>
         <button class="btn btn-primary save {% if BOOTSTRAP_VERSION|first == "4" %}mr-auto{% elif BOOTSTRAP_VERSION|first == "5"  %}me-auto{% endif %}"><i class="fas fa-save"></i> Save </button>
 
 
 </div>
 <div id="document_id" class="hidden">{{data.document_id}}</div>
-<div id="editor_type" class="hidden">{{data.type}}</div>
+<div id="editor_format" class="hidden">{{data.type}}</div>
 {% if data.template_id %}
 <div id="template_id" class="hidden">{{data.template_id}}</div>
 {% endif %}
