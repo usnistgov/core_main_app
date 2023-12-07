@@ -1,5 +1,6 @@
 """ Mongoengine database tools
 """
+import mongomock
 from mongoengine import connect
 from mongoengine.connection import disconnect
 
@@ -24,7 +25,11 @@ class Database:
         Returns:
             the database connection created
         """
-        self.database = connect(self.database_name, host=self.database_host)
+        self.database = connect(
+            self.database_name,
+            host=self.database_host,
+            mongo_client_class=mongomock.MongoClient,
+        )
         return self.database
 
     def disconnect(self):

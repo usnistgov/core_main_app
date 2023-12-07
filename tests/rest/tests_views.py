@@ -4,7 +4,7 @@ from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
 from django.test import override_settings, tag
-from importlib_metadata import PackageNotFoundError
+from importlib.metadata import PackageNotFoundError
 
 from core_main_app.rest.views import CoreSettings
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
@@ -128,7 +128,7 @@ class TestCoreSetting(TestCase):
         # Assert
         self.assertEqual(response.data["database"]["engine"], None)
 
-    @patch("importlib_metadata.version")
+    @patch("importlib.metadata.version")
     def test_main_app_not_found_returns_none(self, version):
         """test_main_app_not_found_returns_none
 

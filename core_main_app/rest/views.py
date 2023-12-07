@@ -1,6 +1,7 @@
 """ Rest views
 """
-import importlib_metadata
+from importlib import metadata
+
 from django.conf import settings
 from django.db import connection
 from rest_framework import status
@@ -37,8 +38,8 @@ class CoreSettings(APIView):
         try:
             # Get version of core main application
             try:
-                core_version = importlib_metadata.version("core_main_app")
-            except importlib_metadata.PackageNotFoundError:
+                core_version = metadata.version("core_main_app")
+            except metadata.PackageNotFoundError:
                 core_version = None
 
             # Get version of MongoDB server

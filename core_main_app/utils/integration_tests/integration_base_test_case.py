@@ -5,7 +5,7 @@ from django.test import TestCase
 from core_main_app.commons.exceptions import CoreError
 
 MOCK_DATABASE_NAME = "db_mock"
-MOCK_DATABASE_HOST = "mongomock://localhost"
+MOCK_DATABASE_HOST = "mongodb://localhost"
 
 
 class IntegrationBaseTestCase(TestCase):
@@ -56,7 +56,7 @@ class MongoDBIntegrationBaseTestCase(TestCase):
         Returns:
 
         """
-        from core_main_app.utils.databases.mongo.mongoengine_database import (
+        from core_main_app.utils.tests_tools.databases.mongo.mongoengine_database import (
             Database,
         )
 
