@@ -99,7 +99,11 @@ admin_urls = [
     ),
     re_path(
         r"^templates$",
-        admin_views.manage_templates,
+        staff_member_required(
+            admin_views.ManageTemplatesView.as_view(
+                template_name="core_main_app/admin/templates/list.html"
+            )
+        ),
         name="core_main_app_templates",
     ),
     re_path(

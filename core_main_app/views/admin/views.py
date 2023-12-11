@@ -65,62 +65,66 @@ def admin_home(request):
     return admin_render(request, "core_main_app/admin/dashboard.html")
 
 
-@staff_member_required
-def manage_templates(request):
-    """View that allows template management.
+class ManageTemplatesView(View):
+    """Manage Templates view."""
 
-    Args:
-        request:
+    template_name = "core_main_app/admin/templates/list.html"
 
-    Returns:
+    def get(self, request):
+        """get request
 
-    """
-    # get all current templates
-    templates = template_version_manager_api.get_global_version_managers(
-        request=request
-    )
+        Args:
+            request:
 
-    context = {
-        "object_name": "Template",
-        "available": [
-            template for template in templates if not template.is_disabled
-        ],
-        "disabled": [
-            template for template in templates if template.is_disabled
-        ],
-    }
+        Returns:
+        """
 
-    assets = {
-        "css": ["core_main_app/common/css/template/template_ordering.css"],
-        "js": [
-            {
-                "path": "core_main_app/common/js/templates/list/restore.js",
-                "is_raw": False,
-            },
-            {
-                "path": "core_main_app/common/js/templates/sort.js",
-                "is_raw": False,
-            },
-            {
-                "path": "core_main_app/common/js/templates/list/modals/disable.js",
-                "is_raw": False,
-            },
-            EditTemplateVersionManagerView.get_modal_js_path(),
-        ],
-    }
+        # get all current templates
+        templates = template_version_manager_api.get_global_version_managers(
+            request=request
+        )
 
-    modals = [
-        "core_main_app/admin/templates/list/modals/disable.html",
-        EditTemplateVersionManagerView.get_modal_html_path(),
-    ]
+        context = {
+            "object_name": "Template",
+            "available": [
+                template for template in templates if not template.is_disabled
+            ],
+            "disabled": [
+                template for template in templates if template.is_disabled
+            ],
+        }
 
-    return admin_render(
-        request,
-        "core_main_app/admin/templates/list.html",
-        assets=assets,
-        context=context,
-        modals=modals,
-    )
+        assets = {
+            "css": ["core_main_app/common/css/template/template_ordering.css"],
+            "js": [
+                {
+                    "path": "core_main_app/common/js/templates/list/restore.js",
+                    "is_raw": False,
+                },
+                {
+                    "path": "core_main_app/common/js/templates/sort.js",
+                    "is_raw": False,
+                },
+                {
+                    "path": "core_main_app/common/js/templates/list/modals/disable.js",
+                    "is_raw": False,
+                },
+                EditTemplateVersionManagerView.get_modal_js_path(),
+            ],
+        }
+
+        modals = [
+            "core_main_app/admin/templates/list/modals/disable.html",
+            EditTemplateVersionManagerView.get_modal_html_path(),
+        ]
+
+        return admin_render(
+            request,
+            self.template_name,
+            assets=assets,
+            context=context,
+            modals=modals,
+        )
 
 
 @staff_member_required
