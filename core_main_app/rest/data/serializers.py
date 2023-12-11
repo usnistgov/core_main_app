@@ -7,6 +7,7 @@ from rest_framework.serializers import ModelSerializer
 from core_main_app.components.data import api as data_api
 from core_main_app.components.data.models import Data
 from core_main_app.components.template import api as template_api
+from core_main_app.rest.template.serializers import TemplateSerializer
 from core_main_app.settings import BACKWARD_COMPATIBILITY_DATA_XML_CONTENT
 
 
@@ -114,15 +115,15 @@ class DataSerializer(ModelSerializer):
         return data_api.upsert(instance, self.context["request"])
 
 
-# FIXME: Should use in the future a serializer with dynamic fields (init depth with parameter for example)
 class DataWithTemplateInfoSerializer(ModelSerializer):
     """Data Full serializer"""
+
+    template = TemplateSerializer()
 
     class Meta:
         """Meta"""
 
         model = Data
-        depth = 2
         fields = [
             "id",
             "template",

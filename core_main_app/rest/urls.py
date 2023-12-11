@@ -127,11 +127,6 @@ urlpatterns = [
         name="core_main_app_rest_data_download",
     ),
     re_path(
-        r"^data/get-full$",
-        data_views.get_by_id_with_template_info,
-        name="core_main_app_rest_data_get_by_id_with_template_info",
-    ),
-    re_path(
         r"^data/query/keyword/$",
         data_views.ExecuteLocalKeywordQueryView.as_view(),
         name="core_main_app_rest_data_keyword_query",

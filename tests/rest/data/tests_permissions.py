@@ -13,7 +13,6 @@ from core_main_app.rest.data import views as data_rest_views
 from core_main_app.rest.data.admin_serializers import AdminDataSerializer
 from core_main_app.rest.data.serializers import (
     DataSerializer,
-    DataWithTemplateInfoSerializer,
 )
 from core_main_app.rest.data.views import Migration as data_migration
 from core_main_app.rest.data.views import Validation as data_validation
@@ -640,87 +639,6 @@ class TestDataDownloadGetPermissions(SimpleTestCase):
 
         response = RequestMock.do_request_get(
             data_rest_views.DataDownload.as_view(), mock_user, param={"pk": 0}
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-
-class TestDataGetFullGetPermissions(SimpleTestCase):
-    """TestDataGetFullGetPermissions"""
-
-    @patch.object(DataWithTemplateInfoSerializer, "data")
-    @patch.object(data_api, "get_by_id")
-    def test_anonymous_returns_http_200(
-        self, mock_data_api_get_by_id, mock_data_with_template_serializer_data
-    ):
-        """test_anonymous_returns_http_200
-
-        Args:
-            mock_data_api_get_by_id:
-            mock_data_with_template_serializer_data:
-
-        Returns:
-
-        """
-        mock_data_api_get_by_id.return_value = None
-        mock_data_with_template_serializer_data.return_value = []
-
-        response = RequestMock.do_request_get(
-            data_rest_views.get_by_id_with_template_info, None, data={"id": 0}
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    @patch.object(DataWithTemplateInfoSerializer, "data")
-    @patch.object(data_api, "get_by_id")
-    def test_authenticated_returns_http_200(
-        self, mock_data_api_get_by_id, mock_data_with_template_serializer_data
-    ):
-        """test_authenticated_returns_http_200
-
-        Args:
-            mock_data_api_get_by_id:
-            mock_data_with_template_serializer_data:
-
-        Returns:
-
-        """
-        mock_data_api_get_by_id.return_value = None
-        mock_data_with_template_serializer_data.return_value = []
-
-        mock_user = create_mock_user(1)
-
-        response = RequestMock.do_request_get(
-            data_rest_views.get_by_id_with_template_info,
-            mock_user,
-            data={"id": 0},
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    @patch.object(DataWithTemplateInfoSerializer, "data")
-    @patch.object(data_api, "get_by_id")
-    def test_staff_returns_http_200(
-        self, mock_data_api_get_by_id, mock_data_with_template_serializer_data
-    ):
-        """test_staff_returns_http_200
-
-        Args:
-            mock_data_api_get_by_id:
-            mock_data_with_template_serializer_data:
-
-        Returns:
-
-        """
-        mock_data_api_get_by_id.return_value = None
-        mock_data_with_template_serializer_data.return_value = []
-
-        mock_user = create_mock_user(1, is_staff=True)
-
-        response = RequestMock.do_request_get(
-            data_rest_views.get_by_id_with_template_info,
-            mock_user,
-            data={"id": 0},
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

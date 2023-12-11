@@ -7,7 +7,6 @@ import os
 from django.conf import settings
 from django.http import Http404
 from rest_framework import status
-from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import (
     IsAuthenticated,
@@ -307,6 +306,13 @@ class DataDetail(APIView):
               content: Internal server error
         """
         try:
+            # Get parameters
+            template_info_param = to_bool(
+                self.request.query_params.get("template_info", False)
+            )
+            if template_info_param:
+                self.serializer = DataWithTemplateInfoSerializer
+
             # Get object
             data_object = self.get_object(request, pk)
 
@@ -592,59 +598,6 @@ class DataDownload(APIView):
             return Response(
                 content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
-
-# FIXME: Should use in the future an serializer with dynamic fields (init depth with parameter for example)
-# FIXME: Should avoid the duplicated code with get_by_id
-@api_view(["GET"])
-def get_by_id_with_template_info(request):
-    """Retrieve a Data with template information
-
-    Examples:
-
-        ../data/get-full?id=[data_id]
-
-    Args:
-
-        request: HTTP request
-
-    Returns:
-
-        - code: 200
-          content: Data
-        - code: 400
-          content: Validation error
-        - code: 404
-          content: Object was not found
-        - code: 500
-          content: Internal server error
-    """
-    try:
-        # Get parameters
-        data_id = request.query_params.get("id", None)
-
-        # Check parameters
-        if data_id is None:
-            content = {"message": "Expected parameters not provided."}
-            return Response(content, status=status.HTTP_400_BAD_REQUEST)
-
-        # Get object
-        data_object = data_api.get_by_id(data_id, request.user)
-
-        # Serialize object
-        return_value = DataWithTemplateInfoSerializer(data_object)
-
-        # Return response
-        return Response(return_value.data, status=status.HTTP_200_OK)
-    except exceptions.DoesNotExist:
-        content = {"message": "No data found with the given id."}
-        return Response(content, status=status.HTTP_404_NOT_FOUND)
-    except exceptions.ModelError:
-        content = {"message": "Invalid input."}
-        return Response(content, status=status.HTTP_400_BAD_REQUEST)
-    except Exception:
-        content = {"message": "An unexpected error occurred."}
-        return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):

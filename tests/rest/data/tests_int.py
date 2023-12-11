@@ -13,6 +13,7 @@ from tests.components.user.fixtures.fixtures import UserFixtures
 
 from core_main_app.components.data import api as data_api
 from core_main_app.components.data.models import Data
+from core_main_app.components.template.models import Template
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.components.workspace.models import Workspace
 from core_main_app.rest.data import views as data_rest_views
@@ -129,15 +130,15 @@ class TestDataList(IntegrationBaseTestCase):
     @patch(
         "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
     )
-    @patch.object(Data, "xml_content")
+    @patch.object(Data, "content")
     def test_get_returns_http_200(
-        self, mock_xml_content, get_all_workspaces_with_read_access_by_user
+        self, mock_content, get_all_workspaces_with_read_access_by_user
     ):
         """test_get_returns_http_200
 
         Args:
             get_all_workspaces_with_read_access_by_user
-            mock_xml_content:
+            mock_content:
 
         Returns:
 
@@ -145,7 +146,7 @@ class TestDataList(IntegrationBaseTestCase):
         # Arrange
         user = create_mock_user(1)
         get_all_workspaces_with_read_access_by_user.return_value = []
-        mock_xml_content.return_value = "content"
+        mock_content.return_value = "content"
 
         # Act
         response = RequestMock.do_request_get(
@@ -283,7 +284,7 @@ class TestDataList(IntegrationBaseTestCase):
         mock_data = {
             "template": str(self.fixture.template.id),
             "user_id": "1",
-            "xml_content": "<tag></tag>",
+            "content": "<tag></tag>",
         }
 
         # Act
@@ -306,7 +307,7 @@ class TestDataList(IntegrationBaseTestCase):
             "template": "507f1f77bcf86cd799439011",
             "user_id": "1",
             "title": "new data",
-            "xml_content": "<tag></tag>",
+            "content": "<tag></tag>",
         }
 
         # Act
@@ -331,19 +332,19 @@ class TestDataDetail(IntegrationBaseTestCase):
         """
         super().setUp()
 
-    @patch.object(Data, "xml_content")
-    def test_get_returns_http_200(self, mock_xml_content):
+    @patch.object(Data, "content")
+    def test_get_returns_http_200(self, mock_content):
         """test_get_returns_http_200
 
         Args:
-            mock_xml_content:
+            mock_content:
 
         Returns:
 
         """
         # Arrange
         user = create_mock_user(1)
-        mock_xml_content.return_value = "content"
+        mock_content.return_value = "content"
 
         # Act
         response = RequestMock.do_request_get(
@@ -355,19 +356,19 @@ class TestDataDetail(IntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    @patch.object(Data, "xml_content")
-    def test_get_returns_data(self, mock_xml_content):
+    @patch.object(Data, "content")
+    def test_get_returns_data(self, mock_content):
         """test_get_returns_data
 
         Args:
-            mock_xml_content:
+            mock_content:
 
         Returns:
 
         """
         # Arrange
         user = create_mock_user(1)
-        mock_xml_content.return_value = "content"
+        mock_content.return_value = "content"
 
         # Act
         response = RequestMock.do_request_get(
@@ -379,19 +380,19 @@ class TestDataDetail(IntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.data["title"], self.fixture.data_1.title)
 
-    @patch.object(Data, "xml_content")
-    def test_get_data_containing_ascii_returns_data(self, mock_xml_content):
+    @patch.object(Data, "content")
+    def test_get_data_containing_ascii_returns_data(self, mock_content):
         """test_get_data_containing_ascii_returns_data
 
         Args:
-            mock_xml_content:
+            mock_content:
 
         Returns:
 
         """
         # Arrange
         user = create_mock_user(1)
-        mock_xml_content.return_value = "\xc3te\xc3"
+        mock_content.return_value = "\xc3te\xc3"
 
         # Act
         response = RequestMock.do_request_get(
@@ -421,6 +422,86 @@ class TestDataDetail(IntegrationBaseTestCase):
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @patch.object(Data, "content")
+    @patch.object(Template, "content")
+    def test_get_returns_data_with_template_info_when_exists(
+        self, mock_template_content, mock_data_content
+    ):
+        """test_get_returns_data_with_template_info_when_exists
+
+        Args:
+            mock_template_content:
+            mock_data_content:
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user(1)
+        mock_template_content.return_value = "content"
+        mock_data_content.return_value = "content"
+
+        # Mock
+        response = RequestMock.do_request_get(
+            data_rest_views.DataDetail.as_view(),
+            user,
+            param={"pk": self.fixture.data_1.id},
+            data={"template_info": "true"},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue("content" in response.data["template"])
+
+    def test_get_returns_data_with_template_info_false_does_not_return_info(
+        self,
+    ):
+        """test_get_returns_data_with_template_info_false_does_not_return_info
+
+        Args:
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user(1)
+
+        # Mock
+        response = RequestMock.do_request_get(
+            data_rest_views.DataDetail.as_view(),
+            user,
+            param={"pk": self.fixture.data_1.id},
+            data={"template_info": "false"},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(isinstance(response.data["template"], int))
+
+    def test_get_returns_data_without_template_info_param_does_not_return_info(
+        self,
+    ):
+        """test_get_returns_data_without_template_info_param_does_not_return_info
+
+        Args:
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user(1)
+
+        # Mock
+        response = RequestMock.do_request_get(
+            data_rest_views.DataDetail.as_view(),
+            user,
+            param={"pk": self.fixture.data_1.id},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(isinstance(response.data["template"], int))
 
     def test_delete_wrong_id_returns_http_404(self):
         """test_delete_wrong_id_returns_http_404

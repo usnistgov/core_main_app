@@ -25,8 +25,10 @@ class TemplateSerializer(ModelSerializer):
             "checksum",
             "content",
             "hash",
+            "format",
             "dependencies",
             "dependencies_dict",
+            "_display_name",
         ]
 
         read_only_fields = [
@@ -34,5 +36,6 @@ class TemplateSerializer(ModelSerializer):
             "user",
             "checksum",
             "hash",
+            "format",
             "_display_name",
         ]

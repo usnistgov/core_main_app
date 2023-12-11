@@ -141,6 +141,89 @@ class TestDataDetail(SimpleTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @patch.object(Data, "get_by_id")
+    def test_get_returns_data_with_template_info_when_exists(
+        self, mock_get_by_id
+    ):
+        """test_get_returns_data_with_template_info_when_exists
+
+        Args:
+            mock_get_by_id:
+
+        Returns:
+
+        """
+        # Arrange
+        mock_user = create_mock_user("1")
+        mock_get_by_id.return_value = _create_data("test")
+
+        # Mock
+        response = RequestMock.do_request_get(
+            data_rest_views.DataDetail.as_view(),
+            mock_user,
+            param={"pk": "1"},
+            data={"template_info": "true"},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue("content" in response.data["template"])
+
+    @patch.object(Data, "get_by_id")
+    def test_get_returns_data_with_template_info_false_does_not_return_info(
+        self, mock_get_by_id
+    ):
+        """test_get_returns_data_with_template_info_false_does_not_return_info
+
+        Args:
+            mock_get_by_id:
+
+        Returns:
+
+        """
+        # Arrange
+        mock_user = create_mock_user("1")
+        mock_get_by_id.return_value = _create_data("test")
+
+        # Mock
+        response = RequestMock.do_request_get(
+            data_rest_views.DataDetail.as_view(),
+            mock_user,
+            param={"pk": "1"},
+            data={"template_info": "false"},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsNone(response.data["template"])
+
+    @patch.object(Data, "get_by_id")
+    def test_get_returns_data_without_template_info_param_does_not_return_info(
+        self, mock_get_by_id
+    ):
+        """test_get_returns_data_without_template_info_param_does_not_return_info
+
+        Args:
+            mock_get_by_id:
+
+        Returns:
+
+        """
+        # Arrange
+        mock_user = create_mock_user("1")
+        mock_get_by_id.return_value = _create_data("test")
+
+        # Mock
+        response = RequestMock.do_request_get(
+            data_rest_views.DataDetail.as_view(),
+            mock_user,
+            param={"pk": "1"},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsNone(response.data["template"])
+
+    @patch.object(Data, "get_by_id")
     def test_delete_returns_http_404_when_data_not_found(self, mock_get_by_id):
         """test_delete_returns_http_404_when_data_not_found
 
