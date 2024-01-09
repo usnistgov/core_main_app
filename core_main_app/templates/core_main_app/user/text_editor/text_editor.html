@@ -18,7 +18,7 @@
 
 
 <div>
-    <div class="row m-1">
+    <div class="row container-font m-1">
         <div class="border {% if BOOTSTRAP_VERSION|first == "4" %}rounded-left{% elif BOOTSTRAP_VERSION|first == "5" %}rounded-start{% endif %} bg-light line-number"></div>
         <div class="border {% if BOOTSTRAP_VERSION|first == "4" %}rounded-right{% elif BOOTSTRAP_VERSION|first == "5" %}rounded-end{% endif %} input col" contenteditable="true">
             <pre class="content-highlight"><code>{{data.content}}</code></pre>
