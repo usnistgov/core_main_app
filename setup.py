@@ -63,7 +63,7 @@ chdir(normpath(join(abspath(__file__), pardir)))
 
 setup(
     name="core_main_app",
-    version="2.7.0",
+    version="2.8.0",
     description="Main functionalities for the curator core project",
     long_description=long_desc,
     author="NIST IT Lab",
