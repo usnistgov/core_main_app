@@ -1,6 +1,8 @@
 {% extends 'core_main_app/_render/admin/theme/tools/box.html' %}
 
-{% block box_title %}Uploading Form{% endblock %}
+{% block box_title %}
+    Upload Form
+{% endblock %}
 
 {% block box_body %}
 <div id="upload_errors" class="alert alert-danger" style="display: {{ data.errors|yesno:',none' }};">

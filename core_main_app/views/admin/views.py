@@ -102,6 +102,10 @@ class ManageTemplatesView(View):
                     "is_raw": False,
                 },
                 {
+                    "path": "core_main_app/common/js/tooltip.js",
+                    "is_raw": False,
+                },
+                {
                     "path": "core_main_app/common/js/templates/sort.js",
                     "is_raw": False,
                 },

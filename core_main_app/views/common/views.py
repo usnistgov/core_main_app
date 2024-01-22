@@ -389,7 +389,11 @@ class TemplateXSLRenderingView(View):
                 {
                     "path": "core_main_app/admin/js/templates_xslt/detail_xslt.js",
                     "is_raw": False,
-                }
+                },
+                {
+                    "path": "core_main_app/common/js/tooltip.js",
+                    "is_raw": False,
+                },
             ],
         }
 

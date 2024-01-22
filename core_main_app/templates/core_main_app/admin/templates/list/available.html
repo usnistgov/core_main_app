@@ -6,6 +6,9 @@
     <a href="{% url 'core-admin:core_main_app_upload_template'%}" class="{% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %} btn btn-secondary">
         <i class="fas fa-upload"></i> Upload {{ data.object_name }}
     </a>
+    <i class="{% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %} btn fas fa-circle-question"
+    {% if BOOTSTRAP_VERSION|first == "4" %}data-toggle{% elif BOOTSTRAP_VERSION|first == "5"  %}data-bs-toggle{% endif %}="tooltip"
+    title="JSON Schema support can be enabled in the project settings."></i>
 {% endblock %}
 
 {% block box_body %}
