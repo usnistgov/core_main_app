@@ -10,13 +10,15 @@
     It shows your content side by side in a clear, editable representation.
 </p>
 
+<div id="switch-to-form" class="{% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %} hidden">
+    <button class="btn btn-secondary switch-to-form-editor"><i class="fas fa-circle-right"></i> Switch to Form Editor </button>
+</div>
+
 <h1>Title : {{data.name}}</h1>
 
 <div class="alert alert-danger m-2" style="display: none;" role="alert">
     <i class="fas fa-exclamation-triangle"></i>
 </div>
-
-
 <div>
     <div class="row container-font m-1">
         <div class="border {% if BOOTSTRAP_VERSION|first == "4" %}rounded-left{% elif BOOTSTRAP_VERSION|first == "5" %}rounded-start{% endif %} bg-light line-number"></div>

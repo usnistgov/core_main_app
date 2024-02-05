@@ -4,11 +4,10 @@
  */
 download = function(e){
     let toFormat = $('#format').is(':checked')
-    let downloadUrl
-    if (e.data.document == "document") downloadUrl = downloadXmlUrl
-    else downloadUrl = downloadXsdUrl
+    let downloadUrl;
+    if (e.data.document == "document") downloadUrl = downloadDocumentUrl
+    else downloadUrl = downloadTemplateUrl
     window.location.href = downloadUrl +"?pretty_print=" + toFormat;
-
 
 };
 

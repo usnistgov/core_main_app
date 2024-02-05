@@ -22,6 +22,7 @@ $(document).ready(function() {
             if (documentName == "Data") textEditorUrl = dataJSONTextEditorUrl;
             else {
                 textEditorUrl = draftJSONTextEditorUrl;
+                $("#switch-to-form" ).removeClass("hidden")
                 $('.save-data').on('click', save);
                 useModal = true;
             }
