@@ -19,28 +19,33 @@
 <div class="alert alert-danger m-2" style="display: none;" role="alert">
     <i class="fas fa-exclamation-triangle"></i>
 </div>
-<div>
-    <div class="row container-font m-1">
-        <div class="border {% if BOOTSTRAP_VERSION|first == "4" %}rounded-left{% elif BOOTSTRAP_VERSION|first == "5" %}rounded-start{% endif %} bg-light line-number"></div>
-        <div class="border {% if BOOTSTRAP_VERSION|first == "4" %}rounded-right{% elif BOOTSTRAP_VERSION|first == "5" %}rounded-end{% endif %} input col" contenteditable="true">
-            <pre class="content-highlight"><code>{{data.content}}</code></pre>
-        </div>
-        {% if data.type == 'XML' %}
-        <div class="border rounded bg-light representation " hidden>
-            <div class="tree m-2">
-                {% xsl_transform_detail xml_content=data.content template_id=data.template_id xslt_id=data.xsl_transformation_id request=request as xml_representation %}
-                {% if 'core_file_preview_app' in INSTALLED_APPS %}
-                    {% render_blob_links_in_span xml_string=xml_representation as xml_representation %}
-                {% endif %}
 
-                {{ xml_representation|safe}}
-            </div>
-        </div>
-    {% endif %}
+
+
+{% if data.TEXT_EDITOR_LIBRARY == "Monaco" %}
+<div>
+        <div id="data_content" class="hidden">{{data.content}}</div>
+        <div id="container" class="border rounded input"></div>
+{% else %}
+<div class="row text-editor-font m-1">
+    <div class="border {% if BOOTSTRAP_VERSION|first == "4" %}rounded-left{% elif BOOTSTRAP_VERSION|first == "5" %}rounded-start{% endif %} bg-light line-number"></div>
+    <div class="border {% if BOOTSTRAP_VERSION|first == "4" %}rounded-right{% elif BOOTSTRAP_VERSION|first == "5" %}rounded-end{% endif %} input input-text-editor col" contenteditable="true">
+        <pre class="content-highlight"><code>{{data.content}}</code></pre>
     </div>
 
+    {% endif %}
+{% if data.type == 'XML' %}
+    <div class="border rounded bg-light representation " hidden>
+        <div class="tree m-2">
+            {% xsl_transform_detail xml_content=data.content template_id=data.template_id xslt_id=data.xsl_transformation_id request=request as xml_representation %}
+            {% if 'core_file_preview_app' in INSTALLED_APPS %}
+                {% render_blob_links_in_span xml_string=xml_representation as xml_representation %}
+            {% endif %}
+            {{ xml_representation|safe}}
+        </div>
+    </div>
+{% endif %}
 </div>
-
 
 <div class="{% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %} m-2">
         {% if data.type == 'XML' %}
@@ -62,11 +67,10 @@
 </div>
 <div id="document_id" class="hidden">{{data.document_id}}</div>
 <div id="editor_format" class="hidden">{{data.type}}</div>
+<div id="text_editor_library" class="hidden">{{data.TEXT_EDITOR_LIBRARY}}</div>
 {% if data.template_id %}
 <div id="template_id" class="hidden">{{data.template_id}}</div>
 {% endif %}
 {% if data.document_name %}
 <div id="document_name" class="hidden">{{data.document_name}}</div>
 {% endif %}
-
-

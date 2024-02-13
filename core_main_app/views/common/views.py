@@ -5,6 +5,7 @@ from abc import ABCMeta, abstractmethod
 from datetime import datetime
 
 from django.conf import settings as conf_settings
+from core_main_app import settings as main_settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import (
@@ -571,6 +572,41 @@ class AbstractEditorView(View, metaclass=ABCMeta):
                 "core_main_app/user/css/text-editor.css",
             ],
         }
+        if main_settings.TEXT_EDITOR_LIBRARY == "Monaco":
+            assets["js"].extend(
+                [
+                    {
+                        "path": "core_main_app/user/js/text_editor/monaco-editor-loader.js",
+                        "is_raw": True,
+                    },
+                    {
+                        "path": "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.46.0/min/vs/loader.min.js",
+                        "integrity": "sha512-ZG31AN9z/CQD1YDDAK4RUAvogwbJHv6bHrumrnMLzdCrVu4HeAqrUX7Jsal/cbUwXGfaMUNmQU04tQ8XXl5Znw==",
+                        "is_external": True,
+                        "is_raw": False,
+                    },
+                    {
+                        "path": "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.46.0/min/vs/editor/editor.main.min.js",
+                        "integrity": "sha512-AnszY619AdeYxGzR/u1bSnYCRmnGHrHLpOkc0qolt12NuhUJI4Cw+dRK0eiRChNxvY+C84xDE0HPPGdr3bCTZQ==",
+                        "is_external": True,
+                        "is_raw": False,
+                    },
+                    {
+                        "path": "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.46.0/min/vs/editor/editor.main.nls.min.js",
+                        "integrity": "sha512-E3GzU1Yj2NxL325SuAMqGvDn0W9+xr3WSkwEacvKo5Qh3wv60JToJUcIAUYrgtiF5tlwU2pztakxsp2UnHhbKA==",
+                        "is_external": True,
+                        "is_raw": False,
+                    },
+                ]
+            )
+            assets["external_css"] = [
+                {
+                    "path": "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.46.0/min/vs/editor/editor.main.min.css",
+                    "integrity": "sha512-Q/ZIaWsdJBTBAkGTDqXN6AhYSD7+QEa+ccWJLsFTbayZWiv+Vi/BUGfm8E/4k/AV9Wvpci22/QSl56214Mv5NQ==",
+                    "extra_args": {"data-name": "vs/editor/editor.main"},
+                }
+            ]
+
         return assets
 
     def _get_modals(self):
@@ -592,6 +628,7 @@ class AbstractEditorView(View, metaclass=ABCMeta):
             "content": content,
             "type": type_content,
             "document_id": document_id,
+            "TEXT_EDITOR_LIBRARY": main_settings.TEXT_EDITOR_LIBRARY,
         }
         return context
 

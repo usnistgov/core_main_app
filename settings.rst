@@ -352,6 +352,7 @@ Dashboard
   Customize the number of queries displayed per page
 
 
+
 UI Customization
 ----------------
 
@@ -388,6 +389,16 @@ UI Customization
   Default: ``"Query by Keyword"``
 
   label for the explore by keyword app menu.
+
+
+* ``TEXT_EDITOR_LIBRARY``
+
+  Default: ``"Monaco"``
+
+  Customize the type of editor used within the  app. Choose between  None and "Monaco" and other third-party text editors:
+  - 'None' to use the simple text editor with minimal features.
+  - 'Monaco' to use Monaco editor for advanced code editing capabilities.
+  - Set parameter to the name of the desired third-party text editor to integrate.
 
 
 XML

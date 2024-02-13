@@ -274,3 +274,8 @@ ENABLE_JSON_SCHEMA_SUPPORT = getattr(
 )
 """ :py:class:`bool`: Set to `True` to enable JSON Schema support.
 """
+
+TEXT_EDITOR_LIBRARY = getattr(settings, "TEXT_EDITOR_LIBRARY", "Monaco")
+""" :py:class:`str`: Set to `Monaco` to enable use external text editor Monaco,`None` to use default text editor,
+or specify another external text editor to set it up.
+"""

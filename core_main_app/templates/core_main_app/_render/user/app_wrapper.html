@@ -4,8 +4,8 @@
 {% load include_static %}
 
 {% comment %}
-    Template including the necessary template and static file for a given view. The file utils/rendering.py is rendering
-    it using Django.
+    Template including the necessary template and static file for a given view. The file
+    utils/rendering.py is rendering it using Django.
 {% endcomment %}
 
 {% block app_data %}
@@ -19,6 +19,16 @@
 {% endblock %}
 
 {% block app_css %}
+    {% for css_file in assets.external_css %}
+        <link rel="stylesheet"
+              href="{{ css_file.path }}"
+              integrity="{{ css_file.integrity }}"
+              crossorigin="anonymous"
+              {% for key, value in css_file.extra_args.items %}
+                  {{ key }}="{{ value }}"
+              {% endfor %}
+        >
+    {% endfor %}
     {% for css_file in assets.css %}
         <link rel="stylesheet" href="{% static css_file %}" />
     {% endfor %}
@@ -29,20 +39,23 @@
         The js key from the asset dict should be formated like this:
             "js": [
                 {
-                    "path": "path/to/file_1.js",
-                    "is_raw": True,
-                    "is_external": False
+                    "path": "path/to/script.js",
+                    "is_raw": False,
+                    "is_external": True,
+                    "integrity": "sha..."
                 },
                 ...
             ]
 
-        The order of the list is the order of inclusion of the JavaScript files
+        The order of the list is the order of inclusion of the JavaScript files.
     {% endcomment %}
     {% for js_file in assets.js %}
         {% if js_file.is_raw %}
             <script type="text/javascript">{% include_static js_file.path %}</script>
         {% elif js_file.is_external %}
-            <script src="{{ js_file.path }}"></script>
+            <script src="{{ js_file.path }}"
+                    integrity="{{ js_file.integrity }}"
+                    crossorigin="anonymous"></script>
         {% else %}
             <script src="{% static js_file.path %}"></script>
         {% endif %}

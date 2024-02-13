@@ -1,6 +1,8 @@
-
 .input{
     height:542px;
+}
+
+.input-text-editor{
     overflow:scroll;
     padding:0px;
     display: inline-block;
@@ -30,7 +32,7 @@
   outline: 0px solid transparent;
 }
 
-.container-font > * {
+.text-editor-font > * {
     padding: 0px  !important;
     font-family: "Sans Mono", "Consolas", "Courier", monospace;
     font-size: 16px;
