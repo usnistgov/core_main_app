@@ -60,6 +60,16 @@ class TestGetJsonValidator(TestCase):
 class TestValidateJsonData(TestCase):
     """TestValidateJsonData"""
 
+    def test_loaded_data_is_dict(self):
+        """test_loaded_data_is_dict"""
+        with self.assertRaises(JSONError):
+            validate_json_data("12", get_json_schema())
+
+    def test_loaded_data_does_not_contain_illegal_chars(self):
+        """test_loaded_data_does_not_contain_illegal_chars"""
+        with self.assertRaises(JSONError):
+            validate_json_data({"key0": {"$key1": "value"}}, get_json_schema())
+
     def test_validate_json_data_with_valid_data(self):
         """test_validate_json_data_with_valid_data"""
         validate_json_data(get_json_data(), get_json_schema())
