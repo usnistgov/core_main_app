@@ -76,7 +76,8 @@ class UploadTemplateForm(UploadForm):
             attrs={
                 "accept": ",".join(
                     TEMPLATE_FILE_EXTENSION_FOR_TEMPLATE_FORMAT.values()
-                )
+                ),
+                "class": "form-control",
             }
         )
 
