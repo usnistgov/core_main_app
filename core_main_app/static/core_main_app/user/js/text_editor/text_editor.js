@@ -190,13 +190,21 @@ var validate = function()
 };
 
 /**
- * AJAX, to refresh html content
+ * Refresh html content
  */
 var refresh = function()
 {
-     var icon = $(".refresh > i").attr("class");
+     updateDisplay($(".refresh > i"));
+};
+
+/**
+ * AJAX, to update display
+ */
+var updateDisplay = function(iconSelector)
+{
+     var icon = iconSelector.attr("class");
      // Show loading spinner
-     showSpinner($(".refresh > i"))
+     showSpinner(iconSelector)
      $.ajax({
             url: changeDataDisplayUrl,
             data: { "content": getContent(),
@@ -206,7 +214,7 @@ var refresh = function()
             dataType:"json",
             type: "post",
             success: function(data){
-                $.notify("Content refreshed with success", "success");
+                $.notify("Display updated.", "success");
                 $(".tree").html(data.template)
 
             },
@@ -216,7 +224,7 @@ var refresh = function()
             }
      }).always(function(data) {
         // get old button icon
-        hideSpinner($(".refresh > i"), icon)
+        hideSpinner(iconSelector, icon)
     });
 };
 
@@ -233,11 +241,12 @@ let display = function(){
         $(".display").html('<i class="fas fa-eye"></i> Display');
     }
     else{
+        updateDisplay($(".display > i"));
         $(".input").css("width", widthInput);
         $(".input").css("display", "inline-block");
         $(".display").html('<i class="fas fa-eye-slash"></i> Hide');
     }
-    showHTML = !showHTML
+    showHTML = !showHTML;
 }
 
 /**
