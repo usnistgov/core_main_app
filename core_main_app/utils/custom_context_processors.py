@@ -45,9 +45,6 @@ def domain_context_processor(request):
         "DISPLAY_NIST_HEADERS": settings.DISPLAY_NIST_HEADERS
         if hasattr(settings, "DISPLAY_NIST_HEADERS")
         else False,
-        "GA_TRACKING_ID": settings.GA_TRACKING_ID
-        if hasattr(settings, "GA_TRACKING_ID")
-        else None,
         "LOGIN_URL": settings.LOGIN_URL
         if hasattr(settings, "LOGIN_URL")
         else "",
