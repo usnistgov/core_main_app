@@ -2,11 +2,11 @@
 """
 from unittest.mock import patch
 
-
 from django.test import RequestFactory, SimpleTestCase
 
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.views.admin import views as admin_views
+from core_main_app.views.admin.ajax import _get_xsd_content_from_html
 
 
 class TestManageTemplates(SimpleTestCase):
@@ -46,3 +46,19 @@ class TestManageTemplates(SimpleTestCase):
         # Assert
         self.assertTrue(response, mock_admin_render.return_value)
         self.assertTrue(mock_get_global_version_managers.called)
+
+
+class TestGetXSDContentFromHTML(SimpleTestCase):
+    """Test _get_xsd_content_from_html"""
+
+    def test_get_xsd_content_from_html_returns_unescaped_string(self):
+        """test_get_xsd_content_from_html_returns_unescaped_string
+
+        Returns:
+
+        """
+        escaped_string = "&lt;xsd:schema&gt;&lt;/xsd:schema&gt;"
+        expected_string = "<xsd:schema></xsd:schema>"
+        self.assertEqual(
+            _get_xsd_content_from_html(escaped_string), expected_string
+        )

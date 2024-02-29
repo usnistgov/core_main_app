@@ -1,6 +1,6 @@
 """Admin AJAX views
 """
-import html.parser
+import html
 import json
 from builtins import zip
 
@@ -107,10 +107,7 @@ def _get_xsd_content_from_html(xsd_content):
     Returns:
 
     """
-    html_parser = html.parser.HTMLParser()
-    # FIXME: deprecated unescape
-    xsd_content = html_parser.unescape(xsd_content)
-    return xsd_content
+    return html.unescape(xsd_content)
 
 
 class EditXSLTView(EditObjectModalView):
