@@ -480,9 +480,8 @@ class TestXmlEditor(SimpleTestCase):
         mock_format_content_xml.assert_called()
 
     @patch.multiple(XmlEditor, __abstractmethods__=set())
-    @patch.object(xml, "format_content_xml")
-    def test_get_context_with_empty_content(self, mock_format_content_xml):
-        """test_get_context_with_empty_content
+    def test_get_context_when_content_is_not_well_formed(self):
+        """test_get_context_when_content_is_not_well_formed
 
         Returns:
 
@@ -491,10 +490,10 @@ class TestXmlEditor(SimpleTestCase):
         data = Data(template=Template())
 
         # Act
-        XmlEditor().get_context(data, "title1", "")
+        result = XmlEditor().get_context(data, "title1", "<test")
 
         # Assert
-        mock_format_content_xml.assert_not_called()
+        self.assertEquals(result["content"], "<test")
 
 
 class TestJSONEditor(SimpleTestCase):

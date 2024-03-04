@@ -1,6 +1,7 @@
 """ Common views
 """
 import json
+import logging
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
 
@@ -52,6 +53,8 @@ from core_main_app.utils.rendering import admin_render, render
 from core_main_app.utils.view_builders import data as data_view_builder
 from core_main_app.views.admin.forms import TemplateXsltRenderingForm
 from xml_utils.xsd_tree.xsd_tree import XSDTree
+
+logger = logging.getLogger(__name__)
 
 
 class CommonView(View, metaclass=ABCMeta):
@@ -942,9 +945,11 @@ class XmlEditor(AbstractEditorView, metaclass=ABCMeta):
 
         Returns:
         """
-        # format before build context
-        if xml_content != "":
+        # try to format before build context
+        try:
             xml_content = main_xml_utils.format_content_xml(xml_content)
+        except exceptions.XMLError as exception:
+            logger.warning(str(exception))
 
         # get context
         context = super()._get_context(
