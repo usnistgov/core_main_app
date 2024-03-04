@@ -7,7 +7,6 @@ from jsonschema import validators as json_validators
 
 from core_main_app.commons.exceptions import JSONError
 from core_main_app.utils.dict import get_dict_keys
-from core_main_app.utils.labels import get_data_label
 
 VALIDATOR_CLASSES = {
     "https://json-schema.org/draft/2020-12/schema": json_validators.Draft202012Validator,
@@ -35,9 +34,7 @@ def validate_json_data(data, json_schema):
             data = json.loads(data)
 
         if not isinstance(data, dict):  # Ensure data is a dictionary.
-            raise JSONError(
-                f"{get_data_label().capitalize()} should be an object"
-            )
+            raise JSONError("The document is not a valid JSON object")
 
         # Ensure the data dictionary keys do not start with '$'.
         if any(item.startswith("$") for item in get_dict_keys(data)):
