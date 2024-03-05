@@ -1018,11 +1018,20 @@ class JSONEditor(AbstractEditorView, metaclass=ABCMeta):
             template = template_api.get_by_id(template_id, self.request)
         except Exception as exception:
             return HttpResponseBadRequest(escape(str(exception)))
-        try:
-            # validate content
+
+        try:  # validate content
             validate_json_data(content, template.content)
-        except Exception as e:
-            raise JSONError(str(e))
+        except JSONError as json_error:
+            return HttpResponseBadRequest(
+                json.dumps(
+                    [
+                        html_escape(str(message))
+                        for message in json_error.message_list
+                    ]
+                )
+            )
+        except Exception as exc:
+            raise JSONError(str(exc))
 
         return HttpResponse(
             json.dumps("Validated successfully"),

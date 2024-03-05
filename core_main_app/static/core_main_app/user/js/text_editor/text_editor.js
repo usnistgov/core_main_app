@@ -80,10 +80,41 @@ $(document).ready(function() {
         if (useModal) createDataModal();
         else save();
     });
-
-
-
 });
+
+/**
+ * Format a list of error message to output HTML ul/li list.
+ *
+ * @param errorList
+ * @returns {string}
+ */
+function buildMessageFromList(errorList) {
+    let node = document.createElement("ul");
+    node.innerHTML = errorList.map((item) => {return `<li>${item}</li>`}).join("");
+
+    // Display the list of item nicely.
+    node.style.padding = "revert";
+    node.style.margin = "0";
+    node.style.listStyle = "initial";
+
+    return node.outerHTML;
+}
+
+/**
+ * Build an error message depending on the data passed.
+ *
+ * @param errorObject
+ * @returns {string}
+ */
+function buildErrorMessage(errorObject) {
+    if (typeof errorObject === "string") {
+        return errorObject;
+    } else if (Array.isArray(errorObject)) {
+        return buildMessageFromList(errorObject);
+    } else {
+        return "Cannot display error: format not supported!";
+    }
+}
 
 /**
  * AJAX, to save content
@@ -106,7 +137,15 @@ let save = function()
 		     window.location =  data.url
 	    },
         error:function(data){
-            jqError.html('<i class="fas fa-exclamation-triangle"></i> '+ data.responseText);
+            let dataContent = null;
+            try {
+                dataContent = JSON.parse(data.responseText);
+            } catch {
+                dataContent = data.responseText;
+            }
+            jqError.html(
+                `<i class="fas fa-exclamation-triangle"></i> An error occurred while saving: ${buildErrorMessage(dataContent)}`
+            );
             jqError.show();
         }
     }).always(function(data) {
@@ -178,8 +217,16 @@ var validate = function()
 		   $.notify("Content validated with success", "success");
 	    },
         error:function(data){
-           jqError.html('<i class="fas fa-exclamation-triangle"></i> '+ data.responseText);
-           jqError.show();
+            let dataContent = null;
+            try {
+                dataContent = JSON.parse(data.responseText);
+            } catch {
+                dataContent = data.responseText;
+            }
+            jqError.html(
+                `<i class="fas fa-exclamation-triangle"></i> An error occurred at validation: ${buildErrorMessage(dataContent)}`
+            );
+            jqError.show();
         }
     }).always(function(data) {
         // get old button icon

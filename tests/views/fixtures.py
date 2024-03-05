@@ -1,5 +1,7 @@
 """ Access control fixture for views
 """
+from django.core.files.uploadedfile import SimpleUploadedFile
+
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
@@ -7,7 +9,6 @@ from core_main_app.components.workspace.models import Workspace
 from core_main_app.utils.integration_tests.fixture_interface import (
     FixtureInterface,
 )
-from django.core.files.uploadedfile import SimpleUploadedFile
 
 
 class AccessControlDataFixture(FixtureInterface):

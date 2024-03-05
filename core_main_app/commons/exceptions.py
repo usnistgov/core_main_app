@@ -126,9 +126,21 @@ class JSONError(BaseCoreException):
         """Initialize exception
 
         Args:
-            message:
+            message (any): A list of errors or a single error message.
         """
-        super().__init__(message)
+        if isinstance(message, list):
+            self.message_list = message
+        elif isinstance(message, str):
+            self.message_list = [message]
+        else:
+            self.message_list = [str(message)]
+
+    def __str__(self):
+        """Returns a string representing the JSONError object.
+
+        Returns: String representation of the JSONError object
+        """
+        return ", ".join(self.message_list)
 
 
 class LockError(BaseCoreException):

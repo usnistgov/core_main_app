@@ -9,10 +9,6 @@ from django.contrib.sessions.middleware import SessionMiddleware
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.http import QueryDict
 from django.test import RequestFactory
-from tests.components.data.fixtures.fixtures import (
-    AccessControlBlobWithMetadataFixture,
-)
-from tests.views.fixtures import AccessControlDataFixture, JSONDataFixtures
 
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons.exceptions import ModelError
@@ -52,7 +48,11 @@ from core_main_app.views.user.ajax import (
     LoadBlobMetadataForm,
 )
 from core_main_app.views.user.views import manage_template_versions
+from tests.components.data.fixtures.fixtures import (
+    AccessControlBlobWithMetadataFixture,
+)
 from tests.test_settings import LOGIN_URL
+from tests.views.fixtures import AccessControlDataFixture, JSONDataFixtures
 
 
 class TestViewData(IntegrationBaseTestCase):

@@ -2,7 +2,6 @@
 """
 import json
 
-from jsonschema import validate
 from jsonschema import validators as json_validators
 
 from core_main_app.commons.exceptions import JSONError
@@ -29,23 +28,32 @@ def validate_json_data(data, json_schema):
     Returns:
 
     """
+    errors = []
     try:
         if isinstance(data, str):
             data = json.loads(data)
 
         if not isinstance(data, dict):  # Ensure data is a dictionary.
-            raise JSONError("The document is not a valid JSON object")
+            errors = ["The document is not a valid JSON object"]
+            return
 
         # Ensure the data dictionary keys do not start with '$'.
         if any(item.startswith("$") for item in get_dict_keys(data)):
-            raise JSONError("JSON keys cannot start with '$'")
+            errors.append("JSON keys cannot start with '$'")
 
         if isinstance(json_schema, str):
             json_schema = json.loads(json_schema)
 
-        validate(data, json_schema)
+        json_validator = _get_json_validator(json_schema)
+        validation = json_validator(json_schema)
+
+        for error in sorted(validation.iter_errors(data), key=str):
+            errors.append(f"{error.json_path}: {error.message}")
     except Exception as e:
-        raise JSONError(str(e))
+        errors = [str(e)]
+    finally:  # If some errors happened, raise a JSONError.
+        if len(errors) > 0:
+            raise JSONError(errors)
 
 
 def is_schema_valid(json_schema):

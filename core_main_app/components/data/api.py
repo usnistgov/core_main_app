@@ -222,6 +222,7 @@ def check_json_file_is_valid(data):
     json_content = json.loads(data.content)
 
     validate_json_data(json_content, template.content)
+
     return True
 
 
