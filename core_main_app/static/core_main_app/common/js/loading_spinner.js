@@ -34,3 +34,9 @@ var displaySpinner = function(container) {
      container.append($("<i class='fa fa-spinner fa-pulse fa-3x fa-fw loading-spinner'></i>"));
 }
 
+/**
+ * Remove spinner from container
+ */
+var removeSpinner = function(container) {
+    container.find('.loading-spinner').remove();
+}
