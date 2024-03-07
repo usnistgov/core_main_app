@@ -588,7 +588,10 @@ DATA_SORTING_FIELDS = ["-title", "+last_modification_date"]
 
   Default: ``4.6.2``
 
-  Version of the bootstrap library.
+  Version of the bootstrap library. Choose from the list of available bootstrap versions:
+  - '4.6.2'
+  - '5.1.3' 
+  - '5.3.1'
 
 ### ``DJANGO_SIMPLE_HISTORY_MODELS``
 
