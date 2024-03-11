@@ -2,6 +2,8 @@
 """
 import logging
 
+from django.conf import settings
+
 from core_main_app.access_control.api import (
     has_perm_publish,
     check_can_read_list,
@@ -11,11 +13,10 @@ from core_main_app.access_control.api import (
 )
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.permissions import rights as rights
+from core_main_app.settings import DATA_SORTING_FIELDS
 from core_main_app.settings import (
     VERIFY_DATA_ACCESS,
 )
-from django.conf import settings
-from core_main_app.settings import DATA_SORTING_FIELDS
 from core_main_app.utils.raw_query import django_raw_query
 from core_main_app.utils.raw_query import mongo_raw_query
 

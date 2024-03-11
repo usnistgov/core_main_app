@@ -4,6 +4,8 @@
 from django import template
 import json
 
+from core_main_app.utils.json_utils import load_json_string
+
 register = template.Library()
 
 
@@ -17,5 +19,5 @@ def render_json_as_html_detail(content):
         HTML
 
     """
-    json_object = json.loads(content)
+    json_object = load_json_string(content)
     return json.dumps(json_object, indent=8)

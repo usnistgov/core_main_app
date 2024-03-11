@@ -1,6 +1,5 @@
 """ Data API
 """
-import json
 
 from django.conf import settings
 
@@ -29,7 +28,7 @@ from core_main_app.settings import (
     ENABLE_JSON_SCHEMA_SUPPORT,
 )
 from core_main_app.utils.datetime import datetime_now
-from core_main_app.utils.json_utils import validate_json_data
+from core_main_app.utils.json_utils import validate_json_data, load_json_string
 from core_main_app.utils.query.mongo.prepare import (
     convert_to_django,
     get_access_filters_from_query,
@@ -219,7 +218,7 @@ def check_json_file_is_valid(data):
 
     """
     template = data.template
-    json_content = json.loads(data.content)
+    json_content = load_json_string(data.content)
 
     validate_json_data(json_content, template.content)
 

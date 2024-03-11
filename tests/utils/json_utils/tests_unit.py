@@ -6,14 +6,7 @@ from unittest.case import TestCase
 from jsonschema.validators import Draft7Validator
 
 from core_main_app.commons.exceptions import JSONError
-from core_main_app.utils.json_utils import (
-    is_schema_valid,
-    validate_json_data,
-    _get_json_validator,
-    DEFAULT_VALIDATOR,
-    format_content_json,
-    is_well_formed_json,
-)
+from core_main_app.utils import json_utils
 
 
 class TestIsSchemaValid(TestCase):
@@ -21,17 +14,17 @@ class TestIsSchemaValid(TestCase):
 
     def test_is_schema_valid_with_valid_schema_does_not_raise_error(self):
         """test_is_schema_valid_with_valid_schema_does_not_raise_error"""
-        is_schema_valid(get_json_schema())
+        json_utils.is_schema_valid(get_json_schema())
 
     def test_is_schema_valid_with_valid_str_schema_does_not_raise_error(self):
         """test_is_schema_valid_with_valid_str_schema_does_not_raise_error"""
-        is_schema_valid(json.dumps(get_json_schema()))
+        json_utils.is_schema_valid(json.dumps(get_json_schema()))
 
     def test_is_schema_valid_with_invalid_schema_raises_json_error(self):
         """test_is_schema_valid_with_invalid_schema_raises_json_error"""
         json_schema = {"bad"}
         with self.assertRaises(JSONError):
-            is_schema_valid(json_schema)
+            json_utils.is_schema_valid(json_schema)
 
 
 class TestGetJsonValidator(TestCase):
@@ -41,19 +34,19 @@ class TestGetJsonValidator(TestCase):
         self,
     ):
         """test_get_json_validator_returns_default_validator_if_no_schema_specified"""
-        json_validator = _get_json_validator({})
-        self.assertEqual(json_validator, DEFAULT_VALIDATOR)
+        json_validator = json_utils._get_json_validator({})
+        self.assertEqual(json_validator, json_utils.DEFAULT_VALIDATOR)
 
     def test_get_json_validator_returns_default_validator_if_unknown_schema_specified(
         self,
     ):
         """test_get_json_validator_returns_default_validator_if_unknown_schema_specified"""
-        json_validator = _get_json_validator({"$schema": "test"})
-        self.assertEqual(json_validator, DEFAULT_VALIDATOR)
+        json_validator = json_utils._get_json_validator({"$schema": "test"})
+        self.assertEqual(json_validator, json_utils.DEFAULT_VALIDATOR)
 
     def test_get_json_validator_returns_validator_if_schema_specified(self):
         """test_get_json_validator_returns_validator_if_schema_specified"""
-        json_validator = _get_json_validator(get_json_schema())
+        json_validator = json_utils._get_json_validator(get_json_schema())
         self.assertEqual(json_validator, Draft7Validator)
 
 
@@ -63,23 +56,25 @@ class TestValidateJsonData(TestCase):
     def test_loaded_data_is_dict(self):
         """test_loaded_data_is_dict"""
         with self.assertRaises(JSONError):
-            validate_json_data("12", get_json_schema())
+            json_utils.validate_json_data("12", get_json_schema())
 
     def test_loaded_data_does_not_contain_illegal_chars(self):
         """test_loaded_data_does_not_contain_illegal_chars"""
         with self.assertRaises(JSONError):
-            validate_json_data({"key0": {"$key1": "value"}}, get_json_schema())
+            json_utils.validate_json_data(
+                {"key0": {"$key1": "value"}}, get_json_schema()
+            )
 
     def test_validate_json_data_with_valid_data(self):
         """test_validate_json_data_with_valid_data"""
-        validate_json_data(get_json_data(), get_json_schema())
+        json_utils.validate_json_data(get_json_data(), get_json_schema())
 
     def test_validate_json_data_with_invalid_data(self):
         """test_validate_json_data_with_invalid_data"""
         json_data = get_json_data()
-        json_data["age"] = "Test"
+        json_data["age"] = "test"  # noqa
         with self.assertRaises(JSONError):
-            validate_json_data(json_data, get_json_schema())
+            json_utils.validate_json_data(json_data, get_json_schema())
 
 
 class TestFormatContentJson(TestCase):
@@ -89,14 +84,14 @@ class TestFormatContentJson(TestCase):
         """test_format_content_json_with_dict_return_formatted_dict"""
         json_dict = {"test": "value"}
         expected_result = """{\n  "test": "value"\n}"""
-        result = format_content_json(json_dict, indent=2)
+        result = json_utils.format_content_json(json_dict, indent=2)
         self.assertEqual(result, expected_result)
 
     def test_format_content_json_with_str_return_formatted_dict(self):
         """test_format_content_json_with_str_return_formatted_dict"""
         json_str = '{"test": "value"}'
         expected_result = """{\n  "test": "value"\n}"""
-        result = format_content_json(json_str, indent=2)
+        result = json_utils.format_content_json(json_str, indent=2)
         self.assertEqual(result, expected_result)
 
     def test_format_content_json_with_invalid_format_return_formatted_dict(
@@ -105,13 +100,13 @@ class TestFormatContentJson(TestCase):
         """test_format_content_json_with_invalid_format_return_formatted_dict"""
         invalid_format = 10
         with self.assertRaises(JSONError):
-            format_content_json(invalid_format)
+            json_utils.format_content_json(invalid_format)
 
     def test_format_content_json_with_invalid_str_return_formatted_dict(self):
         """test_format_content_json_with_invalid_str_return_formatted_dict"""
         invalid_json_str = '{"test":}'
         with self.assertRaises(JSONError):
-            format_content_json(invalid_json_str)
+            json_utils.format_content_json(invalid_json_str)
 
 
 class TestIsWellFormedContentJson(TestCase):
@@ -121,29 +116,53 @@ class TestIsWellFormedContentJson(TestCase):
         """test_is_content_json_well_formed_returns_true"""
         json_dict = {"test": "value"}
         expected_result = True
-        result = is_well_formed_json(json_dict)
+        result = json_utils.is_well_formed_json(json_dict)
         self.assertEqual(result, expected_result)
 
     def test_is_content_json_well_formed_with_str_returns_true(self):
         """test_is_content_json_well_formed_returns_true"""
         json_str = '{"test": "value"}'
         expected_result = True
-        result = is_well_formed_json(json_str)
+        result = json_utils.is_well_formed_json(json_str)
         self.assertEqual(result, expected_result)
 
     def test_is_content_json_well_formed_invalid_format_returns_false(self):
         """test_is_content_json_well_formed_invalid_format_returns_false"""
         json_dict = 10
         expected_result = False
-        result = is_well_formed_json(json_dict)
+        result = json_utils.is_well_formed_json(json_dict)
         self.assertEqual(result, expected_result)
 
     def test_is_content_json_well_formed_invalid_str_returns_false(self):
         """test_is_content_json_well_formed_invalid_str_returns_false"""
         json_dict = "sda"
         expected_result = False
-        result = is_well_formed_json(json_dict)
+        result = json_utils.is_well_formed_json(json_dict)
         self.assertEqual(result, expected_result)
+
+
+class TestLoadJsonString(TestCase):
+    """Unit tests for `load_json_string` function."""
+
+    def test_duplicate_keys_at_same_level_raises_value_error(self):
+        json_string = '{"a": 1, "b": "test", "a": "dup"}'
+
+        with self.assertRaises(ValueError):
+            json_utils.load_json_string(json_string)
+
+    def test_duplicate_keys_at_different_level_returns_dict(self):
+        json_string = '{"a": 1, "b": {"a": "dup?"}, "c": "test"}'
+
+        self.assertEqual(
+            json_utils.load_json_string(json_string), json.loads(json_string)
+        )
+
+    def test_no_duplicate_keys_returns_dict(self):
+        json_string = '{"a": 1, "b": {"d": []}, "c": "test"}'
+
+        self.assertEqual(
+            json_utils.load_json_string(json_string), json.loads(json_string)
+        )
 
 
 def get_json_schema():

@@ -1,8 +1,8 @@
 """ File utils
 """
 import base64
-import re
 import pathlib
+import re
 from io import BytesIO
 from mimetypes import guess_type
 

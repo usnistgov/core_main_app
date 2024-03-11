@@ -1,7 +1,7 @@
 """ Mongoengine Data model
 """
-import json
 import logging
+
 from django.conf import settings
 
 from core_main_app.commons.exceptions import CoreError
@@ -20,6 +20,7 @@ from core_main_app.settings import (
     XML_FORCE_LIST,
 )
 from core_main_app.utils import xml as xml_utils
+from core_main_app.utils.json_utils import load_json_string
 
 logger = logging.getLogger(__name__)
 
@@ -236,7 +237,7 @@ try:
                 mongo_data.title = data.title
                 if data_template.format == Template.JSON:
                     # store python dict
-                    mongo_data.dict_content = json.loads(data.content)
+                    mongo_data.dict_content = load_json_string(data.content)
                 elif data_template.format == Template.XSD:
                     # transform xml content into a dictionary
                     mongo_data.dict_content = xml_utils.raw_xml_to_dict(

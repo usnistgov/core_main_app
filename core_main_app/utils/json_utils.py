@@ -31,7 +31,7 @@ def validate_json_data(data, json_schema):
     errors = []
     try:
         if isinstance(data, str):
-            data = json.loads(data)
+            data = load_json_string(data)
 
         if not isinstance(data, dict):  # Ensure data is a dictionary.
             errors = ["The document is not a valid JSON object"]
@@ -42,7 +42,7 @@ def validate_json_data(data, json_schema):
             errors.append("JSON keys cannot start with '$'")
 
         if isinstance(json_schema, str):
-            json_schema = json.loads(json_schema)
+            json_schema = load_json_string(json_schema)
 
         json_validator = _get_json_validator(json_schema)
         validation = json_validator(json_schema)
@@ -66,7 +66,7 @@ def is_schema_valid(json_schema):
 
     """
     if isinstance(json_schema, str):
-        json_schema = json.loads(json_schema)
+        json_schema = load_json_string(json_schema)
     json_validator = _get_json_validator(json_schema)
 
     try:
@@ -98,7 +98,7 @@ def format_content_json(json_content, indent=2):
     """
     try:
         if isinstance(json_content, str):
-            json_content = json.loads(json_content)
+            json_content = load_json_string(json_content)
         if isinstance(json_content, dict):
             return json.dumps(json_content, indent=indent)
         raise JSONError("Invalid format.")
@@ -118,7 +118,7 @@ def is_well_formed_json(json_content):
     # is it a valid JSON document?
     try:
         if isinstance(json_content, str):
-            json.loads(json_content)
+            load_json_string(json_content)
         elif isinstance(json_content, dict):
             json.dumps(json_content)
 
@@ -128,3 +128,30 @@ def is_well_formed_json(json_content):
         return False
 
     return True
+
+
+def load_json_string(json_content):
+    """Load a json string and checks that no duplicate keys are found.
+
+    See https://stackoverflow.com/a/14902564/1723284
+
+    Args:
+        json_content:
+
+    Returns:
+
+    """
+
+    def dict_raise_on_duplicates(ordered_pairs):
+        """Reject duplicate keys."""
+        json_data = {}
+        for k, v in ordered_pairs:
+            if k in json_data:
+                raise ValueError(
+                    f"Found a duplicate key '{k}' while loading the JSON"
+                )
+            else:
+                json_data[k] = v
+        return json_data
+
+    return json.loads(json_content, object_pairs_hook=dict_raise_on_duplicates)

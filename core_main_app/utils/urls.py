@@ -3,8 +3,8 @@
 
 import re
 
-from django.urls import reverse, re_path, include
 from django.conf import settings
+from django.urls import reverse, re_path, include
 
 
 def get_template_download_pattern():

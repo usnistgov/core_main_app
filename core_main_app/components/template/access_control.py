@@ -1,10 +1,10 @@
 """ Template access control
 """
+from django.conf import settings
 from django.db.models import Q
 
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.template.models import Template
-from django.conf import settings
 from core_main_app.utils.requests_utils.access_control import (
     get_request_from_args,
 )

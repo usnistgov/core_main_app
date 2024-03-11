@@ -53,7 +53,10 @@ from core_main_app.utils.file import (
     get_data_file_content_type_for_template_format,
     get_data_file_extension_for_template_format,
 )
-from core_main_app.utils.json_utils import format_content_json
+from core_main_app.utils.json_utils import (
+    format_content_json,
+    load_json_string,
+)
 from core_main_app.utils.pagination.rest_framework_paginator.pagination import (
     StandardResultsSetPagination,
 )
@@ -1224,7 +1227,9 @@ class BulkUploadFolder(APIView):
                                 )
                             )
                         elif template.format == Template.JSON:
-                            instance.dict_content = json.loads(_file.read())
+                            instance.dict_content = load_json_string(
+                                _file.read()
+                            )
                     # Add data to list
                     data_list.append(instance)
                 except Exception as exception:

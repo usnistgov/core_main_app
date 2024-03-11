@@ -2,11 +2,11 @@
 """
 
 from core_main_app.access_control.exceptions import AccessControlError
-from core_main_app.components.template_version_manager.models import (
-    TemplateVersionManager,
-)
 from core_main_app.components.template_version_manager import (
     api as template_version_manager_api,
+)
+from core_main_app.components.template_version_manager.models import (
+    TemplateVersionManager,
 )
 from core_main_app.utils.requests_utils.access_control import (
     get_request_from_args,

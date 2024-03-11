@@ -1,6 +1,7 @@
 """Custom context processor
 """
 from django.conf import settings
+
 from core_main_app.commons.constants import AVAILABLE_BOOTSTRAP_VERSIONS
 
 

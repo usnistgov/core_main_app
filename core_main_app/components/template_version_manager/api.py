@@ -1,10 +1,9 @@
 """
 Template Version Manager API
 """
-from core_main_app.access_control.exceptions import AccessControlError
-
 from core_main_app.access_control.api import is_superuser
 from core_main_app.access_control.decorators import access_control
+from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
 from core_main_app.commons.constants import (
     TEMPLATE_FILE_EXTENSION_FOR_TEMPLATE_FORMAT,

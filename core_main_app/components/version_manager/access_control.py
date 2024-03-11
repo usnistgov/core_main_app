@@ -2,6 +2,7 @@
 """
 
 from django.conf import settings
+
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.version_manager.models import (
     VersionManager,

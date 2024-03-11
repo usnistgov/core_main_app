@@ -1,6 +1,5 @@
 """ Data model
 """
-import json
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -17,16 +16,17 @@ from core_main_app.commons.constants import (
 )
 from core_main_app.commons.exceptions import ModelError
 from core_main_app.components.abstract_data.models import AbstractData
+from core_main_app.components.blob.models import Blob
 from core_main_app.components.data.access_control import can_read_blob
 from core_main_app.components.template.models import Template
 from core_main_app.components.workspace.models import Workspace
-from core_main_app.components.blob.models import Blob
 from core_main_app.settings import (
     SEARCHABLE_DATA_OCCURRENCES_LIMIT,
     XML_POST_PROCESSOR,
     XML_FORCE_LIST,
 )
 from core_main_app.utils import xml as xml_utils
+from core_main_app.utils.json_utils import load_json_string
 
 
 # TODO: Create publication workflow manager
@@ -81,7 +81,7 @@ class Data(AbstractData):
 
         if self.template.format == Template.JSON:
             # transform json string format into a dictionary.
-            self.dict_content = json.loads(self.content)
+            self.dict_content = load_json_string(self.content)
 
         elif self.template.format == Template.XSD:
             # transform xml content into a dictionary.

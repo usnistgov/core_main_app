@@ -2,14 +2,13 @@
 """
 from urllib.parse import urlparse
 
-from xml_utils.xsd_flattener.xsd_flattener_url import XSDFlattenerURL
-
 from core_main_app.commons import exceptions
 from core_main_app.components.template import api as template_api
 from core_main_app.utils.urls import get_template_download_pattern
 from core_main_app.utils.xsd_flattener.xsd_flattener_requests_url import (
     XSDFlattenerRequestsURL,
 )
+from xml_utils.xsd_flattener.xsd_flattener_url import XSDFlattenerURL
 
 
 class XSDFlattenerDatabaseOrURL(XSDFlattenerRequestsURL):

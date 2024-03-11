@@ -1,14 +1,16 @@
 """ Xml utils for the core applications
 """
-import json
 import logging
 import re
-from collections import OrderedDict
 from urllib.parse import urlparse
 
 import xmltodict
 from django.urls import reverse
 
+from core_main_app.commons import exceptions
+from core_main_app.settings import XERCES_VALIDATION, SERVER_URI
+from core_main_app.utils.resolvers.resolver_utils import lmxl_uri_resolver
+from core_main_app.utils.urls import get_template_download_pattern
 from xml_utils import xpath as xml_utils_xpath
 from xml_utils.commons import constants as xml_utils_constants
 from xml_utils.commons import exceptions as xml_utils_exceptions
@@ -17,12 +19,6 @@ from xml_utils.xml_validation import validation as xml_validation
 from xml_utils.xsd_hash import xsd_hash
 from xml_utils.xsd_tree.operations.namespaces import get_namespaces
 from xml_utils.xsd_tree.xsd_tree import XSDTree
-
-from core_main_app.commons import exceptions
-from core_main_app.settings import XERCES_VALIDATION, SERVER_URI
-from core_main_app.utils.resolvers.resolver_utils import lmxl_uri_resolver
-from core_main_app.utils.urls import get_template_download_pattern
-
 
 logger = logging.getLogger(__name__)
 
@@ -157,26 +153,6 @@ def has_xsl_namespace(xml_string):
         )
 
     return has_namespace
-
-
-def unparse(json_dict, full_document=True):
-    """Unparse JSON data.
-
-    Args:
-        json_dict:
-        full_document:
-
-    Returns:
-
-    """
-    json_dump_string = json.dumps(json_dict)
-    preprocessed_dict = json.loads(
-        json_dump_string,
-        parse_float=_parse_numbers,
-        parse_int=_parse_numbers,
-        object_pairs_hook=OrderedDict,
-    )
-    return xmltodict.unparse(preprocessed_dict, full_document=full_document)
 
 
 def raw_xml_to_dict(

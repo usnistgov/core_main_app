@@ -47,7 +47,11 @@ from core_main_app.settings import MAX_DOCUMENT_EDITING_SIZE
 from core_main_app.utils import file as main_file_utils
 from core_main_app.utils import group as group_utils
 from core_main_app.utils import xml as main_xml_utils
-from core_main_app.utils.json_utils import validate_json_data, is_schema_valid
+from core_main_app.utils.json_utils import (
+    validate_json_data,
+    is_schema_valid,
+    load_json_string,
+)
 from core_main_app.utils.labels import get_data_label
 from core_main_app.utils.rendering import admin_render, render
 from core_main_app.utils.view_builders import data as data_view_builder
@@ -994,7 +998,7 @@ class JSONEditor(AbstractEditorView, metaclass=ABCMeta):
 
         """
         content = self.request.POST["content"].strip()
-        json_object = json.loads(content)
+        json_object = load_json_string(content)
 
         return HttpResponse(
             json.dumps(json_object, indent=2),
@@ -1252,7 +1256,7 @@ class TemplateMixin:
             template_id = request.POST["document_id"]
             template = template_api.get_by_id(template_id, request)
             if template.format == Template.JSON:
-                content = json.loads(content)
+                content = load_json_string(content)
             # update content
             template.content = content
             # save template

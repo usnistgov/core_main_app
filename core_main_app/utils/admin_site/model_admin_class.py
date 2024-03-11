@@ -1,7 +1,7 @@
 """ Constant for admin site
 """
-from django.contrib import admin
 from django.conf import settings
+from django.contrib import admin
 
 
 def get_base_model_admin_class(model):

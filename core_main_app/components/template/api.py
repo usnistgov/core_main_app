@@ -17,8 +17,8 @@ from core_main_app.components.template.access_control import (
 )
 from core_main_app.components.template.models import Template
 from core_main_app.settings import ENABLE_JSON_SCHEMA_SUPPORT
-from core_main_app.utils import xml as main_xml_utils
 from core_main_app.utils import json_utils as main_json_utils
+from core_main_app.utils import xml as main_xml_utils
 from core_main_app.utils.file import get_file_extension
 
 logger = logging.getLogger(__name__)

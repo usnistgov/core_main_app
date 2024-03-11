@@ -1,10 +1,9 @@
 """ Migration utilities
 """
 import logging
+
 from django.db import OperationalError
-
 from django.db.migrations.recorder import MigrationRecorder
-
 
 logger = logging.getLogger(__name__)
 
