@@ -85,7 +85,7 @@ def build_page(
                 ]
             )
             page_info["assets"]["css"].append(
-                "core_main_app/common/modals/download.css"
+                "core_main_app/common/css/modals/download.css"
             )
             page_info["modals"].append(
                 "core_main_app/common/modals/download-options.html"
