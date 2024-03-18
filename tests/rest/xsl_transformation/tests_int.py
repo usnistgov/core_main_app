@@ -281,8 +281,8 @@ class TestDeleteXslTransformationDetail(IntegrationBaseTestCase):
             response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
-    def test_post_return_204_if_document_is_deleted_whit_success(self):
-        """test_post_return_204_if_document_is_deleted_whit_success
+    def test_post_return_204_if_document_is_deleted_with_success(self):
+        """test_post_return_204_if_document_is_deleted_with_success
 
         Returns:
 

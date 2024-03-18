@@ -272,7 +272,7 @@ class EditTemplateVersionManagerView(EditObjectModalView):
     form_class = EditTemplateForm
     model = TemplateVersionManager
     success_url = reverse_lazy("core-admin:core_main_app_templates")
-    success_message = "Name edited with success."
+    success_message = "Name edited."
 
     def _save(self, form):
         # Save treatment.

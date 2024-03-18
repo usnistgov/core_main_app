@@ -1,0 +1,1 @@
+var downloadBlobUrl = "{% url 'core_main_app_rest_blob_download' 'blob_id' %}";

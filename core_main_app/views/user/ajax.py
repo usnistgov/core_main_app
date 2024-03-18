@@ -674,7 +674,7 @@ class RemoveMetadataFromBlob(View):
         messages.add_message(
             request,
             messages.INFO,
-            "Metadata successfully removed.",
+            "Metadata removed.",
         )
         return HttpResponse(json.dumps({}), "application/javascript")
 
@@ -704,7 +704,7 @@ class UploadFile(View):
                 messages.add_message(
                     request,
                     messages.SUCCESS,
-                    "File successfully uploaded.",
+                    "File uploaded.",
                 )
                 return HttpResponse(json.dumps({}))
             else:

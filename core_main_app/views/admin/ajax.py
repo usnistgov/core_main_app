@@ -116,7 +116,7 @@ class EditXSLTView(EditObjectModalView):
     form_class = EditXSLTForm
     model = XslTransformation
     success_url = reverse_lazy("core-admin:core_main_app_xslt")
-    success_message = "XSLT edited with success."
+    success_message = "XSLT edited."
 
     def _save(self, form):
         # Save treatment.
@@ -137,7 +137,7 @@ class DeleteXSLTView(DeleteObjectModalView):
 
     model = XslTransformation
     success_url = reverse_lazy("core-admin:core_main_app_xslt")
-    success_message = "XSLT deleted with success."
+    success_message = "XSLT deleted."
     field_for_name = "name"
 
     def _delete(self, form):

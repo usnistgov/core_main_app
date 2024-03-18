@@ -10,7 +10,7 @@ copyLink = function(link){
     link.focus();
     link.select();
     navigator.clipboard.writeText(link.val()).then(function() {
-        $.notify("URL copied to clipboard successfully!", "success");
+        $.notify("URL copied to clipboard!", "success");
     }, function() {
         $.notify("A problem has occurred while copying the Url.", "danger");
     });

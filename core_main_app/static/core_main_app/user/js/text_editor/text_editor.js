@@ -163,7 +163,7 @@ let format = function()
 {
     if (textEditor == "Monaco" && editorFormat == "JSON"){
         editor.getAction('editor.action.formatDocument').run();
-        $.notify("Document formatted successfully", "success");
+        $.notify("Document formatted ", "success");
     }
     else {
         jqError.hide();
@@ -179,7 +179,7 @@ let format = function()
             },
             dataType: "json",
             success: function(data){
-                $.notify("Document formatted successfully", "success");
+                $.notify("Document formatted ", "success");
                 if(editorFormat == "JSON") data = JSON.stringify(data, null, "  ")
                 setContent(data);
             },
@@ -214,7 +214,7 @@ var validate = function()
         },
         dataType: "json",
 		success: function(data){
-		   $.notify("Content validated with success", "success");
+		   $.notify("Content is valid.", "success");
 	    },
         error:function(data){
             let dataContent = null;
@@ -315,7 +315,7 @@ let generate = function()
         },
         dataType: "json",
 		success: function(data){
-		    $.notify("Document generated successfully", "success");
+		    $.notify("Document generated.", "success");
 		    setContent(data);
 	    },
         error:function(data){

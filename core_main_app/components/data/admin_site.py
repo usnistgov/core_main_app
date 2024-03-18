@@ -11,6 +11,7 @@ from core_main_app.components.workspace import api as workspace_api
 from core_main_app.utils.admin_site.model_admin_class import (
     get_base_model_admin_class,
 )
+from core_main_app.utils.labels import get_data_label
 
 
 class UpdateActionForm(ActionForm):
@@ -94,7 +95,7 @@ def update_data_list(model_admin, request, queryset):
             # Display success message
             model_admin.message_user(
                 request,
-                f"Successfully updated owner of {queryset.count()} Data",
+                f"Owner updated for {queryset.count()} {get_data_label()}.",
                 messages.SUCCESS,
             )
         # Check if workspace_id parameter provided
@@ -130,7 +131,7 @@ def update_data_list(model_admin, request, queryset):
             # Display success message
             model_admin.message_user(
                 request,
-                f"Successfully updated workspace of {queryset.count()} Data",
+                f"Workspace updated for {queryset.count()} {get_data_label()}.",
                 messages.SUCCESS,
             )
     except DoesNotExist as ex:
