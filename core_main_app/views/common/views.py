@@ -1171,8 +1171,13 @@ class DataMixin:
                 messages.SUCCESS,
                 get_data_label().capitalize() + " saved.",
             )
+            reverse_url = (
+                reverse("core_dashboard_records")
+                if "core_dashboard_common_app" in conf_settings.INSTALLED_APPS
+                else reverse("core_main_app_homepage")
+            )
             return HttpResponse(
-                json.dumps({"url": reverse("core_main_app_homepage")}),
+                json.dumps({"url": reverse_url}),
                 "application/javascript",
             )
         except AccessControlError as ace:
