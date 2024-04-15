@@ -67,17 +67,3 @@ def send_delete_request(url, **kwargs):
     if "verify" not in kwargs:
         kwargs["verify"] = SSL_CERTIFICATES_DIR
     return requests.delete(url, **kwargs)
-
-
-def send_get_request_with_access_token(url, access_token):
-    """Send a GET request using python requests adding access token in headers.
-
-    Args:
-        url:
-        access_token:
-
-    Returns:
-
-    """
-    headers = {"Authorization": "Bearer " + access_token}
-    return send_get_request(url, headers=headers)
