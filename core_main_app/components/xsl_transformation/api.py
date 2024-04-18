@@ -13,12 +13,7 @@ def get_by_name(xslt_name):
 
     Returns:
     """
-    try:
-        return XslTransformation.get_by_name(xslt_name)
-    except Exception:
-        raise exceptions.ApiError(
-            "No transformation can be found with the given name"
-        )
+    return XslTransformation.get_by_name(xslt_name)
 
 
 def get_by_id(xslt_id):
@@ -43,7 +38,7 @@ def get_all():
 
 
 def upsert(xsl_transformation):
-    """Upsert an xsl_transformation.
+    """Upsert a xsl_transformation.
 
     Args:
         xsl_transformation: XslTransformation.

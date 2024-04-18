@@ -55,12 +55,12 @@ class TestXslTransformationGet(TestCase):
 
         """
         # Arrange
-        mock_unexisting_name = "unexisting_xslt_name"
-        mock_get_by_name.side_effect = Exception()
+        mock_bad_name = "bad_xslt_name"
+        mock_get_by_name.side_effect = exceptions.DoesNotExist("error")
 
         # Act + Assert
-        with self.assertRaises(exceptions.ApiError):
-            xsl_transformation_api.get_by_name(mock_unexisting_name)
+        with self.assertRaises(exceptions.DoesNotExist):
+            xsl_transformation_api.get_by_name(mock_bad_name)
 
 
 class TestXslTransformationGetById(TestCase):

@@ -2,7 +2,7 @@
 """
 import logging
 
-from core_main_app.commons.exceptions import ApiError
+from core_main_app.commons.exceptions import ApiError, DoesNotExist
 from core_main_app.components.template_xsl_rendering.models import (
     TemplateXslRendering,
 )
@@ -170,11 +170,8 @@ def upsert(
             else xsl_transformation_api.get_none()
         )
         template_xsl_rendering.save()
-    except Exception as exception:
-        logger.warning(
-            "Exception when saving TemplateXSLRendering object: %s"
-            % str(exception)
-        )
+    except DoesNotExist:
+        logger.info("TemplateXSLRendering not found, creating it now.")
         template_xsl_rendering = TemplateXslRendering(
             template=template,
             list_xslt=list_xslt,
