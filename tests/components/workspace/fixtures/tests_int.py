@@ -22,12 +22,14 @@ class TestWorkspaceFixtures(IntegrationTransactionTestCase):
         """
         # Context
         workspace_count = len(workspace_api.get_all())
-        self.assertEqual(workspace_count, 0)
+        self.assertEqual(workspace_count, 1)
 
         # Act
         WorkspaceFixtures().create_workspace("1", TITLE)
 
         # Assert
         list_workspace = workspace_api.get_all()
-        self.assertEqual(list_workspace[0].title, TITLE)
+        self.assertTrue(
+            TITLE in [workspace.title for workspace in list_workspace]
+        )
         self.assertEqual(len(list_workspace), workspace_count + 1)

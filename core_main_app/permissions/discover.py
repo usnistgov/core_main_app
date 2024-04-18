@@ -52,15 +52,20 @@ def init_rules(apps):
 
 
 def create_public_workspace():
-    """Create and save a public workspace for registry. It will also create permissions.
+    """Create and save a public workspace. It will also create permissions.
 
     Returns:
     """
-    logger.info("START create public workspace.")
-
-    # We need the app to be ready to access the Group model
     from core_main_app.components.workspace import api as workspace_api
     from core_main_app.commons import exceptions
+
+    logger.info("START create public workspace.")
+
+    if Workspace.objects.count() > 0:
+        logger.warning(
+            "The database is not empty. Skipping workspace initialization."
+        )
+        return
 
     try:
         try:

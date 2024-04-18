@@ -125,12 +125,10 @@ class TestGetGlobalWorkspace(IntegrationTransactionTestCase):
         Returns:
 
         """
-        # Context
-        workspace = WorkspaceFixtures.create_global_workspace(TITLE_1)
         # Act
-        result = workspace_api.get_global_workspace()
+        workspace = workspace_api.get_global_workspace()
         # Assert
-        self.assertEqual(workspace, result)
+        self.assertTrue(workspace.title == "Global Public Workspace")
 
     def test_get_global_workspace_multiple_workspace(self):
         """test get global workspace multiple workspace
@@ -139,23 +137,9 @@ class TestGetGlobalWorkspace(IntegrationTransactionTestCase):
 
         """
         # Context
-        global_workspace = WorkspaceFixtures.create_global_workspace(TITLE_1)
-        WorkspaceFixtures.create_workspace("1", TITLE_1)
-        # Act
-        result = workspace_api.get_global_workspace()
-        # Assert
-        self.assertEqual(global_workspace, result)
-
-    def test_get_global_workspace_not_global(self):
-        """test get global workspace not global
-
-        Returns:
-
-        """
-        # Context
-        WorkspaceFixtures.create_workspace("1", TITLE_1)
-        # Act
-        with self.assertRaises(exceptions.DoesNotExist):
+        WorkspaceFixtures.create_global_workspace(TITLE_1)
+        # Act + Assert
+        with self.assertRaises(exceptions.ModelError):
             workspace_api.get_global_workspace()
 
 

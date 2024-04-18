@@ -46,7 +46,7 @@ class UserFixtures(FixtureInterface):
 
     @staticmethod
     def create_super_user(username="username", password="pass", email="email"):
-        """create super user
+        """create superuser
 
         Args:
             username:

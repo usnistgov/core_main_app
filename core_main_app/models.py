@@ -7,7 +7,7 @@ from core_main_app.permissions.utils import get_formatted_name
 
 
 class Main(models.Model):
-    """Main model containing several information:
+    """Main app model:
 
     Attributes:
         Meta.verbose_name (:py:class:`str`): Name of the app.

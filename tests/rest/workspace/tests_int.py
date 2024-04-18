@@ -1,12 +1,13 @@
 """ Integration Test for Workspace Rest API
 """
-
+from django.contrib.auth.models import Group
 from rest_framework import status
 from tests.components.group.fixtures.fixtures import GroupFixtures
 from tests.components.user.fixtures.fixtures import UserFixtures
 from tests.components.workspace.fixtures.fixtures import WorkspaceFixtures
 
 from core_main_app.components.workspace import api as workspace_api
+from core_main_app.permissions import rights
 from core_main_app.rest.workspace import views as workspace_rest_views
 from core_main_app.utils.integration_tests.integration_base_transaction_test_case import (
     IntegrationTransactionTestCase,
@@ -225,6 +226,7 @@ class TestWorkspaceList(IntegrationTransactionTestCase):
         user = UserFixtures().create_super_user(username="user1")
         other_user = UserFixtures().create_user(username="user2")
 
+        workspace_count = len(workspace_api.get_all())
         WorkspaceFixtures().create_workspace(user.id, TITLE_1)
         WorkspaceFixtures().create_workspace(user.id, TITLE_2)
         WorkspaceFixtures().create_workspace(other_user.id, TITLE_3)
@@ -235,7 +237,7 @@ class TestWorkspaceList(IntegrationTransactionTestCase):
         )
 
         # Assert
-        self.assertEqual(len(response.data), 3)
+        self.assertEqual(len(response.data), workspace_count + 3)
 
     def test_post_returns_http_201(self):
         """test_post_returns_http_201
@@ -354,7 +356,9 @@ class TestWorkspaceReadAccess(IntegrationTransactionTestCase):
         )
 
         # Assert
-        self.assertEqual(response.data[0]["title"], TITLE_1)
+        self.assertTrue(
+            TITLE_1 in [workspace["title"] for workspace in response.data]
+        )
 
     def test_get_workspace_with_read_access_admin(self):
         """test_get_workspace_with_read_access_admin
@@ -373,7 +377,9 @@ class TestWorkspaceReadAccess(IntegrationTransactionTestCase):
         )
 
         # Assert
-        self.assertEqual(response.data[0]["title"], TITLE_1)
+        self.assertTrue(
+            TITLE_1 in [workspace["title"] for workspace in response.data]
+        )
 
     def test_get_workspace_with_read_access_other_workspace(self):
         """test_get_workspace_with_read_access_other_workspace
@@ -393,7 +399,9 @@ class TestWorkspaceReadAccess(IntegrationTransactionTestCase):
         )
 
         # Assert
-        self.assertEqual(response.data[0]["title"], TITLE_1)
+        self.assertTrue(
+            TITLE_1 in [workspace["title"] for workspace in response.data]
+        )
 
     def test_get_workspace_with_read_access_public_workspace(self):
         """test_get_workspace_with_read_access_public_workspace
@@ -414,7 +422,9 @@ class TestWorkspaceReadAccess(IntegrationTransactionTestCase):
         )
 
         # Assert
-        self.assertEqual(response.data[0]["title"], TITLE_1)
+        self.assertTrue(
+            TITLE_1 in [workspace["title"] for workspace in response.data]
+        )
 
 
 class TestWorkspaceWriteAccess(IntegrationTransactionTestCase):
@@ -472,7 +482,9 @@ class TestWorkspaceWriteAccess(IntegrationTransactionTestCase):
         )
 
         # Assert
-        self.assertEqual(response.data[0]["title"], TITLE_1)
+        self.assertTrue(
+            TITLE_1 in [workspace["title"] for workspace in response.data]
+        )
 
     def test_get_workspace_with_write_access_other_workspace(self):
         """test_get_workspace_with_write_access_other_workspace
@@ -636,6 +648,8 @@ class TestWorkspaceSetPublic(IntegrationTransactionTestCase):
         # Context
         user = UserFixtures().create_user(username="user1")
         workspace = WorkspaceFixtures().create_workspace(user.id, TITLE_1)
+        default_group = Group.objects.get(name=rights.DEFAULT_GROUP)
+        default_group.user_set.remove(user)
 
         # Act
         response = RequestMock.do_request_patch(
