@@ -76,6 +76,7 @@ $(document).ready(function() {
     $('.btn.refresh').on('click', refresh);
     $('.btn.validate').on('click', validate);
     $('.btn.generate').on('click', generate);
+    $('#hide-alert').on('click', function(){jqError.hide()});
     $('.btn.save').on('click', function(){
         if (useModal) createDataModal();
         else save();
@@ -143,7 +144,7 @@ let save = function()
             } catch {
                 dataContent = data.responseText;
             }
-            jqError.html(
+            $("#error_message").html(
                 `<i class="fas fa-exclamation-triangle"></i> An error occurred while saving: ${buildErrorMessage(dataContent)}`
             );
             jqError.show();
@@ -184,7 +185,7 @@ let format = function()
                 setContent(data);
             },
             error:function(data){
-                jqError.html('<i class="fas fa-exclamation-triangle"></i> '+ data.responseText);
+                 $("#error_message").html('<i class="fas fa-exclamation-triangle"></i> ' + data.responseText);
                 jqError.show();
             }
         }).always(function(data) {
@@ -223,7 +224,7 @@ var validate = function()
             } catch {
                 dataContent = data.responseText;
             }
-            jqError.html(
+            $("#error_message").html(
                 `<i class="fas fa-exclamation-triangle"></i> An error occurred at validation: ${buildErrorMessage(dataContent)}`
             );
             jqError.show();
@@ -266,7 +267,7 @@ var updateDisplay = function(iconSelector)
 
             },
             error: function(data){
-                 jqError.html('<i class="fas fa-exclamation-triangle"></i> '+ data.responseText);
+                 $("#error_message").html('<i class="fas fa-exclamation-triangle"></i> '+ data.responseText);
                  jqError.show();
             }
      }).always(function(data) {
@@ -319,7 +320,7 @@ let generate = function()
 		    setContent(data);
 	    },
         error:function(data){
-            jqError.html('<i class="fas fa-exclamation-triangle"></i> '+ data.responseText);
+            $("#error_message").html('<i class="fas fa-exclamation-triangle"></i> '+ data.responseText);
             jqError.show();
 
         }

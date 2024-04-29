@@ -17,15 +17,24 @@
 <h1>Title : {{data.name}}</h1>
 
 <div class="alert alert-danger m-2" style="display: none;" role="alert">
-    <i class="fas fa-exclamation-triangle"></i>
+    <button type="button" id="hide-alert" aria-label="Close"
+            {% if BOOTSTRAP_VERSION|first == "4" %}class="close"
+            {% elif BOOTSTRAP_VERSION|first == "5" %}class="btn-close float-end"
+            {% endif %} >
+            {% if BOOTSTRAP_VERSION|first == "4" %}
+                <span aria-hidden="true">&times;</span>
+            {% elif BOOTSTRAP_VERSION|first == "5" %}
+            {% endif %}
+        </button>
+    <div id="error_message"></div>
 </div>
 
 
 
 {% if data.TEXT_EDITOR_LIBRARY == "Monaco" %}
 <div>
-        <div id="data_content" class="hidden">{{data.content}}</div>
-        <div id="container" class="border rounded input"></div>
+<div id="data_content" class="hidden">{{data.content}}</div>
+<div id="container" class="border rounded input"></div>
 {% else %}
 <div class="row text-editor-font m-1">
     <div class="border {% if BOOTSTRAP_VERSION|first == "4" %}rounded-left{% elif BOOTSTRAP_VERSION|first == "5" %}rounded-start{% endif %} bg-light line-number"></div>
