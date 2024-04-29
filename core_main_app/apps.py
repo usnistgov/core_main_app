@@ -19,7 +19,6 @@ def init_app(sender, **kwargs):
 
     discover.init_rules(sender.apps)
     discover.create_public_workspace()
-    discover.init_mongo_indexing()
 
 
 class InitApp(AppConfig):
@@ -36,10 +35,12 @@ class InitApp(AppConfig):
         from core_main_app.utils.requests_utils.ssl import (
             check_ssl_certificates_dir_setting,
         )
+        from core_main_app.permissions import discover
 
         _check_settings()
         check_ssl_certificates_dir_setting(SSL_CERTIFICATES_DIR)
         post_migrate.connect(init_app, sender=self)
+        discover.init_mongo_indexing()
 
 
 def _check_settings():
