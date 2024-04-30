@@ -31,11 +31,35 @@ class TestBlobSerializerGetPid(TestCase):
 
         self.assertIsNone(self.mock_serializer.get_pid(**self.mock_kwargs))
 
+    @override_settings(
+        INSTALLED_APPS=INSTALLED_APPS + ["core_linked_records_app"]
+    )
+    @patch(
+        "core_linked_records_app.components.pid_settings.models.PidSettings"
+    )
+    def test_auto_set_pid_false_return_none(self, mock_pid_settings):
+        """test_auto_set_pid_false_return_none"""
+        mock_pid_settings_obj = MagicMock()
+        mock_pid_settings_obj.auto_set_pid = False
+
+        mock_pid_settings.get.return_value = mock_pid_settings_obj
+
+        self.assertIsNone(self.mock_serializer.get_pid(**self.mock_kwargs))
+
+    @override_settings(
+        INSTALLED_APPS=INSTALLED_APPS + ["core_linked_records_app"]
+    )
     @patch.object(blob_serializers, "reverse")
-    @patch.object(blob_serializers, "settings")
-    def test_reverse_fn_called(self, mock_settings, mock_reverse):
+    @patch(
+        "core_linked_records_app.components.pid_settings.models.PidSettings"
+    )
+    def test_reverse_fn_called(self, mock_pid_settings, mock_reverse):
         """test_reverse_fn_called"""
-        mock_settings.INSTALLED_APPS = ["core_linked_records_app"]
+        mock_pid_settings_obj = MagicMock()
+        mock_pid_settings_obj.auto_set_pid = True
+
+        mock_pid_settings.get.return_value = mock_pid_settings_obj
+
         self.mock_serializer.get_pid(**self.mock_kwargs)
 
         mock_reverse.assert_called_with(
@@ -48,10 +72,21 @@ class TestBlobSerializerGetPid(TestCase):
     )
     @patch("core_linked_records_app.system.blob.api")
     @patch.object(blob_serializers, "reverse")
+    @patch(
+        "core_linked_records_app.components.pid_settings.models.PidSettings"
+    )
     def test_get_pid_for_blob_called(
-        self, mock_reverse, mock_linked_records_blob_system_api
+        self,
+        mock_pid_settings,
+        mock_reverse,
+        mock_linked_records_blob_system_api,
     ):
         """test_get_pid_for_blob_called"""
+        mock_pid_settings_obj = MagicMock()
+        mock_pid_settings_obj.auto_set_pid = True
+
+        mock_pid_settings.get.return_value = mock_pid_settings_obj
+
         self.mock_serializer.get_pid(**self.mock_kwargs)
 
         mock_linked_records_blob_system_api.get_pid_for_blob.assert_called_with(
@@ -63,10 +98,21 @@ class TestBlobSerializerGetPid(TestCase):
     )
     @patch("core_linked_records_app.system.blob.api")
     @patch.object(blob_serializers, "reverse")
+    @patch(
+        "core_linked_records_app.components.pid_settings.models.PidSettings"
+    )
     def test_get_pid_for_blob_exception_returns_none(
-        self, mock_reverse, mock_linked_records_blob_system_api
+        self,
+        mock_pid_settings,
+        mock_reverse,
+        mock_linked_records_blob_system_api,
     ):
         """test_get_pid_for_blob_exception_returns_none"""
+        mock_pid_settings_obj = MagicMock()
+        mock_pid_settings_obj.auto_set_pid = True
+
+        mock_pid_settings.get.return_value = mock_pid_settings_obj
+
         mock_linked_records_blob_system_api.get_pid_for_blob.side_effect = Exception(
             "mock_linked_records_blob_system_api_get_pid_for_blob_exception"
         )
@@ -79,13 +125,22 @@ class TestBlobSerializerGetPid(TestCase):
     @patch.object(blob_serializers, "urljoin")
     @patch("core_linked_records_app.system.blob.api")
     @patch.object(blob_serializers, "reverse")
+    @patch(
+        "core_linked_records_app.components.pid_settings.models.PidSettings"
+    )
     def test_url_join_called(
         self,
+        mock_pid_settings,
         mock_reverse,
         mock_linked_records_blob_system_api,
         mock_urljoin,
     ):
         """test_url_join_called"""
+        mock_pid_settings_obj = MagicMock()
+        mock_pid_settings_obj.auto_set_pid = True
+
+        mock_pid_settings.get.return_value = mock_pid_settings_obj
+
         mock_reverse_return_value = "mock_reverse_return_value"
         mock_reverse.return_value = mock_reverse_return_value
 
@@ -107,13 +162,22 @@ class TestBlobSerializerGetPid(TestCase):
     @patch.object(blob_serializers, "urljoin")
     @patch("core_linked_records_app.system.blob.api")
     @patch.object(blob_serializers, "reverse")
+    @patch(
+        "core_linked_records_app.components.pid_settings.models.PidSettings"
+    )
     def test_success_returns_pid_value(
         self,
+        mock_pid_settings,
         mock_reverse,
         mock_linked_records_blob_system_api,
         mock_urljoin,
     ):
         """test_success_returns_pid_value"""
+        mock_pid_settings_obj = MagicMock()
+        mock_pid_settings_obj.auto_set_pid = True
+
+        mock_pid_settings.get.return_value = mock_pid_settings_obj
+
         mock_urljoin_return_value = "mock_urljoin_return_value"
         mock_urljoin.return_value = mock_urljoin_return_value
 

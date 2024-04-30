@@ -72,6 +72,13 @@ class BlobSerializer(ModelSerializer):
         if "core_linked_records_app" not in settings.INSTALLED_APPS:
             return None
 
+        from core_linked_records_app.components.pid_settings.models import (
+            PidSettings,
+        )
+
+        if not PidSettings.get().auto_set_pid:
+            return None
+
         from core_linked_records_app.system.blob import (
             api as linked_record_blob_system_api,
         )
