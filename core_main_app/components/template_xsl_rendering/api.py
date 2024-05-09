@@ -47,7 +47,6 @@ def add_or_delete(
             list_xslt,
             default_detail_xslt,
             list_detail_xslt,
-            template_xsl_rendering_id,
         )
 
     try:
@@ -146,7 +145,6 @@ def upsert(
     list_xslt,
     default_detail_xslt,
     list_detail_xslt,
-    template_xsl_rendering_id=None,
 ):
     """Update or create a XSL Template rendering object
 
@@ -155,13 +153,12 @@ def upsert(
         list_xslt:
         default_detail_xslt:
         list_detail_xslt:
-        template_xsl_rendering_id:
 
     Returns:
         TemplateXSLRendering - The updated/created object.
     """
     try:
-        template_xsl_rendering = get_by_id(template_xsl_rendering_id)
+        template_xsl_rendering = get_by_template_id(template.id)
         template_xsl_rendering.list_xslt = list_xslt
         template_xsl_rendering.default_detail_xslt = default_detail_xslt
         template_xsl_rendering.list_detail_xslt.set(

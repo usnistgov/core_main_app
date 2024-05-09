@@ -31,5 +31,4 @@ class TemplateXslRenderingSerializer(ModelSerializer):
             list_xslt,
             default_detail_xslt,
             list_detail_xslt,
-            template_xsl_rendering_id=instance.id,
         )

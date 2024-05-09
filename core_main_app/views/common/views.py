@@ -482,7 +482,6 @@ class TemplateXSLRenderingView(View):
             )
 
             template_xsl_rendering_api.add_or_delete(
-                template_xsl_rendering_id=request.POST.get("id"),
                 template=template,
                 list_xslt=list_xslt,
                 default_detail_xslt=default_detail_xslt,
