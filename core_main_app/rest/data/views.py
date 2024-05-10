@@ -1093,7 +1093,25 @@ class BulkUploadFolder(APIView):
     permission_classes = (IsAdminUser,)
 
     @staticmethod
-    def _bulk_create(data_list):
+    def _save_list(data_list):
+        """Save a list of data
+
+        Args:
+            data_list:
+
+        Returns:
+
+        """
+        for data in data_list:
+            try:
+                data.save()
+            except Exception as e:
+                logger.error(
+                    f"Loading failed for: {data.title}. Error: {str(e)}"
+                )
+
+    @staticmethod
+    def _bulk_create(data_list, batch):
         """Bulk insert list of data
 
         Args:
@@ -1102,6 +1120,10 @@ class BulkUploadFolder(APIView):
         Returns:
 
         """
+        if not batch:
+            BulkUploadFolder._save_list(data_list)
+            return
+
         try:
             # Bulk insert list of data
             Data.objects.bulk_create(data_list)
@@ -1110,19 +1132,14 @@ class BulkUploadFolder(APIView):
             logger.error("Bulk upload failed.")
             logger.error(str(exception))
             # try inserting each data of the batch individually
-            for error_data in data_list:
-                try:
-                    error_data.save()
-                except Exception:
-                    logger.error(
-                        f"Error during bulk upload. Retry loading failed for: {error_data.title}."
-                    )
+            BulkUploadFolder._save_list(data_list)
 
     def put(self, request):
         """Bulk upload a folder.
 
         Dataset needs to be placed in the MEDIA_ROOT folder.
         The folder parameter is a relative path from the MEDIA_ROOT.
+        Setting batch to `True` will perform a bulk upload (post save signals won't be triggered).
 
         Parameters:
 
@@ -1132,7 +1149,8 @@ class BulkUploadFolder(APIView):
                 "workspace": integer,
                 "batch_size": integer,
                 "validate": true|false,
-                "clean_title": true|false
+                "clean_title": true|false,
+                "batch": true|false
             }
 
         Examples:
@@ -1141,7 +1159,8 @@ class BulkUploadFolder(APIView):
                 "template": 1,
                 "workspace": 1,
                 "batch_size": 10,
-                "validate": false
+                "validate": false,
+                "batch": false
             }
 
         Args:
@@ -1153,6 +1172,7 @@ class BulkUploadFolder(APIView):
             folder = request.data["folder"]
             template_id = request.data["template"]
             workspace = request.data["workspace"]
+            batch = request.data.get("batch", False)
             batch_size = request.data.get("batch_size", 10)
             validate = request.data.get("validate", True)
             validate_xml = request.data.get("validate_xml", None)
@@ -1162,7 +1182,7 @@ class BulkUploadFolder(APIView):
             validate = validate_xml if validate_xml is not None else validate
 
             # Get Template
-            template = template_api.get_by_id(template_id)
+            template = template_api.get_by_id(template_id, request)
 
             data_list = []
 
@@ -1239,11 +1259,11 @@ class BulkUploadFolder(APIView):
                 # If data list reaches batch size
                 if len(data_list) == batch_size:
                     # Bulk insert list of data
-                    BulkUploadFolder._bulk_create(data_list)
+                    BulkUploadFolder._bulk_create(data_list, batch)
                     # Clear list of data
                     data_list = list()
             # insert the last batch
-            BulkUploadFolder._bulk_create(data_list)
+            BulkUploadFolder._bulk_create(data_list, batch)
 
             content = {
                 "message": "Bulk upload is complete. Check the logs for errors."

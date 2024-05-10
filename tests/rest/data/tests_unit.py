@@ -765,6 +765,146 @@ class TestBulkUploadFolder(SimpleTestCase):
         self.assertFalse(mock_check_xml_file_is_valid.called)
         self.assertTrue(mock_check_json_file_is_valid.called)
 
+    def test_save_data_list_calls_data_save(
+        self,
+    ):
+        """test_save_data_list_calls_data_save
+
+        Returns:
+
+        """
+        # Arrange
+        mock_data = MagicMock()
+        mock_data.save.return_value = None
+
+        # Mock
+        data_rest_views.BulkUploadFolder._save_list([mock_data])
+        # Assert
+        self.assertTrue(mock_data.save.called)
+
+    def test_save_data_list_continues_if_error(
+        self,
+    ):
+        """test_save_data_list_continues_if_error
+
+        Returns:
+
+        """
+        # Arrange
+        mock_data = MagicMock()
+        mock_data.save.side_effect = Exception()
+
+        # Mock
+        data_rest_views.BulkUploadFolder._save_list([mock_data])
+        # Assert
+        self.assertTrue(mock_data.save.called)
+
+    def test_bulk_upload_not_batch_calls_data_save(
+        self,
+    ):
+        """test_bulk_upload_not_batch_calls_data_save
+
+        Returns:
+
+        """
+        # Arrange
+        mock_data = MagicMock()
+        mock_data.save.return_value = None
+
+        # Mock
+        data_rest_views.BulkUploadFolder._bulk_create([mock_data], batch=False)
+        # Assert
+        self.assertTrue(mock_data.save.called)
+
+    @patch.object(Data, "objects")
+    def test_bulk_upload_with_batch_calls_bulk_save(self, mock_data_objects):
+        """test_bulk_upload_with_batch_calls_bulk_save
+
+        Returns:
+
+        """
+        # Arrange
+        mock_data = MagicMock()
+        mock_data.save.return_value = None
+        mock_data_objects.bulk_create.return_value = None
+
+        # Mock
+        data_rest_views.BulkUploadFolder._bulk_create([mock_data], batch=True)
+
+        # Assert
+        self.assertFalse(mock_data.save.called)
+        self.assertTrue(mock_data_objects.bulk_create.called)
+
+    @patch.object(Data, "objects")
+    def test_bulk_upload_with_batch_and_exception_during_bulk_calls_save(
+        self, mock_data_objects
+    ):
+        """test_bulk_upload_with_batch_and_exception_during_bulk_calls_save
+
+        Returns:
+
+        """
+        # Arrange
+        mock_data = MagicMock()
+        mock_data.save.return_value = None
+        mock_data_objects.bulk_create.side_effect = Exception()
+
+        # Mock
+        data_rest_views.BulkUploadFolder._bulk_create([mock_data], batch=True)
+
+        # Assert
+        self.assertTrue(mock_data.save.called)
+
+    @patch.object(data_rest_views.BulkUploadFolder, "_save_list")
+    @patch("builtins.open", new_callable=mock_open, read_data=b"<tag></tag>")
+    @patch("core_main_app.components.data.api.check_json_file_is_valid")
+    @patch("core_main_app.components.data.api.check_xml_file_is_valid")
+    @patch("os.listdir")
+    @patch("os.path.exists")
+    @patch.object(template_api, "get_by_id")
+    def test_put_folder_batch_calls_data_save(
+        self,
+        mock_template_api_get_by_id,
+        mock_exists,
+        mock_list_dir,
+        mock_check_xml_file_is_valid,
+        mock_check_json_file_is_valid,
+        mock_open_func,
+        mock_save_list,
+    ):
+        """test_put_folder_batch_calls_data_save
+
+        Returns:
+
+        """
+        # Arrange
+        mock_user = create_mock_user("1", is_staff=True)
+        mock_template_api_get_by_id.return_value = MagicMock(
+            format=Template.XSD
+        )
+        mock_exists.return_value = True
+        mock_list_dir.return_value = [MagicMock()]
+        mock_check_xml_file_is_valid.return_value = True
+        mock_check_json_file_is_valid.return_value = True
+        mock_save_list.return_value = None
+
+        # Mock
+        response = RequestMock.do_request_put(
+            data_rest_views.BulkUploadFolder.as_view(),
+            mock_user,
+            data={
+                "folder": "folder",
+                "template": "1",
+                "workspace": "1",
+                "batch_size": 1,
+                "batch": False,
+            },
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(mock_save_list.called)
+
 
 class TestDataSerializer(SimpleTestCase):
     """TestDataSerializer"""
