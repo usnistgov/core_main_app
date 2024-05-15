@@ -12,6 +12,7 @@
     <thead>
         <tr>
             <th>Metadata file</th>
+            <th>Template</th>
             <th>Creation date</th>
             <th>Workspace</th>
             <th>Actions</th>
@@ -27,6 +28,7 @@
                     {{ metadata.title }}
                 </a>
             </td>
+            <td>{{ metadata.template.display_name }}</td>
             <td>{{ metadata.creation_date|localtime }}</td>
             <td>
                 {% if metadata.workspace %}

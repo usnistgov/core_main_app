@@ -3,20 +3,17 @@
 {% load tz %}
 
 <b>Created on: </b> {{data.blob.creation_date|localtime}} <br/>
-<b>Author:</b> {{ data.blob.owner_name}}
+<b>Author:</b> {{ data.blob.owner_name}} <br/>
+<b>Metadata: </b><br/>
 
 
 {% for metadata in data.blob|blob_metadata:request.user %}
-<p>
-<h3>{{ metadata.title }}</h3>
-<div id="xslt-representation">
-    {% xsl_transform_detail xml_content=metadata.xml_content template_id=metadata.template.id xslt_id=data.xsl_transformation_id template_hash=metadata.template.hash request=request as xml_representation %}
-    {% if 'core_file_preview_app' in INSTALLED_APPS %}
-        {% render_blob_links_in_span xml_string=xml_representation as xml_representation %}
-    {% endif %}
-    {{ xml_representation|safe}}
-</div>
-</p>
+    <a class="blob-link"
+   href={% if come_from_admin %}  "{% url 'core-admin:core_main_app_data_detail'%}?id={{metadata.id}}"
+        {% else %} "{% url 'core_main_app_data_detail'%}?id={{metadata.id}}"{% endif %}>
+    {{ metadata.title }} - {{ metadata.template.display_name }}
+    </a><br/>
 {% empty%}
 <p><b>Metadata: </b> No metadata files attached, or user not authorized to see them.</p>
 {% endfor %}
+

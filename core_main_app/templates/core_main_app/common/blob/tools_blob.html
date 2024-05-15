@@ -17,10 +17,10 @@
         Manage Metadata
     </a>
     {% endif %}
-    <a class="btn btn-secondary download
+    <a class="btn btn-primary download
         {% if BOOTSTRAP_VERSION|first == "4" %}mr-1{% elif BOOTSTRAP_VERSION|first == "5"  %}me-1{% endif %}
         {% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %}"
         href="{% url 'core_main_app_rest_blob_download' data.blob.id %}">
-        <i class="fas fa-download"></i> Download
+        <i class="fas fa-download"></i> Download File
     </a>
 </div>
