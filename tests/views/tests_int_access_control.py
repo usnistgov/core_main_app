@@ -782,9 +782,14 @@ class TestAbstractTextEditorView(IntegrationBaseTestCase):
                     "path": "core_main_app/user/js/text_editor/text_editor.js",
                     "is_raw": True,
                 },
+                {
+                    "path": "core_main_app/common/js/data_detail.js",
+                    "is_raw": False,
+                },
             ],
             "css": [
                 "core_main_app/user/css/text-editor.css",
+                "core_main_app/common/css/modals/download.css",
             ],
         }
         # Assert
@@ -806,6 +811,10 @@ class TestAbstractTextEditorView(IntegrationBaseTestCase):
                 {
                     "path": "core_main_app/user/js/text_editor/text_editor.js",
                     "is_raw": True,
+                },
+                {
+                    "path": "core_main_app/common/js/data_detail.js",
+                    "is_raw": False,
                 },
                 {
                     "path": "core_main_app/user/js/text_editor/monaco-editor-loader.js",
@@ -832,6 +841,7 @@ class TestAbstractTextEditorView(IntegrationBaseTestCase):
             ],
             "css": [
                 "core_main_app/user/css/text-editor.css",
+                "core_main_app/common/css/modals/download.css",
             ],
             "external_css": [
                 {
@@ -852,7 +862,10 @@ class TestAbstractTextEditorView(IntegrationBaseTestCase):
         """
 
         # Act # Assert
-        self.assertEqual(AbstractEditorView._get_modals(self), [])
+        self.assertEqual(
+            AbstractEditorView._get_modals(self),
+            ["core_main_app/common/modals/download-options.html"],
+        )
 
     def test_get_context_raises_not_implemented_error(self):
         """test_get_context_raises_not_implemented_error

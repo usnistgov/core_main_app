@@ -9,6 +9,7 @@ let editorFormat = null;
 let lineNumbers = 1;
 let editor = null;
 let widthInput = "45%";
+let documentTitle = null;
 
 
 /**
@@ -20,6 +21,7 @@ $(document).ready(function() {
     templateID = $("#template_id").html();
     documentName = $("#document_name").html();
     textEditor = $("#text_editor_library").html();
+    documentTitle = $("#document_title").html();
 
     if (textEditor == "Monaco"){
         value =  $("#data_content").text();
@@ -51,7 +53,7 @@ $(document).ready(function() {
             if (documentName == "Data") textEditorUrl = dataJSONTextEditorUrl;
             else {
                 textEditorUrl = draftJSONTextEditorUrl;
-                $("#switch-to-form" ).removeClass("hidden")
+                $(".switch-to-form-editor" ).removeClass("hidden")
                 $('.save-data').on('click', save);
                 useModal = true;
             }
@@ -60,7 +62,7 @@ $(document).ready(function() {
             if (documentName == "Data") textEditorUrl = dataXmlTextEditorUrl;
             else {
                 textEditorUrl = draftXMLTextEditorUrl;
-                $("#switch-to-form" ).removeClass("hidden")
+                $(".switch-to-form-editor" ).removeClass("hidden")
                 $('.save-data').on('click', save);
                 useModal = true;
             }
@@ -76,6 +78,10 @@ $(document).ready(function() {
     $('.btn.refresh').on('click', refresh);
     $('.btn.validate').on('click', validate);
     $('.btn.generate').on('click', generate);
+    $('.download-document-btn').on('click', downloadContent);
+    $('.download-template-btn').on('click', function(){
+        window.location.href = downloadTemplateUrl +"?pretty_print=" + $('#format').is(':checked');
+    });
     $('#hide-alert').on('click', function(){jqError.hide()});
     $('.btn.save').on('click', function(){
         if (useModal) createDataModal();
@@ -368,4 +374,26 @@ let setContent = function(content){
         html = hljs.highlightAuto(content).value;
         $(".input").html("<pre class=\"content-highlight\">"+ html +"</pre>")
     }
+}
+
+/**
+* Download current content
+*/
+let downloadContent = function(){
+   jqError.hide()
+   var icon = $(".download > i").attr("class");
+   // Show loading spinner
+   showSpinner($(".download > i"));
+
+   // Create a Blob object with the content and set the appropriate MIME type
+   const blob = new Blob([getContent()], { type: "application/"+editorFormat.toLowerCase()});
+   const link = document.createElement('a');
+   link.href = URL.createObjectURL(blob);
+   // Set file name and extension
+   link.download = `${documentTitle}.${editorFormat.toLowerCase()}`;
+   document.body.appendChild(link);
+   link.click();
+   document.body.removeChild(link);
+   // get old button icon
+   hideSpinner($(".download > i"), icon)
 }

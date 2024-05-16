@@ -580,9 +580,14 @@ class AbstractEditorView(View, metaclass=ABCMeta):
                     "path": "core_main_app/user/js/text_editor/text_editor.js",
                     "is_raw": True,
                 },
+                {
+                    "path": "core_main_app/common/js/data_detail.js",
+                    "is_raw": False,
+                },
             ],
             "css": [
                 "core_main_app/user/css/text-editor.css",
+                "core_main_app/common/css/modals/download.css",
             ],
         }
         if main_settings.TEXT_EDITOR_LIBRARY == "Monaco":
@@ -628,7 +633,7 @@ class AbstractEditorView(View, metaclass=ABCMeta):
         Return:
         """
 
-        return []
+        return ["core_main_app/common/modals/download-options.html"]
 
     def _get_context(self, document_id, document_title, type_content, content):
         """get context

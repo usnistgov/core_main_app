@@ -10,13 +10,19 @@
     It shows your content side by side in a clear, editable representation.
 </p>
 
-<div id="switch-to-form" class="{% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %} hidden">
-    <button class="btn btn-secondary switch-to-form-editor"><i class="fas fa-circle-right"></i> Switch to Form Editor </button>
+<div class="{% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %}">
+    <button class="btn btn-secondary download">
+        <i class="fas fa-download"></i> Download
+    </button>
+    <button class="btn btn-secondary switch-to-form-editor hidden">
+        <i class="fas fa-circle-right"></i> Switch to Form Editor
+    </button>
 </div>
 
 <h1>Title : {{data.name}}</h1>
 
-<div class="alert alert-danger m-2" style="display: none;" role="alert">
+
+<div class="alert alert-danger my-2" style="display: none;" role="alert">
     <button type="button" id="hide-alert" aria-label="Close"
             {% if BOOTSTRAP_VERSION|first == "4" %}class="close"
             {% elif BOOTSTRAP_VERSION|first == "5" %}class="btn-close float-end"
@@ -45,7 +51,7 @@
     {% endif %}
 {% if data.type == 'XML' %}
     <div class="border rounded bg-light representation " hidden>
-        <div class="tree m-2">
+        <div class="tree m-1">
             {% xsl_transform_detail xml_content=data.content template_id=data.template_id xslt_id=data.xsl_transformation_id request=request as xml_representation %}
             {% if 'core_file_preview_app' in INSTALLED_APPS %}
                 {% render_blob_links_in_span xml_string=xml_representation as xml_representation %}
@@ -56,7 +62,7 @@
 {% endif %}
 </div>
 
-<div class="{% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %} m-2">
+<div class="{% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %} my-2">
         {% if data.type == 'XML' %}
             <select class="selectpicker {% if BOOTSTRAP_VERSION|first == "4" %}form-control{% elif BOOTSTRAP_VERSION|first == "5"  %}form-select{% endif %}" style="width:100px; display:inline-block" id="xslt-selector" hidden>
                            {% if not data.template_xsl_rendering.default_detail_xslt %}  <option value={{None}}>Default</option>{% endif %}
@@ -77,6 +83,7 @@
 <div id="document_id" class="hidden">{{data.document_id}}</div>
 <div id="editor_format" class="hidden">{{data.type}}</div>
 <div id="text_editor_library" class="hidden">{{data.TEXT_EDITOR_LIBRARY}}</div>
+<div id="document_title" class="hidden">{{data.name}}</div>
 {% if data.template_id %}
 <div id="template_id" class="hidden">{{data.template_id}}</div>
 {% endif %}
