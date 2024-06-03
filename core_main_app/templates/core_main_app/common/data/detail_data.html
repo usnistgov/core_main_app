@@ -1,7 +1,13 @@
 {% load xsl_transform_tag %}
 {% load blob_tags %}
 {% load format_json %}
+{% load data_to_html %}
 
+{%data_detail_html data=data.data as html_string %}
+
+{% if html_string %}
+    {{html_string}}
+{% else %}
 <div id="xslt-representation" >
     {% if data.data.template.format == "XSD" %}
         {% xsl_transform_detail xml_content=data.data.content template_id=data.data.template.id xslt_id=data.xsl_transformation_id template_hash=data.data.template.hash request=request as html_string %}
@@ -14,7 +20,6 @@
     {% else %}
         {{data.data.content}}
     {% endif %}
-
 </div>
-
+{% endif %}
 

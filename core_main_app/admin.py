@@ -16,6 +16,9 @@ from core_main_app.components.lock.admin_site import CustomDatabaseLockAdmin
 from core_main_app.components.lock.models import DatabaseLockObject
 from core_main_app.components.template.admin_site import CustomTemplateAdmin
 from core_main_app.components.template.models import Template
+from core_main_app.components.template_html_rendering.models import (
+    TemplateHtmlRendering,
+)
 from core_main_app.components.template_version_manager.admin_site import (
     CustomTemplateVersionManagerAdmin,
 )
@@ -186,6 +189,7 @@ admin.site.register(TemplateVersionManager, CustomTemplateVersionManagerAdmin)
 admin.site.register(Template, CustomTemplateAdmin)
 admin.site.register(XslTransformation, CustomXslTransformationAdmin)
 admin.site.register(TemplateXslRendering, CustomTemplateXslRenderingAdmin)
+admin.site.register(TemplateHtmlRendering)
 admin.site.register(DatabaseLockObject, CustomDatabaseLockAdmin)
 admin.site.register(UserPreferences, CustomUserPreferencesAdmin)
 

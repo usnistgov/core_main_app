@@ -62,6 +62,11 @@ templates_children = (
         icon="upload",
     ),
     MenuItem(
+        "HTML Rendering",
+        reverse("admin:core_main_app_templatehtmlrendering_changelist"),
+        icon="palette",
+    ),
+    MenuItem(
         "Data Migration",
         reverse("core-admin:core_main_app_data_migration"),
         icon="exchange-alt",
