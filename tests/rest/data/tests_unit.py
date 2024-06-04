@@ -5,20 +5,14 @@ from unittest.mock import patch, MagicMock, mock_open
 from django.test import SimpleTestCase
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
-from tests.components.data.fixtures.fixtures import QueryDataFixtures
-from tests.components.data.tests_unit import _get_template, _get_json_template
-from tests.mocks import MockQuerySet
 
-from core_main_app.commons.exceptions import DoesNotExist, RestApiError
+from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.data import api as data_api
 from core_main_app.components.data.models import Data
 from core_main_app.components.template import api as template_api
 from core_main_app.components.template.models import Template
 from core_main_app.components.workspace.models import Workspace
 from core_main_app.rest.data import views as data_rest_views
-from core_main_app.rest.data.abstract_views import (
-    AbstractExecuteLocalQueryView,
-)
 from core_main_app.rest.data.admin_serializers import AdminDataSerializer
 from core_main_app.rest.data.serializers import DataSerializer
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
@@ -26,6 +20,9 @@ from core_main_app.utils.tests_tools.RequestMock import (
     RequestMock,
     create_mock_request,
 )
+from tests.components.data.fixtures.fixtures import QueryDataFixtures
+from tests.components.data.tests_unit import _get_template, _get_json_template
+from tests.mocks import MockQuerySet
 
 
 class TestDataList(SimpleTestCase):
@@ -1030,68 +1027,6 @@ class TestDataSerializer(SimpleTestCase):
         )
         # Assert
         self.assertTrue("xml_content" in attrs)
-
-
-class TestAbstractExecuteLocalQueryView(SimpleTestCase):
-    """TestAbstractExecuteLocalQueryView"""
-
-    def test_parse_id_with_template_obj(
-        self,
-    ):
-        """test_parse_id_with_template_obj
-
-        Args:
-
-
-        Returns:
-
-        """
-        # Arrange
-        mock_template = _get_template()
-
-        # Act
-        result = AbstractExecuteLocalQueryView.parse_id(mock_template)
-
-        # Assert
-        self.assertEqual(result, mock_template.id)
-
-    def test_parse_id_with_template_dict(
-        self,
-    ):
-        """test_parse_id_with_template_dict
-
-        Args:
-
-
-        Returns:
-
-        """
-        # Arrange
-        mock_template_dict = {"id": 1}
-
-        # Act
-        result = AbstractExecuteLocalQueryView.parse_id(mock_template_dict)
-
-        # Assert
-        self.assertEqual(result, mock_template_dict["id"])
-
-    def test_parse_id_with_template_dict_no_id_field_raises_exception(
-        self,
-    ):
-        """test_parse_id_with_template_dict_no_id_field_raises_exception
-
-        Args:
-
-
-        Returns:
-
-        """
-        # Arrange
-        mock_template_dict = {"test": 1}
-
-        # Act
-        with self.assertRaises(RestApiError):
-            AbstractExecuteLocalQueryView.parse_id(mock_template_dict)
 
 
 def _create_data(title="test"):
