@@ -35,6 +35,64 @@ def _render_data_html(html_rendering, dict_content):
     )
 
 
+def _get_template_html_rendering(
+    template_id=None, template_hash=None, rendering_type="detail"
+):
+    """Get a template HTML rendering from id or hash
+
+    Args:
+        template_id:
+        template_hash:
+        rendering_type: detail or list
+
+    Returns:
+
+    """
+    # if template id is set, get rendering by template id
+    if template_id:
+        template_html_rendering = (
+            template_html_rendering_api.get_by_template_id(template_id)
+        )
+    # if template hash is set, get rendering by template hash
+    elif template_hash:
+        template_html_rendering = (
+            template_html_rendering_api.get_by_template_hash(template_hash)
+        )
+    # if no template information, return None
+    else:
+        return None
+    # return detail or list rendering set
+    if rendering_type == "detail":
+        return template_html_rendering.detail_rendering
+    elif rendering_type == "list":
+        return template_html_rendering.list_rendering
+    else:
+        return None
+
+
+def _data_content_to_dict(data_content, template_format):
+    """Get dict content from data content
+
+    Args:
+        data_content:
+        template_format:
+
+    Returns:
+
+    """
+    # if data is JSON
+    if template_format == Template.JSON:
+        # convert JSON string to dict
+        return json.loads(data_content)
+    # if the data is XML
+    elif template_format == Template.XSD:
+        # convert XML string to dict
+        return main_xml_utils.raw_xml_to_dict(data_content)
+    # if unknown data format, raise an exception
+    else:
+        raise NotImplementedError("Unsupported format.")
+
+
 @register.simple_tag(name="data_detail_html")
 def data_detail_html(data):
     """Transform data to html
@@ -45,10 +103,8 @@ def data_detail_html(data):
     Returns: html rendering or None
 
     """
-    template_id = None
     template_hash = None
     template_format = None
-    data_content = None
 
     # if data is a Data object
     if isinstance(data, Data):
@@ -72,39 +128,20 @@ def data_detail_html(data):
     else:
         return None
     try:
-        # if template id is set, get rendering by template id
-        if template_id:
-            template_html_rendering = (
-                template_html_rendering_api.get_by_template_id(template_id)
-            )
-        # if template hash is set, get rendering by template hash
-        elif template_hash:
-            template_html_rendering = (
-                template_html_rendering_api.get_by_template_hash(template_hash)
-            )
-        # if no template information, return None
-        else:
-            return None
-        # if no detail rendering set, return None
-        if not template_html_rendering.detail_rendering:
+        # get detail html rendering for this template
+        template_html_rendering = _get_template_html_rendering(
+            template_id=template_id,
+            template_hash=template_hash,
+            rendering_type="detail",
+        )
+        # if template html rendering not set, return None
+        if not template_html_rendering:
             return None
         # if the data content is not a dict (template context expects a dict)
         if not isinstance(data_content, dict):
-            # if data is JSON
-            if template_format == Template.JSON:
-                # convert JSON string to dict
-                data_content = json.loads(data_content)
-            # if the data is XML
-            elif template_format == Template.XSD:
-                # convert XML string to dict
-                data_content = main_xml_utils.raw_xml_to_dict(data_content)
-            # if unknown data format, raise an exception
-            else:
-                raise NotImplementedError("Unsupported format.")
+            data_content = _data_content_to_dict(data_content, template_format)
         # render the data with the HTML template
-        return _render_data_html(
-            template_html_rendering.detail_rendering, data_content
-        )
+        return _render_data_html(template_html_rendering, data_content)
     except Exception as e:
         logger.error(
             "An error occurred while rendering data to html: " + str(e)
