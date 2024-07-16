@@ -1,4 +1,4 @@
-core-linked-records-app==2.10.*
-core-parser-app==2.10.*
-core-curate-app==2.10.*
+core-linked-records-app==2.11.*
+core-parser-app==2.11.*
+core-curate-app==2.11.*
 django-simple-history==3.4.*
