@@ -1,1 +1,1 @@
-mongoengine==0.27.*
+mongoengine==0.28.*
