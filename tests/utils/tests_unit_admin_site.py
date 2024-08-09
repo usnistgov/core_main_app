@@ -24,7 +24,7 @@ class TestGetBaseModelAdminClass(TestCase):
 
         """
         base_class = get_base_model_admin_class("Data")
-        self.assertEquals(base_class, SimpleHistoryAdmin)
+        self.assertEqual(base_class, SimpleHistoryAdmin)
 
     @override_settings(DJANGO_SIMPLE_HISTORY_MODELS=["Data"])
     def test_get_base_model_admin_class_model_not_in_list(self):
@@ -34,7 +34,7 @@ class TestGetBaseModelAdminClass(TestCase):
 
         """
         base_class = get_base_model_admin_class("Template")
-        self.assertEquals(base_class, ModelAdmin)
+        self.assertEqual(base_class, ModelAdmin)
 
     @override_settings(DJANGO_SIMPLE_HISTORY_MODELS=None)
     def test_get_base_model_admin_class_model_setting_not_set(self):
@@ -44,7 +44,7 @@ class TestGetBaseModelAdminClass(TestCase):
 
         """
         base_class = get_base_model_admin_class("Data")
-        self.assertEquals(base_class, ModelAdmin)
+        self.assertEqual(base_class, ModelAdmin)
 
 
 class TestRegisterSimpleHistoryModels(TestCase):

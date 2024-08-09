@@ -20,7 +20,7 @@ class TestUploadTemplateForm(TestCase):
 
         """
         form = UploadTemplateForm()
-        self.assertEquals(
+        self.assertEqual(
             form.fields["upload_file"].validators[0].valid_extensions,
             ".json,.xsd",
         )
@@ -38,11 +38,11 @@ class TestTemplateXsltRenderingForm(TestCase):
         """
         data = {}
         form = TemplateXsltRenderingForm(data)
-        self.assertEquals(
+        self.assertEqual(
             form.fields["default_detail_xslt"].widget.attrs["class"],
             "form-control",
         )
-        self.assertEquals(
+        self.assertEqual(
             form.fields["list_xslt"].widget.attrs["class"], "form-control"
         )
 
@@ -55,10 +55,10 @@ class TestTemplateXsltRenderingForm(TestCase):
         """
         data = {}
         form = TemplateXsltRenderingForm(data)
-        self.assertEquals(
+        self.assertEqual(
             form.fields["default_detail_xslt"].widget.attrs["class"],
             "form-select",
         )
-        self.assertEquals(
+        self.assertEqual(
             form.fields["list_xslt"].widget.attrs["class"], "form-select"
         )

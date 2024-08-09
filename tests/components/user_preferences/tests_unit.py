@@ -162,8 +162,8 @@ class TestUserPreferencesGetByUser(TestCase):
         )
 
         # Assert
-        self.assertEquals(result.timezone, "test")
-        self.assertEquals(result.user_id, "1")
+        self.assertEqual(result.timezone, "test")
+        self.assertEqual(result.user_id, "1")
 
     @patch.object(UserPreferences, "objects")
     def test_get_user_preferences_by_user_raises_dne_exception(

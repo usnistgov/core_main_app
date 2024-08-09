@@ -39,8 +39,8 @@ class TestUserPreferencesUpsert(IntegrationTransactionTestCase):
         result = user_preferences_api.upsert(user_preferences, user)
 
         # Assert
-        self.assertEquals(result.timezone, user_preferences.timezone)
-        self.assertEquals(result.user_id, user.id)
+        self.assertEqual(result.timezone, user_preferences.timezone)
+        self.assertEqual(result.user_id, user.id)
 
     def test_upsert_user_preferences_updates_preferences(self):
         """test_upsert_user_preferences_updates_preferences
@@ -59,8 +59,8 @@ class TestUserPreferencesUpsert(IntegrationTransactionTestCase):
         result = user_preferences_api.upsert(user_preferences, user)
 
         # Assert
-        self.assertEquals(result.timezone, "Europe/Paris")
-        self.assertEquals(result.user_id, user.id)
+        self.assertEqual(result.timezone, "Europe/Paris")
+        self.assertEqual(result.user_id, user.id)
 
     def test_upsert_user_preferences_raises_error_when_user_had_already_preferences(
         self,
@@ -101,7 +101,7 @@ class TestUserPreferencesDelete(IntegrationTransactionTestCase):
         # Act
         user_preferences_api.delete(self.fixture.user_preferences_1, user)
 
-        self.assertEquals(self.fixture.user_preferences_1.id, None)
+        self.assertEqual(self.fixture.user_preferences_1.id, None)
 
 
 class TestUserPreferencesGetByUser(IntegrationTransactionTestCase):
@@ -124,8 +124,8 @@ class TestUserPreferencesGetByUser(IntegrationTransactionTestCase):
         result = user_preferences_api.get_by_user(user)
 
         # Assert
-        self.assertEquals(result.timezone, "UTC")
-        self.assertEquals(result.user_id, user.id)
+        self.assertEqual(result.timezone, "UTC")
+        self.assertEqual(result.user_id, user.id)
 
     def test_get_user_preferences_by_user_raises_dne_exception_when_no_preferences_founded(
         self,

@@ -43,8 +43,8 @@ class TestUserPreferencesUpsert(IntegrationTransactionTestCase):
         result = user_preferences_api.upsert(user_preferences, user)
 
         # Assert
-        self.assertEquals(result.timezone, user_preferences.timezone)
-        self.assertEquals(result.user_id, user.id)
+        self.assertEqual(result.timezone, user_preferences.timezone)
+        self.assertEqual(result.user_id, user.id)
 
     def test_upsert_user_preferences_as_superuser_creates_preferences(self):
         """test_upsert_user_preferences_as_superuser_creates_preferences
@@ -62,8 +62,8 @@ class TestUserPreferencesUpsert(IntegrationTransactionTestCase):
         result = user_preferences_api.upsert(user_preferences, user)
 
         # Assert
-        self.assertEquals(result.timezone, user_preferences.timezone)
-        self.assertEquals(result.user_id, user_preferences.user_id)
+        self.assertEqual(result.timezone, user_preferences.timezone)
+        self.assertEqual(result.user_id, user_preferences.user_id)
 
     def test_upsert_user_preferences_as_user_raises_access_control(self):
         """test_upsert_user_preferences_as_user_raises_access_control
@@ -114,8 +114,8 @@ class TestUserPreferencesUpsert(IntegrationTransactionTestCase):
         result = user_preferences_api.upsert(user_preferences, user)
 
         # Assert
-        self.assertEquals(result.timezone, "Europe/Paris")
-        self.assertEquals(result.user_id, user.id)
+        self.assertEqual(result.timezone, "Europe/Paris")
+        self.assertEqual(result.user_id, user.id)
 
     def test_upsert_others_user_preferences_as_superuser_updates_preferences(
         self,
@@ -136,8 +136,8 @@ class TestUserPreferencesUpsert(IntegrationTransactionTestCase):
         result = user_preferences_api.upsert(user_preferences, user)
 
         # Assert
-        self.assertEquals(result.timezone, "Europe/Paris")
-        self.assertEquals(result.user_id, user_preferences.user_id)
+        self.assertEqual(result.timezone, "Europe/Paris")
+        self.assertEqual(result.user_id, user_preferences.user_id)
 
     def test_upsert_others_user_preferences_as_user_raises_access_control(
         self,
@@ -237,7 +237,7 @@ class TestUserPreferencesDelete(IntegrationTransactionTestCase):
         # Act
         user_preferences_api.delete(self.fixture.user_preferences_1, user)
 
-        self.assertEquals(self.fixture.user_preferences_1.id, None)
+        self.assertEqual(self.fixture.user_preferences_1.id, None)
 
     def test_delete_user_preferences_as_superuser_delete_preferences(self):
         """test_delete_user_preferences_as_superuser_delete_preferences
@@ -253,7 +253,7 @@ class TestUserPreferencesDelete(IntegrationTransactionTestCase):
         # Act
         user_preferences_api.delete(self.fixture.user_preferences_1, user)
 
-        self.assertEquals(self.fixture.user_preferences_1.id, None)
+        self.assertEqual(self.fixture.user_preferences_1.id, None)
 
     def test_delete_others_user_preferences_as_superuser_delete_preferences(
         self,
@@ -271,7 +271,7 @@ class TestUserPreferencesDelete(IntegrationTransactionTestCase):
         # Act
         user_preferences_api.delete(self.fixture.user_preferences_3, user)
 
-        self.assertEquals(self.fixture.user_preferences_3.id, None)
+        self.assertEqual(self.fixture.user_preferences_3.id, None)
 
     def test_delete_others_user_preferences_as_user_raises_access_control(
         self,
@@ -334,8 +334,8 @@ class TestUserPreferencesGetByUser(IntegrationTransactionTestCase):
         result = user_preferences_api.get_by_user(user)
 
         # Assert
-        self.assertEquals(result.timezone, "UTC")
-        self.assertEquals(result.user_id, user.id)
+        self.assertEqual(result.timezone, "UTC")
+        self.assertEqual(result.user_id, user.id)
 
     @patch(
         "core_main_app.components.user_preferences.models.UserPreferences.get_by_user"

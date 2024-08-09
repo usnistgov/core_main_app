@@ -169,7 +169,7 @@ class TestXmlEditor(SimpleTestCase):
         result = common_views.XmlEditor().get_context(data, "title1", "<test")
 
         # Assert
-        self.assertEquals(result["content"], "<test")
+        self.assertEqual(result["content"], "<test")
 
 
 class TestJSONEditor(SimpleTestCase):

@@ -34,7 +34,7 @@ class TestChangeWorkspaceForm(TestCase):
         mock_user.return_value = user
         data = {"workspaces": list()}
         form = ChangeWorkspaceForm(data)
-        self.assertEquals(
+        self.assertEqual(
             form.fields["workspaces"].widget.attrs["class"], "form-control"
         )
 
@@ -59,6 +59,6 @@ class TestChangeWorkspaceForm(TestCase):
         mock_user.return_value = user
         data = {"workspaces": list()}
         form = ChangeWorkspaceForm(data)
-        self.assertEquals(
+        self.assertEqual(
             form.fields["workspaces"].widget.attrs["class"], "form-select"
         )
