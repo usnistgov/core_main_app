@@ -1,5 +1,6 @@
 """ Integration Test for User Preferences
 """
+
 from django.core.exceptions import ValidationError
 from tests.components.user_preferences.fixtures.fixtures import (
     UserPreferencesFixtures,

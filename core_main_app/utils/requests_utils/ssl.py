@@ -1,5 +1,6 @@
 """ SSL utils
 """
+
 import logging
 from os import listdir
 from os.path import isdir, exists

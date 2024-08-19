@@ -1,5 +1,6 @@
 """ Unit tests for `core_main_app.access_control.api`.
 """
+
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 

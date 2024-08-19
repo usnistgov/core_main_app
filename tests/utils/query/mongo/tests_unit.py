@@ -1,5 +1,6 @@
 """Query tool unit tests
 """
+
 import copy
 import re
 from unittest import TestCase

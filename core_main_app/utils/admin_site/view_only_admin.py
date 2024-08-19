@@ -1,5 +1,6 @@
 """ View Only Admin
 """
+
 from django.contrib import admin
 
 

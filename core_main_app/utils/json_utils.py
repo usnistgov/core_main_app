@@ -1,5 +1,6 @@
 """ JSON utils
 """
+
 import json
 
 from jsonschema import validators as json_validators

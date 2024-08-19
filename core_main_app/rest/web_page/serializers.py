@@ -1,5 +1,6 @@
 """ Web Page serializer
 """
+
 from rest_framework.serializers import ModelSerializer
 
 from core_main_app.components.web_page import api as web_page_api

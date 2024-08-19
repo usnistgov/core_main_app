@@ -1,5 +1,6 @@
 """ Unit tests for `core_main_app.utils.object` package.
 """
+
 from unittest import TestCase
 from unittest.mock import Mock, patch
 

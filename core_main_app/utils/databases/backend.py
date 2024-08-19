@@ -1,5 +1,6 @@
 """Utils for database backend
 """
+
 from django.conf import settings
 
 POSTGRESQL_BACKEND = "django.db.backends.postgresql_psycopg2"

@@ -1,5 +1,6 @@
 """ Core main app user views
 """
+
 from django.conf import settings
 from django.contrib import auth as django_auth
 from django.contrib.auth.decorators import login_required

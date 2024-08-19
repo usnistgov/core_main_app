@@ -1,5 +1,6 @@
 """BLOB component utils
 """
+
 from django.urls import reverse
 
 from core_main_app.settings import SERVER_URI

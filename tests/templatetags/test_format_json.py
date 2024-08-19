@@ -1,5 +1,6 @@
 """ Unit tests of format json  templatetag
 """
+
 import json
 from unittest.case import TestCase
 

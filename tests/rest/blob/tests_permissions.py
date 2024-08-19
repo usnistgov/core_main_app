@@ -1,5 +1,6 @@
 """ Authentication tests for Blob REST API
 """
+
 from io import BytesIO
 from unittest.mock import patch, Mock
 

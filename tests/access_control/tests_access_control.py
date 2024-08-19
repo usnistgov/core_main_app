@@ -1,5 +1,6 @@
 """ Unit Test Access Control
 """
+
 from unittest.case import TestCase
 
 from core_main_app.access_control.exceptions import AccessControlError

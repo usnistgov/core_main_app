@@ -1,5 +1,6 @@
 """ Blobs downloader utils
 """
+
 from logging import getLogger
 from urllib.parse import urlparse
 

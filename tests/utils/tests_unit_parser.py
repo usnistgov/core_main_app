@@ -1,5 +1,6 @@
 """ Parser utils test class
 """
+
 from unittest import TestCase
 
 from core_main_app.utils.parser import get_parser

@@ -1,5 +1,6 @@
 """ Abstract Data model
 """
+
 from abc import abstractmethod
 
 from django.contrib.postgres.search import SearchVectorField

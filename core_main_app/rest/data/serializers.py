@@ -1,5 +1,6 @@
 """Serializers used throughout the data Rest API
 """
+
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
@@ -81,9 +82,11 @@ class DataSerializer(ModelSerializer):
         # Create data
         instance = Data(
             template=validated_data["template"],
-            workspace=validated_data["workspace"]
-            if "workspace" in validated_data
-            else None,
+            workspace=(
+                validated_data["workspace"]
+                if "workspace" in validated_data
+                else None
+            ),
             title=validated_data["title"],
             user_id=str(self.context["request"].user.id),
         )

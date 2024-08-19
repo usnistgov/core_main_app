@@ -1,5 +1,6 @@
 """ Boolean utils test class
 """
+
 from unittest import TestCase
 
 from core_main_app.utils.boolean import to_bool

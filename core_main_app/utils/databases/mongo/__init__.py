@@ -1,5 +1,6 @@
 """ MongoDB
 """
+
 from django.conf import settings
 
 from core_main_app.settings import (

@@ -1,5 +1,6 @@
 """ Common views
 """
+
 import json
 import logging
 from abc import ABCMeta, abstractmethod
@@ -369,18 +370,24 @@ class TemplateXSLRenderingView(View):
             data = {
                 "id": str(template_xsl_rendering.id),
                 "template": str(template.id),
-                "list_xslt": template_xsl_rendering.list_xslt.id
-                if template_xsl_rendering.list_xslt
-                else None,
-                "default_detail_xslt": template_xsl_rendering.default_detail_xslt.id
-                if template_xsl_rendering.default_detail_xslt
-                else None,
-                "list_detail_xslt": [
-                    xslt.id
-                    for xslt in template_xsl_rendering.list_detail_xslt.all()
-                ]
-                if template_xsl_rendering.list_detail_xslt.count()
-                else None,
+                "list_xslt": (
+                    template_xsl_rendering.list_xslt.id
+                    if template_xsl_rendering.list_xslt
+                    else None
+                ),
+                "default_detail_xslt": (
+                    template_xsl_rendering.default_detail_xslt.id
+                    if template_xsl_rendering.default_detail_xslt
+                    else None
+                ),
+                "list_detail_xslt": (
+                    [
+                        xslt.id
+                        for xslt in template_xsl_rendering.list_detail_xslt.all()
+                    ]
+                    if template_xsl_rendering.list_detail_xslt.count()
+                    else None
+                ),
             }
         except (Exception, exceptions.DoesNotExist):
             # If no configuration, new form with pre-selected fields.

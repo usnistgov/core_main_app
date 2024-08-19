@@ -1,5 +1,6 @@
 """ Fixtures file for Templates
 """
+
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from core_main_app.components.template.models import Template

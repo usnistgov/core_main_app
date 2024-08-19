@@ -1,5 +1,6 @@
 """ Integration tests Data
 """
+
 from types import SimpleNamespace
 from unittest.mock import patch
 

@@ -1,5 +1,6 @@
 """ Custom admin site for the Template model
 """
+
 from django.contrib import admin
 
 

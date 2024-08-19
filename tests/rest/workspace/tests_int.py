@@ -1,5 +1,6 @@
 """ Integration Test for Workspace Rest API
 """
+
 from django.contrib.auth.models import Group
 from rest_framework import status
 from tests.components.group.fixtures.fixtures import GroupFixtures

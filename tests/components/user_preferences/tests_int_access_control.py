@@ -1,5 +1,6 @@
 """ Access Control Test for User Preferences
 """
+
 from unittest.mock import patch, Mock
 
 from django.contrib.auth.models import AnonymousUser

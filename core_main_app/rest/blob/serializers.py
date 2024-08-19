@@ -1,6 +1,7 @@
 """
     Serializers used throughout the Rest API
 """
+
 import logging
 from os.path import join
 from urllib.parse import urljoin

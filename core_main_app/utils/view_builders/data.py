@@ -1,5 +1,6 @@
 """ View builder for view data page.
 """
+
 import logging
 
 from django.conf import settings as conf_settings

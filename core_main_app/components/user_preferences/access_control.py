@@ -1,5 +1,6 @@
 """ User preferences Access Control
 """
+
 from django.contrib.auth.models import AnonymousUser, User
 
 from core_main_app.access_control.exceptions import AccessControlError

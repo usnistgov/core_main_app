@@ -1,5 +1,6 @@
 """ BLOB API
 """
+
 from core_main_app.access_control.api import (
     can_change_owner,
     can_write,

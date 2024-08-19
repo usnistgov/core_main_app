@@ -1,5 +1,6 @@
 """Units tests for User rest api
 """
+
 from django.test import TestCase
 
 from core_main_app.rest.user import views as user_rest_views

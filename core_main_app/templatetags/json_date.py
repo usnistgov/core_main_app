@@ -1,5 +1,6 @@
 """ Templatetags to get JSON date format and display according to parsing directives
 """
+
 import logging
 
 import dateutil.parser

@@ -1,5 +1,6 @@
 """Results paginator util
 """
+
 from django.core.paginator import PageNotAnInteger, EmptyPage, Paginator
 
 from core_main_app.settings import RESULTS_PER_PAGE

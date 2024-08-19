@@ -1,5 +1,6 @@
 """ REST views for the User API
 """
+
 from django.contrib.auth.models import User
 from rest_framework import permissions
 from rest_framework.generics import (

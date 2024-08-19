@@ -1,5 +1,6 @@
 """ Utils for the python requests package
 """
+
 import requests
 
 from core_main_app.settings import SSL_CERTIFICATES_DIR

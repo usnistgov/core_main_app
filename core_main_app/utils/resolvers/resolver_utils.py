@@ -1,5 +1,6 @@
 """ LXML URI Resolver utils
 """
+
 from logging import getLogger
 
 from core_main_app.commons.exceptions import CoreError

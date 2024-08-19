@@ -1,5 +1,6 @@
 """ Authentication tests for Web Page REST API
 """
+
 from unittest.mock import patch
 
 from django.test import SimpleTestCase

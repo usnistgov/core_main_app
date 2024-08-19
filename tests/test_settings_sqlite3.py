@@ -1,5 +1,6 @@
 """ Tests Settings
 """
+
 from tests.test_settings import *  # noqa
 
 

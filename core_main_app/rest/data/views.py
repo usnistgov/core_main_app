@@ -1,5 +1,6 @@
 """ REST views for the data API
 """
+
 import json
 import logging
 import os

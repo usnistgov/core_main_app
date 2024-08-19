@@ -1,5 +1,6 @@
 """ Unit tests for `core_main_app.utils.dict package`.
 """
+
 from unittest import TestCase
 
 from core_main_app.utils.dict import get_dict_keys

@@ -1,5 +1,6 @@
 """Mailing task
 """
+
 from logging import getLogger
 
 from celery import shared_task

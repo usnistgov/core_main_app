@@ -1,5 +1,6 @@
 """ Utils to provide xpath validation
 """
+
 from django.core.exceptions import ValidationError
 
 from core_main_app.commons import exceptions

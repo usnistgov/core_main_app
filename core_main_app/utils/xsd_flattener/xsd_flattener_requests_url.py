@@ -1,5 +1,6 @@
 """ XSD Flattener Requests URL Class
 """
+
 from core_main_app.utils.requests_utils.requests_utils import send_get_request
 from xml_utils.xsd_flattener.xsd_flattener_url import XSDFlattenerURL
 

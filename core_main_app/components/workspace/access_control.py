@@ -1,5 +1,6 @@
 """ Workspace access control
 """
+
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.permissions import api as permissions_api, rights as rights
 from core_main_app.settings import CAN_SET_PUBLIC_DATA_TO_PRIVATE

@@ -1,5 +1,6 @@
 """ Workspace API
 """
+
 from core_main_app import settings
 from core_main_app.access_control.decorators import access_control
 from core_main_app.commons import exceptions

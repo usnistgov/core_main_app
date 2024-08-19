@@ -1,5 +1,6 @@
 """ Migration utilities
 """
+
 import logging
 
 from django.db import OperationalError

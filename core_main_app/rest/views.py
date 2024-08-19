@@ -1,5 +1,6 @@
 """ Rest views
 """
+
 from importlib import metadata
 
 from django.conf import settings

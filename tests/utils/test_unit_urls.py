@@ -1,5 +1,6 @@
 """ Urls test class
 """
+
 from unittest import TestCase
 
 from django.test import override_settings

@@ -43,13 +43,17 @@ class AdminDataSerializer(DataSerializer):
         # Create data
         instance = Data(
             template=validated_data["template"],
-            workspace=validated_data["workspace"]
-            if "workspace" in validated_data
-            else None,
+            workspace=(
+                validated_data["workspace"]
+                if "workspace" in validated_data
+                else None
+            ),
             title=validated_data["title"],
-            user_id=validated_data["user_id"]
-            if "user_id" in validated_data
-            else str(self.context["request"].user.id),
+            user_id=(
+                validated_data["user_id"]
+                if "user_id" in validated_data
+                else str(self.context["request"].user.id)
+            ),
         )
         # Set content
         if "content" in validated_data:

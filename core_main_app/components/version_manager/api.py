@@ -1,6 +1,7 @@
 """
 Version Manager API
 """
+
 from core_main_app.access_control.decorators import access_control
 from core_main_app.commons import exceptions
 from core_main_app.commons.exceptions import ApiError

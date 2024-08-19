@@ -1,6 +1,7 @@
 """
 Version Manager model
 """
+
 from abc import abstractmethod
 
 from django.core.validators import RegexValidator

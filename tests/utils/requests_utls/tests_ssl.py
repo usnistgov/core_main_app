@@ -1,5 +1,6 @@
 """ SSL utils test class
 """
+
 from unittest import TestCase
 
 from core_main_app.commons.exceptions import SSLError

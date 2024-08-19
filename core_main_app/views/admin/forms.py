@@ -1,5 +1,6 @@
 """Forms for admin views
 """
+
 from django import forms
 from django.conf import settings
 from django.forms import ModelForm
@@ -62,9 +63,7 @@ class UploadTemplateForm(UploadForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["name"].label = "Enter Template name"
-        self.fields[
-            "upload_file"
-        ].help_text = (
+        self.fields["upload_file"].help_text = (
             "JSON Schema support can be enabled in the project settings."
         )
         self.fields["upload_file"].validators = [

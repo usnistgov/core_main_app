@@ -1,5 +1,6 @@
 """Url router for the REST API
 """
+
 from django.urls import re_path
 
 from core_main_app.rest.blob import views as blob_views

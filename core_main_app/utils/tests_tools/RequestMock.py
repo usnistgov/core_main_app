@@ -1,5 +1,6 @@
 """ Mock a Request object.
 """
+
 import json
 from unittest.mock import Mock
 

@@ -1,6 +1,7 @@
 """
  Lock model
 """
+
 import threading
 
 from django.core.exceptions import ObjectDoesNotExist

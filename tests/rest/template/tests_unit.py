@@ -1,5 +1,6 @@
 """Unit tests for template rest api
 """
+
 from unittest.mock import patch
 
 from django.test import SimpleTestCase

@@ -1,5 +1,6 @@
 """ Unit test for `views.admin.views` package.
 """
+
 from unittest.mock import patch
 
 from django.test import RequestFactory, SimpleTestCase

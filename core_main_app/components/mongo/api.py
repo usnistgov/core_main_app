@@ -1,5 +1,6 @@
 """ MongoData API
 """
+
 from core_main_app.access_control.decorators import access_control
 from core_main_app.components.data import (
     access_control as data_api_access_control,

@@ -1,5 +1,6 @@
 """Mailing util
 """
+
 from django.template import loader
 
 from core_main_app.settings import SERVER_EMAIL, SEND_EMAIL_ASYNC

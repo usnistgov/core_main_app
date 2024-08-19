@@ -1,5 +1,6 @@
 """ Template HTML rendering API
 """
+
 from core_main_app.components.template_html_rendering.models import (
     TemplateHtmlRendering,
 )

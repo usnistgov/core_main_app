@@ -1,5 +1,6 @@
 """ Unit tests for `core_main_app.commons.exceptions` package.
 """
+
 from unittest import TestCase
 from core_main_app.commons.exceptions import JSONError
 

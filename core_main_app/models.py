@@ -1,5 +1,6 @@
 """ App model to manage permissions.
 """
+
 from django.db import models
 
 from core_main_app.permissions import rights

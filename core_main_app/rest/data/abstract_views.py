@@ -1,5 +1,6 @@
 """ REST abstract views for the data API
 """
+
 import json
 from abc import ABCMeta, abstractmethod
 
@@ -217,9 +218,11 @@ class AbstractMigrationView(APIView, metaclass=ABCMeta):
                 return Response(task_id, status=status.HTTP_200_OK)
             else:
                 return Response(
-                    "The target template id is not correct."
-                    if not template_id
-                    else "Please provide a template or data id to process.",
+                    (
+                        "The target template id is not correct."
+                        if not template_id
+                        else "Please provide a template or data id to process."
+                    ),
                     status.HTTP_400_BAD_REQUEST,
                 )
         except AccessControlError as ace:

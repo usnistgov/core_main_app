@@ -1,5 +1,6 @@
 """ Access control utilities for core_main_app.
 """
+
 import logging
 
 from core_main_app.access_control.exceptions import AccessControlError

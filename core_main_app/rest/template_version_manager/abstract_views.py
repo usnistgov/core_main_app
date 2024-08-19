@@ -1,5 +1,6 @@
 """ REST abstract views for the template version manager API
 """
+
 from abc import ABCMeta, abstractmethod
 
 from django.http import Http404

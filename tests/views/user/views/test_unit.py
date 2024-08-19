@@ -1,5 +1,6 @@
 """ Unit test for `views.user.views` package.
 """
+
 from unittest.mock import patch, MagicMock
 
 from django.contrib.sessions.middleware import SessionMiddleware

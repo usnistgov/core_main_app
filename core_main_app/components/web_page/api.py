@@ -1,5 +1,6 @@
 """Web page API
 """
+
 from core_main_app.commons import exceptions
 from core_main_app.commons.enums import WEB_PAGE_TYPES
 from core_main_app.components.web_page.models import WebPage

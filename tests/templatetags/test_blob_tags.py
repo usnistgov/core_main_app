@@ -1,5 +1,6 @@
 """ Unit tests of blob templatetag
 """
+
 from unittest.case import TestCase
 from unittest.mock import MagicMock
 

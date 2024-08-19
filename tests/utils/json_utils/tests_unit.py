@@ -1,5 +1,6 @@
 """ Unit Test JSON utils
 """
+
 import json
 from unittest.case import TestCase
 

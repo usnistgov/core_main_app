@@ -1,5 +1,6 @@
 """ XSD Flattener Database or URL class
 """
+
 from urllib.parse import urlparse
 
 from core_main_app.commons import exceptions

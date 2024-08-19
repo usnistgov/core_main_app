@@ -1,5 +1,6 @@
 """ include static templatetag
 """
+
 import io
 
 from django import template

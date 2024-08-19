@@ -1,5 +1,6 @@
 """ Integration Tests Base
 """
+
 from django.test import TestCase
 
 from core_main_app.commons.exceptions import CoreError

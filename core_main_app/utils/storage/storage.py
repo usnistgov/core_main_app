@@ -1,5 +1,6 @@
 """ Utils for CDCS file storage
 """
+
 from django.core.files.storage import default_storage
 
 from core_main_app.commons.exceptions import CoreError

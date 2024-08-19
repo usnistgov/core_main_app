@@ -1,5 +1,6 @@
 """ Convert data to HTML
 """
+
 import json
 import logging
 

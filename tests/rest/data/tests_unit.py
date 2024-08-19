@@ -1,5 +1,6 @@
 """Unit tests for data rest api
 """
+
 from unittest.mock import patch, MagicMock, mock_open
 
 from django.test import SimpleTestCase

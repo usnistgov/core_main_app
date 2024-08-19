@@ -1,5 +1,6 @@
 """Pagination utils for rest_framework package
 """
+
 from urllib.parse import urlparse
 
 from core_main_app.commons.exceptions import PaginationError

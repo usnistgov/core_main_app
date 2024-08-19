@@ -1,5 +1,6 @@
 """ Custom admin site for the Blob model
 """
+
 from django.contrib import admin
 
 

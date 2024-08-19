@@ -24,7 +24,9 @@ class WorkspaceSerializer(ModelSerializer):
         return workspace_api.create_and_save(
             title=validated_data["title"],
             owner_id=validated_data["user"].id,
-            is_public=validated_data["is_public"]
-            if "is_public" in validated_data
-            else False,
+            is_public=(
+                validated_data["is_public"]
+                if "is_public" in validated_data
+                else False
+            ),
         )

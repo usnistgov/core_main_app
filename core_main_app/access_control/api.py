@@ -1,5 +1,6 @@
 """ Set of functions to define the common rules for access control across collections
 """
+
 import logging
 
 from django.conf import settings

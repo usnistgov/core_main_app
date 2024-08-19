@@ -1,5 +1,6 @@
 """ Custom admin site for the Template Xsl Rendering model
 """
+
 from django.contrib import admin
 
 

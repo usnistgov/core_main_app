@@ -1,5 +1,6 @@
 """ Fixtures files for XslTransformation
 """
+
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from core_main_app.components.xsl_transformation.models import (

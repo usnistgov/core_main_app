@@ -1,5 +1,6 @@
 """ Apps file for setting core package when app is ready.
 """
+
 from django.apps import AppConfig
 from django.conf import settings
 from django.db.models.signals import post_migrate

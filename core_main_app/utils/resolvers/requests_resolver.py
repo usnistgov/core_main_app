@@ -1,5 +1,6 @@
 """ lxml URI resolver using requests api
 """
+
 import logging
 
 from core_main_app.utils.requests_utils.requests_utils import send_get_request

@@ -1,6 +1,7 @@
 """
     API for Django Groups
 """
+
 from django.contrib.auth.models import Group
 from django.db.models import Q
 

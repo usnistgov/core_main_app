@@ -1,6 +1,7 @@
 """
     The API contains the available function to access, create and edit a user
 """
+
 from django.contrib.auth.models import User
 
 

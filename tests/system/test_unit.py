@@ -1,5 +1,6 @@
 """ Unit tests of system API
 """
+
 from collections import OrderedDict
 from unittest.case import TestCase
 from unittest.mock import patch

@@ -13,6 +13,7 @@ Upon installation of the app the following menus are displayed:
     * Templates (list and upload)
     * XSLT (list and upload)
 """
+
 from django.urls import reverse
 from menu import Menu, MenuItem
 

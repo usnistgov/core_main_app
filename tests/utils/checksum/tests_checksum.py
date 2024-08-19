@@ -1,5 +1,6 @@
 """ Checksum test class
 """
+
 from os.path import join, dirname, abspath
 from unittest import TestCase
 

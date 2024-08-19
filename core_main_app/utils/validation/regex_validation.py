@@ -1,5 +1,6 @@
 """ Utils to provide regex validation
 """
+
 import re
 
 from django.core.exceptions import ValidationError

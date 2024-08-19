@@ -1,6 +1,7 @@
 """
 Permissions API
 """
+
 import logging
 
 from django.contrib.auth.models import Permission, ContentType

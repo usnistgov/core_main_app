@@ -1,5 +1,6 @@
 """ discover rules for core main app
 """
+
 import logging
 
 from django.conf import settings

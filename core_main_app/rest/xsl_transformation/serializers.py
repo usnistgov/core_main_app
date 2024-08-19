@@ -1,5 +1,6 @@
 """Serializers for Xsl transformation
 """
+
 from rest_framework.serializers import CharField, ModelSerializer
 
 from core_main_app.commons.serializers import BasicSerializer

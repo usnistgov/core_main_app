@@ -1,5 +1,6 @@
 """ Authentication tests for User REST API
 """
+
 from django.test import TestCase
 from rest_framework import status
 from tests.components.user.fixtures.fixtures import UserFixtures

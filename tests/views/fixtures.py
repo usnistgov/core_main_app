@@ -1,5 +1,6 @@
 """ Access control fixture for views
 """
+
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from core_main_app.components.blob.models import Blob

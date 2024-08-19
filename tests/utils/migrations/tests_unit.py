@@ -1,5 +1,6 @@
 """ Unit tests for migrations utilities
 """
+
 from django.db import OperationalError
 from unittest.mock import patch
 

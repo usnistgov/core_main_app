@@ -1,5 +1,6 @@
 """ Test units
 """
+
 from os.path import join, dirname, realpath
 from unittest.case import TestCase
 from unittest.mock import Mock, patch

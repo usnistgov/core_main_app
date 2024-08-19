@@ -1,4 +1,5 @@
 """ Unit tests for `core_main_app.utils.settings` package."""
+
 from unittest import TestCase
 from unittest.mock import MagicMock, patch, call
 

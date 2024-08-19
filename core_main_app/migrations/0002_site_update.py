@@ -1,5 +1,6 @@
 """ Migrations
 """
+
 from django.contrib.sites.models import Site
 from django.db import migrations
 

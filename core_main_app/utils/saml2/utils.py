@@ -1,5 +1,6 @@
 """ Utils for djangosaml2 package
 """
+
 import os
 
 import saml2
@@ -144,17 +145,21 @@ def load_saml_config_from_env(server_uri, base_dir):
         # where the remote metadata is stored, local, remote or mdq server.
         # One metadata store or many ...
         "metadata": {
-            "remote": [
-                {
-                    "url": os.environ["SAML_METADATA_REMOTE"],
-                    "cert": os.getenv("SAML_METADATA_REMOTE_CERT"),
-                },
-            ]
-            if "SAML_METADATA_REMOTE" in os.environ
-            else [],
-            "local": [os.environ["SAML_METADATA_LOCAL"]]
-            if "SAML_METADATA_LOCAL" in os.environ
-            else [],
+            "remote": (
+                [
+                    {
+                        "url": os.environ["SAML_METADATA_REMOTE"],
+                        "cert": os.getenv("SAML_METADATA_REMOTE_CERT"),
+                    },
+                ]
+                if "SAML_METADATA_REMOTE" in os.environ
+                else []
+            ),
+            "local": (
+                [os.environ["SAML_METADATA_LOCAL"]]
+                if "SAML_METADATA_LOCAL" in os.environ
+                else []
+            ),
         },
         # Signing
         "key_file": os.getenv("SAML_KEY_FILE", None),  # private part

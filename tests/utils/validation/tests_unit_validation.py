@@ -1,5 +1,6 @@
 """ Validate filename test case
 """
+
 from unittest import TestCase
 
 from django.core.exceptions import ValidationError

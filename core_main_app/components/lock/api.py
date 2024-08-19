@@ -1,6 +1,7 @@
 """
     Lock API
 """
+
 import logging
 
 from core_main_app.commons.exceptions import LockError

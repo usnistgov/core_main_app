@@ -1,5 +1,6 @@
 """ Custom admin site for the Data model
 """
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.helpers import ActionForm

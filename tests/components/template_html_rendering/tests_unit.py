@@ -1,5 +1,6 @@
 """ Unit Test TemplateHtmlRendering
 """
+
 from unittest.case import TestCase
 from unittest.mock import Mock, patch
 

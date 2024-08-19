@@ -1,5 +1,6 @@
 """ Set of functions to define the rules for access control
 """
+
 import logging
 
 from django.conf import settings

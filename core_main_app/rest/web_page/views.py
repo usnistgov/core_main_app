@@ -1,5 +1,6 @@
 """ Rest views for the web page
 """
+
 import logging
 
 from django.http import Http404

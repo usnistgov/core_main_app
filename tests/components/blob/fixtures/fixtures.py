@@ -1,5 +1,6 @@
 """ Fixtures files for Blobs
 """
+
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from core_main_app.components.blob.models import Blob

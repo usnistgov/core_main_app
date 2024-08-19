@@ -1,5 +1,6 @@
 """Admin AJAX views
 """
+
 import html
 import json
 from builtins import zip

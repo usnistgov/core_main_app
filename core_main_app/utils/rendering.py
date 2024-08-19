@@ -1,5 +1,6 @@
 """ Rendering utils
 """
+
 from os.path import splitext
 
 from django.contrib.staticfiles import finders

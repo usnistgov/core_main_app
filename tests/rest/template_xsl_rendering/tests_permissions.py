@@ -1,5 +1,6 @@
 """ Authentication tests for TemplateXSLRendering REST API
 """
+
 from unittest.mock import patch, Mock
 
 from django.test import SimpleTestCase

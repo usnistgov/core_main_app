@@ -1,5 +1,6 @@
 """ Unit tests of get_attribute templatetag
 """
+
 from unittest.case import TestCase
 
 from core_main_app.templatetags.get_attribute import get_attribute

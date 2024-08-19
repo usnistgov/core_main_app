@@ -1,5 +1,6 @@
 """ Authentication tests for Template Version Manager REST API
 """
+
 from unittest.mock import patch
 
 from core_main_app.access_control.exceptions import AccessControlError

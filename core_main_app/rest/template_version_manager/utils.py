@@ -1,5 +1,6 @@
 """ Utils for template version manager rest Apis
 """
+
 import json
 
 from core_main_app.commons.exceptions import RestApiError

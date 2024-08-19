@@ -1,5 +1,6 @@
 """ Labels utils
 """
+
 from django.utils.translation import gettext as _
 
 
