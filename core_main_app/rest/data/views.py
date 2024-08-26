@@ -41,6 +41,7 @@ from core_main_app.rest.data.serializers import (
     DataWithTemplateInfoSerializer,
 )
 from core_main_app.rest.mongo_data.serializers import MongoDataSerializer
+from core_main_app.rest.template_html_rendering.views import BaseDataHtmlRender
 from core_main_app.settings import MAX_DOCUMENT_LIST
 from core_main_app.settings import XML_POST_PROCESSOR, XML_FORCE_LIST
 from core_main_app.utils import xml as main_xml_utils
@@ -1279,3 +1280,31 @@ class BulkUploadFolder(APIView):
             return Response(
                 content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+
+class DataHtmlRender(BaseDataHtmlRender):
+    """Data Html Render"""
+
+    def get_object(self, pk, request):
+        """get data by id."""
+        return data_api.get_by_id(pk, request.user)
+
+    def get(self, request, pk):
+        """Get Html render
+
+        Args:
+            request: HTTP request
+            pk: data id
+
+        Parameters:
+
+            {
+                "rendering": "list/detail"
+            }
+
+        Returns:
+            Html string
+        """
+
+        # Get rendering content
+        return self.get_rendering_content(request, pk)

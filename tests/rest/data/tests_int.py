@@ -1,16 +1,22 @@
 """ Integration Test for Data Rest API
 """
 
+import json
 from copy import copy
 from unittest.mock import patch
 
 from rest_framework import status
+
+from core_main_app.utils.xml import raw_xml_to_dict
 from tests.components.data.fixtures.fixtures import (
     DataFixtures,
     QueryDataFixtures,
     AccessControlDataFixture,
 )
 from tests.components.user.fixtures.fixtures import UserFixtures
+from tests.components.template_html_rendering.fixtures.fixtures import (
+    TemplateHtmlRenderingFixtures,
+)
 
 from core_main_app.components.data import api as data_api
 from core_main_app.components.data.models import Data
@@ -30,6 +36,7 @@ from core_main_app.utils.tests_tools.RequestMock import RequestMock
 fixture_data = DataFixtures()
 fixture_data_query = QueryDataFixtures()
 fixture_data_workspace = AccessControlDataFixture()
+fixture_data_template_html_rendering = TemplateHtmlRenderingFixtures()
 
 
 class TestDataListByWorkspace(IntegrationBaseTestCase):
@@ -1826,3 +1833,271 @@ class TestDataPermissions(IntegrationTransactionTestCase):
         excepted_result = {}
         excepted_result[str(data.id)] = True
         self.assertEqual(response.data, excepted_result)
+
+
+class TestGetDataHtmlRender(IntegrationBaseTestCase):
+    """TestGetDataHtmlRender"""
+
+    fixture = fixture_data_template_html_rendering
+
+    def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
+        self.user = create_mock_user("1")
+        super().setUp()
+
+    def test_get_raises_404_when_data_not_found(self):
+        """test_patch_raises_404_when_not_found
+
+        Returns:
+
+        """
+        # Arrange
+        self.param = {"pk": -1}
+
+        # Act
+        response = RequestMock.do_request_get(
+            data_rest_views.DataHtmlRender.as_view(),
+            self.user,
+            None,
+            self.param,
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_get_raise_404_when_template_html_rendering_not_found(self):
+        """test_get_raise_404_when_template_html_rendering_not_found
+
+        Returns:
+
+        """
+        # Arrange
+        self.param = {"pk": self.fixture.data_2.id}
+
+        # Act
+        response = RequestMock.do_request_get(
+            data_rest_views.DataHtmlRender.as_view(),
+            self.user,
+            None,
+            self.param,
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_get_raises_403_without_access_permission(self):
+        """test_get_raises_403_without_access_permission
+
+        Returns:
+
+        """
+        # Arrange
+        self.param = {"pk": self.fixture.data_2.id}
+
+        # Act
+        response = RequestMock.do_request_get(
+            data_rest_views.DataHtmlRender.as_view(),
+            create_mock_user("3"),
+            None,
+            self.param,
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch.object(Data, "get_dict_content")
+    def test_get_data_html_render_with_wrong_rendering_type_returns_http_400_bad_request(
+        self, mock_data_get_dict_content
+    ):
+        """test_get_data_html_render_with_wrong_rendering_type_returns_http_400_bad_request
+
+        Returns:
+
+        """
+        # Arrange
+        self.param = {"pk": self.fixture.data_1.id}
+        mock_data_get_dict_content.return_value = raw_xml_to_dict(
+            self.fixture.data_1.content
+        )
+
+        # Act
+        response = RequestMock.do_request_get(
+            data_rest_views.DataHtmlRender.as_view(),
+            self.user,
+            {"rendering": "test"},
+            self.param,
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_get_data_html_render_returns_http_500(self):
+        """test_get_data_html_render_returns_http_500
+
+        Returns:
+
+        """
+        # Arrange
+        self.param = {"pk": "test"}
+
+        # Act
+        response = RequestMock.do_request_get(
+            data_rest_views.DataHtmlRender.as_view(),
+            self.user,
+            {"rendering": "detail"},
+            self.param,
+        )
+
+        # Assert
+        self.assertEqual(
+            response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+    @patch.object(Data, "get_dict_content")
+    def test_get_data_html_render_list_returns_http_200(
+        self, mock_data_get_dict_content
+    ):
+        """test_get_data_html_render_list_returns_http_200
+
+        Returns:
+
+        """
+        # Arrange
+        self.param = {"pk": self.fixture.data_1.id}
+        mock_data_get_dict_content.return_value = raw_xml_to_dict(
+            self.fixture.data_1.content
+        )
+
+        # Act
+        response = RequestMock.do_request_get(
+            data_rest_views.DataHtmlRender.as_view(),
+            self.user,
+            {"rendering": "list"},
+            self.param,
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.rendered_content.decode("utf-8"), '"<b>Title:<b/>CDCS"'
+        )
+
+    @patch.object(Data, "get_dict_content")
+    def test_get_data_html_render_as_superuser_returns_http_200(
+        self, mock_data_get_dict_content
+    ):
+        """test_get_data_html_render_as_superuser_returns_http_200
+
+        Returns:
+
+        """
+        # Arrange
+        self.param = {"pk": self.fixture.data_1.id}
+        mock_data_get_dict_content.return_value = raw_xml_to_dict(
+            self.fixture.data_1.content
+        )
+
+        # Act
+        response = RequestMock.do_request_get(
+            data_rest_views.DataHtmlRender.as_view(),
+            create_mock_user("1", is_superuser=True, is_staff=True),
+            {"rendering": "list"},
+            self.param,
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.rendered_content.decode("utf-8"), '"<b>Title:<b/>CDCS"'
+        )
+
+    @patch.object(Data, "get_dict_content")
+    def test_get_data_html_render_list_returns_string_html(
+        self, mock_data_get_dict_content
+    ):
+        """test_get_data_html_render_list_returns_string_html
+
+        Returns:
+
+        """
+        # Arrange
+        self.param = {"pk": self.fixture.data_1.id}
+        mock_data_get_dict_content.return_value = raw_xml_to_dict(
+            self.fixture.data_1.content
+        )
+
+        # Act
+        response = RequestMock.do_request_get(
+            data_rest_views.DataHtmlRender.as_view(),
+            self.user,
+            {"rendering": "list"},
+            self.param,
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.rendered_content.decode("utf-8"), '"<b>Title:<b/>CDCS"'
+        )
+
+    @patch.object(Data, "get_dict_content")
+    def test_get_data_html_render_detail_returns_http_200(
+        self, mock_data_get_dict_content
+    ):
+        """test_get_data_html_render_detail_returns_http_200
+
+        Returns:
+
+        """
+        # Arrange
+        self.param = {"pk": self.fixture.data_1.id}
+        mock_data_get_dict_content.return_value = raw_xml_to_dict(
+            self.fixture.data_1.content
+        )
+
+        # Act
+        response = RequestMock.do_request_get(
+            data_rest_views.DataHtmlRender.as_view(),
+            self.user,
+            {"rendering": "detail"},
+            self.param,
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.rendered_content.decode("utf-8"), '"detail_rendering_1"'
+        )
+
+    @patch.object(Data, "get_dict_content")
+    def test_get_json_data_html_rendering_returns_http_200(
+        self, mock_data_get_dict_content
+    ):
+        """test_get_json_data_html_rendering_returns_http_200
+
+        Returns:
+
+        """
+        # Arrange
+        self.param = {"pk": self.fixture.data_3.id}
+        mock_data_get_dict_content.return_value = json.loads(
+            self.fixture.data_3.content
+        )
+
+        # Act
+        response = RequestMock.do_request_get(
+            data_rest_views.DataHtmlRender.as_view(),
+            create_mock_user("2"),
+            {"rendering": "list"},
+            self.param,
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.rendered_content.decode("utf-8"), '"<b>Title:<b/>CDCS"'
+        )

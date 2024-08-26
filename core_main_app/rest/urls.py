@@ -13,6 +13,9 @@ from core_main_app.rest.template_version_manager import (
 from core_main_app.rest.template_xsl_rendering import (
     views as template_xsl_rendering_views,
 )
+from core_main_app.rest.template_html_rendering import (
+    views as template_html_rendering_views,
+)
 from core_main_app.rest.user import views as user_views
 from core_main_app.rest.views import CoreSettings
 from core_main_app.rest.web_page import views as web_page_views
@@ -83,6 +86,16 @@ urlpatterns = [
         name="core_main_app_rest_template_version_restore",
     ),
     re_path(
+        r"^template/html_rendering/$",
+        template_html_rendering_views.TemplateHtmlRenderingList.as_view(),
+        name="core_main_app_rest_template_html_rendering",
+    ),
+    re_path(
+        r"^template/html_rendering/(?P<pk>\w+)$",
+        template_html_rendering_views.TemplateHtmlRenderingDetail.as_view(),
+        name="core_main_app_rest_template_html_rendering_detail",
+    ),
+    re_path(
         r"^template/xsl_rendering/$",
         template_xsl_rendering_views.TemplateXslRenderingList.as_view(),
         name="core_main_app_rest_template_detail",
@@ -131,6 +144,11 @@ urlpatterns = [
         r"^data/query/keyword/$",
         data_views.ExecuteLocalKeywordQueryView.as_view(),
         name="core_main_app_rest_data_keyword_query",
+    ),
+    re_path(
+        r"^data/(?P<pk>\w+)/render/$",
+        data_views.DataHtmlRender.as_view(),
+        name="core_main_app_rest_data_html_render",
     ),
     re_path(
         r"^data/query/$",

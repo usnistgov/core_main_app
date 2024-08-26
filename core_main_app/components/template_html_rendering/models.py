@@ -18,6 +18,35 @@ class TemplateHtmlRendering(models.Model):
     detail_rendering = models.TextField(blank=True)
 
     @staticmethod
+    def get_all():
+        """Return all TemplateHtmlRendering.
+
+        Returns:
+            list<TemplateHtmlRendering> .
+        """
+
+        return TemplateHtmlRendering.objects.all()
+
+    @staticmethod
+    def get_by_id(template_html_rendering_id):
+        """Return a template by its id.
+
+        Args:
+            template_html_rendering_id:
+
+        Returns:
+
+        """
+        try:
+            return TemplateHtmlRendering.objects.get(
+                pk=template_html_rendering_id
+            )
+        except ObjectDoesNotExist as exception:
+            raise exceptions.DoesNotExist(str(exception))
+        except Exception as exception:
+            raise exceptions.ModelError(str(exception))
+
+    @staticmethod
     def get_by_template_id(template_id):
         """Get TemplateHtmlRendering by its template id.
 
