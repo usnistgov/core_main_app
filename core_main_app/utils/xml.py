@@ -1,5 +1,6 @@
 """ Xml utils for the core applications
 """
+
 import logging
 import re
 from urllib.parse import urlparse
@@ -381,19 +382,18 @@ def update_dependencies(xsd_string, dependencies):
         f"{xml_utils_constants.LXML_SCHEMA_NAMESPACE}include"
     )
 
-    for schema_location, dependency_id in dependencies.items():
-        if dependency_id is not None:
-            for xsd_include in xsd_includes:
-                if schema_location == xsd_include.attrib["schemaLocation"]:
-                    xsd_include.attrib[
-                        "schemaLocation"
-                    ] = _get_schema_location_uri(dependency_id)
+    # Retrieve the correct URI of imports and includes schemas.
+    for schema in xsd_imports + xsd_includes:
+        if (
+            schema.attrib["schemaLocation"] not in dependencies
+            or not dependencies[schema.attrib["schemaLocation"]]
+        ):
+            continue
 
-            for xsd_import in xsd_imports:
-                if schema_location == xsd_import.attrib["schemaLocation"]:
-                    xsd_import.attrib[
-                        "schemaLocation"
-                    ] = _get_schema_location_uri(dependency_id)
+        schema.attrib["schemaLocation"] = _get_schema_location_uri(
+            dependencies[schema.attrib["schemaLocation"]]
+        )
+
     return xsd_tree
 
 
