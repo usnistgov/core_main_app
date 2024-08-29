@@ -1,3 +1,10 @@
 .form-login {
     width: 100%;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+    padding: 15px;
+    margin: 0 auto;
+    border-radius: 15px 50px;
+    background-color: GhostWhite;
 }

@@ -14,9 +14,13 @@ from core_main_app.utils.labels import get_data_label
 class LoginForm(forms.Form):
     """Custom login form for the user"""
 
-    username = forms.CharField(label="Username", required=True)
+    username = forms.CharField(
+        required=True,
+        widget=forms.TextInput(attrs={"placeholder": "Username"}),
+    )
     password = forms.CharField(
-        label="Password", required=True, widget=forms.PasswordInput
+        required=True,
+        widget=forms.PasswordInput(attrs={"placeholder": "Password"}),
     )
 
     next_page = forms.CharField(widget=forms.HiddenInput)
