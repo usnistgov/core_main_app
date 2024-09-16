@@ -77,6 +77,7 @@ def default_custom_login(request):
         "with_website_features": "core_website_app" in settings.INSTALLED_APPS,
         "ENABLE_SAML2_SSO_AUTH": settings.ENABLE_SAML2_SSO_AUTH,
     }
+    assets = {"css": ["core_main_app/user/css/login.css"]}
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
@@ -115,6 +116,7 @@ def default_custom_login(request):
                 request,
                 "core_main_app/user/login/main.html",
                 context=context,
+                assets=assets,
             )
     elif request.method == "GET":
         if request.user.is_authenticated:
@@ -128,7 +130,6 @@ def default_custom_login(request):
         context.update(
             {"login_form": LoginForm(initial={"next_page": next_page})}
         )
-        assets = {"css": ["core_main_app/user/css/login.css"]}
 
         # get the web page login if exist
         web_page_login = web_page_login_api.get()
