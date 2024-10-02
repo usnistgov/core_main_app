@@ -330,3 +330,24 @@ class TestCustomLogout(SimpleTestCase):
 
         # Assert
         self.assertTrue(response.status_code, 302)
+
+    @override_settings(INSTALLED_APPS=["core_main_app", "allauth"])
+    @patch("core_main_app.views.user.views.redirect")
+    def test_allauth_logout_redirects(self, mock_redirect):
+        """test_allauth_logout_redirects
+
+        Returns:
+
+        """
+        # Arrange
+        request = self.factory.get("core_main_app_logout")
+        request.user = self.connected_user
+        mock_redirect.return_value = MagicMock(status_code=302)
+
+        # Act
+        custom_logout(request)
+
+        # Assert
+        self.assertTrue(
+            "account_logout" in mock_redirect.call_args_list[0].args
+        )

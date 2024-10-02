@@ -546,13 +546,58 @@ DATA_SORTING_FIELDS = ["-title", "+last_modification_date"]
 
   Harvesting rate in seconds.
 
-## Miscellaneous
+## Authentication
+
+### ``ENABLE_ALLAUTH``
+
+  Default: ``False``
+
+  Set to ``True`` to enable the `django-allauth` package.
+  Install the required packages `core-main-app[allauth]` to do so.
 
 ### ``ENABLE_SAML2_SSO_AUTH``
 
   Default: ``False``
 
   Set to ``True`` to enable SAML2 SSO Authentication.
+  If ENABLE_ALLAUTH is ``True``, SAML2 will be done with `django-allauth`,
+  Otherwise, SAML2 will be done with `djangosaml2`.
+
+### ``ENABLE_LOCAL_MFA``
+
+  Default: ``False``
+
+  Set to ``True`` to enable local MFA using `django-allauth`.
+
+### ``ALLAUTH_ACCOUNT_REQUESTS_FOR_NEW_USERS``
+
+  Default: ``True``
+
+  Set to ``True`` to force users making account requests on the system
+  (and prevent them from being able to log in before an administrator
+  approves the account request).
+
+### ``SAML_EMAIL_AUTHENTICATION``
+
+  Default: ``False``
+
+  Set to ``True`` to allow authentication using a matching email address
+  from a trusted Identity Provider.
+
+### ``SAML_VERIFIED_EMAIL``
+
+  Default: ``False``
+
+  Set to ``True`` to ensure email address(es) retrieved from the provider are to be 
+  interpreted as verified. Can be set to a list of accepted domains:
+
+  Example:
+
+```
+SAML_VERIFIED_EMAIL=example.com,test.example.com
+```
+
+## Miscellaneous
 
 ### ``SEND_EMAIL_ASYNC``
 

@@ -25,7 +25,12 @@ INSTALLED_APPS = [
     # Local apps
     "core_main_app",
     "core_parser_app",
+    "core_website_app",
     "tests",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "captcha",
 ]
 
 # SERVER URI
@@ -47,6 +52,7 @@ MIDDLEWARE = (  # noqa
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
 )
 
 TEMPLATES = [
@@ -83,7 +89,12 @@ CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT = getattr(
 DATA_SORTING_FIELDS = ["+title"]
 
 CUSTOM_NAME = "Curator"
+ALLAUTH_ACCOUNT_REQUESTS_FOR_NEW_USERS = True
+ACCOUNT_ADAPTER = "core_main_app.utils.allauth.cdcs_adapter.CDCSAccountAdapter"
+SOCIALACCOUNT_AUTO_SIGNUP = False
+ACCOUNT_SIGNUP_FORM_CLASS = "core_main_app.utils.allauth.forms.CoreSignupForm"
 ENABLE_SAML2_SSO_AUTH = False
+ENABLE_ALLAUTH = False
 VERIFY_DATA_ACCESS = False
 
 USE_TZ = True

@@ -53,7 +53,7 @@ def create_and_save_user(username, password, first_name, last_name, email):
     """Save a user with the given parameters.
 
     Args:
-        username (str): Given user name
+        username (str): Given username
         password (str): Given password
         first_name (str): Given first name
         last_name (str): Given last name

@@ -6,25 +6,26 @@ this package (`requirements.*` files) and their dependencies.
 
 ## Python 
 
-| Name                   | License                                                 |
-|------------------------|---------------------------------------------------------|
-| celery                 | BSD License                                             |
-| Django                 | BSD License                                             |
-| django-celery-beat     | BSD License                                             |
-| django-defender        | Apache Software License                                 |
-| djangorestframework    | BSD License                                             |
-| django-simple-menu     | BSD License                                             |
-| django-simple-history  | BSD License                                             |
-| djangosaml2            | Apache Software License                                 |
-| drf-spectacular        | BSD License                                             |
-| jsonschema             | MIT License                                             |
-| markdown               | BSD License                                             |
-| mongoengine            | MIT License                                             |
-| python-dateutil        | Apache Software License; BSD License                    |
-| pytz                   | MIT License                                             |
-| redis                  | MIT License                                             |
-| requests               | Apache Software License                                 |
-| xmltodict              | MIT License                                             |
+| Name                  | License                              |
+|-----------------------|--------------------------------------|
+| celery                | BSD License                          |
+| Django                | BSD License                          |
+| django-allauth        | MIT License                          |
+| django-celery-beat    | BSD License                          |
+| django-defender       | Apache Software License              |
+| djangorestframework   | BSD License                          |
+| django-simple-menu    | BSD License                          |
+| django-simple-history | BSD License                          |
+| djangosaml2           | Apache Software License              |
+| drf-spectacular       | BSD License                          |
+| jsonschema            | MIT License                          |
+| markdown              | BSD License                          |
+| mongoengine           | MIT License                          |
+| python-dateutil       | Apache Software License; BSD License |
+| pytz                  | MIT License                          |
+| redis                 | MIT License                          |
+| requests              | Apache Software License              |
+| xmltodict             | MIT License                          |
 
 ## Development packages
 

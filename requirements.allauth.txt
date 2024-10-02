@@ -1,0 +1,1 @@
+django-allauth[socialaccount,saml,mfa]==64.1.*

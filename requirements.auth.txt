@@ -1,0 +1,2 @@
+djangosaml2==1.9.*
+django-defender==0.9.*

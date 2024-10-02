@@ -113,7 +113,7 @@ class TestsWebPageApiUpsert(TestCase):
 
         """
         # Arrange
-        web_page = WebPage(type=4, content="test")
+        web_page = WebPage(type=1000, content="test")
         # Act # Assert
         with self.assertRaises(ApiError):
             web_page_api.upsert(web_page)

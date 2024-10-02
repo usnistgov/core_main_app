@@ -179,6 +179,8 @@ def custom_logout(request):
 
     Returns:
     """
+    if "allauth" in settings.INSTALLED_APPS:
+        return redirect("account_logout")
     django_auth.logout(request)
     return redirect(reverse("core_main_app_homepage"))
 

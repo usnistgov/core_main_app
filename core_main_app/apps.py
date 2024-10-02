@@ -61,3 +61,33 @@ def _check_settings():
             "CELERYBEAT_SCHEDULER setting needs to be set "
             "to 'django_celery_beat.schedulers:DatabaseScheduler'."
         )
+
+    if (
+        "allauth" in settings.INSTALLED_APPS
+        and settings.ALLAUTH_ACCOUNT_REQUESTS_FOR_NEW_USERS
+    ):
+        if (
+            settings.ACCOUNT_ADAPTER
+            != "core_main_app.utils.allauth.cdcs_adapter.CDCSAccountAdapter"
+        ):
+            raise CoreError(
+                "ACCOUNT_ADAPTER needs to be set to "
+                "'core_main_app.utils.allauth.cdcs_adapter.CDCSAccountAdapter'."
+            )
+
+        if settings.SOCIALACCOUNT_AUTO_SIGNUP:
+            raise CoreError(
+                "SOCIALACCOUNT_AUTO_SIGNUP needs to be set to False."
+            )
+
+        if "core_website_app" not in settings.INSTALLED_APPS:
+            raise CoreError("core_website_app is required to use allauth.")
+
+        if (
+            settings.ACCOUNT_SIGNUP_FORM_CLASS
+            != "core_main_app.utils.allauth.forms.CoreSignupForm"
+        ):
+            raise CoreError(
+                "ACCOUNT_SIGNUP_FORM_CLASS needs to be set to "
+                "'core_main_app.utils.allauth.forms.CoreSignupForm'."
+            )

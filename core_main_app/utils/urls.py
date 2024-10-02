@@ -5,7 +5,7 @@ import re
 
 from django.conf import settings
 from django.contrib.auth import views as auth_views
-from django.urls import reverse, re_path, include
+from django.urls import reverse, re_path, include, path
 
 
 def get_template_download_pattern():
@@ -56,77 +56,86 @@ def get_auth_urls():
 
     urlpatterns.append(
         re_path(
-            r"^login",
-            user_views.custom_login,
-            name="core_main_app_login",
-        )
-    )
-    urlpatterns.append(
-        re_path(
             r"^logout",
             user_views.custom_logout,
             name="core_main_app_logout",
         )
     )
-    urlpatterns.append(
-        re_path(
-            "password_change/$",
-            auth_views.PasswordChangeView.as_view(),
-            name="password_change",
-        )
-    )
-    urlpatterns.append(
-        re_path(
-            "password_change/done/$",
-            auth_views.PasswordChangeDoneView.as_view(),
-            name="password_change_done",
-        )
-    )
-    urlpatterns.append(
-        re_path(
-            "password_reset/$",
-            auth_views.PasswordResetView.as_view(),
-            name="password_reset",
-        )
-    )
-    urlpatterns.append(
-        re_path(
-            "password_reset/done/$",
-            auth_views.PasswordResetDoneView.as_view(),
-            name="password_reset_done",
-        )
-    )
-    urlpatterns.append(
-        re_path(
-            r"^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,32})/$",
-            auth_views.PasswordResetConfirmView.as_view(),
-            name="password_reset_confirm",
-        )
-    )
-    urlpatterns.append(
-        re_path(
-            r"^reset/done/$",
-            auth_views.PasswordResetCompleteView.as_view(),
-            name="password_reset_complete",
-        )
-    )
 
-    if settings.ENABLE_SAML2_SSO_AUTH:
-        from djangosaml2 import views as saml2_views
-
-        urlpatterns.append(re_path(r"saml2/", include("djangosaml2.urls")))
+    if settings.ENABLE_ALLAUTH:
+        urlpatterns.append(
+            path("accounts/", include("allauth.urls")),
+        )
+    else:
         urlpatterns.append(
             re_path(
-                r"^saml2/login",
-                saml2_views.LoginView.as_view(),
-                name="core_main_app_saml2_login",
+                r"^login",
+                user_views.custom_login,
+                name="core_main_app_login",
             )
         )
         urlpatterns.append(
             re_path(
-                r"^saml2/logout",
-                saml2_views.LogoutInitView.as_view(),
-                name="core_main_app_saml2_logout",
+                "password_change/$",
+                auth_views.PasswordChangeView.as_view(),
+                name="password_change",
             )
         )
+        urlpatterns.append(
+            re_path(
+                "password_change/done/$",
+                auth_views.PasswordChangeDoneView.as_view(),
+                name="password_change_done",
+            )
+        )
+        urlpatterns.append(
+            re_path(
+                "password_reset/$",
+                auth_views.PasswordResetView.as_view(),
+                name="password_reset",
+            )
+        )
+        urlpatterns.append(
+            re_path(
+                "password_reset/done/$",
+                auth_views.PasswordResetDoneView.as_view(),
+                name="password_reset_done",
+            )
+        )
+        urlpatterns.append(
+            re_path(
+                r"^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,32})/$",
+                auth_views.PasswordResetConfirmView.as_view(),
+                name="password_reset_confirm",
+            )
+        )
+        urlpatterns.append(
+            re_path(
+                r"^reset/done/$",
+                auth_views.PasswordResetCompleteView.as_view(),
+                name="password_reset_complete",
+            )
+        )
+        if settings.ENABLE_SAML2_SSO_AUTH:
+            from djangosaml2 import views as saml2_views
+
+            urlpatterns.append(re_path(r"saml2/", include("djangosaml2.urls")))
+            urlpatterns.append(
+                re_path(
+                    r"^saml2/login",
+                    saml2_views.LoginView.as_view(),
+                    name="core_main_app_saml2_login",
+                )
+            )
+            urlpatterns.append(
+                re_path(
+                    r"^saml2/logout",
+                    saml2_views.LogoutInitView.as_view(),
+                    name="core_main_app_saml2_logout",
+                )
+            )
+        if "defender" in settings.INSTALLED_APPS:
+            urlpatterns.append(
+                re_path(r"^admin/defender/", include("defender.urls"))
+            )
     return urlpatterns

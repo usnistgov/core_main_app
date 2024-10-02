@@ -45,6 +45,8 @@ reqs_dev = join(dirname(__file__), "requirements.dev.txt")
 reqs_default = join(dirname(__file__), "requirements.txt")
 reqs_core = join(dirname(__file__), "requirements.core.txt")
 reqs_mongo = join(dirname(__file__), "requirements.mongo.txt")
+reqs_auth = join(dirname(__file__), "requirements.auth.txt")
+reqs_allauth = join(dirname(__file__), "requirements.allauth.txt")
 required = []
 
 required += read_requirements_file(reqs_default)
@@ -52,6 +54,8 @@ required += read_requirements_file(reqs_core)
 
 dev_extra = read_requirements_file(reqs_dev)
 mongo_extra = read_requirements_file(reqs_mongo)
+auth_extra = read_requirements_file(reqs_auth)
+allauth_extra = read_requirements_file(reqs_allauth)
 
 dep_links = [r for r in required if r.startswith("https://")]
 required = [req_link(r) if r.startswith("https://") else r for r in required]
@@ -75,5 +79,10 @@ setup(
     python_requires=">=3.9",
     install_requires=required,
     dependency_links=dep_links,
-    extras_require={"develop": dev_extra, "mongodb": mongo_extra},
+    extras_require={
+        "develop": dev_extra,
+        "mongodb": mongo_extra,
+        "auth": auth_extra,
+        "allauth": allauth_extra,
+    },
 )

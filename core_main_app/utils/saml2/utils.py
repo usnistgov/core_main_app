@@ -96,7 +96,7 @@ def load_saml_config_from_env(server_uri, base_dir):
                 == "true",
                 "name": os.getenv("SERVER_NAME", "Curator"),
                 "name_id_format": saml2.saml.NAMEID_FORMAT_TRANSIENT,
-                # For Okta add signed logout requets. Enable this:
+                # For Okta add signed logout requests. Enable this:
                 "logout_requests_signed": os.getenv(
                     "SAML_LOGOUT_REQUESTS_SIGNED", "True"
                 ).lower()
