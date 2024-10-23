@@ -258,7 +258,7 @@ class Template(Version):
         """
         try:
             self._cls = self.class_name
-            if self._content:
+            if self._content and not self.file:
                 self.file = SimpleUploadedFile(
                     name=self.filename,
                     content=self._content.encode("utf-8"),
