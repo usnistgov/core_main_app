@@ -28,12 +28,20 @@ SERVER_URI = getattr(settings, "SERVER_URI", "http://127.0.0.1:8000")
 """ :py:class:`str`: Server URI for import reference.
 """
 
+# FIXME: deprecated but cannot remove because used in migration
 XSD_UPLOAD_DIR = getattr(settings, "XSD_UPLOAD_DIR", "xml_schemas")
 """ :py:class:`str`: Name of the media folder where XML schemas are uploaded to.
 """
 
+# FIXME: deprecated but cannot remove because used in migration
 XSLT_UPLOAD_DIR = getattr(settings, "XSLT_UPLOAD_DIR", "xslt")
 """ :py:class:`str`: Name of the media folder where XML schemas are uploaded to.
+"""
+
+UPLOAD_FOLDER_INCLUDES_USER = getattr(
+    settings, "UPLOAD_FOLDER_INCLUDES_USER", True
+)
+""" :py:class:`bool`: Set to True to include user sub-folders.
 """
 
 INSTALLED_APPS = getattr(settings, "INSTALLED_APPS", [])

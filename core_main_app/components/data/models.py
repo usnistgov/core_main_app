@@ -29,10 +29,6 @@ from core_main_app.utils import xml as xml_utils
 from core_main_app.utils.json_utils import load_json_string
 
 
-# TODO: Create publication workflow manager
-# TODO: execute_query / execute_query_full_result -> use find method (RETURN FULL OBJECT)
-
-
 class Data(AbstractData):
     """Data object"""
 
@@ -188,7 +184,7 @@ class Data(AbstractData):
 
     @staticmethod
     def get_all_by_user_id(user_id, order_by_field):
-        """Get all data relative to the given user id
+        """Get all data owned by the given user id
 
         Args:
             user_id:
@@ -203,7 +199,7 @@ class Data(AbstractData):
 
     @staticmethod
     def get_all_except_user_id(user_id, order_by_field):
-        """Get all data non relative to the given user id
+        """Get all data not owned by the given user id
 
         Args:
             user_id:

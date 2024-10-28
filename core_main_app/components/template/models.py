@@ -14,12 +14,15 @@ from core_main_app.components.template_version_manager.models import (
     TemplateVersionManager,
 )
 from core_main_app.components.version_manager.models import Version
-from core_main_app.settings import XSD_UPLOAD_DIR, CHECKSUM_ALGORITHM
+from core_main_app.settings import CHECKSUM_ALGORITHM
 from core_main_app.utils.checksum import compute_checksum
 from core_main_app.utils.file import (
     get_template_file_content_type_for_template_format,
 )
-from core_main_app.utils.storage.storage import core_file_storage
+from core_main_app.utils.storage.storage import (
+    core_file_storage,
+    user_directory_path,
+)
 from core_main_app.utils.validation.regex_validation import (
     not_empty_or_whitespaces,
 )
@@ -62,7 +65,7 @@ class Template(Version):
         blank=False,
         max_length=250,
         # NOTE: needed to check owner during upload (cf. core_main_app.utils.xml._get_schema_location_uri)
-        upload_to=XSD_UPLOAD_DIR,
+        upload_to=user_directory_path,
         storage=core_file_storage(model="template"),
     )
     user = models.CharField(

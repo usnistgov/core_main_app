@@ -4,11 +4,15 @@
 from django.core.files.storage import default_storage
 
 from core_main_app.commons.exceptions import CoreError
-from core_main_app.settings import GRIDFS_STORAGE, CUSTOM_FILE_STORAGE
+from core_main_app.settings import (
+    GRIDFS_STORAGE,
+    CUSTOM_FILE_STORAGE,
+    UPLOAD_FOLDER_INCLUDES_USER,
+)
 
 
 def user_directory_path(instance, filename):
-    """Get path to user directory
+    """Build a custom upload directory path
 
     Args:
         instance:
@@ -17,9 +21,17 @@ def user_directory_path(instance, filename):
     Returns:
 
     """
-    user_id = getattr(instance, "user_id", "undefined")
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
-    return f"user_{user_id}/{filename}"
+    user_id = (
+        getattr(instance, "user_id", None)
+        if UPLOAD_FOLDER_INCLUDES_USER
+        else None
+    )
+
+    if user_id:
+        # file will be uploaded to MEDIA_ROOT/<model>/user_<id>/<filename>
+        return f"{instance._meta.model_name}/user_{user_id}/{filename}"
+    # file will be uploaded to MEDIA_ROOT/<model>/<filename>
+    return f"{instance._meta.model_name}/{filename}"
 
 
 def core_file_storage(model):

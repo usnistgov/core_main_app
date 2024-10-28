@@ -353,13 +353,13 @@ DATA_SORTING_FIELDS = ["-title", "+last_modification_date"]
 
 ## XML
 
-### ``XSD_UPLOAD_DIR``
+### ``XSD_UPLOAD_DIR`` (> :warning: Deprecated)
 
   Default: ``"xml_schemas"``
 
   Name of the media folder where XML schemas are uploaded to.
 
-### ``XSLT_UPLOAD_DIR``
+### ``XSLT_UPLOAD_DIR`` (> :warning: Deprecated)
 
   Default: ``"xslt"``
 

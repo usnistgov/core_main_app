@@ -8,9 +8,12 @@ from django.db import models, IntegrityError
 
 from core_main_app.commons import exceptions
 from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
-from core_main_app.settings import XSLT_UPLOAD_DIR, CHECKSUM_ALGORITHM
+from core_main_app.settings import CHECKSUM_ALGORITHM
 from core_main_app.utils.checksum import compute_checksum
-from core_main_app.utils.storage.storage import core_file_storage
+from core_main_app.utils.storage.storage import (
+    core_file_storage,
+    user_directory_path,
+)
 
 
 class XslTransformation(models.Model):
@@ -42,7 +45,7 @@ class XslTransformation(models.Model):
     file = models.FileField(
         blank=False,
         max_length=250,
-        upload_to=XSLT_UPLOAD_DIR,
+        upload_to=user_directory_path,
         storage=core_file_storage(model="xsl_transformation"),
     )
     checksum = models.CharField(
