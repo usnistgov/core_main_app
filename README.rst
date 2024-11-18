@@ -291,13 +291,13 @@ ALLAUTH_ACCOUNT_REQUESTS_FOR_NEW_USERS=True
 For systems with existing user bases, the migration to `django-allauth` will be done as followed:
 - existing local accounts will be migrated automatically,
 - existing local accounts previously created by connecting to an Identity Provider (IdP) using SAML2:
-    - 1) Automatically migrate existing accounts by matching their email to the email
-    registered in the IdP by setting:
-    ```
-    SAML_EMAIL_AUTHENTICATION=True
-    SAML_VERIFIED_EMAIL=True # Or set to a list of accepted domains
-    ```
-    - 2) Let users manually link their account back to the IdP via SAML2 from their profile page.
-    Users who only authenticated via SAML2 in the past may have to first reset their password,
-    connect to their local account and then link their account to the IdP.
+1) Automatically migrate existing accounts by matching their email to the email
+registered in the IdP by setting:
+```
+SAML_EMAIL_AUTHENTICATION=True
+SAML_VERIFIED_EMAIL=True # Or set to a list of accepted domains
+```
+2) Let users manually link their account back to the IdP via SAML2 from their profile page.
+Users who only authenticated via SAML2 in the past may have to first reset their password,
+connect to their local account and then link their account to the IdP.
 
