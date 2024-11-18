@@ -6,7 +6,7 @@
     <div class="box box-default">
 {% endif %}
     <div class="box-header with-border">
-        <h3 class="box-title">{% block box_title %}{% endblock %}</h3>
+        <h1 class="box-title">{% block box_title %}{% endblock %}</h1>
 
         <div class="box-tools {% if BOOTSTRAP_VERSION|first == "4" %}mr-3 float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}me-3 float-end{% endif %}">
             {% block box_tools %}{% endblock %}
