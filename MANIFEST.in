@@ -3,5 +3,7 @@ include requirements.txt
 include requirements.core.txt
 include requirements.dev.txt
 include requirements.mongo.txt
+include requirements.auth.txt
+include requirements.allauth.txt
 recursive-include core_main_app/static *
 recursive-include core_main_app/templates *
