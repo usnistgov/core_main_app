@@ -3,6 +3,13 @@
 
 from unittest.mock import Mock
 
+from core_main_app.components.abstract_processing_module.models import (
+    AbstractProcessingModule,
+)
+from core_main_app.utils.processing_module.models import (
+    AbstractObjectProcessing,
+)
+
 
 class MockQuerySet(Mock):
     """Mock Query Set"""
@@ -16,3 +23,15 @@ class MockQuerySet(Mock):
     def __getitem__(self, item):
         """Iter items"""
         return self.item_list[item]
+
+
+class MockProcessingModule(AbstractProcessingModule):
+    """Mock implementation of an AbstractProcessingModule Django model."""
+
+    pass
+
+
+class MockObjectProcessingModule(AbstractObjectProcessing):
+    """Mock implementation of an AbstractObjectProcessing class."""
+
+    pass

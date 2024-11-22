@@ -11,6 +11,12 @@ from django.views.generic.base import RedirectView
 from core_main_app.commons.enums import WEB_PAGE_TYPES
 from core_main_app.components.blob.admin_site import CustomBlobAdmin
 from core_main_app.components.blob.models import Blob
+from core_main_app.components.blob_processing_module.admin_site import (
+    BlobProcessingModuleAdmin,
+)
+from core_main_app.components.blob_processing_module.models import (
+    BlobProcessingModule,
+)
 from core_main_app.components.data.admin_site import CustomDataAdmin
 from core_main_app.components.data.models import Data
 from core_main_app.components.lock.admin_site import CustomDatabaseLockAdmin
@@ -182,7 +188,6 @@ admin_urls = [
     ),
 ]
 
-
 admin.site.register(Data, CustomDataAdmin)
 admin.site.register(Blob, CustomBlobAdmin)
 admin.site.register(Workspace, CustomWorkspaceAdmin)
@@ -193,6 +198,9 @@ admin.site.register(TemplateXslRendering, CustomTemplateXslRenderingAdmin)
 admin.site.register(TemplateHtmlRendering)
 admin.site.register(DatabaseLockObject, CustomDatabaseLockAdmin)
 admin.site.register(UserPreferences, CustomUserPreferencesAdmin)
+
+# Admin models for processing modules
+admin.site.register(BlobProcessingModule, BlobProcessingModuleAdmin)
 
 
 class CoreAdminSite(AdminSite):

@@ -43,7 +43,7 @@ class TestLoadAllauthSamlConfFromEnv(TestCase):
         os.environ["SAML_ATTRIBUTES_MAP_CN"] = "urn:oid:2.5.4.42"
         os.environ["SAML_ATTRIBUTES_MAP_SN"] = "urn:oid:2.5.4.4"
 
-        self.assertEquals(
+        self.assertEqual(
             {
                 "EMAIL_AUTHENTICATION": False,
                 "VERIFIED_EMAIL": False,
@@ -108,7 +108,7 @@ class TestLoadAllauthContactPersonDictFromEnv(TestCase):
         os.environ["CONTACT_PERSON_1"] = (
             "Firstname1,Lastname1,Example Co.,contact1@example.com,technical"
         )
-        self.assertEquals(
+        self.assertEqual(
             {
                 "technical": {
                     "givenName": "Firstname1",
@@ -134,7 +134,7 @@ class TestLoadAllauthContactPersonDictFromEnv(TestCase):
         os.environ["CONTACT_PERSON_2"] = (
             "Firstname2,Lastname2,Example Co.,contact2@example.com,administrative"
         )
-        self.assertEquals(
+        self.assertEqual(
             {
                 "technical": {
                     "givenName": "Firstname1",
@@ -165,7 +165,7 @@ class TestLoadAllauthContactPersonDictFromEnv(TestCase):
         if "CONTACT_PERSON_2" in os.environ:
             del os.environ["CONTACT_PERSON_2"]
 
-        self.assertEquals({}, load_allauth_contact_person_dict_from_env())
+        self.assertEqual({}, load_allauth_contact_person_dict_from_env())
 
 
 class TestLoadVerifiedEmailFromEnv(TestCase):
@@ -196,7 +196,7 @@ class TestLoadVerifiedEmailFromEnv(TestCase):
 
         """
         os.environ["SAML_VERIFIED_EMAIL"] = "example.com"
-        self.assertEquals(["example.com"], load_verified_email_from_env())
+        self.assertEqual(["example.com"], load_verified_email_from_env())
 
     def test_load_verified_email_from_env_returns_list_if_env_comma_separated_list(
         self,
@@ -207,7 +207,7 @@ class TestLoadVerifiedEmailFromEnv(TestCase):
 
         """
         os.environ["SAML_VERIFIED_EMAIL"] = "example.com,test.example.com"
-        self.assertEquals(
+        self.assertEqual(
             ["example.com", "test.example.com"], load_verified_email_from_env()
         )
 

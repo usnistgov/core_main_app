@@ -1,7 +1,8 @@
 {% load blob_tags %}
 
 <div>
-    <button id="btn-previous-page" type="button" class="btn btn-secondary mb-2 {% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %}">
+    <button id="btn-previous-page" type="button" class="btn btn-secondary mb-2
+        {% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %}">
         <i class="fas fa-arrow-left"></i> Back to previous
     </button>
     {% if data.can_write %}
@@ -13,9 +14,29 @@
                 "{% url 'core_main_app_blob_metadata' data.blob.id %}"
              {% endif %}
         >
-        <i class="fas fa-list"></i>
-        Manage Metadata
+        <i class="fas fa-list"></i> Manage Metadata
     </a>
+    {% if data.blob_modules %}
+    <a id="btn-run" class="btn btn-secondary run
+        {% if BOOTSTRAP_VERSION|first == "4" %}mr-1{% elif BOOTSTRAP_VERSION|first == "5"  %}me-1{% endif %}
+        {% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %}"
+    >
+        <i class="fas fa-play"></i> Run
+    </a>
+    <div class="row
+        {% if BOOTSTRAP_VERSION|first == "4" %}mr-1{% elif BOOTSTRAP_VERSION|first == "5"  %}me-1{% endif %}
+        {% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %}
+    ">
+        <div class="form-group">
+            <select id="blob_processing_module_select" class="form-select">
+                <option value="None">-----------</option>
+                {% for blob_module in data.blob_modules %}
+                    <option value="{{blob_module.id}}">{{blob_module}}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    {% endif %}
     {% endif %}
     <a class="btn btn-primary download
         {% if BOOTSTRAP_VERSION|first == "4" %}mr-1{% elif BOOTSTRAP_VERSION|first == "5"  %}me-1{% endif %}

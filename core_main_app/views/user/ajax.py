@@ -2,6 +2,7 @@
 """
 
 import json
+import logging
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -37,6 +38,8 @@ from core_main_app.views.user.forms import (
     BlobMetadataForm,
     BlobFileForm,
 )
+
+logger = logging.getLogger(__name__)
 
 GROUP = "group"
 USER = "user"

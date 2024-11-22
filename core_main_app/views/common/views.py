@@ -7,7 +7,6 @@ from abc import ABCMeta, abstractmethod
 from datetime import datetime
 
 from django.conf import settings as conf_settings
-from core_main_app import settings as main_settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import (
@@ -21,6 +20,7 @@ from django.utils.decorators import method_decorator
 from django.utils.html import escape as html_escape, escape
 from django.views.generic import View
 
+from core_main_app import settings as main_settings
 from core_main_app.access_control import api as acl_api
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
@@ -29,7 +29,13 @@ from core_main_app.commons.exceptions import (
     DoesNotExist,
     JSONError,
 )
+from core_main_app.components.abstract_processing_module.models import (
+    AbstractProcessingModule,
+)
 from core_main_app.components.blob import api as blob_api
+from core_main_app.components.blob_processing_module import (
+    api as blob_module_api,
+)
 from core_main_app.components.data import api as data_api
 from core_main_app.components.group import api as group_api
 from core_main_app.components.lock import api as lock_api
@@ -1398,21 +1404,34 @@ class ViewBlob(CommonView):
         blob_id = request.GET["id"]
 
         try:
-            # Get blob
+            # Retrieve blob object.
             blob_object = blob_api.get_by_id(blob_id, request.user)
-            try:
+
+            try:  # Retrieve blob modules if authorized.
+                blob_modules = blob_module_api.get_all_by_blob_id(
+                    blob_id,
+                    request.user,
+                    run_strategy=AbstractProcessingModule.RUN_ON_DEMAND,
+                )
+            except AccessControlError:
+                blob_modules = []
+
+            try:  # Check wether the user can write the blob.
                 acl_api.check_can_write(blob_object, request.user)
                 can_write = True
             except AccessControlError:
                 can_write = False
             # Init context
-            context = {"blob": blob_object, "can_write": can_write}
+            context = {
+                "blob": blob_object,
+                "can_write": can_write,
+                "blob_modules": blob_modules,
+            }
             # Init assets
             assets = {
                 "js": [
                     {
                         "path": "core_main_app/user/js/blob/detail.js",
-                        "is_raw": False,
                     }
                 ],
                 "css": [],

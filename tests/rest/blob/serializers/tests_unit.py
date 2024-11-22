@@ -6,6 +6,7 @@ from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
 from django.test import override_settings
+
 from core_main_app.rest.blob import serializers as blob_serializers
 from tests.test_settings import (
     ID_PROVIDER_SYSTEM_NAME,

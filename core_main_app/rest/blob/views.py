@@ -17,6 +17,12 @@ from rest_framework.views import APIView
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
 from core_main_app.components.blob import api as blob_api
+from core_main_app.components.blob_processing_module import (
+    api as blob_processing_module_api,
+)
+from core_main_app.components.blob_processing_module.models import (
+    BlobProcessingModule,
+)
 from core_main_app.components.data import api as data_api
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
@@ -734,6 +740,56 @@ class BlobMetadata(APIView):
         except Http404:
             content = {"message": "Blob not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)
+        except Exception as api_exception:
+            content = {"message": str(api_exception)}
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class BlobRunProcessingModule(APIView):
+    """View to run processing module on blob"""
+
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, blob_id=None, processing_module_id=None):
+        """Run processing module on a given blob
+
+        Args:
+            request: HTTP request
+            blob_id: Blob object ID
+            processing_module_id: Processing module ID
+
+        Returns:
+
+            - code: 200
+              content:
+            - code: 400
+              content: Missing request parameters
+            - code: 403
+              content: Authentication error
+            - code: 500
+              content: Internal server error
+        """
+        try:
+            if not processing_module_id or not blob_id:
+                content = {
+                    "message": "Missing blob or processing module parameters."
+                }
+                return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
+            blob_processing_module_api.process_blob.apply_async(
+                (
+                    processing_module_id,
+                    blob_id,
+                    BlobProcessingModule.RUN_ON_DEMAND,
+                    request.user.id,
+                )
+            )
+            return Response(
+                {"message": "File processing started!"},
+                status=status.HTTP_200_OK,
+            )
         except Exception as api_exception:
             content = {"message": str(api_exception)}
             return Response(

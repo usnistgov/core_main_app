@@ -1,5 +1,6 @@
 <div>
-    <button id="btn-previous-page" type="button" class="btn btn-secondary mb-2 {% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %}">
+    <button id="btn-previous-page" type="button" class="btn btn-secondary mb-2
+            {% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %}">
         <i class="fas fa-arrow-left"></i> Back to previous
     </button>
     {% if data.can_write %}

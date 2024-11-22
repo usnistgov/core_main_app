@@ -7,17 +7,6 @@ from unittest.mock import patch
 
 from rest_framework import status
 
-from core_main_app.utils.xml import raw_xml_to_dict
-from tests.components.data.fixtures.fixtures import (
-    DataFixtures,
-    QueryDataFixtures,
-    AccessControlDataFixture,
-)
-from tests.components.user.fixtures.fixtures import UserFixtures
-from tests.components.template_html_rendering.fixtures.fixtures import (
-    TemplateHtmlRenderingFixtures,
-)
-
 from core_main_app.components.data import api as data_api
 from core_main_app.components.data.models import Data
 from core_main_app.components.template.models import Template
@@ -32,6 +21,16 @@ from core_main_app.utils.integration_tests.integration_base_transaction_test_cas
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
+from core_main_app.utils.xml import raw_xml_to_dict
+from tests.components.data.fixtures.fixtures import (
+    DataFixtures,
+    QueryDataFixtures,
+    AccessControlDataFixture,
+)
+from tests.components.template_html_rendering.fixtures.fixtures import (
+    TemplateHtmlRenderingFixtures,
+)
+from tests.components.user.fixtures.fixtures import UserFixtures
 
 fixture_data = DataFixtures()
 fixture_data_query = QueryDataFixtures()

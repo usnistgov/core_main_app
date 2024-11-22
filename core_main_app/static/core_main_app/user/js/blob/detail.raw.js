@@ -1,0 +1,1 @@
+var processFileUrl = "{% url 'core_main_app_rest_blob_run_processing_module' blob_id='blob_id' processing_module_id='processing_module_id' %}";

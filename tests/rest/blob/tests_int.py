@@ -7,13 +7,6 @@ from unittest.mock import patch
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import override_settings
 from rest_framework import status
-from tests.components.blob.fixtures.fixtures import (
-    BlobFixtures,
-    AccessControlBlobFixture,
-)
-from tests.components.data.fixtures.fixtures import (
-    AccessControlBlobWithMetadataFixture,
-)
 
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.workspace.models import Workspace
@@ -23,6 +16,13 @@ from core_main_app.utils.integration_tests.integration_base_test_case import (
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
+from tests.components.blob.fixtures.fixtures import (
+    BlobFixtures,
+    AccessControlBlobFixture,
+)
+from tests.components.data.fixtures.fixtures import (
+    AccessControlBlobWithMetadataFixture,
+)
 
 RESOURCES_PATH = join(dirname(abspath(__file__)), "data")
 fixture_blob = BlobFixtures()

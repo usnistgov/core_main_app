@@ -7,6 +7,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 
 from core_main_app.commons import exceptions
+from core_main_app.commons.exceptions import ModelError
 from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
 from core_main_app.components.blob.access_control import (
     filter_accessible_metadata,
@@ -73,6 +74,15 @@ class Blob(models.Model):
         """
         # Access _metadata with ACL check
         return filter_accessible_metadata(self._metadata.all(), user)
+
+    @property
+    def size(self):
+        if hasattr(self.blob, "size"):
+            return self.blob.size
+        elif hasattr(self.blob, "length"):
+            return self.blob.length
+        else:
+            raise ModelError("Cannot retrieve size for blob")
 
     @staticmethod
     def get_by_id(blob_id):
@@ -150,14 +160,6 @@ class Blob(models.Model):
         """
         return Blob.objects.none()
 
-    def __str__(self):
-        """Blob object as string
-
-        Returns:
-
-        """
-        return self.filename
-
     def save_object(self):
         """Custom save.
 
@@ -173,3 +175,11 @@ class Blob(models.Model):
             return self.save()
         except Exception as ex:
             raise exceptions.ModelError(str(ex))
+
+    def __str__(self):
+        """Blob object as string
+
+        Returns:
+
+        """
+        return self.filename

@@ -5,6 +5,9 @@ from django.urls import re_path
 from rest_framework.urlpatterns import format_suffix_patterns
 
 from core_main_app.rest.blob import views as blob_views
+from core_main_app.rest.blob_processing_module import (
+    views as blob_processing_module_views,
+)
 from core_main_app.rest.data import views as data_views
 from core_main_app.rest.template import views as template_views
 from core_main_app.rest.template_version_manager import (
@@ -231,6 +234,21 @@ urlpatterns = [
         name="core_main_app_rest_blob_assign",
     ),
     re_path(
+        r"^blob/(?P<pk>\w+)/change-owner/(?P<user_id>\w+)$",
+        blob_views.BlobChangeOwner.as_view(),
+        name="core_main_app_rest_blob_change_owner",
+    ),
+    re_path(
+        r"^blob/(?P<blob_id>\w+)/run/(?P<processing_module_id>\w+)$",
+        blob_views.BlobRunProcessingModule.as_view(),
+        name="core_main_app_rest_blob_run_processing_module",
+    ),
+    re_path(
+        r"^blob-processing-module/$",
+        blob_processing_module_views.BlobProcessingModuleView.as_view(),
+        name="core_main_app_rest_blob_processing_module_list",
+    ),
+    re_path(
         r"^xslt/$",
         xsl_transformation_views.XslTransformationList.as_view(),
         name="core_main_app_rest_xslt",
@@ -364,11 +382,6 @@ urlpatterns = [
         r"^user/(?P<pk>[\w-]+)/$",
         user_views.UserRetrieveUpdateView.as_view(),
         name="core_main_app_user_retrieve_update",
-    ),
-    re_path(
-        r"^blob/(?P<pk>\w+)/change-owner/(?P<user_id>\w+)$",
-        blob_views.BlobChangeOwner.as_view(),
-        name="core_main_app_rest_blob_change_owner",
     ),
     re_path(
         r"^template/xsl_rendering/(?P<pk>\w+)/set_default_xslt/(?P<xslt_id>\w+)/$",

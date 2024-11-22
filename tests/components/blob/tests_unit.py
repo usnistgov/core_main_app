@@ -2,9 +2,13 @@
 """
 
 from unittest.case import TestCase
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from django.contrib.auth.models import User
+from django.db import models
+
+from core_main_app.commons.exceptions import ModelError
+from core_main_app.components.blob.models import Blob
 from tests.components.data.tests_unit import (
     _create_blob,
     _create_data,
@@ -98,3 +102,42 @@ class TestBlobOwnerName(TestCase):
 
         # Assert
         self.assertEqual(blob.owner_name, user.username)
+
+
+class TestSize(TestCase):
+    """Unit tests for `size` property"""
+
+    def setUp(self):
+        """setUp"""
+        self.mock_blob_model = Blob()
+
+    def test_size_attr_returned_if_present(self):
+        """test_size_attr_returned_if_present"""
+        mock_blob = MagicMock()
+        mock_blob.size = 42
+        del mock_blob.length
+
+        self.mock_blob_model.blob = mock_blob
+
+        self.assertEqual(self.mock_blob_model.size, mock_blob.size)
+
+    def test_length_attr_returned_if_present(self):
+        """test_size_attr_returned_if_present"""
+        mock_blob = MagicMock(spec=models.FileField)
+        mock_blob.length = 42
+        del mock_blob.size
+
+        self.mock_blob_model.blob = mock_blob
+
+        self.assertEqual(self.mock_blob_model.size, mock_blob.length)
+
+    def test_invalid_attr_raises_model_error(self):
+        """test_size_attr_returned_if_present"""
+        mock_blob = MagicMock()
+        del mock_blob.size
+        del mock_blob.length
+
+        self.mock_blob_model.blob = mock_blob
+
+        with self.assertRaises(ModelError):
+            self.mock_blob_model.size  # noqa

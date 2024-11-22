@@ -23,7 +23,7 @@ class TestLoadAllauthOidcConfFromEnv(TestCase):
         os.environ["OIDC_SERVER_URL"] = (
             "http://localhost:8080/auth/realms/cdcs-realm"
         )
-        self.assertEquals(
+        self.assertEqual(
             {
                 "APPS": [
                     {

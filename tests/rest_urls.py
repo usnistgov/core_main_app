@@ -23,4 +23,9 @@ urlpatterns = [
         blob_views.BlobDownload.as_view(),
         name="core_main_app_rest_blob_download",
     ),
+    re_path(
+        r"^blob/(?P<blob_id>\w+)/run/(?P<processing_module_id>\w+)$",
+        blob_views.BlobRunProcessingModule.as_view(),
+        name="core_main_app_rest_blob_run_processing_module",
+    ),
 ]

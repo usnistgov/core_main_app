@@ -9,6 +9,7 @@ from rest_framework import status
 
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.blob.models import Blob
+from core_main_app.components.data import api as data_api
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.rest.blob import views as blob_rest_views
 from core_main_app.rest.blob.serializers import (
@@ -17,7 +18,6 @@ from core_main_app.rest.blob.serializers import (
 )
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
-from core_main_app.components.data import api as data_api
 
 
 class TestBlobListAdminGetPermissions(SimpleTestCase):

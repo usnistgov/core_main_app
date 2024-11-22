@@ -447,3 +447,14 @@ def can_change_owner(func, document, new_user, user):
         )
 
     return func(document, new_user, user)
+
+
+def user_is_registered(func, *args, **kwargs):
+    """Ensure a user is registered before processing the function."""
+    user = next((arg for arg in args if isinstance(arg, User)), None)
+    if user is None:
+        user = kwargs.get("user", None)
+
+    check_anonymous_access(user)
+
+    return func(*args, **kwargs)
