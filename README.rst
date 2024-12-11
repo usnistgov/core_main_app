@@ -111,10 +111,10 @@ You should then update the CDCS settings using a Redis connection URL with the p
   CELERY_RESULT_BACKEND = 'redis://:<password>@localhost:6379/0'
 
 
-Enable SMTP server
-------------------
+Email Configuration
+-------------------
 
-Please follow these steps to configure the SMTP server:
+Please follow these steps to configure emails sent by the CDCS:
 
 * Set these constants in your setting.py file (all these constants are required)
 

@@ -163,3 +163,21 @@ def send_mail_to_managers(
         task.send_mail_to_managers(
             subject, path_to_template, context, fail_silently
         )
+
+
+def send_mail_to_website_contacts(
+    subject, path_to_template, context=None, fail_silently=True
+):
+    """Send a message to the admins contacts, as defined by the WEBSITE_CONTACTS setting.
+    From: https://github.com/django/django/blob/main/django/core/mail/__init__.py
+    """
+    if SEND_EMAIL_ASYNC:
+        # Async call. Use celery
+        task.send_mail_to_website_contacts.apply_async(
+            (subject, path_to_template, context, fail_silently), countdown=1
+        )
+    else:
+        # Sync call
+        task.send_mail_to_website_contacts(
+            subject, path_to_template, context, fail_silently
+        )

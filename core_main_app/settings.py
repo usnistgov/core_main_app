@@ -294,3 +294,9 @@ TEXT_EDITOR_LIBRARY = getattr(settings, "TEXT_EDITOR_LIBRARY", "Monaco")
 """ :py:class:`str`: Set to `Monaco` to enable use external text editor Monaco,`None` to use default text editor,
 or specify another external text editor to set it up.
 """
+
+
+WEBSITE_CONTACTS = getattr(settings, "WEBSITE_CONTACTS", [])
+""" :py:class:`str`: A list of all the people who will be notified when contact messages,
+  or account requests are sent via the application.
+"""

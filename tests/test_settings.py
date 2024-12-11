@@ -107,3 +107,7 @@ BOOTSTRAP_VERSION = "5.1.3"
 ID_PROVIDER_SYSTEM_NAME = "mock_provider"
 ENABLE_JSON_SCHEMA_SUPPORT = True
 TEXT_EDITOR_LIBRARY = None
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+WEBSITE_CONTACTS = [("John", "john@example.com"), ("Mary", "mary@example.com")]
+EMAIL_SUBJECT_PREFIX = "[Test]"

@@ -597,7 +597,70 @@ DATA_SORTING_FIELDS = ["-title", "+last_modification_date"]
 SAML_VERIFIED_EMAIL=example.com,test.example.com
 ```
 
-## Miscellaneous
+## EMAILS
+
+### ``EMAIL_HOST``
+
+  Default: ``localhost``
+
+  The host to use for sending email.
+  https://docs.djangoproject.com/en/4.2/ref/settings/#email-host
+
+### ``EMAIL_PORT``
+
+  Default: 25
+
+  Port to use for the SMTP server defined in EMAIL_HOST.
+  https://docs.djangoproject.com/en/4.2/ref/settings/#email-port
+
+### ``DEFAULT_FROM_EMAIL``
+
+  Default: ``webmaster@localhost``
+
+  Default email address to use for various automated correspondence from the site manager(s). 
+  This doesn’t include error messages sent to ADMINS and MANAGERS; for that, see SERVER_EMAIL.
+  https://docs.djangoproject.com/en/4.2/ref/settings/#default-from-email
+
+### ``EMAIL_SUBJECT_PREFIX``
+
+  Default: ``[CURATOR]``
+
+  Subject-line prefix for email messages.
+  https://docs.djangoproject.com/en/4.2/ref/settings/#email-subject-prefix
+
+### ``SERVER_EMAIL``
+
+  Default: ``root@localhost``
+
+  The email address that error messages come from, such as those sent to ADMINS and MANAGERS.
+  https://docs.djangoproject.com/en/4.2/ref/settings/#server-email
+
+### ``ADMINS``
+  
+  Default: ``[]``
+
+  A list of all the people who get code error notifications. 
+  https://docs.djangoproject.com/en/4.2/ref/settings/#admins
+
+### ``MANAGERS``
+
+  Default: ``[]``
+
+  A list of all the people that should get broken link notifications
+  https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-MANAGERS
+
+### ``WEBSITE_CONTACTS``
+
+  Default: ``[]``
+
+  A list of all the people who get notified when contact messages,
+  or account requests are sent via the application.
+
+  Example:
+
+```
+WEBSITE_CONTACTS = [("John", "john@example.com"), ("Mary", "mary@example.com")]
+```
 
 ### ``SEND_EMAIL_ASYNC``
 
@@ -605,8 +668,35 @@ SAML_VERIFIED_EMAIL=example.com,test.example.com
 
   Set to ``True`` to send emails asynchronously.
 
+### ``SEND_EMAIL_WHEN_CONTACT_MESSAGE_IS_RECEIVED``
+
+  Default: ``False``
+
+  Set to ``True`` to email the website contacts when a contact message is received.
+
+### ``SEND_EMAIL_WHEN_ACCOUNT_REQUEST_IS_ACCEPTED``
+
+  Default: ``False``
+
+  Set to ``True`` to email the person who requested an account when the account request is accepted.
+
+### ``SEND_EMAIL_WHEN_ACCOUNT_REQUEST_IS_DENIED``
+
+  Default: ``False``
+
+  Set to ``True`` to email the person who requested an account when the account request is denied.
+
+### ``EMAIL_DENY_SUBJECT``
+
+  Default: ``"Account request denied"``
+
+  Set the email subject sent to the person whose account request is being denied.
+
+
 > :page_facing_up: More information can be found on the Django documentation for
-    [email configuration](https://docs.djangoproject.com/en/4.2/topics/email/).
+    [sending emails](https://docs.djangoproject.com/en/4.2/topics/email/).
+
+## Miscellaneous
 
 ### ``PASSWORD_RESET_DOMAIN_OVERRIDE``
 
