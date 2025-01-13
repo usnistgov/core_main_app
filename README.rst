@@ -301,3 +301,57 @@ SAML_VERIFIED_EMAIL=True # Or set to a list of accepted domains
 Users who only authenticated via SAML2 in the past may have to first reset their password,
 connect to their local account and then link their account to the IdP.
 
+
+Blob Processing Modules
+-----------------------
+
+CDCS 3.13 introduces a new feature that enables asynchronous processing of file and
+metadata uploaded on the system at different points of their lifecycle (manual, creation,
+read, update, delete). This feature is currently available as a preview, with only the
+"On Demand" (manual) trigger implemented. A sample ``FileMetadata`` processing module is
+provided within the ``core_main_app`` package, which triggers the asynchronous creation
+of a metadata file containing the file name and size for the file that triggered it.
+
+
+Adding a Blob Processing Module
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To add a new blob processing module using the ``FileMetadata`` module, go to
+``/admin/core_main_app/blobprocessingmodule/``, and click on "Add Blob Processing
+Module". The following fields are required:
+
+- Name: The name of the processing module as it will appear in the GUI.
+- Run strategy: Choose "Run on demand". Note that other options are not implemented in
+  CDCS 3.13.
+- Parameters: A JSON dictionary containing the necessary parameters to run the module.
+  The ``FileMetadata`` processing module only needs the ID of a JSON template (see
+  [1]_) that will validate the generated metadata file. To allow any
+  metadata, upload a JSON schema containing ``{}`` (empty brackets will validate any
+  content). Given the template ID 42, the parameters field should contain:
+  ``{"template_pk": 42}``.
+- Processing Class: The classpath to the processing class. For the ``File Metadata``
+  processing module, enter
+  ``core_main_app.blob_modules.file_metadata.FileMetadataBlobProcessing``.
+- Blob Filename Regexp: A regular expression to determine which blobs this processing
+  module can be applied to.
+
+.. [1] To ensure JSON support is enabled, see the `JSON Support`_ section. Upload a
+  JSON template by visiting ``/core-admin/template/upload``. Once the template is
+  uploaded, you can find its ID at ``/rest/template-version-manager/all/``.
+
+Using a Blob Processing Module
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To use a processing module, go to ``/dashboard/files`` and click on ``Actions/View``
+of the blob to process. In the top right toolbar, a dropdown should appear, where the
+name of the added modules can be found. Select the name of the module previously created
+and click on "Run". For the ``File Metadata`` processing module, this action will trigger
+the asynchronous creation of the metadata file.
+
+
+Custom Blob Processing Modules
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To create a custom blob processing module you only need to create the processing class.
+This class can be stored anywhere and is required to inherit from
+``core_main_app.utils.processing_module.models.AbstractObjectProcessing``.
