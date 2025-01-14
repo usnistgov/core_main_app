@@ -39,12 +39,12 @@ class TestBlobRunProcessingModulePost(TestCase):
         result = self.mock_view.post(**self.kwargs)
         self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
 
-    @patch.object(blob_views, "blob_processing_module_api")
-    def test_process_blob_called(self, mock_blob_processing_module_api):
+    @patch.object(blob_views, "blob_processing_module_tasks")
+    def test_process_blob_called(self, mock_blob_processing_module_tasks):
         """test_process_blob_called"""
         self.mock_view.post(**self.kwargs)
 
-        mock_blob_processing_module_api.process_blob.apply_async.assert_called_with(
+        mock_blob_processing_module_tasks.process_blob.apply_async.assert_called_with(
             (
                 self.kwargs["processing_module_id"],
                 self.kwargs["blob_id"],
@@ -53,12 +53,12 @@ class TestBlobRunProcessingModulePost(TestCase):
             )
         )
 
-    @patch.object(blob_views, "blob_processing_module_api")
+    @patch.object(blob_views, "blob_processing_module_tasks")
     def test_process_blob_exception_returns_500(
-        self, mock_blob_processing_module_api
+        self, mock_blob_processing_module_tasks
     ):
         """test_process_blob_exception_returns_500"""
-        mock_blob_processing_module_api.process_blob.apply_async.side_effect = Exception(
+        mock_blob_processing_module_tasks.process_blob.apply_async.side_effect = Exception(
             "mock_process_blob_exception"
         )
 
@@ -67,8 +67,8 @@ class TestBlobRunProcessingModulePost(TestCase):
             result.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
-    @patch.object(blob_views, "blob_processing_module_api")
-    def test_success_returns_200(self, mock_blob_processing_module_api):
+    @patch.object(blob_views, "blob_processing_module_tasks")
+    def test_success_returns_200(self, mock_blob_processing_module_tasks):
         """test_success_returns_200"""
         result = self.mock_view.post(**self.kwargs)
         self.assertEqual(result.status_code, status.HTTP_200_OK)

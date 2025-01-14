@@ -18,7 +18,7 @@ from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.blob_processing_module import (
-    api as blob_processing_module_api,
+    tasks as blob_processing_module_tasks,
 )
 from core_main_app.components.blob_processing_module.models import (
     BlobProcessingModule,
@@ -778,7 +778,7 @@ class BlobRunProcessingModule(APIView):
                 }
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
-            blob_processing_module_api.process_blob.apply_async(
+            blob_processing_module_tasks.process_blob.apply_async(
                 (
                     processing_module_id,
                     blob_id,

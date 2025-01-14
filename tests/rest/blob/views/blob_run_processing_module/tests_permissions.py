@@ -30,9 +30,9 @@ class TestBlobRunProcessingModulePost(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @patch.object(blob_views, "blob_processing_module_api")
+    @patch.object(blob_views, "blob_processing_module_tasks")
     def test_registered_returns_http_200(
-        self, mock_blob_processing_module_api
+        self, mock_blob_processing_module_tasks
     ):
         """test_registered_returns_http_200"""
         mock_user = create_mock_user("1")
@@ -45,8 +45,8 @@ class TestBlobRunProcessingModulePost(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    @patch.object(blob_views, "blob_processing_module_api")
-    def test_staff_returns_200(self, mock_blob_processing_module_api):
+    @patch.object(blob_views, "blob_processing_module_tasks")
+    def test_staff_returns_200(self, mock_blob_processing_module_tasks):
         """test_staff_returns_200"""
         mock_user = create_mock_user("1", is_staff=True)
 
