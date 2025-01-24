@@ -10,14 +10,14 @@ from core_main_app.rest.blob_processing_module import (
 )
 from core_main_app.rest.data import views as data_views
 from core_main_app.rest.template import views as template_views
+from core_main_app.rest.template_html_rendering import (
+    views as template_html_rendering_views,
+)
 from core_main_app.rest.template_version_manager import (
     views as template_version_manager_views,
 )
 from core_main_app.rest.template_xsl_rendering import (
     views as template_xsl_rendering_views,
-)
-from core_main_app.rest.template_html_rendering import (
-    views as template_html_rendering_views,
 )
 from core_main_app.rest.user import views as user_views
 from core_main_app.rest.views import CoreSettings
@@ -157,11 +157,6 @@ urlpatterns = [
         r"^data/query/$",
         data_views.ExecuteLocalQueryView.as_view(),
         name="core_main_app_rest_data_query",
-    ),
-    re_path(
-        r"^data/bulk-upload/$",
-        data_views.BulkUploadFolder.as_view(),
-        name="core_main_app_rest_data_bulk_upload",
     ),
     re_path(
         r"^data/(?P<pk>\w+)/assign/(?P<workspace_id>\w+)$",

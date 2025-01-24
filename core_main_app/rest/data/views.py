@@ -3,9 +3,8 @@
 
 import json
 import logging
-import os
 
-from django.conf import settings
+from django.conf import settings as conf_settings
 from django.http import Http404
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
@@ -20,14 +19,9 @@ from rest_framework.views import APIView
 from core_main_app.access_control.api import check_can_write
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
-from core_main_app.commons.constants import (
-    DATA_FILE_EXTENSION_FOR_TEMPLATE_FORMAT,
-)
-from core_main_app.commons.exceptions import XMLError, DoesNotExist
+from core_main_app.commons.exceptions import XMLError
 from core_main_app.components.data import api as data_api
 from core_main_app.components.data import tasks as data_tasks
-from core_main_app.components.data.models import Data
-from core_main_app.components.template import api as template_api
 from core_main_app.components.template.models import Template
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
@@ -43,13 +37,10 @@ from core_main_app.rest.data.serializers import (
 from core_main_app.rest.mongo_data.serializers import MongoDataSerializer
 from core_main_app.rest.template_html_rendering.views import BaseDataHtmlRender
 from core_main_app.settings import MAX_DOCUMENT_LIST
-from core_main_app.settings import XML_POST_PROCESSOR, XML_FORCE_LIST
-from core_main_app.utils import xml as main_xml_utils
 from core_main_app.utils.boolean import to_bool
 from core_main_app.utils.databases.mongo.pymongo_database import (
     get_full_text_query,
 )
-from core_main_app.utils.datetime import datetime_now
 from core_main_app.utils.file import (
     get_file_http_response,
     get_data_file_content_type_for_template_format,
@@ -57,7 +48,6 @@ from core_main_app.utils.file import (
 )
 from core_main_app.utils.json_utils import (
     format_content_json,
-    load_json_string,
 )
 from core_main_app.utils.pagination.rest_framework_paginator.pagination import (
     StandardResultsSetPagination,
@@ -608,7 +598,7 @@ class DataDownload(APIView):
 class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
     """Execute Local Query View"""
 
-    if settings.MONGODB_INDEXING:
+    if conf_settings.MONGODB_INDEXING:
         serializer = MongoDataSerializer
     else:
         serializer = DataSerializer
@@ -1087,199 +1077,6 @@ class GetTaskResult(APIView):
         """
         result = data_tasks.get_task_result(task_id)
         return Response(result, content_type="application/json")
-
-
-class BulkUploadFolder(APIView):
-    """Bulk upload data from folder"""
-
-    permission_classes = (IsAdminUser,)
-
-    @staticmethod
-    def _save_list(data_list):
-        """Save a list of data
-
-        Args:
-            data_list:
-
-        Returns:
-
-        """
-        for data in data_list:
-            try:
-                data.save()
-            except Exception as e:
-                logger.error(
-                    f"Loading failed for: {data.title}. Error: {str(e)}"
-                )
-
-    @staticmethod
-    def _bulk_create(data_list, batch):
-        """Bulk insert list of data
-
-        Args:
-            data_list:
-
-        Returns:
-
-        """
-        if not batch:
-            BulkUploadFolder._save_list(data_list)
-            return
-
-        try:
-            # Bulk insert list of data
-            Data.objects.bulk_create(data_list)
-        except Exception as exception:
-            # Log errors that occurred during bulk insert
-            logger.error("Bulk upload failed.")
-            logger.error(str(exception))
-            # try inserting each data of the batch individually
-            BulkUploadFolder._save_list(data_list)
-
-    def put(self, request):
-        """Bulk upload a folder.
-
-        Dataset needs to be placed in the MEDIA_ROOT folder.
-        The folder parameter is a relative path from the MEDIA_ROOT.
-        Setting batch to `True` will perform a bulk upload (post save signals won't be triggered).
-
-        Parameters:
-
-            {
-                "folder": "dataset/folder",
-                "template": integer,
-                "workspace": integer,
-                "batch_size": integer,
-                "validate": true|false,
-                "clean_title": true|false,
-                "batch": true|false
-            }
-
-        Examples:
-            {
-                "folder": "dataset/files",
-                "template": 1,
-                "workspace": 1,
-                "batch_size": 10,
-                "validate": false,
-                "batch": false
-            }
-
-        Args:
-
-            request: HTTP request
-
-        """
-        try:
-            folder = request.data["folder"]
-            template_id = request.data["template"]
-            workspace = request.data["workspace"]
-            batch = request.data.get("batch", False)
-            batch_size = request.data.get("batch_size", 10)
-            validate = request.data.get("validate", True)
-            validate_xml = request.data.get("validate_xml", None)
-            clean_title = request.data.get("clean_title", True)
-
-            # Backward compatibility
-            validate = validate_xml if validate_xml is not None else validate
-
-            # Get Template
-            template = template_api.get_by_id(template_id, request)
-
-            data_list = []
-
-            if not os.path.exists(os.path.join(settings.MEDIA_ROOT, folder)):
-                content = {"message": "Folder not found."}
-                return Response(content, status=status.HTTP_400_BAD_REQUEST)
-
-            for data_file in os.listdir(
-                os.path.join(settings.MEDIA_ROOT, folder)
-            ):
-                try:
-                    # initialize times
-                    now = datetime_now()
-                    # Create data
-                    instance = Data(
-                        template_id=template_id,
-                        workspace_id=workspace,
-                        user_id=request.user.id,
-                        last_change_date=now,
-                        creation_date=now,
-                        last_modification_date=now,
-                    )
-                    # Set title
-                    instance.title = (
-                        data_file.replace("_", " ")
-                        .replace(
-                            DATA_FILE_EXTENSION_FOR_TEMPLATE_FORMAT[
-                                Template.XSD
-                            ],
-                            "",
-                        )
-                        .replace(
-                            DATA_FILE_EXTENSION_FOR_TEMPLATE_FORMAT[
-                                Template.JSON
-                            ],
-                            "",
-                        )
-                        if clean_title
-                        else data_file
-                    )
-                    # Set file
-                    instance.file.name = os.path.join(folder, data_file)
-                    # Validate file
-                    if validate:
-                        if template.format == Template.XSD:
-                            data_api.check_xml_file_is_valid(
-                                instance, request=request
-                            )
-                        elif template.format == Template.JSON:
-                            data_api.check_json_file_is_valid(instance)
-                    # Convert to JSON
-                    with open(
-                        os.path.join(settings.MEDIA_ROOT, folder, data_file),
-                        "rb",
-                    ) as _file:
-                        if template.format == Template.XSD:
-                            instance.dict_content = (
-                                main_xml_utils.raw_xml_to_dict(
-                                    _file,
-                                    postprocessor=XML_POST_PROCESSOR,
-                                    force_list=XML_FORCE_LIST,
-                                )
-                            )
-                        elif template.format == Template.JSON:
-                            instance.dict_content = load_json_string(
-                                _file.read()
-                            )
-                    # Add data to list
-                    data_list.append(instance)
-                except Exception as exception:
-                    logger.error(
-                        f"ERROR: Unable to insert {data_file}: {str(exception)}"
-                    )
-                # If data list reaches batch size
-                if len(data_list) == batch_size:
-                    # Bulk insert list of data
-                    BulkUploadFolder._bulk_create(data_list, batch)
-                    # Clear list of data
-                    data_list = list()
-            # insert the last batch
-            BulkUploadFolder._bulk_create(data_list, batch)
-
-            content = {
-                "message": "Bulk upload is complete. Check the logs for errors."
-            }
-            return Response(content, status=status.HTTP_200_OK)
-
-        except DoesNotExist:
-            content = {"message": "Template not found."}
-            return Response(content, status=status.HTTP_404_NOT_FOUND)
-        except Exception as api_exception:
-            content = {"message": str(api_exception)}
-            return Response(
-                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
 
 
 class DataHtmlRender(BaseDataHtmlRender):

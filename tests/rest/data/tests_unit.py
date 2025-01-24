@@ -1,16 +1,18 @@
 """Unit tests for data rest api
 """
 
-from unittest.mock import patch, MagicMock, mock_open
+from unittest.mock import patch
 
 from django.test import SimpleTestCase
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
+from tests.components.data.fixtures.fixtures import QueryDataFixtures
+from tests.components.data.tests_unit import _get_template, _get_json_template
+from tests.mocks import MockQuerySet
 
 from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.data import api as data_api
 from core_main_app.components.data.models import Data
-from core_main_app.components.template import api as template_api
 from core_main_app.components.template.models import Template
 from core_main_app.components.workspace.models import Workspace
 from core_main_app.rest.data import views as data_rest_views
@@ -21,9 +23,6 @@ from core_main_app.utils.tests_tools.RequestMock import (
     RequestMock,
     create_mock_request,
 )
-from tests.components.data.fixtures.fixtures import QueryDataFixtures
-from tests.components.data.tests_unit import _get_template, _get_json_template
-from tests.mocks import MockQuerySet
 
 
 class TestDataList(SimpleTestCase):
@@ -619,292 +618,6 @@ class TestDataPermissions(SimpleTestCase):
         # Assert
         excepted_result = {"1": False}
         self.assertEqual(response.data, excepted_result)
-
-
-class TestBulkUploadFolder(SimpleTestCase):
-    """Test Bulk Upload Folder"""
-
-    def setUp(self):
-        """setUp"""
-
-        super().setUp()
-
-    def test_put_not_staff_return_http_403(
-        self,
-    ):
-        """test_put_not_staff_return_http_403
-
-        Returns:
-
-        """
-        # Arrange
-        mock_user = create_mock_user("1")
-
-        # Mock
-        response = RequestMock.do_request_put(
-            data_rest_views.BulkUploadFolder.as_view(),
-            mock_user,
-        )
-
-        # Assert
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    @patch.object(template_api, "get_by_id")
-    def test_put_folder_bad_template_id_return_http_404(
-        self, mock_template_api_get_by_id
-    ):
-        """test_put_folder_bad_template_id_return_http_404
-
-        Returns:
-
-        """
-        # Arrange
-        mock_user = create_mock_user("1", is_staff=True)
-        mock_template_api_get_by_id.side_effect = DoesNotExist("error")
-
-        # Mock
-        response = RequestMock.do_request_put(
-            data_rest_views.BulkUploadFolder.as_view(),
-            mock_user,
-            data={"folder": "folder", "template": "1", "workspace": "1"},
-        )
-
-        # Assert
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-    @patch.object(data_rest_views.BulkUploadFolder, "_bulk_create")
-    @patch("builtins.open", new_callable=mock_open, read_data=b"<tag></tag>")
-    @patch("core_main_app.components.data.api.check_json_file_is_valid")
-    @patch("core_main_app.components.data.api.check_xml_file_is_valid")
-    @patch("os.listdir")
-    @patch("os.path.exists")
-    @patch.object(template_api, "get_by_id")
-    def test_put_xml_folder_calls_xml_validation(
-        self,
-        mock_template_api_get_by_id,
-        mock_exists,
-        mock_list_dir,
-        mock_check_xml_file_is_valid,
-        mock_check_json_file_is_valid,
-        mock_open_func,
-        mock_bulk_create,
-    ):
-        """test_put_xml_folder_calls_xml_validation
-
-        Returns:
-
-        """
-        # Arrange
-        mock_user = create_mock_user("1", is_staff=True)
-        mock_template_api_get_by_id.return_value = MagicMock(
-            format=Template.XSD
-        )
-        mock_exists.return_value = True
-        mock_list_dir.return_value = [MagicMock()]
-        mock_check_xml_file_is_valid.return_value = True
-        mock_check_json_file_is_valid.return_value = True
-        mock_bulk_create.return_value = None
-
-        # Mock
-        response = RequestMock.do_request_put(
-            data_rest_views.BulkUploadFolder.as_view(),
-            mock_user,
-            data={"folder": "folder", "template": "1", "workspace": "1"},
-        )
-
-        # Assert
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue(mock_check_xml_file_is_valid.called)
-        self.assertFalse(mock_check_json_file_is_valid.called)
-
-    @patch.object(data_rest_views.BulkUploadFolder, "_bulk_create")
-    @patch(
-        "builtins.open",
-        new_callable=mock_open,
-        read_data=b'{"element": "value"}',
-    )
-    @patch("core_main_app.components.data.api.check_json_file_is_valid")
-    @patch("core_main_app.components.data.api.check_xml_file_is_valid")
-    @patch("os.listdir")
-    @patch("os.path.exists")
-    @patch.object(template_api, "get_by_id")
-    def test_put_json_folder_calls_json_validation(
-        self,
-        mock_template_api_get_by_id,
-        mock_exists,
-        mock_list_dir,
-        mock_check_xml_file_is_valid,
-        mock_check_json_file_is_valid,
-        mock_open_func,
-        mock_bulk_create,
-    ):
-        """test_put_json_folder_calls_json_validation
-
-        Returns:
-
-        """
-        # Arrange
-        mock_user = create_mock_user("1", is_staff=True)
-        mock_template_api_get_by_id.return_value = MagicMock(
-            format=Template.JSON
-        )
-        mock_exists.return_value = True
-        mock_list_dir.return_value = [MagicMock()]
-        mock_check_xml_file_is_valid.return_value = True
-        mock_check_json_file_is_valid.return_value = True
-        mock_bulk_create.return_value = None
-
-        # Mock
-        response = RequestMock.do_request_put(
-            data_rest_views.BulkUploadFolder.as_view(),
-            mock_user,
-            data={"folder": "folder", "template": "1", "workspace": "1"},
-        )
-
-        # Assert
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertFalse(mock_check_xml_file_is_valid.called)
-        self.assertTrue(mock_check_json_file_is_valid.called)
-
-    def test_save_data_list_calls_data_save(
-        self,
-    ):
-        """test_save_data_list_calls_data_save
-
-        Returns:
-
-        """
-        # Arrange
-        mock_data = MagicMock()
-        mock_data.save.return_value = None
-
-        # Mock
-        data_rest_views.BulkUploadFolder._save_list([mock_data])
-        # Assert
-        self.assertTrue(mock_data.save.called)
-
-    def test_save_data_list_continues_if_error(
-        self,
-    ):
-        """test_save_data_list_continues_if_error
-
-        Returns:
-
-        """
-        # Arrange
-        mock_data = MagicMock()
-        mock_data.save.side_effect = Exception()
-
-        # Mock
-        data_rest_views.BulkUploadFolder._save_list([mock_data])
-        # Assert
-        self.assertTrue(mock_data.save.called)
-
-    def test_bulk_upload_not_batch_calls_data_save(
-        self,
-    ):
-        """test_bulk_upload_not_batch_calls_data_save
-
-        Returns:
-
-        """
-        # Arrange
-        mock_data = MagicMock()
-        mock_data.save.return_value = None
-
-        # Mock
-        data_rest_views.BulkUploadFolder._bulk_create([mock_data], batch=False)
-        # Assert
-        self.assertTrue(mock_data.save.called)
-
-    @patch.object(Data, "objects")
-    def test_bulk_upload_with_batch_calls_bulk_save(self, mock_data_objects):
-        """test_bulk_upload_with_batch_calls_bulk_save
-
-        Returns:
-
-        """
-        # Arrange
-        mock_data = MagicMock()
-        mock_data.save.return_value = None
-        mock_data_objects.bulk_create.return_value = None
-
-        # Mock
-        data_rest_views.BulkUploadFolder._bulk_create([mock_data], batch=True)
-
-        # Assert
-        self.assertFalse(mock_data.save.called)
-        self.assertTrue(mock_data_objects.bulk_create.called)
-
-    @patch.object(Data, "objects")
-    def test_bulk_upload_with_batch_and_exception_during_bulk_calls_save(
-        self, mock_data_objects
-    ):
-        """test_bulk_upload_with_batch_and_exception_during_bulk_calls_save
-
-        Returns:
-
-        """
-        # Arrange
-        mock_data = MagicMock()
-        mock_data.save.return_value = None
-        mock_data_objects.bulk_create.side_effect = Exception()
-
-        # Mock
-        data_rest_views.BulkUploadFolder._bulk_create([mock_data], batch=True)
-
-        # Assert
-        self.assertTrue(mock_data.save.called)
-
-    @patch.object(data_rest_views.BulkUploadFolder, "_save_list")
-    @patch("builtins.open", new_callable=mock_open, read_data=b"<tag></tag>")
-    @patch("core_main_app.components.data.api.check_json_file_is_valid")
-    @patch("core_main_app.components.data.api.check_xml_file_is_valid")
-    @patch("os.listdir")
-    @patch("os.path.exists")
-    @patch.object(template_api, "get_by_id")
-    def test_put_folder_batch_calls_data_save(
-        self,
-        mock_template_api_get_by_id,
-        mock_exists,
-        mock_list_dir,
-        mock_check_xml_file_is_valid,
-        mock_check_json_file_is_valid,
-        mock_open_func,
-        mock_save_list,
-    ):
-        """test_put_folder_batch_calls_data_save
-
-        Returns:
-
-        """
-        # Arrange
-        mock_user = create_mock_user("1", is_staff=True)
-        mock_template_api_get_by_id.return_value = MagicMock(
-            format=Template.XSD
-        )
-        mock_exists.return_value = True
-        mock_list_dir.return_value = [MagicMock()]
-        mock_check_xml_file_is_valid.return_value = True
-        mock_check_json_file_is_valid.return_value = True
-        mock_save_list.return_value = None
-
-        # Mock
-        response = RequestMock.do_request_put(
-            data_rest_views.BulkUploadFolder.as_view(),
-            mock_user,
-            data={
-                "folder": "folder",
-                "template": "1",
-                "workspace": "1",
-                "batch_size": 1,
-                "batch": False,
-            },
-        )
-
-        # Assert
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue(mock_save_list.called)
 
 
 class TestDataSerializer(SimpleTestCase):
