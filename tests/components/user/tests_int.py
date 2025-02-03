@@ -1,12 +1,16 @@
 """ Integration Test for User
 """
 
-from tests.components.user.fixtures.fixtures import UserFixtures
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
+from tests.components.user.fixtures.fixtures import UserFixtures
+
 from core_main_app.components.user import api as user_api
 from core_main_app.utils.integration_tests.integration_base_transaction_test_case import (
     IntegrationTransactionTestCase,
 )
+
+TEST_PASSWORD = "password"
 
 
 class TestUserGetActiveUsers(IntegrationTransactionTestCase):
@@ -266,3 +270,63 @@ class TestUserGetIdUsernameDict(IntegrationTransactionTestCase):
         result = user_api.get_id_username_dict([user1, user2])
         # Assert
         self.assertEqual(len(result), 2)
+
+
+class TestUserPasswords(IntegrationTransactionTestCase):
+    """TestUserPasswords"""
+
+    def test_create_user_with_hashed_password(self):
+        """test_create_user_with_hashed_password
+
+        Returns:
+
+        """
+        user = User.objects.create(
+            **{"username": "user", "password": make_password(TEST_PASSWORD)}
+        )
+        # user password and input password do not match
+        self.assertNotEqual(user.password, TEST_PASSWORD)
+        # input password check is valid
+        self.assertTrue(user.check_password(TEST_PASSWORD))
+
+    def test_create_user_with_raw_password(self):
+        """test_create_user_with_raw_password
+
+        Returns:
+
+        """
+        user = User.objects.create(
+            **{"username": "user", "password": TEST_PASSWORD}
+        )
+        # user password and input password match
+        self.assertEqual(user.password, TEST_PASSWORD)
+        # input password check in invalid
+        self.assertFalse(user.check_password(TEST_PASSWORD))
+
+    def test_create_user_with_empty_password(self):
+        """test_create_user_with_empty_password
+
+        Returns:
+
+        """
+        user = User.objects.create(**{"username": "user", "password": ""})
+        # user password is empty string
+        self.assertEqual(user.password, "")
+        # empty string input password is invalid
+        self.assertFalse(user.check_password(""))
+        # no input password is invalid
+        self.assertFalse(user.check_password(None))
+
+    def test_create_user_with_no_password(self):
+        """test_create_user_with_no_password
+
+        Returns:
+
+        """
+        user = User.objects.create(**{"username": "user"})
+        # not setting password, user password gets empty string
+        self.assertEqual(user.password, "")
+        # empty string input password is invalid
+        self.assertFalse(user.check_password(""))
+        # no input password is invalid
+        self.assertFalse(user.check_password(None))
