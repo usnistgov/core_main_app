@@ -548,6 +548,13 @@ DATA_SORTING_FIELDS = ["-title", "+last_modification_date"]
 
 ## Authentication
 
+### ``ADMIN_URLS_PREFIX``
+
+  Default: ``staff-``
+
+  Prefix added to admin urls. Should be set to a unique string per system and kept secret.
+
+
 ### ``ENABLE_ALLAUTH``
 
   Default: ``False``
