@@ -89,10 +89,16 @@ CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT = getattr(
 DATA_SORTING_FIELDS = ["+title"]
 
 CUSTOM_NAME = "Curator"
-ALLAUTH_ACCOUNT_REQUESTS_FOR_NEW_USERS = True
+
+ACCOUNT_AUTO_SIGNUP = False
 ACCOUNT_ADAPTER = "core_main_app.utils.allauth.cdcs_adapter.CDCSAccountAdapter"
+ACCOUNT_FORMS = {
+    "signup": "core_main_app.utils.allauth.forms.CoreAccountSignupForm"
+}
 SOCIALACCOUNT_AUTO_SIGNUP = False
-ACCOUNT_SIGNUP_FORM_CLASS = "core_main_app.utils.allauth.forms.CoreSignupForm"
+SOCIALACCOUNT_FORMS = {
+    "signup": "core_main_app.utils.allauth.forms.CoreSocialAccountSignupForm"
+}
 ENABLE_SAML2_SSO_AUTH = False
 ENABLE_ALLAUTH = False
 VERIFY_DATA_ACCESS = False

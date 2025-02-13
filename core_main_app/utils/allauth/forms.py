@@ -1,23 +1,17 @@
 """ Custom allauth forms
 """
 
-from django.conf import settings
+from allauth.account.forms import SignupForm as ASignupForm
+from allauth.socialaccount.forms import SignupForm as SASignupForm
+from captcha.fields import CaptchaField
 
 
-def get_core_signup_form_base_class():
-    if (
-        "allauth" in settings.INSTALLED_APPS
-        and "core_website_app" in settings.INSTALLED_APPS
-    ):
-        from core_website_app.views.user.forms import RequestAccountForm
-
-        return RequestAccountForm
-    # Set to None to raise an error
-    return None
-
-
-class CoreSignupForm(get_core_signup_form_base_class()):
+class CoreAccountSignupForm(ASignupForm):
     """Signup Form for Core application"""
+
+    captcha = CaptchaField()
+
+    field_order = ["email", "username", "password1", "password2", "captcha"]
 
     def signup(self, request, user):
         """Implement custom signup method
@@ -30,3 +24,11 @@ class CoreSignupForm(get_core_signup_form_base_class()):
 
         """
         pass
+
+
+class CoreSocialAccountSignupForm(SASignupForm):
+    """Signup Form for Core application"""
+
+    captcha = CaptchaField()
+
+    field_order = ["email", "username", "captcha"]

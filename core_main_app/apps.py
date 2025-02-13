@@ -62,10 +62,7 @@ def _check_settings():
             "to 'django_celery_beat.schedulers:DatabaseScheduler'."
         )
 
-    if (
-        "allauth" in settings.INSTALLED_APPS
-        and settings.ALLAUTH_ACCOUNT_REQUESTS_FOR_NEW_USERS
-    ):
+    if "allauth" in settings.INSTALLED_APPS:
         if (
             settings.ACCOUNT_ADAPTER
             != "core_main_app.utils.allauth.cdcs_adapter.CDCSAccountAdapter"
@@ -75,19 +72,25 @@ def _check_settings():
                 "'core_main_app.utils.allauth.cdcs_adapter.CDCSAccountAdapter'."
             )
 
-        if settings.SOCIALACCOUNT_AUTO_SIGNUP:
+        if "core_website_app" not in settings.INSTALLED_APPS:
             raise CoreError(
-                "SOCIALACCOUNT_AUTO_SIGNUP needs to be set to False."
+                "core_website_app is required to use allauth with CDCS."
             )
 
-        if "core_website_app" not in settings.INSTALLED_APPS:
-            raise CoreError("core_website_app is required to use allauth.")
-
         if (
-            settings.ACCOUNT_SIGNUP_FORM_CLASS
-            != "core_main_app.utils.allauth.forms.CoreSignupForm"
+            settings.ACCOUNT_FORMS["signup"]
+            != "core_main_app.utils.allauth.forms.CoreAccountSignupForm"
         ):
             raise CoreError(
-                "ACCOUNT_SIGNUP_FORM_CLASS needs to be set to "
-                "'core_main_app.utils.allauth.forms.CoreSignupForm'."
+                "ACCOUNT_FORMS['signup'] needs to be set to "
+                "'core_main_app.utils.allauth.forms.CoreAccountSignupForm'."
+            )
+
+        if (
+            settings.SOCIALACCOUNT_FORMS["signup"]
+            != "core_main_app.utils.allauth.forms.CoreSocialAccountSignupForm"
+        ):
+            raise CoreError(
+                "SOCIALACCOUNT_FORMS['signup'] needs to be set to "
+                "'core_main_app.utils.allauth.forms.CoreSocialAccountSignupForm'."
             )

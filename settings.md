@@ -576,14 +576,6 @@ DATA_SORTING_FIELDS = ["-title", "+last_modification_date"]
 
   Set to ``True`` to enable local MFA using `django-allauth`.
 
-### ``ALLAUTH_ACCOUNT_REQUESTS_FOR_NEW_USERS``
-
-  Default: ``True``
-
-  Set to ``True`` to force users making account requests on the system
-  (and prevent them from being able to log in before an administrator
-  approves the account request).
-
 ### ``SAML_EMAIL_AUTHENTICATION``
 
   Default: ``False``

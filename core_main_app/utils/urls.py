@@ -3,9 +3,11 @@
 
 import re
 
-from django.conf import settings
+from django.conf import settings as conf_settings
 from django.contrib.auth import views as auth_views
 from django.urls import reverse, re_path, include, path
+
+from core_main_app import settings as main_settings
 
 
 def get_template_download_pattern():
@@ -62,7 +64,7 @@ def get_auth_urls():
         )
     )
 
-    if settings.ENABLE_ALLAUTH:
+    if main_settings.ENABLE_ALLAUTH:
         urlpatterns.append(
             path("accounts/", include("allauth.urls")),
         )
@@ -116,7 +118,7 @@ def get_auth_urls():
                 name="password_reset_complete",
             )
         )
-        if settings.ENABLE_SAML2_SSO_AUTH:
+        if main_settings.ENABLE_SAML2_SSO_AUTH:
             from djangosaml2 import views as saml2_views
 
             urlpatterns.append(re_path(r"saml2/", include("djangosaml2.urls")))
@@ -134,7 +136,7 @@ def get_auth_urls():
                     name="core_main_app_saml2_logout",
                 )
             )
-        if "defender" in settings.INSTALLED_APPS:
+        if "defender" in conf_settings.INSTALLED_APPS:
             urlpatterns.append(
                 re_path(r"^admin/defender/", include("defender.urls"))
             )

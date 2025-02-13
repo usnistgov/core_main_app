@@ -2,9 +2,6 @@
 """
 
 from allauth.account.adapter import DefaultAccountAdapter
-from core_website_app.components.account_request import (
-    api as account_request_api,
-)
 
 
 class CDCSAccountAdapter(DefaultAccountAdapter):
@@ -15,6 +12,10 @@ class CDCSAccountAdapter(DefaultAccountAdapter):
         Create an inactive user and an account request
         instead of an active user.
         """
+        from core_website_app.components.account_request import (
+            api as account_request_api,
+        )
+
         user = super().save_user(request, user, form, commit=False)
         user.is_active = False
         account_request_api.insert(user)

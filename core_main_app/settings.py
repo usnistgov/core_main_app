@@ -192,12 +192,6 @@ ENABLE_ALLAUTH = getattr(settings, "ENABLE_ALLAUTH", False)
 """ :py:class:`bool`: Enable Django allauth Authentication
 """
 
-ALLAUTH_ACCOUNT_REQUESTS_FOR_NEW_USERS = getattr(
-    settings, "ALLAUTH_ACCOUNT_REQUESTS_FOR_NEW_USERS", True
-)
-""" :py:class:`bool`: Force Django-allauth to go through CDCS account requests
-"""
-
 ENABLE_SAML2_SSO_AUTH = getattr(settings, "ENABLE_SAML2_SSO_AUTH", False)
 """ :py:class:`bool`: Enable SAML2 SSO Authentication
 """

@@ -285,7 +285,7 @@ for an administrator to approve it, an option has been implemented.
 To force users making account requests on the system
 (even when using 3rd party authentication), set:
 ```
-ALLAUTH_ACCOUNT_REQUESTS_FOR_NEW_USERS=True
+ACCOUNT_ADAPTER = "core_main_app.utils.allauth.cdcs_adapter.CDCSAccountAdapter"
 ```
 
 For systems with existing user bases, the migration to `django-allauth` will be done as followed:
