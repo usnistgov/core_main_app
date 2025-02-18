@@ -791,7 +791,7 @@ class BlobRunProcessingModule(APIView):
                 }
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
-            blob_processing_module_tasks.process_blob.apply_async(
+            blob_processing_module_tasks.process_blob_with_module.apply_async(
                 (
                     processing_module_id,
                     blob_id,

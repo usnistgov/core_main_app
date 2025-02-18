@@ -353,3 +353,42 @@ class DigitsCountValidator:
     def get_min_count(self):
         """Returns: Min Non-Alphanumeric letters"""
         return self.min_digits
+
+
+@deconstructible
+class RunStrategyValidator:
+    """Validator used to check if the `run_strategy_list` field from a processing
+    module is well-formed
+    """
+
+    def __call__(self, value):
+        """Main validation function
+
+        Args:
+            value: JSON data contained in the field
+
+        Raises:
+            ValidationError - When the field does not conforms to the specifications.
+
+        """
+        from core_main_app.components.abstract_processing_module.models import (
+            AbstractProcessingModule,
+        )
+
+        if not isinstance(value, list):  # Field needs to be a list
+            raise ValidationError(
+                _("This field should be a list"),
+            )
+
+        for (
+            item
+        ) in value:  # Each item of the list needs to be a valid strategy
+            if item in AbstractProcessingModule.RUN_STRATEGY_MAP.keys():
+                continue
+
+            raise ValidationError(
+                _(
+                    f"This field contains an invalid value. Authorized values are: "
+                    f"{', '.join(AbstractProcessingModule.RUN_STRATEGY_MAP.keys())}"
+                ),
+            )

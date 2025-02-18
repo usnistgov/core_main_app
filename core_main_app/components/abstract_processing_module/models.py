@@ -5,6 +5,8 @@ import importlib
 
 from django.db import models
 
+from core_main_app.commons.validators import RunStrategyValidator
+
 
 class AbstractProcessingModule(models.Model):
     """Class to manage different types of processing modules"""
@@ -14,21 +16,20 @@ class AbstractProcessingModule(models.Model):
     RUN_ON_READ = "READ"
     RUN_ON_UPDATE = "UPDATE"
     RUN_ON_DELETE = "DELETE"
-    RUN_STRATEGY = [
-        (RUN_ON_DEMAND, "Run on demand"),
-        (RUN_ON_CREATE, "Run on create"),
-        (RUN_ON_READ, "Run on read"),
-        (RUN_ON_UPDATE, "Run on update"),
-        (RUN_ON_DELETE, "Run on delete"),
-    ]
+
+    RUN_STRATEGY_MAP = {
+        RUN_ON_DEMAND: "Run on demand",
+        RUN_ON_CREATE: "Run on create",
+        # RUN_ON_READ: "Run on read",  # FIXME: run on read is disabled for now.
+        RUN_ON_UPDATE: "Run on update",
+        RUN_ON_DELETE: "Run on delete",
+    }
 
     name = models.CharField(
         max_length=256, blank=False, default=None, unique=True
     )
-    run_strategy = models.CharField(
-        max_length=20,
-        choices=RUN_STRATEGY,
-        default=RUN_ON_DEMAND,
+    run_strategy_list = models.JSONField(
+        null=True, default=list, validators=[RunStrategyValidator()]
     )
 
     parameters = models.JSONField(null=True, blank=True, default=None)
@@ -40,6 +41,9 @@ class AbstractProcessingModule(models.Model):
         """Metadata information about processing module objects"""
 
         abstract = True
+
+    def has_strategy(self, strategy):
+        return strategy in self.run_strategy_list
 
     def get_class(self):
         """Retrieve and instantiate the processing module class"""

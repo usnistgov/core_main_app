@@ -4,6 +4,8 @@
 import logging
 import re
 
+from django.db.models import Q
+
 from core_main_app.access_control.api import user_is_registered
 from core_main_app.access_control.decorators import access_control
 from core_main_app.components.blob import api as blob_api
@@ -58,7 +60,11 @@ def get_all_by_blob_id(blob_id, user, run_strategy=None):
     blob_module_list = get_all(user)
 
     if run_strategy:  # Additional filtering if `run_strategy` is defined.
-        blob_module_list = blob_module_list.filter(run_strategy=run_strategy)
+        blob_module_list = [
+            blob_module
+            for blob_module in blob_module_list
+            if blob_module.has_strategy(run_strategy)
+        ]
 
     # Return the list of modules for which `blob_filename_regexp` matches the filename of
     #   the blob.

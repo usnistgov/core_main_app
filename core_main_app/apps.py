@@ -37,11 +37,16 @@ class InitApp(AppConfig):
             check_ssl_certificates_dir_setting,
         )
         from core_main_app.permissions import discover
+        from core_main_app.components.blob_processing_module import (
+            signals as blob_processing_module_signals,
+        )
 
         _check_settings()
         check_ssl_certificates_dir_setting(SSL_CERTIFICATES_DIR)
         post_migrate.connect(init_app, sender=self)
         discover.init_mongo_indexing()
+
+        blob_processing_module_signals.connect()
 
 
 def _check_settings():
