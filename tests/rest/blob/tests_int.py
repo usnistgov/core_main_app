@@ -197,6 +197,26 @@ class TestBlobList(IntegrationBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
+    def test_get_filtered_by_name_regex_returns_blob(self):
+        """test_get_filtered_by_incorrect_name_returns_http_200
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user("1", is_superuser=True)
+
+        # Act
+        response = RequestMock.do_request_get(
+            views.BlobList.as_view(),
+            user,
+            data={"filename": "blob", "regex": "true"},
+        )
+
+        # Assert
+        self.assertEqual(len(response.data), 2)
+
+    @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_get_filtered_by_incorrect_name_returns_empty_list(self):
         """test_get_filtered_by_incorrect_name_returns_empty_list
 

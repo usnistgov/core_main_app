@@ -214,6 +214,31 @@ class TestDataList(IntegrationBaseTestCase):
     @patch(
         "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
     )
+    def test_get_filtered_by_title_regex_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_get_filtered_by_title_regex_returns_data
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user(1)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+
+        # Act
+        response = RequestMock.do_request_get(
+            data_rest_views.DataList.as_view(),
+            user,
+            data={"title": "title", "regex": "true"},
+        )
+
+        # Assert
+        self.assertEqual(len(response.data["results"]), 2)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
     def test_get_filtered_by_incorrect_title_returns_no_data(
         self, get_all_workspaces_with_read_access_by_user
     ):
@@ -324,6 +349,83 @@ class TestDataList(IntegrationBaseTestCase):
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class TestAdminDataList(IntegrationBaseTestCase):
+    """TestDataList"""
+
+    fixture = fixture_data
+
+    def setUp(self):
+        """setUp
+
+        Returns:
+
+        """
+        super().setUp()
+
+    def test_get_filtered_by_correct_title_returns_data(
+        self,
+    ):
+        """test_get_filtered_by_correct_title_returns_data
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user(1, is_staff=True, is_superuser=True)
+
+        # Act
+        response = RequestMock.do_request_get(
+            data_rest_views.AdminDataList.as_view(),
+            user,
+            data={"title": self.fixture.data_1.title},
+        )
+
+        # Assert
+        self.assertEqual(len(response.data), 1)
+
+    def test_get_filtered_by_title_regex_returns_data(
+        self,
+    ):
+        """test_get_filtered_by_title_regex_returns_data
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user(1, is_staff=True, is_superuser=True)
+
+        # Act
+        response = RequestMock.do_request_get(
+            data_rest_views.AdminDataList.as_view(),
+            user,
+            data={"title": "title", "regex": "true"},
+        )
+
+        # Assert
+        self.assertEqual(len(response.data), 3)
+
+    def test_get_filtered_by_incorrect_title_returns_no_data(
+        self,
+    ):
+        """test_get_filtered_by_incorrect_title_returns_no_data
+
+        Returns:
+
+        """
+        # Arrange
+        user = create_mock_user(1, is_staff=True, is_superuser=True)
+
+        # Act
+        response = RequestMock.do_request_get(
+            data_rest_views.AdminDataList.as_view(),
+            user,
+            data={"title": "bad title"},
+        )
+
+        # Assert
+        self.assertEqual(len(response.data), 0)
 
 
 class TestDataDetail(IntegrationBaseTestCase):

@@ -30,6 +30,7 @@ from core_main_app.rest.blob.serializers import (
     BlobSerializer,
     DeleteBlobsSerializer,
 )
+from core_main_app.utils.boolean import to_bool
 from core_main_app.utils.file import get_file_http_response
 
 
@@ -54,11 +55,13 @@ class AbstractBlobList(APIView, metaclass=ABCMeta):
         Url Parameters:
 
             filename: document_filename
+            regex: true | false
 
         Examples:
 
             ../blob/
             ../blob?filename=[filename]
+            ../blob?filename=[filename]&regex=true
 
         Args:
 
@@ -78,8 +81,16 @@ class AbstractBlobList(APIView, metaclass=ABCMeta):
 
             # Apply filters
             filename = self.request.query_params.get("filename", None)
+
             if filename is not None:
-                blob_list = blob_list.filter(filename=filename)
+                regex = self.request.query_params.get("regex", False)
+
+                filename_filter = (
+                    {"filename__iregex": filename}
+                    if to_bool(regex)
+                    else {"filename": filename}
+                )
+                blob_list = blob_list.filter(**filename_filter)
 
             # Serialize object
             serializer = BlobSerializer(
@@ -122,11 +133,13 @@ class BlobListAdmin(AbstractBlobList):
         Url Parameters:
 
             filename: document_filename
+            regex: true | false
 
         Examples:
 
             ../blob/
             ../blob?filename=[filename]
+            ../blob?filename=[filename]&regex=true
 
         Args:
 

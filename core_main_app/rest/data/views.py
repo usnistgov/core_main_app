@@ -71,6 +71,7 @@ class DataList(APIView):
             workspace: workspace_id
             template: template_id
             title: document_title
+            regex: true|false
 
         Examples:
 
@@ -79,6 +80,7 @@ class DataList(APIView):
             ../data?workspace=[workspace_id]
             ../data?template=[template_id]
             ../data?title=[document_title]
+            ../data?title=[document_title]&regex=true
             ../data?template=[template_id]&title=[document_title]&page=3
 
         Args:
@@ -106,8 +108,15 @@ class DataList(APIView):
                 data_object_list = data_object_list.filter(template=template)
 
             title = self.request.query_params.get("title", None)
+
             if title is not None:
-                data_object_list = data_object_list.filter(title=title)
+                regex = self.request.query_params.get("regex", False)
+                title_filter = (
+                    {"title__iregex": title}
+                    if to_bool(regex)
+                    else {"title": title}
+                )
+                data_object_list = data_object_list.filter(**title_filter)
 
             # Get paginator
             paginator = StandardResultsSetPagination()
@@ -197,6 +206,7 @@ class AdminDataList(DataList):
             workspace: workspace_id
             template: template_id
             title: document_title
+            regex: true|false
 
         Examples:
 
@@ -205,6 +215,7 @@ class AdminDataList(DataList):
             ../data?workspace=[workspace_id]
             ../data?template=[template_id]
             ../data?title=[document_title]
+            ../data?title=[document_title]&regex=true
             ../data?template=[template_id]&title=[document_title]
 
         Args:
@@ -239,8 +250,15 @@ class AdminDataList(DataList):
                 data_object_list = data_object_list.filter(template=template)
 
             title = self.request.query_params.get("title", None)
+
             if title is not None:
-                data_object_list = data_object_list.filter(title=title)
+                regex = self.request.query_params.get("regex", False)
+                title_filter = (
+                    {"title__iregex": title}
+                    if to_bool(regex)
+                    else {"title": title}
+                )
+                data_object_list = data_object_list.filter(**title_filter)
 
             # Serialize object
             data_serializer = self.serializer(data_object_list, many=True)
