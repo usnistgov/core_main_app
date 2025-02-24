@@ -264,19 +264,19 @@ CDCS 2.12 adds support for [django-allauth](https://docs.allauth.org/en/latest/)
 To install CDCS with the required packages for django-allauth, add the following line
 to the `requirements.core.txt` file of your project, or pip install in your python environment:
 
-```
-core-main-app[allauth]
-core-main-app[allauth]==2.12.* # if the project requires a specific version
-core-main-app[allauth,mongodb]==2.12.* # if the project requires several optional packages such as mongodb
-```
+.. code::
 
-To enable django-allauth and some preconfigured authentication options set the following
-environment variables:
-```
-ENABLE_ALLAUTH=True             # Enable allauth package
-ENABLE_SAML2_SSO_AUTH=True      # Enable saml2 auth via allauth if both variables are True
-ENABLE_ALLAUTH_LOCAL_MFA=True   # Enable local MFA via allauth
-```
+    core-main-app[allauth]
+    core-main-app[allauth]==2.12.* # if the project requires a specific version
+    core-main-app[allauth,mongodb]==2.12.* # if the project requires several optional packages such as mongodb
+
+
+To enable django-allauth routes in the core:
+
+.. code:: python
+
+    ENABLE_ALLAUTH=True             # Enable allauth package
+
 
 By default the django-allauth package allows users signing up on a
 platform and login using their social account. To preserve the
@@ -284,22 +284,40 @@ CDCS workflow of first requesting an account and waiting
 for an administrator to approve it, an option has been implemented.
 To force users making account requests on the system
 (even when using 3rd party authentication), set:
-```
-ACCOUNT_ADAPTER = "core_main_app.utils.allauth.cdcs_adapter.CDCSAccountAdapter"
-```
+
+.. code:: python
+
+    ACCOUNT_ADAPTER = "core_main_app.utils.allauth.cdcs_adapter.CDCSAccountAdapter"
+
 
 For systems with existing user bases, the migration to `django-allauth` will be done as followed:
 - existing local accounts will be migrated automatically,
 - existing local accounts previously created by connecting to an Identity Provider (IdP) using SAML2:
 1) Automatically migrate existing accounts by matching their email to the email
 registered in the IdP by setting:
-```
-SAML_EMAIL_AUTHENTICATION=True
-SAML_VERIFIED_EMAIL=True # Or set to a list of accepted domains
-```
+
+.. code:: python
+
+    SAML_EMAIL_AUTHENTICATION=True
+    SAML_VERIFIED_EMAIL=True # Or set to a list of accepted domains
+
 2) Let users manually link their account back to the IdP via SAML2 from their profile page.
 Users who only authenticated via SAML2 in the past may have to first reset their password,
 connect to their local account and then link their account to the IdP.
+
+REST Authentication
+-------------------
+
+CDCS 2.14 removes Basic REST authentication from the default settings in favor of Token authentication
+(more details about REST authentication can be found the
+`Django REST Framework Authentication Documentation <https://www.django-rest-framework.org/api-guide/authentication/#api-reference>`_ ).
+To enable Basic authentication again, the following lines can be added to a settings file:
+
+.. code:: python
+
+    REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"] = REST_FRAMEWORK[
+        "DEFAULT_AUTHENTICATION_CLASSES"
+    ] + ("rest_framework.authentication.BasicAuthentication", )
 
 
 Blob Processing Modules
