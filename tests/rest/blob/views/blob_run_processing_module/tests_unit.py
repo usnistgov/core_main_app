@@ -44,7 +44,7 @@ class TestBlobRunProcessingModulePost(TestCase):
         """test_process_blob_called"""
         self.mock_view.post(**self.kwargs)
 
-        mock_blob_processing_module_tasks.process_blob.apply_async.assert_called_with(
+        mock_blob_processing_module_tasks.process_blob_with_module.apply_async.assert_called_with(
             (
                 self.kwargs["processing_module_id"],
                 self.kwargs["blob_id"],
@@ -58,7 +58,7 @@ class TestBlobRunProcessingModulePost(TestCase):
         self, mock_blob_processing_module_tasks
     ):
         """test_process_blob_exception_returns_500"""
-        mock_blob_processing_module_tasks.process_blob.apply_async.side_effect = Exception(
+        mock_blob_processing_module_tasks.process_blob_with_module.apply_async.side_effect = Exception(
             "mock_process_blob_exception"
         )
 

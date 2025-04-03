@@ -294,3 +294,9 @@ WEBSITE_CONTACTS = getattr(settings, "WEBSITE_CONTACTS", [])
 """ :py:class:`str`: A list of all the people who will be notified when contact messages,
   or account requests are sent via the application.
 """
+
+ENABLE_BLOB_MODULES_SIGNALS = getattr(
+    settings, "ENABLE_BLOB_MODULES_SIGNALS", True
+)
+""" :py:class:`bool`: Set to `True` to enable Blob modules signals.
+"""

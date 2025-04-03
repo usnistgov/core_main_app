@@ -107,5 +107,5 @@ class TestGetAllByBlobId(TestCase):
         blob_processing_module_api.get_all_by_blob_id(**self.mock_kwargs)
 
         mock_blob_module_list.filter.assert_called_with(
-            run_strategy=self.mock_kwargs["run_strategy"]
+            run_strategy_list__contains=self.mock_kwargs["run_strategy"]
         )

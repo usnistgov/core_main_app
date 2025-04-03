@@ -81,10 +81,7 @@ def process_blob_with_all_modules(blob_id, strategy, user_id=None):
         raise ApiError(error_message)
 
     logger.debug(
-        "Processing blob %d with all modules for strategy %s for user %d...",
-        blob_id,
-        strategy,
-        user_id,
+        f"Processing blob {str(blob_id)} with all modules for strategy {strategy} for user {str(user_id)}..."
     )
 
     try:
@@ -94,7 +91,9 @@ def process_blob_with_all_modules(blob_id, strategy, user_id=None):
         blob = blob_api.get_by_id(blob_id, user)
         blob_module_list = [
             blob_module
-            for blob_module in blob_processing_module_api.get_all(user)
+            for blob_module in blob_processing_module_api.get_all(user).filter(
+                run_strategy_list__contains=strategy
+            )
             if re.match(blob_module.blob_filename_regexp, blob.filename)
         ]
         logger.debug(

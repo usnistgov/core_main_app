@@ -517,6 +517,12 @@ DATA_SORTING_FIELDS = ["-title", "+last_modification_date"]
 
   Set to ``True`` to enable blob api and user views for blob management.
 
+### ``ENABLE_BLOB_MODULES_SIGNALS``
+
+  Default: ``True``
+  
+  Set to `True` to enable Blob modules signals (will trigger some actions on blob create/update/delete)
+
 ### ``LOCAL_ID_LENGTH``
 
   Default: ``20``

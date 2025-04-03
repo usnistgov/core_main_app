@@ -42,9 +42,6 @@ class AbstractProcessingModule(models.Model):
 
         abstract = True
 
-    def has_strategy(self, strategy):
-        return strategy in self.run_strategy_list
-
     def get_class(self):
         """Retrieve and instantiate the processing module class"""
         classpath = self.processing_class.split(".")

@@ -3,8 +3,8 @@
 
 import json
 from copy import deepcopy
-
 from pathlib import Path
+
 from django.urls import reverse
 
 from core_main_app.commons.exceptions import CoreError
@@ -20,27 +20,69 @@ from core_main_app.utils.processing_module.models import (
 
 class FileMetadataBlobProcessing(AbstractObjectProcessing):
     """Class containing all processing functions to maintain file metadata about a blob."""
-    def _get_metadata_data_title(self, blob_filename):
+
+    @staticmethod
+    def _get_metadata_title(blob_filename):
+        """Get metadata title
+
+        Args:
+            blob_filename:
+
+        Returns:
+
+        """
         return f"{Path(blob_filename).with_suffix('')} metadata"
 
-    def _get_current_time(self):
+    @staticmethod
+    def _get_current_time():
+        """Get current time
+
+        Returns:
+
+        """
         return datetime.datetime_to_utc_datetime_iso8601(
             datetime.datetime_now()
         )
 
+    @staticmethod
+    def _get_blob_detail_url(blob_id):
+        """Get blob detail url
+
+        Args:
+            blob_id:
+
+        Returns:
+
+        """
+        return (
+            f"{SERVER_URI}{reverse('core_main_app_blob_detail')}?id={blob_id}"
+        )
+
     def create_metadata_file(self, blob, blob_module_params):  # noqa
-        current_time = self._get_current_time()
+        """Create a metadata file
+
+        Args:
+            blob:
+            blob_module_params:
+
+        Returns:
+
+        """
+        current_time = self.__class__._get_current_time()
 
         blob_info_dict = {
             "filename": blob.filename,
             "checksum": blob.checksum,
-            "url": f"{SERVER_URI}{reverse('core_main_app_blob_detail')}?id={blob.pk}",
+            "url": self.__class__._get_blob_detail_url(blob.pk),
             "size": blob.size,
-            "dates": {"create": current_time, "update": current_time},
+            "dates": {
+                "creation_date": current_time,
+                "modification_date": current_time,
+            },
         }
         # create new data
         data = Data(
-            title=self._get_metadata_data_title(blob.filename),
+            title=self.__class__._get_metadata_title(blob.filename),
             template=system_api.get_template_by_id(
                 blob_module_params["template_pk"],
             ),
@@ -55,18 +97,32 @@ class FileMetadataBlobProcessing(AbstractObjectProcessing):
         return data
 
     def update_metadata_file(self, blob, blob_module_params):
+        """Update the metadata file
+
+        Args:
+            blob:
+            blob_module_params:
+
+        Returns:
+
+        """
         # Check if metadata files with the correct name already exists.
         metadata_data_list = [
             metadata_data
             for metadata_data in Data.objects.filter(_blob=blob)
-            if metadata_data.title == self._get_metadata_data_title(blob.filename)
+            if metadata_data.title
+            == self.__class__._get_metadata_title(blob.filename)
         ]
 
         metadata_data_list_size = len(metadata_data_list)
 
-        if metadata_data_list_size == 0:  # If no metadata files are found, create one.
+        if (
+            metadata_data_list_size == 0
+        ):  # If no metadata files are found, create one.
             return self.create_metadata_file(blob, blob_module_params)
-        elif metadata_data_list_size > 1:  # Too many metadata files with the same name.
+        elif (
+            metadata_data_list_size > 1
+        ):  # Too many metadata files with the same name.
             raise CoreError(
                 "Too many metadata file found. Expecting at most 1 file, found "
                 f"{metadata_data_list_size}."
@@ -74,24 +130,40 @@ class FileMetadataBlobProcessing(AbstractObjectProcessing):
 
         metadata_data = metadata_data_list[0]
         metadata_data_dict_content = deepcopy(metadata_data.get_dict_content())
-        metadata_data_dict_content["dates"]["update"] = self._get_current_time()
+        metadata_data_dict_content["dates"][
+            "modification_date"
+        ] = self.__class__._get_current_time()
 
         metadata_data.content = json.dumps(metadata_data_dict_content)
         return system_api.upsert_data(metadata_data)
 
     def delete_metadata_file(self, blob, blob_module_params):
+        """Delete metadata file
+
+        Args:
+            blob:
+            blob_module_params:
+
+        Returns:
+
+        """
         # Check if metadata files with the correct name already exists.
         metadata_data_list = [
             metadata_data
             for metadata_data in Data.objects.filter(_blob=blob)
-            if metadata_data.title == self._get_metadata_data_title(blob.filename)
+            if metadata_data.title
+            == self.__class__._get_metadata_title(blob.filename)
         ]
 
         metadata_data_list_size = len(metadata_data_list)
 
-        if metadata_data_list_size == 0:  # If no metadata files are found, create one.
+        if (
+            metadata_data_list_size == 0
+        ):  # If no metadata files are found, return.
             return
-        elif metadata_data_list_size > 1:  # Too many metadata files with the same name.
+        elif (
+            metadata_data_list_size > 1
+        ):  # Too many metadata files with the same name.
             raise CoreError(
                 "Too many metadata file found. Expecting at most 1 file, found "
                 f"{metadata_data_list_size}."

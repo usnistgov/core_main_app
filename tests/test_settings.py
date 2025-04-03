@@ -117,3 +117,4 @@ TEXT_EDITOR_LIBRARY = None
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 WEBSITE_CONTACTS = [("John", "john@example.com"), ("Mary", "mary@example.com")]
 EMAIL_SUBJECT_PREFIX = "[Test]"
+ENABLE_BLOB_MODULES_SIGNALS = False

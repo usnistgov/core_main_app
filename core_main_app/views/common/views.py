@@ -1416,7 +1416,7 @@ class ViewBlob(CommonView):
             except AccessControlError:
                 blob_modules = []
 
-            try:  # Check wether the user can write the blob.
+            try:  # Check whether the user can write the blob.
                 acl_api.check_can_write(blob_object, request.user)
                 can_write = True
             except AccessControlError:

@@ -13,6 +13,7 @@ from core_main_app.commons.validators import (
     NonAlphanumericCountValidator,
     DigitsCountValidator,
     BlankSpacesValidator,
+    RunStrategyValidator,
 )
 
 
@@ -151,3 +152,32 @@ class TestValidators(unittest.TestCase):
         digits_validator = DigitsCountValidator(5)
         with self.assertRaises(ValidationError):
             digits_validator.validate("abbccc1234dddd")
+
+    def test_run_strategy_validator_should_fail_if_not_a_list(self):
+        """test_run_strategy_validator_should_fail_if_not_a_list
+
+        Returns:
+
+        """
+        run_strategy_validator = RunStrategyValidator()
+        with self.assertRaises(ValidationError):
+            run_strategy_validator.__call__("test")
+
+    def test_run_strategy_validator_should_fail_if_value_not_in_list(self):
+        """test_run_strategy_validator_should_fail_if_value_not_in_list
+
+        Returns:
+
+        """
+        run_strategy_validator = RunStrategyValidator()
+        with self.assertRaises(ValidationError):
+            run_strategy_validator.__call__(["BAD_EVENT"])
+
+    def test_run_strategy_validator_should_pass(self):
+        """test_run_strategy_validator_should_pass
+
+        Returns:
+
+        """
+        run_strategy_validator = RunStrategyValidator()
+        run_strategy_validator.__call__(["DEMAND", "CREATE"])

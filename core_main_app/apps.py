@@ -5,6 +5,8 @@ from django.apps import AppConfig
 from django.conf import settings
 from django.db.models.signals import post_migrate
 
+from core_main_app import settings as main_settings
+
 
 def init_app(sender, **kwargs):
     """Initialize app
@@ -37,16 +39,12 @@ class InitApp(AppConfig):
             check_ssl_certificates_dir_setting,
         )
         from core_main_app.permissions import discover
-        from core_main_app.components.blob_processing_module import (
-            signals as blob_processing_module_signals,
-        )
 
         _check_settings()
         check_ssl_certificates_dir_setting(SSL_CERTIFICATES_DIR)
         post_migrate.connect(init_app, sender=self)
         discover.init_mongo_indexing()
-
-        blob_processing_module_signals.connect()
+        _init_blob_modules_signals()
 
 
 def _check_settings():
@@ -99,3 +97,15 @@ def _check_settings():
                 "SOCIALACCOUNT_FORMS['signup'] needs to be set to "
                 "'core_main_app.utils.allauth.forms.CoreSocialAccountSignupForm'."
             )
+
+
+def _init_blob_modules_signals():
+    """Initialize blob modules signals
+
+    Returns:
+
+    """
+    from core_main_app.components.blob_processing_module import signals
+
+    if main_settings.ENABLE_BLOB_MODULES_SIGNALS:
+        signals.connect()

@@ -368,7 +368,7 @@ class RunStrategyValidator:
             value: JSON data contained in the field
 
         Raises:
-            ValidationError - When the field does not conforms to the specifications.
+            ValidationError - When the field does not conform to the specifications.
 
         """
         from core_main_app.components.abstract_processing_module.models import (
