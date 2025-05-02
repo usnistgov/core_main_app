@@ -45,7 +45,6 @@ class InitApp(AppConfig):
         post_migrate.connect(init_app, sender=self)
         discover.init_mongo_indexing()
         _init_blob_modules_signals()
-        _init_file_update_signals()
 
 
 def _check_settings():
@@ -110,23 +109,3 @@ def _init_blob_modules_signals():
 
     if main_settings.ENABLE_BLOB_MODULES_SIGNALS:
         signals.connect()
-
-
-def _init_file_update_signals():
-    """Initialize file update signals
-
-    Returns:
-
-    """
-    from django.db.models import signals as models_signals
-
-    from core_main_app.components.data.models import Data
-    from core_main_app.components.template.models import Template
-    from core_main_app.components.xsl_transformation.models import (
-        XslTransformation,
-    )
-    from core_main_app.utils.databases.filefield import replace_file
-
-    models_signals.pre_save.connect(replace_file, sender=Data)
-    models_signals.pre_save.connect(replace_file, sender=Template)
-    models_signals.pre_save.connect(replace_file, sender=XslTransformation)
