@@ -16,7 +16,7 @@ class BlobProcessingModule(AbstractProcessingModule):
 
     blob_filename_regexp = models.CharField(
         max_length=250, validators=[RegexValidator], default=".*"
-    )  # ".*" ".+\.[xml,json]"
+    )  # ".*" ".*\.(png|jpg)"
 
     @staticmethod
     def get_by_id(blob_id):

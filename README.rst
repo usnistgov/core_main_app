@@ -351,7 +351,7 @@ Module". The following fields are required:
   processing module, enter
   ``core_main_app.blob_modules.file_metadata.FileMetadataBlobProcessing``.
 - Blob Filename Regexp: A regular expression to determine which blobs this processing
-  module can be applied to.
+  module can be applied to (e.g. ``.*\.(png|jpg)``).
 
 .. [1] To ensure JSON support is enabled, see the `JSON Support`_ section. Upload a
   JSON template by visiting ``/core-admin/template/upload``. Once the template is
