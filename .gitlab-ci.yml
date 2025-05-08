@@ -1,0 +1,54 @@
+stages:
+  - lint
+  - test
+
+services:
+  - name: postgres:16
+    alias: postgres
+
+variables: # https://docs.gitlab.com/ci/services/postgres/#use-postgresql-with-the-docker-executor
+  POSTGRES_DB: $POSTGRES_DB
+  POSTGRES_USER: $POSTGRES_USER
+  POSTGRES_PASSWORD: $POSTGRES_PASSWORD  # Expected by Psql
+  POSTGRES_PASS: $POSTGRES_PASSWORD  # Expected by Django settings
+  DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}"
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: 5432
+
+before_script:
+  - apt update
+  - apt-get --no-install-recommends install -y gcc git pkg-config libpq-dev postgresql-client libxmlsec1-dev libxml2-dev libxslt-dev libssl-dev python3-pip
+  - pip install --upgrade pip
+  - python -m venv /tmp/venv
+  - source /tmp/venv/bin/activate
+  - pip install -r requirements.txt
+  - pip install -r requirements.dev.txt
+  - pip install -r requirements.test.txt
+  - pip install -U diff-cover
+
+lint:
+  image: python:3.10-slim-bullseye
+  stage: lint
+  script:
+    - black --check .
+    - flake8 --extend-ignore E501 .
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      when: always
+
+test:
+  stage: test
+  parallel:
+    matrix:
+      - PYTHON_VERSION: ['3.9', '3.10', '3.11', '3.12']
+  image: python:${PYTHON_VERSION}-slim-bullseye
+  script:
+    - coverage run --parallel --source=core_main_app --omit=*settings.py -p runtests.py
+    - coverage run --parallel --source=core_main_app --omit=*settings.py -p runtests_mongo.py
+    - coverage run --parallel --source=core_main_app --omit=*settings.py -p runtests_sqlite3.py
+    - coverage combine || true
+    - coverage xml
+    - diff-cover coverage.xml --compare-branch=origin/master --fail-under=100
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      when: on_success
