@@ -1,2 +1,2 @@
-djangosaml2==1.9.*
+djangosaml2==1.10.*
 django-defender==0.9.*
