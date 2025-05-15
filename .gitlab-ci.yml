@@ -17,13 +17,13 @@ variables: # https://docs.gitlab.com/ci/services/postgres/#use-postgresql-with-t
 
 before_script:
   - apt update
-  - apt-get --no-install-recommends install -y gcc git pkg-config libpq-dev postgresql-client libxmlsec1-dev libxml2-dev libxslt-dev libssl-dev python3-pip
+  - apt-get --no-install-recommends install -y gcc git pkg-config libpq-dev postgresql-client libxmlsec1-dev libxmlsec1-openssl libxml2-dev libxslt-dev libssl-dev python3-pip
   - pip install --upgrade pip
   - python -m venv /tmp/venv
   - source /tmp/venv/bin/activate
+  - pip install xmlsec==1.3.14
   - pip install -r requirements.txt
-  - pip install -r requirements.dev.txt
-  - pip install -r requirements.test.txt
+  - find . -name 'requirements.*.txt' -exec pip install --pre --index-url ${CI_SERVER_URL}/api/v4/groups/${CI_PROJECT_NAMESPACE_ID}/-/packages/pypi/simple/ -r {} \;
   - pip install -U diff-cover
 
 lint:
