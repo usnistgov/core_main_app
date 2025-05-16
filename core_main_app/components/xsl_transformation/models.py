@@ -10,6 +10,7 @@ from core_main_app.commons import exceptions
 from core_main_app.commons.regex import NOT_EMPTY_OR_WHITESPACES
 from core_main_app.settings import CHECKSUM_ALGORITHM
 from core_main_app.utils.checksum import compute_checksum
+from core_main_app.utils.databases.filefield import save_file_history
 from core_main_app.utils.storage.storage import (
     core_file_storage,
     user_directory_path,
@@ -48,6 +49,7 @@ class XslTransformation(models.Model):
         upload_to=user_directory_path,
         storage=core_file_storage(model="xsl_transformation"),
     )
+    file_history = models.JSONField(blank=True, null=True, default=list)
     checksum = models.CharField(
         max_length=512, blank=True, default=None, null=True
     )
@@ -151,6 +153,7 @@ class XslTransformation(models.Model):
         """
         try:
             if self._content:
+                save_file_history(self, model="xsl_transformation")
                 self.file = SimpleUploadedFile(
                     name=self.filename,
                     content=self._content.encode("utf-8"),

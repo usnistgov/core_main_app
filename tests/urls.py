@@ -1,9 +1,10 @@
 """ Url router for the main application
 """
 
-from django.conf.urls import include
+from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
+from django.urls import path, include
 from django.urls import re_path
 
 from core_main_app.components.blob import api as blob_api
@@ -16,6 +17,7 @@ from core_main_app.views.common import (
 from core_main_app.views.user import views as user_views, ajax as user_ajax
 
 urlpatterns = [
+    path("admin/", admin.site.urls),
     re_path(r"^$", user_views.homepage, name="core_main_app_homepage"),
     re_path(r"^login", user_views.custom_login, name="core_main_app_login"),
     re_path(r"^rest/", include("tests.rest_urls")),

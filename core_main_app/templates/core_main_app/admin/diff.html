@@ -1,0 +1,27 @@
+{% extends 'admin/base_site.html' %}
+
+{% block title %}Diff - {{ title }}{% endblock %}
+
+{% block content %}
+    <div id="content-main">
+        <p><a href="{{ back_url }}">Back to {{ title }}</a></p>
+        <pre style="white-space: pre-wrap; word-wrap: break-word;">
+            {{ diff|safe }}
+        </pre>
+        <p><a href="{{ back_url }}">Back to {{ title }}</a></p>
+    </div>
+{% endblock %}
+
+{% block extrastyle %}
+    <style>
+        .diff_add {
+            color: green;
+            background-color: #ddffdd;
+        }
+        .diff_sub {
+            color: red;
+            text-decoration: line-through;
+            background-color: #ffdddd;
+        }
+    </style>
+{% endblock %}

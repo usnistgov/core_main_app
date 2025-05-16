@@ -1,6 +1,8 @@
 """ Data model
 """
 
+import logging
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.postgres.indexes import GinIndex
@@ -26,7 +28,10 @@ from core_main_app.settings import (
     XML_FORCE_LIST,
 )
 from core_main_app.utils import xml as xml_utils
+from core_main_app.utils.databases.filefield import save_file_history
 from core_main_app.utils.json_utils import load_json_string
+
+logger = logging.getLogger(__name__)
 
 
 class Data(AbstractData):
@@ -110,6 +115,7 @@ class Data(AbstractData):
         except UnicodeEncodeError:
             content = self.content
 
+        save_file_history(self, model="data")
         self.file = SimpleUploadedFile(
             name=self.title,
             content=content,

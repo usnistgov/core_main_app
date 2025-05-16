@@ -16,6 +16,7 @@ from core_main_app.components.template_version_manager.models import (
 from core_main_app.components.version_manager.models import Version
 from core_main_app.settings import CHECKSUM_ALGORITHM
 from core_main_app.utils.checksum import compute_checksum
+from core_main_app.utils.databases.filefield import save_file_history
 from core_main_app.utils.file import (
     get_template_file_content_type_for_template_format,
 )
@@ -68,6 +69,7 @@ class Template(Version):
         upload_to=user_directory_path,
         storage=core_file_storage(model="template"),
     )
+    file_history = models.JSONField(blank=True, null=True, default=list)
     user = models.CharField(
         blank=True, max_length=200, null=True, default=None
     )
@@ -262,6 +264,7 @@ class Template(Version):
         try:
             self._cls = self.class_name
             if self._content:
+                save_file_history(self, model="template")
                 self.file = SimpleUploadedFile(
                     name=self.filename,
                     content=self._content.encode("utf-8"),

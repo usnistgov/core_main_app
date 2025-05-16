@@ -2,15 +2,23 @@
 """
 
 from unittest.case import TestCase
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import patch, MagicMock, Mock
 
+from django.contrib import admin
 from django.test import override_settings
+from django.urls import reverse, resolve
+from django.utils.safestring import SafeString
+from rest_framework import status
 
+from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
-from core_main_app.commons.exceptions import DoesNotExist, CoreError
+from core_main_app.commons.exceptions import CoreError
+from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.template import api as template_api
+from core_main_app.components.template.admin_site import CustomTemplateAdmin
 from core_main_app.components.template.models import Template
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
+from core_main_app.utils.tests_tools.RequestMock import RequestMock
 from core_main_app.utils.tests_tools.RequestMock import create_mock_request
 
 
@@ -291,6 +299,317 @@ class TestTemplateHash(TestCase):
         template.checksum = "checksum"
 
         self.assertEqual(template.hash, "checksum")
+
+
+class TestCustomTemplateAdminViews(TestCase):
+    """Test Custom Template Admin Views"""
+
+    def setUp(self):
+        """setUp"""
+        self.anonymous = create_mock_user(
+            user_id=None, is_staff=False, is_superuser=False
+        )
+        self.user = create_mock_user(
+            user_id="1", is_staff=False, is_superuser=False
+        )
+        self.staff_user = create_mock_user(
+            user_id="2", is_staff=True, is_superuser=False
+        )
+        self.superuser = create_mock_user(
+            user_id="1", is_staff=True, is_superuser=True
+        )
+
+    @patch("core_main_app.components.template.admin_site.diff_files")
+    def test_anonymous_cannot_access_diff_file_view(self, mock_diff_files):
+        """test_anonymous_cannot_access_diff_file_view"""
+        template_id = 1
+        index = 0
+        url = reverse("admin:diff_file_template", args=[template_id, index])
+        view = resolve(url).func
+        response = RequestMock.do_request_get(view, user=self.anonymous)
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
+        self.assertFalse(mock_diff_files.called)
+
+    @patch("core_main_app.components.template.admin_site.diff_files")
+    def test_user_cannot_access_diff_file_view(self, mock_diff_files):
+        """test_user_cannot_access_diff_file_view"""
+        template_id = 1
+        index = 0
+        url = reverse("admin:diff_file_template", args=[template_id, index])
+        view = resolve(url).func
+        response = RequestMock.do_request_get(view, user=self.user)
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
+        self.assertFalse(mock_diff_files.called)
+
+    @patch("core_main_app.components.template.admin_site.diff_files")
+    def test_staff_user_cannot_access_diff_file_view(self, mock_diff_files):
+        """test_staff_user_cannot_access_diff_file_view"""
+        template_id = 1
+        index = 0
+        url = reverse("admin:diff_file_template", args=[template_id, index])
+        view = resolve(url).func
+        response = RequestMock.do_request_get(
+            view,
+            user=self.staff_user,
+            param={"object_id": template_id, "index": index},
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertFalse(mock_diff_files.called)
+
+    @patch("core_main_app.components.template.admin_site.diff_files")
+    @patch("core_main_app.components.template.api.get_by_id")
+    def test_superuser_can_access_diff_file_view(
+        self, mock_get_template_by_id, mock_diff_files
+    ):
+        """test_superuser_can_access_diff_file_view"""
+        mock_get_template_by_id.return_value = MagicMock()
+        template_id = 1
+        index = 0
+        url = reverse("admin:diff_file_template", args=[template_id, index])
+        view = resolve(url).func
+        response = RequestMock.do_request_get(
+            view,
+            param={"object_id": template_id, "index": index},
+            user=self.superuser,
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(mock_diff_files.called)
+
+    @patch("core_main_app.components.template.admin_site.delete_previous_file")
+    def test_anonymous_cannot_access_delete_file_view(
+        self, mock_delete_previous_file
+    ):
+        """test_anonymous_cannot_access_delete_file_view"""
+        template_id = 1
+        index = 0
+        url = reverse("admin:delete_file_template", args=[template_id, index])
+        view = resolve(url).func
+        response = RequestMock.do_request_get(
+            view,
+            param={"object_id": template_id, "index": index},
+            user=self.anonymous,
+        )
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
+        self.assertFalse(mock_delete_previous_file.called)
+
+    @patch("core_main_app.components.template.admin_site.delete_previous_file")
+    def test_user_cannot_access_delete_file_view(
+        self, mock_delete_previous_file
+    ):
+        """test_user_cannot_access_delete_file_view"""
+        template_id = 1
+        index = 0
+        url = reverse("admin:delete_file_template", args=[template_id, index])
+        view = resolve(url).func
+        response = RequestMock.do_request_get(
+            view,
+            param={"object_id": template_id, "index": index},
+            user=self.user,
+        )
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
+        self.assertFalse(mock_delete_previous_file.called)
+
+    @patch("core_main_app.components.template.admin_site.delete_previous_file")
+    def test_staff_user_cannot_access_delete_file_view(
+        self, mock_delete_previous_file
+    ):
+        """test_staff_user_cannot_access_delete_file_view"""
+        template_id = 1
+        index = 0
+        url = reverse("admin:delete_file_template", args=[template_id, index])
+        view = resolve(url).func
+        response = RequestMock.do_request_get(
+            view,
+            param={"object_id": template_id, "index": index},
+            user=self.staff_user,
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertFalse(mock_delete_previous_file.called)
+
+    @patch("core_main_app.components.template.admin_site.delete_previous_file")
+    @patch("core_main_app.components.template.api.get_by_id")
+    def test_superuser_can_access_delete_file_view(
+        self, mock_get_template_by_id, mock_delete_previous_file
+    ):
+        """test_superuser_can_access_delete_file_view"""
+        mock_get_template_by_id.return_value = MagicMock()
+        template_id = 1
+        index = 0
+        url = reverse("admin:delete_file_template", args=[template_id, index])
+        view = resolve(url).func
+        response = RequestMock.do_request_get(
+            view,
+            param={"object_id": template_id, "index": index},
+            user=self.superuser,
+        )
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
+        self.assertTrue(mock_delete_previous_file.called)
+
+    def test_file_display_with_file(self):
+        """test_file_display_with_file
+
+        Returns:
+
+        """
+        # Arrange
+        obj = MagicMock()
+        obj.id = 1
+        obj.file = "test_file.xsd"
+        custom_admin = CustomTemplateAdmin(Template, admin.AdminSite())
+        # Act
+        result = custom_admin.file_display(obj)
+        # Assert
+        data_url = reverse(
+            "core_main_app_rest_template_download", args=[obj.id]
+        )
+        self.assertIsInstance(result, SafeString)
+        self.assertIn(data_url, result)
+        self.assertIn(obj.file, result)
+
+    def test_file_display_without_file(self):
+        """test_file_display_without_file
+
+        Returns:
+
+        """
+        # Arrange
+        obj = MagicMock()
+        obj.file = None
+        custom_admin = CustomTemplateAdmin(Template, admin.AdminSite())
+        # Act
+        result = custom_admin.file_display(obj)
+        # Assert
+        self.assertEqual(result, "No file")
+
+    @patch(
+        "core_main_app.components.template.admin_site.utils_file_history_display"
+    )
+    def test_file_history_display_calls_utils_file_history_display(
+        self, mock_utils_file_history_display
+    ):
+        """test_file_history_display_calls_utils_file_history_display
+
+        Args:
+            mock_utils_file_history_display:
+
+        Returns:
+
+        """
+        # Arrange
+        obj = MagicMock()
+        custom_admin = CustomTemplateAdmin(Template, admin.AdminSite())
+        # Act
+        custom_admin.file_history_display(obj)
+        # Assert
+        mock_utils_file_history_display.assert_called_once_with(
+            obj,
+            diff_url="admin:diff_file_template",
+            delete_url="admin:delete_file_template",
+        )
+
+    @patch(
+        "core_main_app.components.template.admin_site.template_api.get_by_id"
+    )
+    def test_diff_file_view_user_is_not_superuser(self, mock_get_by_id):
+        """test_diff_file_view_user_is_not_superuser"""
+        mock_request = MagicMock()
+        mock_request.user = self.user
+        object_id = 1
+        index = 0
+        view = CustomTemplateAdmin(Template, admin.AdminSite()).diff_file_view
+        response = view(mock_request, object_id, index)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch(
+        "core_main_app.components.template.admin_site.template_api.get_by_id"
+    )
+    def test_diff_file_view_template_does_not_exist(self, mock_get_by_id):
+        """test_diff_file_view_template_does_not_exist"""
+        mock_get_by_id.side_effect = DoesNotExist("Error")
+        mock_request = MagicMock()
+        mock_request.user = self.superuser
+        object_id = 1
+        index = 0
+        view = CustomTemplateAdmin(Template, admin.AdminSite()).diff_file_view
+        response = view(mock_request, object_id, index)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @patch("core_main_app.components.template.admin_site.diff_files")
+    @patch(
+        "core_main_app.components.template.admin_site.template_api.get_by_id"
+    )
+    def test_diff_file_view_success(self, mock_get_by_id, mock_diff_files):
+        """test_diff_file_view_success"""
+        mock_get_by_id.return_value = MagicMock()
+        mock_diff_files.return_value = "diff"
+        mock_request = MagicMock()
+        mock_request.user = self.superuser
+        object_id = 1
+        index = 0
+        view = CustomTemplateAdmin(Template, admin.AdminSite()).diff_file_view
+        response = view(mock_request, object_id, index)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch(
+        "core_main_app.components.template.admin_site.template_api.get_by_id"
+    )
+    def test_delete_file_view_user_is_not_superuser(self, mock_get_by_id):
+        """test_delete_file_view_user_is_not_superuser"""
+        mock_request = MagicMock()
+        mock_request.user = self.user
+        object_id = 1
+        index = 0
+        view = CustomTemplateAdmin(
+            Template, admin.AdminSite()
+        ).delete_file_view
+        response = view(mock_request, object_id, index)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch(
+        "core_main_app.components.template.admin_site.template_api.get_by_id"
+    )
+    def test_delete_file_view_template_does_not_exist(self, mock_get_by_id):
+        """test_delete_file_view_template_does_not_exist"""
+        mock_get_by_id.side_effect = DoesNotExist("Error")
+        mock_request = MagicMock()
+        mock_request.user = self.superuser
+        object_id = 1
+        index = 0
+        view = CustomTemplateAdmin(
+            Template, admin.AdminSite()
+        ).delete_file_view
+        response = view(mock_request, object_id, index)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @patch(
+        "core_main_app.components.template.admin_site.template_api.get_by_id"
+    )
+    def test_diff_file_view_template_acl_error(self, mock_get_by_id):
+        """test_diff_file_view_template_acl_error"""
+        mock_get_by_id.side_effect = AccessControlError("Error")
+        mock_request = MagicMock()
+        mock_request.user = self.superuser
+        object_id = 1
+        index = 0
+        view = CustomTemplateAdmin(Template, admin.AdminSite()).diff_file_view
+        response = view(mock_request, object_id, index)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch(
+        "core_main_app.components.template.admin_site.template_api.get_by_id"
+    )
+    def test_delete_file_view_template_acl_error(self, mock_get_by_id):
+        """test_delete_file_view_template_acl_error"""
+        mock_get_by_id.side_effect = AccessControlError("Error")
+        mock_request = MagicMock()
+        mock_request.user = self.superuser
+        object_id = 1
+        index = 0
+        view = CustomTemplateAdmin(
+            Template, admin.AdminSite()
+        ).delete_file_view
+        response = view(mock_request, object_id, index)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 def _generic_get_all_test(self, mock_get_all, act_function):

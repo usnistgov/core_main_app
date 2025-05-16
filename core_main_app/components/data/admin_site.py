@@ -2,15 +2,33 @@
 """
 
 from django.conf import settings
+from django.contrib import admin
 from django.contrib import messages
 from django.contrib.admin.helpers import ActionForm
 from django.forms import ChoiceField
+from django.http import (
+    HttpResponseRedirect,
+    HttpResponseBadRequest,
+    HttpResponseForbidden,
+)
+from django.shortcuts import render
+from django.urls import path, reverse
+from django.utils.safestring import mark_safe
 
+from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons.exceptions import DoesNotExist
+from core_main_app.components.data import api as data_api
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
 from core_main_app.utils.admin_site.model_admin_class import (
     get_base_model_admin_class,
+)
+from core_main_app.utils.databases.filefield import (
+    diff_files,
+    delete_previous_file,
+)
+from core_main_app.utils.databases.filefield import (
+    file_history_display as utils_file_history_display,
 )
 from core_main_app.utils.labels import get_data_label
 
@@ -154,9 +172,141 @@ class CustomDataAdmin(get_base_model_admin_class("Data")):
     ]
     action_form = UpdateActionForm
     actions = [update_data_list]
-    readonly_fields = ["checksum", "file"]
-    exclude = ["vector_column", "dict_content"]
+    readonly_fields = [
+        "checksum",
+        "file_display",
+        "file_history_display",
+    ]
+    exclude = ["vector_column", "dict_content", "file", "file_history"]
 
     def has_add_permission(self, request, obj=None):
         """Prevent from manually adding data"""
         return False
+
+    @admin.display(description="File")
+    def file_display(self, obj):
+        """Display file field
+
+        Args:
+            obj:
+
+        Returns:
+
+        """
+        if obj.file:
+            data_url = reverse(
+                "core_main_app_rest_data_download", args=[obj.id]
+            )
+            return mark_safe(f"<a href={data_url}>{obj.file}</a>")
+        return "No file"
+
+    @admin.display(description="File History")
+    def file_history_display(self, obj):
+        """File history display
+
+        Args:
+            obj:
+
+        Returns:
+
+        """
+        return utils_file_history_display(
+            obj,
+            diff_url="admin:diff_file_data",
+            delete_url="admin:delete_file_data",
+        )
+
+    def get_urls(self):
+        """Get custom urls
+
+        Args:
+
+        Returns:
+
+        """
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                "diff/<int:object_id>/<int:index>/",
+                self.admin_site.admin_view(self.diff_file_view),
+                name="diff_file_data",
+            ),
+            path(
+                "delete_previous_file/<int:object_id>/<int:index>/",
+                self.admin_site.admin_view(self.delete_file_view),
+                name="delete_file_data",
+            ),
+        ]
+        return custom_urls + urls
+
+    def diff_file_view(self, request, object_id, index):
+        """Diff file view
+
+        Args:
+            request:
+            object_id:
+            index:
+
+        Returns:
+
+        """
+        # Check if user is superuser
+        if not request.user.is_superuser:
+            return HttpResponseForbidden("<h1>403 Forbidden</h1>")
+
+        # Get data
+        try:
+            data = data_api.get_by_id(object_id, user=request.user)
+        except AccessControlError:
+            return HttpResponseForbidden("<h1>403 Forbidden</h1>")
+        except DoesNotExist:
+            return HttpResponseBadRequest("<h1>Data not found</h1>")
+
+        # Get diff
+        diff = diff_files(
+            data,
+            index,
+            model="data",
+            content_field="content",
+            file_format=data.template.format,
+        )
+        return render(
+            request,
+            "core_main_app/admin/diff.html",
+            {
+                "diff": diff,
+                "title": data.title,
+                "back_url": reverse(
+                    "admin:core_main_app_data_change", args=[data.id]
+                ),
+            },
+        )
+
+    def delete_file_view(self, request, object_id, index):
+        """Delete file view
+
+        Args:
+            request:
+            object_id:
+            index:
+
+        Returns:
+
+        """
+        # Check if user is superuser
+        if not request.user.is_superuser:
+            return HttpResponseForbidden("<h1>403 Forbidden</h1>")
+
+        # Get data
+        try:
+            data = data_api.get_by_id(object_id, user=request.user)
+        except AccessControlError:
+            return HttpResponseForbidden("<h1>403 Forbidden</h1>")
+        except DoesNotExist:
+            return HttpResponseBadRequest("<h1>Data not found</h1>")
+
+        # Delete file
+        delete_previous_file(data, index, model="data")
+        return HttpResponseRedirect(
+            reverse("admin:core_main_app_data_change", args=[object_id])
+        )

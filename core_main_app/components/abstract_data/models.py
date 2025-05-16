@@ -41,6 +41,8 @@ class AbstractData(models.Model):
         upload_to=user_directory_path,
         storage=core_file_storage(model="data"),
     )
+    file_history = models.JSONField(blank=True, null=True, default=list)
+
     checksum = models.CharField(
         max_length=512, blank=True, default=None, null=True
     )
