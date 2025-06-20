@@ -37,7 +37,7 @@ Menu.add_item(
 Menu.add_item(
     "admin",
     MenuItem(
-        "Django admin", reverse("admin:index"), icon="sitemap", weight=-80000
+        "Advanced admin", reverse("admin:index"), icon="sitemap", weight=-80000
     ),
 )
 
