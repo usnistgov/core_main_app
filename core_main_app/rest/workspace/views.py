@@ -1,6 +1,12 @@
 """ REST views for the workspace API
 """
 
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import (
+    OpenApiParameter,
+    extend_schema,
+    OpenApiResponse,
+)
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import ValidationError
@@ -18,21 +24,29 @@ from core_main_app.rest.user.serializers import UserSerializer
 from core_main_app.rest.workspace.serializers import WorkspaceSerializer
 
 
+@extend_schema(
+    tags=["Workspace"],
+    description="List all user Workspace, or create a new one",
+)
 class WorkspaceList(APIView):
     """List all user Workspace, or create a new one"""
 
     permission_classes = (IsAuthenticated,)
     serializer = WorkspaceSerializer
 
+    @extend_schema(
+        summary="Get all user workspaces",
+        description="Get all user workspaces",
+        responses={
+            200: WorkspaceSerializer(many=True),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     def get(self, request):
         """Get all user workspaces
-
         Args:
-
             request: HTTP request
-
         Returns:
-
             - code: 200
               content: List of workspace
             - code: 500
@@ -43,10 +57,8 @@ class WorkspaceList(APIView):
                 workspace_list = workspace_api.get_all()
             else:
                 workspace_list = workspace_api.get_all_by_owner(request.user)
-
             # Serialize object
             serializer = self.serializer(workspace_list, many=True)
-
             # Return response
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as api_exception:
@@ -55,21 +67,28 @@ class WorkspaceList(APIView):
                 content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+    @extend_schema(
+        summary="Create a Workspace",
+        description="Create a Workspace",
+        request=WorkspaceSerializer,
+        responses={
+            201: WorkspaceSerializer,
+            400: OpenApiResponse(
+                description="Validation error / not unique / model error"
+            ),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     def post(self, request):
         """Create a Workspace
-
         Parameters:
-
             {
-                "title": "document_title",
+              "title": "document_title",
+              "is_public": true | false
             }
-
         Args:
-
             request: HTTP request
-
         Returns:
-
             - code: 201
               content: Created workspace
             - code: 400
@@ -80,13 +99,10 @@ class WorkspaceList(APIView):
         try:
             # Build serializer
             serializer = self.serializer(data=request.data)
-
             # Validate data
             serializer.is_valid(raise_exception=True)
-
             # Save data
             serializer.save(user=request.user)
-
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except ValidationError as validation_exception:
             content = {"message": validation_exception.detail}
@@ -107,30 +123,45 @@ class WorkspaceList(APIView):
             )
 
 
+@extend_schema(
+    tags=["Workspace"],
+    description="Workspace Detail",
+)
 class WorkspaceDetail(APIView):
     """Workspace Detail"""
 
     permission_classes = (IsAuthenticated,)
 
+    @extend_schema(
+        summary="Get Workspace",
+        description="Get Workspace",
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Workspace ID",
+            ),
+        ],
+        responses={
+            200: WorkspaceSerializer,
+            404: OpenApiResponse(description="Object was not found"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     def get(self, request, pk):
         """Get Workspace from db
-
         Args:
-
             request: HTTP request
             pk: ObjectId
-
         Returns:
-
             Workspace
         """
         try:
             # Get object
             workspace_object = workspace_api.get_by_id(pk)
-
             # Serialize object
             serializer = WorkspaceSerializer(workspace_object)
-
             # Return response
             return Response(serializer.data)
         except exceptions.DoesNotExist:
@@ -142,16 +173,30 @@ class WorkspaceDetail(APIView):
                 content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+    @extend_schema(
+        summary="Delete a Workspace",
+        description="Delete a Workspace",
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Workspace ID",
+            ),
+        ],
+        responses={
+            204: None,
+            403: OpenApiResponse(description="Access Forbidden"),
+            404: OpenApiResponse(description="Object was not found"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     def delete(self, request, pk):
         """Delete a Workspace
-
         Args:
-
             request: HTTP request
             pk: ObjectId
-
         Returns:
-
             - code: 204
               content: Deletion succeed
             - code: 403
@@ -164,10 +209,8 @@ class WorkspaceDetail(APIView):
         try:
             # Get object
             workspace_object = workspace_api.get_by_id(pk)
-
             # delete object
             workspace_api.delete(workspace_object, request.user)
-
             # Return response
             return Response(status=status.HTTP_204_NO_CONTENT)
         except exceptions.DoesNotExist:
@@ -183,17 +226,23 @@ class WorkspaceDetail(APIView):
             )
 
 
+@extend_schema(
+    summary="Get all workspaces with read access",
+    description="Get all workspaces with read access",
+    responses={
+        200: WorkspaceSerializer(many=True),
+        500: OpenApiResponse(description="Internal server error"),
+    },
+    methods=["GET"],
+    tags=["Workspace"],
+)
 @api_view(["GET"])
 @permission_classes((IsAuthenticated,))
 def get_workspaces_with_read_access(request):
     """Get all workspaces with read access
-
     Args:
-
         request: HTTP request
-
     Returns:
-
         - code: 200
           content: list of workspace
         - code: 500
@@ -204,17 +253,23 @@ def get_workspaces_with_read_access(request):
     )
 
 
+@extend_schema(
+    summary="Get all workspaces with write access",
+    description="Get all workspaces with write access",
+    responses={
+        200: WorkspaceSerializer(many=True),
+        500: OpenApiResponse(description="Internal server error"),
+    },
+    methods=["GET"],
+    tags=["Workspace"],
+)
 @api_view(["GET"])
 @permission_classes((IsAuthenticated,))
 def get_workspaces_with_write_access(request):
     """Get all workspaces with write access
-
     Args:
-
         request: HTTP request
-
     Returns:
-
         - code: 200
           content: list of workspace
         - code: 500
@@ -256,18 +311,33 @@ def _list_of_workspaces_to_response(func):
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@extend_schema(
+    summary="Is the workspace public",
+    description="Is the workspace public",
+    parameters=[
+        OpenApiParameter(
+            name="id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="Workspace ID",
+        ),
+    ],
+    responses={
+        200: OpenApiResponse(description="Boolean", response=None),
+        404: OpenApiResponse(description="Object was not found"),
+        500: OpenApiResponse(description="Internal server error"),
+    },
+    methods=["GET"],
+    tags=["Workspace"],
+)
 @api_view(["GET"])
 @permission_classes((IsAuthenticated,))
 def is_workspace_public(request, pk):
     """Is the workspace public
-
     Args:
-
         request: HTTP request
         pk: ObjectId
-
     Returns:
-
         - code: 200
           content: Boolean
         - code: 404
@@ -278,7 +348,6 @@ def is_workspace_public(request, pk):
     try:
         # Get object
         workspace_object = workspace_api.get_by_id(pk)
-
         # Return response
         return Response(
             workspace_api.is_workspace_public(workspace_object),
@@ -292,18 +361,34 @@ def is_workspace_public(request, pk):
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@extend_schema(
+    summary="Set the workspace public",
+    description="Set the workspace public",
+    parameters=[
+        OpenApiParameter(
+            name="id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="Workspace ID",
+        ),
+    ],
+    responses={
+        200: None,
+        403: OpenApiResponse(description="Access Forbidden"),
+        404: OpenApiResponse(description="Object was not found"),
+        500: OpenApiResponse(description="Internal server error"),
+    },
+    methods=["PATCH"],
+    tags=["Workspace"],
+)
 @api_view(["PATCH"])
 @permission_classes((IsAuthenticated,))
 def set_workspace_public(request, pk):
     """Set the workspace public
-
     Args:
-
         request: HTTP request
         pk: ObjectId
-
     Returns:
-
         - code: 200
           content: None
         - code: 403
@@ -316,10 +401,8 @@ def set_workspace_public(request, pk):
     try:
         # Get object
         workspace_object = workspace_api.get_by_id(pk)
-
         # Set the workspace public
         workspace_api.set_workspace_public(workspace_object, request.user)
-
         # Return response
         return Response(status=status.HTTP_200_OK)
     except exceptions.DoesNotExist:
@@ -333,18 +416,34 @@ def set_workspace_public(request, pk):
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@extend_schema(
+    summary="Set the workspace private",
+    description="Set the workspace private",
+    parameters=[
+        OpenApiParameter(
+            name="id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="Workspace ID",
+        ),
+    ],
+    responses={
+        200: None,
+        403: OpenApiResponse(description="Access Forbidden"),
+        404: OpenApiResponse(description="Object was not found"),
+        500: OpenApiResponse(description="Internal server error"),
+    },
+    methods=["PATCH"],
+    tags=["Workspace"],
+)
 @api_view(["PATCH"])
 @permission_classes((IsAuthenticated,))
 def set_workspace_private(request, pk):
     """Set the workspace private
-
     Args:
-
         request: HTTP request
         pk: ObjectId
-
     Returns:
-
         - code: 200
           content: None
         - code: 403
@@ -357,10 +456,8 @@ def set_workspace_private(request, pk):
     try:
         # Get object
         workspace_object = workspace_api.get_by_id(pk)
-
-        # Set the workspace public
+        # Set the workspace private
         workspace_api.set_workspace_private(workspace_object, request.user)
-
         # Return response
         return Response(status=status.HTTP_200_OK)
     except exceptions.DoesNotExist:
@@ -374,17 +471,33 @@ def set_workspace_private(request, pk):
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@extend_schema(
+    summary="Get list of users that have write access to workspace",
+    description="Get list of users that have write access to workspace",
+    parameters=[
+        OpenApiParameter(
+            name="id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="Workspace ID",
+        ),
+    ],
+    responses={
+        200: UserSerializer(many=True),
+        403: OpenApiResponse(description="Access Forbidden"),
+        404: OpenApiResponse(description="Object was not found"),
+        500: OpenApiResponse(description="Internal server error"),
+    },
+    methods=["GET"],
+    tags=["Workspace"],
+)
 @api_view(["GET"])
 @permission_classes((IsAuthenticated,))
 def get_list_user_can_write_workspace(request, pk):
     """Get list of users that have write access to workspace
-
     Args:
-
         request: HTTP request
-
     Returns:
-
         - code: 200
           content: list of user
         - code: 403
@@ -402,17 +515,33 @@ def get_list_user_can_write_workspace(request, pk):
     )
 
 
+@extend_schema(
+    summary="Get list of users that have read access to workspace",
+    description="Get list of users that have read access to workspace",
+    parameters=[
+        OpenApiParameter(
+            name="id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="Workspace ID",
+        ),
+    ],
+    responses={
+        200: UserSerializer(many=True),
+        403: OpenApiResponse(description="Access Forbidden"),
+        404: OpenApiResponse(description="Object was not found"),
+        500: OpenApiResponse(description="Internal server error"),
+    },
+    methods=["GET"],
+    tags=["Workspace"],
+)
 @api_view(["GET"])
 @permission_classes((IsAuthenticated,))
 def get_list_user_can_read_workspace(request, pk):
     """Get list of users that have read access to workspace
-
     Args:
-
         request: HTTP request
-
     Returns:
-
         - code: 200
           content: list of user
         - code: 403
@@ -430,17 +559,33 @@ def get_list_user_can_read_workspace(request, pk):
     )
 
 
+@extend_schema(
+    summary="Get list of users that have read or write access to workspace",
+    description="Get list of users that have read or write access to workspace",
+    parameters=[
+        OpenApiParameter(
+            name="id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="Workspace ID",
+        ),
+    ],
+    responses={
+        200: UserSerializer(many=True),
+        403: OpenApiResponse(description="Access Forbidden"),
+        404: OpenApiResponse(description="Object was not found"),
+        500: OpenApiResponse(description="Internal server error"),
+    },
+    methods=["GET"],
+    tags=["Workspace"],
+)
 @api_view(["GET"])
 @permission_classes((IsAuthenticated,))
 def get_list_user_can_access_workspace(request, pk):
     """Get list of users that have read or write access to workspace
-
     Args:
-
         request: HTTP request
-
     Returns:
-
         - code: 200
           content: list of user
         - code: 403
@@ -458,17 +603,33 @@ def get_list_user_can_access_workspace(request, pk):
     )
 
 
+@extend_schema(
+    summary="Get list of groups that have write access to workspace",
+    description="Get list of groups that have write access to workspace",
+    parameters=[
+        OpenApiParameter(
+            name="id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="Workspace ID",
+        ),
+    ],
+    responses={
+        200: GroupSerializer(many=True),
+        403: OpenApiResponse(description="Access Forbidden"),
+        404: OpenApiResponse(description="Object was not found"),
+        500: OpenApiResponse(description="Internal server error"),
+    },
+    methods=["GET"],
+    tags=["Workspace"],
+)
 @api_view(["GET"])
 @permission_classes((IsAuthenticated,))
 def get_list_group_can_write_workspace(request, pk):
     """Get list of groups that have write access to workspace
-
     Args:
-
         request: HTTP request
-
     Returns:
-
         - code: 200
           content: list of group
         - code: 403
@@ -486,17 +647,33 @@ def get_list_group_can_write_workspace(request, pk):
     )
 
 
+@extend_schema(
+    summary="Get list of groups that have read access to workspace",
+    description="Get list of groups that have read access to workspace",
+    parameters=[
+        OpenApiParameter(
+            name="id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="Workspace ID",
+        ),
+    ],
+    responses={
+        200: GroupSerializer(many=True),
+        403: OpenApiResponse(description="Access Forbidden"),
+        404: OpenApiResponse(description="Object was not found"),
+        500: OpenApiResponse(description="Internal server error"),
+    },
+    methods=["GET"],
+    tags=["Workspace"],
+)
 @api_view(["GET"])
 @permission_classes((IsAuthenticated,))
 def get_list_group_can_read_workspace(request, pk):
     """Get list of groups that have read access to workspace
-
     Args:
-
         request: HTTP request
-
     Returns:
-
         - code: 200
           content: list of group
         - code: 403
@@ -514,17 +691,33 @@ def get_list_group_can_read_workspace(request, pk):
     )
 
 
+@extend_schema(
+    summary="Get list of groups that have read or write access to workspace",
+    description="Get list of groups that have read or write access to workspace",
+    parameters=[
+        OpenApiParameter(
+            name="id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="Workspace ID",
+        ),
+    ],
+    responses={
+        200: GroupSerializer(many=True),
+        403: OpenApiResponse(description="Access Forbidden"),
+        404: OpenApiResponse(description="Object was not found"),
+        500: OpenApiResponse(description="Internal server error"),
+    },
+    methods=["GET"],
+    tags=["Workspace"],
+)
 @api_view(["GET"])
 @permission_classes((IsAuthenticated,))
 def get_list_group_can_access_workspace(request, pk):
     """Get list of groups that have read or write access to workspace
-
     Args:
-
         request: HTTP request
-
     Returns:
-
         - code: 200
           content: list of group
         - code: 403
@@ -634,19 +827,41 @@ def _add_or_remove_to_user_or_group_right_to_workspace(
         return Response(content, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@extend_schema(
+    summary="Add to the user the read right to the Workspace",
+    description="Add to the user the read right to the Workspace",
+    parameters=[
+        OpenApiParameter(
+            name="id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="Workspace ID",
+        ),
+        OpenApiParameter(
+            name="user_id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="User ID",
+        ),
+    ],
+    responses={
+        200: None,
+        403: OpenApiResponse(description="Access Forbidden"),
+        404: OpenApiResponse(description="Object was not found"),
+        500: OpenApiResponse(description="Internal server error"),
+    },
+    methods=["PATCH"],
+    tags=["Workspace"],
+)
 @api_view(["PATCH"])
 @permission_classes((IsAuthenticated,))
 def add_user_read_right_to_workspace(request, pk, user_id):
     """Add to the user the read right to the Workspace
-
     Args:
-
         request: HTTP request
         pk: ObjectId
         user_id: ObjectId
-
     Returns:
-
         - code: 200
           content: None
         - code: 403
@@ -665,19 +880,41 @@ def add_user_read_right_to_workspace(request, pk, user_id):
     )
 
 
+@extend_schema(
+    summary="Add to the user the write right to the workspace",
+    description="Add to the user the write right to the workspace",
+    parameters=[
+        OpenApiParameter(
+            name="id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="Workspace ID",
+        ),
+        OpenApiParameter(
+            name="user_id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="User ID",
+        ),
+    ],
+    responses={
+        200: None,
+        403: OpenApiResponse(description="Access Forbidden"),
+        404: OpenApiResponse(description="Object was not found"),
+        500: OpenApiResponse(description="Internal server error"),
+    },
+    methods=["PATCH"],
+    tags=["Workspace"],
+)
 @api_view(["PATCH"])
 @permission_classes((IsAuthenticated,))
 def add_user_write_right_to_workspace(request, pk, user_id):
     """Add to the user the write right to the workspace
-
     Args:
-
         request: HTTP request
         pk: ObjectId
         user_id: ObjectId
-
     Returns:
-
         - code: 200
           content: None
         - code: 403
@@ -696,19 +933,41 @@ def add_user_write_right_to_workspace(request, pk, user_id):
     )
 
 
+@extend_schema(
+    summary="Add to the group the read right to the workspace",
+    description="Add to the group the read right to the workspace",
+    parameters=[
+        OpenApiParameter(
+            name="id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="Workspace ID",
+        ),
+        OpenApiParameter(
+            name="group_id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="Group ID",
+        ),
+    ],
+    responses={
+        200: None,
+        403: OpenApiResponse(description="Access Forbidden"),
+        404: OpenApiResponse(description="Object was not found"),
+        500: OpenApiResponse(description="Internal server error"),
+    },
+    methods=["PATCH"],
+    tags=["Workspace"],
+)
 @api_view(["PATCH"])
 @permission_classes((IsAuthenticated,))
 def add_group_read_right_to_workspace(request, pk, group_id):
     """Add to the group the read right to the workspace
-
     Args:
-
         request: HTTP request
         pk: ObjectId
         group_id: ObjectId
-
     Returns:
-
         - code: 200
           content: None
         - code: 403
@@ -727,19 +986,41 @@ def add_group_read_right_to_workspace(request, pk, group_id):
     )
 
 
+@extend_schema(
+    summary="Add to the group the write right to the workspace",
+    description="Add to the group the write right to the workspace",
+    parameters=[
+        OpenApiParameter(
+            name="id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="Workspace ID",
+        ),
+        OpenApiParameter(
+            name="group_id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="Group ID",
+        ),
+    ],
+    responses={
+        200: None,
+        403: OpenApiResponse(description="Access Forbidden"),
+        404: OpenApiResponse(description="Object was not found"),
+        500: OpenApiResponse(description="Internal server error"),
+    },
+    methods=["PATCH"],
+    tags=["Workspace"],
+)
 @api_view(["PATCH"])
 @permission_classes((IsAuthenticated,))
 def add_group_write_right_to_workspace(request, pk, group_id):
     """Add to the group the write right to the workspace
-
     Args:
-
         request: HTTP request
         pk: ObjectId
         group_id: ObjectId
-
     Returns:
-
         - code: 200
           content: None
         - code: 403
@@ -758,19 +1039,41 @@ def add_group_write_right_to_workspace(request, pk, group_id):
     )
 
 
+@extend_schema(
+    summary="Remove from the user the read right to the workspace",
+    description="Remove from the user the read right to the workspace",
+    parameters=[
+        OpenApiParameter(
+            name="id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="Workspace ID",
+        ),
+        OpenApiParameter(
+            name="user_id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="User ID",
+        ),
+    ],
+    responses={
+        200: None,
+        403: OpenApiResponse(description="Access Forbidden"),
+        404: OpenApiResponse(description="Object was not found"),
+        500: OpenApiResponse(description="Internal server error"),
+    },
+    methods=["PATCH"],
+    tags=["Workspace"],
+)
 @api_view(["PATCH"])
 @permission_classes((IsAuthenticated,))
 def remove_user_read_right_to_workspace(request, pk, user_id):
     """Remove from the user the read right to the workspace
-
     Args:
-
         request: HTTP request
         pk: ObjectId
         user_id: ObjectId
-
     Returns:
-
         - code: 200
           content: None
         - code: 403
@@ -789,19 +1092,41 @@ def remove_user_read_right_to_workspace(request, pk, user_id):
     )
 
 
+@extend_schema(
+    summary="Remove from the user the write right to the workspace",
+    description="Remove from the user the write right to the workspace",
+    parameters=[
+        OpenApiParameter(
+            name="id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="Workspace ID",
+        ),
+        OpenApiParameter(
+            name="user_id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="User ID",
+        ),
+    ],
+    responses={
+        200: None,
+        403: OpenApiResponse(description="Access Forbidden"),
+        404: OpenApiResponse(description="Object was not found"),
+        500: OpenApiResponse(description="Internal server error"),
+    },
+    methods=["PATCH"],
+    tags=["Workspace"],
+)
 @api_view(["PATCH"])
 @permission_classes((IsAuthenticated,))
 def remove_user_write_right_to_workspace(request, pk, user_id):
     """Remove from the user the write right to the workspace
-
     Args:
-
         request: HTTP request
         pk: ObjectId
         user_id: ObjectId
-
     Returns:
-
         - code: 200
           content: None
         - code: 403
@@ -820,19 +1145,41 @@ def remove_user_write_right_to_workspace(request, pk, user_id):
     )
 
 
+@extend_schema(
+    summary="Remove from the group the read right to the workspace",
+    description="Remove from the group the read right to the workspace",
+    parameters=[
+        OpenApiParameter(
+            name="id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="Workspace ID",
+        ),
+        OpenApiParameter(
+            name="group_id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="Group ID",
+        ),
+    ],
+    responses={
+        200: None,
+        403: OpenApiResponse(description="Access Forbidden"),
+        404: OpenApiResponse(description="Object was not found"),
+        500: OpenApiResponse(description="Internal server error"),
+    },
+    methods=["PATCH"],
+    tags=["Workspace"],
+)
 @api_view(["PATCH"])
 @permission_classes((IsAuthenticated,))
 def remove_group_read_right_to_workspace(request, pk, group_id):
     """Remove from the group the read right to the workspace
-
     Args:
-
         request: HTTP request
         pk: ObjectId
         group_id: ObjectId
-
     Returns:
-
         - code: 200
           content: None
         - code: 403
@@ -851,19 +1198,41 @@ def remove_group_read_right_to_workspace(request, pk, group_id):
     )
 
 
+@extend_schema(
+    summary="Remove from the group the write right to the workspace",
+    description="Remove from the group the write right to the workspace",
+    parameters=[
+        OpenApiParameter(
+            name="id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="Workspace ID",
+        ),
+        OpenApiParameter(
+            name="group_id",
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            description="Group ID",
+        ),
+    ],
+    responses={
+        200: None,
+        403: OpenApiResponse(description="Access Forbidden"),
+        404: OpenApiResponse(description="Object was not found"),
+        500: OpenApiResponse(description="Internal server error"),
+    },
+    methods=["PATCH"],
+    tags=["Workspace"],
+)
 @api_view(["PATCH"])
 @permission_classes((IsAuthenticated,))
 def remove_group_write_right_to_workspace(request, pk, group_id):
     """Remove from the group the write right to the workspace
-
     Args:
-
         request: HTTP request
         pk: ObjectId
         group_id: ObjectId
-
     Returns:
-
         - code: 200
           content: None
         - code: 403

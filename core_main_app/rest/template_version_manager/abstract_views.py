@@ -30,6 +30,7 @@ from core_main_app.utils.decorators import api_staff_member_required
 class AbstractTemplateVersionManagerList(APIView, metaclass=ABCMeta):
     """List template version managers"""
 
+    permission_classes = (IsAuthenticated,)
     serializer = TemplateVersionManagerSerializer
 
     @abstractmethod
@@ -163,6 +164,8 @@ class AbstractStatusTemplateVersion(APIView, metaclass=ABCMeta):
 
 class AbstractTemplateVersionManagerDetail(APIView, metaclass=ABCMeta):
     """Template Version Manager Detail"""
+
+    permission_classes = (IsAuthenticated,)
 
     def get_object(self, pk):
         """Get template version manager from db

@@ -5,6 +5,7 @@ from importlib import metadata
 
 from django.conf import settings
 from django.db import connection
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -17,20 +18,50 @@ from core_main_app.utils.databases.backend import (
 from core_main_app.utils.databases.mongo import MONGO_CLIENT
 
 
+@extend_schema(
+    tags=["Core Settings"],
+    description="Get Core Settings",
+)
 class CoreSettings(APIView):
     """Get Core Settings"""
 
     permission_classes = (IsAuthenticated,)
 
+    @extend_schema(
+        summary="Get Core settings",
+        description="Retrieve the core settings",
+        responses={
+            200: OpenApiResponse(
+                description="Core settings",
+                response={
+                    "type": "object",
+                    "properties": {
+                        "core_version": {"type": "string"},
+                        "database": {
+                            "type": "object",
+                            "properties": {
+                                "engine": {"type": "string"},
+                                "version": {"type": "integer"},
+                            },
+                        },
+                        "mongodb": {
+                            "type": "object",
+                            "properties": {
+                                "data_indexing": {"type": "boolean"},
+                                "version": {"type": "string"},
+                            },
+                        },
+                    },
+                },
+            ),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     def get(self, request):
         """Get Core setting
-
         Args:
-
             request: HTTP request
-
         Returns:
-
             - code: 200
               content: Settings
             - code: 500
@@ -42,14 +73,12 @@ class CoreSettings(APIView):
                 core_version = metadata.version("core_main_app")
             except metadata.PackageNotFoundError:
                 core_version = None
-
             # Get version of MongoDB server
             mongodb_version = (
                 (MONGO_CLIENT.database.client.server_info()["version"])
                 if MONGO_CLIENT
                 else None
             )
-
             # Get PSQL version
             if uses_postgresql_backend():
                 database_info = (
@@ -64,7 +93,6 @@ class CoreSettings(APIView):
                 )
             else:
                 database_info = (None, None)
-
             response_dict = {
                 "core_version": core_version,
                 "database": {

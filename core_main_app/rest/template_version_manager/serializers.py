@@ -30,7 +30,7 @@ class TemplateVersionManagerSerializer(ModelSerializer):
         """Meta"""
 
         model = TemplateVersionManager
-        fields = "__all__"
+        exclude = ["_cls"]
         read_only_fields = [
             "id",
             "user",

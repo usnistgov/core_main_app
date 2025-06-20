@@ -6,6 +6,13 @@ import logging
 
 from django.conf import settings as conf_settings
 from django.http import Http404
+from drf_spectacular.utils import (
+    extend_schema,
+    OpenApiParameter,
+    OpenApiExample,
+    OpenApiTypes,
+    OpenApiResponse,
+)
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import (
@@ -30,10 +37,8 @@ from core_main_app.rest.data.abstract_views import (
 )
 from core_main_app.rest.data.abstract_views import AbstractMigrationView
 from core_main_app.rest.data.admin_serializers import AdminDataSerializer
-from core_main_app.rest.data.serializers import (
-    DataSerializer,
-    DataWithTemplateInfoSerializer,
-)
+from core_main_app.rest.data.serializers import DataSerializer
+from core_main_app.rest.data.serializers import DataWithTemplateInfoSerializer
 from core_main_app.rest.mongo_data.serializers import MongoDataSerializer
 from core_main_app.rest.template_html_rendering.views import BaseDataHtmlRender
 from core_main_app.settings import MAX_DOCUMENT_LIST
@@ -57,38 +62,71 @@ from core_main_app.utils.xml import get_content_by_xpath, format_content_xml
 logger = logging.getLogger(__name__)
 
 
+@extend_schema(
+    tags=["Data"],
+    description="List all records, or create a new one",
+)
 class DataList(APIView):
-    """List all user Data, or create a new one."""
+    """List all records, or create a new one."""
 
     permission_classes = (IsAuthenticated,)
     serializer = DataSerializer
 
-    def get(self, request):
-        """Get all user Data
-
-        Url Parameters:
-
-            workspace: workspace_id
-            template: template_id
-            title: document_title
-            regex: true|false
+    @extend_schema(
+        summary="List all records",
+        description="""List all records accessible by a user.
 
         Examples:
-
-            ../data/
-            ../data?page=2
-            ../data?workspace=[workspace_id]
-            ../data?template=[template_id]
-            ../data?title=[document_title]
-            ../data?title=[document_title]&regex=true
-            ../data?template=[template_id]&title=[document_title]&page=3
-
+            /data/
+            /data?page=2
+            /data?workspace=[workspace_id]
+            /data?template=[template_id]
+            /data?title=[document_title]
+            /data?title=[document_title]&regex=true
+            /data?template=[template_id]&title=[document_title]&page=3
+        """,
+        parameters=[
+            OpenApiParameter(
+                name="workspace",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description="Filter by workspace_id",
+            ),
+            OpenApiParameter(
+                name="template",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description="Filter by template_id",
+            ),
+            OpenApiParameter(
+                name="title",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description="Filter by document_title",
+            ),
+            OpenApiParameter(
+                name="regex",
+                type=OpenApiTypes.BOOL,
+                location=OpenApiParameter.QUERY,
+                description="Use regex for title filter",
+            ),
+            OpenApiParameter(
+                name="page",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description="Page number",
+            ),
+        ],
+        responses={
+            200: DataSerializer(many=True),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
+    def get(self, request):
+        """Get all records
         Args:
-
             request: HTTP request
-
         Returns:
-
             - code: 200
               content: List of data
             - code: 500
@@ -97,18 +135,14 @@ class DataList(APIView):
         try:
             # Get object
             data_object_list = data_api.get_all_by_user(request.user)
-
             # Apply filters
             workspace = self.request.query_params.get("workspace", None)
             if workspace is not None:
                 data_object_list = data_object_list.filter(workspace=workspace)
-
             template = self.request.query_params.get("template", None)
             if template is not None:
                 data_object_list = data_object_list.filter(template=template)
-
             title = self.request.query_params.get("title", None)
-
             if title is not None:
                 regex = self.request.query_params.get("regex", False)
                 title_filter = (
@@ -117,43 +151,57 @@ class DataList(APIView):
                     else {"title": title}
                 )
                 data_object_list = data_object_list.filter(**title_filter)
-
             # Get paginator
             paginator = StandardResultsSetPagination()
-
             # Get requested page from list of results
             page = paginator.paginate_queryset(data_object_list, self.request)
-
             # Serialize page
             data_serializer = self.serializer(page, many=True)
-
             # Return paginated response
             return paginator.get_paginated_response(data_serializer.data)
-
         except Exception as api_exception:
             content = {"message": str(api_exception)}
             return Response(
                 content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+    @extend_schema(
+        summary="Create a Data",
+        description="Create a Data",
+        request=DataSerializer,
+        responses={
+            201: DataSerializer,
+            400: OpenApiResponse(description="Validation error"),
+            404: OpenApiResponse(description="Template not found"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+        examples=[
+            OpenApiExample(
+                name="Create a Data",
+                description="Create a Data",
+                value={
+                    "title": "document_title",
+                    "template": "template_id",
+                    "workspace": "workspace_id",
+                    "content": "document_content",
+                },
+                request_only=True,
+                response_only=False,
+            ),
+        ],
+    )
     def post(self, request):
         """Create a Data
-
         Parameters:
-
             {
-                "title": "document_title",
-                "template": "template_id",
-                "workspace": "workspace_id",
-                "content": "document_content"
+              "title": "document_title",
+              "template": "template_id",
+              "workspace": "workspace_id",
+              "content": "document_content"
             }
-
         Args:
-
             request: HTTP request
-
         Returns:
-
             - code: 201
               content: Created data
             - code: 400
@@ -168,12 +216,10 @@ class DataList(APIView):
             data_serializer = self.serializer(
                 data=request.data, context={"request": request}
             )
-
             # Validate data
             data_serializer.is_valid(raise_exception=True)
             # Save data
             data_serializer.save()
-
             # Return the serialized data
             return Response(
                 data_serializer.data, status=status.HTTP_201_CREATED
@@ -191,25 +237,76 @@ class DataList(APIView):
             )
 
 
+@extend_schema(
+    tags=["Data"],
+    description="Admin Data List",
+)
 class AdminDataList(DataList):
     """Admin Data List"""
 
     permission_classes = (IsAdminUser,)
     serializer = AdminDataSerializer
 
+    @extend_schema(
+        summary="Get all Data as Admin",
+        description="""Get all Data as Admin.
+
+        Examples:
+            /admin/data/
+            /admin/data?page=2
+            /admin/data?workspace=[workspace_id]
+            /admin/data?template=[template_id]
+            /admin/data?title=[document_title]
+            /admin/data?title=[document_title]&regex=true
+            /admin/data?template=[template_id]&title=[document_title]&page=3
+        """,
+        parameters=[
+            OpenApiParameter(
+                name="user",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description="Filter by user_id",
+            ),
+            OpenApiParameter(
+                name="workspace",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description="Filter by workspace_id",
+            ),
+            OpenApiParameter(
+                name="template",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description="Filter by template_id",
+            ),
+            OpenApiParameter(
+                name="title",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description="Filter by document_title",
+            ),
+            OpenApiParameter(
+                name="regex",
+                type=OpenApiTypes.BOOL,
+                location=OpenApiParameter.QUERY,
+                description="Use regex for title filter",
+            ),
+        ],
+        responses={
+            200: AdminDataSerializer(many=True),
+            403: OpenApiResponse(description="Access Forbidden"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     def get(self, request):
         """Get all Data
-
         Url Parameters:
-
             user: user_id
             workspace: workspace_id
             template: template_id
             title: document_title
             regex: true|false
-
         Examples:
-
             ../data/
             ../data?user=[user_id]
             ../data?workspace=[workspace_id]
@@ -217,15 +314,13 @@ class AdminDataList(DataList):
             ../data?title=[document_title]
             ../data?title=[document_title]&regex=true
             ../data?template=[template_id]&title=[document_title]
-
         Args:
-
             request: HTTP request
-
         Returns:
-
             - code: 200
               content: List of data
+            - code: 403
+              content: Forbidden
             - code: 500
               content: Internal server error
         """
@@ -235,22 +330,17 @@ class AdminDataList(DataList):
         try:
             # Get object
             data_object_list = data_api.get_all(request.user)
-
             # Apply filters
             user = self.request.query_params.get("user", None)
             if user is not None:
                 data_object_list = data_object_list.filter(user_id=user)
-
             workspace = self.request.query_params.get("workspace", None)
             if workspace is not None:
                 data_object_list = data_object_list.filter(workspace=workspace)
-
             template = self.request.query_params.get("template", None)
             if template is not None:
                 data_object_list = data_object_list.filter(template=template)
-
             title = self.request.query_params.get("title", None)
-
             if title is not None:
                 regex = self.request.query_params.get("regex", False)
                 title_filter = (
@@ -259,10 +349,8 @@ class AdminDataList(DataList):
                     else {"title": title}
                 )
                 data_object_list = data_object_list.filter(**title_filter)
-
             # Serialize object
             data_serializer = self.serializer(data_object_list, many=True)
-
             # Return response
             return Response(data_serializer.data, status=status.HTTP_200_OK)
         except Exception as api_exception:
@@ -271,6 +359,18 @@ class AdminDataList(DataList):
                 content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+    @extend_schema(
+        summary="Create a Data as Admin",
+        description="Create a Data as Admin",
+        request=AdminDataSerializer,
+        responses={
+            201: AdminDataSerializer,
+            403: OpenApiResponse(description="Access Forbidden"),
+            400: OpenApiResponse(description="Validation error"),
+            404: OpenApiResponse(description="Template not found"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     def post(self, request):
         if not request.user.is_superuser:
             content = {"message": "Only a superuser can use this feature."}
@@ -278,6 +378,10 @@ class AdminDataList(DataList):
         return super().post(request)
 
 
+@extend_schema(
+    tags=["Data"],
+    description="Retrieve, update or delete a Data",
+)
 class DataDetail(APIView):
     """Retrieve, update or delete a Data"""
 
@@ -286,14 +390,10 @@ class DataDetail(APIView):
 
     def get_object(self, request, pk):
         """Get data from db
-
         Args:
-
             request: HTTP request
             pk: ObjectId
-
         Returns:
-
             Data
         """
         try:
@@ -301,16 +401,51 @@ class DataDetail(APIView):
         except exceptions.DoesNotExist:
             raise Http404
 
+    @extend_schema(
+        summary="Retrieve a data",
+        description="Retrieve a data",
+        parameters=[
+            OpenApiParameter(
+                name="template_info",
+                type=OpenApiTypes.BOOL,
+                location=OpenApiParameter.QUERY,
+                description="Include template information",
+                default=False,
+            ),
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="ObjectId of the data",
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(
+                response=DataSerializer,
+                description="Data retrieved successfully",
+            ),
+            404: OpenApiResponse(
+                response={
+                    "type": "object",
+                    "properties": {"message": {"type": "string"}},
+                },
+                description="Data not found",
+            ),
+            500: OpenApiResponse(
+                response={
+                    "type": "object",
+                    "properties": {"message": {"type": "string"}},
+                },
+                description="Internal server error",
+            ),
+        },
+    )
     def get(self, request, pk):
         """Retrieve a data
-
         Args:
-
             request: HTTP request
             pk: ObjectId
-
         Returns:
-
             - code: 200
               content: Data
             - code: 404
@@ -325,13 +460,10 @@ class DataDetail(APIView):
             )
             if template_info_param:
                 self.serializer = DataWithTemplateInfoSerializer
-
             # Get object
             data_object = self.get_object(request, pk)
-
             # Serialize object
             serializer = self.serializer(data_object)
-
             # Return response
             return Response(serializer.data)
         except Http404:
@@ -346,16 +478,41 @@ class DataDetail(APIView):
                 content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+    @extend_schema(
+        summary="Delete a Data",
+        description="Delete a Data",
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="ObjectId of the data",
+            ),
+        ],
+        responses={
+            204: OpenApiResponse(description="Deletion succeed"),
+            404: OpenApiResponse(
+                response={
+                    "type": "object",
+                    "properties": {"message": {"type": "string"}},
+                },
+                description="Data not found",
+            ),
+            500: OpenApiResponse(
+                response={
+                    "type": "object",
+                    "properties": {"message": {"type": "string"}},
+                },
+                description="Internal server error",
+            ),
+        },
+    )
     def delete(self, request, pk):
         """Delete a Data
-
         Args:
-
             request: HTTP request
             pk: ObjectId
-
         Returns:
-
             - code: 204
               content: Deletion succeed
             - code: 404
@@ -366,10 +523,8 @@ class DataDetail(APIView):
         try:
             # Get object
             data_object = self.get_object(request, pk)
-
             # delete object
             data_api.delete(data_object, request.user)
-
             # Return response
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Http404:
@@ -384,23 +539,57 @@ class DataDetail(APIView):
                 content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+    @extend_schema(
+        summary="Update a Data",
+        description="Update a Data",
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Id of the data",
+            ),
+        ],
+        request=DataSerializer,
+        responses={
+            200: OpenApiResponse(
+                response=DataSerializer,
+                description="Data updated successfully",
+            ),
+            400: OpenApiResponse(
+                response={
+                    "type": "object",
+                    "properties": {"message": {"type": "object"}},
+                },
+                description="Validation error",
+            ),
+            404: OpenApiResponse(
+                response={
+                    "type": "object",
+                    "properties": {"message": {"type": "string"}},
+                },
+                description="Data not found",
+            ),
+            500: OpenApiResponse(
+                response={
+                    "type": "object",
+                    "properties": {"message": {"type": "string"}},
+                },
+                description="Internal server error",
+            ),
+        },
+    )
     def patch(self, request, pk):
         """Update a Data
-
         Parameters:
-
             {
                 "title": "new_title",
                 "content": "new_xml_content"
             }
-
         Args:
-
             request: HTTP request
             pk: ObjectId
-
         Returns:
-
             - code: 200
               content: Updated data
             - code: 400
@@ -413,7 +602,6 @@ class DataDetail(APIView):
         try:
             # Get object
             data_object = self.get_object(request, pk)
-
             # Build serializer
             data_serializer = self.serializer(
                 instance=data_object,
@@ -421,12 +609,10 @@ class DataDetail(APIView):
                 partial=True,
                 context={"request": request},
             )
-
             # Validate data
             data_serializer.is_valid(raise_exception=True)
             # Save data
             data_serializer.save()
-
             return Response(data_serializer.data, status=status.HTTP_200_OK)
         except ValidationError as validation_exception:
             content = {"message": validation_exception.detail}
@@ -444,6 +630,10 @@ class DataDetail(APIView):
             )
 
 
+@extend_schema(
+    tags=["Data"],
+    description="Change the Owner of a data",
+)
 class DataChangeOwner(APIView):
     """Change the Owner of a data"""
 
@@ -451,14 +641,10 @@ class DataChangeOwner(APIView):
 
     def get_object(self, request, pk):
         """Get data from db
-
         Args:
-
             request: HTTP request
             pk: ObjectId
-
         Returns:
-
             Data
         """
         try:
@@ -468,13 +654,9 @@ class DataChangeOwner(APIView):
 
     def get_user(self, user_id):
         """Retrieve a User
-
         Args:
-
             user_id: ObjectId
-
         Returns:
-
             - code: 404
               content: Object was not found
         """
@@ -483,17 +665,37 @@ class DataChangeOwner(APIView):
         except exceptions.DoesNotExist:
             raise Http404
 
+    @extend_schema(
+        summary="Change the Owner of a data",
+        description="Change the Owner of a data",
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Data ID",
+            ),
+            OpenApiParameter(
+                name="user_id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="New owner ID",
+            ),
+        ],
+        responses={
+            200: None,
+            403: OpenApiResponse(description="Access Forbidden"),
+            404: OpenApiResponse(description="Object was not found"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     def patch(self, request, pk, user_id):
         """Change the Owner of a data
-
         Args:
-
             request: HTTP request
             pk: ObjectId
             user_id: ObjectId
-
         Returns:
-
             - code: 200
               content: None
             - code: 403
@@ -507,7 +709,6 @@ class DataChangeOwner(APIView):
             # get object
             data_object = self.get_object(request, pk)
             user_object = self.get_user(user_id)
-
             # change owner
             data_api.change_owner(data_object, user_object, request.user)
             return Response({}, status=status.HTTP_200_OK)
@@ -524,8 +725,12 @@ class DataChangeOwner(APIView):
             )
 
 
+@extend_schema(
+    tags=["Data"],
+    description="Download data file",
+)
 class DataDownload(APIView):
-    """Download XML file in data"""
+    """Download data file"""
 
     def get_object(self, request, pk):
         """Get Data from db
@@ -544,21 +749,48 @@ class DataDownload(APIView):
         except exceptions.DoesNotExist:
             raise Http404
 
+    @extend_schema(
+        summary="Download data file",
+        description="Download data file",
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Data ID",
+            ),
+            OpenApiParameter(
+                name="pretty_print",
+                type=OpenApiTypes.BOOL,
+                location=OpenApiParameter.QUERY,
+                description="Pretty print the content",
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(description="File", response=None),
+            400: OpenApiResponse(description="Bad Request"),
+            404: OpenApiResponse(description="Data not found"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+        examples=[
+            OpenApiExample(
+                name="Download file",
+                description="Download file",
+                value=None,
+                request_only=True,
+                response_only=False,
+            ),
+        ],
+    )
     def get(self, request, pk):
-        """Download the XML file from a data
-
+        """Download data file
         Args:
-
             request: HTTP request
             pk: ObjectId
-
         Examples:
-
             ../data/download/[data_id]
             ../data/download/[data_id]?pretty_print=true
-
         Returns:
-
             - code: 200
               content: XML file
             - code: 404
@@ -569,13 +801,10 @@ class DataDownload(APIView):
         try:
             # Get object
             data_object = self.get_object(request, pk)
-
             # get xml content
             data_content = data_object.content
-
             # get format bool
             pretty_print = request.query_params.get("pretty_print", False)
-
             # format content
             if to_bool(pretty_print):
                 # format XML
@@ -589,7 +818,6 @@ class DataDownload(APIView):
                     return Response(
                         content, status=status.HTTP_400_BAD_REQUEST
                     )
-
             return get_file_http_response(
                 data_content,
                 data_object.title,
@@ -613,6 +841,10 @@ class DataDownload(APIView):
             )
 
 
+@extend_schema(
+    tags=["Data"],
+    description="Execute Local Query View",
+)
 class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
     """Execute Local Query View"""
 
@@ -621,48 +853,118 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
     else:
         serializer = DataSerializer
 
-    def post(self, request):
-        """Execute a query
+    @extend_schema(
+        summary="Retrieve a list of records from a list of selection criteria",
+        description="""Retrieve a list of records by providing a JSON query and filtering parameters.
+            Use this endpoint when you know the structure of your documents and want to query
+            on specific fields.
 
-        Url Parameters:
+            Examples:
 
-            page: page_number
-
-        Parameters:
-
-            # get all results (paginated)
+            # get all records (paginated)
             {"query": {}}
-            # get all results
+            # get all records
             {"query": {}, "all": "true"}
-            # get all results filtered by title
+            # query on string field
+            {"query":{"name": "John"}}
+            # query on string field with regex
+            {"query":{"name": "/John/"}}
+            # query on integer field
+            {"query":{"age": 30}}
+            # query on two fields (AND)
+            {"query":{"name": "John", "age": 30}}
+            # query on two fields (OR)
+            {"query":{"$or": [{"name": "John"}, {"age": 30}]}}
+            # get all records filtered by title
             {"query": {}, "title": "title_string"}
-             # get all results filtered by workspaces
+             # get all records filtered by workspaces
             {"query": {}, "workspaces": [{"id":"[workspace_id]"}]}
-            # get all results filtered by private workspace
+            # get all records filtered by private workspace
             {"query": {}, "workspaces": [{"id":"None"}]}
-            # get all results filtered by templates
+            # get all records filtered by templates
             {"query": {}, "templates": [{"id":"[template_id]"}] }
-            # get all results that verify a given criteria
+            # get all records that verify a given criteria
             {"query": {"root.element.value": 2}}
             # get values at xpath
             {"query": {}, "xpath": "/ns:root/@element", "namespaces": {"ns": "<namespace_url>"}}
-            # get results using multiple options
+            # get records using multiple options
             {"query": {"root.element.value": 2}, "workspaces": [{"id":"workspace_id"}] , "all": "true"}
             {"query": {"root.element.value": 2}, "templates": [{"id":"template_id"}] , "all": "true"}
             {"query": {"root.element.value": 2}, "templates": [{"id":"template_id"}],
             "workspaces": [{"id":"[workspace_id]"}] ,"all": "true"}
+        """,
+        parameters=[
+            OpenApiParameter(
+                name="page",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description="Page number",
+            ),
+        ],
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "object"},
+                    "all": {"type": "boolean"},
+                    "title": {"type": "string"},
+                    "workspaces": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {"id": {"type": "string"}},
+                        },
+                    },
+                    "templates": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {"id": {"type": "string"}},
+                        },
+                    },
+                    "xpath": {"type": "string"},
+                    "namespaces": {"type": "object"},
+                },
+            }
+        },
+        responses={
+            200: DataSerializer(many=True),
+            400: OpenApiResponse(description="Bad Request"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+        examples=[
+            OpenApiExample(
+                name="Get all records (paginated)",
+                description="Get all records (paginated)",
+                value={"query": {}},
+                request_only=True,
+                response_only=False,
+            ),
+            OpenApiExample(
+                name="Get all records",
+                description="Get all records",
+                value={"query": {}, "all": "true"},
+                request_only=True,
+                response_only=False,
+            ),
+            OpenApiExample(
+                name="Get all records filtered by title",
+                description="Get all records filtered by title",
+                value={"query": {}, "title": "title_string"},
+                request_only=True,
+                response_only=False,
+            ),
+        ],
+    )
+    def post(self, request):
+        """Execute a query
 
-        Examples:
-
-            ../data/query/
-            ../data/query/?page=2
+        Url Parameters:
+            page: page_number
 
         Args:
-
             request: HTTP request
-
         Returns:
-
             - code: 200
               content: List of data
             - code: 400
@@ -674,23 +976,17 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
 
     def build_response(self, data_list):
         """Build the response.
-
         Args:
-
             data_list: List of data
-
         Returns:
-
             The response paginated
         """
-
         xpath = self.request.data.get("xpath", None)
         namespaces = self.request.data.get("namespaces", None)
         if "all" in self.request.data and to_bool(self.request.data["all"]):
             if data_list.count() > MAX_DOCUMENT_LIST:
                 content = {"message": "Number of documents is over the limit."}
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
-
             # Select values at xpath if provided
             if xpath:
                 for data_object in data_list:
@@ -704,24 +1000,24 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
         else:
             # Get paginator
             paginator = StandardResultsSetPagination()
-
             # Get requested page from list of results
             page = paginator.paginate_queryset(data_list, self.request)
-
             # Select values at xpath if provided
             if xpath:
                 for data_object in page:
                     data_object.xml_content = get_content_by_xpath(
                         data_object.xml_content, xpath, namespaces=namespaces
                     )
-
             # Serialize page
             data_serializer = self.serializer(page, many=True)
-
             # Return paginated response
             return paginator.get_paginated_response(data_serializer.data)
 
 
+@extend_schema(
+    tags=["Data"],
+    description="Execute Local Keyword Query View",
+)
 class ExecuteLocalKeywordQueryView(ExecuteLocalQueryView):
     """Execute Local Keyword Query View"""
 
@@ -730,17 +1026,13 @@ class ExecuteLocalKeywordQueryView(ExecuteLocalQueryView):
     ):
         """Build the raw query
         Prepare the query for a keyword search
-
         Args:
-
             query: ObjectId
             workspaces: ObjectId
             templates: ObjectId
             options: Query options
             title: title filter
-
         Returns:
-
             The raw query
         """
         # build query builder
@@ -753,7 +1045,72 @@ class ExecuteLocalKeywordQueryView(ExecuteLocalQueryView):
             title=title,
         )
 
+    @extend_schema(
+        summary="Retrieve a list of records that contain a list of keywords",
+        description="""Retrieve a list of records by providing a list of keywords and filtering parameters.
+            Use this endpoint when to find documents that contain exact matches of the provided keywords.
 
+            Examples:
+            # get all records (paginated)
+            {"query": ""}
+            # get all records
+            {"query": "", "all": "true"}
+            # query on one keyword
+            {"query": "dog"}
+            # query on two keywords
+            {"query": "cat dog"}
+            # get all records filtered by title
+            {"query": "", "title": "title_string"}
+             # get all records filtered by workspaces
+            {"query": "", "workspaces": [{"id":"[workspace_id]"}]}
+            # get all records filtered by private workspace
+            {"query": "", "workspaces": [{"id":"None"}]}
+            # get all records filtered by templates
+            {"query": "", "templates": [{"id":"[template_id]"}] }
+            # get records using multiple options
+            {"query": "", "workspaces": [{"id":"workspace_id"}] , "all": "true"}
+            {"query": "", "templates": [{"id":"template_id"}] , "all": "true"}
+            {"query": "", "templates": [{"id":"template_id"}], "workspaces": [{"id":"[workspace_id]"}] ,"all": "true"}
+        """,
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string"},
+                    "all": {"type": "boolean"},
+                    "workspaces": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {"id": {"type": "string"}},
+                        },
+                    },
+                    "templates": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {"id": {"type": "string"}},
+                        },
+                    },
+                    "options": {"type": "object"},
+                    "title": {"type": "string"},
+                },
+            }
+        },
+        responses={
+            200: DataSerializer(many=True),
+            400: OpenApiResponse(description="Bad Request"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
+    def post(self, request):
+        return super().post(request)
+
+
+@extend_schema(
+    tags=["Data"],
+    description="Assign a Data to a Workspace",
+)
 class DataAssign(APIView):
     """Assign a Data to a Workspace."""
 
@@ -761,14 +1118,10 @@ class DataAssign(APIView):
 
     def get_object(self, request, pk):
         """Get data from db
-
         Args:
-
             request: HTTP request
             pk: ObjectId
-
         Returns:
-
             Data
         """
         try:
@@ -778,13 +1131,9 @@ class DataAssign(APIView):
 
     def get_workspace(self, workspace_id):
         """Retrieve a Workspace
-
         Args:
-
             workspace_id: ObjectId
-
         Returns:
-
             - code: 404
               content: Object was not found
         """
@@ -793,17 +1142,37 @@ class DataAssign(APIView):
         except exceptions.DoesNotExist:
             raise Http404
 
+    @extend_schema(
+        summary="Assign Data to a Workspace",
+        description="Assign Data to a Workspace",
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Data ID",
+            ),
+            OpenApiParameter(
+                name="workspace_id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Workspace ID",
+            ),
+        ],
+        responses={
+            200: None,
+            403: OpenApiResponse(description="Access Forbidden"),
+            404: OpenApiResponse(description="Object was not found"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     def patch(self, request, pk, workspace_id):
         """Assign Data to a Workspace
-
         Args:
-
             request: HTTP request
             pk: ObjectId
             workspace_id: ObjectId
-
         Returns:
-
             - code: 200
               content: None
             - code: 403
@@ -817,7 +1186,6 @@ class DataAssign(APIView):
             # Get object
             data_object = self.get_object(request, pk)
             workspace_object = self.get_workspace(workspace_id)
-
             # Assign data to workspace
             data_api.assign(data_object, workspace_object, request.user)
             return Response({}, status=status.HTTP_200_OK)
@@ -834,26 +1202,48 @@ class DataAssign(APIView):
             )
 
 
+@extend_schema(
+    tags=["Data"],
+    description="List all Data by workspace",
+)
 class DataListByWorkspace(APIView):
     """List all Data by workspace."""
 
     permission_classes = (IsAuthenticated,)
     serializer = DataSerializer
 
+    @extend_schema(
+        summary="Get all workspace Data",
+        description="Get all workspace Data",
+        parameters=[
+            OpenApiParameter(
+                name="workspace_id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Workspace ID",
+            ),
+        ],
+        responses={
+            200: DataSerializer(many=True),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+        examples=[
+            OpenApiExample(
+                name="Get all workspace Data",
+                description="Get all workspace Data",
+                value=None,
+                request_only=True,
+                response_only=False,
+            ),
+        ],
+    )
     def get(self, request, workspace_id):
         """Get all workspace Data
-
         Examples:
-
             ../workspace/id/data
-
-
         Args:
-
             request: HTTP request
-
         Returns:
-
             - code: 200
               content: List of data
             - code: 500
@@ -864,10 +1254,8 @@ class DataListByWorkspace(APIView):
             data_object_list = data_api.get_all_by_workspace(
                 workspace_id, request.user
             )
-
             # Serialize object
             data_serializer = self.serializer(data_object_list, many=True)
-
             # Return response
             return Response(data_serializer.data, status=status.HTTP_200_OK)
         except Exception as api_exception:
@@ -877,29 +1265,67 @@ class DataListByWorkspace(APIView):
             )
 
 
+@extend_schema(
+    tags=["Data"],
+    description="Get the permissions of the data according to the client user",
+)
 class DataPermissions(APIView):
-    """
-    Get the permissions of the data according to the client user
-    """
+    """Get the permissions of the data according to the client user"""
 
+    @extend_schema(
+        summary="Get data permissions",
+        description="Get data permissions",
+        parameters=[
+            OpenApiParameter(
+                name="ids",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description="Comma-separated list of data IDs",
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="JSON Array [ <data_id>: <boolean> ]",
+                response=None,
+            ),
+            400: OpenApiResponse(description="Validation error"),
+            404: OpenApiResponse(description="Data not found"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     def get(self, request):
         """GET requests"""
         return self.process_request(request)
 
+    @extend_schema(
+        summary="Set data permissions",
+        description="Set data permissions",
+        request={
+            "application/json": {
+                "type": "array",
+                "items": {"type": "string"},
+            }
+        },
+        responses={
+            200: OpenApiResponse(
+                description="JSON Array [ <data_id>: <boolean> ]",
+                response=None,
+            ),
+            400: OpenApiResponse(description="Validation error"),
+            404: OpenApiResponse(description="Data not found"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     def post(self, request):
         """POST requests"""
         return self.process_request(request)
 
     def get_object(self, request, pk):
         """Get data from db
-
         Args:
-
             request: HTTP request
             pk: ObjectId
-
         Returns:
-
             Data
         """
         try:
@@ -909,22 +1335,11 @@ class DataPermissions(APIView):
 
     def process_request(self, request):
         """Give the user permissions for a list of data ids
-
         Parameters:
-
-            [
-                "data_id1"
-                "data_id2"
-                "data_id3"
-                ...
-            ]
-
+            [ "data_id1" "data_id2" "data_id3" ... ]
         Args:
-
             request: HTTP request
-
         Returns:
-
             - code: 200
               content: JSON Array [ <data_id>: <boolean> ]
             - code: 400
@@ -938,12 +1353,9 @@ class DataPermissions(APIView):
             # Build serializer
             data_ids = json.loads(request.query_params["ids"])
             results = {}
-
             for id in data_ids:
                 results[id] = self.can_write_data(request, id)
-
             return Response(results, status.HTTP_200_OK)
-
         except ValidationError as validation_exception:
             content = {"message": validation_exception.detail}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
@@ -958,14 +1370,10 @@ class DataPermissions(APIView):
 
     def can_write_data(self, request, id):
         """Get the data permissions of a data
-
         Args:
-
             request: http request
             id: data id
-
         Returns:
-
             - Boolean
             - raise: Http404
               content: Data was not found
@@ -983,29 +1391,76 @@ class DataPermissions(APIView):
             raise exception
 
 
+@extend_schema(
+    tags=["Data Migration"],
+    description="Check for a set of data if the migration is possible for the given target template",
+)
 class Validation(AbstractMigrationView):
     """Check for a set of data if the migration is possible for the given target template"""
 
-    def post(self, request, pk):
-        """Check if a migration if possible for the given template id
-
-        Parameters:
-
-            {
-                "data || template": [
-                    "id1",
-                    "id2",
-                    "id3"
-                ]
+    @extend_schema(
+        summary="Check if a migration is possible",
+        description="Check if a migration is possible for the given template ID",
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Target template ID",
+            ),
+        ],
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                    },
+                    "template": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                    },
+                },
             }
-
+        },
+        responses={
+            200: OpenApiResponse(description="Migration Done"),
+            400: OpenApiResponse(description="Bad Request"),
+            403: OpenApiResponse(description="Access Forbidden"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+        examples=[
+            OpenApiExample(
+                name="Check migration possibility",
+                description="Check migration possibility",
+                value={"data": ["id1", "id2", "id3"]},
+                request_only=True,
+                response_only=False,
+            ),
+            OpenApiExample(
+                name="Check migration possibility using template",
+                description="Check migration possibility using template",
+                value={"template": ["id1", "id2", "id3"]},
+                request_only=True,
+                response_only=False,
+            ),
+        ],
+    )
+    def post(self, request, pk):
+        """Check if a migration is possible for the given template ID
+        Parameters:
+            {
+              "data || template": [
+                "id1",
+                "id2",
+                "id3"
+              ]
+            }
         Args:
-
             request: HTTP request
-            pk: Target template id
-
+            pk: Target template ID
         Returns:
-
             - code: 200
               content: Migration done
             - code: 400
@@ -1018,29 +1473,76 @@ class Validation(AbstractMigrationView):
         return super().post(request=request, template_id=pk, migrate=False)
 
 
+@extend_schema(
+    tags=["Data Migration"],
+    description="Data template migration",
+)
 class Migration(AbstractMigrationView):
     """Data template migration"""
 
-    def post(self, request, pk):
-        """Migrate data to the given template id
-
-        Parameters:
-
-            {
-                "data || template": [
-                    "id1",
-                    "id2",
-                    "id3"
-                ]
+    @extend_schema(
+        summary="Migrate data to a template",
+        description="Migrate data to the given template ID",
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Target template ID",
+            ),
+        ],
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                    },
+                    "template": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                    },
+                },
             }
-
+        },
+        responses={
+            200: OpenApiResponse(description="Migration Done"),
+            400: OpenApiResponse(description="Bad Request"),
+            403: OpenApiResponse(description="Access Forbidden"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+        examples=[
+            OpenApiExample(
+                name="Migrate data",
+                description="Migrate data",
+                value={"data": ["id1", "id2", "id3"]},
+                request_only=True,
+                response_only=False,
+            ),
+            OpenApiExample(
+                name="Migrate data using template",
+                description="Migrate data using template",
+                value={"template": ["id1", "id2", "id3"]},
+                request_only=True,
+                response_only=False,
+            ),
+        ],
+    )
+    def post(self, request, pk):
+        """Migrate data to the given template ID
+        Parameters:
+            {
+              "data || template": [
+                "id1",
+                "id2",
+                "id3"
+              ]
+            }
         Args:
-
             request: HTTP request
-            pk: Target template id
-
+            pk: Target template ID
         Returns:
-
             - code: 200
               content: Migration done
             - code: 400
@@ -1053,50 +1555,115 @@ class Migration(AbstractMigrationView):
         return super().post(request=request, template_id=pk, migrate=True)
 
 
+@extend_schema(
+    tags=["Data Migration"],
+    description="Get the progress of the migration / validation async task",
+)
 class GetTaskProgress(APIView):
     """Get the progress of the migration / validation async task"""
 
     permission_classes = (IsAdminUser,)
 
+    @extend_schema(
+        summary="Get task progress",
+        description="Get the progress of the migration / validation async task",
+        parameters=[
+            OpenApiParameter(
+                name="task_id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Task ID",
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="Task progress",
+                response={
+                    "type": "object",
+                    "properties": {
+                        "state": {
+                            "type": "string",
+                            "enum": ["PENDING", "PROGRESS", "SUCCESS"],
+                        },
+                        "details": {"type": "string"},
+                    },
+                },
+            ),
+        },
+    )
     def get(self, request, task_id):
         """Get the progress of the migration / validation async task
-
         Args:
             request:
             task_id:
-
         Return:
             {
-                'state': PENDING | PROGRESS | SUCCESS,
-                'details': result (for SUCCESS) | null (for PENDING) | { PROGRESS info }
+              'state': PENDING | PROGRESS | SUCCESS,
+              'details': result (for SUCCESS) | null (for PENDING) | { PROGRESS info }
             }
         """
         result = data_tasks.get_task_progress(task_id)
         return Response(result, content_type="application/json")
 
 
+@extend_schema(
+    tags=["Data Migration"],
+    description="Get the result of the migration / validation async task",
+)
 class GetTaskResult(APIView):
     """Get the result of the migration / validation async task"""
 
     permission_classes = (IsAdminUser,)
 
+    @extend_schema(
+        summary="Get task result",
+        description="Get the result of the migration / validation async task",
+        parameters=[
+            OpenApiParameter(
+                name="task_id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Task ID",
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="Task result",
+                response={
+                    "type": "object",
+                    "properties": {
+                        "valid": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                        },
+                        "wrong": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                        },
+                    },
+                },
+            ),
+        },
+    )
     def get(self, request, task_id):
         """Get the result of the migration / validation async task
-
         Args:
             request:
             task_id:
-
         Return:
             {
-                    "valid": ["data_id_1", "data_id_2" ...],
-                    "wrong": ["data_id_3", "data_id_4" ...]
+              "valid": ["data_id_1", "data_id_2" ...],
+              "wrong": ["data_id_3", "data_id_4" ...]
             }
         """
         result = data_tasks.get_task_result(task_id)
         return Response(result, content_type="application/json")
 
 
+@extend_schema(
+    tags=["Data"],
+    description="Data Html Render",
+)
 class DataHtmlRender(BaseDataHtmlRender):
     """Data Html Render"""
 
@@ -1104,22 +1671,38 @@ class DataHtmlRender(BaseDataHtmlRender):
         """get data by id."""
         return data_api.get_by_id(pk, request.user)
 
+    @extend_schema(
+        summary="Get Html render",
+        description="Get Html render",
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Data ID",
+            ),
+            OpenApiParameter(
+                name="rendering",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description="Rendering type (list/detail)",
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(description="Html string", response=None),
+        },
+    )
     def get(self, request, pk):
         """Get Html render
-
         Args:
             request: HTTP request
             pk: data id
-
         Parameters:
-
             {
-                "rendering": "list/detail"
+              "rendering": "list/detail"
             }
-
         Returns:
             Html string
         """
-
         # Get rendering content
         return self.get_rendering_content(request, pk)

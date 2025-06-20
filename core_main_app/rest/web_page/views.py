@@ -5,6 +5,7 @@ import logging
 
 from django.http import Http404
 from django.utils.decorators import method_decorator
+from drf_spectacular.utils import extend_schema, OpenApiResponse
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -19,6 +20,10 @@ from core_main_app.utils.decorators import api_staff_member_required
 logger = logging.getLogger("core_main_app.rest.web_page.views")
 
 
+@extend_schema(
+    tags=["Web Page"],
+    description="Retrieve, create or delete the web page",
+)
 class WebPageList(APIView):
     """Retrieve, create or delete the web page"""
 
@@ -38,6 +43,15 @@ class WebPageList(APIView):
         except exceptions.DoesNotExist:
             raise Http404
 
+    @extend_schema(
+        summary="Retrieve the web page",
+        description="Retrieve the web page",
+        responses={
+            200: WebPageSerializer,
+            404: OpenApiResponse(description="Object was not found"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     def get(self, request):
         """Retrieve the web page
 
@@ -76,6 +90,17 @@ class WebPageList(APIView):
                 content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+    @extend_schema(
+        summary="Create or update the custom web page",
+        description="Create or update the custom web page",
+        request=WebPageSerializer,
+        responses={
+            201: WebPageSerializer,
+            400: OpenApiResponse(description="Validation error"),
+            403: OpenApiResponse(description="Access Forbidden"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     @method_decorator(api_staff_member_required())
     def post(self, request):
         """Create or update the custom web page
@@ -134,6 +159,15 @@ class WebPageList(APIView):
                 content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+    @extend_schema(
+        summary="Delete the custom web page",
+        description="Delete the custom web page",
+        responses={
+            204: None,
+            403: OpenApiResponse(description="Access Forbidden"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     @method_decorator(api_staff_member_required())
     def delete(self, request):
         """Delete the custom web page

@@ -3,6 +3,12 @@
 
 from abc import ABC, abstractmethod
 
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import (
+    extend_schema,
+    OpenApiParameter,
+    OpenApiResponse,
+)
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -14,23 +20,33 @@ from core_main_app.commons import exceptions
 from core_main_app.components.template_html_rendering import (
     api as template_html_rendering_api,
 )
-
 from core_main_app.rest.template_html_rendering.serializers import (
     TemplateHtmlRenderingSerializer,
 )
 
 
+@extend_schema(
+    tags=["Template HTML Rendering"],
+    description="List all template HTML renderings, or create a new one",
+)
 class TemplateHtmlRenderingList(APIView):
     """List all template HTML renderings, or create a new one"""
 
     permission_classes = (IsAdminUser,)
 
+    @extend_schema(
+        summary="Get all templates HTML renderings",
+        description="Get all templates HTML renderings",
+        responses={
+            200: TemplateHtmlRenderingSerializer(many=True),
+            401: OpenApiResponse(description="Unauthorized"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     def get(self, request):
         """Get all templates HTML renderings
-
         Args:
             request: HTTP request
-
         Returns:
             - code: 200
               content: List of HTML renderings
@@ -44,12 +60,10 @@ class TemplateHtmlRenderingList(APIView):
             template_html_rendering_list = (
                 template_html_rendering_api.get_all()
             )
-
             # Serialize object
             serializer = TemplateHtmlRenderingSerializer(
                 template_html_rendering_list, many=True
             )
-
             # Return response
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as api_exception:
@@ -58,19 +72,28 @@ class TemplateHtmlRenderingList(APIView):
                 content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+    @extend_schema(
+        summary="Create a HTML template rendering",
+        description="Create a HTML template rendering",
+        request=TemplateHtmlRenderingSerializer,
+        responses={
+            201: TemplateHtmlRenderingSerializer,
+            400: OpenApiResponse(
+                description="Validation error / not unique / model error"
+            ),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     def post(self, request):
         """Create a HTML template rendering
-
         Parameters:
             {
-                "template": "template_object_id",
-                "list_rendering": "list_rendering",
-                "detail_rendering": "detail_rendering"
+              "template": "template_object_id",
+              "list_rendering": "list_rendering",
+              "detail_rendering": "detail_rendering"
             }
-
         Args:
             request: HTTP request
-
         Returns:
             - code: 201
               content: Html rendering created
@@ -82,13 +105,10 @@ class TemplateHtmlRenderingList(APIView):
         try:
             # Build serializer
             serializer = TemplateHtmlRenderingSerializer(data=request.data)
-
             # Validate data
             serializer.is_valid(raise_exception=True)
-
             # Save data
             serializer.save()
-
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except (
             ValidationError,
@@ -110,18 +130,38 @@ class TemplateHtmlRenderingList(APIView):
             )
 
 
+@extend_schema(
+    tags=["Template HTML Rendering"],
+    description="TemplateHtmlRendering details view",
+)
 class TemplateHtmlRenderingDetail(APIView):
     """TemplateHtmlRendering details view"""
 
     permission_classes = (IsAdminUser,)
 
+    @extend_schema(
+        summary="Get TemplateHtmlRendering",
+        description="Get TemplateHtmlRendering",
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="TemplateHtmlRendering ID",
+            ),
+        ],
+        responses={
+            200: TemplateHtmlRenderingSerializer,
+            403: OpenApiResponse(description="Access Forbidden"),
+            404: OpenApiResponse(description="Object was not found"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     def get(self, request, pk):
         """Get `TemplateHtmlRendering` object from db
-
         Args:
             request: HTTP request
             pk: ObjectId
-
         Returns:
             TemplateHtmlRendering
         """
@@ -130,12 +170,10 @@ class TemplateHtmlRenderingDetail(APIView):
             template_html_rendering_object = (
                 template_html_rendering_api.get_by_id(pk)
             )
-
             # Serialize object
             template_html_rendering_serializer = (
                 TemplateHtmlRenderingSerializer(template_html_rendering_object)
             )
-
             # Return response
             return Response(template_html_rendering_serializer.data)
         except exceptions.DoesNotExist:
@@ -147,13 +185,31 @@ class TemplateHtmlRenderingDetail(APIView):
                 content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+    @extend_schema(
+        summary="Edit TemplateHtmlRendering",
+        description="Edit TemplateHtmlRendering",
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="TemplateHtmlRendering ID",
+            ),
+        ],
+        request=TemplateHtmlRenderingSerializer,
+        responses={
+            200: TemplateHtmlRenderingSerializer,
+            400: OpenApiResponse(description="Validation error"),
+            403: OpenApiResponse(description="Access Forbidden"),
+            404: OpenApiResponse(description="Object was not found"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     def patch(self, request, pk):
         """Edit `TemplateHtmlRendering` object from db
-
         Args:
             request: HTTP request
             pk: ObjectId
-
         Returns:
             TemplateHtmlRendering
         """
@@ -162,7 +218,6 @@ class TemplateHtmlRenderingDetail(APIView):
             template_html_rendering_object = (
                 template_html_rendering_api.get_by_id(pk)
             )
-
             template_html_rendering_serializer = (
                 TemplateHtmlRenderingSerializer(
                     instance=template_html_rendering_object,
@@ -170,12 +225,10 @@ class TemplateHtmlRenderingDetail(APIView):
                     partial=True,
                 )
             )
-
             # Validate data
             template_html_rendering_serializer.is_valid(raise_exception=True)
             # Save data
             template_html_rendering_serializer.save()
-
             return Response(
                 template_html_rendering_serializer.data,
                 status=status.HTTP_200_OK,
@@ -192,13 +245,29 @@ class TemplateHtmlRenderingDetail(APIView):
                 content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+    @extend_schema(
+        summary="Delete TemplateHtmlRendering",
+        description="Delete TemplateHtmlRendering",
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="TemplateHtmlRendering ID",
+            ),
+        ],
+        responses={
+            204: None,
+            403: OpenApiResponse(description="Access Forbidden"),
+            404: OpenApiResponse(description="Object was not found"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     def delete(self, request, pk):
         """Delete a TemplateHtmlRendering
-
         Args:
             request: HTTP request
             pk: ObjectId
-
         Returns:
             - code: 204
               content: Deletion successful
@@ -214,10 +283,8 @@ class TemplateHtmlRenderingDetail(APIView):
             template_html_rendering_object = (
                 template_html_rendering_api.get_by_id(pk)
             )
-
             # delete object
             template_html_rendering_api.delete(template_html_rendering_object)
-
             # Return response
             return Response(status=status.HTTP_204_NO_CONTENT)
         except exceptions.DoesNotExist:
@@ -238,14 +305,11 @@ class BaseDataHtmlRender(APIView, ABC):
     @abstractmethod
     def get_object(self, pk, request):
         """Abstract method to get data object.
-
         Args:
             pk:
             request:
-
         Returns:
-             data object.
-
+            data object.
         """
         raise NotImplementedError("This method is not implemented.")
 
@@ -254,38 +318,31 @@ class BaseDataHtmlRender(APIView, ABC):
         try:
             # get data object
             data = self.get_object(pk, request)
-
             # Retrieve the rendering type from query parameters, default to 'detail'
             rendering_type = request.GET.get("rendering", "detail").lower()
-
             if rendering_type not in ["list", "detail"]:
                 content = {
                     "message": "Rendering type should be list or detail"
                 }
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
-
             rendering_type_mapping = {
                 "list": "list_rendering",
                 "detail": "detail_rendering",
             }
-
             # Get the corresponding field name
             rendering_name = rendering_type_mapping.get(rendering_type)
-
             # Fetch the template HTML rendering based on the template ID
             template_html_rendering = (
                 template_html_rendering_api.get_by_template_id(
                     data.template.id
                 )
             )
-
             # Get the HTML rendering content
             return Response(
                 template_html_rendering_api.render_data(
                     template_html_rendering, data, rendering_name
                 )
             )
-
         except exceptions.DoesNotExist:
             content = {"message": "Template HTML rendering or Data not found."}
             return Response(content, status=status.HTTP_404_NOT_FOUND)

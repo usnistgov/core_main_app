@@ -549,7 +549,7 @@ class TestCurrentTemplateVersionPatchPermission(SimpleTestCase):
         response = RequestMock.do_request_patch(
             template_version_manager_views.CurrentTemplateVersion.as_view(),
             mock_user,
-            data={},
+            param={"pk": self.fake_id},
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -571,7 +571,6 @@ class TestCurrentTemplateVersionPatchPermission(SimpleTestCase):
 
         """
         version_manager_set_current.return_value = {}
-        # version_manager_get_from_version.return_value = VersionManager(user="1")
         template_get_by_id.return_value = Template(user="1")
 
         mock_user = create_mock_user("1", is_staff=True)

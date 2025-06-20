@@ -38,7 +38,7 @@ class BlobProcessingModule(AbstractProcessingModule):
 
     @staticmethod
     def get_all():
-        """Return all blobs processing modules.
+        """Return all blob processing modules.
 
         Args:
 

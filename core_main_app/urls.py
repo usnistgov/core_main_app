@@ -4,7 +4,10 @@
 from django.conf.urls import include
 from django.contrib.auth.decorators import login_required
 from django.urls import re_path
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from drf_spectacular.views import (
+    SpectacularSwaggerView,
+    SpectacularJSONAPIView,
+)
 
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.data import api as data_api
@@ -18,7 +21,7 @@ from core_main_app.views.user import views as user_views, ajax as user_ajax
 
 urlpatterns = [
     re_path(r"^$", user_views.homepage, name="core_main_app_homepage"),
-    re_path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    re_path("api/schema/", SpectacularJSONAPIView.as_view(), name="schema"),
     re_path(
         "docs/api/",
         SpectacularSwaggerView.as_view(url_name="schema"),

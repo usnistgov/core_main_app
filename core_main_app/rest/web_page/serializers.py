@@ -8,7 +8,7 @@ from core_main_app.components.web_page.models import WebPage
 
 
 class WebPageSerializer(ModelSerializer):
-    """Represents the web page serializer"""
+    """Web page serializer"""
 
     class Meta:
         """Meta"""

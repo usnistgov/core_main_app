@@ -1,6 +1,7 @@
 """ REST API views for blob processing modules.
 """
 
+from drf_spectacular.utils import extend_schema, OpenApiResponse
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -15,14 +16,31 @@ from core_main_app.rest.blob_processing_module.serializers import (
 )
 
 
+@extend_schema(
+    tags=["Blob Processing Module"],
+    description="CRUD views for blob processing modules",
+)
 class BlobProcessingModuleView(APIView):
     """CRUD views for blob processing modules."""
 
     permission_classes = (IsAuthenticated,)
 
+    @extend_schema(
+        summary="Retrieve the list of blob processing modules",
+        description="Retrieve the list of blob processing modules",
+        responses={
+            200: OpenApiResponse(
+                BlobProcessingModuleSerializer(many=True),
+                description="List of blob processing modules",
+            ),
+            403: OpenApiResponse(
+                description="User is not authenticated or has no access"
+            ),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     def get(self, request):
         """Retrieve the list of blob processing modules
-
         Args:
             request: The HTTP request being sent
         """
@@ -30,14 +48,12 @@ class BlobProcessingModuleView(APIView):
             blob_processing_module_list = blob_processing_module_api.get_all(
                 request.user
             )
-
             # Serialize object
             serializer = BlobProcessingModuleSerializer(
                 blob_processing_module_list,
                 many=True,
                 context={"request": request},
             )
-
             # Return response
             return Response(serializer.data, status=status.HTTP_200_OK)
         except AccessControlError as exception:

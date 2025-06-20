@@ -3,6 +3,12 @@
 
 from django.http import Http404
 from django.utils.decorators import method_decorator
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import (
+    extend_schema,
+    OpenApiParameter,
+    OpenApiResponse,
+)
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -13,6 +19,7 @@ from core_main_app.components.template_version_manager import (
     api as template_version_manager_api,
 )
 from core_main_app.components.version_manager import api as version_manager_api
+from core_main_app.rest.template.serializers import TemplateSerializer
 from core_main_app.rest.template_version_manager.abstract_views import (
     AbstractTemplateVersionManagerList,
     AbstractTemplateList,
@@ -24,18 +31,46 @@ from core_main_app.rest.template_version_manager.abstract_views import (
 from core_main_app.rest.template_version_manager.serializers import (
     TemplateVersionManagerSerializer,
     CreateTemplateSerializer,
+    TemplateVersionManagerOrderingSerializer,
 )
 from core_main_app.utils.decorators import api_staff_member_required
 
 
+@extend_schema(
+    tags=["Template Version Manager"],
+    description="List all GlobalTemplateVersionManager",
+)
 class GlobalTemplateVersionManagerList(AbstractTemplateVersionManagerList):
     """List all GlobalTemplateVersionManager"""
 
+    @extend_schema(
+        summary="Get GlobalTemplateVersionManager",
+        description="Get GlobalTemplateVersionManager",
+        parameters=[
+            OpenApiParameter(
+                name="title",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description="Filter by title",
+            ),
+            OpenApiParameter(
+                name="is_disabled",
+                type=OpenApiTypes.BOOL,
+                location=OpenApiParameter.QUERY,
+                description="Filter by is_disabled",
+            ),
+        ],
+        responses={
+            200: TemplateVersionManagerSerializer(many=True),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
+    def get(self, request):
+        return super().get(request)
+
     def get_template_version_managers(self):
         """Get GlobalTemplateVersionManager
-
         Returns:
-
             List of GlobalTemplateVersionManager
         """
         return template_version_manager_api.get_global_version_managers(
@@ -43,16 +78,44 @@ class GlobalTemplateVersionManagerList(AbstractTemplateVersionManagerList):
         )
 
 
+@extend_schema(
+    tags=["Template Version Manager"],
+    description="List all UserTemplateVersionManager",
+)
 class UserTemplateVersionManagerList(AbstractTemplateVersionManagerList):
     """List all UserTemplateVersionManager"""
 
     permission_classes = (IsAuthenticated,)
 
+    @extend_schema(
+        summary="Get UserTemplateVersionManager",
+        description="Get UserTemplateVersionManager",
+        parameters=[
+            OpenApiParameter(
+                name="title",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description="Filter by title",
+            ),
+            OpenApiParameter(
+                name="is_disabled",
+                type=OpenApiTypes.BOOL,
+                location=OpenApiParameter.QUERY,
+                description="Filter by is_disabled",
+            ),
+        ],
+        responses={
+            200: TemplateVersionManagerSerializer(many=True),
+            403: OpenApiResponse(description="Access Forbidden"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
+    def get(self, request):
+        return super().get(request)
+
     def get_template_version_managers(self):
         """Get all UserTemplateVersionManager
-
         Returns:
-
             List of UserTemplateVersionManager
         """
         return template_version_manager_api.get_all_by_user_id(
@@ -60,6 +123,10 @@ class UserTemplateVersionManagerList(AbstractTemplateVersionManagerList):
         )
 
 
+@extend_schema(
+    tags=["Template Version Manager"],
+    description="List Global And User Template Version Manager",
+)
 class GlobalAndUserTemplateVersionManagerList(
     AbstractTemplateVersionManagerList
 ):
@@ -67,17 +134,44 @@ class GlobalAndUserTemplateVersionManagerList(
 
     permission_classes = (IsAdminUser,)
 
+    @extend_schema(
+        summary="Get Template Version Manager",
+        description="Get Template Version Manager",
+        parameters=[
+            OpenApiParameter(
+                name="title",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description="Filter by title",
+            ),
+            OpenApiParameter(
+                name="is_disabled",
+                type=OpenApiTypes.BOOL,
+                location=OpenApiParameter.QUERY,
+                description="Filter by is_disabled",
+            ),
+        ],
+        responses={
+            200: TemplateVersionManagerSerializer(many=True),
+            403: OpenApiResponse(description="Access Forbidden"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
+    def get(self, request):
+        return super().get(request)
+
     def get_template_version_managers(self):
         """Get all Template Version Manager
-
         Returns:
-
             List of Template Version Manager
         """
-
         return template_version_manager_api.get_all(request=self.request)
 
 
+@extend_schema(
+    tags=["Template Version Manager"],
+    description="Retrieve a TemplateVersionManager",
+)
 class TemplateVersionManagerDetail(APIView):
     """Retrieve a TemplateVersionManager"""
 
@@ -85,14 +179,10 @@ class TemplateVersionManagerDetail(APIView):
 
     def get_object(self, pk, request):
         """Get TemplateVersionManager from db
-
         Args:
-
             pk: ObjectId
             request:
-
         Returns:
-
             TemplateVersionManager
         """
         try:
@@ -100,16 +190,29 @@ class TemplateVersionManagerDetail(APIView):
         except exceptions.DoesNotExist:
             raise Http404
 
+    @extend_schema(
+        summary="Retrieve a TemplateVersionManager",
+        description="Retrieve a TemplateVersionManager",
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="TemplateVersionManager ID",
+            ),
+        ],
+        responses={
+            200: TemplateVersionManagerSerializer,
+            404: OpenApiResponse(description="Object was not found"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     def get(self, request, pk):
         """Retrieve a TemplateVersionManager
-
         Args:
-
             request: HTTP request
             pk: ObjectId
-
         Returns:
-
             - code: 200
               content: TemplateVersionManager
             - code: 404
@@ -122,12 +225,10 @@ class TemplateVersionManagerDetail(APIView):
             template_version_manager_object = self.get_object(
                 pk, request=request
             )
-
             # Serialize object
             serializer = TemplateVersionManagerSerializer(
                 template_version_manager_object
             )
-
             # Return response
             return Response(serializer.data)
         except Http404:
@@ -140,31 +241,47 @@ class TemplateVersionManagerDetail(APIView):
             )
 
 
+@extend_schema(
+    tags=["Template"],
+    description="Create a TemplateVersion",
+)
 class TemplateVersion(AbstractTemplateVersionManagerDetail):
     """Create a TemplateVersion"""
 
+    @extend_schema(
+        summary="Create a TemplateVersion",
+        description="Create a TemplateVersion",
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="TemplateVersionManager ID",
+            ),
+        ],
+        request=CreateTemplateSerializer,
+        responses={
+            201: CreateTemplateSerializer,
+            400: OpenApiResponse(description="Validation error"),
+            404: OpenApiResponse(description="Template not found"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     @method_decorator(api_staff_member_required())
     def post(self, request, pk):
         """Create a TemplateVersion
-
         Parameters:
-
             {
-                "filename": "filename",
-                "content": "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element name='root'/></xs:schema>"
+              "filename": "filename",
+              "content": "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element name='root'/></xs:schema>"
             }
-
         Note:
-
             "dependencies_dict": json.dumps({"schemaLocation1": "id1" ,"schemaLocation2":"id2"})
-
         Args:
-
             request: HTTP request
-
+            pk:
         Returns:
-
-            - code: 200
+            - code: 201
               content: Created TemplateVersionManager
             - code: 400
               content: Validation error
@@ -176,21 +293,17 @@ class TemplateVersion(AbstractTemplateVersionManagerDetail):
         try:
             # Get object
             template_version_manager_object = self.get_object(pk)
-
             # Build serializers
             template_serializer = CreateTemplateSerializer(
                 data=request.data, context={"request": request}
             )
-
             # Validate data
             template_serializer.is_valid(raise_exception=True)
-
             # Save data
             template_serializer.save(
                 template_version_manager=template_version_manager_object,
                 user=template_version_manager_object.user,
             )
-
             return Response(
                 template_serializer.data, status=status.HTTP_201_CREATED
             )
@@ -207,32 +320,40 @@ class TemplateVersion(AbstractTemplateVersionManagerDetail):
             )
 
 
+@extend_schema(
+    tags=["Template"],
+    description="Create a Template (linked to the user)",
+)
 class UserTemplateList(AbstractTemplateList):
     """Create a Template (linked to the user)"""
 
     permission_classes = (IsAuthenticated,)
 
+    @extend_schema(
+        summary="Create a Template (linked to the user)",
+        description="Create a Template (linked to the user)",
+        request=CreateTemplateSerializer,
+        responses={
+            201: TemplateSerializer,
+            400: OpenApiResponse(
+                description="Validation error / not unique / XSD error"
+            ),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     def post(self, request):
         """Create a Template (linked to the user)
-
         Parameters:
-
             {
-                "title": "title",
-                "filename": "filename",
-                "content": "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element name='root'/></xs:schema>"
+              "title": "title",
+              "filename": "filename",
+              "content": "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element name='root'/></xs:schema>"
             }
-
         Note:
-
             "dependencies_dict": json.dumps({"schemaLocation1": "id1" ,"schemaLocation2":"id2"})
-
         Args:
-
             request: HTTP request
-
         Returns:
-
             - code: 201
               content: Created Template
             - code: 400
@@ -244,39 +365,45 @@ class UserTemplateList(AbstractTemplateList):
 
     def get_user(self):
         """Retrieve the user from the request
-
         Returns:
-
             User ID
         """
         return str(self.request.user.id)
 
 
+@extend_schema(
+    tags=["Template"],
+    description="Create a Template (global schema)",
+)
 class GlobalTemplateList(AbstractTemplateList):
     """Create a Template (global schema)"""
 
+    @extend_schema(
+        summary="Create a Template (global schema)",
+        description="Create a Template (global schema)",
+        request=CreateTemplateSerializer,
+        responses={
+            201: TemplateSerializer,
+            400: OpenApiResponse(
+                description="Validation error / not unique / XSD error"
+            ),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     @method_decorator(api_staff_member_required())
     def post(self, request):
         """Create a Template (global schema)
-
         Parameters:
-
             {
-                "title": "title",
-                "filename": "filename",
-                "content": "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element name='root'/></xs:schema>"
+              "title": "title",
+              "filename": "filename",
+              "content": "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element name='root'/></xs:schema>"
             }
-
         Note:
-
             "dependencies_dict": json.dumps({"schemaLocation1": "id1" ,"schemaLocation2":"id2"})
-
         Args:
-
             request: HTTP request
-
         Returns:
-
             - code: 201
               content: Created template
             - code: 400
@@ -288,14 +415,16 @@ class GlobalTemplateList(AbstractTemplateList):
 
     def get_user(self):
         """The user is None for a global template
-
         Returns:
-
             None
         """
         return None
 
 
+@extend_schema(
+    tags=["Template"],
+    description="Update status to current",
+)
 class CurrentTemplateVersion(AbstractStatusTemplateVersion):
     """Update status to current"""
 
@@ -303,20 +432,42 @@ class CurrentTemplateVersion(AbstractStatusTemplateVersion):
 
     def status_update(self, template_object):
         """Update status to current
-
         Args:
-
             template_object: template_version
-
         Returns:
-
             TemplateVersion
         """
         return version_manager_api.set_current(
             template_object, request=self.request
         )
 
+    @extend_schema(
+        summary="Update status to current",
+        description="Update status to current",
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Template ID",
+            ),
+        ],
+        responses={
+            200: None,
+            400: OpenApiResponse(description="Validation Error / Bad Request"),
+            403: OpenApiResponse(description="Access Forbidden"),
+            404: OpenApiResponse(description="Object was not found"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
+    def patch(self, request, pk):
+        return super().patch(request, pk)
 
+
+@extend_schema(
+    tags=["Template"],
+    description="Update status to disabled",
+)
 class DisableTemplateVersion(AbstractStatusTemplateVersion):
     """Update status to disabled"""
 
@@ -324,20 +475,42 @@ class DisableTemplateVersion(AbstractStatusTemplateVersion):
 
     def status_update(self, template_object):
         """Update status to disabled
-
         Args:
-
             template_object: template_version
-
         Returns:
-
             TemplateVersion
         """
         return version_manager_api.disable_version(
             template_object, request=self.request
         )
 
+    @extend_schema(
+        summary="Update status to disabled",
+        description="Update status to disabled",
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Template ID",
+            ),
+        ],
+        responses={
+            200: None,
+            400: OpenApiResponse(description="Validation Error / Bad Request"),
+            403: OpenApiResponse(description="Access Forbidden"),
+            404: OpenApiResponse(description="Object was not found"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
+    def patch(self, request, pk):
+        return super().patch(request, pk)
 
+
+@extend_schema(
+    tags=["Template"],
+    description="Update status to restored",
+)
 class RestoreTemplateVersion(AbstractStatusTemplateVersion):
     """Update status to restored"""
 
@@ -345,20 +518,42 @@ class RestoreTemplateVersion(AbstractStatusTemplateVersion):
 
     def status_update(self, template_object):
         """Update status to restored
-
         Args:
-
             template_object: template_version
-
         Returns:
-
             TemplateVersion
         """
         return version_manager_api.restore_version(
             template_object, request=self.request
         )
 
+    @extend_schema(
+        summary="Update status to restored",
+        description="Update status to restored",
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Template ID",
+            ),
+        ],
+        responses={
+            200: None,
+            400: OpenApiResponse(description="Validation Error / Bad Request"),
+            403: OpenApiResponse(description="Access Forbidden"),
+            404: OpenApiResponse(description="Object was not found"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
+    def patch(self, request, pk):
+        return super().patch(request, pk)
 
+
+@extend_schema(
+    tags=["Template Version Manager"],
+    description="Update status to disabled",
+)
 class DisableTemplateVersionManager(AbstractStatusTemplateVersionManager):
     """Update status to disabled"""
 
@@ -366,13 +561,9 @@ class DisableTemplateVersionManager(AbstractStatusTemplateVersionManager):
 
     def status_update(self, template_version_manager_object):
         """Update status to disabled
-
         Args:
-
             template_version_manager_object: template_version_manager
-
         Returns:
-
             TemplateVersionManager
         """
         # FIXME: add return?
@@ -380,7 +571,33 @@ class DisableTemplateVersionManager(AbstractStatusTemplateVersionManager):
             template_version_manager_object, request=self.request
         )
 
+    @extend_schema(
+        summary="Update status to disabled",
+        description="Update status to disabled",
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="TemplateVersionManager ID",
+            ),
+        ],
+        responses={
+            200: None,
+            400: OpenApiResponse(description="Validation error"),
+            403: OpenApiResponse(description="Access Forbidden"),
+            404: OpenApiResponse(description="Object was not found"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
+    def patch(self, request, pk):
+        return super().patch(request, pk)
 
+
+@extend_schema(
+    tags=["Template Version Manager"],
+    description="Update status to restored",
+)
 class RestoreTemplateVersionManager(AbstractStatusTemplateVersionManager):
     """Update status to restored"""
 
@@ -388,18 +605,41 @@ class RestoreTemplateVersionManager(AbstractStatusTemplateVersionManager):
 
     def status_update(self, template_version_manager_object):
         """Update status to restored
-
         Args:
-
             template_version_manager_object: template_version_manager
-
         """
         # FIXME: add return?
         version_manager_api.restore(
             template_version_manager_object, request=self.request
         )
 
+    @extend_schema(
+        summary="Update status to restored",
+        description="Update status to restored",
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="TemplateVersionManager ID",
+            ),
+        ],
+        responses={
+            200: None,
+            400: OpenApiResponse(description="Validation error"),
+            403: OpenApiResponse(description="Access Forbidden"),
+            404: OpenApiResponse(description="Object was not found"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
+    def patch(self, request, pk):
+        return super().patch(request, pk)
 
+
+@extend_schema(
+    tags=["Template Version Manager"],
+    description="Get Global TemplateVersionManager ordering",
+)
 class GlobalTemplateVersionManagerOrdering(
     AbstractOrderingTemplateVersionManager
 ):
@@ -408,9 +648,7 @@ class GlobalTemplateVersionManagerOrdering(
 
     def get_objects(self):
         """Get TemplateVersionManager list from db
-
         Args:
-
         Returns:
             TemplateVersionManager list
         """
@@ -420,27 +658,79 @@ class GlobalTemplateVersionManagerOrdering(
 
     def update_ordering(self, list_ids):
         """update global TemplateVersionManager ordering
-
         Args:
             list_ids:
         Returns:
-
         """
         template_version_manager_api.update_global_template_ordering(
             list_ids, request=self.request
         )
 
+    @extend_schema(
+        summary="Get TemplateVersionManager",
+        description="Get TemplateVersionManager",
+        parameters=[
+            OpenApiParameter(
+                name="title",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description="Filter by title",
+            ),
+            OpenApiParameter(
+                name="is_disabled",
+                type=OpenApiTypes.BOOL,
+                location=OpenApiParameter.QUERY,
+                description="Filter by is_disabled",
+            ),
+        ],
+        responses={
+            200: TemplateVersionManagerOrderingSerializer(many=True),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
+    def get(self, request):
+        return super().get(request)
 
+    @extend_schema(
+        summary="Update templates ordering",
+        description="Update templates ordering",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "template_list": {
+                        "type": "array",
+                        "items": {"type": "integer"},
+                    }
+                },
+            }
+        },
+        responses={
+            200: TemplateVersionManagerOrderingSerializer(many=True),
+            400: OpenApiResponse(description="Bad Request"),
+            403: OpenApiResponse(description="Access Forbidden"),
+            404: OpenApiResponse(description="Object was not found"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
+    def patch(self, request):
+        return super().patch(request)
+
+
+@extend_schema(
+    tags=["Template Version Manager"],
+    description="Get User TemplateVersionManager ordering",
+)
 class UserTemplateVersionManagerOrdering(
     AbstractOrderingTemplateVersionManager
 ):
     """Get User TemplateVersionManager ordering"""
 
+    permission_classes = (IsAuthenticated,)
+
     def get_objects(self):
         """Get TemplateVersionManager list from db
-
         Args:
-
         Returns:
             TemplateVersionManager list
         """
@@ -450,12 +740,61 @@ class UserTemplateVersionManagerOrdering(
 
     def update_ordering(self, list_ids):
         """update user TemplateVersionManager ordering
-
         Args:
             list_ids:
         Returns:
-
         """
         template_version_manager_api.update_user_template_ordering(
             list_ids, request=self.request
         )
+
+    @extend_schema(
+        summary="Get TemplateVersionManager",
+        description="Get TemplateVersionManager",
+        parameters=[
+            OpenApiParameter(
+                name="title",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description="Filter by title",
+            ),
+            OpenApiParameter(
+                name="is_disabled",
+                type=OpenApiTypes.BOOL,
+                location=OpenApiParameter.QUERY,
+                description="Filter by is_disabled",
+            ),
+        ],
+        responses={
+            200: TemplateVersionManagerOrderingSerializer(many=True),
+            403: OpenApiResponse(description="Access Forbidden"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
+    def get(self, request):
+        return super().get(request)
+
+    @extend_schema(
+        summary="Update templates ordering",
+        description="Update templates ordering",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "template_list": {
+                        "type": "array",
+                        "items": {"type": "integer"},
+                    }
+                },
+            }
+        },
+        responses={
+            200: TemplateVersionManagerOrderingSerializer(many=True),
+            400: OpenApiResponse(description="Bad Request"),
+            403: OpenApiResponse(description="Access Forbidden"),
+            404: OpenApiResponse(description="Object was not found"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
+    def patch(self, request):
+        return super().patch(request)

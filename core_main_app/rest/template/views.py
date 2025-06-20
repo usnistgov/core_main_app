@@ -2,6 +2,12 @@
 """
 
 from django.http import Http404
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import (
+    extend_schema,
+    OpenApiParameter,
+    OpenApiResponse,
+)
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -23,6 +29,10 @@ from core_main_app.utils.json_utils import format_content_json
 from core_main_app.utils.xml import format_content_xml
 
 
+@extend_schema(
+    tags=["Template"],
+    description="List Templates",
+)
 class TemplateList(APIView):
     """List templates"""
 
@@ -30,38 +40,83 @@ class TemplateList(APIView):
 
     def _get_templates(self, request):
         """Retrieve templates
-
         Args:
             request:
-
         Returns:
-
         """
         return template_api.get_all(request=request)
 
+    @extend_schema(
+        description="Get templates",
+        parameters=[
+            OpenApiParameter(
+                name="filename",
+                description="Filter by filename",
+                required=False,
+                type=str,
+            ),
+            OpenApiParameter(
+                name="title",
+                description="Filter by title",
+                required=False,
+                type=str,
+            ),
+            OpenApiParameter(
+                name="regex",
+                description="Enable regular expression matching for filename and title filters (default: False)",
+                required=False,
+                type=bool,
+            ),
+            OpenApiParameter(
+                name="active_only",
+                description="Filter by active templates (current and enabled, default: True)",
+                required=False,
+                type=bool,
+            ),
+            OpenApiParameter(
+                name="template_format",
+                description="Filter by template format (XSD, JSON)",
+                required=False,
+                type=str,
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(
+                response=TemplateSerializer(many=True),
+                description="List of templates",
+            ),
+            403: OpenApiResponse(
+                response={
+                    "type": "object",
+                    "properties": {"message": {"type": "string"}},
+                },
+                description="Authentication error",
+            ),
+            500: OpenApiResponse(
+                response={
+                    "type": "object",
+                    "properties": {"message": {"type": "string"}},
+                },
+                description="Internal server error",
+            ),
+        },
+    )
     def get(self, request):
         """Get templates
-
         Url Parameters:
             filename: filter by filename
             title: filter by title
             regex: enable regular expression matching for filename and title filters (default: False)
             active_only: filter by active templates (current and enabled, default: True)
             template_format: filter by template format (XSD, JSON)
-
         Examples:
-
             - Retrieve all templates: GET /templates/
             - Retrieve templates with filename `example.json` GET /templates?filename=example.json
             - Retrieve templates with title `Example Template` using regex GET /templates?title=Example&regex=true
             - Retrieve active templates in JSON format GET /templates?active_only=true&template_format=JSON
-
         Args:
-
             request: HTTP request
-
         Returns:
-
             - code: 200
               content: List of templates
             - code: 403
@@ -78,7 +133,6 @@ class TemplateList(APIView):
                 template_list = template_list.filter(
                     is_current=True, is_disabled=False
                 )
-
             template_format = self.request.query_params.get(
                 "template_format", None
             )
@@ -93,13 +147,10 @@ class TemplateList(APIView):
                     return Response(
                         content, status=status.HTTP_400_BAD_REQUEST
                     )
-
                 format_filter = {"format": template_format}
                 template_list = template_list.filter(**format_filter)
-
             regex = self.request.query_params.get("regex", False)
             title = self.request.query_params.get("title", None)
-
             if title:
                 title_filter = (
                     {"version_manager__title__iregex": title}
@@ -107,7 +158,6 @@ class TemplateList(APIView):
                     else {"version_manager__title": title}
                 )
                 template_list = template_list.filter(**title_filter)
-
             filename = self.request.query_params.get("filename", None)
             if filename:
                 filename_filter = (
@@ -118,7 +168,6 @@ class TemplateList(APIView):
                 template_list = template_list.filter(**filename_filter)
             # Serialize object
             serializer = TemplateSerializer(template_list, many=True)
-
             # Return response
             return Response(serializer.data)
         except AccessControlError:
@@ -131,6 +180,10 @@ class TemplateList(APIView):
             )
 
 
+@extend_schema(
+    tags=["Template"],
+    description="Retrieve a Template",
+)
 class TemplateDetail(APIView):
     """Retrieve a Template."""
 
@@ -151,6 +204,24 @@ class TemplateDetail(APIView):
         except exceptions.DoesNotExist:
             raise Http404
 
+    @extend_schema(
+        summary="Retrieve a Template",
+        description="Retrieve a Template",
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Template ID",
+            ),
+        ],
+        responses={
+            200: TemplateSerializer,
+            403: OpenApiResponse(description="Access Forbidden"),
+            404: OpenApiResponse(description="Object was not found"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
     def get(self, request, pk):
         """Retrieve a Template
 
@@ -171,10 +242,8 @@ class TemplateDetail(APIView):
         try:
             # Get object
             template_object = self.get_object(pk, request=request)
-
             # Serialize object
             serializer = TemplateSerializer(template_object)
-
             # Return response
             return Response(serializer.data)
         except Http404:
@@ -190,19 +259,19 @@ class TemplateDetail(APIView):
             )
 
 
+@extend_schema(
+    tags=["Template"],
+    description="Download a Template",
+)
 class TemplateDownload(APIView):
     """Download a Template"""
 
     def get_object(self, pk, request):
         """Get Template from db
-
         Args:
-
             pk: ObjectId
             request:
-
         Returns:
-
             Template
         """
         try:
@@ -210,23 +279,38 @@ class TemplateDownload(APIView):
         except exceptions.DoesNotExist:
             raise Http404
 
+    @extend_schema(
+        summary="Download the XSD file from a Template",
+        description="Download the XSD file from a Template",
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Template ID",
+            ),
+            OpenApiParameter(
+                name="pretty_print",
+                type=OpenApiTypes.BOOL,
+                location=OpenApiParameter.QUERY,
+                description="Pretty print the content",
+            ),
+        ],
+        responses=OpenApiResponse(response={"application/octet-stream": {}}),
+    )
     def get(self, request, pk):
         """Download the XSD file from a Template
-
         Args:
-
             request: HTTP request
             pk: ObjectId
-
         Examples:
-
             ../template/[template_id]/download
             ../template/[template_id]/download?pretty_print=false
-
         Returns:
-
             - code: 200
               content: XSD file
+            - code: 400
+              content: Validation error
             - code: 404
               content: Object was not found
             - code: 500
@@ -235,13 +319,10 @@ class TemplateDownload(APIView):
         try:
             # Get object
             template_object = self.get_object(pk, request=request)
-
             # get xml content
             content = template_object.content
-
             # get format bool
             pretty_print = request.query_params.get("pretty_print", False)
-
             # format content
             if to_bool(pretty_print):
                 # format XML
@@ -255,7 +336,6 @@ class TemplateDownload(APIView):
                     return Response(
                         content, status=status.HTTP_400_BAD_REQUEST
                     )
-
             return get_file_http_response(
                 content,
                 template_object.filename,
