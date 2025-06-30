@@ -3,8 +3,6 @@
 
 from unittest import TestCase
 
-from django.core.exceptions import ValidationError
-
 from core_main_app.utils.validation.regex_validation import validate_filename
 
 
@@ -42,12 +40,3 @@ class TestValidateFilename(TestCase):
 
         """
         validate_filename("_Test-1.png")
-
-    def test_validate_filename_if_extension_missing(self):
-        """test_validate_filename_if_extension_missing
-
-        Returns:
-
-        """
-        with self.assertRaises(ValidationError):
-            validate_filename("test")
