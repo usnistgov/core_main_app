@@ -3,6 +3,7 @@
 
 from django.http import Http404
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -20,6 +21,114 @@ from core_main_app.utils.file import (
 )
 from core_main_app.utils.json_utils import format_content_json
 from core_main_app.utils.xml import format_content_xml
+
+
+class TemplateList(APIView):
+    """List templates"""
+
+    permission_classes = (IsAuthenticated,)
+
+    def _get_templates(self, request):
+        """Retrieve templates
+
+        Args:
+            request:
+
+        Returns:
+
+        """
+        return template_api.get_all(request=request)
+
+    def get(self, request):
+        """Get templates
+
+        Url Parameters:
+            filename: filter by filename
+            title: filter by title
+            regex: enable regular expression matching for filename and title filters (default: False)
+            active_only: filter by active templates (current and enabled, default: True)
+            template_format: filter by template format (XSD, JSON)
+
+        Examples:
+
+            - Retrieve all templates: GET /templates/
+            - Retrieve templates with filename `example.json` GET /templates?filename=example.json
+            - Retrieve templates with title `Example Template` using regex GET /templates?title=Example&regex=true
+            - Retrieve active templates in JSON format GET /templates?active_only=true&template_format=JSON
+
+        Args:
+
+            request: HTTP request
+
+        Returns:
+
+            - code: 200
+              content: List of templates
+            - code: 403
+              content: Authentication error
+            - code: 500
+              content: Internal server error
+        """
+        try:
+            # Get object
+            template_list = self._get_templates(request=request)
+            # Apply filters
+            active_only = self.request.query_params.get("active_only", True)
+            if to_bool(active_only):
+                template_list = template_list.filter(
+                    is_current=True, is_disabled=False
+                )
+
+            template_format = self.request.query_params.get(
+                "template_format", None
+            )
+            valid_formats = [
+                t_format[0] for t_format in Template.FORMAT_CHOICES
+            ]
+            if template_format:
+                if template_format not in valid_formats:
+                    content = {
+                        "message": f"Unknown format (available formats: {valid_formats}"
+                    }
+                    return Response(
+                        content, status=status.HTTP_400_BAD_REQUEST
+                    )
+
+                format_filter = {"format": template_format}
+                template_list = template_list.filter(**format_filter)
+
+            regex = self.request.query_params.get("regex", False)
+            title = self.request.query_params.get("title", None)
+
+            if title:
+                title_filter = (
+                    {"version_manager__title__iregex": title}
+                    if to_bool(regex)
+                    else {"version_manager__title": title}
+                )
+                template_list = template_list.filter(**title_filter)
+
+            filename = self.request.query_params.get("filename", None)
+            if filename:
+                filename_filter = (
+                    {"filename__iregex": title}
+                    if to_bool(regex)
+                    else {"filename": title}
+                )
+                template_list = template_list.filter(**filename_filter)
+            # Serialize object
+            serializer = TemplateSerializer(template_list, many=True)
+
+            # Return response
+            return Response(serializer.data)
+        except AccessControlError:
+            content = {"message": "Access Forbidden."}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
+        except Exception as api_exception:
+            content = {"message": str(api_exception)}
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class TemplateDetail(APIView):

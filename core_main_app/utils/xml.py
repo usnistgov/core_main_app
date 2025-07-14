@@ -435,7 +435,7 @@ def get_local_dependencies(xsd_string):
 
 
 def _check_core_support(xsd_string):
-    """Check that the format of the the schema is supported by the current version of the Core.
+    """Check that the format of the schema is supported by the current version of the Core.
 
     Args:
         xsd_string:
@@ -491,7 +491,7 @@ def _parse_numbers(num_str):
 
 
 def _get_schema_location_uri(schema_id):
-    """Get an URI of the schema location on the system from an id.
+    """Get a URI of the schema location on the system from an id.
 
     Args:
         schema_id:
@@ -531,7 +531,7 @@ def xsl_transform(xml_string, xslt_string):
 
 
 def xpath_to_dot_notation(xpath, namespaces=None):
-    """Transforms XML xpath into dot notation
+    """Transform XML xpath into dot notation
 
     Args:
         xpath:

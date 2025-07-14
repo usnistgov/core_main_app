@@ -2,6 +2,7 @@
 """
 
 import json
+from unittest.mock import patch
 
 from django.test import override_settings
 from django.urls import reverse
@@ -22,6 +23,7 @@ from core_main_app.utils.tests_tools.RequestMock import (
     RequestMock,
     create_mock_request,
 )
+from tests.test_settings import SERVER_URI
 
 fixture_template = TemplateVersionManagerFixtures()
 fixture_template_2 = TemplateVersionManagerAccessControlFixtures()
@@ -602,8 +604,14 @@ class TestUserTemplateList(IntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    @patch("core_main_app.utils.xml.validate_xml_schema")
+    @patch("core_main_app.utils.xml.get_template_with_server_dependencies")
     @override_settings(ROOT_URLCONF="core_main_app.urls")
-    def test_post_template_with_correct_dependency_returns_http_201(self):
+    def test_post_template_with_correct_dependency_returns_http_201(
+        self,
+        mock_get_template_with_server_dependencies,
+        mock_validate_xml_schema,
+    ):
         """test_post_template_with_correct_dependency_returns_http_201
 
         Returns:
@@ -620,6 +628,14 @@ class TestUserTemplateList(IntegrationBaseTestCase):
         self.data["dependencies_dict"] = json.dumps(
             {"template1_1.xsd": str(self.fixture.template_1_1.id)}
         )
+        mock_validate_xml_schema.return_value = None
+        expected_download_url = reverse(
+            "core_main_app_rest_template_download",
+            kwargs={"pk": self.fixture.template_1_1.id},
+        )
+        mock_get_template_with_server_dependencies.return_value = self.data[
+            "content"
+        ].replace("template1_1.xsd", SERVER_URI + expected_download_url)
 
         # Act
         response = RequestMock.do_request_post(
@@ -627,14 +643,8 @@ class TestUserTemplateList(IntegrationBaseTestCase):
         )
 
         # Assert
-        # FIXME: unable to download self dependency because server not running
-        # self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        expected_download_url = reverse(
-            "core_main_app_rest_template_download",
-            kwargs={"pk": self.fixture.template_1_1.id},
-        )
-        self.assertTrue(expected_download_url in response.data["message"])
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(expected_download_url in response.data["content"])
 
     @override_settings(ROOT_URLCONF="core_main_app.urls")
     def test_post_template_with_incorrect_dependency_schema_location_returns_http_400(

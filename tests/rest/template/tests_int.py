@@ -78,3 +78,97 @@ class TestTemplateDownload(IntegrationBaseTestCase):
         # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.content, expected_value)
+
+
+class TestTemplateList(IntegrationBaseTestCase):
+    fixture = AccessControlTemplateFixture()
+
+    def setUp(self):
+        super(TestTemplateList, self).setUp()
+
+    def test_get_returns_http_200(self):
+        # Arrange
+        user = create_mock_user("1")
+
+        # Act
+        response = RequestMock.do_request_get(
+            template_rest_views.TemplateList.as_view(),
+            user,
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_with_filename_filter_returns_http_200(self):
+        # Arrange
+        user = create_mock_user("1")
+        filename = self.fixture.user1_template.filename
+
+        # Act
+        response = RequestMock.do_request_get(
+            template_rest_views.TemplateList.as_view(),
+            user,
+            data={"filename": filename},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_with_title_filter_returns_http_200(self):
+        # Arrange
+        user = create_mock_user("1")
+        title = self.fixture.user1_template.version_manager.title
+
+        # Act
+        response = RequestMock.do_request_get(
+            template_rest_views.TemplateList.as_view(),
+            user,
+            data={"title": title},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_with_regex_filter_returns_http_200(self):
+        # Arrange
+        user = create_mock_user("1")
+        title = self.fixture.user1_template.version_manager.title
+
+        # Act
+        response = RequestMock.do_request_get(
+            template_rest_views.TemplateList.as_view(),
+            user,
+            data={"title": title, "regex": "true"},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_with_active_only_filter_returns_http_200(self):
+        # Arrange
+        user = create_mock_user("1")
+
+        # Act
+        response = RequestMock.do_request_get(
+            template_rest_views.TemplateList.as_view(),
+            user,
+            data={"active_only": "true"},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_with_template_format_filter_returns_http_200(self):
+        # Arrange
+        user = create_mock_user("1")
+        template_format = self.fixture.user1_template.format
+
+        # Act
+        response = RequestMock.do_request_get(
+            template_rest_views.TemplateList.as_view(),
+            user,
+            data={"template_format": template_format},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

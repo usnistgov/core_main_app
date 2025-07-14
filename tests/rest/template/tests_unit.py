@@ -1,13 +1,14 @@
 """Unit tests for template rest api
 """
 
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from django.test import SimpleTestCase
 from rest_framework import status
 from tests.components.data.tests_unit import _get_template, _get_json_template
 
 import core_main_app.components.template.api as template_api
+from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.template.models import Template
 from core_main_app.rest.template import views as template_rest_views
@@ -192,3 +193,92 @@ class TestTemplateDownload(SimpleTestCase):
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class TestTemplateList(SimpleTestCase):
+    @patch.object(template_api, "get_all")
+    def test_get_returns_http_200(self, mock_template_api_get_all):
+        # Arrange
+        mock_user = create_mock_user("1")
+        mock_template_api_get_all.return_value = MagicMock()
+
+        # Act
+        response = RequestMock.do_request_get(
+            template_rest_views.TemplateList.as_view(),
+            mock_user,
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(template_api, "get_all")
+    def test_get_with_filename_filter_returns_http_200(
+        self, mock_template_api_get_all
+    ):
+        # Arrange
+        mock_user = create_mock_user("1")
+        mock_template_api_get_all.return_value = MagicMock()
+
+        # Act
+        response = RequestMock.do_request_get(
+            template_rest_views.TemplateList.as_view(),
+            mock_user,
+            data={"filename": "example.xsd"},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(template_api, "get_all")
+    def test_get_with_invalid_template_format_returns_http_400(
+        self, mock_template_api_get_all
+    ):
+        # Arrange
+        mock_user = create_mock_user("1")
+        mock_template_api_get_all.return_value = MagicMock()
+
+        # Act
+        response = RequestMock.do_request_get(
+            template_rest_views.TemplateList.as_view(),
+            mock_user,
+            data={"template_format": "INVALID"},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @patch.object(template_api, "get_all")
+    def test_get_with_access_control_error_returns_http_403(
+        self, mock_template_api_get_all
+    ):
+        # Arrange
+        mock_user = create_mock_user("1")
+        mock_template_api_get_all.side_effect = AccessControlError("Error")
+
+        # Act
+        response = RequestMock.do_request_get(
+            template_rest_views.TemplateList.as_view(),
+            mock_user,
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch.object(template_api, "get_all")
+    def test_get_with_exception_returns_http_500(
+        self, mock_template_api_get_all
+    ):
+        # Arrange
+        mock_user = create_mock_user("1")
+        mock_template_api_get_all.side_effect = Exception("Error")
+
+        # Act
+        response = RequestMock.do_request_get(
+            template_rest_views.TemplateList.as_view(),
+            mock_user,
+        )
+
+        # Assert
+        self.assertEqual(
+            response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

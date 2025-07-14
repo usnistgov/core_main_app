@@ -124,6 +124,11 @@ urlpatterns = [
         name="core_main_app_rest_template_download",
     ),
     re_path(
+        r"^template/$",
+        template_views.TemplateList.as_view(),
+        name="core_main_app_rest_template_list",
+    ),
+    re_path(
         r"^template/(?P<pk>\w+)/$",
         template_views.TemplateDetail.as_view(),
         name="core_main_app_rest_template_detail",

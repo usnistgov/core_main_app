@@ -1,7 +1,7 @@
 """ Authentication tests for Template REST API
 """
 
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from django.test import SimpleTestCase
 from rest_framework import status
@@ -184,4 +184,47 @@ class TestTemplateDownloadGetPermission(SimpleTestCase):
             param={"pk": self.fake_id},
         )
 
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestTemplateListGetPermission(SimpleTestCase):
+    @patch.object(Template, "get_all")
+    def test_anonymous_returns_http_403(self, mock_template_get_all):
+        # Act
+        response = RequestMock.do_request_get(
+            template_views.TemplateList.as_view(),
+            None,
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch.object(Template, "get_all")
+    def test_authenticated_returns_http_200(self, mock_template_get_all):
+        # Arrange
+        mock_user = create_mock_user("1")
+        mock_template_get_all.return_value = MagicMock()
+
+        # Act
+        response = RequestMock.do_request_get(
+            template_views.TemplateList.as_view(),
+            mock_user,
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(Template, "get_all")
+    def test_staff_returns_http_200(self, mock_template_get_all):
+        # Arrange
+        mock_user = create_mock_user("1", is_staff=True)
+        mock_template_get_all.return_value = MagicMock()
+
+        # Act
+        response = RequestMock.do_request_get(
+            template_views.TemplateList.as_view(),
+            mock_user,
+        )
+
+        # Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
