@@ -1,12 +1,14 @@
 stages:
   - lint
   - test
+  - package
 
 services:
   - name: postgres:16
     alias: postgres
 
 variables: # https://docs.gitlab.com/ci/services/postgres/#use-postgresql-with-the-docker-executor
+  PROTECTED_BRANCH: master
   POSTGRES_DB: $POSTGRES_DB
   POSTGRES_USER: $POSTGRES_USER
   POSTGRES_PASSWORD: $POSTGRES_PASSWORD  # Expected by Psql
@@ -17,18 +19,35 @@ variables: # https://docs.gitlab.com/ci/services/postgres/#use-postgresql-with-t
 
 before_script:
   - apt update
-  - apt-get --no-install-recommends install -y gcc git pkg-config libpq-dev postgresql-client libxmlsec1-dev libxmlsec1-openssl libxml2-dev libxslt-dev libssl-dev python3-pip
+  - apt-get --no-install-recommends install -y
+      gcc
+      git
+      libpq-dev
+      libxmlsec1-dev
+      libxmlsec1-openssl
+      libxml2-dev
+      libxslt-dev
+      libssl-dev
+      pkg-config
+      postgresql-client
+      python3-pip
   - pip install --upgrade pip
   - python -m venv /tmp/venv
   - source /tmp/venv/bin/activate
-  - pip install xmlsec==1.3.14
+  - pip install
+      diff-cover
+      twine
+      wheel
+      xmlsec==1.3.14 
   - pip install -r requirements.txt
-  - find . -name 'requirements.*.txt' -exec pip install --pre --index-url ${CI_SERVER_URL}/api/v4/groups/${CI_PROJECT_NAMESPACE_ID}/-/packages/pypi/simple/ -r {} \;
-  - pip install -U diff-cover
+  - find . -name 'requirements.*.txt'
+      -exec pip install --pre 
+      --index-url ${CI_API_V4_URL}/groups/${CI_PROJECT_NAMESPACE_ID}/-/packages/pypi/simple/
+      -r {} \;
 
 lint:
-  image: python:3.10-slim-bullseye
   stage: lint
+  image: python:3.10-slim-bullseye
   script:
     - black --check .
     - flake8 --extend-ignore E501 .
@@ -48,7 +67,21 @@ test:
     - coverage run --parallel --source=core_main_app --omit=*settings.py -p runtests_sqlite3.py
     - coverage combine || true
     - coverage xml
-    - diff-cover coverage.xml --compare-branch=origin/master --fail-under=100
+    - diff-cover coverage.xml --compare-branch=origin/$PROTECTED_BRANCH --fail-under=100
   rules:
     - if: $CI_COMMIT_BRANCH
+      when: on_success
+
+package:
+  stage: package
+  image: python:3.10-slim-bullseye
+  script:
+    - rm -rf dist *.egg-info
+    - sed -i "s/version=\"\([^\"]*\)\"/version=\"\1.dev$(date +"%Y%m%d%H%M")\"/" setup.py
+    - python3 setup.py sdist bdist_wheel --verbose
+    - export TWINE_PASSWORD=${CI_JOB_TOKEN}
+    - export TWINE_USERNAME=gitlab-ci-token
+    - twine upload --verbose --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/*
+  rules:
+    - if: '$CI_COMMIT_BRANCH != $PROTECTED_BRANCH'
       when: on_success
