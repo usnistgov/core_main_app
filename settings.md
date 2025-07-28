@@ -560,6 +560,11 @@ DATA_SORTING_FIELDS = ["-title", "+last_modification_date"]
 
   Prefix added to admin urls. Should be set to a unique string per system and kept secret.
 
+### ``ENABLE_OBTAIN_API_TOKEN_ENDPOINT``
+
+  Default: ``False``
+
+  Set to ``True`` to enable a REST endpoint to obtain an API token.
 
 ### ``ENABLE_ALLAUTH``
 

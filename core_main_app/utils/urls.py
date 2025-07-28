@@ -8,6 +8,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import reverse, re_path, include, path
 
 from core_main_app import settings as main_settings
+from rest_framework.authtoken import views as drf_views
 
 
 def get_template_download_pattern():
@@ -140,4 +141,7 @@ def get_auth_urls():
             urlpatterns.append(
                 re_path(r"^admin/defender/", include("defender.urls"))
             )
+
+    if main_settings.ENABLE_OBTAIN_API_TOKEN_ENDPOINT:
+        urlpatterns += [path("api-token-auth/", drf_views.obtain_auth_token)]
     return urlpatterns
