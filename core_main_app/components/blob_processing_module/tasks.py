@@ -68,7 +68,7 @@ def process_blob_with_module(blob_module_id, blob_id, strategy, user_id=None):
 
 @shared_task
 def process_blob_with_all_modules(blob_id, strategy, user_id=None):
-    """Start the processing of a blob with a given module.
+    """Start the processing of a blob with all matching modules.
 
     Args:
         blob_id:
@@ -109,6 +109,7 @@ def process_blob_with_all_modules(blob_id, strategy, user_id=None):
         logger.error(error_message)
         raise ApiError(error_message)
 
+    blob_processing_return_data = {}
     for blob_module in blob_module_list:
         try:
             blob_module_class = blob_module.get_class()
@@ -117,10 +118,14 @@ def process_blob_with_all_modules(blob_id, strategy, user_id=None):
                 blob.filename,
                 blob_module.name,
             )
-            return blob_module_class.process(
-                blob, blob_module.parameters, strategy
+            blob_processing_return_data[blob_module.name] = (
+                blob_module_class.process(
+                    blob, blob_module.parameters, strategy
+                )
             )
         except Exception as exc:
             error_message = f"File {blob.filename} cannot be processed by {blob_module.name}: {str(exc)}"
             logger.error(error_message)
             raise ApiError(error_message)
+
+    return blob_processing_return_data

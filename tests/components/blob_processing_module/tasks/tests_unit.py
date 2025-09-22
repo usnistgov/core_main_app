@@ -310,6 +310,8 @@ class TestProcessBlobWithModule(TestCase):
 class TestProcessBlobWithAllModules(TestCase):
     """Unit test for `process_blob_with_all_modules` function."""
 
+    maxDiff = None
+
     def setUp(self):
         """setUp"""
         self.mock_kwargs = {
@@ -572,26 +574,38 @@ class TestProcessBlobWithAllModules(TestCase):
         mock_blob = MagicMock()
         mock_blob_api.get_by_id.return_value = mock_blob
 
-        mock_module = MagicMock()
+        mock_module_1 = MagicMock()
+        mock_module_1.name = "mock_module_1"
+        mock_module_2 = MagicMock()
+        mock_module_2.name = "mock_module_2"
         mock_module_qs = MagicMock()
-        mock_module_qs.filter.return_value = [mock_module]
+        mock_module_qs.filter.return_value = [mock_module_1, mock_module_2]
         mock_blob_processing_module_api.get_all.return_value = mock_module_qs
 
         mock_re.match.return_value = True
 
-        mock_module_class = MagicMock()
-        mock_module.get_class.return_value = mock_module_class
+        mock_module_class_1 = MagicMock()
+        mock_module_1.get_class.return_value = mock_module_class_1
+        mock_module_class_process_result_1 = MagicMock()
+        mock_module_class_1.process.return_value = (
+            mock_module_class_process_result_1
+        )
 
-        mock_module_class_process_result = MagicMock()
-        mock_module_class.process.return_value = (
-            mock_module_class_process_result
+        mock_module_class_2 = MagicMock()
+        mock_module_2.get_class.return_value = mock_module_class_2
+        mock_module_class_process_result_2 = MagicMock()
+        mock_module_class_2.process.return_value = (
+            mock_module_class_process_result_2
         )
 
         self.assertEqual(
             blob_processing_module_tasks.process_blob_with_all_modules(
                 **self.mock_kwargs
             ),
-            mock_module_class_process_result,
+            {
+                mock_module_1.name: mock_module_class_process_result_1,
+                mock_module_2.name: mock_module_class_process_result_2,
+            },
         )
 
     @patch.object(blob_processing_module_tasks, "User")

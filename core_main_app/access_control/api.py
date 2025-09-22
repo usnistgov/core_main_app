@@ -474,3 +474,17 @@ def user_is_registered(func, *args, **kwargs):
     check_anonymous_access(user)
 
     return func(*args, **kwargs)
+
+
+def user_is_staff(func, *args, **kwargs):
+    """Ensure a user has admin privilege before processing the function."""
+    user = next((arg for arg in args if isinstance(arg, User)), None)
+    if user is None:
+        user = kwargs.get("user", None)
+
+    if user is None or not user.is_staff:
+        raise AccessControlError(
+            "The user doesn't have enough rights to perform this action."
+        )
+
+    return func(*args, **kwargs)

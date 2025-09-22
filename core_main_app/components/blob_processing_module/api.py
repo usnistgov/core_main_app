@@ -1,10 +1,10 @@
-""" Blob Module API
+""" Blob Processing Module API
 """
 
 import logging
 import re
 
-from core_main_app.access_control.api import user_is_registered
+from core_main_app.access_control.api import user_is_registered, user_is_staff
 from core_main_app.access_control.decorators import access_control
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.blob_processing_module.models import (
@@ -15,43 +15,49 @@ logger = logging.getLogger(__name__)
 
 
 @access_control(user_is_registered)
-def get_all(user):
-    """Return all blob modules.
+def get_all(user):  # noqa
+    """Return all blob processing modules.
 
     Args:
-        user:
+        user: The user object requesting the list (used for access control).
 
     Returns:
-        List of Blob Modules.
+        list: A list or QuerySet of all BlobProcessingModule instances.
     """
     return BlobProcessingModule.get_all()
 
 
 @access_control(user_is_registered)
-def get_by_id(blob_module_id, user):
-    """Retrieve blob module.
+def get_by_id(blob_module_id, user):  # noqa
+    """Retrieve a specific blob processing module by its ID.
 
     Args:
-        blob_module_id:
-        user:
+        blob_module_id: The unique identifier of the module to retrieve.
+        user: The user object requesting the module (used for access control).
 
     Returns:
-        Blob Module.
+        BlobProcessingModule: The requested module instance.
     """
     return BlobProcessingModule.get_by_id(blob_module_id)
 
 
 @access_control(user_is_registered)
 def get_all_by_blob_id(blob_id, user, run_strategy=None):
-    """Retrieve a blob given a blob_id.
+    """Retrieve all blob processing modules applicable to a specific blob.
+
+    This function fetches the blob (checking user ownership), filters modules
+    by the optional run strategy, and then returns only the modules where the
+    module's filename regex matches the blob's filename.
 
     Args:
-        blob_id:
-        user:
-        run_strategy:
+        blob_id: The unique identifier of the target blob.
+        user: The user object requesting the modules (used for blob access check).
+        run_strategy (str, optional): A specific execution strategy to filter
+            the modules by. Defaults to None.
 
     Returns:
-        Blob Module.
+        list: A list of BlobProcessingModule instances that match the blob's
+        filename pattern and the optional run strategy.
     """
     # Retrieve the blob (will check ownership) and blob modules.
     blob = blob_api.get_by_id(blob_id, user)
@@ -59,7 +65,9 @@ def get_all_by_blob_id(blob_id, user, run_strategy=None):
 
     # Additional filtering if `run_strategy` is defined.
     blob_module_list = (
-        list(blob_module_list.filter(run_strategy_list__contains=run_strategy))
+        list(
+            blob_module_list.filter(run_strategy_list__contains=run_strategy)
+        )  # noqa
         if run_strategy
         else blob_module_list
     )
@@ -71,3 +79,17 @@ def get_all_by_blob_id(blob_id, user, run_strategy=None):
         for blob_module in blob_module_list
         if re.match(blob_module.blob_filename_regexp, blob.filename)
     ]
+
+
+@access_control(user_is_staff)
+def delete(blob_module_id, user):  # noqa
+    """Deletes a BlobProcessingModule instance identified by the given ID.
+
+    Args:
+        blob_module_id: The unique identifier of the BlobProcessingModule to delete.
+        user: The user object requesting the deletion (checked for staff status).
+
+    Returns:
+        The result of the delete operation on the module instance.
+    """
+    return BlobProcessingModule.get_by_id(blob_module_id).delete()

@@ -21,7 +21,7 @@ class TestGetById(TestCase):
         self.blob_processing_module = (
             blob_processing_module_models.BlobProcessingModule()
         )
-        self.mock_kwargs = {"blob_id": MagicMock()}
+        self.mock_kwargs = {"blob_processing_module_id": MagicMock()}
 
     @patch(
         "core_main_app.components.blob_processing_module.models.BlobProcessingModule.objects"
@@ -31,7 +31,7 @@ class TestGetById(TestCase):
         self.blob_processing_module.get_by_id(**self.mock_kwargs)
 
         mock_blob_processing_module_objects.get.assert_called_with(
-            pk=self.mock_kwargs["blob_id"]
+            pk=self.mock_kwargs["blob_processing_module_id"]
         )
 
     @patch(

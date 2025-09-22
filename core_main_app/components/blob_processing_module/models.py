@@ -15,22 +15,24 @@ class BlobProcessingModule(AbstractProcessingModule):
     """Class managing blob processing modules"""
 
     blob_filename_regexp = models.CharField(
-        max_length=250, validators=[RegexValidator], default=".*"
+        max_length=250, validators=[RegexValidator], default=".*"  # noqa
     )  # ".*" ".*\.(png|jpg)"
 
     @staticmethod
-    def get_by_id(blob_id):
+    def get_by_id(blob_processing_module_id):
         """Return the blob processing modules with the given id.
 
         Args:
-            blob_id:
+            blob_processing_module_id:
 
         Returns:
             Blob
 
         """
         try:
-            return BlobProcessingModule.objects.get(pk=blob_id)
+            return BlobProcessingModule.objects.get(
+                pk=blob_processing_module_id
+            )
         except ObjectDoesNotExist as e:
             raise exceptions.DoesNotExist(str(e))
         except Exception as ex:

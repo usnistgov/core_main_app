@@ -245,8 +245,13 @@ urlpatterns = [
     ),
     re_path(
         r"^blob-processing-module/$",
-        blob_processing_module_views.BlobProcessingModuleView.as_view(),
+        blob_processing_module_views.BlobProcessingModuleListView.as_view(),
         name="core_main_app_rest_blob_processing_module_list",
+    ),
+    re_path(
+        r"^blob-processing-module/(?P<blob_processing_module_id>\w+)/$",
+        blob_processing_module_views.BlobProcessingModuleManageView.as_view(),
+        name="core_main_app_rest_blob_processing_module_manage",
     ),
     re_path(
         r"^xslt/$",

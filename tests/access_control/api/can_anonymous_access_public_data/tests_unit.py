@@ -1,4 +1,4 @@
-""" Unit tests for `core_main_app.access_control.api`.
+""" Unit tests for `core_main_app.access_control.api.can_anonymous_access_public_data`.
 """
 
 from unittest import TestCase
@@ -23,7 +23,7 @@ class TestCanAnonymousAccessPublicData(TestCase):
         mock_check_anonymous_access.assert_called_with(user)
 
     @patch.object(access_control_api, "check_anonymous_access")
-    def test_returns_function(self, mock_check_anonymous_access):
+    def test_returns_function(self, mock_check_anonymous_access):  # noqa
         """test_returns_function"""
         func = MagicMock()
         user = create_mock_user("1")
