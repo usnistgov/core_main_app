@@ -13,8 +13,10 @@ from tests.components.data.fixtures.fixtures import (
     AccessControlDataNumericFixture,
     AccessControlDataNoneFixture,
     AccessControlBlobWithMetadataFixture,
+    AccessControlJSONDataListFixture,
 )
 
+from core_main_app.access_control.api import check_can_read_list
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons.exceptions import QueryError
 from core_main_app.components.data import api as data_api
@@ -27,6 +29,7 @@ from core_main_app.utils.tests_tools.RequestMock import create_mock_request
 
 fixture_data = AccessControlDataFixture()
 fixture_data2 = AccessControlDataFixture2()
+fixture_data_list = AccessControlJSONDataListFixture()
 fixture_data_full_text = AccessControlDataFullTextSearchFixture()
 fixture_data_numeric = AccessControlDataNumericFixture()
 fixture_data_none = AccessControlDataNoneFixture()
@@ -2090,6 +2093,114 @@ class TestDataExecuteFullTextQuery(IntegrationBaseTestCase):
             data_api.execute_json_query(query, mock_user)
 
 
+class TestDataListQuery(IntegrationBaseTestCase):
+    """TestDataListQuery"""
+
+    fixture = fixture_data_list
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_list_with_matches_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_query_list_with_matches_returns_data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.list": {"$all": ["value1"]}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 1)
+        self.assertEqual(data_list[0], self.fixture.data_1)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_list_without_matches_returns_no_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_query_list_without_matches_returns_no_data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.list": {"$all": ["value4"]}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_list_with_two_matches_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_query_list_with_two_matches_returns_data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("2")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.list": {"$all": ["value1", "value2"]}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 1)
+        self.assertEqual(data_list[0], self.fixture.data_2)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_list_with_partial_matches_returns_no_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_query_list_with_partial_matches_returns_no_data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.list": {"$all": ["value1", "value4"]}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 0)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_list_from_private_workspace_returns_no_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_query_list_from_private_workspace_returns_no_data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.list": {"$all": ["value1"]}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 0)
+
+
 class TestDataDelete(IntegrationBaseTestCase):
     """TestDataDelete"""
 
@@ -2606,3 +2717,113 @@ def _create_data(user_id, workspace):
         xml_content='<tag  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ></tag>',
         workspace=workspace,
     )
+
+
+class TestDataCanReadListQuery(IntegrationBaseTestCase):
+    """TestDataCanReadListQuery"""
+
+    fixture = fixture_data_list
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_queryset_contain_other_user_private_data_raises_acl_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_queryset_contain_other_user_private_data_raises_acl_error
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        # Get a queryset using a superuser
+        mock_superuser = create_mock_user("1", is_superuser=True)
+        query = {"dict_content.list": {"$all": ["value1"]}}
+        data_list = data_api.execute_json_query(query, mock_superuser)
+        self.assertEqual(data_list.count(), 2)
+
+        # Check if user can read this queryset
+        mock_user = create_mock_user("2")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        with self.assertRaises(AccessControlError):
+            check_can_read_list(data_list, mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_queryset_contain_own_private_data_does_not_raise_acl_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_queryset_contain_own_private_data_does_not_raise_acl_error
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        # Get a queryset using a superuser
+        mock_superuser = create_mock_user("1", is_superuser=True)
+        query = {"dict_content.list": {"$all": ["value31"]}}
+        data_list = data_api.execute_json_query(query, mock_superuser)
+        self.assertEqual(data_list.count(), 1)
+
+        # Check if user can read this queryset
+        mock_user = create_mock_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        check_can_read_list(data_list, mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_queryset_contains_data_from_another_workspace_raises_acl_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_queryset_contains_data_from_another_workspace_raises_acl_error
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        # Get a queryset using a superuser
+        mock_superuser = create_mock_user("1", is_superuser=True)
+        query = {"dict_content.list": {"$all": ["value2"]}}
+        data_list = data_api.execute_json_query(query, mock_superuser)
+        self.assertEqual(data_list.count(), 1)
+
+        # Check if user can read this queryset
+        mock_user = create_mock_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        with self.assertRaises(AccessControlError):
+            check_can_read_list(data_list, mock_user)
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_queryset_contains_data_from_accessible_workspace_does_not_raise_acl_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_queryset_contains_data_from_accessible_workspace_does_not_raise_acl_error
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        # Get a queryset using a superuser
+        mock_superuser = create_mock_user("1", is_superuser=True)
+        query = {"dict_content.list": {"$all": ["value2"]}}
+        data_list = data_api.execute_json_query(query, mock_superuser)
+        self.assertEqual(data_list.count(), 1)
+
+        # Check if user can read this queryset
+        mock_user = create_mock_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            self.fixture.workspace_1
+        ]
+        check_can_read_list(data_list, mock_user)

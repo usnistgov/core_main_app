@@ -144,7 +144,7 @@ from django.core.files.storage import default_storage
 
 ### ``VERIFY_DATA_ACCESS``
 
-  Default: ``False``
+  Default: ``True``
 
   Verify that data returned by a query can be accessed.
   CDCS queries are prepared to only return data that the user can access.

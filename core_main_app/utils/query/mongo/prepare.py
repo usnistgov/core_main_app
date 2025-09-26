@@ -300,6 +300,25 @@ def convert_to_django(query_dict):
                             key = "__".join(key.split("__")[:-1])
                             # add has key operator to key (e.g. dict_content__root, becomes dict_content__root__has_key)
                             operator = "has_key"
+                    elif "$all" in value:
+                        values_list = value["$all"]
+                        if not isinstance(values_list, list):
+                            raise QueryError(
+                                "Unsupported value for $all operator."
+                            )
+                        if settings.MONGODB_INDEXING:
+                            # set all operator
+                            operator = "all"
+                            value = values_list
+                        else:
+                            # value to look for is the last element of the key
+                            # (e.g. if key is dict_content__root__element, value becomes element)
+                            value = key.split("__")[-1]
+                            # key is the rest of the path, minus the last part that was just set as value
+                            # (e.g. dict_content__root__element, key is dict_content__root)
+                            key = "__".join(key.split("__")[:-1])
+                            value = {value: values_list}
+                            operator = "contains"
                     else:
                         # If an operator not listed above is found, an exception is raised
                         raise QueryError(

@@ -88,7 +88,6 @@ def can_read_data_query(
     # if superuser, return list of data
     if user.is_superuser:
         return data_list
-    # TODO: check if necessary because it is time consuming (checking that user has access to list of returned data)
     # check that user can access the list of data
     if VERIFY_DATA_ACCESS:
         check_can_read_list(data_list, user)

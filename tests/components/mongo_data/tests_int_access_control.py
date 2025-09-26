@@ -7,6 +7,7 @@ from unittest.mock import patch
 
 from django.test import override_settings, tag
 
+from core_main_app.access_control.api import check_can_read_list
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons.exceptions import QueryError
 from core_main_app.components.data import api as data_api
@@ -247,6 +248,21 @@ class TestDataExecuteQuery(MongoDBIntegrationBaseTestCase):
         mock_user = create_mock_user(1, is_superuser=True)
         with self.assertRaises(QueryError):
             data_api.execute_json_query({"$test": True}, mock_user)
+
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    @tag("mongodb")
+    def test_execute_query_as_superuser_with_bad_value_for_all_operator_raises_error(
+        self,
+    ):
+        """test_execute_query_as_superuser_with_bad_value_for_all_operator_raises_error
+
+        Returns:
+
+        """
+        mock_user = create_mock_user(1, is_superuser=True)
+        with self.assertRaises(QueryError):
+            data_api.execute_json_query({"list": {"$all": "test"}}, mock_user)
 
     @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=False)
     @override_settings(MONGODB_INDEXING=True)
@@ -2279,3 +2295,288 @@ class TestDataBlob(MongoDBIntegrationBaseTestCase):
         get_all_workspaces_with_read_access_by_user.return_value = []
         with self.assertRaises(AccessControlError):
             data.blob(mock_user)
+
+
+class TestDataListQuery(MongoDBIntegrationBaseTestCase):
+    """TestDataListQuery"""
+
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    def setUp(self):
+        """Insert needed data.
+
+        Returns:
+
+        """
+        from core_main_app.components.mongo.models import (  # noqa: keep import to init signals
+            MongoData,
+        )
+        from tests.components.data.fixtures.fixtures import (
+            AccessControlJSONDataListFixture,
+        )
+
+        # Mongo indexing is not initialized by default
+        init_mongo_indexing()
+
+        # fixture needs to initialized with settings.MONGODB_INDEXING=True otherwise MongoData does not exist
+        self.fixture = AccessControlJSONDataListFixture()
+        self.fixture.insert_data()
+
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    @tag("mongodb")
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_list_with_matches_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_query_list_with_matches_returns_data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.list": {"$all": ["value1"]}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 1)
+        self.assertEqual(data_list[0].title, self.fixture.data_1.title)
+
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    @tag("mongodb")
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_list_without_matches_returns_no_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_query_list_without_matches_returns_no_data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.list": {"$all": ["value4"]}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 0)
+
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    @tag("mongodb")
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_list_with_two_matches_returns_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_query_list_with_two_matches_returns_data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("2")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.list": {"$all": ["value1", "value2"]}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 1)
+        self.assertEqual(data_list[0].title, self.fixture.data_2.title)
+
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    @tag("mongodb")
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_list_with_partial_matches_returns_no_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_query_list_with_partial_matches_returns_no_data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("1")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.list": {"$all": ["value1", "value4"]}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 0)
+
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    @tag("mongodb")
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_query_list_from_private_workspace_returns_no_data(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_query_list_from_private_workspace_returns_no_data
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        mock_user = create_mock_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        query = {"dict_content.list": {"$all": ["value1"]}}
+        data_list = data_api.execute_json_query(query, mock_user)
+        self.assertEqual(data_list.count(), 0)
+
+
+class TestDataCanReadListQuery(MongoDBIntegrationBaseTestCase):
+    """TestDataCanReadListQuery"""
+
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    def setUp(self):
+        """Insert needed data.
+
+        Returns:
+
+        """
+        from core_main_app.components.mongo.models import (  # noqa: keep import to init signals
+            MongoData,
+        )
+        from tests.components.data.fixtures.fixtures import (
+            AccessControlJSONDataListFixture,
+        )
+
+        # Mongo indexing is not initialized by default
+        init_mongo_indexing()
+
+        # fixture needs to initialized with settings.MONGODB_INDEXING=True otherwise MongoData does not exist
+        self.fixture = AccessControlJSONDataListFixture()
+        self.fixture.insert_data()
+
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    @tag("mongodb")
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_queryset_contain_other_user_private_data_raises_acl_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_queryset_contain_other_user_private_data_raises_acl_error
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        # Get a queryset using a superuser
+        mock_superuser = create_mock_user("1", is_superuser=True)
+        query = {"dict_content.list": {"$all": ["value1"]}}
+        data_list = data_api.execute_json_query(query, mock_superuser)
+        self.assertEqual(data_list.count(), 2)
+
+        # Check if user can read this queryset
+        mock_user = create_mock_user("2")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        with self.assertRaises(AccessControlError):
+            check_can_read_list(data_list, mock_user)
+
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    @tag("mongodb")
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_queryset_contain_own_private_data_does_not_raise_acl_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_queryset_contain_own_private_data_does_not_raise_acl_error
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        # Get a queryset using a superuser
+        mock_superuser = create_mock_user("1", is_superuser=True)
+        query = {"dict_content.list": {"$all": ["value31"]}}
+        data_list = data_api.execute_json_query(query, mock_superuser)
+        self.assertEqual(data_list.count(), 1)
+
+        # Check if user can read this queryset
+        mock_user = create_mock_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        check_can_read_list(data_list, mock_user)
+
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    @tag("mongodb")
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_queryset_contains_data_from_another_workspace_raises_acl_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_queryset_contains_data_from_another_workspace_raises_acl_error
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        # Get a queryset using a superuser
+        mock_superuser = create_mock_user("1", is_superuser=True)
+        query = {"dict_content.list": {"$all": ["value2"]}}
+        data_list = data_api.execute_json_query(query, mock_superuser)
+        self.assertEqual(data_list.count(), 1)
+
+        # Check if user can read this queryset
+        mock_user = create_mock_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        with self.assertRaises(AccessControlError):
+            check_can_read_list(data_list, mock_user)
+
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    @tag("mongodb")
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_queryset_contains_data_from_accessible_workspace_does_not_raise_acl_error(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_queryset_contains_data_from_accessible_workspace_does_not_raise_acl_error
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        # Get a queryset using a superuser
+        mock_superuser = create_mock_user("1", is_superuser=True)
+        query = {"dict_content.list": {"$all": ["value2"]}}
+        data_list = data_api.execute_json_query(query, mock_superuser)
+        self.assertEqual(data_list.count(), 1)
+
+        # Check if user can read this queryset
+        mock_user = create_mock_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            self.fixture.workspace_1
+        ]
+        check_can_read_list(data_list, mock_user)

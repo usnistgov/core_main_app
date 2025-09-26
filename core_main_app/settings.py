@@ -168,7 +168,7 @@ XML_POST_PROCESSOR = getattr(settings, "XML_POST_PROCESSOR", "NUMERIC")
     callable for other custom xml post processing.
 """
 
-VERIFY_DATA_ACCESS = getattr(settings, "VERIFY_DATA_ACCESS", False)
+VERIFY_DATA_ACCESS = getattr(settings, "VERIFY_DATA_ACCESS", True)
 """ :py:class:`bool`: Verify that data returned by a query can be accessed.
 """
 
