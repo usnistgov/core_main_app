@@ -2,6 +2,7 @@
 """
 
 from django.contrib import admin
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.urls import path, include
@@ -10,6 +11,7 @@ from django.urls import re_path
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.data import api as data_api
 from core_main_app.utils.rendering import render
+from core_main_app.views.admin import views as admin_views
 from core_main_app.views.common import (
     ajax as common_ajax,
     views as common_views,
@@ -137,5 +139,10 @@ urlpatterns = [
         "password_reset/$",
         auth_views.PasswordResetView.as_view(),
         name="password_reset",
+    ),
+    re_path(
+        r"^template/(?P<template_id>\w+)",
+        staff_member_required(admin_views.TemplateDetailView.as_view()),
+        name="core_main_app_template_detail",
     ),
 ]

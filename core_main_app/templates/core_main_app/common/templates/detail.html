@@ -1,0 +1,19 @@
+{% extends 'core_main_app/_render/admin/theme/tools/box.html' %}
+
+{% block box_title %}
+    {{ data.template.display_name }}
+{% endblock %}
+
+
+{% block box_tools %}
+<a class="btn btn-secondary download"
+   href="{% url 'core_main_app_rest_template_download' data.template.id %}">
+    <i class="fas fa-download"></i> Download
+</a>
+<a href="#" class="btn btn-secondary back-to-previous">
+         <i class="fas fa-arrow-left"></i> Previous page
+</a>
+{% endblock %}
+{% block box_body %}
+<pre class="content-highlight"><code>{{data.template.content}}</code></pre>
+{% endblock %}

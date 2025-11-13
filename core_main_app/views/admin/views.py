@@ -51,6 +51,7 @@ from core_main_app.views.common.views import read_xsd_file
 from core_main_app.views.user.views import get_context_manage_template_versions
 from xml_utils.commons.exceptions import HTMLError
 from xml_utils.html_tree.parser import parse_html
+from core_main_app.components.template import api as template_api
 
 
 @staff_member_required
@@ -755,6 +756,50 @@ def data_migration(request):
         assets=assets,
         context=context,
     )
+
+
+class TemplateDetailView(View):
+    """Template Detail View"""
+
+    def get(self, request, template_id):
+        """Template detail view
+
+        Args:
+            request:
+            template_id:
+
+        Returns:
+
+        """
+        # get the template
+        template = template_api.get_by_id(template_id, request=request)
+
+        assets = {
+            "js": [
+                {
+                    "path": "core_main_app/common/js/backtoprevious.js",
+                    "is_raw": True,
+                }
+            ],
+            "css": [],
+        }
+
+        modals = []
+
+        try:
+            return admin_render(
+                request,
+                "core_main_app/common/templates/detail.html",
+                modals=modals,
+                assets=assets,
+                context={"template": template},
+            )
+        except Exception as exception:
+            return admin_render(
+                request,
+                "core_main_app/common/commons/error.html",
+                context={"error": str(exception)},
+            )
 
 
 class CustomExceptionReporter(SafeExceptionReporterFilter):

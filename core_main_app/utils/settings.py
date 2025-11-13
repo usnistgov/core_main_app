@@ -50,9 +50,9 @@ def getattr_from_deprecated_var(
         # If the supported setting is not set, try to use the deprecated setting, or the
         # default value, whichever is not defined.
         supported_var_value = (
-            deprecated_var_value  # noqa
+            deprecated_var_value
             if deprecated_var_defined
-            else default_value
+            else default_value  # noqa
         )
 
     return supported_var_value
