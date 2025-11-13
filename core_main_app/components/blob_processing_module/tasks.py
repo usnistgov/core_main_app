@@ -7,6 +7,7 @@ import re
 from celery import shared_task
 from django.contrib.auth.models import User
 
+from core_main_app.access_control.api import check_can_write
 from core_main_app.commons.exceptions import ApiError
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.blob_processing_module import (
@@ -34,8 +35,8 @@ def process_blob_with_module(blob_module_id, blob_id, strategy, user_id=None):
     try:
         # Retrieve user, blob and blob_module
         user = User.objects.get(pk=user_id)
-
         blob = blob_api.get_by_id(blob_id, user)
+        check_can_write(blob, user)
         blob_module = blob_processing_module_api.get_by_id(
             blob_module_id, user
         )
@@ -87,8 +88,8 @@ def process_blob_with_all_modules(blob_id, strategy, user_id=None):
     try:
         # Retrieve user, blob and blob_module
         user = User.objects.get(pk=user_id)
-
         blob = blob_api.get_by_id(blob_id, user)
+        check_can_write(blob, user)
         blob_module_list = [
             blob_module
             for blob_module in blob_processing_module_api.get_all(user).filter(

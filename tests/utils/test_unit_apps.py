@@ -6,7 +6,11 @@ from unittest.mock import patch
 
 from django.test import override_settings
 
-from core_main_app.apps import _check_settings, _init_blob_modules_signals
+from core_main_app.apps import (
+    _check_settings,
+    _init_blob_modules_signals,
+    _init_data_modules_signals,
+)
 from core_main_app.commons.exceptions import CoreError
 
 
@@ -124,5 +128,40 @@ class TestInitBlobProcessingModules(TestCase):
 
         """
         _init_blob_modules_signals()
+
+        self.assertFalse(mock_signals.called)
+
+
+class TestInitDataProcessingModules(TestCase):
+    """TestInitDataProcessingModules"""
+
+    @patch(
+        "core_main_app.apps.main_settings.ENABLE_DATA_MODULES_SIGNALS", True
+    )
+    @patch("core_main_app.components.data_processing_module.signals")
+    def test_signals_connected_if_setting_true(
+        self,
+        mock_signals,
+    ):
+        """test_signals_connected_if_setting_true
+
+        Returns:
+
+        """
+        _init_data_modules_signals()
+
+        self.assertTrue(mock_signals.connect.called)
+
+    @patch(
+        "core_main_app.apps.main_settings.ENABLE_DATA_MODULES_SIGNALS", False
+    )
+    @patch("core_main_app.components.data_processing_module.signals")
+    def test_signals_not_connected_if_setting_false(self, mock_signals):
+        """test_signals_not_connected_if_setting_false
+
+        Returns:
+
+        """
+        _init_data_modules_signals()
 
         self.assertFalse(mock_signals.called)

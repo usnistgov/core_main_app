@@ -29,6 +29,9 @@ from core_main_app.commons import exceptions
 from core_main_app.commons.exceptions import XMLError
 from core_main_app.components.data import api as data_api
 from core_main_app.components.data import tasks as data_tasks
+from core_main_app.components.data_processing_module.models import (
+    DataProcessingModule,
+)
 from core_main_app.components.template.models import Template
 from core_main_app.components.user import api as user_api
 from core_main_app.components.workspace import api as workspace_api
@@ -58,6 +61,9 @@ from core_main_app.utils.pagination.rest_framework_paginator.pagination import (
     StandardResultsSetPagination,
 )
 from core_main_app.utils.xml import get_content_by_xpath, format_content_xml
+from core_main_app.components.data_processing_module import (
+    tasks as data_processing_module_tasks,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -1706,3 +1712,86 @@ class DataHtmlRender(BaseDataHtmlRender):
         """
         # Get rendering content
         return self.get_rendering_content(request, pk)
+
+
+@extend_schema(
+    tags=["Data"],
+    description="View to run processing module on Data",
+)
+class DataRunProcessingModule(APIView):
+    """View to run processing module on Data"""
+
+    permission_classes = (IsAuthenticated,)
+
+    @extend_schema(
+        summary="Run processing module on a given data",
+        description="Run processing module on a given data",
+        parameters=[
+            OpenApiParameter(
+                name="data_id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Data ID",
+            ),
+            OpenApiParameter(
+                name="processing_module_id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Processing module ID",
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="File processing started", response=None
+            ),
+            400: OpenApiResponse(description="Missing request parameters"),
+            403: OpenApiResponse(description="Access Forbidden"),
+            500: OpenApiResponse(description="Internal server error"),
+        },
+    )
+    def post(self, request, data_id=None, processing_module_id=None):
+        """Run processing module on a given data
+        Args:
+            request: HTTP request
+            data_id: Data object ID
+            processing_module_id: Processing module ID
+        Returns:
+            - code: 200
+              content: File processing started
+            - code: 400
+              content: Missing request parameters
+            - code: 403
+              content: Authentication error
+            - code: 500
+              content: Internal server error
+        """
+        try:
+            if not processing_module_id or not data_id:
+                content = {
+                    "message": "Missing data or processing module parameters."
+                }
+                return Response(content, status=status.HTTP_400_BAD_REQUEST)
+            # check user can access data
+            data = data_api.get_by_id(data_id, request.user)
+            check_can_write(data, request.user)
+            # start processing task
+            data_processing_module_tasks.process_data_with_module.apply_async(
+                (
+                    processing_module_id,
+                    data_id,
+                    DataProcessingModule.RUN_ON_DEMAND,
+                    request.user.id,
+                )
+            )
+            return Response(
+                {"message": "File processing started!"},
+                status=status.HTTP_200_OK,
+            )
+        except AccessControlError as acl_error:
+            content = {"message": str(acl_error)}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
+        except Exception as api_exception:
+            content = {"message": str(api_exception)}
+            return Response(
+                content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

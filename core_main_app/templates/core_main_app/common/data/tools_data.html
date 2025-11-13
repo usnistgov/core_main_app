@@ -12,13 +12,40 @@
     {% if data.share_pid_button %}
         {% include 'core_linked_records_app/user/sharing/data_detail/button.html' %}
     {% endif %}
-    {% if 'core_tsne_app' in INSTALLED_APPS %}
-        <a style="margin-top: 1em;" class="btn btn-primary {% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %}"
-           href="{% url 'core_tsne_app_data' data.data.id %}">
-            view on t-sne map
-        </a>
+    {% if data.can_write %}
+    <button class="btn btn-secondary
+            open-{% if data.data.template.format == 'XML' %}xml{% elif data.data.template.format == 'JSON'%}json{% endif %}-record-btn
+            {% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %}
+            {% if BOOTSTRAP_VERSION|first == "4" %}mr-1{% elif BOOTSTRAP_VERSION|first == "5"  %}me-1{% endif %}">
+        <i class="fas fa-code"></i> Open in text editor
+    </button>
+    <button class="btn btn-secondary edit-record-btn
+            {% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %}
+            {% if BOOTSTRAP_VERSION|first == "4" %}mr-1{% elif BOOTSTRAP_VERSION|first == "5"  %}me-1{% endif %}">
+        <i class="fas fa-pencil-alt"></i> Edit
+    </button>
     {% endif %}
-
+    {% if data.data_modules %}
+    <a id="btn-run" class="btn btn-secondary run
+        {% if BOOTSTRAP_VERSION|first == "4" %}mr-1{% elif BOOTSTRAP_VERSION|first == "5"  %}me-1{% endif %}
+        {% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %}"
+    >
+        <i class="fas fa-play"></i> Run
+    </a>
+    <div class="row
+        {% if BOOTSTRAP_VERSION|first == "4" %}mr-1{% elif BOOTSTRAP_VERSION|first == "5"  %}me-1{% endif %}
+        {% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %}
+    ">
+        <div class="form-group">
+            <select id="data_processing_module_select" class="form-select">
+                <option value="None">-----------</option>
+                {% for data_module in data.data_modules %}
+                    <option value="{{data_module.id}}">{{data_module}}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    {% endif %}
         <div class="row
                 {% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %}
                 {% if BOOTSTRAP_VERSION|first == "4" %}mr-1{% elif BOOTSTRAP_VERSION|first == "5"  %}me-1{% endif %}"
@@ -36,5 +63,4 @@
                 </select>
             </div>
         </div>
-
 </div>

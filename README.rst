@@ -349,7 +349,7 @@ Module". The following fields are required:
   ``{"template_pk": 42}``.
 - Processing Class: The classpath to the processing class. For the ``File Metadata``
   processing module, enter
-  ``core_main_app.blob_modules.file_metadata.FileMetadataBlobProcessing``.
+  ``core_main_app.processing_modules.blob_modules.file_metadata.FileMetadataBlobProcessing``.
 - Blob Filename Regexp: A regular expression to determine which blobs this processing
   module can be applied to (e.g. ``.*\.(png|jpg)``).
 

@@ -4,9 +4,11 @@
 from unittest import TestCase
 
 from core_main_app.components.abstract_processing_module.admin_site import (
-    RunStrategyListWidget,
     AbstractProcessingModuleAdmin,
     AbstractProcessingModuleForm,
+)
+from core_main_app.components.abstract_processing_module.forms import (
+    RunStrategyListWidget,
 )
 from core_main_app.components.blob_processing_module.models import (
     BlobProcessingModule,

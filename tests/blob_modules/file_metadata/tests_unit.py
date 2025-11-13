@@ -7,8 +7,10 @@ from datetime import timedelta
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
-from core_main_app.blob_modules import file_metadata
-from core_main_app.blob_modules.file_metadata import FileMetadataBlobProcessing
+from core_main_app.processing_modules.blob_modules import file_metadata
+from core_main_app.processing_modules.blob_modules.file_metadata import (
+    FileMetadataBlobProcessing,
+)
 from core_main_app.commons.exceptions import CoreError
 
 

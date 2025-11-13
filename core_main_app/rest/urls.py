@@ -199,6 +199,11 @@ urlpatterns = [
         name="core_main_app_rest_data_migration_task_result",
     ),
     re_path(
+        r"^data/(?P<data_id>\w+)/run/(?P<processing_module_id>\w+)$",
+        data_views.DataRunProcessingModule.as_view(),
+        name="core_main_app_rest_data_run_processing_module",
+    ),
+    re_path(
         r"^admin/blob/$",
         blob_views.BlobListAdmin.as_view(),
         name="core_main_app_rest_blob_list_admin",

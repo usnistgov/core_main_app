@@ -36,6 +36,9 @@ from core_main_app.components.blob import api as blob_api
 from core_main_app.components.blob_processing_module import (
     api as blob_module_api,
 )
+from core_main_app.components.data_processing_module import (
+    api as data_module_api,
+)
 from core_main_app.components.data import api as data_api
 from core_main_app.components.group import api as group_api
 from core_main_app.components.lock import api as lock_api
@@ -284,8 +287,28 @@ class ViewData(CommonView):
 
         try:
             data_object = data_api.get_by_id(data_id, request.user)
+            try:
+                acl_api.check_can_write(data_object, request.user)
+                can_edit_data = True
+            except:  # noqa: E722
+                can_edit_data = False
+
+            data_modules = []
+            if can_edit_data:
+                try:  # Retrieve data modules if authorized.
+                    data_modules = data_module_api.get_all_by_data_id(
+                        data_id,
+                        request.user,
+                        run_strategy=AbstractProcessingModule.RUN_ON_DEMAND,
+                    )
+                except AccessControlError:
+                    data_modules = []
+
             page_context = data_view_builder.build_page(
-                data_object, display_download_options=True
+                data_object,
+                display_download_options=True,
+                data_modules=data_modules,
+                display_edit_options=can_edit_data,
             )
 
             return data_view_builder.render_page(

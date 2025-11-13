@@ -12,6 +12,11 @@ runBlobProcessingModule = function(event) {
         .text();
     let blob_id = $("#blob_id").html();
 
+    if (processing_module_id === null || processing_module_id == 'None') {
+        notify("Please select a module to first.", "error");
+        return;
+    }
+
     $.ajax({
         url : processFileUrl
             .replace("blob_id", blob_id)

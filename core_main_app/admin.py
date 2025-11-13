@@ -19,6 +19,12 @@ from core_main_app.components.blob_processing_module.models import (
 )
 from core_main_app.components.data.admin_site import CustomDataAdmin
 from core_main_app.components.data.models import Data
+from core_main_app.components.data_processing_module.admin_site import (
+    DataProcessingModuleAdmin,
+)
+from core_main_app.components.data_processing_module.models import (
+    DataProcessingModule,
+)
 from core_main_app.components.lock.admin_site import CustomDatabaseLockAdmin
 from core_main_app.components.lock.models import DatabaseLockObject
 from core_main_app.components.template.admin_site import CustomTemplateAdmin
@@ -206,6 +212,7 @@ admin.site.register(UserPreferences, CustomUserPreferencesAdmin)
 
 # Admin models for processing modules
 admin.site.register(BlobProcessingModule, BlobProcessingModuleAdmin)
+admin.site.register(DataProcessingModule, DataProcessingModuleAdmin)
 
 
 class CoreAdminSite(AdminSite):

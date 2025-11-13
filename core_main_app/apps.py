@@ -45,6 +45,7 @@ class InitApp(AppConfig):
         post_migrate.connect(init_app, sender=self)
         discover.init_mongo_indexing()
         _init_blob_modules_signals()
+        _init_data_modules_signals()
 
 
 def _check_settings():
@@ -105,7 +106,23 @@ def _init_blob_modules_signals():
     Returns:
 
     """
-    from core_main_app.components.blob_processing_module import signals
+    from core_main_app.components.blob_processing_module import (
+        signals as blob_signals,
+    )
 
     if main_settings.ENABLE_BLOB_MODULES_SIGNALS:
-        signals.connect()
+        blob_signals.connect()
+
+
+def _init_data_modules_signals():
+    """Initialize data modules signals
+
+    Returns:
+
+    """
+    from core_main_app.components.data_processing_module import (
+        signals as data_signals,
+    )
+
+    if main_settings.ENABLE_DATA_MODULES_SIGNALS:
+        data_signals.connect()

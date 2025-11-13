@@ -6,7 +6,9 @@ from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
 from rest_framework import status
+from rest_framework.status import HTTP_403_FORBIDDEN
 
+from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.blob_processing_module.models import (
     BlobProcessingModule,
 )
@@ -39,8 +41,44 @@ class TestBlobRunProcessingModulePost(TestCase):
         result = self.mock_view.post(**self.kwargs)
         self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
 
+    @patch.object(blob_views, "check_can_write")
+    @patch.object(blob_views, "blob_api")
     @patch.object(blob_views, "blob_processing_module_tasks")
-    def test_process_blob_called(self, mock_blob_processing_module_tasks):
+    def test_process_blob_blob_api_called(
+        self,
+        mock_blob_processing_module_tasks,
+        mock_blob_api,
+        mock_check_can_write,
+    ):
+        """test_process_blob_blob_api_called"""
+        self.mock_view.post(**self.kwargs)
+        self.assertTrue(mock_blob_api.get_by_id.called)
+
+    @patch.object(blob_views, "check_can_write")
+    @patch.object(blob_views, "blob_api")
+    @patch.object(blob_views, "blob_processing_module_tasks")
+    def test_process_blob_return_http_403_when_acl_error_in_blob_api(
+        self,
+        mock_blob_processing_module_tasks,
+        mock_blob_api,
+        mock_check_can_write,
+    ):
+        """test_process_blob_blob_api_called"""
+        mock_blob_api.get_by_id.side_effect = AccessControlError("error")
+        response = self.mock_view.post(**self.kwargs)
+
+        self.assertTrue(mock_blob_api.get_by_id.called)
+        self.assertEqual(response.status_code, HTTP_403_FORBIDDEN)
+
+    @patch.object(blob_views, "check_can_write")
+    @patch.object(blob_views, "blob_api")
+    @patch.object(blob_views, "blob_processing_module_tasks")
+    def test_process_blob_called(
+        self,
+        mock_blob_processing_module_tasks,
+        mock_blob_api,
+        mock_check_can_write,
+    ):
         """test_process_blob_called"""
         self.mock_view.post(**self.kwargs)
 
@@ -53,9 +91,14 @@ class TestBlobRunProcessingModulePost(TestCase):
             )
         )
 
+    @patch.object(blob_views, "check_can_write")
+    @patch.object(blob_views, "blob_api")
     @patch.object(blob_views, "blob_processing_module_tasks")
     def test_process_blob_exception_returns_500(
-        self, mock_blob_processing_module_tasks
+        self,
+        mock_blob_processing_module_tasks,
+        mock_blob_api,
+        mock_check_can_write,
     ):
         """test_process_blob_exception_returns_500"""
         mock_blob_processing_module_tasks.process_blob_with_module.apply_async.side_effect = Exception(
@@ -67,8 +110,15 @@ class TestBlobRunProcessingModulePost(TestCase):
             result.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
+    @patch.object(blob_views, "check_can_write")
+    @patch.object(blob_views, "blob_api")
     @patch.object(blob_views, "blob_processing_module_tasks")
-    def test_success_returns_200(self, mock_blob_processing_module_tasks):
+    def test_success_returns_200(
+        self,
+        mock_blob_processing_module_tasks,
+        mock_blob_api,
+        mock_check_can_write,
+    ):
         """test_success_returns_200"""
         result = self.mock_view.post(**self.kwargs)
         self.assertEqual(result.status_code, status.HTTP_200_OK)

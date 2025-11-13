@@ -35,8 +35,10 @@ class TestProcessBlobWithModule(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_user_get_called(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,
@@ -55,8 +57,10 @@ class TestProcessBlobWithModule(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_user_get_fails_error_api_error(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,
@@ -76,8 +80,10 @@ class TestProcessBlobWithModule(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_blob_get_by_id_called(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,
@@ -99,8 +105,10 @@ class TestProcessBlobWithModule(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_blob_get_by_id_fails_error_api_error(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,
@@ -120,8 +128,10 @@ class TestProcessBlobWithModule(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_blob_module_get_by_id_called(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,
@@ -143,8 +153,10 @@ class TestProcessBlobWithModule(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_blob_module_get_by_id_error_raises_api_error(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,
@@ -164,8 +176,10 @@ class TestProcessBlobWithModule(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_blob_module_get_class_called(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,
@@ -185,8 +199,10 @@ class TestProcessBlobWithModule(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_blob_module_get_class_error_raises_api_error(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,
@@ -208,8 +224,10 @@ class TestProcessBlobWithModule(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_blob_filename_not_matching_blob_module_regexp_raises_api_error(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,
@@ -227,8 +245,10 @@ class TestProcessBlobWithModule(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_blob_module_class_process_called(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,
@@ -255,8 +275,10 @@ class TestProcessBlobWithModule(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_returns_blob_module_class_process(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,
@@ -284,8 +306,10 @@ class TestProcessBlobWithModule(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_blob_module_class_process_error_raises_api_error(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,
@@ -333,8 +357,10 @@ class TestProcessBlobWithAllModules(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_user_get_called(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,
@@ -353,8 +379,10 @@ class TestProcessBlobWithAllModules(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_user_get_fails_error_api_error(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,
@@ -374,8 +402,10 @@ class TestProcessBlobWithAllModules(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_blob_get_by_id_called(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,
@@ -397,8 +427,10 @@ class TestProcessBlobWithAllModules(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_blob_get_by_id_fails_error_api_error(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,
@@ -418,8 +450,10 @@ class TestProcessBlobWithAllModules(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_blob_module_get_all_called(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,
@@ -439,8 +473,10 @@ class TestProcessBlobWithAllModules(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_blob_module_get_all_error_raises_api_error(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,
@@ -460,8 +496,10 @@ class TestProcessBlobWithAllModules(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_blob_module_get_class_called(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,
@@ -483,8 +521,10 @@ class TestProcessBlobWithAllModules(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_blob_module_get_class_error_raises_api_error(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,
@@ -509,8 +549,10 @@ class TestProcessBlobWithAllModules(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_blob_filename_not_matching_blob_module_regexp_does_not_call_any_module(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,
@@ -530,8 +572,10 @@ class TestProcessBlobWithAllModules(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_blob_module_class_process_called(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,
@@ -563,8 +607,10 @@ class TestProcessBlobWithAllModules(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_returns_blob_module_class_process(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,
@@ -612,8 +658,10 @@ class TestProcessBlobWithAllModules(TestCase):
     @patch.object(blob_processing_module_tasks, "blob_api")
     @patch.object(blob_processing_module_tasks, "blob_processing_module_api")
     @patch.object(blob_processing_module_tasks, "re")
+    @patch.object(blob_processing_module_tasks, "check_can_write")
     def test_blob_module_class_process_error_raises_api_error(
         self,
+        mock_check_can_write,
         mock_re,
         mock_blob_processing_module_api,
         mock_blob_api,

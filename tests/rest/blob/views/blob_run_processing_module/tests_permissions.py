@@ -1,4 +1,4 @@
-""" Permission tests tests for `BlobRunProcessingModule` views in
+""" Permission tests for `BlobRunProcessingModule` views in
 `core_main_app.rest.blob.views` package.
 """
 
@@ -30,9 +30,14 @@ class TestBlobRunProcessingModulePost(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    @patch.object(blob_views, "check_can_write")
+    @patch.object(blob_views, "blob_api")
     @patch.object(blob_views, "blob_processing_module_tasks")
     def test_registered_returns_http_200(
-        self, mock_blob_processing_module_tasks
+        self,
+        mock_blob_processing_module_tasks,
+        mock_blob_api,
+        mock_check_can_write,
     ):
         """test_registered_returns_http_200"""
         mock_user = create_mock_user("1")
@@ -45,8 +50,15 @@ class TestBlobRunProcessingModulePost(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    @patch.object(blob_views, "check_can_write")
+    @patch.object(blob_views, "blob_api")
     @patch.object(blob_views, "blob_processing_module_tasks")
-    def test_staff_returns_200(self, mock_blob_processing_module_tasks):
+    def test_staff_returns_200(
+        self,
+        mock_blob_processing_module_tasks,
+        mock_blob_api,
+        mock_check_can_write,
+    ):
         """test_staff_returns_200"""
         mock_user = create_mock_user("1", is_staff=True)
 

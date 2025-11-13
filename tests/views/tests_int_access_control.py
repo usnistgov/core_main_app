@@ -19,6 +19,9 @@ from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons.exceptions import ModelError
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.data import api as data_api
+from core_main_app.components.data_processing_module.models import (
+    DataProcessingModule,
+)
 from core_main_app.settings import MAX_DOCUMENT_EDITING_SIZE
 from core_main_app.utils.integration_tests.integration_base_test_case import (
     IntegrationBaseTestCase,
@@ -145,6 +148,66 @@ class TestViewData(IntegrationBaseTestCase):
             not in response.content.decode()
         )
         self.assertTrue("Error" in response.content.decode())
+
+    @patch(
+        "core_main_app.components.data_processing_module.api.get_all_by_data_id"
+    )
+    def test_data_modules_set_in_page(
+        self, mock_data_modules_get_all_by_data_id
+    ):
+        """test_data_modules_set_in_page
+
+        Returns:
+
+        """
+        mock_data_modules_get_all_by_data_id.return_value = [
+            DataProcessingModule(name="module")
+        ]
+        request = self.factory.get("core_main_app_data_detail")
+        request.user = self.user1
+        request.GET = {"id": str(self.fixture.data_1.id)}
+        response = ViewData.as_view()(request)
+        self.assertTrue(
+            '<i class="fas fa-play"></i> Run' in response.content.decode()
+        )
+
+    @patch(
+        "core_main_app.components.data_processing_module.api.get_all_by_data_id"
+    )
+    def test_data_modules_not_set_if_access_control_error(
+        self, mock_data_modules_get_all_by_data_id
+    ):
+        """test_data_modules_not_set_if_access_control_error
+
+        Returns:
+
+        """
+        mock_data_modules_get_all_by_data_id.side_effect = AccessControlError(
+            "Forbidden"
+        )
+        request = self.factory.get("core_main_app_data_detail")
+        request.user = self.user1
+        request.GET = {"id": str(self.fixture.data_1.id)}
+        response = ViewData.as_view()(request)
+        self.assertFalse(
+            '<i class="fas fa-play"></i> Run' in response.content.decode()
+        )
+
+    @patch("core_main_app.views.common.views.acl_api")
+    def test_cannot_write_data(self, mock_acl_api):
+        """test_cannot_write_data
+
+        Returns:
+
+        """
+        mock_acl_api.check_can_write.side_effect = AccessControlError(
+            "Forbidden"
+        )
+        request = self.factory.get("core_main_app_data_detail")
+        request.user = self.user1
+        request.GET = {"id": str(self.fixture.data_1.id)}
+        response = ViewData.as_view()(request)
+        self.assertFalse("Edit" in response.content.decode())
 
 
 class TestManageTemplateVersions(IntegrationBaseTestCase):

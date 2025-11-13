@@ -6,6 +6,7 @@ import logging
 from django.conf import settings as conf_settings
 
 from core_main_app.commons import exceptions
+from core_main_app import settings as main_settings
 from core_main_app.components.template_xsl_rendering import (
     api as template_xsl_rendering_api,
 )
@@ -14,7 +15,11 @@ logger = logging.getLogger(__name__)
 
 
 def build_page(
-    data_object, display_admin_version=False, display_download_options=False
+    data_object,
+    display_admin_version=False,
+    display_download_options=False,
+    display_edit_options=False,
+    data_modules=None,
 ):
     """Generic page building data
 
@@ -22,6 +27,8 @@ def build_page(
         data_object:
         display_admin_version:
         display_download_options:
+        display_edit_options:
+        data_modules:
 
     Returns:
     """
@@ -41,6 +48,15 @@ def build_page(
             _get_field(_get_field(data_object, "template"), "id")
         )
 
+        if (
+            display_edit_options
+            and "core_curate_app" in conf_settings.INSTALLED_APPS
+            and "core_dashboard_common_app" in conf_settings.INSTALLED_APPS
+        ):
+            can_edit_data = True
+        else:
+            can_edit_data = False
+
         page_info["context"] = {
             "data": data_object,
             "share_pid_button": False,
@@ -49,6 +65,9 @@ def build_page(
             "can_display_selector": display_xslt_selector,
             "display_download_options": display_download_options,
             "page_title": _get_field(data_object, "title"),
+            "can_write": can_edit_data,
+            "data_modules": data_modules,
+            "show_title": main_settings.SHOW_TITLE_ON_DATA_DETAIL_PAGE,
         }
 
         page_info["assets"] = {
@@ -133,6 +152,15 @@ def build_page(
                 page_info["modals"].append(
                     "core_linked_records_app/user/sharing/data_detail/modal.html"
                 )
+        if can_edit_data:
+            page_info["assets"]["js"].extend(
+                [
+                    {
+                        "path": "core_main_app/user/js/data/edit_record.raw.js",
+                        "is_raw": True,
+                    },
+                ]
+            )
     except exceptions.DoesNotExist:
         page_info["error"] = "Data not found"
     except exceptions.ModelError:

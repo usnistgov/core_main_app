@@ -145,4 +145,18 @@ urlpatterns = [
         staff_member_required(admin_views.TemplateDetailView.as_view()),
         name="core_main_app_template_detail",
     ),
+    re_path(
+        r"^xml-editor/data",
+        login_required(
+            common_views.DataXMLEditor.as_view(),
+        ),
+        name="core_main_app_xml_text_editor_view",
+    ),
+    re_path(
+        r"^json-editor/data",
+        login_required(
+            common_views.DataJSONEditor.as_view(),
+        ),
+        name="core_main_app_json_text_editor_view",
+    ),
 ]

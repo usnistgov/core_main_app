@@ -16,6 +16,7 @@ from rest_framework.permissions import (
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core_main_app.access_control.api import check_can_write
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons import exceptions
 from core_main_app.components.blob import api as blob_api
@@ -962,6 +963,10 @@ class BlobRunProcessingModule(APIView):
                     "message": "Missing blob or processing module parameters."
                 }
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
+            # check user can access blob
+            blob = blob_api.get_by_id(blob_id, request.user)
+            check_can_write(blob, request.user)
+            # start processing task
             blob_processing_module_tasks.process_blob_with_module.apply_async(
                 (
                     processing_module_id,
@@ -974,6 +979,9 @@ class BlobRunProcessingModule(APIView):
                 {"message": "File processing started!"},
                 status=status.HTTP_200_OK,
             )
+        except AccessControlError as acl_error:
+            content = {"message": str(acl_error)}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
             return Response(

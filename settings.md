@@ -350,6 +350,11 @@ DATA_SORTING_FIELDS = ["-title", "+last_modification_date"]
   - 'Monaco' to use Monaco editor for advanced code editing capabilities.
   - Set parameter to the name of the desired third-party text editor to integrate.
 
+### ``SHOW_TITLE_ON_DATA_DETAIL_PAGE``
+
+  Default: ``True``
+
+  Set to `True` to show Data's title on the detail page.
 
 ## XML
 
@@ -522,6 +527,12 @@ DATA_SORTING_FIELDS = ["-title", "+last_modification_date"]
   Default: ``True``
   
   Set to `True` to enable Blob modules signals (will trigger some actions on blob create/update/delete)
+
+### ``ENABLE_DATA_MODULES_SIGNALS``
+
+  Default: ``True``
+  
+  Set to `True` to enable Data modules signals (will trigger some actions on data create/update/delete)
 
 ### ``LOCAL_ID_LENGTH``
 

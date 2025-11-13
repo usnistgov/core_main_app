@@ -190,3 +190,61 @@ class TestBuildPage(TestCase):
         build_page(data)
         # Assert
         self.assertTrue(mock_system_get_pid_settings.called)
+
+    @override_settings(
+        INSTALLED_APPS=["core_curate_app", "core_dashboard_common_app"]
+    )
+    def test_build_page_with_edit_options(
+        self,
+    ):
+        # Arrange
+        data = MagicMock()
+        # Act
+        page_info = build_page(data, display_edit_options=True)
+        # Assert
+        self.assertTrue(page_info["context"]["can_write"])
+        self.assertTrue(
+            {
+                "path": "core_main_app/user/js/data/edit_record.raw.js",
+                "is_raw": True,
+            }
+            in page_info["assets"]["js"]
+        )
+
+    @override_settings(INSTALLED_APPS=[])
+    def test_build_page_with_edit_options_without_required_dependencies(
+        self,
+    ):
+        # Arrange
+        data = MagicMock()
+        # Act
+        page_info = build_page(data, display_edit_options=True)
+        # Assert
+        self.assertFalse(page_info["context"]["can_write"])
+        self.assertFalse(
+            {
+                "path": "core_main_app/user/js/data/edit_record.raw.js",
+                "is_raw": True,
+            }
+            in page_info["assets"]["js"]
+        )
+
+    @override_settings(
+        INSTALLED_APPS=["core_curate_app", "core_dashboard_common_app"]
+    )
+    def test_build_page_without_edit_options_without_required_dependencies(
+        self,
+    ):
+        # Arrange
+        data = MagicMock()
+        # Act
+        page_info = build_page(data, display_edit_options=False)
+        # Assert
+        self.assertFalse(page_info["context"]["can_write"])
+        self.assertFalse(
+            {
+                "path": "core_main_app/user/js/data/edit_record.raw.js",
+                "is_raw": True,
+            }
+            in page_info["assets"]["js"]
+        )

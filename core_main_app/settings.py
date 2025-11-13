@@ -301,8 +301,20 @@ ENABLE_BLOB_MODULES_SIGNALS = getattr(
 """ :py:class:`bool`: Set to `True` to enable Blob modules signals.
 """
 
+ENABLE_DATA_MODULES_SIGNALS = getattr(
+    settings, "ENABLE_DATA_MODULES_SIGNALS", True
+)
+""" :py:class:`bool`: Set to `True` to enable Data modules signals.
+"""
+
 ENABLE_OBTAIN_API_TOKEN_ENDPOINT = getattr(
     settings, "ENABLE_OBTAIN_API_TOKEN_ENDPOINT", False
 )
 """ :py:class:`bool`: Set to `True` to enable a REST endpoint to obtain an API token.
+"""
+
+SHOW_TITLE_ON_DATA_DETAIL_PAGE = getattr(
+    settings, "SHOW_TITLE_ON_DATA_DETAIL_PAGE", True
+)
+""" :py:class:`bool`: Set to `True` to show Data's title on the detail page.
 """
