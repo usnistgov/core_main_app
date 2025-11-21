@@ -2,5 +2,5 @@ black==24.8.*
 coverage
 flake8
 mongomock==4.3.*
-python-dotenv==1.1.*
+python-dotenv==1.2.*
 psycopg2-binary==2.9.*

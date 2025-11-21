@@ -4,7 +4,7 @@ stages:
   - package
 
 services:
-  - name: postgres:16
+  - name: postgres:17
     alias: postgres
 
 variables: # https://docs.gitlab.com/ci/services/postgres/#use-postgresql-with-the-docker-executor
@@ -47,7 +47,7 @@ before_script:
 
 lint:
   stage: lint
-  image: python:3.10-slim-bullseye
+  image: python:3.10-slim-bookworm
   script:
     - black --check .
     - flake8 --extend-ignore E501 .
@@ -60,7 +60,7 @@ test:
   parallel:
     matrix:
       - PYTHON_VERSION: ['3.9', '3.10', '3.11', '3.12']
-  image: python:${PYTHON_VERSION}-slim-bullseye
+  image: python:${PYTHON_VERSION}-slim-bookworm
   script:
     - coverage run --parallel --source=core_main_app --omit=*settings.py -p runtests.py
     - coverage run --parallel --source=core_main_app --omit=*settings.py -p runtests_mongo.py
@@ -74,7 +74,7 @@ test:
 
 package:
   stage: package
-  image: python:3.10-slim-bullseye
+  image: python:3.10-slim-bookworm
   script:
     - rm -rf dist *.egg-info
     - sed -i "s/version=\"\([^\"]*\)\"/version=\"\1.dev$(date +"%Y%m%d%H%M")\"/" setup.py

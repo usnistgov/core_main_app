@@ -80,7 +80,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CELERYBEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 MEDIA_ROOT = "tests_media"
 
-PASSWORD_HASHERS = ("django.contrib.auth.hashers.UnsaltedMD5PasswordHasher",)
 
 CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT = getattr(
     settings, "CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT", False

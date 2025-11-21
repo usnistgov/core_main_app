@@ -2,5 +2,5 @@ core-linked-records-app==2.19.*
 core-parser-app==2.19.*
 core-curate-app==2.19.*
 core-website-app==2.19.*
-django-simple-history==3.8.*
+django-simple-history==3.10.*
 django-allauth[socialaccount,saml,mfa]==65.7.*
