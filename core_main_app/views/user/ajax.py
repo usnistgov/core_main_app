@@ -699,16 +699,18 @@ class UploadFile(View):
         try:
             form = BlobFileForm(request.POST, request.FILES)
             if form.is_valid():
-                blob = Blob(
-                    filename=form.files["file"].name,
-                    blob=form.files["file"],
-                    user_id=str(request.user.id),
-                )
-                blob_api.insert(blob, request.user)
+                file_list = form.cleaned_data["file"]
+
+                for file_object in file_list:
+                    blob = Blob(
+                        filename=file_object.name,
+                        blob=file_object,
+                        user_id=str(request.user.id),
+                    )
+                    blob_api.insert(blob, request.user)
+
                 messages.add_message(
-                    request,
-                    messages.SUCCESS,
-                    "File uploaded.",
+                    request, messages.SUCCESS, "Files uploaded."
                 )
                 return HttpResponse(json.dumps({}))
             else:

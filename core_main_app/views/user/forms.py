@@ -214,14 +214,38 @@ class BlobMetadataForm(forms.Form):
         self.fields["metadata"].choices = self.user_data
 
 
+class MultipleFileInput(forms.FileInput):
+    """File input for multiple files"""
+
+    allow_multiple_selected = True
+
+
+class MultipleFileField(forms.FileField):
+    """File field for multiple files"""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the field to contain the necessary widget"""
+        kwargs.setdefault("widget", MultipleFileInput)
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+        """Clean the data to always output a list of files."""
+        single_file_clean = super().clean
+        if isinstance(data, (list, tuple)):
+            result = [single_file_clean(item, initial) for item in data]
+        else:
+            result = [single_file_clean(data, initial)]
+        return result
+
+
 class BlobFileForm(forms.Form):
     """
     Form blob file.
     """
 
-    file = forms.FileField(
+    file = MultipleFileField(
         label="",
-        widget=forms.FileInput(
+        widget=MultipleFileInput(
             attrs={"class": "form-control form-control-lg"}
         ),
     )
