@@ -430,12 +430,16 @@ class XSLTView(View):
                 EditXSLTView.get_modal_js_path(),
                 DeleteObjectModalView.get_modal_js_path(),
             ],
+            "css": ["core_main_app/admin/css/xslt.css"],
         }
 
         context = {
             "object_name": "XSLT",
             "xslt": xslt_transformation_api.get_all(),
             "update_url": reverse("core-admin:core_main_app_upload_xslt"),
+            "html_rendering_url": reverse(
+                "admin:core_main_app_templatehtmlrendering_changelist"
+            ),
         }
 
         return admin_render(

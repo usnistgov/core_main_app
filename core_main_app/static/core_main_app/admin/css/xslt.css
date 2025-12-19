@@ -1,0 +1,7 @@
+#html_template_alert a{
+    color: gray;
+}
+
+#html_template_alert a:hover{
+    color: white;
+}

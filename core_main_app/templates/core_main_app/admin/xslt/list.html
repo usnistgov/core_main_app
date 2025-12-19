@@ -4,6 +4,13 @@
 {% block section_title %} {{ data.object_name }}{% endblock %}
 
 {% block section_content %}
+<div class="alert alert-primary" id="html_template_alert">
+  <span><i class="fas fa-question-circle"></i> In addition to the traditional XSLT method for rendering XML records,
+      there is also another option - HTML templates - which can be used to render either XML or JSON records.
+      HTML template rendering methods may be used on some templates while XSLT may also be used for others.
+      Click <a href="{{ data.html_rendering_url }}">here</a> to add a new HTML template.
+  </span>
+</div>
 <div class="row">
     <div class="col-md-12">
         {% include 'core_main_app/admin/xslt/list/table.html' %}
