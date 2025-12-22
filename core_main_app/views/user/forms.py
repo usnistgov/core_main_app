@@ -248,4 +248,5 @@ class BlobFileForm(forms.Form):
         widget=MultipleFileInput(
             attrs={"class": "form-control form-control-lg"}
         ),
+        allow_empty_file=True,
     )

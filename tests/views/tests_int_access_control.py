@@ -56,6 +56,17 @@ from core_main_app.views.user.views import manage_template_versions
 from tests.test_settings import LOGIN_URL
 
 
+def _process_request_with_middleware(request):
+    """Process request with session and message middleware"""
+    mock_get_response = MagicMock()
+
+    for middleware_class in [SessionMiddleware, MessageMiddleware]:
+        middleware = middleware_class(mock_get_response)
+        middleware.process_request(request)
+
+    request.session.save()
+
+
 class TestViewData(IntegrationBaseTestCase):
     """TestViewData"""
 
@@ -1703,12 +1714,7 @@ class TestAddMetadataToBlob(IntegrationBaseTestCase):
         request.POST = QueryDict("").copy()
         request.POST.update({"blob_id": str(self.fixture.blob_1.id)})
         # Add middlewares
-        mock_get_response = MagicMock()
-        middleware = SessionMiddleware(mock_get_response)
-        middleware.process_request(request)
-        middleware = MessageMiddleware(mock_get_response)
-        middleware.process_request(request)
-        request.session.save()
+        _process_request_with_middleware(request)
         response = AddMetadataToBlob.as_view()(request)
         self.assertEqual(response.status_code, 200)
 
@@ -1724,12 +1730,7 @@ class TestAddMetadataToBlob(IntegrationBaseTestCase):
         request.POST.update({"blob_id": str(self.fixture.blob_1.id)})
         request.POST.update({"metadata_id[]": str(self.fixture.data_4.id)})
         # Add middlewares
-        mock_get_response = MagicMock()
-        middleware = SessionMiddleware(mock_get_response)
-        middleware.process_request(request)
-        middleware = MessageMiddleware(mock_get_response)
-        middleware.process_request(request)
-        request.session.save()
+        _process_request_with_middleware(request)
         response = AddMetadataToBlob.as_view()(request)
         self.assertEqual(response.status_code, 200)
 
@@ -1827,12 +1828,7 @@ class TestRemoveMetadataFromBlob(IntegrationBaseTestCase):
         request.POST.update({"blob_id": str(self.fixture.blob_1.id)})
         request.POST.update({"metadata_id": str(self.fixture.data_1.id)})
         # Add middlewares
-        mock_get_response = MagicMock()
-        middleware = SessionMiddleware(mock_get_response)
-        middleware.process_request(request)
-        middleware = MessageMiddleware(mock_get_response)
-        middleware.process_request(request)
-        request.session.save()
+        _process_request_with_middleware(request)
         response = RemoveMetadataFromBlob.as_view()(request)
         self.assertEqual(response.status_code, 200)
 
@@ -1919,8 +1915,8 @@ class TestUploadFile(IntegrationBaseTestCase):
         response = UploadFile.as_view()(request)
         self.assertEqual(response.status_code, 302)
 
-    def test_user_can_upload_file(self):
-        """test_user_can_upload_file
+    def test_user_upload_valid_file_returns_200(self):
+        """test_user_upload_valid_file_returns_200
 
         Returns:
 
@@ -1928,18 +1924,28 @@ class TestUploadFile(IntegrationBaseTestCase):
         request = self.factory.post("core_main_upload_file")
         request.user = self.user1
         request.FILES["file"] = self.file
-        mock_get_response = MagicMock()
         # Add middlewares
-        middleware = SessionMiddleware(mock_get_response)
-        middleware.process_request(request)
-        middleware = MessageMiddleware(mock_get_response)
-        middleware.process_request(request)
+        _process_request_with_middleware(request)
         response = UploadFile.as_view()(request)
         self.assertEqual(response.status_code, 200)
 
+    def test_user_upload_valid_file_set_session_status_to_success(self):
+        """test_user_upload_valid_file_set_session_status_to_success
+
+        Returns:
+
+        """
+        request = self.factory.post("core_main_upload_file")
+        request.user = self.user1
+        request.FILES["file"] = self.file
+        # Add middlewares
+        _process_request_with_middleware(request)
+        UploadFile.as_view()(request)
+        self.assertEqual(request.session["upload_report"]["status"], "success")
+
     @patch("core_main_app.components.blob.api.insert")
-    def test_user_can_not_upload_file_with_error(self, mock_insert):
-        """test_user_can_not_upload_file_with_error
+    def test_user_upload_file_with_error_returns_400(self, mock_insert):
+        """test_user_upload_file_with_error_returns_400
 
         Returns:
 
@@ -1949,13 +1955,25 @@ class TestUploadFile(IntegrationBaseTestCase):
         request.FILES["file"] = self.file
         mock_insert.side_effect = Exception()
         # Add middlewares
-        mock_get_response = MagicMock()
-        middleware = SessionMiddleware(mock_get_response)
-        middleware.process_request(request)
-        middleware = MessageMiddleware(mock_get_response)
-        middleware.process_request(request)
+        _process_request_with_middleware(request)
         response = UploadFile.as_view()(request)
         self.assertEqual(response.status_code, 400)
+
+    @patch("core_main_app.components.blob.api.insert")
+    def test_user_upload_error_set_session_status_to_error(self, mock_insert):
+        """test_user_upload_error_set_session_status_to_error
+
+        Returns:
+
+        """
+        request = self.factory.post("core_main_upload_file")
+        request.user = self.user1
+        request.FILES["file"] = self.file
+        mock_insert.side_effect = Exception()
+        # Add middlewares
+        _process_request_with_middleware(request)
+        UploadFile.as_view()(request)
+        self.assertEqual(request.session["upload_report"]["status"], "error")
 
     def test_user_can_not_upload_file_with_invalid_form(self):
         """test_user_can_not_upload_file_with_invalid_form
@@ -1967,11 +1985,7 @@ class TestUploadFile(IntegrationBaseTestCase):
         request.user = self.user1
         request.FILES["file"] = 123
         # Add middlewares
-        mock_get_response = MagicMock()
-        middleware = SessionMiddleware(mock_get_response)
-        middleware.process_request(request)
-        middleware = MessageMiddleware(mock_get_response)
-        middleware.process_request(request)
+        _process_request_with_middleware(request)
         response = UploadFile.as_view()(request)
         self.assertEqual(response.status_code, 400)
 

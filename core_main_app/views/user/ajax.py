@@ -15,6 +15,7 @@ from django.template import loader
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.views.generic import View
+from rest_framework import status
 
 from core_main_app.access_control.api import check_can_write
 from core_main_app.access_control.exceptions import AccessControlError
@@ -700,28 +701,80 @@ class UploadFile(View):
             form = BlobFileForm(request.POST, request.FILES)
             if form.is_valid():
                 file_list = form.cleaned_data["file"]
+                file_list_report = []
+                error_count = 0
 
                 for file_object in file_list:
-                    blob = Blob(
-                        filename=file_object.name,
-                        blob=file_object,
-                        user_id=str(request.user.id),
-                    )
-                    blob_api.insert(blob, request.user)
+                    if file_object.size == 0:
+                        file_list_report.append(
+                            {
+                                "filename": file_object.name,
+                                "status": "error",
+                                "notes": "Empty file",
+                            }
+                        )
+                        error_count += 1
+                        logger.warning(
+                            "Cannot upload file %s: file is empty",
+                            file_object.name,
+                        )
+                        continue
 
-                messages.add_message(
-                    request, messages.SUCCESS, "Files uploaded."
+                    try:
+                        blob = Blob(
+                            filename=file_object.name,
+                            blob=file_object,
+                            user_id=str(request.user.id),
+                        )
+                        blob_api.insert(blob, request.user)
+                        file_list_report.append(
+                            {
+                                "filename": file_object.name,
+                                "status": "success",
+                                "notes": "Success",
+                            }
+                        )
+                    except Exception as exc:
+                        file_list_report.append(
+                            {
+                                "filename": file_object.name,
+                                "status": "error",
+                                "notes": str(exc),
+                            }
+                        )
+                        error_count += 1
+                        logger.error(
+                            "Error uploading file %s: %s",
+                            file_object.name,
+                            str(exc),
+                        )
+
+                request.session["upload_report"] = {
+                    "status": "success" if error_count == 0 else "error",
+                    "file_list": file_list_report,
+                }
+                logger.info(
+                    "Uploaded %d files, %d error occurred",
+                    len(file_list),
+                    error_count,
                 )
-                return HttpResponse(json.dumps({}))
+                return HttpResponse(
+                    json.dumps({}),
+                    status=(
+                        status.HTTP_200_OK
+                        if error_count == 0
+                        else status.HTTP_400_BAD_REQUEST
+                    ),
+                )
             else:
+                error_message = f"The provided form data is invalid: {str(form.errors.as_text())}"
+                logger.error(error_message)
                 return HttpResponseBadRequest(
-                    json.dumps({"message": str(form.errors.as_text())})
+                    json.dumps({"message": error_message})
                 )
-        except Exception:
-            messages.add_message(
-                request,
-                messages.ERROR,
-                "An error occurred during file upload.",
+        except Exception as exc:
+            error_message = "An unexpected error occurred during file upload"
+            logger.error("%s: %s", error_message, str(exc))
+            return HttpResponseBadRequest(
+                json.dumps({"message": f"{error_message}."})
             )
-
-            return HttpResponseBadRequest(json.dumps({}))
