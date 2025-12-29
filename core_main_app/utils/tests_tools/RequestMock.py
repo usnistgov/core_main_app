@@ -4,6 +4,7 @@
 import json
 from unittest.mock import Mock
 
+from django.contrib.sessions.backends.base import SessionBase
 from django.contrib.sessions.models import Session
 from django.core.wsgi import get_wsgi_application
 from django.http import HttpResponse, HttpRequest
@@ -155,7 +156,7 @@ class RequestMock:
         # Set the user
         request.user = user
         # Set the session
-        request.session = Session(session_key="KEY")
+        request.session = SessionBase(session_key="KEY")
         # i18n. Get django validation messages.
         get_wsgi_application()
         # Do not use CSRF checks.
