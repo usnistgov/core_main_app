@@ -550,7 +550,8 @@ DATA_SORTING_FIELDS = ["-title", "+last_modification_date"]
 
   Default: ``60``
 
-  Harvesting rate in seconds.
+  Harvesting rate in seconds. The provided value is converted from seconds to minutes, 
+  ensuring a minimum interval of 1 minute.
 
 ## Authentication
 
