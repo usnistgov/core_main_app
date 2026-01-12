@@ -27,6 +27,6 @@ def ensure_migration_applied(app_name, migration_name):
             raise RuntimeError(error_message)
     except OperationalError as exc:
         logger.warning(
-            "An error occured while checking the status of the "
+            "An error occurred while checking the status of the "
             f"({app_name}, {migration_name}) migration: {exc}"
         )

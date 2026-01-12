@@ -26,7 +26,7 @@ createWorkspace = function(){
             let message;
 
             if(!data.hasOwnProperty("responseJSON")) {
-                message = "An unknown error occured"
+                message = "An unknown error occurred"
             } else {
                 if (!(message = data.responseJSON["message"].title)) {
                     message = data.responseJSON["message"]

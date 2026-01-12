@@ -739,7 +739,7 @@ class UploadFile(View):
                             {
                                 "filename": file_object.name,
                                 "status": "error",
-                                "notes": str(exc),
+                                "notes": "Unexpected error",
                             }
                         )
                         error_count += 1

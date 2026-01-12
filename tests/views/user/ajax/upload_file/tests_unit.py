@@ -102,12 +102,12 @@ class TestUploadFilePost(TestCase):
                 {
                     "filename": mock_file_a.name,
                     "status": "error",
-                    "notes": "mock_blob_exception",
+                    "notes": "Unexpected error",
                 },
                 {
                     "filename": mock_file_b.name,
                     "status": "error",
-                    "notes": "mock_blob_exception",
+                    "notes": "Unexpected error",
                 },
             ],
         )
@@ -185,12 +185,12 @@ class TestUploadFilePost(TestCase):
                 {
                     "filename": mock_file_a.name,
                     "status": "error",
-                    "notes": "mock_blob_insert_exception",
+                    "notes": "Unexpected error",
                 },
                 {
                     "filename": mock_file_b.name,
                     "status": "error",
-                    "notes": "mock_blob_insert_exception",
+                    "notes": "Unexpected error",
                 },
             ],
         )
