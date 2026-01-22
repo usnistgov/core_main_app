@@ -2827,3 +2827,65 @@ class TestDataCanReadListQuery(IntegrationBaseTestCase):
             self.fixture.workspace_1
         ]
         check_can_read_list(data_list, mock_user)
+
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=True)
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_anon_with_anon_setting_returns_queryset(
+        self,
+        get_all_workspaces_with_read_access_by_user,
+    ):
+        """test_anon_with_anon_setting_returns_queryset
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        # Get a queryset using a superuser
+        mock_superuser = create_mock_user("1", is_superuser=True)
+        # value2 is in a workspace that anon could access if public
+        query = {"dict_content.list": {"$all": ["value2"]}}
+        data_list = data_api.execute_json_query(query, mock_superuser)
+        self.assertEqual(data_list.count(), 1)
+
+        # Check if user can read this queryset
+        mock_user = create_mock_user(None, is_anonymous=True)
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            self.fixture.workspace_1
+        ]
+        check_can_read_list(data_list, mock_user)
+        self.assertTrue(get_all_workspaces_with_read_access_by_user.called)
+
+    @override_settings(CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT=False)
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_anon_without_anon_setting_returns_queryset(
+        self, get_all_workspaces_with_read_access_by_user
+    ):
+        """test_anon_without_anon_setting_returns_queryset
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+
+        Returns:
+
+        """
+        # Get a queryset using a superuser
+        mock_superuser = create_mock_user("1", is_superuser=True)
+        # value2 is in a workspace that anon could access if public
+        query = {"dict_content.list": {"$all": ["value2"]}}
+        data_list = data_api.execute_json_query(query, mock_superuser)
+        self.assertEqual(data_list.count(), 1)
+
+        # Check if user can read this queryset
+        mock_user = create_mock_user(None, is_anonymous=True)
+        get_all_workspaces_with_read_access_by_user.return_value = []
+        with self.assertRaises(AccessControlError):
+            check_can_read_list(data_list, mock_user)
+            self.assertFalse(
+                get_all_workspaces_with_read_access_by_user.called
+            )

@@ -130,6 +130,12 @@ def check_can_read_list(document_list, user):
 
     """
     if document_list.count() > 0:
+        if (
+            user is None
+            or user.is_anonymous
+            and not settings.CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT
+        ):
+            raise AccessControlError("Unable to access these documents.")
         if settings.MONGODB_INDEXING:
             from mongoengine.queryset.visitor import Q
 
@@ -141,12 +147,19 @@ def check_can_read_list(document_list, user):
             workspace_key = "workspace"
             values_list_kwargs = {"flat": True}
 
-        if settings.MONGODB_INDEXING:
-            other_users_documents = document_list.filter(
-                user_id__ne=str(user.id)
-            )
+        if user is None or user.is_anonymous:
+            # all documents belong to other users when querying as anonymous
+            other_users_documents = document_list
         else:
-            other_users_documents = document_list.exclude(user_id=str(user.id))
+            # if connected user, filter own documents
+            if settings.MONGODB_INDEXING:
+                other_users_documents = document_list.filter(
+                    user_id__ne=str(user.id)
+                )
+            else:
+                other_users_documents = document_list.exclude(
+                    user_id=str(user.id)
+                )
 
         # check that other users private data is not accessed
         other_users_private_document = other_users_documents.filter(
