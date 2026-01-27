@@ -122,42 +122,6 @@ class Workspace(models.Model):
         ).all()
 
     @staticmethod
-    def get_all_workspaces_with_read_access_not_owned_by_user_id(
-        user_id, read_permissions
-    ):
-        """Get all workspaces with read access not owned by the given user id.
-
-        Args:
-            user_id
-            read_permissions
-
-        Returns:
-
-        """
-
-        return Workspace.objects.filter(
-            Q(read_perm_id__in=read_permissions) | Q(is_public=True),
-            owner__ne=str(user_id),
-        ).all()
-
-    @staticmethod
-    def get_all_workspaces_with_write_access_not_owned_by_user_id(
-        user_id, write_permissions
-    ):
-        """Get all workspaces with write access not owned by the given user id.
-
-        Args:
-            user_id
-            write_permissions
-
-        Returns:
-
-        """
-        return Workspace.objects.filter(
-            owner__ne=str(user_id), write_perm_id__in=write_permissions
-        ).all()
-
-    @staticmethod
     def get_all_public_workspaces():
         """Get all public workspaces.
 
@@ -167,48 +131,6 @@ class Workspace(models.Model):
 
         """
         return Workspace.objects.filter(is_public=True).all()
-
-    @staticmethod
-    def get_all_other_public_workspaces(user_id):
-        """Get all other public workspaces.
-
-        Args:
-            user_id
-
-        Returns:
-
-        """
-        return Workspace.objects.filter(
-            owner__ne=str(user_id), is_public=True
-        ).all()
-
-    @staticmethod
-    def get_non_public_workspace_owned_by_user_id(user_id):
-        """Get the non public workspaces owned by the given user id.
-
-        Args:
-            user_id
-
-        Returns:
-
-        """
-        return Workspace.objects.filter(
-            owner=str(user_id), is_public=False
-        ).all()
-
-    @staticmethod
-    def get_public_workspaces_owned_by_user_id(user_id):
-        """Get the public workspaces owned the given user id.
-
-        Args:
-            user_id
-
-        Returns:
-
-        """
-        return Workspace.objects.filter(
-            owner=str(user_id), is_public=True
-        ).all()
 
     @staticmethod
     def get_global_workspace():

@@ -105,6 +105,9 @@ def _check_is_owner_workspace(workspace, user):
     Returns:
 
     """
+    # Raise early if anonymous user
+    if not user or user.is_anonymous:
+        raise AccessControlError("The user does not have the permission.")
     if workspace.owner != str(user.id):
         raise AccessControlError(
             "The user does not have the permission. The user is not the owner of this workspace."

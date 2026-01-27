@@ -67,19 +67,6 @@ def _create_workspace(title, owner_id=None, is_public=False):
     )
 
 
-def set_title(workspace, new_title):
-    """Set the workspace's title.
-
-    Args:
-        workspace
-        new_title
-
-    Returns:
-    """
-    workspace.title = new_title
-    workspace.save()
-
-
 def get_all():
     """Get all workspace.
 
@@ -98,7 +85,9 @@ def get_all_by_owner(user):
     Returns:
 
     """
-    return Workspace.get_all_by_owner(str(user.id))
+    if user.id:
+        return Workspace.get_all_by_owner(str(user.id))
+    return Workspace.objects.none()
 
 
 def get_by_id(workspace_id):
@@ -162,40 +151,6 @@ def get_all_workspaces_with_write_access_by_user(user):
     )
 
 
-def get_all_workspaces_with_read_access_not_owned_by_user(user):
-    """Get the all workspaces with read access not owned by the given user.
-
-    Args:
-        user
-
-    Returns:
-
-    """
-    read_permissions = (
-        permission_api.get_all_workspace_permissions_user_can_read(user)
-    )
-    return Workspace.get_all_workspaces_with_read_access_not_owned_by_user_id(
-        user.id, read_permissions
-    )
-
-
-def get_all_workspaces_with_write_access_not_owned_by_user_id(user):
-    """Get the all workspaces with write access not owned by the given user.
-
-    Args:
-        user
-
-    Returns:
-
-    """
-    write_permissions = (
-        permission_api.get_all_workspace_permissions_user_can_write(user)
-    )
-    return Workspace.get_all_workspaces_with_write_access_not_owned_by_user_id(
-        user.id, write_permissions
-    )
-
-
 def get_all_public_workspaces():
     """Get all public workspaces.
 
@@ -205,41 +160,6 @@ def get_all_public_workspaces():
 
     """
     return Workspace.get_all_public_workspaces()
-
-
-def get_all_other_public_workspaces(user):
-    """Get all other public workspaces.
-
-    Args:
-        user
-    Returns:
-
-    """
-    return Workspace.get_all_other_public_workspaces(user.id)
-
-
-def get_non_public_workspace_owned_by_user(user):
-    """Get the non public workspaces owned by the given user.
-
-    Args:
-        user:
-
-    Returns:
-
-    """
-    return Workspace.get_non_public_workspace_owned_by_user_id(user.id)
-
-
-def get_public_workspaces_owned_by_user(user):
-    """Get the public workspaces owned the given user.
-
-    Args:
-        user
-
-    Returns:
-
-    """
-    return Workspace.get_public_workspaces_owned_by_user_id(user.id)
 
 
 def is_workspace_public(workspace):
@@ -286,9 +206,9 @@ def can_user_read_workspace(workspace, user):
     permission_label = permission_api.get_permission_label(
         workspace.read_perm_id
     )
-    return str(workspace.owner) == str(user.id) or user.has_perm(
-        permission_label
-    )
+    return (
+        user.id is not None and workspace.owner == str(user.id)
+    ) or user.has_perm(permission_label)
 
 
 def can_user_write_workspace(workspace, user):
@@ -303,9 +223,9 @@ def can_user_write_workspace(workspace, user):
     permission_label = permission_api.get_permission_label(
         workspace.write_perm_id
     )
-    return str(workspace.owner) == str(user.id) or user.has_perm(
-        permission_label
-    )
+    return (
+        user.id is not None and workspace.owner == str(user.id)
+    ) or user.has_perm(permission_label)
 
 
 def can_group_read_workspace(workspace, group):
@@ -352,7 +272,7 @@ def get_list_group_can_access_workspace(workspace, user):
     # List all groups that have the write permission of the workspace
     all_groups_write = get_list_group_can_write_workspace(workspace, user)
 
-    # Return the union without doublons of the two lists.
+    # Return the union of the two lists without duplicates
     return list(set(all_groups_read + all_groups_write))
 
 
@@ -372,7 +292,7 @@ def get_list_user_can_access_workspace(workspace, user):
     # List all users that have the write permission of the workspace
     all_users_write = get_list_user_can_write_workspace(workspace, user)
 
-    # Return the union without doublons of the two lists.
+    # Return the union of the two lists without duplicates
     return list(set(all_users_read + all_users_write))
 
 
@@ -448,6 +368,7 @@ def delete(workspace, user):
 
     Args:
          workspace:
+         user:
 
     Returns:
     """
