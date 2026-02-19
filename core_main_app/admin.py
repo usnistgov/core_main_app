@@ -155,17 +155,17 @@ admin_urls = [
         name="core_main_app_template_xslt",
     ),
     re_path(
+        r"^template/resolve-dependencies",
+        admin_ajax.resolve_dependencies,
+        name="core_main_app_resolve_dependencies",
+    ),
+    re_path(
         r"^template/(?P<template_id>\w+)",
         staff_member_required(admin_views.TemplateDetailView.as_view()),
         name="core_main_app_template_detail",
     ),
     re_path(
         r"^dashboard$", admin_views.admin_home, name="core_main_app_admin_home"
-    ),
-    re_path(
-        r"^template/resolve-dependencies",
-        admin_ajax.resolve_dependencies,
-        name="core_main_app_resolve_dependencies",
     ),
     re_path(
         r"^xslt/(?P<pk>[\w-]+)/edit/$",
