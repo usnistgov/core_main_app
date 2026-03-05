@@ -296,13 +296,13 @@ WEBSITE_CONTACTS = getattr(settings, "WEBSITE_CONTACTS", [])
 """
 
 ENABLE_BLOB_MODULES_SIGNALS = getattr(
-    settings, "ENABLE_BLOB_MODULES_SIGNALS", True
+    settings, "ENABLE_BLOB_MODULES_SIGNALS", False
 )
 """ :py:class:`bool`: Set to `True` to enable Blob modules signals.
 """
 
 ENABLE_DATA_MODULES_SIGNALS = getattr(
-    settings, "ENABLE_DATA_MODULES_SIGNALS", True
+    settings, "ENABLE_DATA_MODULES_SIGNALS", False
 )
 """ :py:class:`bool`: Set to `True` to enable Data modules signals.
 """

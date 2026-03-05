@@ -358,13 +358,13 @@ DATA_SORTING_FIELDS = ["-title", "+last_modification_date"]
 
 ## XML
 
-### ``XSD_UPLOAD_DIR`` (> :warning: Deprecated)
+### ``XSD_UPLOAD_DIR`` (:warning: Deprecated)
 
   Default: ``"xml_schemas"``
 
   Name of the media folder where XML schemas are uploaded to.
 
-### ``XSLT_UPLOAD_DIR`` (> :warning: Deprecated)
+### ``XSLT_UPLOAD_DIR`` (:warning: Deprecated)
 
   Default: ``"xslt"``
 
@@ -524,13 +524,13 @@ DATA_SORTING_FIELDS = ["-title", "+last_modification_date"]
 
 ### ``ENABLE_BLOB_MODULES_SIGNALS``
 
-  Default: ``True``
+  Default: ``False``
   
   Set to `True` to enable Blob modules signals (will trigger some actions on blob create/update/delete)
 
 ### ``ENABLE_DATA_MODULES_SIGNALS``
 
-  Default: ``True``
+  Default: ``False``
   
   Set to `True` to enable Data modules signals (will trigger some actions on data create/update/delete)
 
