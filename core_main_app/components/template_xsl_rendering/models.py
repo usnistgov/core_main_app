@@ -1,5 +1,4 @@
-""" TemplateXslRendering model
-"""
+"""TemplateXslRendering model"""
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models

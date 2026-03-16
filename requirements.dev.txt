@@ -1,4 +1,4 @@
-black==24.8.*
+black
 coverage
 flake8
 mongomock==4.3.*

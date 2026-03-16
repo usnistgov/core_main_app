@@ -1,5 +1,4 @@
-""" Authentication tests for Template REST API
-"""
+"""Authentication tests for Template REST API"""
 
 from unittest.mock import patch, MagicMock
 

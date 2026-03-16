@@ -1,5 +1,4 @@
-""" Serializers used throughout the data Rest API for the admin user
-"""
+"""Serializers used throughout the data Rest API for the admin user"""
 
 from core_main_app.components.data import api as data_api
 from core_main_app.components.data.models import Data

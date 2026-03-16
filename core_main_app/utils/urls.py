@@ -1,5 +1,4 @@
-""" Urls utils
-"""
+"""Urls utils"""
 
 import re
 

@@ -1,5 +1,4 @@
-""" Unit tests for `core_main_app.access_control.api.user_is_staff`.
-"""
+"""Unit tests for `core_main_app.access_control.api.user_is_staff`."""
 
 from unittest import TestCase
 from unittest.mock import MagicMock

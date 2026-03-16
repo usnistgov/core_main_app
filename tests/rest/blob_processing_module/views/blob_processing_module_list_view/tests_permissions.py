@@ -1,4 +1,4 @@
-""" Permission tests for `BlobProcessingModuleListView` view from
+"""Permission tests for `BlobProcessingModuleListView` view from
 `core_main_app.rest.blob_processing_module.views` package
 """
 

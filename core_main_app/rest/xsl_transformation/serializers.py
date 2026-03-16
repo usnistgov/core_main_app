@@ -1,5 +1,4 @@
-"""Serializers for Xsl transformation
-"""
+"""Serializers for Xsl transformation"""
 
 from rest_framework.serializers import CharField, ModelSerializer
 

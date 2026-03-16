@@ -1,5 +1,4 @@
-""" REST views for the User API
-"""
+"""REST views for the User API"""
 
 from django.contrib.auth.models import User
 from drf_spectacular.utils import extend_schema

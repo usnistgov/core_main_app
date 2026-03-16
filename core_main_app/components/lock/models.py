@@ -1,5 +1,5 @@
 """
- Lock model
+Lock model
 """
 
 import threading

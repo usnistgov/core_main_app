@@ -1,5 +1,4 @@
-""" DB Router for Primary/Replica
-"""
+"""DB Router for Primary/Replica"""
 
 
 class PrimaryReplicaRouter:

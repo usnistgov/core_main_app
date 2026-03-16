@@ -1,5 +1,4 @@
-""" Unit tests for `ViewBlob` from `core_main_app.views.common.views` package.
-"""
+"""Unit tests for `ViewBlob` from `core_main_app.views.common.views` package."""
 
 from unittest import TestCase
 from unittest.mock import MagicMock, patch

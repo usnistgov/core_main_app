@@ -1,5 +1,4 @@
-""" Custom admin site for the Workspace model
-"""
+"""Custom admin site for the Workspace model"""
 
 from django.contrib import admin
 

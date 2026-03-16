@@ -1,5 +1,4 @@
-""" Data Module API
-"""
+"""Data Module API"""
 
 import logging
 

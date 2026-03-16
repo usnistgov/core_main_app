@@ -1,5 +1,4 @@
-"""Template tag to check user permission
-"""
+"""Template tag to check user permission"""
 
 from django import template
 

@@ -1,5 +1,4 @@
-""" Custom allauth forms
-"""
+"""Custom allauth forms"""
 
 from allauth.account.forms import SignupForm as ASignupForm
 from allauth.socialaccount.forms import SignupForm as SASignupForm

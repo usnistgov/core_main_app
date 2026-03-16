@@ -1,5 +1,4 @@
-""" GridFSStorage class (previously blob_utils)
-"""
+"""GridFSStorage class (previously blob_utils)"""
 
 from django.core.files.storage import Storage
 from django.utils.deconstruct import deconstructible

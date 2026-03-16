@@ -1,5 +1,5 @@
 """
-    Utils for groups
+Utils for groups
 """
 
 

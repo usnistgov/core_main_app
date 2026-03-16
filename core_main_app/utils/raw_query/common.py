@@ -1,5 +1,4 @@
-""" Raw queries common utils
-"""
+"""Raw queries common utils"""
 
 from core_main_app.access_control.exceptions import AccessControlError
 

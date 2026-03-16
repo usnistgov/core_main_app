@@ -1,5 +1,4 @@
-""" Unit tests for Lock components
-"""
+"""Unit tests for Lock components"""
 
 from unittest import TestCase
 

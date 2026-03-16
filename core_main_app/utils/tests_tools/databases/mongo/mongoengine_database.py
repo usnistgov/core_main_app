@@ -1,5 +1,4 @@
-""" Mongoengine database tools
-"""
+"""Mongoengine database tools"""
 
 import mongomock
 from mongoengine import connect

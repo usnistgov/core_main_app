@@ -1,5 +1,4 @@
-""" Celery tasks for data processing modules.
-"""
+"""Celery tasks for data processing modules."""
 
 import logging
 import re

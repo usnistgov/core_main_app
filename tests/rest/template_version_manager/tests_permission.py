@@ -1,5 +1,4 @@
-""" Authentication tests for Template Version Manager REST API
-"""
+"""Authentication tests for Template Version Manager REST API"""
 
 from unittest.mock import patch
 

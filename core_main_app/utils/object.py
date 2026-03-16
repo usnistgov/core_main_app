@@ -1,5 +1,4 @@
-""" Utilities for operating on objects/dictionaries.
-"""
+"""Utilities for operating on objects/dictionaries."""
 
 import logging
 

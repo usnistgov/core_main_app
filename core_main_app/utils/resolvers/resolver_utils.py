@@ -1,5 +1,4 @@
-""" LXML URI Resolver utils
-"""
+"""LXML URI Resolver utils"""
 
 from logging import getLogger
 

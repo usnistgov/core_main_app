@@ -1,5 +1,4 @@
-""" Templatetags to get JSON format and display according to parsing directives
-"""
+"""Templatetags to get JSON format and display according to parsing directives"""
 
 from django import template
 import json

@@ -1,5 +1,4 @@
-"""Integration tests for xsl transformation rest api
-"""
+"""Integration tests for xsl transformation rest api"""
 
 from rest_framework import status
 from tests.rest.xsl_transformation.fixtures.fixtures import (

@@ -1,5 +1,4 @@
-""" Integration Test for Template Rest API
-"""
+"""Integration Test for Template Rest API"""
 
 from rest_framework import status
 from tests.components.template.fixtures.fixtures import (

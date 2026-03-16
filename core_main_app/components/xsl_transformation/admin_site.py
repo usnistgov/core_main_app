@@ -1,5 +1,4 @@
-""" Custom admin site for the XslTransformation model
-"""
+"""Custom admin site for the XslTransformation model"""
 
 from django.contrib import admin
 from django.http import (

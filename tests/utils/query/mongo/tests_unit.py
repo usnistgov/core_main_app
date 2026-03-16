@@ -1,5 +1,4 @@
-"""Query tool unit tests
-"""
+"""Query tool unit tests"""
 
 import copy
 import re

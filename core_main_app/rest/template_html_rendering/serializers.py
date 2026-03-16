@@ -1,5 +1,4 @@
-""" Serializers used throughout the TemplateHtmlRendering Rest API
-"""
+"""Serializers used throughout the TemplateHtmlRendering Rest API"""
 
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ModelSerializer

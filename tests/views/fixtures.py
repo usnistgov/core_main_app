@@ -1,5 +1,4 @@
-""" Access control fixture for views
-"""
+"""Access control fixture for views"""
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 

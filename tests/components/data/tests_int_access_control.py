@@ -1,5 +1,4 @@
-""" Access control testing
-"""
+"""Access control testing"""
 
 import re
 import unittest

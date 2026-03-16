@@ -1,5 +1,4 @@
-""" Mongoengine Data model
-"""
+"""Mongoengine Data model"""
 
 import logging
 

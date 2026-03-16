@@ -1,5 +1,4 @@
-""" Allauth account adapter for the CDCS
-"""
+"""Allauth account adapter for the CDCS"""
 
 from allauth.account.adapter import DefaultAccountAdapter
 

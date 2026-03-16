@@ -1,5 +1,4 @@
-""" Access Control Test for User Preferences
-"""
+"""Access Control Test for User Preferences"""
 
 from unittest.mock import patch, Mock
 

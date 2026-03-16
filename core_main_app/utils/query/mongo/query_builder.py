@@ -1,5 +1,4 @@
-"""Query builder class
-"""
+"""Query builder class"""
 
 import json
 import logging

@@ -1,5 +1,4 @@
-""" Integration Test for Workspace API
-"""
+"""Integration Test for Workspace API"""
 
 from tests.components.user.fixtures.fixtures import UserFixtures
 from tests.components.workspace.fixtures.fixtures import WorkspaceFixtures

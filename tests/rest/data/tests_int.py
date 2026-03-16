@@ -1,5 +1,4 @@
-""" Integration Test for Data Rest API
-"""
+"""Integration Test for Data Rest API"""
 
 import json
 from copy import copy

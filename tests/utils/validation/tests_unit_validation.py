@@ -1,5 +1,4 @@
-""" Validate filename test case
-"""
+"""Validate filename test case"""
 
 from unittest import TestCase
 

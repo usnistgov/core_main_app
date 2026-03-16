@@ -1,5 +1,4 @@
-""" Template tag to access a dictionary's key
-"""
+"""Template tag to access a dictionary's key"""
 
 from django import template
 

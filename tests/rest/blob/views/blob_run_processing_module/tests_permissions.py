@@ -1,4 +1,4 @@
-""" Permission tests for `BlobRunProcessingModule` views in
+"""Permission tests for `BlobRunProcessingModule` views in
 `core_main_app.rest.blob.views` package.
 """
 

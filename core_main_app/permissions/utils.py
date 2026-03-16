@@ -1,5 +1,4 @@
-"""Utils for permissions
-"""
+"""Utils for permissions"""
 
 
 def get_formatted_name(permission):

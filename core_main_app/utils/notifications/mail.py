@@ -1,5 +1,4 @@
-"""Mailing util
-"""
+"""Mailing util"""
 
 from django.template import loader
 

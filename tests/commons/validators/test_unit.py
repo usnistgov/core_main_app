@@ -1,5 +1,4 @@
-""" Unit Test Validators
-"""
+"""Unit Test Validators"""
 
 import unittest
 

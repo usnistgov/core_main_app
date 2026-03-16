@@ -1,5 +1,4 @@
-"""Access control decorator
-"""
+"""Access control decorator"""
 
 
 def access_control(check_func):

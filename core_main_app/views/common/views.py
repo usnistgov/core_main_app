@@ -1,5 +1,4 @@
-""" Common views
-"""
+"""Common views"""
 
 import json
 import logging

@@ -1,5 +1,4 @@
-"""  Test send mail
-"""
+"""Test send mail"""
 
 from unittest.mock import patch
 
@@ -85,7 +84,7 @@ class TestSendEmailToWebsiteContacts(TestCase):
 
     @patch(
         "core_main_app.utils.notifications.tasks.task_mail.WEBSITE_CONTACTS",
-        [("test@example.com")],
+        ["test@example.com"],
     )
     def test_send_mail_website_contacts_setting_not_well_formatted_raise_value_error(
         self,

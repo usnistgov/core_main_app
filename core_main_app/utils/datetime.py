@@ -1,5 +1,4 @@
-""" Datetime utils
-"""
+"""Datetime utils"""
 
 from django.utils import timezone
 import datetime

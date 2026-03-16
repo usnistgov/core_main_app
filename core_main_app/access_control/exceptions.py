@@ -1,5 +1,4 @@
-"""Exceptions for access control
-"""
+"""Exceptions for access control"""
 
 
 class AccessControlError(Exception):

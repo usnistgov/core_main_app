@@ -1,5 +1,4 @@
-""" Custom admin site for the User Preferences model
-"""
+"""Custom admin site for the User Preferences model"""
 
 from core_main_app.utils.admin_site.model_admin_class import (
     get_base_model_admin_class,

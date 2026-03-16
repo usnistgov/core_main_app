@@ -1,5 +1,4 @@
-""" Urls test class
-"""
+"""Urls test class"""
 
 from unittest import TestCase
 from unittest.mock import patch

@@ -1,5 +1,4 @@
-""" Model for blob processing modules.
-"""
+"""Model for blob processing modules."""
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import RegexValidator

@@ -1,5 +1,4 @@
-""" Int Test Lock
-"""
+"""Int Test Lock"""
 
 from core_main_app.commons.exceptions import LockError
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
@@ -9,7 +8,6 @@ from core_main_app.utils.integration_tests.integration_base_test_case import (
     IntegrationBaseTestCase,
 )
 from core_main_app.components.lock import api as lock_api
-
 
 fixture_data = DataFixtures()
 

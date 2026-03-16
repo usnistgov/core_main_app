@@ -1,5 +1,4 @@
-""" Fixtures files for Workspace
-"""
+"""Fixtures files for Workspace"""
 
 from core_main_app.components.group import api as group_api
 from core_main_app.components.workspace import api as workspace_api

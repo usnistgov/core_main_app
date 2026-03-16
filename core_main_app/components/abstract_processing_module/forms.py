@@ -1,5 +1,4 @@
-""" Custom admin forms for the Abstract Processing Module model
-"""
+"""Custom admin forms for the Abstract Processing Module model"""
 
 import json
 

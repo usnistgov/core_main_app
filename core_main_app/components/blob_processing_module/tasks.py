@@ -1,5 +1,4 @@
-""" Celery tasks for blob processing modules.
-"""
+"""Celery tasks for blob processing modules."""
 
 import logging
 import re

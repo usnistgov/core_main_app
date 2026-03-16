@@ -1,5 +1,4 @@
-""" Blob Processing Module Forms test class
-"""
+"""Blob Processing Module Forms test class"""
 
 from unittest import TestCase
 

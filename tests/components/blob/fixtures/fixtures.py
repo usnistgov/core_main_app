@@ -1,5 +1,4 @@
-""" Fixtures files for Blobs
-"""
+"""Fixtures files for Blobs"""
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 

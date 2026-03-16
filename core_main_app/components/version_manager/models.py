@@ -13,7 +13,6 @@ from core_main_app.utils.validation.regex_validation import (
     not_empty_or_whitespaces,
 )
 
-
 # TODO: could make is_disabled a Status with other possible values taken from an enum
 
 

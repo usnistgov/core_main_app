@@ -1,5 +1,4 @@
-""" Rest views
-"""
+"""Rest views"""
 
 from importlib import metadata
 

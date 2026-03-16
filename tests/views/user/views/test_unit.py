@@ -1,5 +1,4 @@
-""" Unit test for `views.user.views` package.
-"""
+"""Unit test for `views.user.views` package."""
 
 from unittest.mock import patch, MagicMock
 

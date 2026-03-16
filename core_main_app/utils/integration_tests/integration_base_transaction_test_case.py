@@ -1,5 +1,4 @@
-""" Integration Tests with transaction
-"""
+"""Integration Tests with transaction"""
 
 from django.core.management import execute_from_command_line
 from django.test.testcases import TransactionTestCase

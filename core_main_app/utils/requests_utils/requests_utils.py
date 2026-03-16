@@ -1,5 +1,4 @@
-""" Utils for the python requests package
-"""
+"""Utils for the python requests package"""
 
 import requests
 

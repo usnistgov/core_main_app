@@ -1,5 +1,4 @@
-""" Apps file for setting core package when app is ready.
-"""
+"""Apps file for setting core package when app is ready."""
 
 from django.apps import AppConfig
 from django.conf import settings

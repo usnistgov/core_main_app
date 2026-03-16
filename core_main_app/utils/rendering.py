@@ -1,5 +1,4 @@
-""" Rendering utils
-"""
+"""Rendering utils"""
 
 from os.path import splitext
 

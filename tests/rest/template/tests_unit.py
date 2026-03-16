@@ -1,5 +1,4 @@
-"""Unit tests for template rest api
-"""
+"""Unit tests for template rest api"""
 
 from unittest.mock import patch, MagicMock
 

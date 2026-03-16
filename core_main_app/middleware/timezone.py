@@ -1,5 +1,4 @@
-""" Timezone Middleware
-"""
+"""Timezone Middleware"""
 
 from django.utils import timezone
 

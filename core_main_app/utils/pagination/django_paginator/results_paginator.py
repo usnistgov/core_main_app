@@ -1,5 +1,4 @@
-"""Results paginator util
-"""
+"""Results paginator util"""
 
 from django.core.paginator import PageNotAnInteger, EmptyPage, Paginator
 

@@ -1,5 +1,4 @@
-""" Blob tags
-"""
+"""Blob tags"""
 
 from django import template
 

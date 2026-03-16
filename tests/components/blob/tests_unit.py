@@ -1,5 +1,4 @@
-""" Unit test Blob
-"""
+"""Unit test Blob"""
 
 from unittest.case import TestCase
 from unittest.mock import patch, MagicMock

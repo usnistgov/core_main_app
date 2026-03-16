@@ -1,5 +1,4 @@
-""" Integration Test for User Rest API
-"""
+"""Integration Test for User Rest API"""
 
 from rest_framework.status import HTTP_404_NOT_FOUND
 from tests.components.user.fixtures.fixtures import UserFixtures

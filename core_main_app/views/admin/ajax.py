@@ -1,5 +1,4 @@
-"""Admin AJAX views
-"""
+"""Admin AJAX views"""
 
 import html
 import json

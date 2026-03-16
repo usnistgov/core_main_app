@@ -1,5 +1,4 @@
-""" Mongoengine paginator
-"""
+"""Mongoengine paginator"""
 
 import inspect
 import logging

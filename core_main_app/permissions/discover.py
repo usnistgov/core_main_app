@@ -1,5 +1,4 @@
-""" discover rules for core main app
-"""
+"""discover rules for core main app"""
 
 import logging
 

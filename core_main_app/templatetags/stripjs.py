@@ -1,5 +1,4 @@
-""" Templatetags for core_website_app
-"""
+"""Templatetags for core_website_app"""
 
 import re
 

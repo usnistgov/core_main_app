@@ -1,5 +1,4 @@
-""" Unit test for rest views
-"""
+"""Unit test for rest views"""
 
 from unittest import TestCase
 from unittest.mock import patch, MagicMock

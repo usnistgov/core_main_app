@@ -1,5 +1,4 @@
-""" File utils
-"""
+"""File utils"""
 
 import base64
 import pathlib

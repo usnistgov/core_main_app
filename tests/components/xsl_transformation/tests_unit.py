@@ -1,5 +1,4 @@
-""" Test units
-"""
+"""Test units"""
 
 from os.path import join, dirname, realpath
 from unittest.case import TestCase

@@ -1,5 +1,4 @@
-""" Utilities for settings
-"""
+"""Utilities for settings"""
 
 import logging
 

@@ -1,5 +1,4 @@
-""" Web Page serializer
-"""
+"""Web Page serializer"""
 
 from rest_framework.serializers import ModelSerializer
 

@@ -1,5 +1,4 @@
-""" Integration Test for Workspace Fixtures
-"""
+"""Integration Test for Workspace Fixtures"""
 
 from tests.components.workspace.fixtures.fixtures import WorkspaceFixtures
 

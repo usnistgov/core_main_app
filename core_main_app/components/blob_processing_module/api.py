@@ -1,5 +1,4 @@
-""" Blob Processing Module API
-"""
+"""Blob Processing Module API"""
 
 import logging
 import re

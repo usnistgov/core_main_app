@@ -1,5 +1,4 @@
-""" Migration utilities
-"""
+"""Migration utilities"""
 
 import logging
 

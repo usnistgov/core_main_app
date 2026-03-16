@@ -1,5 +1,4 @@
-""" Upload data command
-"""
+"""Upload data command"""
 
 import logging
 import os

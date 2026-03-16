@@ -1,5 +1,4 @@
-""" Mock classes for use in unit tests.
-"""
+"""Mock classes for use in unit tests."""
 
 from unittest.mock import Mock
 

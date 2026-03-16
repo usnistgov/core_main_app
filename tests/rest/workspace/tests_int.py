@@ -1,5 +1,4 @@
-""" Integration Test for Workspace Rest API
-"""
+"""Integration Test for Workspace Rest API"""
 
 from django.contrib.auth.models import Group
 from rest_framework import status

@@ -1,5 +1,4 @@
-"""Forms for admin views
-"""
+"""Forms for admin views"""
 
 from django import forms
 from django.conf import settings

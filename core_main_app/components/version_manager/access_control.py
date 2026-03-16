@@ -1,5 +1,4 @@
-""" Version Manager Access Control
-"""
+"""Version Manager Access Control"""
 
 from django.conf import settings
 

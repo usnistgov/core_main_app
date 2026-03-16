@@ -1,5 +1,4 @@
-""" User Preferences API
-"""
+"""User Preferences API"""
 
 from core_main_app.access_control.decorators import access_control
 from core_main_app.components.user_preferences.access_control import (

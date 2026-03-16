@@ -1,5 +1,4 @@
-"""Utils for mongodb raw query
-"""
+"""Utils for mongodb raw query"""
 
 from core_main_app.utils.raw_query.common import (
     check_user_filter,

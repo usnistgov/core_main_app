@@ -1,5 +1,4 @@
-""" Serializers for Django User
-"""
+"""Serializers for Django User"""
 
 from django.contrib.auth.models import User
 from rest_framework import serializers

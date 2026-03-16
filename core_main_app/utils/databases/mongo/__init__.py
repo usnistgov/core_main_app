@@ -1,5 +1,4 @@
-""" MongoDB
-"""
+"""MongoDB"""
 
 from django.conf import settings
 

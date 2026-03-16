@@ -1,5 +1,4 @@
-""" Integration test for data ordering
-"""
+"""Integration test for data ordering"""
 
 from tests.components.data.fixtures.fixtures import AccessControlDataFixture
 

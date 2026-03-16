@@ -1,5 +1,4 @@
-""" Admin Site test class
-"""
+"""Admin Site test class"""
 
 from unittest import TestCase
 from unittest.mock import patch

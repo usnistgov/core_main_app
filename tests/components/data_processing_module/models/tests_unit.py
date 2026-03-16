@@ -1,4 +1,4 @@
-""" Unit tests for `DataProcessingModule` from the
+"""Unit tests for `DataProcessingModule` from the
 `core_main_app.components.data_processing_module.models` package.
 """
 

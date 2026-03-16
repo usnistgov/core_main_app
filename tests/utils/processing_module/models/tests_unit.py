@@ -1,4 +1,4 @@
-""" Unit tests for `AbstractObjectProcessing` class from `core_main_app.blob_modules`
+"""Unit tests for `AbstractObjectProcessing` class from `core_main_app.blob_modules`
 package.
 """
 

@@ -1,5 +1,4 @@
-""" Custom admin forms for the Data Processing Module model
-"""
+"""Custom admin forms for the Data Processing Module model"""
 
 from core_main_app.components.abstract_processing_module.forms import (
     AbstractProcessingModuleForm,

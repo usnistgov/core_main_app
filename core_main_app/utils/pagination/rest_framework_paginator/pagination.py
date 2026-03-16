@@ -1,5 +1,4 @@
-"""Pagination configuration for rest_framework
-"""
+"""Pagination configuration for rest_framework"""
 
 from django.conf import settings
 from rest_framework.pagination import PageNumberPagination

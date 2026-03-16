@@ -1,5 +1,4 @@
-""" User preferences Access Control
-"""
+"""User preferences Access Control"""
 
 from django.contrib.auth.models import AnonymousUser, User
 

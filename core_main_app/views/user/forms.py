@@ -1,5 +1,4 @@
-""" Form needed for the user part of everything
-"""
+"""Form needed for the user part of everything"""
 
 from django import forms
 from django.conf import settings

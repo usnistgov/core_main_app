@@ -1,5 +1,4 @@
-"""Mailing task
-"""
+"""Mailing task"""
 
 from logging import getLogger
 

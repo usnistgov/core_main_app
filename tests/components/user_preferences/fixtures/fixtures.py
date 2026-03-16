@@ -1,5 +1,4 @@
-""" Fixtures files for User Preferences
-"""
+"""Fixtures files for User Preferences"""
 
 from core_main_app.components.user_preferences.models import UserPreferences
 

@@ -1,5 +1,4 @@
-""" Test units for User Preferences
-"""
+"""Test units for User Preferences"""
 
 from unittest.case import TestCase
 from unittest.mock import patch

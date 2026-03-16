@@ -1,5 +1,4 @@
-""" REST API views for blob processing modules.
-"""
+"""REST API views for blob processing modules."""
 
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import (

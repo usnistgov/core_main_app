@@ -1,5 +1,4 @@
-""" Int test Blob
-"""
+"""Int test Blob"""
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from tests.components.blob.fixtures.fixtures import (

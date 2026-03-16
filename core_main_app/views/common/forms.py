@@ -1,5 +1,4 @@
-""" Common forms
-"""
+"""Common forms"""
 
 from django import forms
 

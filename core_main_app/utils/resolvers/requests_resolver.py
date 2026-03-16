@@ -1,5 +1,4 @@
-""" lxml URI resolver using requests api
-"""
+"""lxml URI resolver using requests api"""
 
 import logging
 

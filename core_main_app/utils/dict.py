@@ -1,5 +1,4 @@
-""" Utilities for dictionaries
-"""
+"""Utilities for dictionaries"""
 
 
 def get_dict_keys(dictionary):

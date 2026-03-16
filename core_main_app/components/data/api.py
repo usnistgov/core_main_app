@@ -1,5 +1,4 @@
-""" Data API
-"""
+"""Data API"""
 
 from django.conf import settings
 

@@ -1,5 +1,4 @@
-""" Tests of the web page API
-"""
+"""Tests of the web page API"""
 
 from unittest.case import TestCase
 from unittest.mock import Mock, patch

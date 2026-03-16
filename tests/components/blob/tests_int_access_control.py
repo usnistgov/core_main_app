@@ -1,5 +1,4 @@
-""" Access control testing for Blob.
-"""
+"""Access control testing for Blob."""
 
 import unittest
 from unittest.mock import patch

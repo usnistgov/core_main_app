@@ -1,5 +1,4 @@
-""" Unit Test Data
-"""
+"""Unit Test Data"""
 
 import json
 from collections import OrderedDict

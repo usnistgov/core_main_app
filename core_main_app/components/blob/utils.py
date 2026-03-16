@@ -1,5 +1,4 @@
-"""BLOB component utils
-"""
+"""BLOB component utils"""
 
 from django.urls import reverse
 

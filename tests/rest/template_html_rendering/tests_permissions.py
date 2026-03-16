@@ -1,5 +1,4 @@
-""" Authentication tests for TemplateHtmlRendering REST API
-"""
+"""Authentication tests for TemplateHtmlRendering REST API"""
 
 from unittest.mock import patch, Mock
 

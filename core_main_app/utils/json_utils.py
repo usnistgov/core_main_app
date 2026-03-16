@@ -1,5 +1,4 @@
-""" JSON utils
-"""
+"""JSON utils"""
 
 import json
 

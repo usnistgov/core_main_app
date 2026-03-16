@@ -1,5 +1,4 @@
-""" Boolean utils
-"""
+"""Boolean utils"""
 
 
 def to_bool(value):

@@ -1,5 +1,4 @@
-""" REST abstract views for the data API
-"""
+"""REST abstract views for the data API"""
 
 import json
 from abc import ABCMeta, abstractmethod

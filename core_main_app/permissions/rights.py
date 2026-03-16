@@ -1,5 +1,4 @@
-""" Rights for core main app
-"""
+"""Rights for core main app"""
 
 # Anonymous group
 ANONYMOUS_GROUP = "anonymous"

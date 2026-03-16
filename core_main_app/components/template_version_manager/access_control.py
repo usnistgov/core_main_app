@@ -1,5 +1,4 @@
-""" Template Version Manager Access Control
-"""
+"""Template Version Manager Access Control"""
 
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.components.template_version_manager import (

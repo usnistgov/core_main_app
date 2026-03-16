@@ -1,5 +1,4 @@
-""" System API for Blob objects.
-"""
+"""System API for Blob objects."""
 
 from core_main_app.components.blob.models import Blob
 

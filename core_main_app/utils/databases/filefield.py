@@ -1,5 +1,4 @@
-""" FileField utils
-"""
+"""FileField utils"""
 
 import json
 import logging

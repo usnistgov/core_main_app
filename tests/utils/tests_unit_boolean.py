@@ -1,5 +1,4 @@
-""" Boolean utils test class
-"""
+"""Boolean utils test class"""
 
 from unittest import TestCase
 

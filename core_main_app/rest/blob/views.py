@@ -1,5 +1,4 @@
-""" REST views for the blob API
-"""
+"""REST views for the blob API"""
 
 from abc import abstractmethod, ABCMeta
 

@@ -1,5 +1,4 @@
-""" TemplateXslRendering API calls
-"""
+"""TemplateXslRendering API calls"""
 
 import logging
 

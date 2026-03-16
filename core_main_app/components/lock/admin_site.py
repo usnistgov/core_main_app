@@ -1,5 +1,4 @@
-""" Custom admin site for the Database Lock model
-"""
+"""Custom admin site for the Database Lock model"""
 
 from django.contrib import admin
 

@@ -1,5 +1,4 @@
-""" Unit tests for `core_main_app.access_control.api.can_anonymous_access_public_data`.
-"""
+"""Unit tests for `core_main_app.access_control.api.can_anonymous_access_public_data`."""
 
 from unittest import TestCase
 from unittest.mock import MagicMock, patch

@@ -1,5 +1,4 @@
-""" Fixtures file for Templates html rendering
-"""
+"""Fixtures file for Templates html rendering"""
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 

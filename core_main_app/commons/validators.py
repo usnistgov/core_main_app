@@ -1,5 +1,4 @@
-""" Common Validators
-"""
+"""Common Validators"""
 
 import os
 import re

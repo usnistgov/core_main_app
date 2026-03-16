@@ -1,4 +1,4 @@
-""" Unit tests for `AbstractProcessingModule` class from
+"""Unit tests for `AbstractProcessingModule` class from
 `core_main_app.components.abstract_processing_module.models` package.
 """
 

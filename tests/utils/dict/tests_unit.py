@@ -1,5 +1,4 @@
-""" Unit tests for `core_main_app.utils.dict package`.
-"""
+"""Unit tests for `core_main_app.utils.dict package`."""
 
 from unittest import TestCase
 

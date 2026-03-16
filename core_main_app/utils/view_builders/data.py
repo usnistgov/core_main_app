@@ -1,5 +1,4 @@
-""" View builder for view data page.
-"""
+"""View builder for view data page."""
 
 import logging
 

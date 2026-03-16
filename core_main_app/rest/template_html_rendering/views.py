@@ -1,5 +1,4 @@
-""" REST views for the template HTML rendering API
-"""
+"""REST views for the template HTML rendering API"""
 
 from abc import ABC, abstractmethod
 

@@ -1,4 +1,4 @@
-""" Unit tests for `BlobRunProcessingModule` views in `core_main_app.rest.blob.views`
+"""Unit tests for `BlobRunProcessingModule` views in `core_main_app.rest.blob.views`
 package.
 """
 

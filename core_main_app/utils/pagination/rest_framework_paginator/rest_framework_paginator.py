@@ -1,5 +1,4 @@
-"""Pagination utils for rest_framework package
-"""
+"""Pagination utils for rest_framework package"""
 
 from urllib.parse import urlparse
 

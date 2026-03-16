@@ -1,5 +1,4 @@
-""" Unit tests for classes related to `core_main_app.views.user.forms.BlobFileForm`
-"""
+"""Unit tests for classes related to `core_main_app.views.user.forms.BlobFileForm`"""
 
 from unittest import TestCase
 from unittest.mock import patch, MagicMock, call

@@ -1,5 +1,4 @@
-""" Unit tests of get_attribute templatetag
-"""
+"""Unit tests of get_attribute templatetag"""
 
 from unittest.case import TestCase
 

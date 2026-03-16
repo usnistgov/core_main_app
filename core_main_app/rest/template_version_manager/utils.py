@@ -1,5 +1,4 @@
-""" Utils for template version manager rest Apis
-"""
+"""Utils for template version manager rest Apis"""
 
 import json
 

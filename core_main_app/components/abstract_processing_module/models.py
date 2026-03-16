@@ -1,5 +1,4 @@
-""" Abstract model for processing modules
-"""
+"""Abstract model for processing modules"""
 
 import importlib
 

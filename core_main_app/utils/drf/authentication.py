@@ -1,5 +1,4 @@
-""" Django REST Framework authentication classes
-"""
+"""Django REST Framework authentication classes"""
 
 from rest_framework.authentication import TokenAuthentication
 

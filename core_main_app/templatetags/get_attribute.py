@@ -1,5 +1,4 @@
-""" Get attribute
-"""
+"""Get attribute"""
 
 from django import template
 

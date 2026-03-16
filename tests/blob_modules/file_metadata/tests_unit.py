@@ -1,5 +1,4 @@
-""" Unit tests for `FileMetadataBlobProcessing` class.
-"""
+"""Unit tests for `FileMetadataBlobProcessing` class."""
 
 import json
 from core_main_app.utils import datetime

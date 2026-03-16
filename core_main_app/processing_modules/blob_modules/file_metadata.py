@@ -1,5 +1,4 @@
-""" Blob processing module to maintain file metadata about a blob.
-"""
+"""Blob processing module to maintain file metadata about a blob."""
 
 import json
 from copy import deepcopy

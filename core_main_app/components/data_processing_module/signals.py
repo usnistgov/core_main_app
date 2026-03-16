@@ -1,5 +1,4 @@
-""" Signals to attach to Data for processing.
-"""
+"""Signals to attach to Data for processing."""
 
 import logging
 

@@ -1,5 +1,4 @@
-""" Template access control
-"""
+"""Template access control"""
 
 from django.conf import settings
 from django.db.models import Q

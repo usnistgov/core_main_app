@@ -1,5 +1,4 @@
-""" Test XSD Flattener
-"""
+"""Test XSD Flattener"""
 
 from unittest import TestCase
 from unittest.mock import patch

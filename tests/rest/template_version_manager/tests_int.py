@@ -1,5 +1,4 @@
-""" Integration Test for Template Version Manager Rest API
-"""
+"""Integration Test for Template Version Manager Rest API"""
 
 import json
 from unittest.mock import patch

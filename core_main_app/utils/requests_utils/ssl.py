@@ -1,5 +1,4 @@
-""" SSL utils
-"""
+"""SSL utils"""
 
 import logging
 from os import listdir

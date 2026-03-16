@@ -1,5 +1,4 @@
-""" Checksum utils
-"""
+"""Checksum utils"""
 
 import hashlib
 

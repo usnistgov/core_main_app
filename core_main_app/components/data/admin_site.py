@@ -1,5 +1,4 @@
-""" Custom admin site for the Data model
-"""
+"""Custom admin site for the Data model"""
 
 from django.conf import settings
 from django.contrib import admin

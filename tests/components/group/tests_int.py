@@ -1,5 +1,4 @@
-""" Integration Test for Group
-"""
+"""Integration Test for Group"""
 
 from tests.components.group.fixtures.fixtures import GroupFixtures
 from django.contrib.auth.models import Group

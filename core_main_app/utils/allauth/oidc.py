@@ -1,5 +1,4 @@
-""" Utils for allauth oidc configuration
-"""
+"""Utils for allauth oidc configuration"""
 
 import os
 

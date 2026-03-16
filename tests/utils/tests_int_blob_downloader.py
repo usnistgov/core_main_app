@@ -1,5 +1,4 @@
-""" Blob utils test class
-"""
+"""Blob utils test class"""
 
 import unittest
 from unittest import TestCase

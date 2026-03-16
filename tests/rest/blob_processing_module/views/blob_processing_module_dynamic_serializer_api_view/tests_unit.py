@@ -1,4 +1,4 @@
-""" Unit tests for `BlobProcessingModuleDynamicSerializerAPIView` view from
+"""Unit tests for `BlobProcessingModuleDynamicSerializerAPIView` view from
 `core_main_app.rest.blob_processing_module.views` package
 """
 

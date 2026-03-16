@@ -1,5 +1,4 @@
-""" Unit tests of system API
-"""
+"""Unit tests of system API"""
 
 from collections import OrderedDict
 from unittest.case import TestCase

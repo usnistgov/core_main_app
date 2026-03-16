@@ -1,5 +1,4 @@
-""" Integration Test for TemplateXslRendering Rest API
-"""
+"""Integration Test for TemplateXslRendering Rest API"""
 
 from rest_framework import status
 from tests.components.template_xsl_rendering.fixtures.fixtures import (

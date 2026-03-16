@@ -1,5 +1,4 @@
-""" Unit tests for `rest.blob.serializers` package.
-"""
+"""Unit tests for `rest.blob.serializers` package."""
 
 from os.path import join
 from unittest import TestCase

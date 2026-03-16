@@ -1,5 +1,4 @@
-""" Allauth SAML utils test class
-"""
+"""Allauth SAML utils test class"""
 
 import os
 from unittest import TestCase

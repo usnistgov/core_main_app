@@ -1,5 +1,4 @@
-""" Fixtures files for Data
-"""
+"""Fixtures files for Data"""
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 
@@ -817,42 +816,52 @@ class DataMigrationFixture(FixtureInterface):
         self.data_1 = Data(
             template=self.template_1, title="Data 1", user_id="1"
         )
-        self.data_1.xml_content = '<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
+        self.data_1.xml_content = (
+            '<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
                                     <test>test</test> \
                                   </root>'
+        )
         self.data_1.save()
 
         self.data_2 = Data(
             template=self.template_1, title="Data 2", user_id="1"
         )
-        self.data_2.xml_content = '<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
+        self.data_2.xml_content = (
+            '<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
                                     <test>test</test> \
                                   </root>'
+        )
         self.data_2.save()
 
         self.data_3 = Data(
             template=self.template_2, title="Data 3", user_id="1"
         )
-        self.data_3.xml_content = '<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
+        self.data_3.xml_content = (
+            '<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
                                     <test>test</test> \
                                   </root>'
+        )
 
         self.data_3.save()
 
         self.data_4 = Data(
             template=self.template_3, title="Data4", user_id="1"
         )
-        self.data_4.xml_content = '<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
+        self.data_4.xml_content = (
+            '<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
                                     <other>test</other> \
                                   </root>'
+        )
         self.data_4.save()
 
         self.data_5 = Data(
             template=self.template_3, title="Data5", user_id="1"
         )
-        self.data_5.xml_content = '<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
+        self.data_5.xml_content = (
+            '<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
                                     <other>test</other> \
                                   </root>'
+        )
         self.data_5.save()
 
         self.data_collection = [

@@ -1,5 +1,4 @@
-""" REST abstract views for the template version manager API
-"""
+"""REST abstract views for the template version manager API"""
 
 from abc import ABCMeta, abstractmethod
 

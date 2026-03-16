@@ -1,5 +1,4 @@
-""" Login page api
-"""
+"""Login page api"""
 
 from core_main_app.commons.enums import WEB_PAGE_TYPES
 from core_main_app.commons.exceptions import ApiError

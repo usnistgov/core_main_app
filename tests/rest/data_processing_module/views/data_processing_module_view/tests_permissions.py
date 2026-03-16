@@ -1,4 +1,4 @@
-""" Permission tests for `DataProcessingModuleView` view from
+"""Permission tests for `DataProcessingModuleView` view from
 `core_main_app.rest.data_processing_module.views` package
 """
 

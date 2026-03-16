@@ -1,5 +1,4 @@
-""" Access control utilities for core_main_app.
-"""
+"""Access control utilities for core_main_app."""
 
 import logging
 

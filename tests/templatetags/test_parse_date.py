@@ -1,5 +1,4 @@
-""" Unit tests of parse_date templatetag
-"""
+"""Unit tests of parse_date templatetag"""
 
 from unittest.case import TestCase
 from unittest.mock import patch

@@ -1,5 +1,4 @@
-""" Signals to attach to Blob for processing.
-"""
+"""Signals to attach to Blob for processing."""
 
 import logging
 

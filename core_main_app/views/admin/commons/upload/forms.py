@@ -1,5 +1,4 @@
-""" Forms
-"""
+"""Forms"""
 
 from django import forms
 

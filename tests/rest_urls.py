@@ -1,5 +1,4 @@
-"""Url router for the REST API
-"""
+"""Url router for the REST API"""
 
 from django.urls import re_path
 

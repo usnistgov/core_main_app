@@ -1,5 +1,4 @@
-"""Parser util for text editor
-"""
+"""Parser util for text editor"""
 
 
 def get_parser(request=None):

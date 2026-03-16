@@ -1,5 +1,4 @@
-""" Utils to provide xpath validation
-"""
+"""Utils to provide xpath validation"""
 
 from django.core.exceptions import ValidationError
 

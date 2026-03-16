@@ -1,5 +1,4 @@
-""" Access control testing
-"""
+"""Access control testing"""
 
 from django.test import override_settings
 
@@ -18,7 +17,6 @@ from tests.components.template_version_manager.fixtures.fixtures import (
     TemplateVersionManagerAccessControlFixtures,
     TemplateVersionManagerOrderingFixtures,
 )
-
 
 fixture_template_vm = TemplateVersionManagerAccessControlFixtures()
 fixture_template_vm_ordering = TemplateVersionManagerOrderingFixtures()

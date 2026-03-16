@@ -1,5 +1,4 @@
-""" Integration Test for Group Fixtures
-"""
+"""Integration Test for Group Fixtures"""
 
 from tests.components.group.fixtures.fixtures import GroupFixtures
 

@@ -1,5 +1,4 @@
-""" Set of functions to define the rules for access control
-"""
+"""Set of functions to define the rules for access control"""
 
 import logging
 

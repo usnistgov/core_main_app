@@ -1,5 +1,4 @@
-""" Integration Tests Base
-"""
+"""Integration Tests Base"""
 
 from django.test import TestCase
 

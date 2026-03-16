@@ -1,5 +1,4 @@
-"""Utils for version manager components
-"""
+"""Utils for version manager components"""
 
 
 def get_latest_version_name(version_manager):

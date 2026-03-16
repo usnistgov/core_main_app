@@ -1,5 +1,4 @@
-""" include static templatetag
-"""
+"""include static templatetag"""
 
 import io
 

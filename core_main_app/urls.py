@@ -1,5 +1,4 @@
-""" Url router for the main application
-"""
+"""Url router for the main application"""
 
 from django.conf.urls import include
 from django.contrib.auth.decorators import login_required

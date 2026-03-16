@@ -1,5 +1,4 @@
-""" Xml utils for the core applications
-"""
+"""Xml utils for the core applications"""
 
 import logging
 import re

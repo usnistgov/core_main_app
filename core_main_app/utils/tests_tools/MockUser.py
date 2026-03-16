@@ -1,5 +1,4 @@
-"""Mock user for tests
-"""
+"""Mock user for tests"""
 
 from unittest.mock import Mock
 

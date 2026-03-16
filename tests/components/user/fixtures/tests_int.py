@@ -1,5 +1,4 @@
-""" Integration Test for User Fixtures
-"""
+"""Integration Test for User Fixtures"""
 
 from tests.components.user.fixtures.fixtures import UserFixtures
 

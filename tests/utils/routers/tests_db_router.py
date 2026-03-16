@@ -1,5 +1,4 @@
-""" Unit Test Primary/Replica Router
-"""
+"""Unit Test Primary/Replica Router"""
 
 from unittest.case import TestCase
 from unittest.mock import MagicMock

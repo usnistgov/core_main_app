@@ -1,5 +1,4 @@
-""" REST views for the template API
-"""
+"""REST views for the template API"""
 
 from django.http import Http404
 from drf_spectacular.types import OpenApiTypes

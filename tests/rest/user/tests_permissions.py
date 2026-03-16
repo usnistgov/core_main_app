@@ -1,5 +1,4 @@
-""" Authentication tests for User REST API
-"""
+"""Authentication tests for User REST API"""
 
 from django.test import TestCase
 from rest_framework import status

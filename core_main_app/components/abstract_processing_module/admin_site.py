@@ -1,5 +1,4 @@
-""" Custom admin site for the Abstract Processing Module model
-"""
+"""Custom admin site for the Abstract Processing Module model"""
 
 from django.contrib import admin
 

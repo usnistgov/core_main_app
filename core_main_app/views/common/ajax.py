@@ -1,5 +1,5 @@
 """
-    Common ajax
+Common ajax
 """
 
 from django.contrib import messages

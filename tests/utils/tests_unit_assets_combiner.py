@@ -1,5 +1,4 @@
-""" Assets Combiner utils test class
-"""
+"""Assets Combiner utils test class"""
 
 from unittest import TestCase
 

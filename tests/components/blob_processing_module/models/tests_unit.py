@@ -1,4 +1,4 @@
-""" Unit tests for `BlobProcessingModule` from the
+"""Unit tests for `BlobProcessingModule` from the
 `core_main_app.components.blob_processing_module.models` package.
 """
 

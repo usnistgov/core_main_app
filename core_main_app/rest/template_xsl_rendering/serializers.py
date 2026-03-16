@@ -1,5 +1,4 @@
-""" Serializers used throughout the TemplateXslRendering Rest API
-"""
+"""Serializers used throughout the TemplateXslRendering Rest API"""
 
 from rest_framework.serializers import ModelSerializer
 

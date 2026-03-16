@@ -1,5 +1,4 @@
-""" Logger utils
-"""
+"""Logger utils"""
 
 import copy
 

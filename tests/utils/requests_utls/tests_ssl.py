@@ -1,5 +1,4 @@
-""" SSL utils test class
-"""
+"""SSL utils test class"""
 
 from unittest import TestCase
 

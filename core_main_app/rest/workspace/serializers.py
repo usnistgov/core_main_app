@@ -1,5 +1,4 @@
-"""Serializers used throughout the workspace Rest API
-"""
+"""Serializers used throughout the workspace Rest API"""
 
 from rest_framework.serializers import ModelSerializer
 

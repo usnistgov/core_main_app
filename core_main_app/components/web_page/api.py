@@ -1,5 +1,4 @@
-"""Web page API
-"""
+"""Web page API"""
 
 from core_main_app.commons import exceptions
 from core_main_app.commons.enums import WEB_PAGE_TYPES

@@ -1,5 +1,4 @@
-""" Unit tests for `core_main_app.components.data.access_control`.
-"""
+"""Unit tests for `core_main_app.components.data.access_control`."""
 
 from unittest import TestCase
 from unittest.mock import patch

@@ -1,5 +1,4 @@
-""" Core Exceptions
-"""
+"""Core Exceptions"""
 
 
 class BaseCoreException(Exception):

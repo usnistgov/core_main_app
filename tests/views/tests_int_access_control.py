@@ -1,5 +1,4 @@
-""" Test access to views
-"""
+"""Test access to views"""
 
 from unittest.mock import patch, MagicMock
 

@@ -1,5 +1,4 @@
-""" Constants
-"""
+"""Constants"""
 
 MARKDOWN_UNSAFE = 0
 MARKDOWN_GENERATION_FAILED = 1

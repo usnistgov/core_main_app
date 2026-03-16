@@ -1,5 +1,4 @@
-"""Template tag to print date
-"""
+"""Template tag to print date"""
 
 import pytz
 from django import template

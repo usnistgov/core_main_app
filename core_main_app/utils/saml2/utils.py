@@ -1,5 +1,4 @@
-""" Utils for djangosaml2 package
-"""
+"""Utils for djangosaml2 package"""
 
 import os
 

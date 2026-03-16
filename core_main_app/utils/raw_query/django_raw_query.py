@@ -1,5 +1,4 @@
-"""Utils for Django raw query
-"""
+"""Utils for Django raw query"""
 
 from django.conf import settings
 

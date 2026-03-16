@@ -1,5 +1,4 @@
-""" Access control testing
-"""
+"""Access control testing"""
 
 from django.test import override_settings
 from tests.components.template.fixtures.fixtures import (

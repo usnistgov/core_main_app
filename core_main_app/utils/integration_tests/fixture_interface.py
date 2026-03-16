@@ -1,5 +1,4 @@
-""" Fixture interface
-"""
+"""Fixture interface"""
 
 
 class FixtureInterface:

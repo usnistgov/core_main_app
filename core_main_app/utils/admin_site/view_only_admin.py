@@ -1,5 +1,4 @@
-""" View Only Admin
-"""
+"""View Only Admin"""
 
 from django.contrib import admin
 

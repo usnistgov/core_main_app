@@ -1,5 +1,4 @@
-""" Data tasks
-"""
+"""Data tasks"""
 
 import logging
 

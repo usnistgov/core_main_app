@@ -1,5 +1,4 @@
-""" Integration Test for Template xsl rendering
-"""
+"""Integration Test for Template xsl rendering"""
 
 from tests.components.template_xsl_rendering.fixtures.fixtures import (
     TemplateXslRenderingFixtures,

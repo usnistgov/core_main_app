@@ -1,5 +1,4 @@
-""" Ajax API
-"""
+"""Ajax API"""
 
 import json
 import logging

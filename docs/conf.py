@@ -1,5 +1,4 @@
-"""Conf
-"""
+"""Conf"""
 
 # -*- coding: utf-8 -*-
 #

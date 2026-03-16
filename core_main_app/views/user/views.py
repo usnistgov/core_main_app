@@ -1,5 +1,4 @@
-""" Core main app user views
-"""
+"""Core main app user views"""
 
 from django.conf import settings
 from django.contrib import auth as django_auth

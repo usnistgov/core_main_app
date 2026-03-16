@@ -1,5 +1,4 @@
-""" Method's decorators
-"""
+"""Method's decorators"""
 
 from functools import wraps
 from urllib.parse import urlparse

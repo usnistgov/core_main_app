@@ -1,5 +1,4 @@
-""" Integration tests Data
-"""
+"""Integration tests Data"""
 
 from types import SimpleNamespace
 from unittest.mock import patch

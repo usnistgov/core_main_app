@@ -1,5 +1,4 @@
-""" Tests of the web page login
-"""
+"""Tests of the web page login"""
 
 from unittest.case import TestCase
 

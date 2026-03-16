@@ -1,5 +1,4 @@
-"""Command unit testing
-"""
+"""Command unit testing"""
 
 from io import StringIO
 from unittest.case import TestCase

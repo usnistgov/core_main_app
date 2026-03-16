@@ -1,5 +1,4 @@
-""" Convert data to HTML
-"""
+"""Convert data to HTML"""
 
 import json
 import logging

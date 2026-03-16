@@ -1,4 +1,4 @@
-""" Unit tests for `DataRunProcessingModuleView` view from
+"""Unit tests for `DataRunProcessingModuleView` view from
 `core_main_app.rest.data_processing_module.views` package
 """
 

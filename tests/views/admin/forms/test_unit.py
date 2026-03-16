@@ -1,5 +1,4 @@
-""" Test forms.
-"""
+"""Test forms."""
 
 from unittest.case import TestCase
 

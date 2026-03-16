@@ -1,4 +1,4 @@
-""" System API allowing to perform call on Data without access control.
+"""System API allowing to perform call on Data without access control.
 Use this API carefully.
 """
 

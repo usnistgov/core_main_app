@@ -1,8 +1,6 @@
-""" Tests Settings
-"""
+"""Tests Settings"""
 
 from tests.test_settings import *  # noqa
-
 
 # IN-MEMORY TEST DATABASE
 DATABASES = {

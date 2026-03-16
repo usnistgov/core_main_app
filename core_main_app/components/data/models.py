@@ -1,5 +1,4 @@
-""" Data model
-"""
+"""Data model"""
 
 import logging
 

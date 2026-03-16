@@ -1,5 +1,4 @@
-""" Abstractions for processing any type of object from the database.
-"""
+"""Abstractions for processing any type of object from the database."""
 
 from abc import abstractmethod
 

@@ -1,5 +1,4 @@
-""" XSD Flattener Database or URL class
-"""
+"""XSD Flattener Database or URL class"""
 
 from urllib.parse import urlparse
 

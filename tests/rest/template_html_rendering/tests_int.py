@@ -1,5 +1,4 @@
-""" Integration Test for TemplateHtmlRendering Rest API
-"""
+"""Integration Test for TemplateHtmlRendering Rest API"""
 
 from unittest.mock import patch
 

@@ -1,5 +1,4 @@
-""" REST views for the workspace API
-"""
+"""REST views for the workspace API"""
 
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import (

@@ -1,5 +1,4 @@
-""" Unit tests of data_to_html templatetag
-"""
+"""Unit tests of data_to_html templatetag"""
 
 from unittest.case import TestCase
 from unittest.mock import patch, MagicMock

@@ -1,5 +1,4 @@
-""" FileField unit test class
-"""
+"""FileField unit test class"""
 
 from unittest import TestCase
 from unittest.mock import MagicMock, Mock, patch

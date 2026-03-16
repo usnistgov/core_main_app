@@ -1,5 +1,5 @@
 """
-    Admin views
+Admin views
 """
 
 import re

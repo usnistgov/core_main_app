@@ -1,5 +1,4 @@
-""" Custom context processor to generate global variables to be used in templates.
-"""
+"""Custom context processor to generate global variables to be used in templates."""
 
 from django.conf import settings
 from django.template import RequestContext

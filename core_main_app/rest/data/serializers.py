@@ -1,5 +1,4 @@
-"""Serializers used throughout the data Rest API
-"""
+"""Serializers used throughout the data Rest API"""
 
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers

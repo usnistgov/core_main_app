@@ -1,5 +1,4 @@
-""" Assets combiner utils
-"""
+"""Assets combiner utils"""
 
 
 def join_assets(*dicts):

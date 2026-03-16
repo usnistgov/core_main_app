@@ -1,5 +1,4 @@
-""" Unit test for `views.admin.ajax` package.
-"""
+"""Unit test for `views.admin.ajax` package."""
 
 from django.test import SimpleTestCase
 

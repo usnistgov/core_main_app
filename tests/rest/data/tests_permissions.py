@@ -1,5 +1,4 @@
-""" Authentication tests for Data REST API
-"""
+"""Authentication tests for Data REST API"""
 
 from unittest.mock import patch, Mock
 

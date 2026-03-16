@@ -1,5 +1,4 @@
-"""Unit tests for data rest api
-"""
+"""Unit tests for data rest api"""
 
 from unittest.mock import patch
 

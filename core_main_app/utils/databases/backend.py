@@ -1,5 +1,4 @@
-"""Utils for database backend
-"""
+"""Utils for database backend"""
 
 from django.conf import settings
 

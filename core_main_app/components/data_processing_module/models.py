@@ -1,5 +1,4 @@
-""" Model for data processing modules.
-"""
+"""Model for data processing modules."""
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models

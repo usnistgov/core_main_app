@@ -1,5 +1,4 @@
-""" Authentication tests for views
-"""
+"""Authentication tests for views"""
 
 from django.contrib.auth.models import AnonymousUser
 from rest_framework import status

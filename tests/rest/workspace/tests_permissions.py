@@ -1,5 +1,4 @@
-""" Permissions Test for Workspace Rest API
-"""
+"""Permissions Test for Workspace Rest API"""
 
 from unittest.mock import patch
 

@@ -1,5 +1,4 @@
-""" Upload blob command
-"""
+"""Upload blob command"""
 
 import logging
 import os

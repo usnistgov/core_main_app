@@ -1,5 +1,4 @@
-""" Utils to provide regex validation
-"""
+"""Utils to provide regex validation"""
 
 import re
 

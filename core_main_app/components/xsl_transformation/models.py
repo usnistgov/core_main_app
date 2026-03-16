@@ -1,5 +1,4 @@
-""" XslTransformation model
-"""
+"""XslTransformation model"""
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.uploadedfile import SimpleUploadedFile

@@ -1,5 +1,4 @@
-""" Parser utils test class
-"""
+"""Parser utils test class"""
 
 from unittest import TestCase
 

@@ -1,5 +1,4 @@
-""" Templatetags to parse date string and convert to datetime object
-"""
+"""Templatetags to parse date string and convert to datetime object"""
 
 from datetime import datetime
 

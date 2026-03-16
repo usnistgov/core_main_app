@@ -1,4 +1,3 @@
-"""Regular expressions used in the core
-"""
+"""Regular expressions used in the core"""
 
 NOT_EMPTY_OR_WHITESPACES = r".*\S.*"

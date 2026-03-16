@@ -1,5 +1,4 @@
-"""Unit tests for template version manager rest api
-"""
+"""Unit tests for template version manager rest api"""
 
 from unittest.mock import patch
 

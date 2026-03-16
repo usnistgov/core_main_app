@@ -1,5 +1,4 @@
-""" Fixtures files for XslTransformation
-"""
+"""Fixtures files for XslTransformation"""
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 

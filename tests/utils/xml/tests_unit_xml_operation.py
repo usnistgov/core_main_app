@@ -1,5 +1,4 @@
-""" Unit tests for `core_main_app.utils.xml` package.
-"""
+"""Unit tests for `core_main_app.utils.xml` package."""
 
 from collections import OrderedDict
 from unittest import TestCase

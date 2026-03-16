@@ -1,5 +1,4 @@
-""" Abstract Data model
-"""
+"""Abstract Data model"""
 
 from abc import abstractmethod
 

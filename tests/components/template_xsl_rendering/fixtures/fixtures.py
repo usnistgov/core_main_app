@@ -1,5 +1,4 @@
-""" Fixtures files for TemplateXslRendering
-"""
+"""Fixtures files for TemplateXslRendering"""
 
 from core_main_app.components.template.models import Template
 from core_main_app.components.template_xsl_rendering.models import (

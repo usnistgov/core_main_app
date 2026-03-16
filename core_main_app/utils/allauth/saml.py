@@ -1,5 +1,4 @@
-""" Utils for allauth saml configuration
-"""
+"""Utils for allauth saml configuration"""
 
 import os
 

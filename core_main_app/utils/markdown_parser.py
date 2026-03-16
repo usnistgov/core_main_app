@@ -1,5 +1,4 @@
-""" Parser to convert Markdown to HTML in a safe way
-"""
+"""Parser to convert Markdown to HTML in a safe way"""
 
 from markdown import markdown
 

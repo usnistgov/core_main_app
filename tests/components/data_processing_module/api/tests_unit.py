@@ -1,5 +1,4 @@
-""" Unit tests for `core_main_app.components.data_processing_module.api` package.
-"""
+"""Unit tests for `core_main_app.components.data_processing_module.api` package."""
 
 from unittest import TestCase
 from unittest.mock import MagicMock, patch

@@ -1,5 +1,4 @@
-""" Conf urls
-"""
+"""Conf urls"""
 
 from django.conf.urls import include
 from django.contrib import admin

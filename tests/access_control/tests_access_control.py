@@ -1,5 +1,4 @@
-""" Unit Test Access Control
-"""
+"""Unit Test Access Control"""
 
 from unittest.case import TestCase
 

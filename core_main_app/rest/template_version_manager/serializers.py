@@ -1,5 +1,4 @@
-"""Serializers used throughout the Rest API
-"""
+"""Serializers used throughout the Rest API"""
 
 from rest_framework.serializers import ModelSerializer, ReadOnlyField
 
