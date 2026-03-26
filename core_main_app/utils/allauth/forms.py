@@ -1,8 +1,9 @@
 """Custom allauth forms"""
 
+from captcha.fields import CaptchaField
+
 from allauth.account.forms import SignupForm as ASignupForm
 from allauth.socialaccount.forms import SignupForm as SASignupForm
-from captcha.fields import CaptchaField
 
 
 class CoreAccountSignupForm(ASignupForm):

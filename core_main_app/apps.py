@@ -5,6 +5,7 @@ from django.conf import settings
 from django.db.models.signals import post_migrate
 
 from core_main_app import settings as main_settings
+from django.contrib.auth.signals import user_logged_in
 
 
 def init_app(sender, **kwargs):
@@ -97,6 +98,8 @@ def _check_settings():
                 "SOCIALACCOUNT_FORMS['signup'] needs to be set to "
                 "'core_main_app.utils.allauth.forms.CoreSocialAccountSignupForm'."
             )
+        if main_settings.ALLAUTH_ENABLE_GROUP_SYNC_ON_LOGIN:
+            _init_allauth_signals()
 
 
 def _init_blob_modules_signals():
@@ -125,3 +128,9 @@ def _init_data_modules_signals():
 
     if main_settings.ENABLE_DATA_MODULES_SIGNALS:
         data_signals.connect()
+
+
+def _init_allauth_signals():
+    from core_main_app.utils.allauth.signals import sync_user_saml_groups
+
+    user_logged_in.connect(sync_user_saml_groups)

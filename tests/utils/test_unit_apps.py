@@ -95,6 +95,45 @@ class TestCheckSettings(TestCase):
         with self.assertRaises(CoreError):
             _check_settings()
 
+    @override_settings(
+        INSTALLED_APPS=["allauth", "core_website_app"],
+    )
+    @patch(
+        "core_main_app.apps.main_settings.ALLAUTH_ENABLE_GROUP_SYNC_ON_LOGIN",
+        True,
+    )
+    @patch("core_main_app.apps.user_logged_in")
+    def test_check_settings_allauth_with_group_sync_inits_signals(
+        self,
+        mock_logged_in_signals,
+    ):
+        """test_check_settings_allauth_with_group_sync_inits_signals
+
+        Returns:
+
+        """
+        _check_settings()
+        self.assertTrue(mock_logged_in_signals.connect.called)
+
+    @override_settings(
+        INSTALLED_APPS=["allauth", "core_website_app"],
+    )
+    @patch(
+        "core_main_app.apps.main_settings.ALLAUTH_ENABLE_GROUP_SYNC_ON_LOGIN",
+        False,
+    )
+    @patch("core_main_app.apps.user_logged_in")
+    def test_check_settings_allauth_with_group_sync_doesnt_init_signals_if_setting_false(
+        self, mock_logged_in_signals
+    ):
+        """test_check_settings_allauth_with_group_sync_doesnt_init_signals_if_setting_false
+
+        Returns:
+
+        """
+        _check_settings()
+        self.assertFalse(mock_logged_in_signals.connect.called)
+
 
 class TestInitBlobProcessingModules(TestCase):
     """TestInitBlobProcessingModules"""

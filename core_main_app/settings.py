@@ -318,3 +318,9 @@ SHOW_TITLE_ON_DATA_DETAIL_PAGE = getattr(
 )
 """ :py:class:`bool`: Set to `True` to show Data's title on the detail page.
 """
+
+ALLAUTH_ENABLE_GROUP_SYNC_ON_LOGIN = getattr(
+    settings, "ALLAUTH_ENABLE_GROUP_SYNC_ON_LOGIN", False
+)
+""" :py:class:`bool`: Set to `True` to automatically create and assign groups on login.
+"""

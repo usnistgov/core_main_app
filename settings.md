@@ -619,6 +619,12 @@ DATA_SORTING_FIELDS = ["-title", "+last_modification_date"]
 SAML_VERIFIED_EMAIL=example.com,test.example.com
 ```
 
+### ``ALLAUTH_ENABLE_GROUP_SYNC_ON_LOGIN``
+
+  Default: ``False``
+
+  Set to ``True`` to automatically create and assign groups on login.
+
 ## EMAILS
 
 ### ``EMAIL_HOST``

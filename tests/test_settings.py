@@ -117,3 +117,4 @@ WEBSITE_CONTACTS = [("John", "john@example.com"), ("Mary", "mary@example.com")]
 EMAIL_SUBJECT_PREFIX = "[Test]"
 ENABLE_BLOB_MODULES_SIGNALS = False
 ENABLE_DATA_MODULES_SIGNALS = False
+ALLAUTH_ENABLE_GROUP_SYNC_ON_LOGIN = False
