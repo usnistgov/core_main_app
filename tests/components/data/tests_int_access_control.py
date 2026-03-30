@@ -2,7 +2,7 @@
 
 import re
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from django.test import override_settings
 from tests.components.data.fixtures.fixtures import (
@@ -2888,3 +2888,38 @@ class TestDataCanReadListQuery(IntegrationBaseTestCase):
             self.assertFalse(
                 get_all_workspaces_with_read_access_by_user.called
             )
+
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_sql_document_list_calls_django_model(
+        self,
+        get_all_workspaces_with_read_access_by_user,
+    ):
+        """test_sql_document_list_calls_django_model
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+            mock_django_Q
+
+        Returns:
+
+        """
+        # Get a queryset using a superuser
+        mock_superuser = create_mock_user("1", is_superuser=True)
+        query = {"dict_content.list": {"$all": ["value2"]}}
+        data_list = data_api.execute_json_query(query, mock_superuser)
+        data_list.exclude = MagicMock()
+        data_list.exclude.return_value = data_list
+        self.assertEqual(data_list.count(), 1)
+
+        # Check if user can read this queryset
+        mock_user = create_mock_user("3")
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            self.fixture.workspace_1
+        ]
+        check_can_read_list(data_list, mock_user)
+        # Check that sql branch is called
+        data_list.exclude.assert_called_once()
+        called_kw = data_list.exclude.call_args[1]
+        self.assertIn("user_id", called_kw)

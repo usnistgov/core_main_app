@@ -135,14 +135,25 @@ def check_can_read_list(document_list, user):
             and not settings.CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT
         ):
             raise AccessControlError("Unable to access these documents.")
+
+        is_mongo_queryset = False
+        # If mongodb indexing is enabled
         if settings.MONGODB_INDEXING:
-            from mongoengine.queryset.visitor import Q
+            from mongoengine.queryset import QuerySet as MongoQueryset
 
-            workspace_key = "_workspace_id"
-            values_list_kwargs = {}
-        else:
-            from django.db.models import Q
+            # If the document_list is a monggo queryset
+            if isinstance(document_list, MongoQueryset):
+                from mongoengine.queryset.visitor import Q  # noqa: F811
 
+                # Set parameters for mongo queryset
+                is_mongo_queryset = True
+                workspace_key = "_workspace_id"
+                values_list_kwargs = {}
+
+        if not is_mongo_queryset:
+            from django.db.models import Q  # noqa: F811
+
+            # Set parameters for sql queryset
             workspace_key = "workspace"
             values_list_kwargs = {"flat": True}
 
@@ -151,7 +162,7 @@ def check_can_read_list(document_list, user):
             other_users_documents = document_list
         else:
             # if connected user, filter own documents
-            if settings.MONGODB_INDEXING:
+            if is_mongo_queryset:
                 other_users_documents = document_list.filter(
                     user_id__ne=str(user.id)
                 )

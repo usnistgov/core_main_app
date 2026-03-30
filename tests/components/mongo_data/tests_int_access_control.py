@@ -2,7 +2,7 @@
 
 import re
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from django.test import override_settings, tag
 
@@ -2648,3 +2648,80 @@ class TestDataCanReadListQuery(MongoDBIntegrationBaseTestCase):
             self.assertFalse(
                 get_all_workspaces_with_read_access_by_user.called
             )
+
+    @tag("mongodb")
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_mongo_document_list_calls_mongo_model(
+        self,
+        get_all_workspaces_with_read_access_by_user,
+    ):
+        """test_sql_document_list_calls_django_model
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+            mock_django_Q
+
+        Returns:
+
+        """
+        # Get a queryset using a superuser
+        mock_superuser = create_mock_user("1", is_superuser=True)
+        query = {"dict_content.list": {"$all": ["value2"]}}
+        data_list = data_api.execute_json_query(query, mock_superuser)
+        data_list.filter = MagicMock()
+        data_list.filter.side_effect = [
+            data_list.none(),  # other_users_documents
+            data_list.none(),  # other_users_private_document
+        ]
+        self.assertEqual(data_list.count(), 1)
+
+        # Check if user can read this queryset
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            self.fixture.workspace_1
+        ]
+        check_can_read_list(data_list, mock_superuser)
+        # Check that mongo branch is called
+        first_kwargs = data_list.filter.call_args_list[0][1]
+        self.assertIn("user_id__ne", first_kwargs)
+
+    @tag("mongodb")
+    @override_settings(MONGODB_INDEXING=True)
+    @override_settings(MONGODB_ASYNC_SAVE=False)
+    @patch(
+        "core_main_app.components.workspace.api.get_all_workspaces_with_read_access_by_user"
+    )
+    def test_sql_document_list_calls_django_model(
+        self,
+        get_all_workspaces_with_read_access_by_user,
+    ):
+        """test_sql_document_list_calls_django_model
+
+        Args:
+            get_all_workspaces_with_read_access_by_user:
+            mock_django_Q
+
+        Returns:
+
+        """
+        # Get a queryset using a superuser
+        mock_superuser = create_mock_user("1", is_superuser=True)
+
+        # Call a function that returns a sql qs
+        data_list = data_api.get_all_by_user(mock_superuser)
+        data_list.exclude = MagicMock()
+        data_list.exclude.return_value = data_list.none()
+        self.assertEqual(data_list.count(), 1)
+
+        # Check if user can read this queryset
+        get_all_workspaces_with_read_access_by_user.return_value = [
+            self.fixture.workspace_1
+        ]
+        check_can_read_list(data_list, mock_superuser)
+        # Check that sql branch is called
+        data_list.exclude.assert_called_once()
+        called_kw = data_list.exclude.call_args[1]
+        self.assertIn("user_id", called_kw)
