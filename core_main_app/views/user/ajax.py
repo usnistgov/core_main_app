@@ -4,6 +4,7 @@ import json
 import logging
 
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.http import (
     HttpResponse,
@@ -733,6 +734,20 @@ class UploadFile(View):
                                 "notes": "Success",
                             }
                         )
+                    except ValidationError as exc:
+                        file_list_report.append(
+                            {
+                                "filename": file_object.name,
+                                "status": "error",
+                                "notes": str(exc.messages[0]),
+                            }
+                        )
+                        error_count += 1
+                        logger.error(
+                            "Error uploading file %s: %s",
+                            file_object.name,
+                            str(exc),
+                        )
                     except Exception as exc:
                         file_list_report.append(
                             {
@@ -747,7 +762,6 @@ class UploadFile(View):
                             file_object.name,
                             str(exc),
                         )
-
                 request.session["upload_report"] = {
                     "status": "success" if error_count == 0 else "error",
                     "file_list": file_list_report,

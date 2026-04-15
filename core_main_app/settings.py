@@ -324,3 +324,31 @@ ALLAUTH_ENABLE_GROUP_SYNC_ON_LOGIN = getattr(
 )
 """ :py:class:`bool`: Set to `True` to automatically create and assign groups on login.
 """
+
+
+BLOB_EXTENSIONS = getattr(
+    settings,
+    "BLOB_EXTENSIONS",
+    [
+        "csv",
+        "xls",
+        "xlsx",
+        "txt",
+        "doc",
+        "docx",
+        "ppt",
+        "pptx",
+        "pdf",
+        "xml",
+        "xsl",
+        "xslt",
+        "json",
+        "yaml",
+        "jpg",
+        "jpeg",
+        "png",
+        "tiff",
+    ],
+)
+""" :py:class:`bool`: List of valid blob extensions.
+"""

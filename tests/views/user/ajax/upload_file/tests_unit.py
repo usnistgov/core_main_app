@@ -4,6 +4,7 @@ import json
 from unittest import TestCase
 from unittest.mock import MagicMock, patch, call
 
+from django.core.exceptions import ValidationError
 from django.contrib.sessions.backends.base import SessionBase
 from rest_framework import status
 
@@ -324,4 +325,39 @@ class TestUploadFilePost(TestCase):
         self.assertEqual(
             self.upload_file_cls.post(**self.mock_kwargs).status_code,
             status.HTTP_400_BAD_REQUEST,
+        )
+
+    @patch.object(user_ajax, "BlobFileForm")
+    @patch.object(user_ajax, "Blob")
+    def test_blob_validation_exception_adds_error_to_report(
+        self, mock_blob, mock_blob_file_form
+    ):
+        """test_blob_init_exception_adds_error_to_report"""
+        mock_file_a = MagicMock()
+        mock_file_b = MagicMock()
+        mock_file_list = [mock_file_a, mock_file_b]
+        mock_blob_file_form_instance = MagicMock()
+        mock_blob_file_form_instance.is_valid.return_value = True
+        mock_blob_file_form_instance.cleaned_data = {"file": mock_file_list}
+        mock_blob_file_form.return_value = mock_blob_file_form_instance
+        mock_blob.side_effect = ValidationError(
+            {"messages": ["Unsupported extension"]}
+        )
+
+        self.upload_file_cls.post(**self.mock_kwargs)
+
+        self.assertEqual(
+            self.mock_kwargs["request"].session["upload_report"]["file_list"],
+            [
+                {
+                    "filename": mock_file_a.name,
+                    "status": "error",
+                    "notes": "Unsupported extension",
+                },
+                {
+                    "filename": mock_file_b.name,
+                    "status": "error",
+                    "notes": "Unsupported extension",
+                },
+            ],
         )

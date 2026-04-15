@@ -3,6 +3,7 @@
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import RegexValidator
+from django.core.validators import FileExtensionValidator
 from django.db import models
 
 from core_main_app.commons import exceptions
@@ -12,7 +13,7 @@ from core_main_app.components.blob.access_control import (
     filter_accessible_metadata,
 )
 from core_main_app.components.workspace.models import Workspace
-from core_main_app.settings import CHECKSUM_ALGORITHM
+from core_main_app.settings import CHECKSUM_ALGORITHM, BLOB_EXTENSIONS
 from core_main_app.utils.checksum import compute_checksum
 from core_main_app.utils.storage.storage import (
     user_directory_path,
@@ -166,6 +167,8 @@ class Blob(models.Model):
             Saved Instance.
 
         """
+        validate = FileExtensionValidator(BLOB_EXTENSIONS)
+        validate(self.blob)
         try:
             if self.blob.file and CHECKSUM_ALGORITHM:
                 self.checksum = compute_checksum(

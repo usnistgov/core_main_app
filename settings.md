@@ -522,6 +522,13 @@ DATA_SORTING_FIELDS = ["-title", "+last_modification_date"]
 
   Set to ``True`` to enable blob api and user views for blob management.
 
+
+### ``BLOB_EXTENSIONS``
+
+  Default: ``["csv", "xls", "xlsx", "txt", "doc", "docx", "ppt", "pptx", "pdf", "xml", "xsl", "xslt", "json", "yaml", "jpg", "jpeg", "png", "tiff"]``
+
+  Set a list of valid blob extensions.
+
 ### ``ENABLE_BLOB_MODULES_SIGNALS``
 
   Default: ``False``

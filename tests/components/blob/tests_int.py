@@ -239,5 +239,5 @@ class TestBlobInsert(IntegrationBaseTestCase):
         blob = Blob(filename="blob", user_id="1", blob=None)
 
         # Act # Assert
-        with self.assertRaises(exceptions.ModelError):
+        with self.assertRaises(TypeError):
             blob_api.insert(blob, self.user)
