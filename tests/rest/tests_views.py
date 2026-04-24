@@ -1,12 +1,12 @@
 """Unit test for rest views"""
 
+from importlib.metadata import PackageNotFoundError
 from unittest import TestCase
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 from django.test import override_settings, tag
-from importlib.metadata import PackageNotFoundError
 
-from core_main_app.rest.views import CoreSettings
+from core_main_app.rest.views import CoreSettings, HealthCheck
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import RequestMock
 
@@ -147,3 +147,40 @@ class TestCoreSetting(TestCase):
 
         # Assert
         self.assertEqual(response.data["core_version"], None)
+
+
+class TestHealthCheck(TestCase):
+    """TestHealthCheck"""
+
+    def test_anonymous_user_gets_http_200(self):
+        """test_anonymous_user_gets_http_200
+
+        Returns:
+
+        """
+        # Act
+        response = RequestMock.do_request_get(
+            HealthCheck.as_view(),
+            None,
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, 200)
+
+    def test_user_gets_http_200(self):
+        """test_user_gets_http_200
+
+        Returns:
+
+        """
+        # Arrange
+        mock_user = create_mock_user("1")
+
+        # Act
+        response = RequestMock.do_request_get(
+            HealthCheck.as_view(),
+            mock_user,
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, 200)

@@ -6,7 +6,11 @@ from django.conf import settings
 from django.db import connection
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import (
+    authentication_classes,
+    permission_classes,
+)
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -109,3 +113,37 @@ class CoreSettings(APIView):
             return Response(
                 content, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+
+@extend_schema(
+    tags=["Health Check"],
+    description="Health Check",
+)
+class HealthCheck(APIView):
+
+    @authentication_classes([])
+    @permission_classes([AllowAny])
+    @extend_schema(
+        summary="Get Health Check",
+        description="Retrieve system health status",
+        responses={
+            200: OpenApiResponse(
+                description="Health Check",
+                response={
+                    "type": "object",
+                    "properties": {
+                        "status": {"type": "string"},
+                    },
+                },
+            ),
+        },
+    )
+    def get(self, request):
+        """Get Health check
+
+        Args:
+            request: HTTP request
+        Returns:
+            - code: 200
+        """
+        return Response({"status": "ok"}, status=200)

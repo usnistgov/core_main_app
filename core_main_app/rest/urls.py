@@ -19,7 +19,7 @@ from core_main_app.rest.template_xsl_rendering import (
     views as template_xsl_rendering_views,
 )
 from core_main_app.rest.user import views as user_views
-from core_main_app.rest.views import CoreSettings
+from core_main_app.rest.views import CoreSettings, HealthCheck
 from core_main_app.rest.web_page import views as web_page_views
 from core_main_app.rest.workspace import views as workspace_views
 from core_main_app.rest.xsl_transformation import (
@@ -426,6 +426,11 @@ urlpatterns = [
         r"^core-settings/$",
         CoreSettings.as_view(),
         name="core_main_app_rest_core_settings",
+    ),
+    re_path(
+        r"^health/$",
+        HealthCheck.as_view(),
+        name="core_main_app_rest_health_check",
     ),
 ]
 
