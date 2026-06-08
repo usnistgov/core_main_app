@@ -14,7 +14,7 @@
     {% endif %}
     {% if data.can_write %}
     <button class="btn btn-secondary
-            open-{% if data.data.template.format == 'XML' %}xml{% elif data.data.template.format == 'JSON'%}json{% endif %}-record-btn
+            open-{% if data.data.template.format == 'XSD' %}xml{% elif data.data.template.format == 'JSON'%}json{% endif %}-record-btn
             {% if BOOTSTRAP_VERSION|first == "4" %}float-right{% elif BOOTSTRAP_VERSION|first == "5"  %}float-end{% endif %}
             {% if BOOTSTRAP_VERSION|first == "4" %}mr-1{% elif BOOTSTRAP_VERSION|first == "5"  %}me-1{% endif %}">
         <i class="fas fa-code"></i> Open in text editor
