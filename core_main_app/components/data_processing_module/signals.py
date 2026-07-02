@@ -1,7 +1,6 @@
 """Signals to attach to Data for processing."""
 
 import logging
-
 from django.db.models import signals as models_signals
 
 from core_main_app.commons.exceptions import ApiError
@@ -11,6 +10,9 @@ from core_main_app.components.data_processing_module import (
 )
 from core_main_app.components.data_processing_module.models import (
     DataProcessingModule,
+)
+from core_main_app.components.data_processing_module.context import (
+    _suppress_processing_signals,
 )
 
 logger = logging.getLogger(__name__)
@@ -31,6 +33,9 @@ def post_save_data(sender, instance, **kwargs):
         instance:
         kwargs:
     """
+    if _suppress_processing_signals.get():
+        return
+
     try:
         logger.debug("Executing post save data processing modules...")
 
@@ -59,9 +64,12 @@ def pre_delete_data(sender, instance, **kwargs):
         instance:
         kwargs:
     """
+    if _suppress_processing_signals.get():
+        return
+
     logger.debug("Starting data processing modules on delete")
 
-    data_processing_module_tasks.process_data_with_all_modules.apply_async(
+    data_processing_module_tasks.process_data_with_all_modules.apply(
         (
             instance.pk,
             DataProcessingModule.RUN_ON_DELETE,

@@ -163,122 +163,48 @@ class TestProcessDataWithModule(TestCase):
     @patch.object(data_processing_module_tasks, "data_api")
     @patch.object(data_processing_module_tasks, "data_processing_module_api")
     @patch.object(data_processing_module_tasks, "check_can_write")
-    def test_data_module_get_class_called(
+    def test_data_execute_process_called(
         self,
         mock_check_can_write,
         mock_data_processing_module_api,
         mock_data_api,
         mock_user_model,
     ):
-        """test_data_module_get_class_called"""
-        mock_module = MagicMock()
-        mock_data_processing_module_api.get_by_id.return_value = mock_module
-
-        data_processing_module_tasks.process_data_with_module(
-            **self.mock_kwargs
-        )
-
-        mock_module.get_class.assert_called_with()
-
-    @patch.object(data_processing_module_tasks, "User")
-    @patch.object(data_processing_module_tasks, "data_api")
-    @patch.object(data_processing_module_tasks, "data_processing_module_api")
-    @patch.object(data_processing_module_tasks, "check_can_write")
-    def test_data_module_get_class_error_raises_api_error(
-        self,
-        mock_check_can_write,
-        mock_data_processing_module_api,
-        mock_data_api,
-        mock_user_model,
-    ):
-        """test_data_module_get_class_error_raises_api_error"""
-        mock_module = MagicMock()
-        mock_data_processing_module_api.get_by_id.return_value = mock_module
-        mock_module.get_class.side_effect = Exception(
-            "mock_module_get_class_exception"
-        )
-
-        with self.assertRaises(ApiError):
-            data_processing_module_tasks.process_data_with_module(
-                **self.mock_kwargs
-            )
-
-    @patch.object(data_processing_module_tasks, "User")
-    @patch.object(data_processing_module_tasks, "data_api")
-    @patch.object(data_processing_module_tasks, "data_processing_module_api")
-    @patch.object(data_processing_module_tasks, "check_can_write")
-    def test_data_module_class_process_called(
-        self,
-        mock_check_can_write,
-        mock_data_processing_module_api,
-        mock_data_api,
-        mock_user_model,
-    ):
-        """test_returns_data_module_class_process"""
+        """test_data_execute_process_called"""
         mock_data = MagicMock()
         mock_data_api.get_by_id.return_value = mock_data
 
         mock_module = MagicMock()
         mock_data_processing_module_api.get_by_id.return_value = mock_module
-        mock_module_class = MagicMock()
-        mock_module.get_class.return_value = mock_module_class
+        mock_module.execute_process.return_value = MagicMock()
 
         data_processing_module_tasks.process_data_with_module(
             **self.mock_kwargs
         )
 
-        mock_module_class.process.assert_called_with(
-            mock_data, mock_module.parameters, self.mock_kwargs["strategy"]
+        mock_module.execute_process.assert_called_with(
+            mock_data,
+            mock_module.parameters,
+            strategy=self.mock_kwargs["strategy"],
         )
 
     @patch.object(data_processing_module_tasks, "User")
     @patch.object(data_processing_module_tasks, "data_api")
     @patch.object(data_processing_module_tasks, "data_processing_module_api")
     @patch.object(data_processing_module_tasks, "check_can_write")
-    def test_returns_data_module_class_process(
+    def test_data_module_execute_process_error_raises_api_error(
         self,
         mock_check_can_write,
         mock_data_processing_module_api,
         mock_data_api,
         mock_user_model,
     ):
-        """test_returns_data_module_class_process"""
+        """test_data_module_execute_process_error_raises_api_error"""
         mock_module = MagicMock()
         mock_data_processing_module_api.get_by_id.return_value = mock_module
-        mock_module_class = MagicMock()
-        mock_module.get_class.return_value = mock_module_class
 
-        mock_module_class_process_result = MagicMock()
-        mock_module_class.process.return_value = (
-            mock_module_class_process_result
-        )
-
-        self.assertEqual(
-            data_processing_module_tasks.process_data_with_module(
-                **self.mock_kwargs
-            ),
-            mock_module_class_process_result,
-        )
-
-    @patch.object(data_processing_module_tasks, "User")
-    @patch.object(data_processing_module_tasks, "data_api")
-    @patch.object(data_processing_module_tasks, "data_processing_module_api")
-    @patch.object(data_processing_module_tasks, "check_can_write")
-    def test_data_module_class_process_error_raises_api_error(
-        self,
-        mock_check_can_write,
-        mock_data_processing_module_api,
-        mock_data_api,
-        mock_user_model,
-    ):
-        """test_data_module_class_process_error_raises_api_error"""
-        mock_module = MagicMock()
-        mock_data_processing_module_api.get_by_id.return_value = mock_module
-        mock_module_class = MagicMock()
-        mock_module.get_class.return_value = mock_module_class
-
-        mock_module_class.process.side_effect = Exception(
-            "mock_module_class_process_exception"
+        mock_module.execute_process.side_effect = Exception(
+            "mock_module_execute_process_exception"
         )
 
         with self.assertRaises(ApiError):
@@ -438,14 +364,14 @@ class TestProcessDataWithAllModules(TestCase):
     @patch.object(data_processing_module_tasks, "data_api")
     @patch.object(data_processing_module_tasks, "data_processing_module_api")
     @patch.object(data_processing_module_tasks, "check_can_write")
-    def test_data_module_get_class_called(
+    def test_data_module_execute_process_called(
         self,
         mock_check_can_write,
         mock_data_processing_module_api,
         mock_data_api,
         mock_user_model,
     ):
-        """test_data_module_get_class_called"""
+        """test_data_module_execute_process_called"""
         mock_data = MagicMock()
         mock_data.template.filename = "schema.json"
         mock_data_api.get_by_id.return_value = mock_data
@@ -460,20 +386,20 @@ class TestProcessDataWithAllModules(TestCase):
             **self.mock_kwargs
         )
 
-        mock_module.get_class.assert_called_with()
+        self.assertTrue(mock_module.execute_process)
 
     @patch.object(data_processing_module_tasks, "User")
     @patch.object(data_processing_module_tasks, "data_api")
     @patch.object(data_processing_module_tasks, "data_processing_module_api")
     @patch.object(data_processing_module_tasks, "check_can_write")
-    def test_data_module_get_class_error_raises_api_error(
+    def test_data_module_execute_process_error_raises_api_error(
         self,
         mock_check_can_write,
         mock_data_processing_module_api,
         mock_data_api,
         mock_user_model,
     ):
-        """test_data_module_get_class_error_raises_api_error"""
+        """test_data_module_execute_process_error_raises_api_error"""
         mock_data = MagicMock()
         mock_data.template.filename = "schema.json"
         mock_data_api.get_by_id.return_value = mock_data
@@ -484,8 +410,8 @@ class TestProcessDataWithAllModules(TestCase):
         mock_module_qs.filter.return_value = [mock_module]
         mock_data_processing_module_api.get_all.return_value = mock_module_qs
 
-        mock_module.get_class.side_effect = Exception(
-            "mock_module_get_class_exception"
+        mock_module.execute_process.side_effect = Exception(
+            "mock_module_execute_process_exception"
         )
 
         with self.assertRaises(ApiError):
@@ -515,89 +441,14 @@ class TestProcessDataWithAllModules(TestCase):
         mock_module_qs.filter.return_value = [mock_module]
         mock_data_processing_module_api.get_all.return_value = mock_module_qs
 
-        mock_module_class = MagicMock()
-        mock_module.get_class.return_value = mock_module_class
+        mock_module.execute_process.return_value = MagicMock()
 
         data_processing_module_tasks.process_data_with_all_modules(
             **self.mock_kwargs
         )
 
-        mock_module_class.process.assert_called_with(
-            mock_data, mock_module.parameters, self.mock_kwargs["strategy"]
+        mock_module.execute_process.assert_called_with(
+            mock_data,
+            mock_module.parameters,
+            strategy=self.mock_kwargs["strategy"],
         )
-
-    @patch.object(data_processing_module_tasks, "User")
-    @patch.object(data_processing_module_tasks, "data_api")
-    @patch.object(data_processing_module_tasks, "data_processing_module_api")
-    @patch.object(data_processing_module_tasks, "check_can_write")
-    def test_returns_data_module_class_process(
-        self,
-        mock_check_can_write,
-        mock_data_processing_module_api,
-        mock_data_api,
-        mock_user_model,
-    ):
-        """test_returns_data_module_class_process"""
-        mock_data = MagicMock()
-        mock_data.template.filename = "schema.json"
-        mock_data_api.get_by_id.return_value = mock_data
-
-        mock_module = MagicMock()
-        mock_module.template_filename_regexp = ".*"
-        mock_module_qs = MagicMock()
-        mock_module_qs.filter.return_value = [mock_module]
-        mock_data_processing_module_api.get_all.return_value = mock_module_qs
-
-        mock_module_class = MagicMock()
-        mock_module.get_class.return_value = mock_module_class
-
-        mock_module_class_process_result = MagicMock()
-        mock_module_class.process.return_value = (
-            mock_module_class_process_result
-        )
-
-        self.assertEqual(
-            data_processing_module_tasks.process_data_with_all_modules(
-                **self.mock_kwargs
-            ),
-            mock_module_class_process_result,
-        )
-
-    @patch.object(data_processing_module_tasks, "User")
-    @patch.object(data_processing_module_tasks, "data_api")
-    @patch.object(data_processing_module_tasks, "data_processing_module_api")
-    @patch.object(data_processing_module_tasks, "check_can_write")
-    def test_data_module_class_process_error_raises_api_error(
-        self,
-        mock_check_can_write,
-        mock_data_processing_module_api,
-        mock_data_api,
-        mock_user_model,
-    ):
-        """test_data_module_class_process_error_raises_api_error"""
-        mock_data = MagicMock()
-        mock_data.template.filename = "schema.json"
-        mock_data_api.get_by_id.return_value = mock_data
-
-        mock_module = MagicMock()
-        mock_module.template_filename_regexp = ".*"
-        mock_module_qs = MagicMock()
-        mock_module_qs.filter.return_value = [mock_module]
-        mock_data_processing_module_api.get_all.return_value = mock_module_qs
-
-        mock_module_class = MagicMock()
-        mock_module.get_class.return_value = mock_module_class
-
-        mock_module_class_process_result = MagicMock()
-        mock_module_class.process.return_value = (
-            mock_module_class_process_result
-        )
-
-        mock_module_class.process.side_effect = Exception(
-            "mock_module_class_process_exception"
-        )
-
-        with self.assertRaises(ApiError):
-            data_processing_module_tasks.process_data_with_all_modules(
-                **self.mock_kwargs
-            )

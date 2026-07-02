@@ -144,6 +144,44 @@ class TestPostSaveData(TestCase):
                 instance=mock_data,
             )
 
+    @patch(
+        "core_main_app.components.data_processing_module.signals._suppress_processing_signals"
+    )
+    @patch(
+        "core_main_app.components.data_processing_module.tasks.process_data_with_all_modules"
+    )
+    def test_post_save_data_returns_early_when_suppressed(
+        self, mock_process_data, mock_suppress
+    ):
+        """test_post_save_data_returns_early_when_suppressed"""
+        mock_suppress.get.return_value = True
+        mock_data = MagicMock()
+
+        data_processing_module_signals.post_save_data(
+            sender=Data, instance=mock_data
+        )
+
+        mock_process_data.apply_async.assert_not_called()
+
+    @patch(
+        "core_main_app.components.data_processing_module.signals._suppress_processing_signals"
+    )
+    @patch(
+        "core_main_app.components.data_processing_module.tasks.process_data_with_all_modules"
+    )
+    def test_post_save_data_executes_when_not_suppressed(
+        self, mock_process_data, mock_suppress
+    ):
+        """test_post_save_data_executes_when_not_suppressed"""
+        mock_suppress.get.return_value = False
+        mock_data = MagicMock(pk=1, user_id=1)
+
+        data_processing_module_signals.post_save_data(
+            sender=Data, instance=mock_data
+        )
+
+        mock_process_data.apply_async.assert_called_once()
+
 
 class TestPreDeleteData(TestCase):
     """Unit test for `pre_delete_data` function."""
@@ -162,9 +200,7 @@ class TestPreDeleteData(TestCase):
         )
 
         self.assertEqual(
-            mock_process_data_with_all_modules.apply_async.call_args.args[0][
-                1
-            ],
+            mock_process_data_with_all_modules.apply.call_args.args[0][1],
             "DELETE",
         )
 
@@ -182,14 +218,49 @@ class TestPreDeleteData(TestCase):
         )
 
         self.assertEqual(
-            mock_process_data_with_all_modules.apply_async.call_args.args[0][
-                0
-            ],
+            mock_process_data_with_all_modules.apply.call_args.args[0][0],
             mock_data.pk,
         )
         self.assertEqual(
-            mock_process_data_with_all_modules.apply_async.call_args.args[0][
-                2
-            ],
+            mock_process_data_with_all_modules.apply.call_args.args[0][2],
             mock_data.user_id,
         )
+
+    @patch(
+        "core_main_app.components.data_processing_module.signals._suppress_processing_signals"
+    )
+    @patch(
+        "core_main_app.components.data_processing_module.tasks.process_data_with_all_modules"
+    )
+    def test_pre_delete_data_returns_early_when_suppressed(
+        self, mock_process_data, mock_suppress
+    ):
+        """test_pre_delete_data_returns_early_when_suppressed"""
+
+        mock_suppress.get.return_value = True
+        mock_data = MagicMock()
+
+        data_processing_module_signals.pre_delete_data(
+            sender=Data, instance=mock_data
+        )
+
+        mock_process_data.apply.assert_not_called()
+
+    @patch(
+        "core_main_app.components.data_processing_module.signals._suppress_processing_signals"
+    )
+    @patch(
+        "core_main_app.components.data_processing_module.tasks.process_data_with_all_modules"
+    )
+    def test_pre_delete_data_executes_when_not_suppressed(
+        self, mock_process_data, mock_suppress
+    ):
+        """test_pre_delete_data_executes_when_not_suppressed"""
+        mock_suppress.get.return_value = False
+        mock_data = MagicMock(pk=1, user_id=1)
+
+        data_processing_module_signals.pre_delete_data(
+            sender=Data, instance=mock_data
+        )
+
+        mock_process_data.apply.assert_called_once()

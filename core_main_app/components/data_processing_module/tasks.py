@@ -39,7 +39,6 @@ def process_data_with_module(data_module_id, data_id, strategy, user_id=None):
         data_module = data_processing_module_api.get_by_id(
             data_module_id, user
         )
-        data_module_class = data_module.get_class()
     except Exception as exc:
         error_message = (
             f"An error occurred while instantiating data module {data_module_id} for "
@@ -50,8 +49,8 @@ def process_data_with_module(data_module_id, data_id, strategy, user_id=None):
 
     try:
         logger.info("File %s processed by %s", data.title, data_module.name)
-        return data_module_class.process(
-            data, data_module.parameters, strategy
+        data_module.execute_process(
+            data, data_module.parameters, strategy=strategy
         )
     except Exception as exc:
         error_message = f"File {data.title} cannot be processed by {data_module.name}: {str(exc)}"
@@ -107,14 +106,13 @@ def process_data_with_all_modules(data_id, strategy, user_id=None):
 
     for data_module in data_module_list:
         try:
-            data_module_class = data_module.get_class()
             logger.debug(
                 "Processing file %s with %s...",
                 data.title,
                 data_module.name,
             )
-            return data_module_class.process(
-                data, data_module.parameters, strategy
+            data_module.execute_process(
+                data, data_module.parameters, strategy=strategy
             )
         except Exception as exc:
             error_message = f"File {data.title} cannot be processed by {data_module.name}: {str(exc)}"
