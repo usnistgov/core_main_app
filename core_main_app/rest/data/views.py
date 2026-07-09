@@ -864,6 +864,17 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
             Use this endpoint when you know the structure of your documents and want to query
             on specific fields.
 
+            Supported Operators:
+            - Equality: {"field": "value"} or {"field": {"$eq": "value"}}
+            - Not Equal: {"field": {"$ne": "value"}}
+            - Comparison: {"field": {"$gt": val}}, {"field": {"$gte": val}}, {"field": {"$lt": val}}, {"field": {"$lte": val}}
+            - Set/Array: {"field": {"$in": [val1, val2]}}, {"field": {"$all": [val1, val2]}}
+            - Existence: {"field": {"$exists": true}}
+            - Negation: {"field": {"$not": {"$gt": val}}}
+            - Regex: {"field": "/pattern/"} or {"field": {"$regex": "pattern"}}
+            - Full-text Search: {"$text": {"$search": "search terms"}}
+            - Logical: {"$and": [query1, query2]}, {"$or": [query1, query2]}
+
             Examples:
 
             # get all records (paginated)
@@ -880,9 +891,11 @@ class ExecuteLocalQueryView(AbstractExecuteLocalQueryView):
             {"query":{"name": "John", "age": 30}}
             # query on two fields (OR)
             {"query":{"$or": [{"name": "John"}, {"age": 30}]}}
+            # full-text search
+            {"query": {"$text": {"$search": "keyword1 keyword2"}}}
             # get all records filtered by title
             {"query": {}, "title": "title_string"}
-             # get all records filtered by workspaces
+            # get all records filtered by workspaces
             {"query": {}, "workspaces": [{"id":"[workspace_id]"}]}
             # get all records filtered by private workspace
             {"query": {}, "workspaces": [{"id":"None"}]}
