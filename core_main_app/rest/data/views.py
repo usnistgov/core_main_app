@@ -774,6 +774,7 @@ class DataDownload(APIView):
         responses={
             200: OpenApiResponse(description="File", response=None),
             400: OpenApiResponse(description="Bad Request"),
+            403: OpenApiResponse(description="Access Forbidden"),
             404: OpenApiResponse(description="Data not found"),
             500: OpenApiResponse(description="Internal server error"),
         },
@@ -798,6 +799,8 @@ class DataDownload(APIView):
         Returns:
             - code: 200
               content: XML file
+            - code: 403
+              content: Authentication error
             - code: 404
               content: Object was not found
             - code: 500
@@ -839,6 +842,9 @@ class DataDownload(APIView):
         except XMLError:
             content = {"message": "Content is not well formatted XML."}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        except AccessControlError as ace:
+            content = {"message": str(ace)}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as api_exception:
             content = {"message": str(api_exception)}
             return Response(
