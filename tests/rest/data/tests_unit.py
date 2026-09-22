@@ -9,6 +9,7 @@ from tests.components.data.fixtures.fixtures import QueryDataFixtures
 from tests.components.data.tests_unit import _get_template, _get_json_template
 from tests.mocks import MockQuerySet
 
+from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons.exceptions import DoesNotExist
 from core_main_app.components.data import api as data_api
 from core_main_app.components.data.models import Data
@@ -328,6 +329,32 @@ class TestDataDownload(SimpleTestCase):
 
         # Assert
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @patch.object(data_api, "get_by_id")
+    def test_get_returns_http_403_when_access_denied(
+        self, mock_data_api_get_by_id
+    ):
+        """test_get_returns_http_403_when_access_denied
+
+        Args:
+            mock_data_api_get_by_id:
+
+        Returns:
+
+        """
+        # Arrange
+        mock_user = create_mock_user("1")
+        mock_data_api_get_by_id.side_effect = AccessControlError("error")
+
+        # Mock
+        response = RequestMock.do_request_get(
+            data_rest_views.DataDownload.as_view(),
+            mock_user,
+            param={"pk": "1"},
+        )
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @patch.object(data_api, "get_by_id")
     def test_get_returns_http_200_when_data_found(
