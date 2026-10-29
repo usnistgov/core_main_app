@@ -289,7 +289,6 @@ TEXT_EDITOR_LIBRARY = getattr(settings, "TEXT_EDITOR_LIBRARY", "Monaco")
 or specify another external text editor to set it up.
 """
 
-
 WEBSITE_CONTACTS = getattr(settings, "WEBSITE_CONTACTS", [])
 """ :py:class:`str`: A list of all the people who will be notified when contact messages,
   or account requests are sent via the application.
@@ -325,7 +324,6 @@ ALLAUTH_ENABLE_GROUP_SYNC_ON_LOGIN = getattr(
 """ :py:class:`bool`: Set to `True` to automatically create and assign groups on login.
 """
 
-
 BLOB_EXTENSIONS = getattr(
     settings,
     "BLOB_EXTENSIONS",
@@ -351,4 +349,17 @@ BLOB_EXTENSIONS = getattr(
     ],
 )
 """ :py:class:`bool`: List of valid blob extensions.
+"""
+
+HTTP_ALLOWED_URL_SCHEMES = ("http", "https")
+""" :py:class:`list`: List of allowed URL schemes for HTTP requests.
+"""
+
+BLOCKED_IP_LIST = []
+""" :py:class:`list`: List of blocked IP addresses for HTTP requests.
+"""
+
+BLOCK_URL_LINK_LOCAL = True
+""" :py:class:`bool`: Set to `True` to block link-local addresses in
+`validate_request_url`.
 """
