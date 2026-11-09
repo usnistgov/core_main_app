@@ -5,7 +5,6 @@ from unittest import TestCase
 from unittest.mock import patch
 
 from django.core.exceptions import ValidationError
-from django.test import override_settings
 
 from core_main_app.utils.validation.url_validation import (
     is_same_origin,
@@ -16,25 +15,37 @@ from core_main_app.utils.validation.url_validation import (
 class TestIsSameOrigin(TestCase):
     """Test is_same_origin"""
 
-    @override_settings(SERVER_URI="http://127.0.0.1:8000")
+    @patch(
+        "core_main_app.utils.validation.url_validation.settings.SERVER_URI",
+        "http://127.0.0.1:8000",
+    )
     def test_is_same_origin_returns_true_when_origin_matches_server(self):
         """test is same origin returns true when origin matches server"""
         url = "http://127.0.0.1:8000/rest/data/"
         self.assertTrue(is_same_origin(url))
 
-    @override_settings(SERVER_URI="http://127.0.0.1:8000")
+    @patch(
+        "core_main_app.utils.validation.url_validation.settings.SERVER_URI",
+        "http://127.0.0.1:8000",
+    )
     def test_is_same_origin_returns_false_when_origin_differs(self):
         """test is same origin returns false when origin differs"""
         url = "https://example.com/rest/data/"
         self.assertFalse(is_same_origin(url))
 
-    @override_settings(SERVER_URI="http://127.0.0.1:8000")
+    @patch(
+        "core_main_app.utils.validation.url_validation.settings.SERVER_URI",
+        "http://127.0.0.1:8000",
+    )
     def test_is_same_origin_returns_false_when_url_unparsable(self):
         """test is same origin returns false when url unparsable"""
         url = "no-scheme-and-netloc"
         self.assertFalse(is_same_origin(url))
 
-    @override_settings(SERVER_URI="http://127.0.0.1:8000")
+    @patch(
+        "core_main_app.utils.validation.url_validation.settings.SERVER_URI",
+        "http://127.0.0.1:8000",
+    )
     def test_is_same_origin_returns_false_when_netloc_missing(self):
         """test is same origin returns false when netloc missing"""
         url = "http:///path"
@@ -113,7 +124,10 @@ class TestValidateRequestUrl(TestCase):
         with self.assertRaises(ValidationError):
             validate_request_url("http://1.2.3.4/")
 
-    @override_settings(BLOCK_URL_LINK_LOCAL=False)
+    @patch(
+        "core_main_app.utils.validation.url_validation.settings.BLOCK_URL_LINK_LOCAL",
+        False,
+    )
     @patch(
         "core_main_app.utils.validation.url_validation.ipaddress.ip_address"
     )
@@ -125,7 +139,10 @@ class TestValidateRequestUrl(TestCase):
         # Should not raise
         validate_request_url("http://1.2.3.4/")
 
-    @override_settings(BLOCKED_IP_LIST=["1.2.3.4"])
+    @patch(
+        "core_main_app.utils.validation.url_validation.settings.BLOCKED_IP_LIST",
+        ["1.2.3.4"],
+    )
     @patch(
         "core_main_app.utils.validation.url_validation.ipaddress.ip_address"
     )
@@ -135,13 +152,19 @@ class TestValidateRequestUrl(TestCase):
         with self.assertRaises(ValidationError):
             validate_request_url("http://1.2.3.4/")
 
-    @override_settings(BLOCKED_IP_LIST=["9.9.9.9"])
+    @patch(
+        "core_main_app.utils.validation.url_validation.settings.BLOCKED_IP_LIST",
+        ["9.9.9.9"],
+    )
     def test_validate_request_url_raises_for_blocked_ip_real(self):
         """URL with real IP in BLOCKED_IP_LIST is rejected"""
         with self.assertRaises(ValidationError):
             validate_request_url("http://9.9.9.9/")
 
-    @override_settings(HTTP_ALLOWED_URL_SCHEMES=("https",))
+    @patch(
+        "core_main_app.utils.validation.url_validation.settings.HTTP_ALLOWED_URL_SCHEMES",
+        ("https",),
+    )
     def test_validate_request_url_respects_custom_allowed_schemes(self):
         """Only schemes from settings are allowed"""
         # http should be rejected

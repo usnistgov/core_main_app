@@ -351,15 +351,17 @@ BLOB_EXTENSIONS = getattr(
 """ :py:class:`bool`: List of valid blob extensions.
 """
 
-HTTP_ALLOWED_URL_SCHEMES = ("http", "https")
+HTTP_ALLOWED_URL_SCHEMES = getattr(
+    settings, "HTTP_ALLOWED_URL_SCHEMES", ("http", "https")
+)
 """ :py:class:`list`: List of allowed URL schemes for HTTP requests.
 """
 
-BLOCKED_IP_LIST = []
+BLOCKED_IP_LIST = getattr(settings, "BLOCKED_IP_LIST", [])
 """ :py:class:`list`: List of blocked IP addresses for HTTP requests.
 """
 
-BLOCK_URL_LINK_LOCAL = True
+BLOCK_URL_LINK_LOCAL = getattr(settings, "BLOCK_URL_LINK_LOCAL", True)
 """ :py:class:`bool`: Set to `True` to block link-local addresses in
 `validate_request_url`.
 """

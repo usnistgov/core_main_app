@@ -7,7 +7,7 @@ OAI-PMH harvesting) to guard against SSRF and credential-leak risks.
 import ipaddress
 from urllib.parse import urlparse
 
-from django.conf import settings
+from core_main_app import settings
 from django.core.exceptions import ValidationError
 
 
