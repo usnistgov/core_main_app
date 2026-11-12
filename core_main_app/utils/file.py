@@ -5,6 +5,7 @@ import pathlib
 import re
 from io import BytesIO
 from mimetypes import guess_type
+from urllib.parse import quote, unquote
 
 from django.http.response import HttpResponse
 
@@ -54,7 +55,11 @@ def get_file_http_response(
                 extension = "." + extension
             file_name += extension
         # set content disposition in response
-        response["Content-Disposition"] = "attachment; filename=" + file_name
+        encoded_filename = quote(file_name)
+        fallback_filename = file_name.encode("ascii", "ignore").decode("ascii")
+        response["Content-Disposition"] = (
+            f"attachment; filename=\"{fallback_filename}\"; filename*=UTF-8''{encoded_filename}"
+        )
         # return response
         return response
     except Exception:
@@ -87,10 +92,18 @@ def get_filename_from_response(response):
     content_disposition = response.headers.get("content-disposition")
     if not content_disposition:
         return None
-    file_name = re.findall("filename=(.+)", content_disposition)
-    if len(file_name) == 0:
-        return None
-    return file_name[0]
+
+    utf8_filename_match = re.search(
+        r"filename\*=UTF-8''([^;]+)", content_disposition, re.IGNORECASE
+    )
+    if utf8_filename_match:
+        return unquote(utf8_filename_match.group(1))
+    filename_match = re.search(
+        r'filename=["\']?([^"\';]+)["\']?', content_disposition, re.IGNORECASE
+    )
+    if filename_match:
+        return filename_match.group(1)
+    return None
 
 
 def get_base_64_content_from_response(response):

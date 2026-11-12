@@ -1,7 +1,7 @@
 """Blob utils test class"""
 
 from unittest import TestCase
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from core_main_app.commons.exceptions import CoreError
 from core_main_app.components.template.models import Template
@@ -14,7 +14,9 @@ from core_main_app.utils.file import (
     get_data_file_extension_for_template_format,
     get_template_file_extension_for_template_format,
     get_file_http_response,
+    get_filename_from_response,
 )
+from urllib.parse import quote
 
 
 class TestFileUtilsGetBase64ContentFromResponse(TestCase):
@@ -276,3 +278,74 @@ class TestGetFileHttpResponse(TestCase):
         )
         self.assertEqual(response.content, b'{"element": "value"}')
         self.assertEqual(response.headers["Content-Type"], "application/json")
+
+    def test_get_file_http_response_with_utf8_filename(self):
+        """test_get_file_http_response_with_utf8_filename"""
+        filename = "tést_fîle.pdf"
+        response = get_file_http_response(
+            file_content="content", file_name=filename
+        )
+        header = response["Content-Disposition"]
+
+        encoded_name = quote(filename)
+        fallback_name = "tst_fle.pdf"
+        self.assertIn(f"filename*=UTF-8''{encoded_name}", header)
+        self.assertIn(f'filename="{fallback_name}"', header)
+
+    def test_get_file_http_response_adds_extension(self):
+        """test_get_file_http_response_adds_extension"""
+        response = get_file_http_response(
+            file_content="content", file_name="test", extension="xml"
+        )
+        self.assertIn('filename="test.xml"', response["Content-Disposition"])
+
+
+class TestGetFilenameFromResponse(TestCase):
+    """TestGetFilenameFromResponse"""
+
+    def test_get_filename(self):
+        """test_get_filename"""
+        mock_response = MagicMock()
+        mock_response.headers = {
+            "content-disposition": 'attachment; filename="test.txt"'
+        }
+
+        self.assertEqual(get_filename_from_response(mock_response), "test.txt")
+
+    def test_get_filename_utf8_encoded(self):
+        """test_get_filename_utf8_encoded"""
+        filename = "tést_fîle.pdf"
+        encoded_filename = quote(filename)
+        fallback_name = "tst_fle.pdf"
+        headers = f"attachment; filename='{fallback_name}'; filename*=UTF-8''{encoded_filename}"
+        mock_response = MagicMock()
+        mock_response.headers = {"content-disposition": headers}
+
+        self.assertEqual(get_filename_from_response(mock_response), filename)
+
+    def test_get_filename_fallback_only(self):
+        """test_get_filename_fallback_only"""
+        filename = "filename.pdf"
+
+        mock_response = MagicMock()
+        mock_response.headers = {
+            "content-disposition": f"attachment; filename='{filename}'"
+        }
+
+        self.assertEqual(get_filename_from_response(mock_response), filename)
+
+    def test_get_filename_no_header(self):
+        """test_get_filename_no_header"""
+        mock_response = MagicMock()
+        mock_response.headers = {}
+
+        self.assertIsNone(get_filename_from_response(mock_response))
+
+    def test_get_filename_invalid_header(self):
+        """test_get_filename_invalid_header"""
+        mock_response = MagicMock()
+        mock_response.headers = {
+            "content-disposition": "attachment; size=1234"
+        }
+
+        self.assertIsNone(get_filename_from_response(mock_response))
