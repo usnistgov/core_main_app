@@ -108,7 +108,9 @@ class TestPostSaveData(TestCase):
         self, mock_process_data_with_all_modules
     ):
         """test_post_save_calls_with_instance_fields"""
-        mock_data = MagicMock(pk=1, user_id=1)
+        mock_data = MagicMock()
+        mock_data.pk = 1
+        mock_data.user_id = 1
         data_processing_module_signals.post_save_data(
             sender=Data,
             instance=mock_data,
@@ -134,7 +136,9 @@ class TestPostSaveData(TestCase):
         self, mock_process_data_with_all_modules
     ):
         """test_post_save_calls_raises_api_error_if_error_occurs"""
-        mock_data = MagicMock(pk=1, user_id=1)
+        mock_data = MagicMock()
+        mock_data.pk = 1
+        mock_data.user_id = 1
         mock_process_data_with_all_modules.apply_async.side_effect = ApiError(
             "error"
         )
@@ -174,7 +178,9 @@ class TestPostSaveData(TestCase):
     ):
         """test_post_save_data_executes_when_not_suppressed"""
         mock_suppress.get.return_value = False
-        mock_data = MagicMock(pk=1, user_id=1)
+        mock_data = MagicMock()
+        mock_data.pk = 1
+        mock_data.user_id = 1
 
         data_processing_module_signals.post_save_data(
             sender=Data, instance=mock_data
@@ -211,7 +217,9 @@ class TestPreDeleteData(TestCase):
         self, mock_process_data_with_all_modules
     ):
         """test_post_save_calls_with_instance_fields"""
-        mock_data = MagicMock(pk=1, user_id=1)
+        mock_data = MagicMock()
+        mock_data.pk = 1
+        mock_data.user_id = 1
         data_processing_module_signals.pre_delete_data(
             sender=Data,
             instance=mock_data,
@@ -257,7 +265,9 @@ class TestPreDeleteData(TestCase):
     ):
         """test_pre_delete_data_executes_when_not_suppressed"""
         mock_suppress.get.return_value = False
-        mock_data = MagicMock(pk=1, user_id=1)
+        mock_data = MagicMock()
+        mock_data.pk = 1
+        mock_data.user_id = 1
 
         data_processing_module_signals.pre_delete_data(
             sender=Data, instance=mock_data

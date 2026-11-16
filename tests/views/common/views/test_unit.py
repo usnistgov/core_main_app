@@ -53,7 +53,9 @@ class TestXmlEditorGenerateView(SimpleTestCase):
 
         """
         # Arrange
-        mock_template_get_by_id.return_value = MagicMock(content="")
+        mock_template = MagicMock()
+        mock_template.content = ""
+        mock_template_get_by_id.return_value = mock_template
         mock_curate_ds_upsert.return_value = None
         mock_curate_ds_delete.return_value = None
         mock_generate_form.return_value = 1

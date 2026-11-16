@@ -59,7 +59,9 @@ class TestUploadDataCommand(TestCase):
         mock_default_storage.exists.return_value = True
         mock_user_objects.get.return_value = MagicMock()
         mock_workspace_objects.return_value = MagicMock()
-        mock_template_objects.get.return_value = MagicMock(format="JSON")
+        mock_template = MagicMock()
+        mock_template.format = "JSON"
+        mock_template_objects.get.return_value = mock_template
 
         out = StringIO()
         err = StringIO()
@@ -121,7 +123,9 @@ class TestUploadDataCommand(TestCase):
         mock_default_storage.exists.return_value = True
         mock_user_objects.get.return_value = MagicMock()
         mock_workspace_objects.return_value = MagicMock()
-        mock_template_objects.get.return_value = MagicMock(format="Unknown")
+        mock_template = MagicMock()
+        mock_template.format = "Unknown"
+        mock_template_objects.get.return_value = mock_template
 
         out = StringIO()
         err = StringIO()
@@ -179,7 +183,9 @@ class TestUploadDataCommand(TestCase):
         mock_default_storage.exists.return_value = True
         mock_user_objects.get.return_value = MagicMock()
         mock_workspace_objects.return_value = MagicMock()
-        mock_template_objects.get.return_value = MagicMock(format="Unknown")
+        mock_template = MagicMock()
+        mock_template.format = "Unknown"
+        mock_template_objects.get.return_value = mock_template
 
         out = StringIO()
         err = StringIO()
@@ -238,7 +244,9 @@ class TestUploadDataCommand(TestCase):
         mock_default_storage.exists.return_value = True
         mock_user_objects.get.return_value = MagicMock()
         mock_workspace_objects.return_value = MagicMock()
-        mock_template_objects.get.return_value = MagicMock(format="JSON")
+        mock_template = MagicMock()
+        mock_template.format = "JSON"
+        mock_template_objects.get.return_value = mock_template
 
         out = StringIO()
         err = StringIO()
@@ -443,7 +451,9 @@ class TestUploadDataCommand(TestCase):
         mock_default_storage.exists.return_value = True
         mock_user_objects.get.return_value = MagicMock()
         mock_workspace_objects.return_value = MagicMock()
-        mock_template_objects.get.return_value = MagicMock(format="JSON")
+        mock_template = MagicMock()
+        mock_template.format = "JSON"
+        mock_template_objects.get.return_value = mock_template
 
         out = StringIO()
         err = StringIO()
@@ -506,7 +516,9 @@ class TestUploadDataCommand(TestCase):
         mock_default_storage.exists.return_value = True
         mock_user_objects.get.return_value = MagicMock()
         mock_workspace_objects.return_value = MagicMock()
-        mock_template_objects.get.return_value = MagicMock(format="JSON")
+        mock_template = MagicMock()
+        mock_template.format = "JSON"
+        mock_template_objects.get.return_value = mock_template
 
         out = StringIO()
         err = StringIO()
@@ -570,7 +582,9 @@ class TestUploadDataCommand(TestCase):
         mock_default_storage.exists.return_value = True
         mock_user_objects.get.return_value = MagicMock()
         mock_workspace_objects.return_value = MagicMock()
-        mock_template_objects.get.return_value = MagicMock(format="JSON")
+        mock_template = MagicMock()
+        mock_template.format = "JSON"
+        mock_template_objects.get.return_value = mock_template
 
         out = StringIO()
         err = StringIO()
@@ -633,7 +647,9 @@ class TestUploadDataCommand(TestCase):
         mock_default_storage.exists.return_value = True
         mock_user_objects.get.return_value = MagicMock()
         mock_workspace_objects.return_value = MagicMock()
-        mock_template_objects.get.return_value = MagicMock(format="JSON")
+        mock_template = MagicMock()
+        mock_template.format = "JSON"
+        mock_template_objects.get.return_value = mock_template
 
         out = StringIO()
         err = StringIO()
@@ -701,7 +717,9 @@ class TestUploadDataCommand(TestCase):
         mock_default_storage.exists.return_value = True
         mock_user_objects.get.return_value = MagicMock()
         mock_workspace_objects.return_value = MagicMock()
-        mock_template_objects.get.return_value = MagicMock(format="JSON")
+        mock_template = MagicMock()
+        mock_template.format = "JSON"
+        mock_template_objects.get.return_value = mock_template
 
         out = StringIO()
         err = StringIO()
@@ -766,7 +784,9 @@ class TestUploadDataCommand(TestCase):
         mock_default_storage.exists.return_value = True
         mock_user_objects.get.return_value = MagicMock()
         mock_workspace_objects.return_value = MagicMock()
-        mock_template_objects.get.return_value = MagicMock(format="XSD")
+        mock_template = MagicMock()
+        mock_template.format = "XSD"
+        mock_template_objects.get.return_value = mock_template
 
         out = StringIO()
         err = StringIO()
@@ -996,7 +1016,9 @@ class TestUploadDataCommand(TestCase):
         mock_default_storage.exists.return_value = True
         mock_user_objects.get.return_value = MagicMock()
         mock_workspace_objects.return_value = MagicMock()
-        mock_template_objects.get.return_value = MagicMock(format="JSON")
+        mock_template = MagicMock()
+        mock_template.format = "JSON"
+        mock_template_objects.get.return_value = mock_template
         mock_data_objects.bulk_create.side_effect = Exception()
 
         out = StringIO()
@@ -1060,7 +1082,9 @@ class TestUploadDataCommand(TestCase):
         mock_default_storage.exists.return_value = True
         mock_user_objects.get.return_value = MagicMock()
         mock_workspace_objects.return_value = MagicMock()
-        mock_template_objects.get.return_value = MagicMock(format="JSON")
+        mock_template = MagicMock()
+        mock_template.format = "JSON"
+        mock_template_objects.get.return_value = mock_template
         mock_data_save.side_effect = Exception()
 
         out = StringIO()

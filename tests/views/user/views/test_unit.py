@@ -341,7 +341,9 @@ class TestCustomLogout(SimpleTestCase):
         # Arrange
         request = self.factory.get("core_main_app_logout")
         request.user = self.connected_user
-        mock_redirect.return_value = MagicMock(status_code=302)
+        mock_response = MagicMock()
+        mock_response.status_code = 302
+        mock_redirect.return_value = mock_response
 
         # Act
         custom_logout(request)
